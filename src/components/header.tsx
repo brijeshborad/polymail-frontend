@@ -54,7 +54,7 @@ export function Header() {
             <div className={styles.profile}>
                 <Menu>
                     <MenuButton as={Button} rightIcon={<ChevronDownIcon/>} className={styles.profileButton}>
-                        <Image src="/image/user.png" width="100" height="100" alt=""/>
+                        <Image src="/image/user.png" width="36" height="36" alt=""/>
                     </MenuButton>
                     <MenuList>
                         <MenuItem>Download</MenuItem>

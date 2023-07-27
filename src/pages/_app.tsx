@@ -7,13 +7,14 @@ import {Header} from "../components";
 import chakraTheme from '@chakra-ui/theme'
 import {Inter} from "next/font/google";
 
-const {Button, Input, Menu} = chakraTheme.components
+const {Button, Input, Menu, Checkbox} = chakraTheme.components
 
 const theme = extendBaseTheme({
     components: {
         Button,
         Input,
-        Menu
+        Menu,
+        Checkbox
     },
 })
 
