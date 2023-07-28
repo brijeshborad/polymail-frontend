@@ -1,12 +1,13 @@
-import {ProjectButton} from "../components/project-button";
+import {ProjectButton} from "@/components";
 import {Flex, Grid, GridItem, Badge, MenuButton, Button, MenuList, MenuItem, Menu, Checkbox} from "@chakra-ui/react";
-import Image from "next/image";
-
 import {TriangleDownIcon} from "@chakra-ui/icons";
-import {FolderIcon, DisneyIcon, DotIcon, DraftIcon, ClockIcon, SpamIcon, SendIcon, EyeIcon} from "../icons";
+import {FolderIcon, DisneyIcon, DotIcon, DraftIcon, ClockIcon, SpamIcon, SendIcon, EyeIcon} from "@/icons";
 import styles from '@/styles/Home.module.css'
+import {useSelector} from "react-redux";
+import {StateType} from "@/types";
 
 export default function Home() {
+    const {projects} = useSelector((state: StateType) => state.projects);
     return (
         <div>
             <div className={styles.filterTabs}>
@@ -14,50 +15,45 @@ export default function Home() {
                     <GridItem w='100%'>
                         <Flex className={styles.filterTabsName} align={'center'} justify={'space-between'}>
                             <div className={styles.buttonContent}>
-                                <DisneyIcon/>
-                                Disney Launch
+                                <ProjectButton text="Disney Launch" iconStart={<DisneyIcon className={styles.icon}/>}/>
                             </div>
                         </Flex>
                     </GridItem>
                     <GridItem w='100%'>
                         <Flex className={styles.filterTabsName} align={'center'} justify={'space-between'}>
                             <div className={styles.buttonContent}>
-                                <Image width="20" height="20" src="/image/handcraft.png" alt=""/>
-                                Handcrafted Frozen Mouse
-                            </div>
-                            <DotIcon/>
-                        </Flex>
-                    </GridItem>
-                    <GridItem w='100%'>
-                        <Flex className={styles.filterTabsName} align={'center'} justify={'space-between'}>
-                            <div className={styles.buttonContent}>
-                                <Image width="20" height="20" src="/image/car.png" alt=""/>
-                                Generic Plastic Car
-                            </div>
-                            <DotIcon/>
-                        </Flex>
-                    </GridItem>
-                    <GridItem w='100%'>
-                        <Flex className={styles.filterTabsName} align={'center'} justify={'space-between'}>
-                            <div className={styles.buttonContent}>
-                                <DisneyIcon/>
-                                Disney Launch
+                                <ProjectButton text="Handcrafted Frozen Mouse" imageStart={'/image/handcraft.png'}
+                                               iconEnd={<DotIcon/>}/>
                             </div>
                         </Flex>
                     </GridItem>
                     <GridItem w='100%'>
                         <Flex className={styles.filterTabsName} align={'center'} justify={'space-between'}>
                             <div className={styles.buttonContent}>
-                                <Image width="20" height="20" src="/image/car.png" alt=""/>
-                                Generic Plastic Car
+                                <ProjectButton text="Generic Plastic Car" imageStart={'/image/car.png'}
+                                               iconEnd={<DotIcon/>}/>
                             </div>
                         </Flex>
                     </GridItem>
                     <GridItem w='100%'>
                         <Flex className={styles.filterTabsName} align={'center'} justify={'space-between'}>
                             <div className={styles.buttonContent}>
-                                <FolderIcon/>
-                                Show all projects (7)
+                                <ProjectButton text="Disney Launch" iconStart={<DisneyIcon className={styles.icon}/>}/>
+                            </div>
+                        </Flex>
+                    </GridItem>
+                    <GridItem w='100%'>
+                        <Flex className={styles.filterTabsName} align={'center'} justify={'space-between'}>
+                            <div className={styles.buttonContent}>
+                                <ProjectButton text="Generic Plastic Car" imageStart={'/image/car.png'}/>
+                            </div>
+                        </Flex>
+                    </GridItem>
+                    <GridItem w='100%'>
+                        <Flex className={styles.filterTabsName} align={'center'} justify={'space-between'}>
+                            <div className={styles.buttonContent}>
+                                <ProjectButton text="Show all projects (7)"
+                                               iconStart={<FolderIcon className={styles.icon}/>}/>
                             </div>
                         </Flex>
                     </GridItem>
@@ -72,42 +68,43 @@ export default function Home() {
                                 <Flex align={'center'} justify={'space-between'} className={styles.emailTabs}>
                                     <div className={styles.active}>
                                         <FolderIcon/>
-                                        <span className={styles.details}>
+                                        <span>
                                         Inbox <Badge>12</Badge>
                                     </span>
                                     </div>
 
                                     <div>
                                         <DraftIcon/>
-                                        <span className={styles.details}>
+                                        <span>
                                         Inbox <Badge>12</Badge>
                                     </span>
                                     </div>
 
                                     <div>
                                         <ClockIcon/>
-                                        <span className={styles.details}>
+                                        <span>
                                         Inbox <Badge>12</Badge>
                                     </span>
                                     </div>
 
                                     <div>
                                         <SendIcon/>
-                                        <span className={styles.details}>
+                                        <span>
                                         Inbox <Badge>12</Badge>
                                     </span>
                                     </div>
 
                                     <div>
                                         <SpamIcon/>
-                                        <span className={styles.details}>
+                                        <span>
                                         Inbox <Badge>12</Badge>
                                     </span>
                                     </div>
 
                                     <div className={styles.moreDropdown}>
                                         <Menu>
-                                            <MenuButton as={Button} rightIcon={<TriangleDownIcon/>} className={styles.moreButton}>
+                                            <MenuButton as={Button} rightIcon={<TriangleDownIcon/>}
+                                                        className={styles.moreButton}>
                                                 More
                                             </MenuButton>
                                             <MenuList>
@@ -123,7 +120,7 @@ export default function Home() {
                                 </Flex>
                             </div>
                             <div>
-                                <Flex align={'center'} className={styles.selectEmail}>
+                                <Flex align={'center'}>
                                     <div className={styles.checkBoxLabel}>
                                         <Checkbox defaultChecked>Select All</Checkbox>
                                     </div>
@@ -148,7 +145,7 @@ export default function Home() {
                                 <Flex direction={'column'} gap={1} className={styles.mailList}>
                                     <div>
                                         <div className={styles.mailDetails}>
-                                            <Flex align={"center"} justify={'space-between'} className={styles.mailRecivedDetails}>
+                                            <Flex align={"center"} justify={'space-between'}>
                                                 <Flex align={"center"} gap={1}>
                                                     <Flex align={"center"} className={styles.senderDetails} gap={1}>
                                                         <DisneyIcon/> Slack
@@ -165,7 +162,7 @@ export default function Home() {
                                     </div>
                                     <div>
                                         <div className={styles.mailDetails}>
-                                            <Flex align={"center"} justify={'space-between'} className={styles.mailRecivedDetails}>
+                                            <Flex align={"center"} justify={'space-between'}>
                                                 <Flex align={"center"} gap={1}>
                                                     <div className={styles.SenderIcon}>
                                                         <DisneyIcon/>
@@ -188,7 +185,7 @@ export default function Home() {
                                     </div>
                                     <div>
                                         <div className={styles.mailDetails}>
-                                            <Flex align={"center"} justify={'space-between'} className={styles.mailRecivedDetails}>
+                                            <Flex align={"center"} justify={'space-between'}>
                                                 <Flex align={"center"} gap={1}>
                                                     <div className={styles.SenderIcon}>
                                                         <DisneyIcon/>
@@ -208,7 +205,7 @@ export default function Home() {
                                     </div>
                                     <div>
                                         <div className={styles.mailDetails}>
-                                            <Flex align={"center"} justify={'space-between'} className={styles.mailRecivedDetails}>
+                                            <Flex align={"center"} justify={'space-between'}>
                                                 <Flex align={"center"} gap={1}>
                                                     <Flex align={"center"} className={styles.senderDetails} gap={1}>
                                                         <DisneyIcon/> Meetup
@@ -225,7 +222,7 @@ export default function Home() {
                                     </div>
                                     <div className={styles.mailOpen}>
                                         <div className={styles.mailDetails}>
-                                            <Flex align={"center"} justify={'space-between'} className={styles.mailRecivedDetails}>
+                                            <Flex align={"center"} justify={'space-between'}>
                                                 <Flex align={"center"} gap={1}>
                                                     <Flex align={"center"} className={styles.senderDetails} gap={1}>
                                                         <DisneyIcon/> Michael Eisner
@@ -242,7 +239,7 @@ export default function Home() {
                                     </div>
                                     <div>
                                         <div className={styles.mailDetails}>
-                                            <Flex align={"center"} justify={'space-between'} className={styles.mailRecivedDetails}>
+                                            <Flex align={"center"} justify={'space-between'}>
                                                 <Flex align={"center"} gap={1}>
                                                     <Flex align={"center"} className={styles.senderDetails} gap={1}>
                                                         <DisneyIcon/> Michael Eisner
@@ -259,7 +256,7 @@ export default function Home() {
                                     </div>
                                     <div>
                                         <div className={styles.mailDetails}>
-                                            <Flex align={"center"} justify={'space-between'} className={styles.mailRecivedDetails}>
+                                            <Flex align={"center"} justify={'space-between'}>
                                                 <Flex align={"center"} gap={1}>
                                                     <Flex align={"center"} className={styles.senderDetails} gap={1}>
                                                         <DisneyIcon/> Michael Eisner
@@ -276,7 +273,7 @@ export default function Home() {
                                     </div>
                                     <div>
                                         <div className={styles.mailDetails}>
-                                            <Flex align={"center"} justify={'space-between'} className={styles.mailRecivedDetails}>
+                                            <Flex align={"center"} justify={'space-between'}>
                                                 <Flex align={"center"} gap={1}>
                                                     <Flex align={"center"} className={styles.senderDetails} gap={1}>
                                                         <DisneyIcon/> Michael Eisner
@@ -293,7 +290,7 @@ export default function Home() {
                                     </div>
                                     <div>
                                         <div className={styles.mailDetails}>
-                                            <Flex align={"center"} justify={'space-between'} className={styles.mailRecivedDetails}>
+                                            <Flex align={"center"} justify={'space-between'}>
                                                 <Flex align={"center"} gap={1}>
                                                     <Flex align={"center"} className={styles.senderDetails} gap={1}>
                                                         <DisneyIcon/> Michael Eisner
@@ -310,7 +307,7 @@ export default function Home() {
                                     </div>
                                     <div>
                                         <div className={styles.mailDetails}>
-                                            <Flex align={"center"} justify={'space-between'} className={styles.mailRecivedDetails}>
+                                            <Flex align={"center"} justify={'space-between'}>
                                                 <Flex align={"center"} gap={1}>
                                                     <Flex align={"center"} className={styles.senderDetails} gap={1}>
                                                         <DisneyIcon/> Michael Eisner
@@ -327,7 +324,7 @@ export default function Home() {
                                     </div>
                                     <div>
                                         <div className={styles.mailDetails}>
-                                            <Flex align={"center"} justify={'space-between'} className={styles.mailRecivedDetails}>
+                                            <Flex align={"center"} justify={'space-between'}>
                                                 <Flex align={"center"} gap={1}>
                                                     <Flex align={"center"} className={styles.senderDetails} gap={1}>
                                                         <DisneyIcon/> Michael Eisner
@@ -344,7 +341,7 @@ export default function Home() {
                                     </div>
                                     <div>
                                         <div className={styles.mailDetails}>
-                                            <Flex align={"center"} justify={'space-between'} className={styles.mailRecivedDetails}>
+                                            <Flex align={"center"} justify={'space-between'}>
                                                 <Flex align={"center"} gap={1}>
                                                     <Flex align={"center"} className={styles.senderDetails} gap={1}>
                                                         <DisneyIcon/> Michael Eisner
@@ -361,7 +358,7 @@ export default function Home() {
                                     </div>
                                     <div>
                                         <div className={styles.mailDetails}>
-                                            <Flex align={"center"} justify={'space-between'} className={styles.mailRecivedDetails}>
+                                            <Flex align={"center"} justify={'space-between'}>
                                                 <Flex align={"center"} gap={1}>
                                                     <Flex align={"center"} className={styles.senderDetails} gap={1}>
                                                         <DisneyIcon/> Michael Eisner
@@ -380,12 +377,10 @@ export default function Home() {
                                 </Flex>
                             </div>
                         </Flex>
-
                     </GridItem>
                     <GridItem w='100%'/>
                 </Grid>
             </div>
-            <ProjectButton/>
         </div>
     )
 }

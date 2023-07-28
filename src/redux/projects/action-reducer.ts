@@ -1,11 +1,6 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {Project} from "../../models";
+import {InitialProjectState} from "@/types";
 
-type InitialProjectState = {
-    projects: Project[],
-    project: Project,
-    isLoading: boolean
-}
 
 const initialState = {
     projects: [],
@@ -18,10 +13,9 @@ const projectsSlice = createSlice({
     initialState,
     reducers: {
         getAllProjects: (state: InitialProjectState, action: PayloadAction<null>) => {
-
+            return {...state, projects: []}
         },
         setAllProjects: (state: InitialProjectState, action: PayloadAction<null>) => {
-
         }
     }
 })

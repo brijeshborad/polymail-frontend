@@ -210,9 +210,10 @@
 }
 
 .profileButton {
-  background: transparent !important;
+    background: transparent !important;
     padding: 0 !important;
 }
+
 .profileButton img {
     min-width: 36px;
     height: 36px;
@@ -231,13 +232,13 @@
     align-items: center;
 }
 
-.buttonContent svg{
+.buttonContent .icon {
     width: 20px;
     height: 20px;
     margin-right: 8px;
 }
 
-.buttonContent img{
+.buttonContent img {
     margin-right: 8px;
 }
 
@@ -270,7 +271,7 @@
     padding: 2px;
 }
 
-.emailTabs > div{
+.emailTabs > div {
     padding: 9px 12px;
     border-radius: 6px;
     font-size: 13px;
@@ -280,7 +281,7 @@
     cursor: pointer;
 }
 
-.emailTabs > div span span{
+.emailTabs > div span span {
     background-color: #E9F0FE;
     border-radius: 4px;
     margin-left: 4px;
@@ -288,12 +289,12 @@
     line-height: 1.23;
 }
 
-.emailTabs > div svg{
+.emailTabs > div svg {
     width: 20px;
     height: 20px;
 }
 
-.emailTabs > div span{
+.emailTabs > div span {
     margin-left: 8px;
     display: none;
 }
@@ -307,7 +308,7 @@
     display: inline-block;
 }
 
-.emailTabs > div.active svg{
+.emailTabs > div.active svg {
     stroke: #266DF0;
 }
 
@@ -319,7 +320,7 @@
 }
 
 .emailTabs .moreDropdown .moreButton {
-   padding: 0 0 0 13px;
+    padding: 0 0 0 13px;
     background-color: transparent;
     height: fit-content;
     border-left: 1px solid rgba(93, 95, 98, 0.2);
@@ -351,7 +352,7 @@
     height: auto;
 }
 
-.mailOtherOption button span{
+.mailOtherOption button span {
     background-color: rgba(93, 95, 98, 0.1);
     letter-spacing: 0.24px;
     line-height: 1.25;
@@ -360,12 +361,12 @@
     border-radius: 4px;
 }
 
-.mailOtherOption .active button{
+.mailOtherOption .active button {
     border: 1px solid rgba(38, 109, 240, 0.14);
     color: #266DF0;
 }
 
-.mailOtherOption .active button span{
+.mailOtherOption .active button span {
     background-color: #E9F0FE;
 }
 

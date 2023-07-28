@@ -11,14 +11,13 @@ import {
     MenuList
 } from "@chakra-ui/react";
 import {ChevronDownIcon, SearchIcon} from "@chakra-ui/icons";
-import {MailIcon, FolderIcon, EnergyIcon} from "../icons";
-
+import {MailIcon, FolderIcon, EnergyIcon} from "@/icons";
 import styles from '@/styles/Home.module.css'
 
 export function Header() {
     return (
         <Flex className={styles.header} w='100%' align={'center'}>
-            <div className={styles.headerLogo}>
+            <div>
                 <Image width="30" height="30" src="/image/logo.png" alt=""/>
             </div>
             <Flex className={styles.headerTabs} align={'center'}>
@@ -45,7 +44,7 @@ export function Header() {
                 </InputGroup>
             </div>
 
-            <div className={styles.notificationBadge}>
+            <div>
                 <Flex align={'center'} justify={'center'} className={styles.notificationIcon}>
                     <EnergyIcon/>
                     <Badge>3</Badge>
