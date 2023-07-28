@@ -8,9 +8,11 @@ export declare type IProfileButtonProps = {
     iconStart?: React.JSX.Element
     iconEnd?: React.JSX.Element
     imageEnd?: string
+    buttonClass?: string
 }
 
 
 export declare type IconProps = {
     className?: string
+    stroke?: string
 }

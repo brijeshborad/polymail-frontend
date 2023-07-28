@@ -1,0 +1,41 @@
+.buttonContent {
+    display: flex;
+    align-items: center;
+}
+
+.buttonContent .icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+}
+
+.buttonContent img {
+    margin-right: 8px;
+}
+
+.buttonContent .button:hover {
+    background: none;
+}
+
+.filterTabsName {
+    border: 1px solid rgba(8, 22, 47, 0.1);
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 13px;
+    color: #08162F;
+    font-weight: 500;
+}
+
+.filterTabsName svg {
+    color: #266DF0;
+}
+
+.textBlue {
+    color: #266DF0 !important;
+}
+
+.receiveTime p {
+    color: rgba(0, 0, 0, 0.4);
+    font-size: 11px;
+    line-height: 1;
+}

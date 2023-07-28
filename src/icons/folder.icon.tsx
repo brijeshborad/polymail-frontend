@@ -3,7 +3,7 @@ import {IconProps} from "@/types";
 
 export function FolderIcon(props: IconProps) {
     return (
-        <Icon viewBox="0 0 20 20" fill="none" stroke="#08162F" className={props.className}>
+        <Icon viewBox="0 0 20 20" fill="none" stroke={`${props.stroke || '#08162F'}`} className={props.className}>
             <path
                 d="M16.0443 14.3776V8.1276C16.0443 7.20713 15.2981 6.46094 14.3776 6.46094H3.96094V14.3776C3.96094 15.2981 4.70713 16.0443 5.6276 16.0443H14.3776C15.2981 16.0443 16.0443 15.2981 16.0443 14.3776Z"
                 strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>

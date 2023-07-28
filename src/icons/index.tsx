@@ -6,5 +6,7 @@ export * from './dot.icon';
 export * from './draft.icon';
 export * from './clock.icon';
 export * from './send.icon';
-export * from './spam.icon';
 export * from './eye.icon';
+export * from './archive.icon';
+export * from './trash.icon';
+export * from './time-snooze.icon';
