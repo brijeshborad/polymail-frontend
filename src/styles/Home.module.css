@@ -115,6 +115,15 @@
     cursor: pointer;
     font-size: 13px;
     font-weight: 500;
+    transition: all 0.5s;
+}
+
+.headerTabs div:hover {
+    color: #266DF0;
+}
+
+.headerTabs div:hover svg {
+    stroke: #266DF0;
 }
 
 .headerTabs .tabsActive {
@@ -133,6 +142,7 @@
 
 .headerTabs .tabsActive svg {
     stroke: #266DF0;
+    transition: all 0.5s;
 }
 
 .headerTabs svg {
@@ -225,6 +235,12 @@
     background-color: #FCFCFD;
     padding: 32px 40px 0;
     height: calc(100vh - 136px);
+}
+
+.mailBoxTabs {
+    display: grid;
+    grid-template-columns: 30% auto;
+    gap: 40px;
 }
 
 /* Enable hover only on non-touch devices */

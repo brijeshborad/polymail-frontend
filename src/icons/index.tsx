@@ -10,3 +10,7 @@ export * from './eye.icon';
 export * from './archive.icon';
 export * from './trash.icon';
 export * from './time-snooze.icon';
+export * from './file.icon';
+export * from './link.icon';
+export * from './emoji.icon';
+export * from './text.icon';

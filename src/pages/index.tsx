@@ -13,7 +13,8 @@ export default function Home() {
         <div>
             <Projects/>
             <div className={styles.mailBg}>
-                <Grid templateColumns='30% 70%' gap={10}>
+
+                <Grid templateColumns='30% auto' gap={10}>
                     <GridItem w='100%'>
                         <Mails/>
                     </GridItem>
