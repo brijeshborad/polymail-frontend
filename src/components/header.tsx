@@ -31,7 +31,7 @@ export function Header() {
                 </Flex>
             </Flex>
             <div className={styles.headerSearch}>
-                <InputGroup>
+                <InputGroup className={styles.inputGroup}>
                     <InputLeftElement pointerEvents='none'>
                         <SearchIcon/>
                     </InputLeftElement>

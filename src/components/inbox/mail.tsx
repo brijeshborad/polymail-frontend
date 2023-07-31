@@ -7,17 +7,17 @@ import {ArchiveIcon, FolderIcon, TrashIcon, TimeSnoozeIcon, FileIcon, LinkIcon, 
 import Image from "next/image";
 import {Chip} from "@/components/chip";
 
-export function Mail() {
+export function Mail(props) {
     return (
         <Box className={styles.mailBox}>
             <Flex justifyContent={'space-between'} flexDir={'column'} height={'100%'}>
                 <div>
                     <div>
-                        <Flex justifyContent={'space-between'} align={'center'}
+                        <Flex justifyContent={'space-between'} wrap={'wrap'} align={'center'}
                               borderBottom={'1px solid rgba(8, 22, 47, 0.1)'}
                               marginBottom={'15'} padding={'12px 20px'}>
                             <Flex alignItems={'center'} gap={2}>
-                                <div className={styles.closeIcon}><CloseIcon/></div>
+                                <div className={styles.closeIcon} onClick={() => props.show(false)}><CloseIcon/></div>
                                 <div className={styles.actionIcon}><ChevronUpIcon/></div>
                                 <div className={styles.actionIcon}><ChevronDownIcon/></div>
                             </Flex>
@@ -28,7 +28,7 @@ export function Mail() {
                                 <TimeSnoozeIcon/>
                             </Flex>
                         </Flex>
-                        <Flex alignItems={'center'} justifyContent={'space-between'} gap={2} padding={'10px 20px'}>
+                        <Flex alignItems={'center'} wrap={'wrap'} justifyContent={'space-between'} gap={2} padding={'10px 20px'}>
                             <Flex alignItems={'center'}>
                                 <Image src={'/image/user.png'} alt={''} width={50} height={50}/>
                                 <Flex flexDir={'column'} marginLeft={'5'}>
@@ -59,7 +59,7 @@ export function Mail() {
                     <Box className={styles.replyBox}>
                         <Flex alignItems={'center'} justifyContent={'space-between'} padding={'8px 10px'}
                               borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>
-                            <Flex alignItems={'center'} gap={1} className={styles.replyBoxCC}>
+                            <Flex alignItems={'center'} wrap={'wrap'} gap={1} className={styles.replyBoxCC}>
                                 <Heading as={'h1'} size={'sm'} marginRight={1}>CC:</Heading>
                                 <Chip text={'Design Team'} buttonClass={styles.textBlue}/>
                                 <Chip text={'John Doe'}/>
@@ -77,19 +77,7 @@ export function Mail() {
                                     <TextIcon/>
                                     <EmojiIcon/>
                                 </Flex>
-                                <Menu>
-                                    <MenuButton className={styles.replyButton} as={Button} rightIcon={<ChevronDownIcon />}>
-                                        Actions
-                                    </MenuButton>
-                                    <MenuList>
-                                        <MenuItem>Download</MenuItem>
-                                        <MenuItem>Create a Copy</MenuItem>
-                                        <MenuItem>Mark as Draft</MenuItem>
-                                        <MenuItem>Delete</MenuItem>
-                                        <MenuItem>Attend a Workshop</MenuItem>
-                                    </MenuList>
-                                </Menu>
-                                {/*<Button  colorScheme='blue' rightIcon={<ChevronDownIcon />}>Reply all</Button>*/}
+                                <Button className={styles.replyButton} colorScheme='blue' rightIcon={<ChevronDownIcon />}>Reply all</Button>
                             </Flex>
                         </div>
                     </Box>

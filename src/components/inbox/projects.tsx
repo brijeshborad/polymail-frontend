@@ -7,7 +7,7 @@ import {DisneyIcon, DotIcon, FolderIcon} from "@/icons";
 export function Projects() {
     return (
         <div className={styles.filterTabs}>
-            <Grid templateColumns='repeat(6, 1fr)' gap={3}>
+            <Grid templateColumns='repeat(6, 1fr)' gap={3} overflowX={'auto'}>
                 <GridItem w='100%'>
                     <ProjectButton text="Disney Launch" iconStart={<DisneyIcon className={styles2.icon}/>}/>
                 </GridItem>
