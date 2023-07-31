@@ -14,6 +14,10 @@ import {ChevronDownIcon, SearchIcon} from "@chakra-ui/icons";
 import {MailIcon, FolderIcon, EnergyIcon} from "@/icons";
 import styles from '@/styles/Home.module.css'
 
+const data = {
+    names: ['John doe']
+};
+
 export function Header() {
     return (
         <Flex className={styles.header} w='100%' align={'center'}>

@@ -1,13 +1,14 @@
 import styles from "@/styles/Inbox.module.css";
 import styles2 from "@/styles/common.module.css";
-import {Box, Flex, Heading, Text, Input, Button, Menu, MenuButton, MenuList, MenuItem} from "@chakra-ui/react";
+import {Box, Flex, Heading, Text, Input, Button} from "@chakra-ui/react";
 import {ChevronDownIcon, ChevronUpIcon, CloseIcon, InfoOutlineIcon, TriangleDownIcon} from "@chakra-ui/icons";
 import {Time} from "@/components";
 import {ArchiveIcon, FolderIcon, TrashIcon, TimeSnoozeIcon, FileIcon, LinkIcon, TextIcon, EmojiIcon} from "@/icons";
 import Image from "next/image";
 import {Chip} from "@/components/chip";
+import {MailTabProps} from "@/types";
 
-export function Mail(props) {
+export function Mail(props: MailTabProps) {
     return (
         <Box className={styles.mailBox}>
             <Flex justifyContent={'space-between'} flexDir={'column'} height={'100%'}>
@@ -68,7 +69,6 @@ export function Mail(props) {
                             <InfoOutlineIcon/>
                         </Flex>
                         <div className={styles.replayMessage}>
-                            {/*<Text fontSize={'sm'}>Reply with anything you like or @mention someone to share this thread</Text>*/}
                             <Input variant='unstyled' placeholder='Reply with anything you like or @mention someone to share this thread' />
                             <Flex align={'flex-end'} justify={"space-between"} gap={2}>
                                 <Flex align={'center'} gap={3}>

@@ -8,3 +8,4 @@ export * from './projects/project-state.type';
 export * from './props-types/profile-button-props.type';
 export * from './props-types/time.type';
 export * from './props-types/chip.type';
+export * from './props-types/inbox-page.type';

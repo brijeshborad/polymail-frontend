@@ -6,25 +6,23 @@ import {
     Grid,
     GridItem,
 } from "@chakra-ui/react";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 
 export default function Home() {
     const {projects} = useSelector((state: StateType) => state.projects);
-    const [isShow, setIsShow] = useState(false);
-    const [size, setSize] = useState();
+    const [isShow, setIsShow] = useState<boolean>(false);
+    const [size, setSize] = useState<number>(0);
+
+    function updateSize() {
+        setSize(window.innerWidth);
+    }
 
     useEffect(() => {
         if (typeof window !== "undefined") {
-            console.log('=====', window.innerWidth)
+            window.addEventListener('resize', updateSize);
+            updateSize();
+            return () => window.removeEventListener('resize', updateSize);
         }
-        function updateSize() {
-            setSize(window.innerWidth);
-        }
-
-        console.log(size)
-        window.addEventListener('resize', updateSize);
-        updateSize();
-        return () => window.removeEventListener('resize', updateSize);
     }, []);
 
     return (

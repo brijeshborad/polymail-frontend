@@ -7,7 +7,7 @@ import rootSaga from './saga';
 
 const sagaMiddleware = createSagaMiddleware();
 
-export function makeStore(initialState) {
+export function makeStore(initialState: any) {
     const store = configureStore({
         reducer: rootReducer,
         preloadedState: initialState,
@@ -15,8 +15,8 @@ export function makeStore(initialState) {
     });
     sagaMiddleware.run(rootSaga);
 
-    if (process.env.NODE_ENV !== 'production' && module['hot']) {
-        module['hot'].accept('./reducer', () => store.replaceReducer(rootReducer))
+    if (process.env.NODE_ENV !== 'production' && module.hot) {
+        module.hot.accept('./reducer', () => store.replaceReducer(rootReducer))
     }
     return store;
 }
