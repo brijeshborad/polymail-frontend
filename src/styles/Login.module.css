@@ -1,0 +1,57 @@
+.login .loginBox {
+    width: 30%;
+    margin: 0 auto;
+    min-height: 100vh;
+}
+
+.loginBox .loginHeader {
+    margin-bottom: 60px;
+}
+
+.loginGoogleButton {
+    border: 1px solid #E2E8F0;
+    border-radius: 15px;
+    padding: 5px 20px;
+    width: 100%;
+    text-align: center;
+    cursor: pointer;
+}
+
+.loginGoogleButton button {
+    border: none;
+    background: transparent;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 auto;
+}
+
+.loginGoogleButton button:hover {
+    border: none;
+    background: transparent;
+}
+
+
+.loginInput {
+    border-radius: 10px !important;
+    margin-bottom: 20px;
+    font-size: 20px !important;
+    height: 50px !important;
+}
+
+.loginButton {
+    width: 100%;
+    background: #761799 !important;
+    color: white !important;
+    border-radius: 15px !important;
+}
+
+.loginInfo {
+    margin-top: 10px;
+    color: rgb(126, 143, 159);
+}
+
+.loginInfo a {
+    margin-left: 5px;
+    color: #761799;
+    font-weight: bold;
+}
