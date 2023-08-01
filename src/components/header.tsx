@@ -13,12 +13,19 @@ import {
 import {ChevronDownIcon, SearchIcon} from "@chakra-ui/icons";
 import {MailIcon, FolderIcon, EnergyIcon} from "@/icons";
 import styles from '@/styles/Home.module.css'
-
-const data = {
-    names: ['John doe']
-};
+import {useDispatch} from "react-redux";
+import {logoutUser} from "@/redux/auth/action-reducer";
+import {removeStoreLocal} from "@/utils/localstorage.service";
+import Router from "next/router";
 
 export function Header() {
+    const dispatch = useDispatch();
+
+    function logout() {
+        removeStoreLocal('poly-user');
+        dispatch(logoutUser(null));
+        Router.push('/auth/login');
+    }
     return (
         <Flex className={styles.header} w='100%' align={'center'}>
             <div>
@@ -64,7 +71,7 @@ export function Header() {
                         <MenuItem>Create a Copy</MenuItem>
                         <MenuItem>Mark as Draft</MenuItem>
                         <MenuItem>Delete</MenuItem>
-                        <MenuItem>Attend a Workshop</MenuItem>
+                        <MenuItem onClick={() => logout()}>Logout</MenuItem>
                     </MenuList>
                 </Menu>
             </div>

@@ -4,8 +4,9 @@ import {useEffect, useState} from "react";
 import {Mail, Mails, Projects} from "@/components/inbox";
 import styles from "@/styles/Home.module.css";
 import {Grid, GridItem} from "@chakra-ui/react";
+import withAuth from "@/components/withAuth";
 
-export default function Inbox() {
+function Inbox() {
     const {projects} = useSelector((state: StateType) => state.projects);
     const [isShow, setIsShow] = useState<boolean>(false);
     const [size, setSize] = useState<number>(0);
@@ -39,3 +40,5 @@ export default function Inbox() {
         </div>
     )
 }
+
+export default withAuth(Inbox);
