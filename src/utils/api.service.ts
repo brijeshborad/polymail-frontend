@@ -13,11 +13,11 @@ const axiosInstance: AxiosInstance = axios.create({
 } as CreateAxiosDefaults);
 
 axiosInstance.interceptors.request.use((config) => {
-    let userSession: any = getStoreLocal('ploy-user');
+    let userSession: any = getStoreLocal('poly-user', true);
     if (config.headers.hasOwnProperty('Skip-Headers')) {
         delete config.headers['Skip-Headers'];
     } else {
-        config.headers.Authorization = `Bearer ${userSession.accessToken}`;
+        config.headers.Authorization = `PG ${userSession.token}`;
         delete config.headers['Skip-Headers'];
     }
     return config;

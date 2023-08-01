@@ -22,8 +22,7 @@ export function Header() {
     const dispatch = useDispatch();
 
     function logout() {
-        removeStoreLocal('poly-user');
-        dispatch(logoutUser(null));
+        dispatch(logoutUser());
         Router.push('/auth/login');
     }
     return (

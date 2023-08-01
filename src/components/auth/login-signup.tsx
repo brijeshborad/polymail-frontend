@@ -42,7 +42,10 @@ export function LoginSignup({type = 'login'}: LoginProps) {
         if (type === 'login') {
             dispatch(loginUser({email: formValues.email, password: formValues.password}));
         } else {
-            dispatch(registerUser({email: formValues.email, password: formValues.password}));
+            const bcrypt = require('bcryptjs');
+            bcrypt.hash(formValues.password, 10, function (err, hash) {
+                dispatch(registerUser({email: formValues.email, password: hash}));
+            })
         }
     }
 
