@@ -33,7 +33,7 @@ axiosInstance.interceptors.response.use((response) => {
                 },
                 accessToken: ""
             };
-            setStoreLocal('ploy-user', session);
+            setStoreLocal('ploy-user', JSON.stringify(session));
             Router.push(`/auth/login`);
         }
     }

@@ -1,6 +1,9 @@
 import {PayloadAction} from "@reduxjs/toolkit";
 import {all, fork, put, takeLatest} from "@redux-saga/core/effects";
 import {
+    googleAuthLink,
+    googleAuthLinkError,
+    googleAuthLinkSuccess,
     loginError,
     loginSuccess,
     loginUser,
@@ -9,7 +12,7 @@ import {
     registerUser
 } from "@/redux/auth/action-reducer";
 import ApiService from "@/utils/api.service";
-import {AxiosResponse} from "axios";
+import {AxiosError, AxiosResponse} from "axios";
 import {setStoreLocal} from "@/utils/localstorage.service";
 
 function* login({payload: {email, password}}: PayloadAction<any>) {
@@ -19,7 +22,7 @@ function* login({payload: {email, password}}: PayloadAction<any>) {
         });
         setStoreLocal('poly-user', JSON.stringify(response));
         yield put(loginSuccess(response.data));
-    } catch (error) {
+    } catch (error: AxiosError | any) {
         yield put(loginError(error.response.data));
     }
 }
@@ -31,8 +34,19 @@ function* register({payload: {email, password}}: PayloadAction<any>) {
         });
         setStoreLocal('poly-user', JSON.stringify(response));
         yield put(registerSuccess(response));
-    } catch (error) {
+    } catch (error: AxiosError | any) {
         yield put(registerError(error.response.data));
+    }
+}
+
+function* getGoogleAuthLink({payload}: PayloadAction<any>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callPost(`auth/oauth2link`, payload, {
+            'Skip-Headers': true
+        });
+        yield put(googleAuthLinkSuccess(response));
+    } catch (error: AxiosError | any) {
+        yield put(googleAuthLinkError(error.response.data));
     }
 }
 
@@ -44,10 +58,15 @@ export function* watchRegisterUser() {
     yield takeLatest(registerUser.type, register);
 }
 
+export function* watchGoogleAuthLink() {
+    yield takeLatest(googleAuthLink.type, getGoogleAuthLink);
+}
+
 export default function* rootSaga() {
     yield all([
         fork(watchLoginUser),
         fork(watchRegisterUser),
+        fork(watchGoogleAuthLink),
     ]);
 }
 

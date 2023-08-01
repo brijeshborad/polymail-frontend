@@ -5,7 +5,7 @@ import Link from "next/link";
 import {LoginProps, StateType} from "@/types";
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
-import {loginUser, registerUser} from "@/redux/auth/action-reducer";
+import {googleAuthLink, loginUser, registerUser} from "@/redux/auth/action-reducer";
 import {InfoIcon} from "@chakra-ui/icons";
 import Router from "next/router";
 
@@ -16,7 +16,7 @@ declare type LoginForm = {
 
 export function LoginSignup({type = 'login'}: LoginProps) {
     const dispatch = useDispatch();
-    const {user, error} = useSelector((state: StateType) => state.auth);
+    const {user, error, googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
     const [formValues, setFormValues] = useState<LoginForm>({email: '', password: ''});
 
     const handleChange = (event: any) => {
@@ -29,7 +29,16 @@ export function LoginSignup({type = 'login'}: LoginProps) {
         }
     }, [user])
 
+    useEffect(() => {
+        if (googleAuthRedirectionLink) {
+            window.location.href = googleAuthRedirectionLink.url;
+        }
+    }, [googleAuthRedirectionLink])
+
     function signIn() {
+        if (!formValues.email || !formValues.password) {
+            return;
+        }
         if (type === 'login') {
             dispatch(loginUser({email: formValues.email, password: formValues.password}));
         } else {
@@ -38,11 +47,14 @@ export function LoginSignup({type = 'login'}: LoginProps) {
     }
 
     function loginWithGoogle() {
-        if (type === 'login') {
-            dispatch(loginUser({email: formValues.email, password: formValues.password}));
-        } else {
-            dispatch(registerUser({email: formValues.email, password: formValues.password}));
+        let body = {
+            mode: type === 'login' ? "login" : 'register',
+            successRedirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}`,
+            failureRedirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}auth/signup`,
+            accountType: "google",
+            platform: "web"
         }
+        dispatch(googleAuthLink(body));
     }
 
     return (
@@ -56,7 +68,8 @@ export function LoginSignup({type = 'login'}: LoginProps) {
                     <InfoIcon marginRight={'10px'} color={'red'}/>
                     <Heading as={'h4'} size={'md'}>{error.description}</Heading>
                 </Alert>}
-                <ButtonGroup onClick={() => loginWithGoogle()} size='sm' isAttached variant='outline' className={styles.loginGoogleButton}>
+                <ButtonGroup onClick={() => loginWithGoogle()} size='sm' isAttached variant='outline'
+                             className={styles.loginGoogleButton}>
                     <Image src={'/image/google-logo.png'} alt={''} width={30} height={30}/>
                     <Button>Sign {type === 'login' ? `In` : 'Up'} With Google</Button>
                 </ButtonGroup>
