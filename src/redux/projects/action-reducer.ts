@@ -1,10 +1,12 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {InitialProjectState} from "@/types";
+import {Project} from "@/models";
 
 const initialState = {
     projects: [],
     project: null,
     isLoading: false,
+    error: null,
 } as InitialProjectState
 
 const projectsSlice = createSlice({
@@ -12,12 +14,16 @@ const projectsSlice = createSlice({
     initialState,
     reducers: {
         getAllProjects: (state: InitialProjectState, action: PayloadAction<null>) => {
-            return {...state, projects: []}
+            return {...state, projects: [], isLoading: true, error: null}
         },
-        setAllProjects: (state: InitialProjectState, action: PayloadAction<null>) => {
+        getAllProjectsSuccess: (state: InitialProjectState, {payload: projects}: PayloadAction<{ projects: Project[] }>) => {
+            return {...state, projects, isLoading: false, error: null}
+        },
+        getAllProjectsError: (state: InitialProjectState, {payload: error}: PayloadAction<{ error: any }>) => {
+            return {...state, projects: [], isLoading: false, error}
         }
     }
 })
 
-export const {getAllProjects, setAllProjects} = projectsSlice.actions
+export const {getAllProjects, getAllProjectsSuccess, getAllProjectsError} = projectsSlice.actions
 export default projectsSlice.reducer

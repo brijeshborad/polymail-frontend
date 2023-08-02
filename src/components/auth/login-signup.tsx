@@ -63,7 +63,6 @@ export function LoginSignup({type = 'login'}: LoginProps) {
         let body = {
             mode: type === 'login' ? "login" : 'register',
             redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}/auth/login`,
-           // failureRedirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}auth/signup`,
             accountType: "google",
             platform: "web"
         }

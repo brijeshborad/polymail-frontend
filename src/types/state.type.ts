@@ -1,6 +1,8 @@
-import {InitialProjectState, InitialAuthState} from "./";
+import {InitialProjectState, InitialAuthState, InitialMessageStateType, InitialThreadStateType} from "./";
 
 export declare type StateType = {
     projects: InitialProjectState
-    auth: InitialAuthState
+    auth: InitialAuthState,
+    threads: InitialThreadStateType,
+    messages: InitialMessageStateType,
 }
