@@ -59,7 +59,20 @@ export function Header() {
                     <Badge>3</Badge>
                 </Flex>
             </div>
-            <div className={styles.profile}>
+            <div className={styles.Workspace}>
+                <Menu>
+                    <MenuButton as={Button} rightIcon={<ChevronDownIcon/>} className={styles.profileButton}>
+                        Workspace
+                    </MenuButton>
+                    <MenuList>
+                        <MenuItem>Download</MenuItem>
+                        <MenuItem>Create a Copy</MenuItem>
+                        <MenuItem>Mark as Draft</MenuItem>
+                        <MenuItem>Delete</MenuItem>
+                        <MenuItem onClick={() => logout()}>Logout</MenuItem>
+                    </MenuList>
+                </Menu>
+            </div><div className={styles.profile}>
                 <Menu>
                     <MenuButton as={Button} rightIcon={<ChevronDownIcon/>} className={styles.profileButton}>
                         <Image src="/image/user.png" width="36" height="36" alt=""/>

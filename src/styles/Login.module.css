@@ -1,7 +1,9 @@
 .login .loginBox {
-    width: 40%;
+    width: 100%;
+    max-width: 450px;
     margin: 0 auto;
     min-height: 100vh;
+    padding: 30px;
 }
 
 .loginBox .loginHeader {
@@ -13,8 +15,8 @@
     border-radius: 15px;
     padding: 5px 20px;
     width: 100%;
-    text-align: center;
     cursor: pointer;
+    align-items: center;
 }
 
 .loginGoogleButton button {
@@ -31,18 +33,22 @@
 }
 
 
-.loginInput {
-    border-radius: 10px !important;
+.loginBox .loginInput {
+    border-radius: 10px;
     margin-bottom: 20px;
-    font-size: 20px !important;
-    height: 50px !important;
+    font-size: 20px;
+    height: 50px;
 }
 
-.loginButton {
+.loginBox .loginButton {
     width: 100%;
-    background: #761799 !important;
-    color: white !important;
-    border-radius: 15px !important;
+    background: #761799;
+    color: white;
+    border-radius: 15px;
+}
+
+.loginBox .loginButton:hover {
+    background: #761799;
 }
 
 .loginInfo {
@@ -54,4 +60,23 @@
     margin-left: 5px;
     color: #761799;
     font-weight: bold;
+}
+.loginBox .centerDivider {
+    top: 0;
+    transform: translate(-50%, 50%);
+}
+
+@media (max-width: 576px) {
+
+    .loginGoogleButton button {
+        font-size: 18px;
+    }
+    .loginGoogleButton img {
+        width: 25px;
+        height: 25px;
+    }
+
+    .loginBox .loginInput {
+        font-size: 18px;
+    }
 }

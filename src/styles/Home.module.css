@@ -203,7 +203,7 @@
     background-color: rgba(38, 109, 240, 0.2);
     border: 1px solid rgba(38, 109, 240, 0.2);
     margin-left: 21px;
-    margin-right: 165px;
+    margin-right: 15px;
 }
 
 .notificationIcon span {
@@ -247,7 +247,9 @@
     grid-template-columns: 30% auto;
     gap: 40px;
 }
-
+.Workspace {
+    margin-right: 15px;
+}
 /* Enable hover only on non-touch devices */
 @media (hover: hover) and (pointer: fine) {
     .card:hover {
@@ -263,12 +265,6 @@
 @media (prefers-reduced-motion) {
     .card:hover span {
         transform: none;
-    }
-}
-
-@media (max-width: 1366px) {
-    .notificationIcon {
-        margin-right: 120px;
     }
 }
 
@@ -385,10 +381,6 @@
     .mailBg {
         height: 100%;
         padding: 30px 30px 10px;
-    }
-
-    .notificationIcon {
-        margin-right: 15px;
     }
 
     .header {

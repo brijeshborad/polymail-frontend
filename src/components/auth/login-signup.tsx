@@ -88,7 +88,7 @@ export function LoginSignup({type = 'login'}: LoginProps) {
 
                 <Box position='relative' py='10' width={'100%'}>
                     <Divider orientation='horizontal'/>
-                    <AbsoluteCenter bg='white' px='40px'>
+                    <AbsoluteCenter bg='white' px='40px' className={styles.centerDivider}>
                         <Heading as={'h1'} size={'lg'}>or</Heading>
                     </AbsoluteCenter>
                 </Box>
