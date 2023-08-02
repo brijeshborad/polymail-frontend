@@ -8,6 +8,7 @@ import {useEffect, useState} from "react";
 import {googleAuthLink, loginUser, registerUser} from "@/redux/auth/action-reducer";
 import {InfoIcon} from "@chakra-ui/icons";
 import Router from "next/router";
+import { useLocation } from "react-router-dom";
 
 declare type LoginForm = {
     email: string,
@@ -18,6 +19,7 @@ export function LoginSignup({type = 'login'}: LoginProps) {
     const dispatch = useDispatch();
     const {user, error, googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
     const [formValues, setFormValues] = useState<LoginForm>({email: '', password: ''});
+
 
     const handleChange = (event: any) => {
         setFormValues(value => ({...value, [event.target.name]: event.target.value}))
@@ -52,8 +54,8 @@ export function LoginSignup({type = 'login'}: LoginProps) {
     function loginWithGoogle() {
         let body = {
             mode: type === 'login' ? "login" : 'register',
-            successRedirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}`,
-            failureRedirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}auth/signup`,
+            redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}`,
+           // failureRedirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}auth/signup`,
             accountType: "google",
             platform: "web"
         }
