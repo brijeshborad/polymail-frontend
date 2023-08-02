@@ -8,7 +8,6 @@ import {useEffect, useState} from "react";
 import {googleAuthLink, loginUser, registerUser} from "@/redux/auth/action-reducer";
 import {InfoIcon} from "@chakra-ui/icons";
 import Router, {useRouter} from "next/router";
-import { useLocation } from "react-router-dom";
 import {setStoreLocal} from "@/utils/localstorage.service";
 
 declare type LoginForm = {
