@@ -17,10 +17,6 @@ export function Projects() {
         getProjects();
     },[])
 
-    useEffect(() => {
-        console.log(projects)
-    }, [projects]);
-
     const getProjects = () => {
         dispatch(getAllProjects({project: null}, null));
     }
@@ -28,8 +24,8 @@ export function Projects() {
     return (
         <div className={styles.filterTabs}>
             <Grid templateColumns='repeat(6, 1fr)' gap={3} overflowX={'auto'}>
-                {projects.map(project => (
-                    <GridItem w='100%'>
+                {projects.map((project, i) => (
+                    <GridItem w='100%' key={i + 1}>
                         <ProjectButton text={project?.name} iconStart={<DisneyIcon className={styles2.icon}/>}/>
                     </GridItem>
                 ))}

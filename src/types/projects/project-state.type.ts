@@ -1,8 +1,8 @@
 import {Project} from "../../models";
 
 export declare type InitialProjectState = {
-    projects?: Project[],
-    project?: Project | null,
+    projects: Project[],
+    project: Project | null,
     isLoading: boolean,
     error: Error | any
 }

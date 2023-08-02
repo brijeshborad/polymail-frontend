@@ -1,45 +1,52 @@
 import Image from "next/image";
 import {
-    Badge, Button,
+    Badge,
+    Button,
     Flex,
     Input,
     InputGroup,
     InputLeftElement,
     InputRightElement,
     Menu,
-    MenuButton, MenuItem,
+    MenuButton,
+    MenuItem,
     MenuList
 } from "@chakra-ui/react";
 import {ChevronDownIcon, SearchIcon} from "@chakra-ui/icons";
-import {MailIcon, FolderIcon, EnergyIcon} from "@/icons";
+import {EnergyIcon, FolderIcon, MailIcon} from "@/icons";
 import styles from '@/styles/Home.module.css'
 import {useDispatch, useSelector} from "react-redux";
 import {logoutUser} from "@/redux/auth/action-reducer";
 import Router from "next/router";
 import {StateType} from "@/types";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {getAllOrganizations} from "@/redux/organizations/action-reducer";
+import {Organization} from "@/models";
 
 export function Header() {
     const dispatch = useDispatch();
-
+    const [workspace, setWorkspace] = useState<Organization>({});
     const {organizations, error} = useSelector((state: StateType) => state.organizations);
 
     useEffect(() => {
         getOrganizations();
-    },[])
+    }, [])
 
     useEffect(() => {
-        console.log(organizations)
+        if (organizations.length > 0) {
+            setWorkspace(organizations[0]);
+        }
     }, [organizations]);
 
     const getOrganizations = () => {
         dispatch(getAllOrganizations({organization: null}, null));
     }
+
     function logout() {
         dispatch(logoutUser(null));
         Router.push('/auth/login');
     }
+
     return (
         <Flex className={styles.header} w='100%' align={'center'}>
             <div>
@@ -78,17 +85,18 @@ export function Header() {
             <div className={styles.Workspace}>
                 <Menu>
                     <MenuButton as={Button} rightIcon={<ChevronDownIcon/>} className={styles.profileButton}>
-                        Workspace
+                        {workspace?.name || 'Workspaces'}
                     </MenuButton>
                     <MenuList>
-                        <MenuItem>Download</MenuItem>
-                        <MenuItem>Create a Copy</MenuItem>
-                        <MenuItem>Mark as Draft</MenuItem>
-                        <MenuItem>Delete</MenuItem>
-                        <MenuItem onClick={() => logout()}>Logout</MenuItem>
+                        {organizations?.map((org, i) => (
+                            <MenuItem w='100%' key={i + 1}>
+                                {org.name}
+                            </MenuItem>
+                        ))}
                     </MenuList>
                 </Menu>
-            </div><div className={styles.profile}>
+            </div>
+            <div className={styles.profile}>
                 <Menu>
                     <MenuButton as={Button} rightIcon={<ChevronDownIcon/>} className={styles.profileButton}>
                         <Image src="/image/user.png" width="36" height="36" alt=""/>
