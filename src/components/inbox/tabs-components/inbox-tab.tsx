@@ -46,7 +46,7 @@ export default function InboxTab(props: InboxTabProps) {
                                     </div>
                                 </Flex>
                                 <div className={styles.mailMessage}>
-                                    {item}
+                                    {item.subject}
                                 </div>
                             </div>
                         </div>

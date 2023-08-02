@@ -11,16 +11,36 @@ import {
 import {ClockIcon, DraftIcon, FolderIcon, SendIcon, TimeSnoozeIcon} from "@/icons";
 import {TriangleDownIcon} from "@chakra-ui/icons";
 import InboxTab from "@/components/inbox/tabs-components/inbox-tab";
-import {MailTabProps} from "@/types";
+import {MailTabProps, StateType} from "@/types";
+import {useDispatch, useSelector} from "react-redux";
+import {useEffect, useState} from "react";
+import {getAllThreads} from "@/redux/threads/action-reducer";
 
-const content = [
-    'What’s the next project phase?',
-    'What’s the next project phase?',
-    'What’s the next project phase?',
-    'What’s the next project phase?'
-]
+// const content = [
+//     'What’s the next project phase?',
+//     'What’s the next project phase?',
+//     'What’s the next project phase?',
+//     'What’s the next project phase?'
+// ]
 
 export function Mails(props: MailTabProps) {
+
+    const [content, setContent] = useState([]);
+    const {threads, error} = useSelector((state: StateType) => state.threads);
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        getAllThread();
+    },[])
+
+    const getAllThread = () => {
+        dispatch(getAllThreads({mailbox: 'INBOX'}));
+    }
+
+    useEffect(() => {
+        setContent(threads);
+    }, [threads])
 
     const handleClick = () => {
         props.show(true);

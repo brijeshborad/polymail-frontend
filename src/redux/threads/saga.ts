@@ -6,14 +6,14 @@ import {getAllThreadsError, getAllThreadsSuccess, getAllThreads} from "@/redux/t
 
 function* getThreads({
                          payload: {
-                             mailBox,
+                             mailbox,
                              project,
                              account
                          }
-                     }: PayloadAction<{ mailBox?: string, project?: string, account?: string }>) {
+                     }: PayloadAction<{ mailbox?: string, project?: string, account?: string }>) {
     try {
         const response: AxiosResponse = yield ApiService.callGet(`threads`, {
-            ...(mailBox ? {mailBox}: {}),
+            ...(mailbox ? {mailbox}: {}),
             ...(project ? {project}: {}),
             ...(account ? {account}: {}),
         });
