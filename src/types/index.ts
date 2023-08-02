@@ -13,6 +13,9 @@ export * from './threads/thread-state.type';
 // Messages
 export * from './message/message-state.type';
 
+//Organizations
+export * from './organizations/organization-state.type';
+
 // Props
 export * from './props-types/profile-button-props.type';
 export * from './props-types/time.type';

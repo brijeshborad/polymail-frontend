@@ -13,13 +13,29 @@ import {
 import {ChevronDownIcon, SearchIcon} from "@chakra-ui/icons";
 import {MailIcon, FolderIcon, EnergyIcon} from "@/icons";
 import styles from '@/styles/Home.module.css'
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {logoutUser} from "@/redux/auth/action-reducer";
 import Router from "next/router";
+import {StateType} from "@/types";
+import {useEffect} from "react";
+import {getAllOrganizations} from "@/redux/organizations/action-reducer";
 
 export function Header() {
     const dispatch = useDispatch();
 
+    const {organizations, error} = useSelector((state: StateType) => state.organizations);
+
+    useEffect(() => {
+        getOrganizations();
+    },[])
+
+    useEffect(() => {
+        console.log(organizations)
+    }, [organizations]);
+
+    const getOrganizations = () => {
+        dispatch(getAllOrganizations({organization: null}, null));
+    }
     function logout() {
         dispatch(logoutUser(null));
         Router.push('/auth/login');
