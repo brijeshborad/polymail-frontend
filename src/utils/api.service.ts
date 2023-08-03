@@ -1,5 +1,5 @@
 import axios, {AxiosInstance, CreateAxiosDefaults} from 'axios';
-import {getStoreLocal, removeStoreLocal, setStoreLocal} from "./localstorage.service";
+import LocalStorageService from "./localstorage.service";
 import Router from "next/router";
 
 const axiosInstance: AxiosInstance = axios.create({
@@ -13,7 +13,7 @@ const axiosInstance: AxiosInstance = axios.create({
 } as CreateAxiosDefaults);
 
 axiosInstance.interceptors.request.use((config) => {
-    let userSession: any = getStoreLocal('poly-user', true);
+    let userSession: any = LocalStorageService.updateUser('get');
     if (config.headers.hasOwnProperty('Skip-Headers')) {
         delete config.headers['Skip-Headers'];
     } else {
@@ -28,7 +28,7 @@ axiosInstance.interceptors.response.use((response) => {
 }, error => {
     if (error.response && error.response.data) {
         if (error.response.data.description === 'Unauthorized') {
-            removeStoreLocal('poly-user');
+            LocalStorageService.updateUser('remove');
             Router.push(`/auth/login`);
             return false;
         }

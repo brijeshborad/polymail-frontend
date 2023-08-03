@@ -1,11 +1,9 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {InitialAuthState, InitialOrganizationStateType} from "@/types";
-import {getStoreLocal} from "@/utils/localstorage.service";
-import {Account, Organization} from "@/models";
-import {InitialAccountStateType} from "@/types/account/account-state.type";
+import {InitialAuthState} from "@/types";
+import LocalStorageService from "@/utils/localstorage.service";
 
 const initialState = {
-    user: getStoreLocal('poly-user', true) || null,
+    user: LocalStorageService.updateUser('get') || null,
     isLoading: false,
     error: null,
     googleAuthRedirectionLink: null,

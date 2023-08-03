@@ -8,7 +8,7 @@ import {useEffect, useState} from "react";
 import {googleAuthLink, loginUser, registerUser, updateAuthState} from "@/redux/auth/action-reducer";
 import {InfoIcon} from "@chakra-ui/icons";
 import Router, {useRouter} from "next/router";
-import {setStoreLocal} from "@/utils/localstorage.service";
+import LocalStorageService from "@/utils/localstorage.service";
 
 declare type LoginForm = {
     email: string,
@@ -25,7 +25,7 @@ export function LoginSignup({type = 'login'}: LoginProps) {
     useEffect(() => {
         if (router.query) {
             if (router.query.access_token) {
-                setStoreLocal('poly-user', JSON.stringify({token: router.query.access_token}));
+                LocalStorageService.updateUser('store', {token: router.query.access_token})
                 Router.push('/inbox');
             }
 

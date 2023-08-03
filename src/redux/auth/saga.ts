@@ -16,14 +16,14 @@ import {
 } from "@/redux/auth/action-reducer";
 import ApiService from "@/utils/api.service";
 import {AxiosError, AxiosResponse} from "axios";
-import {removeStoreLocal, setStoreLocal} from "@/utils/localstorage.service";
+import LocalStorageService from "@/utils/localstorage.service";
 
 function* login({payload: {email, password}}: PayloadAction<any>) {
     try {
         const response: AxiosResponse = yield ApiService.callPost(`auth/login`, {email, password}, {
             'Skip-Headers': true
         });
-        setStoreLocal('poly-user', JSON.stringify(response));
+        LocalStorageService.updateUser('store', response)
         yield put(loginSuccess(response));
     } catch (error: AxiosError | any) {
         yield put(loginError(error.response.data));
@@ -38,7 +38,7 @@ function* register({payload: {email, password}}: PayloadAction<any>) {
         }, {
             'Skip-Headers': true
         });
-        setStoreLocal('poly-user', JSON.stringify(response));
+        LocalStorageService.updateUser('store', response)
         yield put(registerSuccess(response));
     } catch (error: AxiosError | any) {
         yield put(registerError(error.response.data));
@@ -58,7 +58,7 @@ function* getGoogleAuthLink({payload}: PayloadAction<any>) {
 
 function* logout() {
     yield ApiService.callGet(`auth/logout`, null);
-    removeStoreLocal('poly-user');
+    LocalStorageService.updateUser('remove');
 }
 
 export function* watchLoginUser() {

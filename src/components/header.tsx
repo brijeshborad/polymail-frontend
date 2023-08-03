@@ -21,15 +21,22 @@ import Router from "next/router";
 import {StateType} from "@/types";
 import {useCallback, useEffect, useState} from "react";
 import {getAllOrganizations} from "@/redux/organizations/action-reducer";
-import {Organization} from "@/models";
+import {Account, Organization} from "@/models";
 import {getAllAccount} from "@/redux/accounts/action-reducer";
+import LocalStorageService from "@/utils/localstorage.service";
 
 export function Header() {
     const dispatch = useDispatch();
     const [workspace, setWorkspace] = useState<Organization>(null);
+    const [account, setAccount] = useState<Account>(null);
     const {organizations, isLoading: isOrganizationLoading} = useSelector((state: StateType) => state.organizations);
     const {accounts} = useSelector((state: StateType) => state.accounts);
     const {googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
+
+    useEffect(() => {
+        setWorkspace(LocalStorageService.updateOrg('get') || null);
+        setAccount(LocalStorageService.updateAccount('get') || null);
+    }, [])
 
     useEffect(() => {
         if (googleAuthRedirectionLink) {
@@ -61,9 +68,19 @@ export function Header() {
 
     useEffect(() => {
         if (organizations && organizations.length > 0) {
-            setWorkspace(organizations[0]);
+            if (!LocalStorageService.updateOrg('get')) {
+                setOrganization(organizations[0]);
+            }
         }
     }, [organizations]);
+
+    useEffect(() => {
+        if (accounts && accounts.length > 0) {
+            if (!LocalStorageService.updateAccount('get')) {
+                setAccounts(accounts[0]);
+            }
+        }
+    }, [accounts]);
 
     function logout() {
         dispatch(logoutUser(null));
@@ -78,6 +95,16 @@ export function Header() {
             platform: "web"
         }
         dispatch(googleAuthLink(body));
+    }
+
+    function setOrganization(org: Organization) {
+        LocalStorageService.updateOrg('store', org);
+        setWorkspace(org);
+    }
+
+    function setAccounts(account: Account) {
+        LocalStorageService.updateAccount('store', account);
+        setAccount(account);
     }
 
 
@@ -119,12 +146,12 @@ export function Header() {
             <div className={styles.Workspace}>
                 <Menu>
                     <MenuButton as={Button} rightIcon={<ChevronDownIcon/>} className={styles.profileButton}>
-                        {workspace?.name || 'Organization'}
+                        {workspace && workspace.name || 'Organization'}
                     </MenuButton>
                     <MenuList>
                         <MenuItem w='100%' onClick={() => Router.push('/organization/add')}>Add New</MenuItem>
                         {organizations && organizations?.map((org, i) => (
-                            <MenuItem w='100%' key={i + 1}>
+                            <MenuItem w='100%' key={i + 1} onClick={() => setOrganization(org)}>
                                 {org.name}
                             </MenuItem>
                         ))}
@@ -141,7 +168,7 @@ export function Header() {
                     <MenuList>
                         <MenuItem onClick={() => loginWithGoogle()}>Add New Account</MenuItem>
                         {accounts && accounts?.map((acc, i) => (
-                            <MenuItem w='100%' key={i + 1}>
+                            <MenuItem w='100%' key={i + 1} onClick={() => setAccounts(acc)}>
                                 {acc.email}
                             </MenuItem>
                         ))}

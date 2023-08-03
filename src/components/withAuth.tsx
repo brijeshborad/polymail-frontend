@@ -1,12 +1,12 @@
 import {useRouter} from 'next/router';
 import React, {useEffect} from 'react';
-import {getStoreLocal} from "@/utils/localstorage.service";
+import LocalStorageService from "@/utils/localstorage.service";
 import {Header} from "@/components/header";
 
 export default function withAuth(ProtectedComponent: any) {
     return function ProtectedRoute({...props}) {
         const router = useRouter();
-        const user = getStoreLocal('poly-user', true);
+        const user = LocalStorageService.updateUser('get');
         const userIsAuthenticated = user !== null;
         useEffect(() => {
             if (!userIsAuthenticated) {
