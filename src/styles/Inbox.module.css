@@ -369,6 +369,11 @@
     margin-right: 0;
 }
 
+.actionIcon.disabled {
+    background-color: rgba(0,0,0, 0.1);
+    cursor: not-allowed;
+}
+
 /* Mail Box End */
 
 @media (max-width: 991px) {

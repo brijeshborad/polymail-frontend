@@ -70,8 +70,8 @@ export function Mail(props: MailTabProps) {
                               marginBottom={'15'} padding={'12px 20px'}>
                             <Flex alignItems={'center'} gap={2}>
                                 <div className={styles.closeIcon} onClick={() => props.show(false)}><CloseIcon/></div>
-                                <div className={styles.actionIcon} onClick={() => showPreThreads('up')}><ChevronUpIcon /></div>
-                                <div className={styles.actionIcon} onClick={() => showPreThreads('down')}><ChevronDownIcon /></div>
+                                <div  className={`${styles.actionIcon} ${index > 1 ? '' : styles.disabled}`} onClick={() => showPreThreads('up')}><ChevronUpIcon /></div>
+                                <div className={`${styles.actionIcon} ${threads?.length - 1 !== index ? '' : styles.disabled}`} onClick={() => showPreThreads('down')}><ChevronDownIcon /></div>
                             </Flex>
                             <Flex alignItems={'center'} gap={3} className={styles.headerRightIcon}>
                                 <Button className={styles.addToProject} leftIcon={<FolderIcon />}>Add to Project <span className={styles.RightContent}>⌘P</span></Button>

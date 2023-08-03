@@ -1,13 +1,28 @@
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Mail, Mails, Projects} from "@/components/inbox";
 import styles from "@/styles/Home.module.css";
-import {Grid, GridItem, useDisclosure} from "@chakra-ui/react";
+import {
+    AbsoluteCenter,
+    Alert,
+    Box,
+    Button,
+    ButtonGroup,
+    Divider,
+    Flex,
+    Grid,
+    GridItem,
+    Heading, Input, Text,
+    useDisclosure
+} from "@chakra-ui/react";
 import withAuth from "@/components/withAuth";
 import {getAllThreads} from "@/redux/threads/action-reducer";
 import {getAllOrganizations} from "@/redux/organizations/action-reducer";
 import {AddOrganization} from "@/components/custom-model/add-organization";
+import Image from "next/image";
+import {InfoIcon} from "@chakra-ui/icons";
+import Link from "next/link";
 
 function Inbox() {
     // const {projects} = useSelector((state: StateType) => state.projects);

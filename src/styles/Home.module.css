@@ -250,6 +250,20 @@
 .Workspace {
     margin-right: 15px;
 }
+
+.addOrganizationPage {
+    padding: 30px;
+    height: 100vh;
+}
+
+.addOrganizationPage .addOrganizationBox {
+    height: 100%;
+}
+
+
+.organizationsPageLogo {
+    flex: none;
+}
 /* Enable hover only on non-touch devices */
 @media (hover: hover) and (pointer: fine) {
     .card:hover {
