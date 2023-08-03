@@ -31,7 +31,7 @@ export function Mails(props: MailsTabProps) {
 
     const getAllThread = useCallback(() => {
         if (selectedAccount) {
-            dispatch(getAllThreads({mailbox: tab}));
+            dispatch(getAllThreads({mailbox: tab, account: selectedAccount.id}));
         }
     }, [dispatch, tab, selectedAccount]);
 
