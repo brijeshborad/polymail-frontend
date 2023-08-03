@@ -20,23 +20,25 @@ import {googleAuthLink, logoutUser} from "@/redux/auth/action-reducer";
 import Router from "next/router";
 import {StateType} from "@/types";
 import {useCallback, useEffect, useState} from "react";
-import {getAllOrganizations} from "@/redux/organizations/action-reducer";
+import {getAllOrganizations, updateOrganizationState} from "@/redux/organizations/action-reducer";
 import {Account, Organization} from "@/models";
-import {getAllAccount} from "@/redux/accounts/action-reducer";
+import {getAllAccount, updateAccountState} from "@/redux/accounts/action-reducer";
 import LocalStorageService from "@/utils/localstorage.service";
 
 export function Header() {
     const dispatch = useDispatch();
     const [workspace, setWorkspace] = useState<Organization>(null);
-    const [account, setAccount] = useState<Account>(null);
-    const {organizations, isLoading: isOrganizationLoading} = useSelector((state: StateType) => state.organizations);
+    const {
+        organizations,
+        isLoading: isOrganizationLoading,
+        selectedOrganization
+    } = useSelector((state: StateType) => state.organizations);
     const {accounts} = useSelector((state: StateType) => state.accounts);
     const {googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
 
     useEffect(() => {
-        setWorkspace(LocalStorageService.updateOrg('get') || null);
-        setAccount(LocalStorageService.updateAccount('get') || null);
-    }, [])
+        setWorkspace(selectedOrganization);
+    }, [selectedOrganization])
 
     useEffect(() => {
         if (googleAuthRedirectionLink) {
@@ -99,12 +101,12 @@ export function Header() {
 
     function setOrganization(org: Organization) {
         LocalStorageService.updateOrg('store', org);
-        setWorkspace(org);
+        dispatch(updateOrganizationState({selectedOrganization: org}))
     }
 
     function setAccounts(account: Account) {
         LocalStorageService.updateAccount('store', account);
-        setAccount(account);
+        dispatch(updateAccountState({selectedAccount: account}))
     }
 
 

@@ -1,13 +1,17 @@
+import {Thread} from "@/models";
+
 export declare type InboxTabProps = {
-    content: string[],
-    handleClick: (val: any) => void;
+    content: Thread[],
+    handleClick: (val: string) => void;
+    tab: string,
 }
 
 export declare type MailTabProps = {
     show: (val: boolean) => void;
-    content: string[],
-    handleContent: (val: any) => void;
-    handleTab: (val: any) => void;
-    tab: string,
-    id: string,
+    id?: string,
+}
+
+export declare type MailsTabProps = {
+    show: (val: boolean) => void;
+    handleContent: (val: string) => void;
 }

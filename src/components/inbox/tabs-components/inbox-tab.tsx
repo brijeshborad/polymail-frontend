@@ -4,12 +4,13 @@ import {DisneyIcon} from "@/icons";
 import styles2 from "@/styles/common.module.css";
 import {Time} from "@/components";
 import {InboxTabProps} from "@/types";
+import {Thread} from "@/models";
 
 export default function InboxTab(props: InboxTabProps) {
     return (
         <>
             {
-                props?.tab === 'INBOX' &&  <div>
+                props.tab === 'INBOX' && <div>
                     <Flex overflowX={'auto'} align={'center'}>
                         <div className={styles.checkBoxLabel}>
                             <Checkbox defaultChecked>Select All</Checkbox>
@@ -34,8 +35,8 @@ export default function InboxTab(props: InboxTabProps) {
             }
             <div>
                 <Flex direction={'column'} gap={1} marginTop={5} className={styles.mailList}>
-                    {props.content.map((item: any, index: number) => (
-                        <div onClick={() => props.handleClick(item)} key={index}>
+                    {props.content.map((item: Thread, index: number) => (
+                        <div onClick={() => props.handleClick(item.id)} key={index}>
                             <div className={styles.mailDetails}>
                                 <Flex align={"center"} justify={'space-between'}>
                                     <Flex align={"center"} gap={1}>
@@ -53,231 +54,6 @@ export default function InboxTab(props: InboxTabProps) {
                             </div>
                         </div>
                     ))}
-                    {/*<div>*/}
-                    {/*    <div className={styles.mailDetails}>*/}
-                    {/*        <Flex align={"center"} justify={'space-between'}>*/}
-                    {/*            <Flex align={"center"} gap={1}>*/}
-                    {/*                <Flex align={"center"} className={styles.senderDetails} gap={1}>*/}
-                    {/*                    <DisneyIcon/> Slack*/}
-                    {/*                </Flex>*/}
-                    {/*            </Flex>*/}
-                    {/*            <div className={styles2.receiveTime}>*/}
-                    {/*                <Time time={'28-07-2023 05:51:00 PM'}/>*/}
-                    {/*            </div>*/}
-                    {/*        </Flex>*/}
-                    {/*        <div className={styles.mailMessage}>*/}
-                    {/*            New sign-in with Slack: Loom*/}
-                    {/*        </div>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
-                    {/*<div>*/}
-                    {/*    <div className={styles.mailDetails}>*/}
-                    {/*        <Flex align={"center"} justify={'space-between'}>*/}
-                    {/*            <Flex align={"center"} gap={1}>*/}
-                    {/*                <div className={styles.SenderIcon}><DisneyIcon/></div>*/}
-                    {/*                <Flex align={"center"} className={styles.senderDetails} gap={1}>*/}
-                    {/*                    <DisneyIcon/> Jane Doe*/}
-                    {/*                </Flex>*/}
-                    {/*                <div className={styles.mailRead}><EyeIcon/></div>*/}
-                    {/*            </Flex>*/}
-                    {/*            <div className={styles2.receiveTime}>*/}
-                    {/*                <Time time={'28-07-2023 05:51:00 PM'}/>*/}
-                    {/*            </div>*/}
-                    {/*        </Flex>*/}
-                    {/*        <div className={styles.mailMessage}>*/}
-                    {/*            What’s the next project phase?*/}
-                    {/*        </div>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
-                    {/*<div>*/}
-                    {/*    <div className={styles.mailDetails}>*/}
-                    {/*        <Flex align={"center"} justify={'space-between'}>*/}
-                    {/*            <Flex align={"center"} gap={1}>*/}
-                    {/*                <div className={styles.SenderIcon}><DisneyIcon/></div>*/}
-                    {/*                <Flex align={"center"} className={styles.senderDetails} gap={1}>*/}
-                    {/*                    <DisneyIcon/> Jane Doe*/}
-                    {/*                </Flex>*/}
-                    {/*            </Flex>*/}
-                    {/*            <div className={styles2.receiveTime}>*/}
-                    {/*                <Time time={'28-07-2023 05:51:00 PM'}/>*/}
-                    {/*            </div>*/}
-                    {/*        </Flex>*/}
-                    {/*        <div className={styles.mailMessage}>*/}
-                    {/*            What’s the next project phase?*/}
-                    {/*        </div>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
-                    {/*<div>*/}
-                    {/*    <div className={styles.mailDetails}>*/}
-                    {/*        <Flex align={"center"} justify={'space-between'}>*/}
-                    {/*            <Flex align={"center"} gap={1}>*/}
-                    {/*                <Flex align={"center"} className={styles.senderDetails} gap={1}>*/}
-                    {/*                    <DisneyIcon/> Meetup*/}
-                    {/*                </Flex>*/}
-                    {/*            </Flex>*/}
-                    {/*            <div className={styles2.receiveTime}>*/}
-                    {/*                <Time time={'28-07-2023 05:51:00 PM'}/>*/}
-                    {/*            </div>*/}
-                    {/*        </Flex>*/}
-                    {/*        <div className={styles.mailMessage}>*/}
-                    {/*            Your friends are waiting*/}
-                    {/*        </div>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
-                    {/*<div className={styles.mailOpen}>*/}
-                    {/*    <div className={styles.mailDetails}>*/}
-                    {/*        <Flex align={"center"} justify={'space-between'}>*/}
-                    {/*            <Flex align={"center"} gap={1}>*/}
-                    {/*                <Flex align={"center"} className={styles.senderDetails} gap={1}>*/}
-                    {/*                    <DisneyIcon/> Michael Eisner*/}
-                    {/*                </Flex>*/}
-                    {/*            </Flex>*/}
-                    {/*            <div className={styles2.receiveTime}>*/}
-                    {/*                <Time time={'28-07-2023 05:51:00 PM'}/>*/}
-                    {/*            </div>*/}
-                    {/*        </Flex>*/}
-                    {/*        <div className={styles.mailMessage}>*/}
-                    {/*            What’s the next project phase?*/}
-                    {/*        </div>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
-                    {/*<div>*/}
-                    {/*    <div className={styles.mailDetails}>*/}
-                    {/*        <Flex align={"center"} justify={'space-between'}>*/}
-                    {/*            <Flex align={"center"} gap={1}>*/}
-                    {/*                <Flex align={"center"} className={styles.senderDetails} gap={1}>*/}
-                    {/*                    <DisneyIcon/> Michael Eisner*/}
-                    {/*                </Flex>*/}
-                    {/*            </Flex>*/}
-                    {/*            <div className={styles2.receiveTime}>*/}
-                    {/*                <Time time={'28-07-2023 05:51:00 PM'}/>*/}
-                    {/*            </div>*/}
-                    {/*        </Flex>*/}
-                    {/*        <div className={styles.mailMessage}>*/}
-                    {/*            What’s the next project phase?*/}
-                    {/*        </div>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
-                    {/*<div>*/}
-                    {/*    <div className={styles.mailDetails}>*/}
-                    {/*        <Flex align={"center"} justify={'space-between'}>*/}
-                    {/*            <Flex align={"center"} gap={1}>*/}
-                    {/*                <Flex align={"center"} className={styles.senderDetails} gap={1}>*/}
-                    {/*                    <DisneyIcon/> Michael Eisner*/}
-                    {/*                </Flex>*/}
-                    {/*            </Flex>*/}
-                    {/*            <div className={styles2.receiveTime}>*/}
-                    {/*                <Time time={'28-07-2023 05:51:00 PM'}/>*/}
-                    {/*            </div>*/}
-                    {/*        </Flex>*/}
-                    {/*        <div className={styles.mailMessage}>*/}
-                    {/*            What’s the next project phase?*/}
-                    {/*        </div>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
-                    {/*<div>*/}
-                    {/*    <div className={styles.mailDetails}>*/}
-                    {/*        <Flex align={"center"} justify={'space-between'}>*/}
-                    {/*            <Flex align={"center"} gap={1}>*/}
-                    {/*                <Flex align={"center"} className={styles.senderDetails} gap={1}>*/}
-                    {/*                    <DisneyIcon/> Michael Eisner*/}
-                    {/*                </Flex>*/}
-                    {/*            </Flex>*/}
-                    {/*            <div className={styles2.receiveTime}>*/}
-                    {/*                <Time time={'28-07-2023 05:51:00 PM'}/>*/}
-                    {/*            </div>*/}
-                    {/*        </Flex>*/}
-                    {/*        <div className={styles.mailMessage}>*/}
-                    {/*            What’s the next project phase?*/}
-                    {/*        </div>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
-                    {/*<div>*/}
-                    {/*    <div className={styles.mailDetails}>*/}
-                    {/*        <Flex align={"center"} justify={'space-between'}>*/}
-                    {/*            <Flex align={"center"} gap={1}>*/}
-                    {/*                <Flex align={"center"} className={styles.senderDetails} gap={1}>*/}
-                    {/*                    <DisneyIcon/> Michael Eisner*/}
-                    {/*                </Flex>*/}
-                    {/*            </Flex>*/}
-                    {/*            <div className={styles2.receiveTime}>*/}
-                    {/*                <Time time={'28-07-2023 05:51:00 PM'}/>*/}
-                    {/*            </div>*/}
-                    {/*        </Flex>*/}
-                    {/*        <div className={styles.mailMessage}>*/}
-                    {/*            What’s the next project phase?*/}
-                    {/*        </div>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
-                    {/*<div>*/}
-                    {/*    <div className={styles.mailDetails}>*/}
-                    {/*        <Flex align={"center"} justify={'space-between'}>*/}
-                    {/*            <Flex align={"center"} gap={1}>*/}
-                    {/*                <Flex align={"center"} className={styles.senderDetails} gap={1}>*/}
-                    {/*                    <DisneyIcon/> Michael Eisner*/}
-                    {/*                </Flex>*/}
-                    {/*            </Flex>*/}
-                    {/*            <div className={styles2.receiveTime}>*/}
-                    {/*                <Time time={'28-07-2023 05:51:00 PM'}/>*/}
-                    {/*            </div>*/}
-                    {/*        </Flex>*/}
-                    {/*        <div className={styles.mailMessage}>*/}
-                    {/*            What’s the next project phase?*/}
-                    {/*        </div>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
-                    {/*<div>*/}
-                    {/*    <div className={styles.mailDetails}>*/}
-                    {/*        <Flex align={"center"} justify={'space-between'}>*/}
-                    {/*            <Flex align={"center"} gap={1}>*/}
-                    {/*                <Flex align={"center"} className={styles.senderDetails} gap={1}>*/}
-                    {/*                    <DisneyIcon/> Michael Eisner*/}
-                    {/*                </Flex>*/}
-                    {/*            </Flex>*/}
-                    {/*            <div className={styles2.receiveTime}>*/}
-                    {/*                <Time time={'28-07-2023 05:51:00 PM'}/>*/}
-                    {/*            </div>*/}
-                    {/*        </Flex>*/}
-                    {/*        <div className={styles.mailMessage}>*/}
-                    {/*            What’s the next project phase?*/}
-                    {/*        </div>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
-                    {/*<div>*/}
-                    {/*    <div className={styles.mailDetails}>*/}
-                    {/*        <Flex align={"center"} justify={'space-between'}>*/}
-                    {/*            <Flex align={"center"} gap={1}>*/}
-                    {/*                <Flex align={"center"} className={styles.senderDetails} gap={1}>*/}
-                    {/*                    <DisneyIcon/> Michael Eisner*/}
-                    {/*                </Flex>*/}
-                    {/*            </Flex>*/}
-                    {/*            <div className={styles2.receiveTime}>*/}
-                    {/*                <Time time={'28-07-2023 05:51:00 PM'}/>*/}
-                    {/*            </div>*/}
-                    {/*        </Flex>*/}
-                    {/*        <div className={styles.mailMessage}>*/}
-                    {/*            What’s the next project phase?*/}
-                    {/*        </div>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
-                    {/*<div>*/}
-                    {/*    <div className={styles.mailDetails}>*/}
-                    {/*        <Flex align={"center"} justify={'space-between'}>*/}
-                    {/*            <Flex align={"center"} gap={1}>*/}
-                    {/*                <Flex align={"center"} className={styles.senderDetails} gap={1}>*/}
-                    {/*                    <DisneyIcon/> Michael Eisner*/}
-                    {/*                </Flex>*/}
-                    {/*            </Flex>*/}
-                    {/*            <div className={styles2.receiveTime}>*/}
-                    {/*                <Time time={'28-07-2023 05:51:00 PM'}/>*/}
-                    {/*            </div>*/}
-                    {/*        </Flex>*/}
-                    {/*        <div className={styles.mailMessage}>*/}
-                    {/*            What’s the next project phase?*/}
-                    {/*        </div>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
-
                 </Flex>
             </div>
         </>

@@ -16,8 +16,8 @@ const messagesSlice = createSlice({
         getAllMessages: (state: InitialMessageStateType, action: PayloadAction<{ thread?: string }>) => {
             return {...state, messages: [], isLoading: true, error: null}
         },
-        getAllMessagesSuccess: (state: InitialMessageStateType, {payload: threads}: PayloadAction<{ messages: Message[] }>) => {
-            return {...state, threads, isLoading: false, error: null}
+        getAllMessagesSuccess: (state: InitialMessageStateType, {payload: messages}: PayloadAction<{ messages: Message[] }>) => {
+            return {...state, messages, isLoading: false, error: null}
         },
         getAllMessagesError: (state: InitialMessageStateType, {payload: error}: PayloadAction<{ error: any }>) => {
             return {...state, messages: [], isLoading: false, error}

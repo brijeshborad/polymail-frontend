@@ -16,10 +16,12 @@ export * from './message/message-state.type';
 //Organizations
 export * from './organizations/organization-state.type';
 
+//Account
+export * from './account/account-state.type';
+
 // Props
 export * from './props-types/profile-button-props.type';
 export * from './props-types/time.type';
 export * from './props-types/chip.type';
 export * from './props-types/inbox-page.type';
 export * from './props-types/login.type';
-export * from './account/account-state.type';

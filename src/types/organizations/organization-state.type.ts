@@ -4,5 +4,6 @@ export declare type InitialOrganizationStateType = {
     organizations: Organization[],
     organization: Organization | null,
     isLoading: boolean
-    error: Error | any
+    error: Error | any,
+    selectedOrganization: Organization | null
 }

@@ -1,12 +1,14 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {InitialAuthState, InitialOrganizationStateType} from "@/types";
+import {InitialOrganizationStateType} from "@/types";
 import {Organization} from "@/models";
+import LocalStorageService from "@/utils/localstorage.service";
 
 const initialState = {
     organizations: [],
     organization: null,
     isLoading: false,
     error: null,
+    selectedOrganization: LocalStorageService.updateOrg('get') || null,
 } as InitialOrganizationStateType
 
 const organizationSlice = createSlice({
@@ -31,8 +33,19 @@ const organizationSlice = createSlice({
         addOrganizationError: (state: InitialOrganizationStateType, {payload: error}: PayloadAction<any>) => {
             return {...state, organization: null, error, isLoading: false}
         },
+        updateOrganizationState: (state: InitialOrganizationStateType, action: PayloadAction<any>) => {
+            return {...state, ...action.payload}
+        },
     }
 })
 
-export const {getAllOrganizations, getAllOrganizationsSuccess, getAllOrganizationsError, addOrganization, addOrganizationSuccess, addOrganizationError} = organizationSlice.actions
+export const {
+    getAllOrganizations,
+    getAllOrganizationsSuccess,
+    getAllOrganizationsError,
+    addOrganization,
+    addOrganizationSuccess,
+    addOrganizationError,
+    updateOrganizationState
+} = organizationSlice.actions
 export default organizationSlice.reducer

@@ -8,32 +8,41 @@ import {
     MenuItem,
     MenuList, Tab, TabList, TabPanel, TabPanels, Tabs, Tooltip
 } from "@chakra-ui/react";
-import {ClockIcon, DraftIcon, FolderIcon, SendIcon, TimeSnoozeIcon} from "@/icons";
+import {ClockIcon, DraftIcon, FolderIcon, SendIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
 import {TriangleDownIcon} from "@chakra-ui/icons";
 import InboxTab from "@/components/inbox/tabs-components/inbox-tab";
-import {MailTabProps, StateType} from "@/types";
+import {MailsTabProps, StateType} from "@/types";
+import {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {useEffect, useState} from "react";
 import {getAllThreads} from "@/redux/threads/action-reducer";
 
-// const content = [
-//     'What’s the next project phase?',
-//     'What’s the next project phase?',
-//     'What’s the next project phase?',
-//     'What’s the next project phase?'
-// ]
+export function Mails(props: MailsTabProps) {
+    const [tab, setTab] = useState<string>('INBOX');
 
-export function Mails(props: MailTabProps) {
+    const {threads} = useSelector((state: StateType) => state.threads);
+    const dispatch = useDispatch();
 
-    const handleClick = (e) => {
-        props.show(true);
+    const getAllThread = useCallback(() => {
+        dispatch(getAllThreads({mailbox: tab}));
+    }, [dispatch, tab]);
+
+    useEffect(() => {
+        getAllThread();
+    }, [getAllThread])
+
+    const handleClick = (e: string, isShow: boolean = true) => {
+        props.show(isShow);
         props.handleContent(e);
     }
-    const [tab, setTab] = useState('INBOX');
+
+    useEffect(() => {
+        if (threads && threads.length > 0) {
+            handleClick(threads[0].id, false)
+        }
+    }, [handleClick, threads])
 
     const changeEmailTabs = (value) => {
         setTab(value);
-        props.handleTab(value);
     }
 
     return (
@@ -43,55 +52,51 @@ export function Mails(props: MailTabProps) {
                     <TabList justifyContent={'space-between'} alignItems={'center'} className={styles.mailTabList}>
                         <Tab className={styles.emailTabs}>
                             <Tooltip label='Inbox' placement='bottom' bg='gray.300' color='black'>
-                            <div className={styles.active} onClick={() => changeEmailTabs('INBOX')}>
-                                <FolderIcon/>
-                                <span>Inbox <Badge>12</Badge></span>
-                            </div>
+                                <div className={`${tab === 'INBOX' ? styles.active: ''}`} onClick={() => changeEmailTabs('INBOX')}>
+                                    <FolderIcon/>
+                                    <span>Inbox <Badge>{threads.length}</Badge></span>
+                                </div>
                             </Tooltip>
                         </Tab>
                         <Tab className={styles.emailTabs}>
                             <Tooltip label='Draft' placement='bottom' bg='gray.300' color='black'>
-
-                            <div onClick={() => changeEmailTabs('DRAFT')}>
-                                <DraftIcon/>
-                                <span>Inbox <Badge>12</Badge></span>
-                            </div>
+                                <div className={`${tab === 'DRAFT' ? styles.active: ''}`} onClick={() => changeEmailTabs('DRAFT')}>
+                                    <DraftIcon/>
+                                    <span>Draft <Badge>{threads.length}</Badge></span>
+                                </div>
                             </Tooltip>
                         </Tab>
                         <Tab className={styles.emailTabs}>
                             <Tooltip label='Starred' placement='bottom' bg='gray.300' color='black'>
-                            <div onClick={() => changeEmailTabs('STARRED')}>
-                                <ClockIcon/>
-                                <span>Inbox <Badge>12</Badge></span>
-                            </div>
+                                <div className={`${tab === 'STARRED' ? styles.active: ''}`} onClick={() => changeEmailTabs('STARRED')}>
+                                    <ClockIcon/>
+                                    <span>Starred <Badge>{threads.length}</Badge></span>
+                                </div>
                             </Tooltip>
                         </Tab>
                         <Tab className={styles.emailTabs}>
                             <Tooltip label='Sent' placement='bottom' bg='gray.300' color='black'>
-
-                            <div onClick={() => changeEmailTabs('SENT')}>
-                                <SendIcon/>
-                                <span>Inbox <Badge>12</Badge></span>
-                            </div>
+                                <div className={`${tab === 'SENT' ? styles.active: ''}`} onClick={() => changeEmailTabs('SENT')}>
+                                    <SendIcon/>
+                                    <span>Sent <Badge>{threads.length}</Badge></span>
+                                </div>
                             </Tooltip>
                         </Tab>
                         <Tab className={styles.emailTabs}>
                             <Tooltip label='Trash' placement='bottom' bg='gray.300' color='black'>
-
-                            <div onClick={() => changeEmailTabs('TRASH')}>
-                                <TimeSnoozeIcon/>
-                                <span>Inbox <Badge>12</Badge></span>
-                            </div>
+                                <div className={`${tab === 'TRASH' ? styles.active: ''}`} onClick={() => changeEmailTabs('TRASH')}>
+                                    <TrashIcon/>
+                                    <span>Trash <Badge>{threads.length}</Badge></span>
+                                </div>
                             </Tooltip>
                         </Tab>
 
                         <Tab className={styles.emailTabs}>
                             <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
-
-                            <div onClick={() => changeEmailTabs('ARCHIVE')}>
-                                <TimeSnoozeIcon/>
-                                <span>Inbox <Badge>12</Badge></span>
-                            </div>
+                                <div className={`${tab === 'ARCHIVE' ? styles.active: ''}`} onClick={() => changeEmailTabs('ARCHIVE')}>
+                                    <TimeSnoozeIcon/>
+                                    <span>Archive <Badge>{threads.length}</Badge></span>
+                                </div>
                             </Tooltip>
                         </Tab>
                         <div className={styles.moreDropdown}>
@@ -113,25 +118,25 @@ export function Mails(props: MailTabProps) {
 
                     <TabPanels marginTop={5}>
                         <TabPanel>
-                            <InboxTab content={props.content} tab={tab} handleClick={(e) => handleClick(e)}/>
+                            <InboxTab content={threads} tab={tab} handleClick={(e) => handleClick(e)}/>
                         </TabPanel>
                         <TabPanel>
-                            <InboxTab content={props.content} tab={tab} handleClick={(e) => handleClick(e)}/>
+                            <InboxTab content={threads} tab={tab} handleClick={(e) => handleClick(e)}/>
                         </TabPanel>
                         <TabPanel>
-                            <InboxTab content={props.content} tab={tab} handleClick={(e) => handleClick(e)}/>
+                            <InboxTab content={threads} tab={tab} handleClick={(e) => handleClick(e)}/>
                         </TabPanel>
                         <TabPanel>
-                            <InboxTab content={props.content} tab={tab} handleClick={(e) => handleClick(e)}/>
+                            <InboxTab content={threads} tab={tab} handleClick={(e) => handleClick(e)}/>
                         </TabPanel>
                         <TabPanel>
-                            <InboxTab content={props.content} tab={tab} handleClick={(e) => handleClick(e)}/>
+                            <InboxTab content={threads} tab={tab} handleClick={(e) => handleClick(e)}/>
                         </TabPanel>
                         <TabPanel>
-                            <InboxTab content={props.content} tab={tab} handleClick={(e) => handleClick(e)}/>
+                            <InboxTab content={threads} tab={tab} handleClick={(e) => handleClick(e)}/>
                         </TabPanel>
                         <TabPanel>
-                            <InboxTab content={props.content} tab={tab} handleClick={(e) => handleClick(e)}/>
+                            <InboxTab content={threads} tab={tab} handleClick={(e) => handleClick(e)}/>
                         </TabPanel>
                     </TabPanels>
                 </Tabs>
