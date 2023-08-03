@@ -48,6 +48,9 @@ const authSlice = createSlice({
         googleAuthLinkError: (state: InitialAuthState, {payload: error}: PayloadAction<any>) => {
             return {...state, user: null, error, googleAuthRedirectionLink: null, isLoading: false}
         },
+        updateAuthState: (state: InitialAuthState, action: PayloadAction<any>) => {
+            return {...state, ...action.payload}
+        },
     }
 })
 
@@ -62,5 +65,6 @@ export const {
     googleAuthLink,
     googleAuthLinkSuccess,
     googleAuthLinkError,
+    updateAuthState
 } = authSlice.actions
 export default authSlice.reducer

@@ -1,7 +1,7 @@
-import {useEffect} from "react";
+import {useCallback, useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {Grid, GridItem} from "@chakra-ui/react";
-import {DisneyIcon, DotIcon, FolderIcon} from "@/icons";
+import {DisneyIcon, FolderIcon} from "@/icons";
 import {ProjectButton} from "@/components";
 import styles from "@/styles/Inbox.module.css";
 import styles2 from "@/styles/common.module.css";
@@ -13,13 +13,13 @@ export function Projects() {
 
     const {projects, error} = useSelector((state: StateType) => state.projects);
 
+    const getProjects = useCallback(() => {
+        dispatch(getAllProjects(null));
+    }, [dispatch])
+
     useEffect(() => {
         getProjects();
-    },[])
-
-    const getProjects = () => {
-        dispatch(getAllProjects({project: null}, null));
-    }
+    }, [getProjects])
 
     return (
         <div className={styles.filterTabs}>

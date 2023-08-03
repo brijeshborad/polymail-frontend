@@ -247,23 +247,12 @@
     grid-template-columns: 30% auto;
     gap: 40px;
 }
+
 .Workspace {
     margin-right: 15px;
 }
 
-.addOrganizationPage {
-    padding: 30px;
-    height: 100vh;
-}
 
-.addOrganizationPage .addOrganizationBox {
-    height: 100%;
-}
-
-
-.organizationsPageLogo {
-    flex: none;
-}
 /* Enable hover only on non-touch devices */
 @media (hover: hover) and (pointer: fine) {
     .card:hover {
@@ -358,39 +347,6 @@
         );
         z-index: 1;
     }
-}
-
-.organizationModal {
-    width: 100%;
-    max-width: 450px;
-    margin: 0 auto;
-}
-
-.organizationModal .organizationInput {
-    border-radius: 10px;
-    margin-bottom: 20px;
-    font-size: 18px;
-    height: 40px;
-}
-
-.organizationModal .organizationButton {
-    width: 100%;
-    background: #761799;
-    color: white;
-    border-radius: 15px;
-}
-
-.organizationModal .organizationButton:hover {
-    background: #761799;
-}
-
-.modalFooter .modalClose {
-    background-color: #266DF0;
-    color: #ffffff;
-}
-
-.modalFooter .modalClose:hover {
-    background-color: #266DF0;
 }
 
 /* Tablet and Smaller Desktop */

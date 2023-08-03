@@ -5,7 +5,7 @@ import Link from "next/link";
 import {LoginProps, StateType} from "@/types";
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
-import {googleAuthLink, loginUser, registerUser} from "@/redux/auth/action-reducer";
+import {googleAuthLink, loginUser, registerUser, updateAuthState} from "@/redux/auth/action-reducer";
 import {InfoIcon} from "@chakra-ui/icons";
 import Router, {useRouter} from "next/router";
 import {setStoreLocal} from "@/utils/localstorage.service";
@@ -23,11 +23,18 @@ export function LoginSignup({type = 'login'}: LoginProps) {
     const router = useRouter();
 
     useEffect(() => {
-        if (router.query && router.query.access_token) {
-            setStoreLocal('poly-user', JSON.stringify({token: router.query.access_token}));
-            Router.push('/inbox');
+        if (router.query) {
+            if (router.query.access_token) {
+                setStoreLocal('poly-user', JSON.stringify({token: router.query.access_token}));
+                Router.push('/inbox');
+            }
+
+            if (router.query.error) {
+                Router.replace('/auth/login', undefined, {shallow: true});
+                dispatch(updateAuthState({error: {description: 'Invalid account'}}));
+            }
         }
-    }, [router.query]);
+    }, [dispatch, router.query]);
 
     const handleChange = (event: any) => {
         setFormValues(value => ({...value, [event.target.name]: event.target.value}))

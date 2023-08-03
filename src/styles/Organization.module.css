@@ -1,0 +1,37 @@
+.addOrganizationPage {
+    padding: 30px;
+    height: 100vh;
+}
+
+.addOrganizationPage .addOrganizationBox {
+    height: 100%;
+}
+
+
+.organizationsPageLogo {
+    flex: none;
+}
+
+.organizationModal {
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+}
+
+.organizationModal .organizationInput {
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 18px;
+    height: 40px;
+}
+
+.organizationModal .organizationButton {
+    width: 100%;
+    background: #761799;
+    color: white;
+    border-radius: 15px;
+}
+
+.organizationModal .organizationButton:hover {
+    background: #761799;
+}

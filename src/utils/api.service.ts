@@ -1,5 +1,5 @@
 import axios, {AxiosInstance, CreateAxiosDefaults} from 'axios';
-import {getStoreLocal, setStoreLocal} from "./localstorage.service";
+import {getStoreLocal, removeStoreLocal, setStoreLocal} from "./localstorage.service";
 import Router from "next/router";
 
 const axiosInstance: AxiosInstance = axios.create({
@@ -24,20 +24,16 @@ axiosInstance.interceptors.request.use((config) => {
 });
 
 axiosInstance.interceptors.response.use((response) => {
-    if (response.data) {
-        if (response.data.message === 'Unauthorized') {
-            let session = {
-                authenticated: false,
-                user: {
-                    role: "visitor"
-                },
-                accessToken: ""
-            };
-            setStoreLocal('ploy-user', JSON.stringify(session));
+    return response.data;
+}, error => {
+    if (error.response && error.response.data) {
+        if (error.response.data.description === 'Unauthorized') {
+            removeStoreLocal('poly-user');
             Router.push(`/auth/login`);
+            return false;
         }
     }
-    return response.data;
+    return error
 });
 
 class ApiService {

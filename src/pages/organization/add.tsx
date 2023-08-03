@@ -1,28 +1,16 @@
 import Image from "next/image";
 import {
-    AbsoluteCenter,
-    Alert,
-    Box,
-    Button, ButtonGroup,
-    Divider,
-    Flex, Heading, Input, Modal,
-    ModalBody,
-    ModalCloseButton,
-    ModalContent,
-    ModalHeader,
-    ModalOverlay, Text, useDisclosure, useToast
+    Button,
+    Flex, Heading, Input, useToast
 } from "@chakra-ui/react";
 import React, {useEffect, useState} from "react";
 import {StateType} from "@/types";
-import styles from "@/styles/Home.module.css";
+import styles from "@/styles/Organization.module.css";
 import {addOrganization, getAllOrganizations} from "@/redux/organizations/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
-import {InfoIcon} from "@chakra-ui/icons";
-import Link from "next/link";
 
 
-export function AddOrganization(props: any) {
-    const {isOpen, onOpen, onClose} = useDisclosure();
+export default function AddOrganization() {
     const dispatch = useDispatch();
     const {organization, organizations} = useSelector((state: StateType) => state.organizations);
     const [organizationName, setOrganizationName] = React.useState('');
@@ -38,7 +26,6 @@ export function AddOrganization(props: any) {
     const createOrganization = () => {
         if (organizationName.length === 0) {
             toastIdRef.current = toast({description: 'Please add Organization name', status: 'error',})
-            props.onClose();
             return;
         }
         let body = {
@@ -46,18 +33,15 @@ export function AddOrganization(props: any) {
             accountId: '64cb3e882cba32a99e445cbe'
         }
         dispatch(addOrganization(body));
-        props.onClose();
     }
 
     useEffect(() => {
-        console.log('organization', organization);
         if (organization) {
             dispatch(getAllOrganizations({organization: null}, null));
         }
     }, [organization]);
 
     useEffect(() => {
-        console.log('organizations===',organizations);
         if (organizations && organizations.length) {
             setIsShow(true)
         }
