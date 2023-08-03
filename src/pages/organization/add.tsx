@@ -3,7 +3,7 @@ import {
     Button,
     Flex, Heading, Input, useToast
 } from "@chakra-ui/react";
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {StateType} from "@/types";
 import styles from "@/styles/Organization.module.css";
 import {addOrganization} from "@/redux/organizations/action-reducer";
@@ -15,7 +15,7 @@ export default function AddOrganization() {
     const dispatch = useDispatch();
     const {organization} = useSelector((state: StateType) => state.organizations);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
-    const [organizationName, setOrganizationName] = React.useState('');
+    const [organizationName, setOrganizationName] = useState<string>('');
 
     const handleChange = (event) => {
         setOrganizationName(event.target.value);
@@ -52,7 +52,7 @@ export default function AddOrganization() {
                           className={styles.organizationModal}>
                         <Heading as={'h1'} size='md' pb={5}>Add Organization Name</Heading>
 
-                        <Input name={'myorg'} placeholder={'My Org'} onClick={handleChange}
+                        <Input name={'myorg'} placeholder={'My Org'} onChange={handleChange}
                                className={`${styles.organizationInput}`} type={'text'}/>
                         <Button className={styles.organizationButton} onClick={() => createOrganization()}
                                 py={'25px'}>Create Organization</Button>
