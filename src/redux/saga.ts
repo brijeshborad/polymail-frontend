@@ -4,6 +4,7 @@ import organizationsSagas from './organizations/saga';
 import projectsSagas from './projects/saga';
 import threadsSagas from './threads/saga';
 import messageSagas from './messages/saga';
+import accountSagas from './accounts/saga';
 
 export default function* rootSaga() {
     yield all([
@@ -12,5 +13,6 @@ export default function* rootSaga() {
         threadsSagas(),
         messageSagas(),
         organizationsSagas(),
+        accountSagas(),
     ]);
 }

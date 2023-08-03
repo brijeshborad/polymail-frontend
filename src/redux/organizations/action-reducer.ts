@@ -1,5 +1,5 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {InitialOrganizationStateType} from "@/types";
+import {InitialAuthState, InitialOrganizationStateType} from "@/types";
 import {Organization} from "@/models";
 
 const initialState = {
@@ -21,9 +21,18 @@ const organizationSlice = createSlice({
         },
         getAllOrganizationsError: (state: InitialOrganizationStateType, {payload: error}: PayloadAction<{ error: any }>) => {
             return {...state, organizations: [], isLoading: false, error}
-        }
+        },
+        addOrganization: (state: InitialOrganizationStateType, action: PayloadAction<{ name: string, accountId: string }>) => {
+            return {...state, organization: null, error: null, isLoading: true}
+        },
+        addOrganizationSuccess: (state: InitialOrganizationStateType, {payload: organization}: PayloadAction<any>) => {
+            return {...state, organization, error: null, isLoading: false}
+        },
+        addOrganizationError: (state: InitialOrganizationStateType, {payload: error}: PayloadAction<any>) => {
+            return {...state, organization: null, error, isLoading: false}
+        },
     }
 })
 
-export const {getAllOrganizations, getAllOrganizationsSuccess, getAllOrganizationsError} = organizationSlice.actions
+export const {getAllOrganizations, getAllOrganizationsSuccess, getAllOrganizationsError, addOrganization, addOrganizationSuccess, addOrganizationError} = organizationSlice.actions
 export default organizationSlice.reducer

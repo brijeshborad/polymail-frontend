@@ -1,6 +1,8 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {InitialAuthState} from "@/types";
+import {InitialAuthState, InitialOrganizationStateType} from "@/types";
 import {getStoreLocal} from "@/utils/localstorage.service";
+import {Account, Organization} from "@/models";
+import {InitialAccountStateType} from "@/types/account/account-state.type";
 
 const initialState = {
     user: getStoreLocal('poly-user', true) || null,
@@ -45,7 +47,7 @@ const authSlice = createSlice({
         },
         googleAuthLinkError: (state: InitialAuthState, {payload: error}: PayloadAction<any>) => {
             return {...state, user: null, error, googleAuthRedirectionLink: null, isLoading: false}
-        }
+        },
     }
 })
 
@@ -59,6 +61,6 @@ export const {
     logoutUser,
     googleAuthLink,
     googleAuthLinkSuccess,
-    googleAuthLinkError
+    googleAuthLinkError,
 } = authSlice.actions
 export default authSlice.reducer

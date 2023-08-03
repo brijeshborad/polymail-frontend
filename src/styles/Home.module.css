@@ -346,6 +346,39 @@
     }
 }
 
+.organizationModal {
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+}
+
+.organizationModal .organizationInput {
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 18px;
+    height: 40px;
+}
+
+.organizationModal .organizationButton {
+    width: 100%;
+    background: #761799;
+    color: white;
+    border-radius: 15px;
+}
+
+.organizationModal .organizationButton:hover {
+    background: #761799;
+}
+
+.modalFooter .modalClose {
+    background-color: #266DF0;
+    color: #ffffff;
+}
+
+.modalFooter .modalClose:hover {
+    background-color: #266DF0;
+}
+
 /* Tablet and Smaller Desktop */
 @media (min-width: 701px) and (max-width: 1120px) {
     .grid {

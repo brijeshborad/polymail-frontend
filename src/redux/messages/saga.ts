@@ -30,7 +30,7 @@ function* getMessagePart({payload: {id}}: PayloadAction<{ id: string }>) {
 }
 
 export function* watchGetMessages() {
-    yield takeLatest(getMessageParts.type, getMessagePart);
+    yield takeLatest(getAllMessages.type, getMessages);
 }
 
 export default function* rootSaga() {

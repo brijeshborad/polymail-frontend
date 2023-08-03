@@ -8,32 +8,34 @@ import {InboxTabProps} from "@/types";
 export default function InboxTab(props: InboxTabProps) {
     return (
         <>
-            <div>
-                <Flex overflowX={'auto'} align={'center'}>
-                    <div className={styles.checkBoxLabel}>
-                        <Checkbox defaultChecked>Select All</Checkbox>
-                    </div>
+            {
+                props?.tab === 'INBOX' &&  <div>
+                    <Flex overflowX={'auto'} align={'center'}>
+                        <div className={styles.checkBoxLabel}>
+                            <Checkbox defaultChecked>Select All</Checkbox>
+                        </div>
 
-                    <div className={styles.mailOtherOption}>
-                        <Flex align={'center'} gap={2}>
-                            <div className={styles.active}>
-                                <Button colorScheme='white'>All Inboxes <Badge>12</Badge></Button>
-                            </div>
-                            <div>
-                                <Button colorScheme='white'>Inbox <Badge>7</Badge></Button>
-                            </div>
-                            <div>
-                                <Button colorScheme='white'>Projects Inbox <Badge>5</Badge></Button>
-                            </div>
-                        </Flex>
-                    </div>
+                        <div className={styles.mailOtherOption}>
+                            <Flex align={'center'} gap={2}>
+                                <div className={styles.active}>
+                                    <Button colorScheme='white'>All Inboxes <Badge>12</Badge></Button>
+                                </div>
+                                <div>
+                                    <Button colorScheme='white'>Inbox <Badge>7</Badge></Button>
+                                </div>
+                                <div>
+                                    <Button colorScheme='white'>Projects Inbox <Badge>5</Badge></Button>
+                                </div>
+                            </Flex>
+                        </div>
 
-                </Flex>
-            </div>
+                    </Flex>
+                </div>
+            }
             <div>
                 <Flex direction={'column'} gap={1} marginTop={5} className={styles.mailList}>
                     {props.content.map((item: any, index: number) => (
-                        <div onClick={() => props.handleClick()} key={index}>
+                        <div onClick={() => props.handleClick(item)} key={index}>
                             <div className={styles.mailDetails}>
                                 <Flex align={"center"} justify={'space-between'}>
                                     <Flex align={"center"} gap={1}>
@@ -42,7 +44,7 @@ export default function InboxTab(props: InboxTabProps) {
                                         </Flex>
                                     </Flex>
                                     <div className={styles2.receiveTime}>
-                                        <Time time={'28-07-2023 05:51:00 PM'}/>
+                                        <Time time={item.updated}/>
                                     </div>
                                 </Flex>
                                 <div className={styles.mailMessage}>

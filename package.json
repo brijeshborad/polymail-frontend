@@ -23,6 +23,7 @@
     "@types/webpack-env": "^1.18.1",
     "axios": "^1.4.0",
     "bcryptjs": "^2.4.3",
+    "dayjs": "^1.11.9",
     "eslint": "8.45.0",
     "eslint-config-next": "13.4.12",
     "framer-motion": "^10.13.1",

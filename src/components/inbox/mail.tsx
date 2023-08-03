@@ -1,14 +1,65 @@
 import styles from "@/styles/Inbox.module.css";
 import styles2 from "@/styles/common.module.css";
-import {Box, Flex, Heading, Text, Input, Button} from "@chakra-ui/react";
+import {Box, Flex, Heading, Text, Input, Button, Tooltip} from "@chakra-ui/react";
 import {ChevronDownIcon, ChevronUpIcon, CloseIcon, InfoOutlineIcon, TriangleDownIcon} from "@chakra-ui/icons";
 import {Time} from "@/components";
 import {ArchiveIcon, FolderIcon, TrashIcon, TimeSnoozeIcon, FileIcon, LinkIcon, TextIcon, EmojiIcon} from "@/icons";
 import Image from "next/image";
 import {Chip} from "@/components/chip";
-import {MailTabProps} from "@/types";
+import {MailTabProps, StateType} from "@/types";
+import {useEffect, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {getAllMessages} from "@/redux/messages/action-reducer";
 
 export function Mail(props: MailTabProps) {
+
+    const [content, setContent] = useState([]);
+    const [index, setIndex] = useState(null);
+    const {threads, error} = useSelector((state: StateType) => state.messages);
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        if(props.id) {
+            setIndex(null)
+            getAllThreadMessages();
+        }
+    },[props.id])
+
+    const getAllThreadMessages = () => {
+        dispatch(getAllMessages({thread: props?.id}));
+    }
+
+    useEffect(() => {
+        if (threads && threads.length) {
+            setIndex(prevState => {
+                if (prevState) {
+                    return prevState;
+                }
+                return threads.length - 1
+            })
+        }
+
+    }, [threads])
+
+    useEffect(() => {
+       if (index !== null) {
+           setContent(threads[index]);
+       }
+    }, [index])
+
+    const showPreThreads = (type) => {
+            if (type === 'up') {
+                if (index > 1) {
+                    setIndex(prevState => prevState - 1);
+                }
+            } else if (type === 'down') {
+                if (threads.length - 1 !== index) {
+                    setIndex(prevState => prevState + 1);
+                }
+            }
+    }
+
     return (
         <Box className={styles.mailBox}>
             <Flex justifyContent={'space-between'} flexDir={'column'} height={'100%'}>
@@ -19,35 +70,45 @@ export function Mail(props: MailTabProps) {
                               marginBottom={'15'} padding={'12px 20px'}>
                             <Flex alignItems={'center'} gap={2}>
                                 <div className={styles.closeIcon} onClick={() => props.show(false)}><CloseIcon/></div>
-                                <div className={styles.actionIcon}><ChevronUpIcon/></div>
-                                <div className={styles.actionIcon}><ChevronDownIcon/></div>
+                                <div className={styles.actionIcon} onClick={() => showPreThreads('up')}><ChevronUpIcon /></div>
+                                <div className={styles.actionIcon} onClick={() => showPreThreads('down')}><ChevronDownIcon /></div>
                             </Flex>
                             <Flex alignItems={'center'} gap={3} className={styles.headerRightIcon}>
                                 <Button className={styles.addToProject} leftIcon={<FolderIcon />}>Add to Project <span className={styles.RightContent}>⌘P</span></Button>
-                                <ArchiveIcon/>
-                                <TrashIcon/>
-                                <TimeSnoozeIcon/>
+                                    <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
+                                        <div>
+                                            <ArchiveIcon/>
+                                        </div>
+                                    </Tooltip>
+                                <Tooltip label='Trash' placement='bottom' bg='gray.300' color='black'>
+                                    <div>
+                                        <TrashIcon/>
+                                    </div>
+                                </Tooltip>
+                                <Tooltip label='Snooze' placement='bottom' bg='gray.300' color='black'>
+                                    <div>
+                                        <TimeSnoozeIcon/>
+                                    </div>
+                                </Tooltip>
+
                             </Flex>
                         </Flex>
                         <Flex alignItems={'center'} wrap={'wrap'} justifyContent={'space-between'} gap={2} padding={'10px 20px'}>
                             <Flex alignItems={'center'}>
                                 <Image src={'/image/user.png'} alt={''} width={50} height={50}/>
                                 <Flex flexDir={'column'} marginLeft={'5'}>
-                                    <Heading as='h4' size='md'>What`s the next project Phase</Heading>
+                                    <Heading as='h4' size='md'>{content.subject}</Heading>
                                     <Text fontSize='sm'>Michel Eisner to Lee Clow and 4 others</Text>
                                 </Flex>
                             </Flex>
                             <div className={styles2.receiveTime}>
-                                <Time time={'28-07-2023 05:51:00 PM'}/>
+                                <Time time={content.created}/>
                             </div>
                         </Flex>
                     </div>
                     <div className={styles.mailBody}>
                         <Text>
-                            Lee, we’re gearing up to launch the next Toy Story. Can you spin up a team to start thinking
-                            about the
-                            entire launch execution, especially getting the launch to spread via organic social
-                            (TikTok)?
+                            {content.snippet}
                         </Text>
                     </div>
                 </div>

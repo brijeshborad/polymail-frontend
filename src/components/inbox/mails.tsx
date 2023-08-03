@@ -6,7 +6,7 @@ import {
     Menu,
     MenuButton,
     MenuItem,
-    MenuList, Tab, TabList, TabPanel, TabPanels, Tabs
+    MenuList, Tab, TabList, TabPanel, TabPanels, Tabs, Tooltip
 } from "@chakra-ui/react";
 import {ClockIcon, DraftIcon, FolderIcon, SendIcon, TimeSnoozeIcon} from "@/icons";
 import {TriangleDownIcon} from "@chakra-ui/icons";
@@ -25,25 +25,15 @@ import {getAllThreads} from "@/redux/threads/action-reducer";
 
 export function Mails(props: MailTabProps) {
 
-    const [content, setContent] = useState([]);
-    const {threads, error} = useSelector((state: StateType) => state.threads);
-
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        getAllThread();
-    },[])
-
-    const getAllThread = () => {
-        dispatch(getAllThreads({mailbox: 'INBOX'}));
-    }
-
-    useEffect(() => {
-        setContent(threads);
-    }, [threads])
-
-    const handleClick = () => {
+    const handleClick = (e) => {
         props.show(true);
+        props.handleContent(e);
+    }
+    const [tab, setTab] = useState('INBOX');
+
+    const changeEmailTabs = (value) => {
+        setTab(value);
+        props.handleTab(value);
     }
 
     return (
@@ -52,34 +42,57 @@ export function Mails(props: MailTabProps) {
                 <Tabs>
                     <TabList justifyContent={'space-between'} alignItems={'center'} className={styles.mailTabList}>
                         <Tab className={styles.emailTabs}>
-                            <div className={styles.active}>
+                            <Tooltip label='Inbox' placement='bottom' bg='gray.300' color='black'>
+                            <div className={styles.active} onClick={() => changeEmailTabs('INBOX')}>
                                 <FolderIcon/>
                                 <span>Inbox <Badge>12</Badge></span>
                             </div>
+                            </Tooltip>
                         </Tab>
                         <Tab className={styles.emailTabs}>
-                            <div>
+                            <Tooltip label='Draft' placement='bottom' bg='gray.300' color='black'>
+
+                            <div onClick={() => changeEmailTabs('DRAFT')}>
                                 <DraftIcon/>
                                 <span>Inbox <Badge>12</Badge></span>
                             </div>
+                            </Tooltip>
                         </Tab>
                         <Tab className={styles.emailTabs}>
-                            <div>
+                            <Tooltip label='Starred' placement='bottom' bg='gray.300' color='black'>
+                            <div onClick={() => changeEmailTabs('STARRED')}>
                                 <ClockIcon/>
                                 <span>Inbox <Badge>12</Badge></span>
                             </div>
+                            </Tooltip>
                         </Tab>
                         <Tab className={styles.emailTabs}>
-                            <div>
+                            <Tooltip label='Sent' placement='bottom' bg='gray.300' color='black'>
+
+                            <div onClick={() => changeEmailTabs('SENT')}>
                                 <SendIcon/>
                                 <span>Inbox <Badge>12</Badge></span>
                             </div>
+                            </Tooltip>
                         </Tab>
                         <Tab className={styles.emailTabs}>
-                            <div>
+                            <Tooltip label='Trash' placement='bottom' bg='gray.300' color='black'>
+
+                            <div onClick={() => changeEmailTabs('TRASH')}>
                                 <TimeSnoozeIcon/>
                                 <span>Inbox <Badge>12</Badge></span>
                             </div>
+                            </Tooltip>
+                        </Tab>
+
+                        <Tab className={styles.emailTabs}>
+                            <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
+
+                            <div onClick={() => changeEmailTabs('ARCHIVE')}>
+                                <TimeSnoozeIcon/>
+                                <span>Inbox <Badge>12</Badge></span>
+                            </div>
+                            </Tooltip>
                         </Tab>
                         <div className={styles.moreDropdown}>
                             <Menu>
@@ -100,22 +113,25 @@ export function Mails(props: MailTabProps) {
 
                     <TabPanels marginTop={5}>
                         <TabPanel>
-                            <InboxTab content={content} handleClick={() => handleClick()}/>
+                            <InboxTab content={props.content} tab={tab} handleClick={(e) => handleClick(e)}/>
                         </TabPanel>
                         <TabPanel>
-                            <p>two!</p>
+                            <InboxTab content={props.content} tab={tab} handleClick={(e) => handleClick(e)}/>
                         </TabPanel>
                         <TabPanel>
-                            <p>three!</p>
+                            <InboxTab content={props.content} tab={tab} handleClick={(e) => handleClick(e)}/>
                         </TabPanel>
                         <TabPanel>
-                            <p>three!</p>
+                            <InboxTab content={props.content} tab={tab} handleClick={(e) => handleClick(e)}/>
                         </TabPanel>
                         <TabPanel>
-                            <p>Fore!</p>
+                            <InboxTab content={props.content} tab={tab} handleClick={(e) => handleClick(e)}/>
                         </TabPanel>
                         <TabPanel>
-                            <p>Five!</p>
+                            <InboxTab content={props.content} tab={tab} handleClick={(e) => handleClick(e)}/>
+                        </TabPanel>
+                        <TabPanel>
+                            <InboxTab content={props.content} tab={tab} handleClick={(e) => handleClick(e)}/>
                         </TabPanel>
                     </TabPanels>
                 </Tabs>
