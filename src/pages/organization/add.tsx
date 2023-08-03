@@ -50,7 +50,7 @@ export default function AddOrganization() {
                     </div>
                     <Flex flex={'1 0 auto'} alignItems={'center'} justifyContent={'center'} flexDir={'column'}
                           className={styles.organizationModal}>
-                        <Heading as={'h1'} size='md' pb={5}>Add Organization Name</Heading>
+                        <Heading as={'h1'} size='md' pb={5}>Name Your Organization</Heading>
 
                         <Input name={'myorg'} placeholder={'My Org'} onChange={handleChange}
                                className={`${styles.organizationInput}`} type={'text'}/>
