@@ -45,7 +45,7 @@ export function Mail(props: MailTabProps) {
 
     const showPreThreads = (type) => {
         if (type === 'up') {
-            if (index > 1) {
+            if (index > 0) {
                 setIndex(prevState => prevState - 1);
             }
         } else if (type === 'down') {
@@ -65,7 +65,7 @@ export function Mail(props: MailTabProps) {
                               marginBottom={'15'} padding={'12px 20px'}>
                             <Flex alignItems={'center'} gap={2}>
                                 <div className={styles.closeIcon} onClick={() => props.show(false)}><CloseIcon/></div>
-                                <div className={`${styles.actionIcon} ${index > 1 ? '' : styles.disabled}`}
+                                <div className={`${styles.actionIcon} ${index === 0 ? styles.disabled : '' }`}
                                      onClick={() => showPreThreads('up')}><ChevronUpIcon/></div>
                                 <div
                                     className={`${styles.actionIcon} ${messages?.length - 1 !== index ? '' : styles.disabled}`}

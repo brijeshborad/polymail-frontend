@@ -29,6 +29,12 @@ class LocalStorageService {
     static updateAccount(type: string, data: any = null) {
         return LocalStorageService.updateLocalStorage(this.accountKey, type, data, true);
     }
+
+    static clearStorage() {
+        LocalStorageService.updateUser('remove');
+        LocalStorageService.updateOrg('remove');
+        LocalStorageService.updateAccount('remove');
+    }
 }
 
 export default LocalStorageService;

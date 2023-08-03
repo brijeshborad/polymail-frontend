@@ -35,7 +35,7 @@ export default function InboxTab(props: InboxTabProps) {
             }
             <div>
                 <Flex direction={'column'} gap={1} marginTop={5} className={styles.mailList}>
-                    {props.content.map((item: Thread, index: number) => (
+                    {props.content && props.content.map((item: Thread, index: number) => (
                         <div onClick={() => props.handleClick(item.id)} key={index}>
                             <div className={styles.mailDetails}>
                                 <Flex align={"center"} justify={'space-between'}>

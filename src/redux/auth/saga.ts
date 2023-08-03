@@ -47,9 +47,15 @@ function* register({payload: {email, password}}: PayloadAction<any>) {
 
 function* getGoogleAuthLink({payload}: PayloadAction<any>) {
     try {
-        const response: AxiosResponse = yield ApiService.callPost(`auth/oauth2link`, payload, {
-            'Skip-Headers': true
-        });
+        let headers = {};
+        if(!payload.withToken) {
+            headers = {
+                'Skip-Headers': true
+            }
+        }
+        delete payload.withToken;
+
+        const response: AxiosResponse = yield ApiService.callPost(`auth/oauth2link`, payload, headers);
         yield put(googleAuthLinkSuccess(response));
     } catch (error: AxiosError | any) {
         yield put(googleAuthLinkError(error.response.data));
@@ -58,7 +64,7 @@ function* getGoogleAuthLink({payload}: PayloadAction<any>) {
 
 function* logout() {
     yield ApiService.callGet(`auth/logout`, null);
-    LocalStorageService.updateUser('remove');
+    LocalStorageService.clearStorage();
 }
 
 export function* watchLoginUser() {

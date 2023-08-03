@@ -34,10 +34,13 @@ const authSlice = createSlice({
         logoutUser: (state: InitialAuthState, action: PayloadAction<null>) => {
             return {...state, user: null, error: null, isLoading: false}
         },
-        googleAuthLink: (state: InitialAuthState, action: PayloadAction<{ mode: string,
+        googleAuthLink: (state: InitialAuthState, action: PayloadAction<{
+            mode: string,
             redirectUrl: string
             accountType: string
-            platform: string }>) => {
+            platform: string,
+            withToken?: boolean
+        }>) => {
             return {...state, user: null, error: null, googleAuthRedirectionLink: null, isLoading: false}
         },
         googleAuthLinkSuccess: (state: InitialAuthState, {payload: googleAuthRedirectionLink}: PayloadAction<any>) => {

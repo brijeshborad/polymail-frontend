@@ -19,7 +19,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {googleAuthLink, logoutUser} from "@/redux/auth/action-reducer";
 import Router from "next/router";
 import {StateType} from "@/types";
-import {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {getAllOrganizations, updateOrganizationState} from "@/redux/organizations/action-reducer";
 import {Account, Organization} from "@/models";
 import {getAllAccount, updateAccountState} from "@/redux/accounts/action-reducer";
@@ -35,6 +35,13 @@ export function Header() {
     } = useSelector((state: StateType) => state.organizations);
     const {accounts} = useSelector((state: StateType) => state.accounts);
     const {googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
+    const [userData, setUserData] = useState<any>(null);
+
+    const {user} = useSelector((state: StateType) => state.auth);
+
+    useEffect(() => {
+        setUserData(user);
+    }, [user]);
 
     useEffect(() => {
         setWorkspace(selectedOrganization);
@@ -84,17 +91,20 @@ export function Header() {
         }
     }, [accounts]);
 
+
     function logout() {
         dispatch(logoutUser(null));
+
         Router.push('/auth/login');
     }
 
-    function loginWithGoogle() {
+    function addNewGoogleAccount() {
         let body = {
-            mode: 'register',
-            redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}/auth/login`,
+            mode: 'create',
+            redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}/inbox`,
             accountType: "google",
-            platform: "web"
+            platform: "web",
+            withToken: true
         }
         dispatch(googleAuthLink(body));
     }
@@ -109,6 +119,9 @@ export function Header() {
         dispatch(updateAccountState({selectedAccount: account}))
     }
 
+    if (!userData) {
+        return <></>;
+    }
 
     return (
         <Flex className={styles.header} w='100%' align={'center'}>
@@ -168,7 +181,7 @@ export function Header() {
                         <Image src="/image/user.png" width="36" height="36" alt=""/>
                     </MenuButton>
                     <MenuList>
-                        <MenuItem onClick={() => loginWithGoogle()}>Add New Account</MenuItem>
+                        <MenuItem onClick={() => addNewGoogleAccount()}>Add New Account</MenuItem>
                         {accounts && accounts?.map((acc, i) => (
                             <MenuItem w='100%' key={i + 1} onClick={() => setAccounts(acc)}>
                                 {acc.email}

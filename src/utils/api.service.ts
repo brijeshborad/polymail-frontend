@@ -17,7 +17,7 @@ axiosInstance.interceptors.request.use((config) => {
     if (config.headers.hasOwnProperty('Skip-Headers')) {
         delete config.headers['Skip-Headers'];
     } else {
-        config.headers.Authorization = `Bearer PG ${userSession.token}`;
+        config.headers.Authorization = `Bearer PG ${userSession?.token}`;
         delete config.headers['Skip-Headers'];
     }
     return config;
@@ -28,7 +28,7 @@ axiosInstance.interceptors.response.use((response) => {
 }, error => {
     if (error.response && error.response.data) {
         if (error.response.data.description === 'Unauthorized') {
-            LocalStorageService.updateUser('remove');
+            LocalStorageService.clearStorage();
             Router.push(`/auth/login`);
             return false;
         }

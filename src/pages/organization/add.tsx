@@ -25,7 +25,7 @@ export default function AddOrganization() {
 
     const createOrganization = () => {
         if (organizationName.length === 0) {
-            toastIdRef.current = toast({description: 'Please add Organization name', status: 'error',})
+            toastIdRef.current = toast({description: 'Please enter the organization\'s name', status: 'error',})
             return;
         }
         let body = {
