@@ -39,12 +39,12 @@ export default function InboxTab(props: InboxTabProps) {
             <div>
                 <Flex direction={'column'} gap={1} marginTop={5} className={styles.mailList}>
                     {props.content && props.content.map((item: Thread, index: number) => (
-                        <div onClick={() => props.handleClick(item.id)} key={index}>
+                        <div onClick={() => props.handleClick(item)} key={index}>
                             <div className={styles.mailDetails}>
                                 <Flex align={"center"} justify={'space-between'}>
                                     <Flex align={"center"} gap={1}>
                                         <Flex align={"center"} className={styles.senderDetails} gap={1}>
-                                            <DisneyIcon/> Slack
+                                            <DisneyIcon/> {item.from || 'Anonymous'}
                                         </Flex>
                                     </Flex>
                                     <div className={styles2.receiveTime}>

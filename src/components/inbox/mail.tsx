@@ -11,7 +11,7 @@ import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {getAllMessages, getMessageParts} from "@/redux/messages/action-reducer";
 import {getSyncAccount} from "@/redux/accounts/action-reducer";
-import {Message} from "@/models";
+import {Message, Thread} from "@/models";
 import {SpinnerUI} from '@/components/spinner';
 
 export function Mail(props: MailTabProps) {
@@ -19,7 +19,7 @@ export function Mail(props: MailTabProps) {
     const [content, setContent] = useState<Message>(null);
     const [index, setIndex] = useState<number | null>(null);
     const [showLoader, setShowLoader] = useState<boolean>(false);
-    const [selectedThread, setSelectedThread] = useState<string>('');
+    const [selectedThread, setSelectedThread] = useState<Thread>(null);
     const {messages, error, message} = useSelector((state: StateType) => state.messages);
     const {account, selectedAccount} = useSelector((state: StateType) => state.accounts);
 
@@ -32,8 +32,8 @@ export function Mail(props: MailTabProps) {
     }, [selectedAccount]);
 
     useEffect(() => {
-        setSelectedThread(props.id);
-    }, [props.id])
+        setSelectedThread(props.thread);
+    }, [props.thread])
 
     useEffect(() => {
         if (account) {
@@ -43,15 +43,17 @@ export function Mail(props: MailTabProps) {
     }, [account])
 
     const getAllThreadMessages = useCallback(() => {
-        dispatch(getAllMessages({thread: props.id}));
-    }, [dispatch, props.id])
+        if(selectedThread?.id) {
+            dispatch(getAllMessages({thread: selectedThread.id}));
+        }
+    }, [dispatch, selectedThread])
 
     useEffect(() => {
-        if (props.id) {
+        if (selectedThread?.id) {
             setIndex(null)
             getAllThreadMessages();
         }
-    }, [props.id, getAllThreadMessages])
+    }, [selectedThread, getAllThreadMessages])
 
     useEffect(() => {
         if (messages && messages.length > 0) {
@@ -63,10 +65,19 @@ export function Mail(props: MailTabProps) {
     useEffect(() => {
         if (message && message.data) {
             let decoded = Buffer.from(message.data, 'base64').toString('ascii');
-            setEmailPart(decoded);
+            // const binaryString = atob((`data:text/html;base64,${message.data}`).split(',')[1]); // Binary data string
+            const blob = new Blob([decoded], {type: "text/html"});
+            const blobUrl = window.URL.createObjectURL(blob);
+            setEmailPart(blobUrl);
+
         }
         setShowLoader(true);
     }, [message])
+
+    const blobToDataUrl = (blob) => {
+        return new Promise(r => {let a=new FileReader(); a.onload=r; a.readAsDataURL(blob)}).then(e => e.target.result);
+    }
+
 
     useEffect(() => {
         if (index !== null) {
@@ -338,7 +349,7 @@ export function Mail(props: MailTabProps) {
 
                             <Flex alignItems={'center'} gap={3} className={styles.headerRightIcon}>
                                 {showLoader && <Text className={styles.totalMessages}>
-                                    {index + 1} / {messages.length}
+                                    {index + 1} / {selectedThread.numMessages}
                                 </Text>}
                                 <Button className={styles.addToProject} leftIcon={<FolderIcon/>}>Add to
                                     Project <span
@@ -380,10 +391,10 @@ export function Mail(props: MailTabProps) {
                         </Flex>}
                     </div>
 
-                    {(showLoader && emailPart) && <div className={styles.mailBody}>
-                        <div dangerouslySetInnerHTML={{__html: emailPart}}>
-                        </div>
-                    </div>}
+                    {(showLoader && emailPart) &&
+                        <iframe src={emailPart} className={styles.mailBody}/>
+
+                        }
 
                 </div>
 

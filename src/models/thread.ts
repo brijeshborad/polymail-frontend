@@ -1,5 +1,6 @@
 export interface Thread {
     id: string,
+    from: string,
     created?: string,
     updated?: string,
     user?: string,
@@ -8,5 +9,6 @@ export interface Thread {
     historyId?: number,
     subject?: string,
     snippet?: string,
-    mailboxes?: string[]
+    mailboxes?: string[],
+    numMessages: number,
 }
