@@ -41,7 +41,7 @@ export function Mails(props: MailsTabProps) {
     }, [getAllThread, selectedAccount])
 
     useEffect(() => {
-        if (threads && !!threads.length) {
+        if (threads) {
             setShowLoader(true);
         }
     }, [threads])
@@ -50,12 +50,6 @@ export function Mails(props: MailsTabProps) {
         props.show(isShow);
         props.handleContent(e);
     }
-
-    useEffect(() => {
-        if (tab === 'INBOX' && threads && threads.length > 0) {
-            handleClick(threads[0].id, false)
-        }
-    }, [threads])
 
     const changeEmailTabs = (value) => {
         setTab(value);
@@ -143,22 +137,22 @@ export function Mails(props: MailsTabProps) {
                             <InboxTab content={threads} tab={tab} showLoader={showLoader} handleClick={(e) => handleClick(e)}/>
                         </TabPanel>
                         <TabPanel>
-                            <InboxTab content={threads} tab={tab} handleClick={(e) => handleClick(e)}/>
+                            <InboxTab content={threads} tab={tab} showLoader={showLoader} handleClick={(e) => handleClick(e)}/>
                         </TabPanel>
                         <TabPanel>
-                            <InboxTab content={threads} tab={tab} handleClick={(e) => handleClick(e)}/>
+                            <InboxTab content={threads} tab={tab} showLoader={showLoader} handleClick={(e) => handleClick(e)}/>
                         </TabPanel>
                         <TabPanel>
-                            <InboxTab content={threads} tab={tab} handleClick={(e) => handleClick(e)}/>
+                            <InboxTab content={threads} tab={tab} showLoader={showLoader} handleClick={(e) => handleClick(e)}/>
                         </TabPanel>
                         <TabPanel>
-                            <InboxTab content={threads} tab={tab} handleClick={(e) => handleClick(e)}/>
+                            <InboxTab content={threads} tab={tab} showLoader={showLoader} handleClick={(e) => handleClick(e)}/>
                         </TabPanel>
                         <TabPanel>
-                            <InboxTab content={threads} tab={tab} handleClick={(e) => handleClick(e)}/>
+                            <InboxTab content={threads} tab={tab} showLoader={showLoader} handleClick={(e) => handleClick(e)}/>
                         </TabPanel>
                         <TabPanel>
-                            <InboxTab content={threads} tab={tab} handleClick={(e) => handleClick(e)}/>
+                            <InboxTab content={threads} tab={tab} showLoader={showLoader} handleClick={(e) => handleClick(e)}/>
                         </TabPanel>
                     </TabPanels>
                 </Tabs>

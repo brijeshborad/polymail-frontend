@@ -1,9 +1,9 @@
 import styles from "@/styles/Inbox.module.css";
 import styles2 from "@/styles/common.module.css";
-import {Box, Flex, Heading, Text, Button, Tooltip, Textarea, Input, Spinner} from "@chakra-ui/react";
-import {ChevronDownIcon, ChevronUpIcon, CloseIcon, InfoOutlineIcon, TriangleDownIcon} from "@chakra-ui/icons";
+import {Box, Button, Flex, Heading, Input, Text, Textarea, Tooltip} from "@chakra-ui/react";
+import {ChevronDownIcon, ChevronUpIcon, CloseIcon, TriangleDownIcon} from "@chakra-ui/icons";
 import {Time} from "@/components";
-import {ArchiveIcon, FolderIcon, TrashIcon, TimeSnoozeIcon, FileIcon, LinkIcon, TextIcon, EmojiIcon} from "@/icons";
+import {ArchiveIcon, EmojiIcon, FileIcon, FolderIcon, LinkIcon, TextIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
 import Image from "next/image";
 import {Chip} from "@/components/chip";
 import {MailTabProps, StateType} from "@/types";
@@ -12,12 +12,14 @@ import {useDispatch, useSelector} from "react-redux";
 import {getAllMessages, getMessageParts} from "@/redux/messages/action-reducer";
 import {getSyncAccount} from "@/redux/accounts/action-reducer";
 import {Message} from "@/models";
-import {SpinnerUI} from '@/components/spinner'
+import {SpinnerUI} from '@/components/spinner';
+
 export function Mail(props: MailTabProps) {
 
     const [content, setContent] = useState<Message>(null);
     const [index, setIndex] = useState<number | null>(null);
     const [showLoader, setShowLoader] = useState<boolean>(false);
+    const [selectedThread, setSelectedThread] = useState<string>('');
     const {messages, error, message} = useSelector((state: StateType) => state.messages);
     const {account, selectedAccount} = useSelector((state: StateType) => state.accounts);
 
@@ -27,11 +29,15 @@ export function Mail(props: MailTabProps) {
         if (selectedAccount && selectedAccount.id) {
             dispatch(getSyncAccount({id: selectedAccount.id}));
         }
-    }, [selectedAccount])
+    }, [selectedAccount]);
+
+    useEffect(() => {
+        setSelectedThread(props.id);
+    }, [props.id])
 
     useEffect(() => {
         if (account) {
-            console.log('--------------=========' , account)
+            console.log('--------------=========', account)
         }
 
     }, [account])
@@ -58,8 +64,8 @@ export function Mail(props: MailTabProps) {
         if (message && message.data) {
             let decoded = Buffer.from(message.data, 'base64').toString('ascii');
             setEmailPart(decoded);
-            setShowLoader(true)
         }
+        setShowLoader(true);
     }, [message])
 
     useEffect(() => {
@@ -181,7 +187,7 @@ export function Mail(props: MailTabProps) {
         if (["Enter", "Tab"].includes(evt.key)) {
             evt.preventDefault();
             let value = state.value.trim();
-           let emailArray = value.split(',');
+            let emailArray = value.split(',');
             emailArray.map(item => {
                 if (item && isValid(item, 'cc')) {
                     setState((prevState) => ({
@@ -194,12 +200,12 @@ export function Mail(props: MailTabProps) {
         }
     };
     const handleDelete = (item) => {
-         setState({
-             items: state.items.filter(i => i !== item),
-             value: "",
-             error: null
-         });
-     };
+        setState({
+            items: state.items.filter(i => i !== item),
+            value: "",
+            error: null
+        });
+    };
 
 
     const handleBcc = (evt) => {
@@ -275,6 +281,7 @@ export function Mail(props: MailTabProps) {
             }));
         }
     };
+
     const handleKeyDownRecipients = evt => {
         if (["Enter", "Tab"].includes(evt.key)) {
             evt.preventDefault();
@@ -310,6 +317,8 @@ export function Mail(props: MailTabProps) {
     }
     return (
         <Box className={styles.mailBox}>
+
+            {selectedThread &&
             <Flex className={styles.mailBoxHeight} justifyContent={'space-between'} flexDir={'column'} height={'100%'}>
                 <div>
                     <div>
@@ -317,21 +326,23 @@ export function Mail(props: MailTabProps) {
                               borderBottom={'1px solid rgba(8, 22, 47, 0.1)'}
                               marginBottom={'15'} padding={'12px 20px'}>
                             <Flex alignItems={'center'} gap={2}>
-                                <div className={styles.closeIcon} onClick={() => props.show(false)}><CloseIcon/></div>
+                                <div className={styles.closeIcon} onClick={() => setSelectedThread(null)}><CloseIcon/>
+                                </div>
                                 <div className={`${styles.actionIcon} ${index === 0 ? styles.disabled : ''}`}
                                      onClick={() => showPreThreads('up')}><ChevronUpIcon/></div>
                                 <div
                                     className={`${styles.actionIcon} ${messages?.length - 1 !== index ? '' : styles.disabled}`}
                                     onClick={() => showPreThreads('down')}><ChevronDownIcon/></div>
 
-
                             </Flex>
+
                             <Flex alignItems={'center'} gap={3} className={styles.headerRightIcon}>
                                 {showLoader && <Text className={styles.totalMessages}>
                                     {index + 1} / {messages.length}
                                 </Text>}
-                                <Button className={styles.addToProject} leftIcon={<FolderIcon/>}>Add to Project <span
-                                    className={styles.RightContent}>⌘P</span></Button>
+                                <Button className={styles.addToProject} leftIcon={<FolderIcon/>}>Add to
+                                    Project <span
+                                        className={styles.RightContent}>⌘P</span></Button>
                                 <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
                                     <div>
                                         <ArchiveIcon/>
@@ -350,9 +361,12 @@ export function Mail(props: MailTabProps) {
 
                             </Flex>
                         </Flex>
-                        {!showLoader && <SpinnerUI />}
-                        {showLoader && <Flex alignItems={'center'} wrap={'wrap'} justifyContent={'space-between'} gap={2}
-                                           padding={'10px 20px'}>
+
+                        {!showLoader && <SpinnerUI/>}
+
+                        {(showLoader && content) &&
+                        <Flex alignItems={'center'} wrap={'wrap'} justifyContent={'space-between'} gap={2}
+                              padding={'10px 20px'}>
                             <Flex alignItems={'center'}>
                                 <Image src={'/image/user.png'} alt={''} width={50} height={50}/>
                                 <Flex flexDir={'column'} marginLeft={'5'}>
@@ -363,18 +377,20 @@ export function Mail(props: MailTabProps) {
                             <div className={styles2.receiveTime}>
                                 <Time time={content?.created || ''}/>
                             </div>
-                        </Flex> }
+                        </Flex>}
                     </div>
-                    {showLoader && <div className={styles.mailBody}>
-                        <div dangerouslySetInnerHTML={{__html: emailPart}} >
+
+                    {(showLoader && emailPart) && <div className={styles.mailBody}>
+                        <div dangerouslySetInnerHTML={{__html: emailPart}}>
                         </div>
                     </div>}
 
                 </div>
+
                 <div className={styles.mailFooter}>
                     <Flex marginBottom={4} className={styles.mailReplay}>
                         <Heading as={'h1'} pt={'6px'} size={'sm'}>Reply</Heading>
-                        <TriangleDownIcon mt={'9px'} />
+                        <TriangleDownIcon mt={'9px'}/>
                         <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} className={styles.replyBoxCC}>
                             {!!recipients?.items?.length && recipients.items.map(item => (
                                 <Chip text={item} click={() => handleDeleteRecipients(item)}/>
@@ -392,6 +408,7 @@ export function Mail(props: MailTabProps) {
                             {recipients.error && <p className={styles.error}>{recipients.error}</p>}
                         </Flex>
                     </Flex>
+
                     <Box className={styles.replyBox}>
                         {/*<Flex justifyContent={'space-between'} padding={'8px 10px'}*/}
                         {/*      borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>*/}
@@ -461,6 +478,13 @@ export function Mail(props: MailTabProps) {
                     </Box>
                 </div>
             </Flex>
+            }
+            {!selectedThread &&
+            <Flex className={styles.mailBoxHeight} justifyContent={'center'} alignItems={'center'} flexDir={'column'}
+                  height={'100%'}>
+                <Heading as='h3' size='md'>Click on a thread from list to view messages!</Heading>
+            </Flex>}
+
         </Box>
     )
 }
