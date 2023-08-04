@@ -14,7 +14,7 @@ import {
     Tabs,
     Tooltip
 } from "@chakra-ui/react";
-import {ClockIcon, DraftIcon, FolderIcon, SendIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
+import {StarIcon, DraftIcon, FolderIcon, SendIcon, TrashIcon, ArchiveIcon} from "@/icons";
 import {TriangleDownIcon} from "@chakra-ui/icons";
 import InboxTab from "@/components/inbox/tabs-components/inbox-tab";
 import {MailsTabProps, StateType} from "@/types";
@@ -81,7 +81,7 @@ export function Mails(props: MailsTabProps) {
                             <Tooltip label='Starred' placement='bottom' bg='gray.300' color='black'>
                                 <div className={`${tab === 'STARRED' ? styles.active : ''}`}
                                      onClick={() => changeEmailTabs('STARRED')}>
-                                    <ClockIcon/>
+                                    <StarIcon />
                                     <span>Starred <Badge>{threads.length}</Badge></span>
                                 </div>
                             </Tooltip>
@@ -109,7 +109,7 @@ export function Mails(props: MailsTabProps) {
                             <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
                                 <div className={`${tab === 'ARCHIVE' ? styles.active : ''}`}
                                      onClick={() => changeEmailTabs('ARCHIVE')}>
-                                    <TimeSnoozeIcon/>
+                                    <ArchiveIcon />
                                     <span>Archive <Badge>{threads.length}</Badge></span>
                                 </div>
                             </Tooltip>

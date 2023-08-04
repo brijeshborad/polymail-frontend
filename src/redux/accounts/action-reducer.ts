@@ -27,6 +27,16 @@ const accountSlice = createSlice({
         updateAccountState: (state: InitialAccountStateType, action: PayloadAction<any>) => {
             return {...state, ...action.payload}
         },
+
+        getSyncAccount: (state: InitialAccountStateType, action: PayloadAction<{}>) => {
+            return {...state, account: null, isLoading: true, error: null}
+        },
+        getSyncAccountSuccess: (state: InitialAccountStateType, {payload: account}: PayloadAction<{ account: any }>) => {
+            return {...state, account, isLoading: false, error: null}
+        },
+        getSyncAccountError: (state: InitialAccountStateType, {payload: error}: PayloadAction<{ error: any }>) => {
+            return {...state, account: null, isLoading: false, error}
+        },
     }
 })
 
@@ -34,6 +44,9 @@ export const {
     getAllAccount,
     getAllAccountSuccess,
     getAllAccountError,
-    updateAccountState
+    updateAccountState,
+    getSyncAccount,
+    getSyncAccountSuccess,
+    getSyncAccountError
 } = accountSlice.actions
 export default accountSlice.reducer

@@ -10,15 +10,29 @@ import {MailTabProps, StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {getAllMessages, getMessageParts} from "@/redux/messages/action-reducer";
+import {getSyncAccount} from "@/redux/accounts/action-reducer";
 import {Message} from "@/models";
+import Link from "next/link";
 
 export function Mail(props: MailTabProps) {
 
     const [content, setContent] = useState<Message>(null);
     const [index, setIndex] = useState<number | null>(null);
     const {messages, error, message} = useSelector((state: StateType) => state.messages);
+    const {account, selectedAccount} = useSelector((state: StateType) => state.accounts);
 
     const dispatch = useDispatch();
+
+    useEffect(() => {
+            dispatch(getSyncAccount({id: selectedAccount.id}));
+    }, [selectedAccount])
+
+    useEffect(() => {
+        if (account) {
+            console.log('--------------=========' , account)
+        }
+
+    }, [account])
 
     const getAllThreadMessages = useCallback(() => {
         dispatch(getAllMessages({thread: props.id}));
@@ -300,8 +314,13 @@ export function Mail(props: MailTabProps) {
                                 <div
                                     className={`${styles.actionIcon} ${messages?.length - 1 !== index ? '' : styles.disabled}`}
                                     onClick={() => showPreThreads('down')}><ChevronDownIcon/></div>
+
+
                             </Flex>
                             <Flex alignItems={'center'} gap={3} className={styles.headerRightIcon}>
+                                <Text className={styles.totalMessages}>
+                                    {index + 1} / {messages.length}
+                                </Text>
                                 <Button className={styles.addToProject} leftIcon={<FolderIcon/>}>Add to Project <span
                                     className={styles.RightContent}>⌘P</span></Button>
                                 <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
@@ -337,9 +356,6 @@ export function Mail(props: MailTabProps) {
                         </Flex>
                     </div>
                     <div className={styles.mailBody}>
-                        {/*<Text>*/}
-                        {/*    {content?.snippet || ''}*/}
-                        {/*</Text>*/}
                         <div dangerouslySetInnerHTML={{__html: emailPart}} >
                         </div>
                     </div>
@@ -348,8 +364,6 @@ export function Mail(props: MailTabProps) {
                     <Flex alignItems={'center'} marginBottom={4} className={styles.mailReplay}>
                         <Heading as={'h1'} size={'sm'}>Reply</Heading>
                         <TriangleDownIcon/>
-                        {/*<Text fontSize={'sm'}>to Lee Clow @chiat.com and 4 others</Text>*/}
-                        {/*<Input name={'add-email'} placeholder={'Recipients'}  onChange={addReplayEmail} type={'text'}/>*/}
 
                         {!!recipients?.items?.length && recipients.items.map(item => (
                             <Chip text={item} click={() => handleDeleteRecipients(item)}/>

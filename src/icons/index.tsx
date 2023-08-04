@@ -14,3 +14,4 @@ export * from './file.icon';
 export * from './link.icon';
 export * from './emoji.icon';
 export * from './text.icon';
+export * from './star.icon';

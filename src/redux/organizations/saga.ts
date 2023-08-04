@@ -16,7 +16,6 @@ function* getOrganizations(payload: PayloadAction<any>) {
 function* addOrganizations({payload: {name, accountId}}: PayloadAction<any>) {
     try {
         const response: AxiosResponse = yield ApiService.callPost(`organizations`, {name, accountId});
-        console.log('response' , response)
         yield put(addOrganizationSuccess(response));
     } catch (error: AxiosError | any) {
         yield put(addOrganizationError(error.response.data));
