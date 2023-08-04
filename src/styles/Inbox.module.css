@@ -131,7 +131,7 @@
 }
 
 .mailList {
-    max-height: calc(100vh - 300px);
+    max-height: calc(100vh - 220px);
     overflow-y: auto;
 }
 
@@ -208,11 +208,11 @@
 .mailBox {
     border: 1px solid rgba(8, 22, 47, 0.16);
     border-radius: 16px;
-    min-height: calc(100vh - 190px);
+    min-height: calc(100vh - 110px);
 }
 
 .mailBox .mailBoxHeight {
-    min-height: calc(100vh - 190px);
+    min-height: calc(100vh - 110px);
 }
 
 .mailBox svg {

@@ -37,10 +37,10 @@ function Inbox() {
     if (!userData) {
         return <></>;
     }
-    
+
     return (
         <div>
-            <Projects/>
+            {/*<Projects/>*/}
             <div className={styles.mailBg}>
 
                 <Grid className={styles.mailGrid} templateColumns='30% auto' gap={10}>
