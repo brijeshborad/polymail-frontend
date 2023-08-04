@@ -28,6 +28,7 @@ export function Mails(props: MailsTabProps) {
     const {threads} = useSelector((state: StateType) => state.threads);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const dispatch = useDispatch();
+    const [showLoader, setShowLoader] = useState<boolean>(false);
 
     const getAllThread = useCallback(() => {
         if (selectedAccount) {
@@ -39,13 +40,19 @@ export function Mails(props: MailsTabProps) {
         getAllThread();
     }, [getAllThread, selectedAccount])
 
+    useEffect(() => {
+        if (threads && !!threads.length) {
+            setShowLoader(true);
+        }
+    }, [threads])
+
     const handleClick = (e: string, isShow: boolean = true) => {
         props.show(isShow);
         props.handleContent(e);
     }
 
     useEffect(() => {
-        if (tab  === 'INBOX' && threads && threads.length > 0) {
+        if (tab === 'INBOX' && threads && threads.length > 0) {
             handleClick(threads[0].id, false)
         }
     }, [threads])
@@ -133,7 +140,7 @@ export function Mails(props: MailsTabProps) {
 
                     <TabPanels marginTop={5}>
                         <TabPanel>
-                            <InboxTab content={threads} tab={tab} handleClick={(e) => handleClick(e)}/>
+                            <InboxTab content={threads} tab={tab} showLoader={showLoader} handleClick={(e) => handleClick(e)}/>
                         </TabPanel>
                         <TabPanel>
                             <InboxTab content={threads} tab={tab} handleClick={(e) => handleClick(e)}/>

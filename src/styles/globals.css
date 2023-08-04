@@ -121,3 +121,7 @@ a {
 ::-webkit-scrollbar-thumb {
   background-color: rgba(38, 109, 240, 0.8);
 }
+
+.text-center {
+  text-align: center;
+}

@@ -4,6 +4,7 @@ export declare type InboxTabProps = {
     content: Thread[],
     handleClick: (val: string) => void;
     tab: string,
+    showLoader: boolean
 }
 
 export declare type MailTabProps = {

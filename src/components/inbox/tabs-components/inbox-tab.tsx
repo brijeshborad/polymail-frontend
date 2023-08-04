@@ -1,10 +1,12 @@
-import {Badge, Button, Checkbox, Flex} from "@chakra-ui/react";
+import {Badge, Button, Checkbox, Flex, Spinner} from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
 import {DisneyIcon} from "@/icons";
 import styles2 from "@/styles/common.module.css";
 import {Time} from "@/components";
 import {InboxTabProps} from "@/types";
 import {Thread} from "@/models";
+import React from "react";
+import {SpinnerUI} from "@/components/spinner";
 
 export default function InboxTab(props: InboxTabProps) {
     return (
@@ -33,6 +35,7 @@ export default function InboxTab(props: InboxTabProps) {
                     </Flex>
                 </div>
             }
+            {!props.showLoader && <SpinnerUI />}
             <div>
                 <Flex direction={'column'} gap={1} marginTop={5} className={styles.mailList}>
                     {props.content && props.content.map((item: Thread, index: number) => (

@@ -1,6 +1,6 @@
 import styles from "@/styles/Inbox.module.css";
 import styles2 from "@/styles/common.module.css";
-import {Box, Flex, Heading, Text, Button, Tooltip, Textarea, Input} from "@chakra-ui/react";
+import {Box, Flex, Heading, Text, Button, Tooltip, Textarea, Input, Spinner} from "@chakra-ui/react";
 import {ChevronDownIcon, ChevronUpIcon, CloseIcon, InfoOutlineIcon, TriangleDownIcon} from "@chakra-ui/icons";
 import {Time} from "@/components";
 import {ArchiveIcon, FolderIcon, TrashIcon, TimeSnoozeIcon, FileIcon, LinkIcon, TextIcon, EmojiIcon} from "@/icons";
@@ -12,12 +12,12 @@ import {useDispatch, useSelector} from "react-redux";
 import {getAllMessages, getMessageParts} from "@/redux/messages/action-reducer";
 import {getSyncAccount} from "@/redux/accounts/action-reducer";
 import {Message} from "@/models";
-import Link from "next/link";
-
+import {SpinnerUI} from '@/components/spinner'
 export function Mail(props: MailTabProps) {
 
     const [content, setContent] = useState<Message>(null);
     const [index, setIndex] = useState<number | null>(null);
+    const [showLoader, setShowLoader] = useState<boolean>(false);
     const {messages, error, message} = useSelector((state: StateType) => state.messages);
     const {account, selectedAccount} = useSelector((state: StateType) => state.accounts);
 
@@ -58,6 +58,7 @@ export function Mail(props: MailTabProps) {
         if (message && message.data) {
             let decoded = Buffer.from(message.data, 'base64').toString('ascii');
             setEmailPart(decoded);
+            setShowLoader(true)
         }
     }, [message])
 
@@ -69,6 +70,7 @@ export function Mail(props: MailTabProps) {
     useEffect(() => {
         if (content) {
             dispatch(getMessageParts({id: content.id}));
+
         }
     }, [content])
 
@@ -325,9 +327,9 @@ export function Mail(props: MailTabProps) {
 
                             </Flex>
                             <Flex alignItems={'center'} gap={3} className={styles.headerRightIcon}>
-                                <Text className={styles.totalMessages}>
+                                {showLoader && <Text className={styles.totalMessages}>
                                     {index + 1} / {messages.length}
-                                </Text>
+                                </Text>}
                                 <Button className={styles.addToProject} leftIcon={<FolderIcon/>}>Add to Project <span
                                     className={styles.RightContent}>⌘P</span></Button>
                                 <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
@@ -348,8 +350,9 @@ export function Mail(props: MailTabProps) {
 
                             </Flex>
                         </Flex>
-                        <Flex alignItems={'center'} wrap={'wrap'} justifyContent={'space-between'} gap={2}
-                              padding={'10px 20px'}>
+                        {!showLoader && <SpinnerUI />}
+                        {showLoader && <Flex alignItems={'center'} wrap={'wrap'} justifyContent={'space-between'} gap={2}
+                                           padding={'10px 20px'}>
                             <Flex alignItems={'center'}>
                                 <Image src={'/image/user.png'} alt={''} width={50} height={50}/>
                                 <Flex flexDir={'column'} marginLeft={'5'}>
@@ -360,12 +363,13 @@ export function Mail(props: MailTabProps) {
                             <div className={styles2.receiveTime}>
                                 <Time time={content?.created || ''}/>
                             </div>
-                        </Flex>
+                        </Flex> }
                     </div>
-                    <div className={styles.mailBody}>
+                    {showLoader && <div className={styles.mailBody}>
                         <div dangerouslySetInnerHTML={{__html: emailPart}} >
                         </div>
-                    </div>
+                    </div>}
+
                 </div>
                 <div className={styles.mailFooter}>
                     <Flex marginBottom={4} className={styles.mailReplay}>
@@ -383,6 +387,7 @@ export function Mail(props: MailTabProps) {
                                    onChange={handleRecipients}
                                    onPaste={handlePasteRecipients}
                                    border={0} className={styles.ccInput}
+                                   placeholder={'Recipient\'s Email'}
                             />
                             {recipients.error && <p className={styles.error}>{recipients.error}</p>}
                         </Flex>
