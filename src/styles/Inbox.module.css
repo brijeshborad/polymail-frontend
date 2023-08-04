@@ -50,13 +50,13 @@
     display: none;
 }
 
-.emailTabs > div.active {
+.emailTabs[aria-selected="true"] > div {
     background-color: #ffffff;
     color: #266DF0;
 }
 
 .emailTabs > div.active span {
-    display: inline-block;
+    display: flex;
 }
 
 .emailTabs > div.active svg {
@@ -91,7 +91,7 @@
     height: 8px;
 }
 
-.checkBoxLabel span{
+.checkBoxLabel span {
     color: #5D5F62;
     font-size: 13px;
     font-weight: 400;
@@ -200,12 +200,19 @@
 
 /*Mail section CSS End*/
 
+.error {
+    color: #FF0000;
+}
 
 /* Mail Box Start */
 .mailBox {
     border: 1px solid rgba(8, 22, 47, 0.16);
     border-radius: 16px;
-    height: calc(100vh - 190px);
+    min-height: calc(100vh - 190px);
+}
+
+.mailBox .mailBoxHeight {
+    min-height: calc(100vh - 190px);
 }
 
 .mailBox svg {
@@ -221,6 +228,8 @@
     margin: 10px 20px;
     font-size: 16px;
     line-height: 1.5;
+    max-height: calc(100vh - 575px);
+    overflow-y: auto;
 }
 
 .replyBox {
@@ -228,7 +237,7 @@
     border-radius: 20px;
 }
 
-.headerRightIcon svg{
+.headerRightIcon svg {
     cursor: pointer;
 }
 
@@ -296,7 +305,7 @@
 .closeIcon svg {
     width: 0.7rem;
     height: 0.7rem;
-    color: rgba(0,0,0, 0.5);
+    color: rgba(0, 0, 0, 0.5);
     font-weight: 700;
     margin: 0;
 }
@@ -309,7 +318,7 @@
     justify-content: center;
     background-color: #ffffff;
     border-radius: 5px;
-    box-shadow: 0 0 4px 0 rgba(0,0,0, 0.1);
+    box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.1);
     cursor: pointer;
 }
 
@@ -344,6 +353,10 @@
     font-size: 13px;
     font-weight: 500;
     color: rgba(0, 0, 0, 0.6);
+}
+
+.mailReplay .error {
+    color: #FF0000;
 }
 
 .replayMessage {
@@ -394,7 +407,7 @@
 }
 
 .actionIcon.disabled {
-    background-color: rgba(0,0,0, 0.1);
+    background-color: rgba(0, 0, 0, 0.1);
     cursor: not-allowed;
 }
 

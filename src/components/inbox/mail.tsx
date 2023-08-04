@@ -101,21 +101,26 @@ export function Mail(props: MailTabProps) {
     });
 
 
-    const isInList = (email) => {
-        return state?.items?.includes(email);
+    const isInList = (email, type) => {
+        if (type == 'cc') {
+            return state?.items?.includes(email);
+        } else if (type === 'bcc') {
+            return bcc?.items?.includes(email);
+        } else if (type === 'recipients') {
+            return bcc?.items?.includes(email);
+        }
     }
     const isEmail = (email) => {
         return /[\w\d\.-]+@[\w\d\.-]+\.[\w\d\.-]+/.test(email);
     }
     const isValid = (email, type) => {
         let error = null;
-
-        if (isInList(email)) {
-            error = `${email} has already been added.`;
+        if (isInList(email, type)) {
+            error = `This email has already been added.`;
         }
 
         if (!isEmail(email)) {
-            error = `${email} is not a valid email address.`;
+            error = `This email has not been valid.`;
         }
 
         if (error) {
@@ -153,14 +158,14 @@ export function Mail(props: MailTabProps) {
             }
         });
     };
-    const handlePaste = evt => {
+    const handlePaste = (evt) => {
         evt.preventDefault();
 
-        var paste = evt.clipboardData.getData("text");
-        var emails = paste.match(/[\w\d\.-]+@[\w\d\.-]+\.[\w\d\.-]+/g);
+        let paste = evt.clipboardData.getData("text");
+        let emails = paste.match(/[\w\d\.-]+@[\w\d\.-]+\.[\w\d\.-]+/g);
 
         if (emails) {
-            var toBeAdded = emails.filter(email => !isInList(email));
+            let toBeAdded = emails.filter(email => !isInList(email, 'cc'));
             setState((prevState) => ({
                 items: [...prevState.items, ...toBeAdded],
                 value: "",
@@ -171,7 +176,7 @@ export function Mail(props: MailTabProps) {
     const handleKeyDown = evt => {
         if (["Enter", "Tab"].includes(evt.key)) {
             evt.preventDefault();
-            var value = state.value.trim();
+            let value = state.value.trim();
            let emailArray = value.split(',');
             emailArray.map(item => {
                 if (item && isValid(item, 'cc')) {
@@ -205,11 +210,11 @@ export function Mail(props: MailTabProps) {
     const handlePasteBcc = evt => {
         evt.preventDefault();
 
-        var paste = evt.clipboardData.getData("text");
-        var emails = paste.match(/[\w\d\.-]+@[\w\d\.-]+\.[\w\d\.-]+/g);
+        let paste = evt.clipboardData.getData("text");
+        let emails = paste.match(/[\w\d\.-]+@[\w\d\.-]+\.[\w\d\.-]+/g);
 
         if (emails) {
-            var toBeAdded = emails.filter(email => !isInList(email));
+            let toBeAdded = emails.filter(email => !isInList(email, 'bcc'));
             setBcc((prevState) => ({
                 items: [...prevState.items, ...toBeAdded],
                 value: "",
@@ -220,7 +225,7 @@ export function Mail(props: MailTabProps) {
     const handleKeyDownBcc = evt => {
         if (["Enter", "Tab"].includes(evt.key)) {
             evt.preventDefault();
-            var value = bcc.value.trim();
+            let value = bcc.value.trim();
             let emailArray = value.split(',');
             emailArray.map(item => {
                 if (item && isValid(item, 'bcc')) {
@@ -254,11 +259,11 @@ export function Mail(props: MailTabProps) {
     const handlePasteRecipients = evt => {
         evt.preventDefault();
 
-        var paste = evt.clipboardData.getData("text");
-        var emails = paste.match(/[\w\d\.-]+@[\w\d\.-]+\.[\w\d\.-]+/g);
+        let paste = evt.clipboardData.getData("text");
+        let emails = paste.match(/[\w\d\.-]+@[\w\d\.-]+\.[\w\d\.-]+/g);
 
         if (emails) {
-            var toBeAdded = emails.filter(email => !isInList(email));
+            let toBeAdded = emails.filter(email => !isInList(email, 'recipients'));
             setRecipients((prevState) => ({
                 items: [...prevState.items, ...toBeAdded],
                 error: null,
@@ -269,7 +274,7 @@ export function Mail(props: MailTabProps) {
     const handleKeyDownRecipients = evt => {
         if (["Enter", "Tab"].includes(evt.key)) {
             evt.preventDefault();
-            var value = recipients.value.trim();
+            let value = recipients.value.trim();
             let emailArray = value.split(',');
             emailArray.map(item => {
                 if (item && isValid(item, 'recipients')) {
@@ -301,7 +306,7 @@ export function Mail(props: MailTabProps) {
     }
     return (
         <Box className={styles.mailBox}>
-            <Flex justifyContent={'space-between'} flexDir={'column'} height={'100%'}>
+            <Flex className={styles.mailBoxHeight} justifyContent={'space-between'} flexDir={'column'} height={'100%'}>
                 <div>
                     <div>
                         <Flex justifyContent={'space-between'} wrap={'wrap'} align={'center'}
@@ -361,73 +366,74 @@ export function Mail(props: MailTabProps) {
                     </div>
                 </div>
                 <div className={styles.mailFooter}>
-                    <Flex alignItems={'center'} marginBottom={4} className={styles.mailReplay}>
-                        <Heading as={'h1'} size={'sm'}>Reply</Heading>
-                        <TriangleDownIcon/>
+                    <Flex marginBottom={4} className={styles.mailReplay}>
+                        <Heading as={'h1'} pt={'6px'} size={'sm'}>Reply</Heading>
+                        <TriangleDownIcon mt={'9px'} />
+                        <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} className={styles.replyBoxCC}>
+                            {!!recipients?.items?.length && recipients.items.map(item => (
+                                <Chip text={item} click={() => handleDeleteRecipients(item)}/>
+                            ))}
 
-                        {!!recipients?.items?.length && recipients.items.map(item => (
-                            <Chip text={item} click={() => handleDeleteRecipients(item)}/>
-                        ))}
-
-                        <Input width={'auto'} padding={0} height={'23px'}
-                               fontSize={'12px'}
-                               value={recipients.value}
-                               onKeyDown={handleKeyDownRecipients}
-                               onChange={handleRecipients}
-                               onPaste={handlePasteRecipients}
-                               border={0} className={styles.ccInput}
-                        />
-                        {recipients.error && <p className={recipients.error}>{recipients.error}</p>}
+                            <Input width={'auto'} padding={0} height={'23px'}
+                                   fontSize={'12px'}
+                                   value={recipients.value}
+                                   onKeyDown={handleKeyDownRecipients}
+                                   onChange={handleRecipients}
+                                   onPaste={handlePasteRecipients}
+                                   border={0} className={styles.ccInput}
+                            />
+                            {recipients.error && <p className={styles.error}>{recipients.error}</p>}
+                        </Flex>
                     </Flex>
                     <Box className={styles.replyBox}>
-                        <Flex justifyContent={'space-between'} padding={'8px 10px'}
-                              borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>
-                            <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>
-                                <Heading as={'h1'} size={'sm'} pt={'6px'} marginRight={1}>CC:</Heading>
-                                <Flex alignItems={'center'} wrap={'wrap'} width={'100%'}>
-                                    {!!state?.items?.length && state.items.map(item => (
-                                        <Chip text={item} click={() => handleDelete(item)}/>
-                                    ))}
+                        {/*<Flex justifyContent={'space-between'} padding={'8px 10px'}*/}
+                        {/*      borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>*/}
+                        {/*    <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>*/}
+                        {/*        <Heading as={'h1'} size={'sm'} pt={'6px'} marginRight={1}>CC:</Heading>*/}
+                        {/*        <Flex alignItems={'center'} wrap={'wrap'} width={'100%'}>*/}
+                        {/*            {!!state?.items?.length && state.items.map(item => (*/}
+                        {/*                <Chip text={item} click={() => handleDelete(item)}/>*/}
+                        {/*            ))}*/}
 
-                                    <Input width={'auto'} padding={0} height={'23px'}
-                                           fontSize={'12px'}
-                                           value={state.value}
-                                           onKeyDown={handleKeyDown}
-                                           onChange={handleChange}
-                                           onPaste={handlePaste}
-                                           border={0} className={styles.ccInput}
-                                    />
-                                    {state.error && <p className={styles.error}>{state.error}</p>}
-                                </Flex>
-                            </Flex>
-                            <InfoOutlineIcon/>
-                        </Flex>
+                        {/*            <Input width={'auto'} padding={0} height={'23px'}*/}
+                        {/*                   fontSize={'12px'}*/}
+                        {/*                   value={state.value}*/}
+                        {/*                   onKeyDown={handleKeyDown}*/}
+                        {/*                   onChange={handleChange}*/}
+                        {/*                   onPaste={handlePaste}*/}
+                        {/*                   border={0} className={styles.ccInput}*/}
+                        {/*            />*/}
+                        {/*            {state.error && <p className={styles.error}>{state.error}</p>}*/}
+                        {/*        </Flex>*/}
+                        {/*    </Flex>*/}
+                        {/*    <InfoOutlineIcon/>*/}
+                        {/*</Flex>*/}
 
-                        <Flex alignItems={'center'} justifyContent={'space-between'} padding={'8px 10px'}
-                              borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>
-                            <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>
-                                <Heading as={'h1'} pt={'6px'} size={'sm'} marginRight={1}>BCC:</Heading>
-                                <Flex alignItems={'center'} wrap={'wrap'} width={'100%'}>
-                                    {!!bcc?.items?.length && bcc.items.map(item => (
-                                        <Chip text={item} click={() => handleDeleteBcc(item)}/>
-                                    ))}
+                        {/*<Flex alignItems={'center'} justifyContent={'space-between'} padding={'8px 10px'}*/}
+                        {/*      borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>*/}
+                        {/*    <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>*/}
+                        {/*        <Heading as={'h1'} pt={'6px'} size={'sm'} marginRight={1}>BCC:</Heading>*/}
+                        {/*        <Flex alignItems={'center'} wrap={'wrap'} width={'100%'}>*/}
+                        {/*            {!!bcc?.items?.length && bcc.items.map(item => (*/}
+                        {/*                <Chip text={item} click={() => handleDeleteBcc(item)}/>*/}
+                        {/*            ))}*/}
 
-                                    <Input
-                                        width={'auto'} padding={0} height={'23px'}
-                                        fontSize={'12px'}
-                                        value={bcc.value}
-                                        placeholder=""
-                                        onKeyDown={handleKeyDownBcc}
-                                        onChange={handleBcc}
-                                        onPaste={handlePasteBcc}
-                                        border={0} className={styles.ccInput}
-                                    />
-                                    {bcc.error && <p className={styles.error}>{bcc.error}</p>}
-                                </Flex>
+                        {/*            <Input*/}
+                        {/*                width={'auto'} padding={0} height={'23px'}*/}
+                        {/*                fontSize={'12px'}*/}
+                        {/*                value={bcc.value}*/}
+                        {/*                placeholder=""*/}
+                        {/*                onKeyDown={handleKeyDownBcc}*/}
+                        {/*                onChange={handleBcc}*/}
+                        {/*                onPaste={handlePasteBcc}*/}
+                        {/*                border={0} className={styles.ccInput}*/}
+                        {/*            />*/}
+                        {/*            {bcc.error && <p className={styles.error}>{bcc.error}</p>}*/}
+                        {/*        </Flex>*/}
 
-                            </Flex>
-                            <InfoOutlineIcon/>
-                        </Flex>
+                        {/*    </Flex>*/}
+                        {/*    <InfoOutlineIcon/>*/}
+                        {/*</Flex>*/}
 
 
                         <div className={styles.replayMessage}>

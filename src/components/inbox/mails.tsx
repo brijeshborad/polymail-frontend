@@ -58,7 +58,7 @@ export function Mails(props: MailsTabProps) {
         <>
             <Flex direction={'column'} gap={5}>
                 <Tabs>
-                    <TabList justifyContent={'space-between'} alignItems={'center'} className={styles.mailTabList}>
+                    <TabList justifyContent={'space-between'} alignItems={'center'} className={styles.mailTabList} overflowX={"auto"}>
                         <Tab className={styles.emailTabs}>
                             <Tooltip label='Inbox' placement='bottom' bg='gray.300' color='black'>
                                 <div className={`${tab === 'INBOX' ? styles.active : ''}`}
