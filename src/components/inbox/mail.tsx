@@ -1,22 +1,22 @@
 import styles from "@/styles/Inbox.module.css";
 import styles2 from "@/styles/common.module.css";
-import {Box, Flex, Heading, Text, Input, Button, Tooltip} from "@chakra-ui/react";
+import {Box, Flex, Heading, Text, Button, Tooltip, Textarea, Input} from "@chakra-ui/react";
 import {ChevronDownIcon, ChevronUpIcon, CloseIcon, InfoOutlineIcon, TriangleDownIcon} from "@chakra-ui/icons";
 import {Time} from "@/components";
 import {ArchiveIcon, FolderIcon, TrashIcon, TimeSnoozeIcon, FileIcon, LinkIcon, TextIcon, EmojiIcon} from "@/icons";
 import Image from "next/image";
 import {Chip} from "@/components/chip";
 import {MailTabProps, StateType} from "@/types";
-import {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {getAllMessages} from "@/redux/messages/action-reducer";
+import {getAllMessages, getMessageParts} from "@/redux/messages/action-reducer";
 import {Message} from "@/models";
 
 export function Mail(props: MailTabProps) {
 
     const [content, setContent] = useState<Message>(null);
     const [index, setIndex] = useState<number | null>(null);
-    const {messages, error} = useSelector((state: StateType) => state.messages);
+    const {messages, error, message} = useSelector((state: StateType) => state.messages);
 
     const dispatch = useDispatch();
 
@@ -36,12 +36,25 @@ export function Mail(props: MailTabProps) {
             setIndex(val => !val ? messages.length - 1 : val);
         }
     }, [messages])
+    const [emailPart, setEmailPart] = useState("");
+
+    useEffect(() => {
+        if (message && message.data) {
+            let decoded = Buffer.from(message.data, 'base64').toString('ascii');
+            setEmailPart(decoded);
+        }
+    }, [message])
 
     useEffect(() => {
         if (index !== null) {
             setContent(messages[index]);
         }
     }, [index, messages])
+    useEffect(() => {
+        if (content) {
+            dispatch(getMessageParts({id: content.id}));
+        }
+    }, [content])
 
     const showPreThreads = (type) => {
         if (type === 'up') {
@@ -55,6 +68,223 @@ export function Mail(props: MailTabProps) {
         }
     }
 
+    const [state, setState] = useState({
+        items: [],
+        value: "",
+        error: null
+    });
+
+    const [bcc, setBcc] = useState({
+        items: [],
+        value: "",
+        error: null
+    });
+
+    const [recipients, setRecipients] = useState({
+        items: [],
+        value: "",
+        error: null
+    });
+
+
+    const isInList = (email) => {
+        return state?.items?.includes(email);
+    }
+    const isEmail = (email) => {
+        return /[\w\d\.-]+@[\w\d\.-]+\.[\w\d\.-]+/.test(email);
+    }
+    const isValid = (email, type) => {
+        let error = null;
+
+        if (isInList(email)) {
+            error = `${email} has already been added.`;
+        }
+
+        if (!isEmail(email)) {
+            error = `${email} is not a valid email address.`;
+        }
+
+        if (error) {
+            if (type === 'cc') {
+                setState((prevState) => ({
+                    items: [...prevState.items],
+                    value: prevState.value,
+                    error: error
+                }));
+            } else if (type === 'bcc') {
+                setBcc((prevState) => ({
+                    items: [...prevState.items],
+                    value: prevState.value,
+                    error: error
+                }));
+            } else if (type === 'recipients') {
+                setRecipients((prevState) => ({
+                    items: [...prevState.items],
+                    value: prevState.value,
+                    error: error
+                }));
+            }
+            return false;
+        }
+
+        return true;
+    }
+
+    const handleChange = (evt) => {
+        setState(prevState => {
+            return {
+                items: [...prevState.items],
+                value: evt.target.value,
+                error: null
+            }
+        });
+    };
+    const handlePaste = evt => {
+        evt.preventDefault();
+
+        var paste = evt.clipboardData.getData("text");
+        var emails = paste.match(/[\w\d\.-]+@[\w\d\.-]+\.[\w\d\.-]+/g);
+
+        if (emails) {
+            var toBeAdded = emails.filter(email => !isInList(email));
+            setState((prevState) => ({
+                items: [...prevState.items, ...toBeAdded],
+                value: "",
+                error: null
+            }));
+        }
+    };
+    const handleKeyDown = evt => {
+        if (["Enter", "Tab"].includes(evt.key)) {
+            evt.preventDefault();
+            var value = state.value.trim();
+           let emailArray = value.split(',');
+            emailArray.map(item => {
+                if (item && isValid(item, 'cc')) {
+                    setState((prevState) => ({
+                        items: [...prevState.items, item],
+                        value: "",
+                        error: null
+                    }));
+                }
+            })
+        }
+    };
+    const handleDelete = (item) => {
+         setState({
+             items: state.items.filter(i => i !== item),
+             value: "",
+             error: null
+         });
+     };
+
+
+    const handleBcc = (evt) => {
+        setBcc(prevState => {
+            return {
+                items: [...prevState.items],
+                value: evt.target.value,
+                error: null
+            }
+        });
+    };
+    const handlePasteBcc = evt => {
+        evt.preventDefault();
+
+        var paste = evt.clipboardData.getData("text");
+        var emails = paste.match(/[\w\d\.-]+@[\w\d\.-]+\.[\w\d\.-]+/g);
+
+        if (emails) {
+            var toBeAdded = emails.filter(email => !isInList(email));
+            setBcc((prevState) => ({
+                items: [...prevState.items, ...toBeAdded],
+                value: "",
+                error: null
+            }));
+        }
+    };
+    const handleKeyDownBcc = evt => {
+        if (["Enter", "Tab"].includes(evt.key)) {
+            evt.preventDefault();
+            var value = bcc.value.trim();
+            let emailArray = value.split(',');
+            emailArray.map(item => {
+                if (item && isValid(item, 'bcc')) {
+                    setBcc((prevState) => ({
+                        items: [...prevState.items, item],
+                        value: "",
+                        error: null
+                    }));
+                }
+            })
+        }
+    };
+    const handleDeleteBcc = (item) => {
+        setBcc({
+            items: bcc.items.filter(i => i !== item),
+            value: "",
+            error: null
+        });
+    };
+
+
+    const handleRecipients = (evt) => {
+        setRecipients(prevState => {
+            return {
+                items: [...prevState.items],
+                value: evt.target.value,
+                error: null
+            }
+        });
+    };
+    const handlePasteRecipients = evt => {
+        evt.preventDefault();
+
+        var paste = evt.clipboardData.getData("text");
+        var emails = paste.match(/[\w\d\.-]+@[\w\d\.-]+\.[\w\d\.-]+/g);
+
+        if (emails) {
+            var toBeAdded = emails.filter(email => !isInList(email));
+            setRecipients((prevState) => ({
+                items: [...prevState.items, ...toBeAdded],
+                error: null,
+                value: ''
+            }));
+        }
+    };
+    const handleKeyDownRecipients = evt => {
+        if (["Enter", "Tab"].includes(evt.key)) {
+            evt.preventDefault();
+            var value = recipients.value.trim();
+            let emailArray = value.split(',');
+            emailArray.map(item => {
+                if (item && isValid(item, 'recipients')) {
+                    setRecipients((prevState) => ({
+                        items: [...prevState.items, item],
+                        value: "",
+                        error: null,
+                    }));
+                }
+            })
+        }
+    };
+    const handleDeleteRecipients = (item) => {
+        setRecipients({
+            items: recipients.items.filter(i => i !== item),
+            value: "",
+            error: null,
+        });
+    };
+
+    const [email, setEmail] = useState<string>('');
+
+    const addReplayEmail = (event) => {
+        if (!isEmail(event.target.value)) {
+            return `${event.target.value} is not a valid email address.`;
+        } else {
+            setEmail(event.target.value);
+        }
+    }
     return (
         <Box className={styles.mailBox}>
             <Flex justifyContent={'space-between'} flexDir={'column'} height={'100%'}>
@@ -65,7 +295,7 @@ export function Mail(props: MailTabProps) {
                               marginBottom={'15'} padding={'12px 20px'}>
                             <Flex alignItems={'center'} gap={2}>
                                 <div className={styles.closeIcon} onClick={() => props.show(false)}><CloseIcon/></div>
-                                <div className={`${styles.actionIcon} ${index === 0 ? styles.disabled : '' }`}
+                                <div className={`${styles.actionIcon} ${index === 0 ? styles.disabled : ''}`}
                                      onClick={() => showPreThreads('up')}><ChevronUpIcon/></div>
                                 <div
                                     className={`${styles.actionIcon} ${messages?.length - 1 !== index ? '' : styles.disabled}`}
@@ -107,31 +337,89 @@ export function Mail(props: MailTabProps) {
                         </Flex>
                     </div>
                     <div className={styles.mailBody}>
-                        <Text>
-                            {content?.snippet || ''}
-                        </Text>
+                        {/*<Text>*/}
+                        {/*    {content?.snippet || ''}*/}
+                        {/*</Text>*/}
+                        <div dangerouslySetInnerHTML={{__html: emailPart}} >
+                        </div>
                     </div>
                 </div>
                 <div className={styles.mailFooter}>
                     <Flex alignItems={'center'} marginBottom={4} className={styles.mailReplay}>
                         <Heading as={'h1'} size={'sm'}>Reply</Heading>
                         <TriangleDownIcon/>
-                        <Text fontSize={'sm'}>to Lee Clow @chiat.com and 4 others</Text>
+                        {/*<Text fontSize={'sm'}>to Lee Clow @chiat.com and 4 others</Text>*/}
+                        {/*<Input name={'add-email'} placeholder={'Recipients'}  onChange={addReplayEmail} type={'text'}/>*/}
+
+                        {!!recipients?.items?.length && recipients.items.map(item => (
+                            <Chip text={item} click={() => handleDeleteRecipients(item)}/>
+                        ))}
+
+                        <Input width={'auto'} padding={0} height={'23px'}
+                               fontSize={'12px'}
+                               value={recipients.value}
+                               onKeyDown={handleKeyDownRecipients}
+                               onChange={handleRecipients}
+                               onPaste={handlePasteRecipients}
+                               border={0} className={styles.ccInput}
+                        />
+                        {recipients.error && <p className={recipients.error}>{recipients.error}</p>}
                     </Flex>
                     <Box className={styles.replyBox}>
-                        <Flex alignItems={'center'} justifyContent={'space-between'} padding={'8px 10px'}
+                        <Flex justifyContent={'space-between'} padding={'8px 10px'}
                               borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>
-                            <Flex alignItems={'center'} wrap={'wrap'} gap={1} className={styles.replyBoxCC}>
-                                <Heading as={'h1'} size={'sm'} marginRight={1}>CC:</Heading>
-                                <Chip text={'Design Team'} buttonClass={styles.textBlue}/>
-                                <Chip text={'John Doe'}/>
-                                <Chip text={'Lee Clow'}/>
+                            <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>
+                                <Heading as={'h1'} size={'sm'} pt={'6px'} marginRight={1}>CC:</Heading>
+                                <Flex alignItems={'center'} wrap={'wrap'} width={'100%'}>
+                                    {!!state?.items?.length && state.items.map(item => (
+                                        <Chip text={item} click={() => handleDelete(item)}/>
+                                    ))}
+
+                                    <Input width={'auto'} padding={0} height={'23px'}
+                                           fontSize={'12px'}
+                                           value={state.value}
+                                           onKeyDown={handleKeyDown}
+                                           onChange={handleChange}
+                                           onPaste={handlePaste}
+                                           border={0} className={styles.ccInput}
+                                    />
+                                    {state.error && <p className={styles.error}>{state.error}</p>}
+                                </Flex>
                             </Flex>
                             <InfoOutlineIcon/>
                         </Flex>
+
+                        <Flex alignItems={'center'} justifyContent={'space-between'} padding={'8px 10px'}
+                              borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>
+                            <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>
+                                <Heading as={'h1'} pt={'6px'} size={'sm'} marginRight={1}>BCC:</Heading>
+                                <Flex alignItems={'center'} wrap={'wrap'} width={'100%'}>
+                                    {!!bcc?.items?.length && bcc.items.map(item => (
+                                        <Chip text={item} click={() => handleDeleteBcc(item)}/>
+                                    ))}
+
+                                    <Input
+                                        width={'auto'} padding={0} height={'23px'}
+                                        fontSize={'12px'}
+                                        value={bcc.value}
+                                        placeholder=""
+                                        onKeyDown={handleKeyDownBcc}
+                                        onChange={handleBcc}
+                                        onPaste={handlePasteBcc}
+                                        border={0} className={styles.ccInput}
+                                    />
+                                    {bcc.error && <p className={styles.error}>{bcc.error}</p>}
+                                </Flex>
+
+                            </Flex>
+                            <InfoOutlineIcon/>
+                        </Flex>
+
+
                         <div className={styles.replayMessage}>
-                            <Input variant='unstyled'
-                                   placeholder='Reply with anything you like or @mention someone to share this thread'/>
+
+                            <Textarea className={styles.replayMessageArea} padding={0}
+                                      placeholder='Reply with anything you like or @mention someone to share this thread'/>
                             <Flex align={'flex-end'} justify={"space-between"} gap={2}>
                                 <Flex align={'center'} gap={3}>
                                     <FileIcon/>

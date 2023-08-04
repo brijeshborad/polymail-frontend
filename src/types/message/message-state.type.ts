@@ -6,3 +6,5 @@ export declare type InitialMessageStateType = {
     isLoading: boolean
     error: Error | any
 }
+
+

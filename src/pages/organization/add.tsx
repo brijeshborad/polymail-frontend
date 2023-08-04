@@ -9,9 +9,10 @@ import styles from "@/styles/Organization.module.css";
 import {addOrganization} from "@/redux/organizations/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import Router from "next/router";
+import withAuth from "@/components/withAuth";
 
 
-export default function AddOrganization() {
+function AddOrganization() {
     const dispatch = useDispatch();
     const {organization} = useSelector((state: StateType) => state.organizations);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
@@ -62,3 +63,5 @@ export default function AddOrganization() {
         </>
     )
 }
+
+export default withAuth(AddOrganization);

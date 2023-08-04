@@ -25,3 +25,7 @@ export * from './props-types/time.type';
 export * from './props-types/chip.type';
 export * from './props-types/inbox-page.type';
 export * from './props-types/login.type';
+
+// Messages Part
+
+export * from './message/message-part.type';

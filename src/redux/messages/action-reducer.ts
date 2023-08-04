@@ -1,10 +1,10 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {InitialMessageStateType} from "@/types";
+import {InitialMessagePartType, InitialMessageStateType} from "@/types";
 import {Message} from "@/models";
 
 const initialState = {
     messages: [],
-    message: null,
+    message : null,
     isLoading: false,
     error: null,
 } as InitialMessageStateType
@@ -25,11 +25,11 @@ const messagesSlice = createSlice({
         getMessageParts: (state: InitialMessageStateType, action: PayloadAction<{ id: string }>) => {
             return {...state, message: null, isLoading: true, error: null}
         },
-        getMessagePartsSuccess: (state: InitialMessageStateType, {payload: message}: PayloadAction<{ message: Message }>) => {
+        getMessagePartsSuccess: (state: InitialMessageStateType, {payload: message}: PayloadAction<{ message: any }>) => {
             return {...state, message, isLoading: false, error: null}
         },
         getMessagePartsError: (state: InitialMessageStateType, {payload: error}: PayloadAction<{ error: any }>) => {
-            return {...state, message: null, isLoading: false, error}
+            return {...state, messages: null, isLoading: false, error}
         }
     }
 })

@@ -33,9 +33,15 @@ export function* watchGetMessages() {
     yield takeLatest(getAllMessages.type, getMessages);
 }
 
+export function* watchGetMessagesPart() {
+    yield takeLatest(getMessageParts.type, getMessagePart);
+}
+
+
 export default function* rootSaga() {
     yield all([
         fork(watchGetMessages),
+        fork(watchGetMessagesPart),
     ]);
 }
 

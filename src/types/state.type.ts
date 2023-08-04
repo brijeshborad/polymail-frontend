@@ -7,4 +7,5 @@ export declare type StateType = {
     messages: InitialMessageStateType,
     organizations: InitialOrganizationStateType,
     accounts: InitialAccountStateType,
+    messagePart: InitialAccountStateType,
 }
