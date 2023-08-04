@@ -24,7 +24,9 @@ export function Mail(props: MailTabProps) {
     const dispatch = useDispatch();
 
     useEffect(() => {
+        if (selectedAccount && selectedAccount.id) {
             dispatch(getSyncAccount({id: selectedAccount.id}));
+        }
     }, [selectedAccount])
 
     useEffect(() => {
