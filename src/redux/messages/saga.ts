@@ -7,9 +7,10 @@ import {
     getAllMessagesError,
     getAllMessagesSuccess, getMessageParts, getMessagePartsError,
     getMessagePartsSuccess, createDraft, createDraftSuccess, createDraftError, sendMessage, sendMessageSuccess, sendMessageError,
-    updateDraft, updateDraftSuccess, updateDraftError,
+    updateDraft, updateDraftSuccess, updateDraftError, updatePartialMessage,
     updateCurrentDraft, updateCurrentDraftSuccess, updateCurrentDraftError
 } from "@/redux/messages/action-reducer";
+import {MessageRequestBody} from "@/models";
 
 function* getMessages({payload: {thread}}: PayloadAction<{ thread?: string }>) {
     try {
@@ -48,6 +49,16 @@ function* updateCurrentDrafts({payload: {id, body}}: PayloadAction<{ id: string,
         const response: AxiosResponse = yield ApiService.callPatch(`messages/${id}`, {
             newBody,
         });
+        yield put(updateCurrentDraftSuccess(response));
+    } catch (error: AxiosError | any) {
+        yield put(updateCurrentDraftError(error.response.data));
+    }
+}
+
+function* patchPartialMessage({payload: {id, body}}: PayloadAction<{ id: string, body: MessageRequestBody }>) {
+    try {
+        let newBody = body;
+        const response: AxiosResponse = yield ApiService.callPatch(`messages/${id}`, body);
         yield put(updateCurrentDraftSuccess(response));
     } catch (error: AxiosError | any) {
         yield put(updateCurrentDraftError(error.response.data));
@@ -95,9 +106,13 @@ export function* watchSendDraftMessage() {
 export function* watchUpdateDraftMessage() {
     yield takeLatest(updateDraft.type, updateNewDraft);
 }
+//
+// export function* watchUpdateCurrentDraftMessage() {
+//     yield takeLatest(updateCurrentDraft.type, updateCurrentDrafts);
+// }
 
 export function* watchUpdateCurrentDraftMessage() {
-    yield takeLatest(updateCurrentDraft.type, updateCurrentDrafts);
+    yield takeLatest(updatePartialMessage.type, patchPartialMessage);
 }
 
 export default function* rootSaga() {

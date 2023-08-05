@@ -15,18 +15,20 @@ import {
     getMessageParts,
     sendMessage,
     updateCurrentDraft,
-    updateDraft
+    updateDraft,
+    updateMessageState
 } from "@/redux/messages/action-reducer";
 // import {getSyncAccount} from "@/redux/accounts/action-reducer";
 import {Message, Thread} from "@/models";
 import {SpinnerUI} from '@/components/spinner';
+import {ReplyBox} from "@/components/inbox/reply-box";
 
 export function Mail(props: MailTabProps) {
     const [content, setContent] = useState<Message>(null);
     const [index, setIndex] = useState<number | null>(null);
     const [showLoader, setShowLoader] = useState<boolean>(false);
     const [selectedThread, setSelectedThread] = useState<Thread>(null);
-    const {messages, message, draft, isCompose} = useSelector((state: StateType) => state.messages);
+    const {messages, message, messagePart, draft, isCompose} = useSelector((state: StateType) => state.messages);
     const {account, selectedAccount} = useSelector((state: StateType) => state.accounts);
 
     const dispatch = useDispatch();
@@ -65,15 +67,15 @@ export function Mail(props: MailTabProps) {
     useEffect(() => {
         setShowLoader(true);
 
-        if (message && message.data) {
-            let decoded = Buffer.from(message.data, 'base64').toString('ascii');
+        if (messagePart && messagePart.data) {
+            let decoded = Buffer.from(messagePart.data, 'base64').toString('ascii');
             // const binaryString = atob((`data:text/html;base64,${message.data}`).split(',')[1]); // Binary data string
             const blob = new Blob([decoded], {type: "text/html"});
             const blobUrl = window.URL.createObjectURL(blob);
             setEmailPart(blobUrl);
             setShowLoader(false);
         }
-    }, [message])
+    }, [messagePart])
 
     const blobToDataUrl = (blob) => {
         return new Promise(r => {
@@ -86,8 +88,10 @@ export function Mail(props: MailTabProps) {
     useEffect(() => {
         if (index !== null) {
             setContent(messages[index]);
+            dispatch(updateMessageState({selectedMessage: messages[index]}));
         }
     }, [index, messages])
+
     useEffect(() => {
         setShowLoader(true);
         if (content) {
@@ -378,15 +382,6 @@ export function Mail(props: MailTabProps) {
     const updateDraftMessages = (messageBox) => {
         if (content && content.id) {
             let body = {
-                Subject: 'First email',
-                To: recipients?.items,
-                Body: '',
-                Attachments: [
-                    {
-                        filename: 'attachment.txt',
-                        data: 'VGhpcyBpcyBhbiBhdHRhY2htZW50Lgo='
-                    }
-                ],
                 Mailboxes: [
                     messageBox
                 ],
@@ -473,100 +468,7 @@ export function Mail(props: MailTabProps) {
 
                 </div>
 
-                <div className={styles.mailFooter}>
-                    <Flex marginBottom={4} className={styles.mailReply} alignItems={'center'}>
-                        <Heading as={'h1'} pr={'10px'} size={'sm'}>To</Heading>
-                        {/*<TriangleDownIcon mt={'9px'}/>*/}
-                        <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} className={styles.replyBoxCC} gap={2}>
-                            {!!recipients?.items?.length && recipients.items.map(item => (
-                                <Chip text={item} click={() => handleDeleteRecipients(item)}/>
-                            ))}
-
-                            <Input width={'auto'} padding={0} height={'23px'}
-                                   fontSize={'12px'}
-                                   value={recipients.value}
-                                   onKeyDown={handleKeyDownRecipients}
-                                   onChange={handleRecipients}
-                                   onPaste={handlePasteRecipients}
-                                   border={0} className={styles.ccInput}
-                                   placeholder={'Recipient\'s Email'}
-                            />
-
-                            {recipients.error && <p className={styles.error}>{recipients.error}</p>}
-                        </Flex>
-                    </Flex>
-
-                    <Box className={styles.replyBox}>
-                        <Flex justifyContent={'space-between'} padding={'8px 10px'}
-                              borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>
-                            <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>
-                                <Heading as={'h1'} size={'sm'} pt={'6px'} marginRight={1}>CC:</Heading>
-                                <Flex alignItems={'center'} wrap={'wrap'} width={'100%'}>
-                                    {!!state?.items?.length && state.items.map(item => (
-                                        <Chip text={item} click={() => handleDelete(item)}/>
-                                    ))}
-
-                                    <Input width={'auto'} padding={0} height={'23px'}
-                                           fontSize={'12px'}
-                                           value={state.value}
-                                           onKeyDown={handleKeyDown}
-                                           onChange={handleChange}
-                                           onPaste={handlePaste}
-                                           border={0} className={styles.ccInput}
-                                    />
-                                    {state.error && <p className={styles.error}>{state.error}</p>}
-                                </Flex>
-                            </Flex>
-                            <InfoOutlineIcon/>
-                        </Flex>
-
-                        {/*<Flex alignItems={'center'} justifyContent={'space-between'} padding={'8px 10px'}*/}
-                        {/*      borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>*/}
-                        {/*    <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>*/}
-                        {/*        <Heading as={'h1'} pt={'6px'} size={'sm'} marginRight={1}>BCC:</Heading>*/}
-                        {/*        <Flex alignItems={'center'} wrap={'wrap'} width={'100%'}>*/}
-                        {/*            {!!bcc?.items?.length && bcc.items.map(item => (*/}
-                        {/*                <Chip text={item} click={() => handleDeleteBcc(item)}/>*/}
-                        {/*            ))}*/}
-
-                        {/*            <Input*/}
-                        {/*                width={'auto'} padding={0} height={'23px'}*/}
-                        {/*                fontSize={'12px'}*/}
-                        {/*                value={bcc.value}*/}
-                        {/*                placeholder=""*/}
-                        {/*                onKeyDown={handleKeyDownBcc}*/}
-                        {/*                onChange={handleBcc}*/}
-                        {/*                onPaste={handlePasteBcc}*/}
-                        {/*                border={0} className={styles.ccInput}*/}
-                        {/*            />*/}
-                        {/*            {bcc.error && <p className={styles.error}>{bcc.error}</p>}*/}
-                        {/*        </Flex>*/}
-
-                        {/*    </Flex>*/}
-                        {/*    <InfoOutlineIcon/>*/}
-                        {/*</Flex>*/}
-
-
-                        <div className={styles.replayMessage}>
-
-                            <Textarea className={styles.replayMessageArea} padding={0} onBlur={(e) => sendToDraft(e)}
-                                      placeholder='Reply with anything you like or @mention someone to share this thread'/>
-                            <Flex align={'flex-end'} justify={"space-between"} gap={2}>
-                                <Flex align={'center'} gap={3}>
-                                    <FileIcon/>
-                                    <LinkIcon/>
-                                    <TextIcon/>
-                                    <EmojiIcon/>
-                                </Flex>
-                                <Flex align={'center'} gap={2}>
-                                    <Button className={styles.replyButton} colorScheme='blue'
-                                            onClick={() => sendMessages()} isDisabled={!isToEmailAdded}
-                                            rightIcon={<ChevronDownIcon/>}>Reply all</Button>
-                                </Flex>
-                            </Flex>
-                        </div>
-                    </Box>
-                </div>
+               <ReplyBox currentMessage={content}/>
             </Flex>
             }
 

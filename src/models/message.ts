@@ -34,3 +34,17 @@ export interface MessageHeaders {
     name?: string,
     value?: string
 }
+
+export interface MessageAttachment {
+    filename: string,
+    data?: string
+}
+
+export interface MessageRequestBody {
+    subject?: string,
+    to?: string[],
+    body? :string,
+    attachments:MessageAttachment[],
+    mailboxes: string[],
+
+}

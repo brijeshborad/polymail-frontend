@@ -1,4 +1,12 @@
-import {InitialProjectState, InitialAuthState, InitialMessageStateType, InitialThreadStateType, InitialOrganizationStateType, InitialAccountStateType, InitialMessagePartType} from "./";
+import {
+    InitialAccountStateType,
+    InitialAuthState,
+    InitialMessagePartType,
+    InitialMessageStateType,
+    InitialOrganizationStateType,
+    InitialProjectState,
+    InitialThreadStateType
+} from "./";
 
 export declare type StateType = {
     projects: InitialProjectState

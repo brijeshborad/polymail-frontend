@@ -1,10 +1,12 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {InitialMessageStateType} from "@/types";
-import {Message} from "@/models";
+import {Message, MessageRequestBody} from "@/models";
 
 const initialState = {
     messages: [],
     message : null,
+    selectedMessage : null,
+    messagePart : null,
     draft: null,
     sendMessage: null,
     isLoading: false,
@@ -25,15 +27,17 @@ const messagesSlice = createSlice({
         getAllMessagesError: (state: InitialMessageStateType, {payload: error}: PayloadAction<{ error: any }>) => {
             return {...state, messages: [], isLoading: false, error}
         },
+
         getMessageParts: (state: InitialMessageStateType, action: PayloadAction<{ id: string }>) => {
-            return {...state, message: null, isLoading: true, error: null}
+            return {...state, messagePart: null, isLoading: true, error: null}
         },
-        getMessagePartsSuccess: (state: InitialMessageStateType, {payload: message}: PayloadAction<{ message: any }>) => {
-            return {...state, message, isLoading: false, error: null}
+        getMessagePartsSuccess: (state: InitialMessageStateType, {payload: messagePart}: PayloadAction<{ messagePart: any }>) => {
+            return {...state, messagePart, isLoading: false, error: null}
         },
         getMessagePartsError: (state: InitialMessageStateType, {payload: error}: PayloadAction<{ error: any }>) => {
-            return {...state, messages: null, isLoading: false, error}
+            return {...state, messagePart: null, isLoading: false, error}
         },
+
         createDraft: (state: InitialMessageStateType, action: PayloadAction<{ id: string}>) => {
             return {...state, draft: null, error: null, isLoading: true}
         },
@@ -43,6 +47,7 @@ const messagesSlice = createSlice({
         createDraftError: (state: InitialMessageStateType, {payload: error}: PayloadAction<any>) => {
             return {...state, draft: null, error, isLoading: false}
         },
+
         sendMessage: (state: InitialMessageStateType, action: PayloadAction<{ id: string}>) => {
             return {...state, sendMessage: null, error: null, isLoading: true}
         },
@@ -52,6 +57,17 @@ const messagesSlice = createSlice({
         sendMessageError: (state: InitialMessageStateType, {payload: error}: PayloadAction<any>) => {
             return {...state, sendMessage: null, error, isLoading: false}
         },
+
+        updatePartialMessage: (state: InitialMessageStateType, action: PayloadAction<{ id: string, body: MessageRequestBody}>) => {
+            return {...state, message: null, error: null, isLoading: true}
+        },
+        updatePartialMessageSuccess: (state: InitialMessageStateType, {payload: message}: PayloadAction<Message>) => {
+            return {...state, message, error: null, isLoading: false}
+        },
+        updatePartialMessageError: (state: InitialMessageStateType, {payload: error}: PayloadAction<any>) => {
+            return {...state, message: null, error, isLoading: false}
+        },
+
         updateDraft: (state: InitialMessageStateType, action: PayloadAction<{ id: string, body: object}>) => {
             return {...state, draft: null, error: null, isLoading: true}
         },
@@ -61,6 +77,7 @@ const messagesSlice = createSlice({
         updateDraftError: (state: InitialMessageStateType, {payload: error}: PayloadAction<any>) => {
             return {...state, draft: null, error, isLoading: false}
         },
+
         updateCurrentDraft: (state: InitialMessageStateType, action: PayloadAction<{ id: string, body: object}>) => {
             return {...state, draft: null, error: null, isLoading: true}
         },
@@ -70,6 +87,7 @@ const messagesSlice = createSlice({
         updateCurrentDraftError: (state: InitialMessageStateType, {payload: error}: PayloadAction<any>) => {
             return {...state, draft: null, error, isLoading: false}
         },
+
         updateMessageState: (state: InitialMessageStateType, action: PayloadAction<any>) => {
             return {...state, ...action.payload}
         },
@@ -90,6 +108,11 @@ export const {
     sendMessageSuccess,
     sendMessageError,
     updateDraft,
+
+    updatePartialMessage,
+    updatePartialMessageSuccess,
+    updatePartialMessageError,
+
     updateDraftSuccess,
     updateDraftError,
     updateCurrentDraft,
