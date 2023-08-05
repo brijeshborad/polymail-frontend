@@ -5,7 +5,8 @@ export declare type InitialMessageStateType = {
     message: Message | null,
     draft: MessageDraft | null,
     sendMessage: MessageDraft | null,
-    isLoading: boolean
+    isLoading: boolean,
+    isCompose: boolean,
     error: Error | any
 }
 

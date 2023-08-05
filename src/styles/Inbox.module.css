@@ -338,25 +338,25 @@
     cursor: pointer;
 }
 
-.mailReplay h1 {
+.mailReply h1 {
     font-weight: 500;
     font-size: 13px;
 }
 
-.mailReplay svg {
+.mailReply svg {
     width: 10px;
     height: 10px;
     margin-right: 10px;
     margin-left: 5px;
 }
 
-.mailReplay p {
+.mailReply p {
     font-size: 13px;
     font-weight: 500;
     color: rgba(0, 0, 0, 0.6);
 }
 
-.mailReplay .error {
+.mailReply .error {
     color: #FF0000;
 }
 
@@ -417,6 +417,11 @@
 .syncButton {
     text-align: end;
     margin-bottom: 20px;
+}
+.composeButton svg {
+    width: 2em;
+    height: 2em;
+    cursor: pointer;
 }
 
 .replayMailBox {

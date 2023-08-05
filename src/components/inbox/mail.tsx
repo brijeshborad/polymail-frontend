@@ -1,7 +1,7 @@
 import styles from "@/styles/Inbox.module.css";
 import styles2 from "@/styles/common.module.css";
 import {Box, Button, Flex, Heading, Input, Text, Textarea, Tooltip} from "@chakra-ui/react";
-import {ChevronDownIcon, ChevronUpIcon, CloseIcon, InfoOutlineIcon, TriangleDownIcon} from "@chakra-ui/icons";
+import {ChevronDownIcon, ChevronUpIcon, CloseIcon, InfoOutlineIcon} from "@chakra-ui/icons";
 import {Time} from "@/components";
 import {ArchiveIcon, EmojiIcon, FileIcon, FolderIcon, LinkIcon, TextIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
 import Image from "next/image";
@@ -26,7 +26,7 @@ export function Mail(props: MailTabProps) {
     const [index, setIndex] = useState<number | null>(null);
     const [showLoader, setShowLoader] = useState<boolean>(false);
     const [selectedThread, setSelectedThread] = useState<Thread>(null);
-    const {messages, error, message, draft} = useSelector((state: StateType) => state.messages);
+    const {messages, message, draft, isCompose} = useSelector((state: StateType) => state.messages);
     const {account, selectedAccount} = useSelector((state: StateType) => state.accounts);
 
     const dispatch = useDispatch();
@@ -350,8 +350,11 @@ export function Mail(props: MailTabProps) {
         if (selectedAccount && selectedAccount.id) {
             if (drafts && drafts.id) {
                 let body = {
-                    body: event.target.value,
+                    Subject: 'First email',
+                    To: recipients?.items,
+                    Body: event.target.value,
                 }
+
                 dispatch(updateCurrentDraft({id: drafts.id, body}));
             } else {
                 dispatch(createDraft({id: selectedAccount.id}));
@@ -392,10 +395,15 @@ export function Mail(props: MailTabProps) {
         }
     }
 
+    const onClose = () => {
+        setSelectedThread(null);
+        props.onClose();
+    }
+
     return (
         <Box className={styles.mailBox}>
 
-            {selectedThread && !props.compose &&
+            {selectedThread && !isCompose &&
             <Flex justifyContent={'space-between'} flexDir={'column'} height={'100%'}>
                 <div className={styles.mailBoxFLex}>
 
@@ -404,7 +412,7 @@ export function Mail(props: MailTabProps) {
                               borderBottom={'1px solid rgba(8, 22, 47, 0.1)'}
                               marginBottom={'15'} padding={'12px 20px'}>
                             <Flex alignItems={'center'} gap={2}>
-                                <div className={styles.closeIcon} onClick={() => setSelectedThread(null)}><CloseIcon/>
+                                <div className={styles.closeIcon} onClick={() => onClose()}><CloseIcon/>
                                 </div>
                                 <div className={`${styles.actionIcon} ${index === 0 ? styles.disabled : ''}`}
                                      onClick={() => showPreThreads('up')}><ChevronUpIcon/></div>
@@ -466,8 +474,8 @@ export function Mail(props: MailTabProps) {
                 </div>
 
                 <div className={styles.mailFooter}>
-                    <Flex marginBottom={4} className={styles.mailReplay}>
-                        <Heading as={'h1'} pt={'6px'} pr={'10px'} size={'sm'}>To</Heading>
+                    <Flex marginBottom={4} className={styles.mailReply} alignItems={'center'}>
+                        <Heading as={'h1'} pr={'10px'} size={'sm'}>To</Heading>
                         {/*<TriangleDownIcon mt={'9px'}/>*/}
                         <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} className={styles.replyBoxCC} gap={2}>
                             {!!recipients?.items?.length && recipients.items.map(item => (
@@ -561,13 +569,14 @@ export function Mail(props: MailTabProps) {
                 </div>
             </Flex>
             }
-            {!selectedThread && !props.compose &&
-            <Flex className={styles.mailBoxHeight} justifyContent={'center'} alignItems={'center'} flexDir={'column'}
+
+            {!selectedThread && !isCompose &&
+            <Flex justifyContent={'center'} alignItems={'center'} flexDir={'column'}
                   height={'100%'}>
                 <Heading as='h3' size='md'>Click on a thread from list to view messages!</Heading>
             </Flex>}
 
-            {props.compose &&
+            {isCompose &&
             <Flex justifyContent={'space-between'} flexDir={'column'} height={'100%'}
                   className={styles.messageNotSelectReplay}>
                 <div className={styles.mailBoxFLex}>
@@ -575,12 +584,12 @@ export function Mail(props: MailTabProps) {
                         <Flex justifyContent={'space-between'} wrap={'wrap'} align={'center'}
                               borderBottom={'1px solid rgba(8, 22, 47, 0.1)'} padding={'12px 20px'}>
                             <Flex alignItems={'center'} gap={2}>
-                                <div className={styles.closeIcon} onClick={() => setSelectedThread(null)}><CloseIcon/>
+                                <div className={styles.closeIcon} onClick={() => onClose()}><CloseIcon/>
                                 </div>
 
                             </Flex>
                         </Flex>
-                        <Flex marginBottom={4} pl={'10px'} pt={'5px'} className={styles.mailReplay}>
+                        <Flex marginBottom={4} pl={'10px'} pt={'5px'} className={styles.mailReply}>
                             <Heading as={'h1'} pt={'6px'} pr={'10px'} size={'sm'}>To</Heading>
                             <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} className={styles.replyBoxCC}
                                   gap={2}>

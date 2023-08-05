@@ -12,21 +12,6 @@ import dayjs from "dayjs";
 
 export default function InboxTab(props: InboxTabProps) {
 
-    const getOneDayAgo = (newDate) => {
-        const date1 = dayjs(newDate);
-        const date2 = dayjs();
-
-        let days = date2.diff(date1, 'day');
-        if (days < 1) {
-            return `${date2.diff(date1, 'hour')} hours ago`;
-        } else if (date2.diff(date1, 'hour') < 1) {
-            return `${date2.diff(date1, 'minute')} minutes ago`;
-        } else if (date2.diff(date1, 'minute') < 1) {
-            return `${date2.diff(date1, 'second')} seconds`;
-        } else {
-            return `${days} days ago`;
-        }
-    };
     return (
         <>
             {
@@ -53,7 +38,7 @@ export default function InboxTab(props: InboxTabProps) {
                     </Flex>
                 </div>
             }
-            {props.showLoader}
+
             {props.showLoader && <SpinnerUI />}
             <div>
                 <Flex direction={'column'} gap={1} marginTop={5} className={styles.mailList}>

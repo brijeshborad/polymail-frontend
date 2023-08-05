@@ -1,5 +1,5 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {InitialMessagePartType, InitialMessageStateType, InitialOrganizationStateType} from "@/types";
+import {InitialMessageStateType} from "@/types";
 import {Message} from "@/models";
 
 const initialState = {
@@ -9,6 +9,7 @@ const initialState = {
     sendMessage: null,
     isLoading: false,
     error: null,
+    isCompose: false
 } as InitialMessageStateType
 
 const messagesSlice = createSlice({
@@ -69,6 +70,9 @@ const messagesSlice = createSlice({
         updateCurrentDraftError: (state: InitialMessageStateType, {payload: error}: PayloadAction<any>) => {
             return {...state, draft: null, error, isLoading: false}
         },
+        updateMessageState: (state: InitialMessageStateType, action: PayloadAction<any>) => {
+            return {...state, ...action.payload}
+        },
     }
 })
 
@@ -90,6 +94,7 @@ export const {
     updateDraftError,
     updateCurrentDraft,
     updateCurrentDraftSuccess,
-    updateCurrentDraftError
+    updateCurrentDraftError,
+    updateMessageState
 } = messagesSlice.actions
 export default messagesSlice.reducer

@@ -1,4 +1,4 @@
-import {InitialProjectState, InitialAuthState, InitialMessageStateType, InitialThreadStateType, InitialOrganizationStateType, InitialAccountStateType} from "./";
+import {InitialProjectState, InitialAuthState, InitialMessageStateType, InitialThreadStateType, InitialOrganizationStateType, InitialAccountStateType, InitialMessagePartType} from "./";
 
 export declare type StateType = {
     projects: InitialProjectState
@@ -7,5 +7,5 @@ export declare type StateType = {
     messages: InitialMessageStateType,
     organizations: InitialOrganizationStateType,
     accounts: InitialAccountStateType,
-    messagePart: InitialAccountStateType,
+    messagePart: InitialMessagePartType,
 }

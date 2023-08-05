@@ -10,8 +10,7 @@ export declare type InboxTabProps = {
 export declare type MailTabProps = {
     show: (val: boolean) => void;
     thread?: Thread,
-    compose: boolean,
-    setCompose: boolean
+    onClose: (val?: any) => void;
 }
 
 export declare type MailsTabProps = {

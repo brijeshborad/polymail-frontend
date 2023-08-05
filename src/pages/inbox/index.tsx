@@ -1,19 +1,19 @@
 import React, {useEffect, useState} from "react";
-import {Mail, Mails, Projects} from "@/components/inbox";
+import {Mail, Mails} from "@/components/inbox";
 import styles from "@/styles/Home.module.css";
 import {Grid, GridItem,} from "@chakra-ui/react";
 import withAuth from "@/components/withAuth";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {Thread} from "@/models";
+import {updateMessageState} from "@/redux/messages/action-reducer";
 
 function Inbox() {
     const [isShow, setIsShow] = useState<boolean>(false);
     const [size, setSize] = useState<number>(0);
     const [thread, setThread] = useState<Thread>(null);
-    const [compose, setCompose] = useState<boolean>(false);
     const [userData, setUserData] = useState<any>(null);
-
+    const dispatch = useDispatch();
     const {user} = useSelector((state: StateType) => state.auth);
 
     useEffect(() => {
@@ -36,8 +36,9 @@ function Inbox() {
         setThread(selectedThread);
     }
 
-    const showCompose = (selectedThread: any) => {
-        setCompose(selectedThread);
+    const onClose = () => {
+        setThread(null);
+        dispatch(updateMessageState({isCompose: false}))
     }
 
     if (!userData) {
@@ -52,10 +53,10 @@ function Inbox() {
                 <Grid className={styles.mailGrid} templateColumns='30% auto' gap={6}>
                     <GridItem w='100%'>
                         {((size < 991 && !isShow) || size > 991) &&
-                        <Mails show={setIsShow} handleContent={handleContent} showCompose={showCompose}/>}
+                        <Mails show={setIsShow} handleContent={handleContent} />}
                     </GridItem>
                     <GridItem w='100%'>
-                        {((size < 991 && isShow) || size > 991) && <Mail show={setIsShow} thread={thread} compose={compose} setCompose={setCompose}/>}
+                        {((size < 991 && isShow) || size > 991) && <Mail show={setIsShow} thread={thread} onClose={onClose}/>}
                     </GridItem>
                 </Grid>
             </div>
