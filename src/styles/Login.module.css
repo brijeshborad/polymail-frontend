@@ -51,6 +51,15 @@
     background: #761799;
 }
 
+.loginBox .loginAlert {
+    border-radius: 10px;
+}
+
+.loginBox .loginAlert h4 {
+    font-size: 15px;
+    font-weight: 500;
+}
+
 .loginInfo {
     margin-top: 10px;
     color: rgb(126, 143, 159);

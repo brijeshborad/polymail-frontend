@@ -131,7 +131,7 @@
 }
 
 .mailList {
-    max-height: calc(100vh - 225px);
+    max-height: calc(100vh - 295px);
     overflow-y: auto;
 }
 
@@ -208,11 +208,7 @@
 .mailBox {
     border: 1px solid rgba(8, 22, 47, 0.16);
     border-radius: 16px;
-    min-height: calc(100vh - 110px);
-}
-
-.mailBox .mailBoxHeight {
-    min-height: calc(100vh - 110px);
+    height: 100%;
 }
 
 .mailBox svg {
@@ -225,12 +221,16 @@
     padding: 24px;
     background: rgba(0, 0, 0, 0.03);
     border-radius: 8px;
-    margin: 10px 20px;
+    margin: 10px 20px 0;
     font-size: 16px;
     line-height: 1.5;
-    height: calc(100vh - 510px);
+    height: calc(100% - 145px);
     overflow-y: auto;
-    width: 100%;
+    width: calc(100% - 40px);
+}
+
+.mailBoxFLex {
+    flex: 1;
 }
 
 .replyBox {
@@ -394,12 +394,14 @@
     color: #000000;
 }
 
-.replayMessage .replyButton {
+.replayMessage .replyButton,
+.syncButton .replyButton {
     background-color: #266DF0;
     color: #ffffff;
 }
 
-.replayMessage .replyButton:hover {
+.replayMessage .replyButton:hover,
+.syncButton .replyButton:hover {
     background-color: #266DF0;
 }
 
@@ -410,6 +412,39 @@
 .actionIcon.disabled {
     background-color: rgba(0, 0, 0, 0.1);
     cursor: not-allowed;
+}
+
+.syncButton {
+    text-align: end;
+    margin-bottom: 20px;
+}
+
+.replayMailBox {
+    padding: 10px;
+}
+
+.replayMailBox .replayMessageArea {
+    margin-bottom: 10px;
+    color: #000000;
+    font-size: 13px;
+    border: 0;
+    height: calc(100% - 150px);
+    border-radius: 0;
+}
+
+
+.replayMailBox .replayMessageArea:focus-visible {
+    border: 0;
+    box-shadow: none;
+}
+
+.messageNotSelectReplay .replyBox {
+    border: 0;
+    height: 100%;
+}
+
+.messageNotSelectReplay .replayMailBox {
+    height: 100%;
 }
 
 /* Mail Box End */

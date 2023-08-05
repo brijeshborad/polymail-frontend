@@ -11,6 +11,7 @@ function Inbox() {
     const [isShow, setIsShow] = useState<boolean>(false);
     const [size, setSize] = useState<number>(0);
     const [thread, setThread] = useState<Thread>(null);
+    const [compose, setCompose] = useState<boolean>(false);
     const [userData, setUserData] = useState<any>(null);
 
     const {user} = useSelector((state: StateType) => state.auth);
@@ -35,6 +36,10 @@ function Inbox() {
         setThread(selectedThread);
     }
 
+    const showCompose = (selectedThread: any) => {
+        setCompose(selectedThread);
+    }
+
     if (!userData) {
         return <></>;
     }
@@ -47,10 +52,10 @@ function Inbox() {
                 <Grid className={styles.mailGrid} templateColumns='30% auto' gap={6}>
                     <GridItem w='100%'>
                         {((size < 991 && !isShow) || size > 991) &&
-                        <Mails show={setIsShow} handleContent={handleContent}/>}
+                        <Mails show={setIsShow} handleContent={handleContent} showCompose={showCompose}/>}
                     </GridItem>
                     <GridItem w='100%'>
-                        {((size < 991 && isShow) || size > 991) && <Mail show={setIsShow} thread={thread}/>}
+                        {((size < 991 && isShow) || size > 991) && <Mail show={setIsShow} thread={thread} compose={compose} setCompose={setCompose}/>}
                     </GridItem>
                 </Grid>
             </div>

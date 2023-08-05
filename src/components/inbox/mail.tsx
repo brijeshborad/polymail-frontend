@@ -1,7 +1,7 @@
 import styles from "@/styles/Inbox.module.css";
 import styles2 from "@/styles/common.module.css";
 import {Box, Button, Flex, Heading, Input, Text, Textarea, Tooltip} from "@chakra-ui/react";
-import {ChevronDownIcon, ChevronUpIcon, CloseIcon, TriangleDownIcon} from "@chakra-ui/icons";
+import {ChevronDownIcon, ChevronUpIcon, CloseIcon, InfoOutlineIcon, TriangleDownIcon} from "@chakra-ui/icons";
 import {Time} from "@/components";
 import {ArchiveIcon, EmojiIcon, FileIcon, FolderIcon, LinkIcon, TextIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
 import Image from "next/image";
@@ -9,27 +9,27 @@ import {Chip} from "@/components/chip";
 import {MailTabProps, StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {getAllMessages, getMessageParts} from "@/redux/messages/action-reducer";
-import {getSyncAccount} from "@/redux/accounts/action-reducer";
+import {
+    createDraft,
+    getAllMessages,
+    getMessageParts,
+    sendMessage,
+    updateCurrentDraft,
+    updateDraft
+} from "@/redux/messages/action-reducer";
+// import {getSyncAccount} from "@/redux/accounts/action-reducer";
 import {Message, Thread} from "@/models";
 import {SpinnerUI} from '@/components/spinner';
 
 export function Mail(props: MailTabProps) {
-
     const [content, setContent] = useState<Message>(null);
     const [index, setIndex] = useState<number | null>(null);
     const [showLoader, setShowLoader] = useState<boolean>(false);
     const [selectedThread, setSelectedThread] = useState<Thread>(null);
-    const {messages, error, message} = useSelector((state: StateType) => state.messages);
+    const {messages, error, message, draft} = useSelector((state: StateType) => state.messages);
     const {account, selectedAccount} = useSelector((state: StateType) => state.accounts);
 
     const dispatch = useDispatch();
-
-    useEffect(() => {
-        if (selectedAccount && selectedAccount.id) {
-            dispatch(getSyncAccount({id: selectedAccount.id}));
-        }
-    }, [selectedAccount]);
 
     useEffect(() => {
         setSelectedThread(props.thread);
@@ -43,7 +43,7 @@ export function Mail(props: MailTabProps) {
     }, [account])
 
     const getAllThreadMessages = useCallback(() => {
-        if(selectedThread?.id) {
+        if (selectedThread?.id) {
             dispatch(getAllMessages({thread: selectedThread.id}));
         }
     }, [dispatch, selectedThread])
@@ -63,21 +63,25 @@ export function Mail(props: MailTabProps) {
     const [emailPart, setEmailPart] = useState("");
 
     useEffect(() => {
+        setShowLoader(true);
+
         if (message && message.data) {
             let decoded = Buffer.from(message.data, 'base64').toString('ascii');
             // const binaryString = atob((`data:text/html;base64,${message.data}`).split(',')[1]); // Binary data string
             const blob = new Blob([decoded], {type: "text/html"});
             const blobUrl = window.URL.createObjectURL(blob);
             setEmailPart(blobUrl);
-
+            setShowLoader(false);
         }
-        setShowLoader(true);
     }, [message])
 
     const blobToDataUrl = (blob) => {
-        return new Promise(r => {let a=new FileReader(); a.onload=r; a.readAsDataURL(blob)}).then(e => e.target.result);
+        return new Promise(r => {
+            let a = new FileReader();
+            a.onload = r;
+            a.readAsDataURL(blob)
+        }).then(e => e.target.result);
     }
-
 
     useEffect(() => {
         if (index !== null) {
@@ -85,9 +89,10 @@ export function Mail(props: MailTabProps) {
         }
     }, [index, messages])
     useEffect(() => {
+        setShowLoader(true);
         if (content) {
             dispatch(getMessageParts({id: content.id}));
-
+            setShowLoader(false);
         }
     }, [content])
 
@@ -120,7 +125,6 @@ export function Mail(props: MailTabProps) {
         value: "",
         error: null
     });
-
 
     const isInList = (email, type) => {
         if (type == 'cc') {
@@ -218,7 +222,6 @@ export function Mail(props: MailTabProps) {
         });
     };
 
-
     const handleBcc = (evt) => {
         setBcc(prevState => {
             return {
@@ -267,7 +270,6 @@ export function Mail(props: MailTabProps) {
         });
     };
 
-
     const handleRecipients = (evt) => {
         setRecipients(prevState => {
             return {
@@ -292,7 +294,6 @@ export function Mail(props: MailTabProps) {
             }));
         }
     };
-
     const handleKeyDownRecipients = evt => {
         if (["Enter", "Tab"].includes(evt.key)) {
             evt.preventDefault();
@@ -318,7 +319,6 @@ export function Mail(props: MailTabProps) {
     };
 
     const [email, setEmail] = useState<string>('');
-
     const addReplayEmail = (event) => {
         if (!isEmail(event.target.value)) {
             return `${event.target.value} is not a valid email address.`;
@@ -326,12 +326,79 @@ export function Mail(props: MailTabProps) {
             setEmail(event.target.value);
         }
     }
+    const [drafts, setDrafts] = useState(null);
+    const [isToEmailAdded, setIsToEmailAdded] = useState<boolean>(false);
+    const [emailBody, setEmailBody] = useState<boolean>(null);
+
+    useEffect(() => {
+        if (recipients && recipients.items && recipients.items.length && emailBody) {
+            setIsToEmailAdded(true);
+        } else {
+            setIsToEmailAdded(false)
+        }
+    }, [recipients, emailBody])
+
+    useEffect(() => {
+        if (draft) {
+            setDrafts(draft)
+        }
+    }, [draft])
+
+    const sendToDraft = (event) => {
+        setShowLoader(true);
+        setEmailBody(event.target.value)
+        if (selectedAccount && selectedAccount.id) {
+            if (drafts && drafts.id) {
+                let body = {
+                    body: event.target.value,
+                }
+                dispatch(updateCurrentDraft({id: drafts.id, body}));
+            } else {
+                dispatch(createDraft({id: selectedAccount.id}));
+            }
+            setShowLoader(false);
+        }
+    }
+
+    const sendMessages = () => {
+        if (drafts && drafts.id) {
+            dispatch(sendMessage({id: drafts.id}));
+            setRecipients({
+                items: [],
+                value: "",
+                error: null
+            })
+            setEmailBody(null)
+        }
+    }
+
+    const updateDraftMessages = (messageBox) => {
+        if (content && content.id) {
+            let body = {
+                Subject: 'First email',
+                To: recipients?.items,
+                Body: '',
+                Attachments: [
+                    {
+                        filename: 'attachment.txt',
+                        data: 'VGhpcyBpcyBhbiBhdHRhY2htZW50Lgo='
+                    }
+                ],
+                Mailboxes: [
+                    messageBox
+                ],
+            }
+            dispatch(updateDraft({id: content.id, body}));
+        }
+    }
+
     return (
         <Box className={styles.mailBox}>
 
-            {selectedThread &&
-            <Flex className={styles.mailBoxHeight} justifyContent={'space-between'} flexDir={'column'} height={'100%'}>
-                <div>
+            {selectedThread && !props.compose &&
+            <Flex justifyContent={'space-between'} flexDir={'column'} height={'100%'}>
+                <div className={styles.mailBoxFLex}>
+
                     <div>
                         <Flex justifyContent={'space-between'} wrap={'wrap'} align={'center'}
                               borderBottom={'1px solid rgba(8, 22, 47, 0.1)'}
@@ -348,24 +415,24 @@ export function Mail(props: MailTabProps) {
                             </Flex>
 
                             <Flex alignItems={'center'} gap={3} className={styles.headerRightIcon}>
-                                {showLoader && <Text className={styles.totalMessages}>
+                                {!showLoader && <Text className={styles.totalMessages}>
                                     {index + 1} / {selectedThread.numMessages}
                                 </Text>}
                                 <Button className={styles.addToProject} leftIcon={<FolderIcon/>}>Add to
                                     Project <span
                                         className={styles.RightContent}>⌘P</span></Button>
                                 <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
-                                    <div>
+                                    <div onClick={() => updateDraftMessages('Archive')}>
                                         <ArchiveIcon/>
                                     </div>
                                 </Tooltip>
                                 <Tooltip label='Trash' placement='bottom' bg='gray.300' color='black'>
-                                    <div>
+                                    <div onClick={() => updateDraftMessages('Trash')}>
                                         <TrashIcon/>
                                     </div>
                                 </Tooltip>
                                 <Tooltip label='Snooze' placement='bottom' bg='gray.300' color='black'>
-                                    <div>
+                                    <div onClick={() => updateDraftMessages('Snooze')}>
                                         <TimeSnoozeIcon/>
                                     </div>
                                 </Tooltip>
@@ -373,9 +440,9 @@ export function Mail(props: MailTabProps) {
                             </Flex>
                         </Flex>
 
-                        {!showLoader && <SpinnerUI/>}
+                        {showLoader && <SpinnerUI/>}
 
-                        {(showLoader && content) &&
+                        {(!showLoader && content) &&
                         <Flex alignItems={'center'} wrap={'wrap'} justifyContent={'space-between'} gap={2}
                               padding={'10px 20px'}>
                             <Flex alignItems={'center'}>
@@ -391,18 +458,18 @@ export function Mail(props: MailTabProps) {
                         </Flex>}
                     </div>
 
-                    {(showLoader && emailPart) &&
-                        <iframe src={emailPart} className={styles.mailBody}/>
+                    {(!showLoader && emailPart) &&
+                    <iframe src={emailPart} className={styles.mailBody}/>
 
-                        }
+                    }
 
                 </div>
 
                 <div className={styles.mailFooter}>
                     <Flex marginBottom={4} className={styles.mailReplay}>
-                        <Heading as={'h1'} pt={'6px'} size={'sm'}>Reply</Heading>
-                        <TriangleDownIcon mt={'9px'}/>
-                        <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} className={styles.replyBoxCC}>
+                        <Heading as={'h1'} pt={'6px'} pr={'10px'} size={'sm'}>To</Heading>
+                        {/*<TriangleDownIcon mt={'9px'}/>*/}
+                        <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} className={styles.replyBoxCC} gap={2}>
                             {!!recipients?.items?.length && recipients.items.map(item => (
                                 <Chip text={item} click={() => handleDeleteRecipients(item)}/>
                             ))}
@@ -416,33 +483,34 @@ export function Mail(props: MailTabProps) {
                                    border={0} className={styles.ccInput}
                                    placeholder={'Recipient\'s Email'}
                             />
+
                             {recipients.error && <p className={styles.error}>{recipients.error}</p>}
                         </Flex>
                     </Flex>
 
                     <Box className={styles.replyBox}>
-                        {/*<Flex justifyContent={'space-between'} padding={'8px 10px'}*/}
-                        {/*      borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>*/}
-                        {/*    <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>*/}
-                        {/*        <Heading as={'h1'} size={'sm'} pt={'6px'} marginRight={1}>CC:</Heading>*/}
-                        {/*        <Flex alignItems={'center'} wrap={'wrap'} width={'100%'}>*/}
-                        {/*            {!!state?.items?.length && state.items.map(item => (*/}
-                        {/*                <Chip text={item} click={() => handleDelete(item)}/>*/}
-                        {/*            ))}*/}
+                        <Flex justifyContent={'space-between'} padding={'8px 10px'}
+                              borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>
+                            <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>
+                                <Heading as={'h1'} size={'sm'} pt={'6px'} marginRight={1}>CC:</Heading>
+                                <Flex alignItems={'center'} wrap={'wrap'} width={'100%'}>
+                                    {!!state?.items?.length && state.items.map(item => (
+                                        <Chip text={item} click={() => handleDelete(item)}/>
+                                    ))}
 
-                        {/*            <Input width={'auto'} padding={0} height={'23px'}*/}
-                        {/*                   fontSize={'12px'}*/}
-                        {/*                   value={state.value}*/}
-                        {/*                   onKeyDown={handleKeyDown}*/}
-                        {/*                   onChange={handleChange}*/}
-                        {/*                   onPaste={handlePaste}*/}
-                        {/*                   border={0} className={styles.ccInput}*/}
-                        {/*            />*/}
-                        {/*            {state.error && <p className={styles.error}>{state.error}</p>}*/}
-                        {/*        </Flex>*/}
-                        {/*    </Flex>*/}
-                        {/*    <InfoOutlineIcon/>*/}
-                        {/*</Flex>*/}
+                                    <Input width={'auto'} padding={0} height={'23px'}
+                                           fontSize={'12px'}
+                                           value={state.value}
+                                           onKeyDown={handleKeyDown}
+                                           onChange={handleChange}
+                                           onPaste={handlePaste}
+                                           border={0} className={styles.ccInput}
+                                    />
+                                    {state.error && <p className={styles.error}>{state.error}</p>}
+                                </Flex>
+                            </Flex>
+                            <InfoOutlineIcon/>
+                        </Flex>
 
                         {/*<Flex alignItems={'center'} justifyContent={'space-between'} padding={'8px 10px'}*/}
                         {/*      borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>*/}
@@ -473,7 +541,7 @@ export function Mail(props: MailTabProps) {
 
                         <div className={styles.replayMessage}>
 
-                            <Textarea className={styles.replayMessageArea} padding={0}
+                            <Textarea className={styles.replayMessageArea} padding={0} onBlur={(e) => sendToDraft(e)}
                                       placeholder='Reply with anything you like or @mention someone to share this thread'/>
                             <Flex align={'flex-end'} justify={"space-between"} gap={2}>
                                 <Flex align={'center'} gap={3}>
@@ -482,19 +550,112 @@ export function Mail(props: MailTabProps) {
                                     <TextIcon/>
                                     <EmojiIcon/>
                                 </Flex>
-                                <Button className={styles.replyButton} colorScheme='blue'
-                                        rightIcon={<ChevronDownIcon/>}>Reply all</Button>
+                                <Flex align={'center'} gap={2}>
+                                    <Button className={styles.replyButton} colorScheme='blue'
+                                            onClick={() => sendMessages()} isDisabled={!isToEmailAdded}
+                                            rightIcon={<ChevronDownIcon/>}>Reply all</Button>
+                                </Flex>
                             </Flex>
                         </div>
                     </Box>
                 </div>
             </Flex>
             }
-            {!selectedThread &&
+            {!selectedThread && !props.compose &&
             <Flex className={styles.mailBoxHeight} justifyContent={'center'} alignItems={'center'} flexDir={'column'}
                   height={'100%'}>
                 <Heading as='h3' size='md'>Click on a thread from list to view messages!</Heading>
             </Flex>}
+
+            {props.compose &&
+            <Flex justifyContent={'space-between'} flexDir={'column'} height={'100%'}
+                  className={styles.messageNotSelectReplay}>
+                <div className={styles.mailBoxFLex}>
+                    <div style={{height: '100%'}}>
+                        <Flex justifyContent={'space-between'} wrap={'wrap'} align={'center'}
+                              borderBottom={'1px solid rgba(8, 22, 47, 0.1)'} padding={'12px 20px'}>
+                            <Flex alignItems={'center'} gap={2}>
+                                <div className={styles.closeIcon} onClick={() => setSelectedThread(null)}><CloseIcon/>
+                                </div>
+
+                            </Flex>
+                        </Flex>
+                        <Flex marginBottom={4} pl={'10px'} pt={'5px'} className={styles.mailReplay}>
+                            <Heading as={'h1'} pt={'6px'} pr={'10px'} size={'sm'}>To</Heading>
+                            <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} className={styles.replyBoxCC}
+                                  gap={2}>
+                                {!!recipients?.items?.length && recipients.items.map(item => (
+                                    <Chip text={item} click={() => handleDeleteRecipients(item)}/>
+                                ))}
+
+                                <Input width={'auto'} padding={0} height={'23px'}
+                                       fontSize={'12px'}
+                                       value={recipients.value}
+                                       onKeyDown={handleKeyDownRecipients}
+                                       onChange={handleRecipients}
+                                       onPaste={handlePasteRecipients}
+                                       border={0} className={styles.ccInput}
+                                       placeholder={'Recipient\'s Email'}
+                                />
+
+                                {recipients.error && <p className={styles.error}>{recipients.error}</p>}
+                            </Flex>
+                        </Flex>
+
+                        <Box className={styles.replyBox}>
+                            <Flex justifyContent={'space-between'} padding={'8px 10px'}
+                                  borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>
+                                <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>
+                                    <Heading as={'h1'} size={'sm'} pt={'6px'} marginRight={1}>CC:</Heading>
+                                    <Flex alignItems={'center'} wrap={'wrap'} width={'100%'}>
+                                        {!!state?.items?.length && state.items.map(item => (
+                                            <Chip text={item} click={() => handleDelete(item)}/>
+                                        ))}
+
+                                        <Input width={'auto'} padding={0} height={'23px'}
+                                               fontSize={'12px'}
+                                               value={state.value}
+                                               onKeyDown={handleKeyDown}
+                                               onChange={handleChange}
+                                               onPaste={handlePaste}
+                                               border={0} className={styles.ccInput}
+                                        />
+                                        {state.error && <p className={styles.error}>{state.error}</p>}
+                                    </Flex>
+                                </Flex>
+                                <InfoOutlineIcon/>
+                            </Flex>
+
+                            <div className={styles.replayMailBox}>
+                                <Textarea className={styles.replayMessageArea} padding={0}
+                                          onBlur={(e) => sendToDraft(e)}
+                                          placeholder='Reply with anything you like or @mention someone to share this thread'/>
+                            </div>
+                        </Box>
+                    </div>
+                </div>
+
+                <div className={styles.mailFooter}>
+                    <Box className={styles.replyBox}>
+                        <div className={styles.replayMessage}>
+                            <Flex align={'flex-end'} justify={"space-between"} gap={2}>
+                                <Flex align={'center'} gap={3}>
+                                    <FileIcon/>
+                                    <LinkIcon/>
+                                    <TextIcon/>
+                                    <EmojiIcon/>
+                                </Flex>
+                                <Flex align={'center'} gap={2}>
+                                    <Button className={styles.replyButton} colorScheme='blue'
+                                            onClick={() => sendMessages()} isDisabled={!isToEmailAdded}
+                                            rightIcon={<ChevronDownIcon/>}>Reply all</Button>
+                                </Flex>
+                            </Flex>
+                        </div>
+                    </Box>
+                </div>
+            </Flex>
+            }
 
         </Box>
     )

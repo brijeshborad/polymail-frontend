@@ -15,18 +15,19 @@ import {
     Tooltip
 } from "@chakra-ui/react";
 import {StarIcon, DraftIcon, FolderIcon, SendIcon, TrashIcon, ArchiveIcon} from "@/icons";
-import {TriangleDownIcon} from "@chakra-ui/icons";
+import {ChevronDownIcon, RepeatIcon, TriangleDownIcon} from "@chakra-ui/icons";
 import InboxTab from "@/components/inbox/tabs-components/inbox-tab";
 import {MailsTabProps, StateType} from "@/types";
-import {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {getAllThreads} from "@/redux/threads/action-reducer";
+import {getSyncAccount} from "@/redux/accounts/action-reducer";
 
 export function Mails(props: MailsTabProps) {
     const [tab, setTab] = useState<string>('INBOX');
 
     const {threads} = useSelector((state: StateType) => state.threads);
-    const {selectedAccount} = useSelector((state: StateType) => state.accounts);
+    const {account, selectedAccount} = useSelector((state: StateType) => state.accounts);
     const dispatch = useDispatch();
     const [showLoader, setShowLoader] = useState<boolean>(false);
 
@@ -41,8 +42,9 @@ export function Mails(props: MailsTabProps) {
     }, [getAllThread, selectedAccount])
 
     useEffect(() => {
+        setShowLoader(true);
         if (threads) {
-            setShowLoader(true);
+            setShowLoader(false);
         }
     }, [threads])
 
@@ -55,8 +57,39 @@ export function Mails(props: MailsTabProps) {
         setTab(value);
     }
 
+    const callSyncAPI = () => {
+        if (selectedAccount && selectedAccount.id) {
+            dispatch(getSyncAccount({id: selectedAccount.id}));
+        }
+    }
+    const [showCompose, setShowCompose] = useState<boolean>(false);
+
+    const openComposeBox = () => {
+        setShowCompose(true);
+    }
+    useEffect(() => {
+        if (showCompose) {
+            props.showCompose(showCompose);
+        }
+    }, [showCompose])
+
+    useEffect(() => {
+        // setShowLoader(true);
+        if (account) {
+            getAllThread();
+            setShowLoader(false);
+        }
+    }, [account])
+
     return (
         <>
+            <Flex align={'center'} justify={'space-between'} className={styles.syncButton}>
+                <Button className={styles.replyButton} onClick={() => openComposeBox()}>Compose</Button>
+
+                <Tooltip label='Sync Data' placement='bottom' bg='gray.300' color='black'>
+                    <RepeatIcon onClick={() => callSyncAPI()}/>
+                </Tooltip>
+            </Flex>
             <Flex direction={'column'} gap={5}>
                 <Tabs>
                     <TabList justifyContent={'space-between'} alignItems={'center'} className={styles.mailTabList} overflowX={"auto"}>
@@ -115,45 +148,30 @@ export function Mails(props: MailsTabProps) {
                                 </div>
                             </Tooltip>
                         </Tab>
-                        <div className={styles.moreDropdown}>
-                            <Menu>
-                                <MenuButton as={Button} rightIcon={<TriangleDownIcon/>}
-                                            className={styles.moreButton}>
-                                    More
-                                </MenuButton>
-                                <MenuList>
-                                    <MenuItem>Download</MenuItem>
-                                    <MenuItem>Create a Copy</MenuItem>
-                                    <MenuItem>Mark as Draft</MenuItem>
-                                    <MenuItem>Delete</MenuItem>
-                                    <MenuItem>Attend a Workshop</MenuItem>
-                                </MenuList>
-                            </Menu>
-                        </div>
                     </TabList>
 
                     <TabPanels marginTop={5}>
-                        <TabPanel>
+                        {/*<TabPanel>*/}
                             <InboxTab content={threads} tab={tab} showLoader={showLoader} handleClick={(e) => handleClick(e)}/>
-                        </TabPanel>
-                        <TabPanel>
-                            <InboxTab content={threads} tab={tab} showLoader={showLoader} handleClick={(e) => handleClick(e)}/>
-                        </TabPanel>
-                        <TabPanel>
-                            <InboxTab content={threads} tab={tab} showLoader={showLoader} handleClick={(e) => handleClick(e)}/>
-                        </TabPanel>
-                        <TabPanel>
-                            <InboxTab content={threads} tab={tab} showLoader={showLoader} handleClick={(e) => handleClick(e)}/>
-                        </TabPanel>
-                        <TabPanel>
-                            <InboxTab content={threads} tab={tab} showLoader={showLoader} handleClick={(e) => handleClick(e)}/>
-                        </TabPanel>
-                        <TabPanel>
-                            <InboxTab content={threads} tab={tab} showLoader={showLoader} handleClick={(e) => handleClick(e)}/>
-                        </TabPanel>
-                        <TabPanel>
-                            <InboxTab content={threads} tab={tab} showLoader={showLoader} handleClick={(e) => handleClick(e)}/>
-                        </TabPanel>
+                        {/*</TabPanel>*/}
+                        {/*<TabPanel>*/}
+                        {/*    <InboxTab content={threads} tab={tab} showLoader={showLoader} handleClick={(e) => handleClick(e)}/>*/}
+                        {/*</TabPanel>*/}
+                        {/*<TabPanel>*/}
+                        {/*    <InboxTab content={threads} tab={tab} showLoader={showLoader} handleClick={(e) => handleClick(e)}/>*/}
+                        {/*</TabPanel>*/}
+                        {/*<TabPanel>*/}
+                        {/*    <InboxTab content={threads} tab={tab} showLoader={showLoader} handleClick={(e) => handleClick(e)}/>*/}
+                        {/*</TabPanel>*/}
+                        {/*<TabPanel>*/}
+                        {/*    <InboxTab content={threads} tab={tab} showLoader={showLoader} handleClick={(e) => handleClick(e)}/>*/}
+                        {/*</TabPanel>*/}
+                        {/*<TabPanel>*/}
+                        {/*    <InboxTab content={threads} tab={tab} showLoader={showLoader} handleClick={(e) => handleClick(e)}/>*/}
+                        {/*</TabPanel>*/}
+                        {/*<TabPanel>*/}
+                        {/*    <InboxTab content={threads} tab={tab} showLoader={showLoader} handleClick={(e) => handleClick(e)}/>*/}
+                        {/*</TabPanel>*/}
                     </TabPanels>
                 </Tabs>
             </Flex>

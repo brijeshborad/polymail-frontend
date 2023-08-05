@@ -14,6 +14,22 @@ export interface Message {
     contentRoot?: string,
 }
 
+export interface MessageDraft {
+    accountId: string,
+    contentRoot?: string,
+    created?: string,
+    draftInfo?: object,
+    from?: string,
+    mailboxes?: string[],
+    id?: string,
+    providerId?: string,
+    threadId?: string,
+}
+
+export interface sendMessage {
+    id?: string,
+}
+
 export interface MessageHeaders {
     name?: string,
     value?: string

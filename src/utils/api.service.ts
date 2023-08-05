@@ -63,6 +63,14 @@ class ApiService {
         });
     }
 
+    static callPatch(url: string, payload: any, headers: any = {}) {
+        return axiosInstance.patch(url, payload, {
+            headers: {
+                ...headers
+            }
+        });
+    }
+
     static callDelete(url: string, params: any, headers: any = {}) {
         return axiosInstance.delete(url, {
             headers: {

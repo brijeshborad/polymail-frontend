@@ -84,7 +84,7 @@ export function LoginSignup({type = 'login'}: LoginProps) {
                     <Image width="30" height="30" src="/image/logo.png" alt=""/>
                     <Heading marginLeft={'10px'} as={'h6'} size='lg'>Polymail</Heading>
                 </Flex>
-                {error && <Alert status='error' marginBottom={'10px'}>
+                {error && <Alert className={styles.loginAlert} status='error' marginBottom={'10px'}>
                     <InfoIcon marginRight={'10px'} color={'red'}/>
                     <Heading as={'h4'} size={'md'}>{error.description}</Heading>
                 </Alert>}

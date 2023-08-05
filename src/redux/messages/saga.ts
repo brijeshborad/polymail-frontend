@@ -6,7 +6,9 @@ import {
     getAllMessages,
     getAllMessagesError,
     getAllMessagesSuccess, getMessageParts, getMessagePartsError,
-    getMessagePartsSuccess
+    getMessagePartsSuccess, createDraft, createDraftSuccess, createDraftError, sendMessage, sendMessageSuccess, sendMessageError,
+    updateDraft, updateDraftSuccess, updateDraftError,
+    updateCurrentDraft, updateCurrentDraftSuccess, updateCurrentDraftError
 } from "@/redux/messages/action-reducer";
 
 function* getMessages({payload: {thread}}: PayloadAction<{ thread?: string }>) {
@@ -29,6 +31,51 @@ function* getMessagePart({payload: {id}}: PayloadAction<{ id: string }>) {
     }
 }
 
+function* createNewDraft({payload: {id}}: PayloadAction<{ id: string }>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callPost(`messages`, {
+            account: id,
+        });
+        yield put(createDraftSuccess(response));
+    } catch (error: AxiosError | any) {
+        yield put(createDraftError(error.response.data));
+    }
+}
+
+function* updateCurrentDrafts({payload: {id, body}}: PayloadAction<{ id: string, body: object }>) {
+    try {
+        let newBody = body.body
+        const response: AxiosResponse = yield ApiService.callPatch(`messages/${id}`, {
+            newBody,
+        });
+        yield put(updateCurrentDraftSuccess(response));
+    } catch (error: AxiosError | any) {
+        yield put(updateCurrentDraftError(error.response.data));
+    }
+}
+
+function* sendDraftMessage({payload: {id}}: PayloadAction<{ id: string }>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callGet(`messages/${id}/send`, null);
+        yield put(sendMessageSuccess(response));
+    } catch (error: AxiosError | any) {
+        yield put(sendMessageError(error.response.data));
+    }
+}
+
+function* updateNewDraft({payload: {id, body}}: PayloadAction<{ id: string, body: object }>) {
+    try {
+        let newBody = body.body;
+
+        const response: AxiosResponse = yield ApiService.callPatch(`messages/${id}`, {
+            newBody,
+        });
+        yield put(updateDraftSuccess(response));
+    } catch (error: AxiosError | any) {
+        yield put(updateDraftError(error.response.data));
+    }
+}
+
 export function* watchGetMessages() {
     yield takeLatest(getAllMessages.type, getMessages);
 }
@@ -37,11 +84,30 @@ export function* watchGetMessagesPart() {
     yield takeLatest(getMessageParts.type, getMessagePart);
 }
 
+export function* watchCreateNewDraft() {
+    yield takeLatest(createDraft.type, createNewDraft);
+}
+
+export function* watchSendDraftMessage() {
+    yield takeLatest(sendMessage.type, sendDraftMessage);
+}
+
+export function* watchUpdateDraftMessage() {
+    yield takeLatest(updateDraft.type, updateNewDraft);
+}
+
+export function* watchUpdateCurrentDraftMessage() {
+    yield takeLatest(updateCurrentDraft.type, updateCurrentDrafts);
+}
 
 export default function* rootSaga() {
     yield all([
         fork(watchGetMessages),
         fork(watchGetMessagesPart),
+        fork(watchCreateNewDraft),
+        fork(watchSendDraftMessage),
+        fork(watchUpdateDraftMessage),
+        fork(watchUpdateCurrentDraftMessage),
     ]);
 }
 
