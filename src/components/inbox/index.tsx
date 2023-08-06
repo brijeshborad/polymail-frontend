@@ -1,3 +1,3 @@
 export * from './projects';
-export * from './mails';
-export * from './mail';
+export * from './threads';
+export * from './message';

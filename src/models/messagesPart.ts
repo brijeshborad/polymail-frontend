@@ -1,3 +1,3 @@
 export interface MessagePart {
-     data: string
+     data?: string
 }

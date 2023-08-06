@@ -360,11 +360,11 @@
     color: #FF0000;
 }
 
-.replayMessage {
+.replyMessage {
     padding: 16px;
 }
 
-.replayMessage .replayMessageArea {
+.replyMessage .replyMessageArea {
     margin-bottom: 10px;
     color: #000000;
     font-size: 13px;
@@ -385,22 +385,22 @@
 
 }
 
-.replayMessage .replayMessageArea:focus-visible {
+.replyMessage .replyMessageArea:focus-visible {
     box-shadow: none;
     border: 0;
 }
 
-.replayMessage .replayMessageArea::placeholder {
+.replyMessage .replyMessageArea::placeholder {
     color: #000000;
 }
 
-.replayMessage .replyButton,
+.replyMessage .replyButton,
 .syncButton .replyButton {
     background-color: #266DF0;
     color: #ffffff;
 }
 
-.replayMessage .replyButton:hover,
+.replyMessage .replyButton:hover,
 .syncButton .replyButton:hover {
     background-color: #266DF0;
 }
@@ -428,7 +428,7 @@
     padding: 10px;
 }
 
-.replayMailBox .replayMessageArea {
+.replayMailBox .replyMessageArea {
     margin-bottom: 10px;
     color: #000000;
     font-size: 13px;
@@ -438,7 +438,7 @@
 }
 
 
-.replayMailBox .replayMessageArea:focus-visible {
+.replayMailBox .replyMessageArea:focus-visible {
     border: 0;
     box-shadow: none;
 }
@@ -450,6 +450,10 @@
 
 .messageNotSelectReplay .replayMailBox {
     height: 100%;
+}
+
+.selectedThread {
+    border: 1px solid red;
 }
 
 /* Mail Box End */

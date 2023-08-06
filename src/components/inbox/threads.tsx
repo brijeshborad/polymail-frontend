@@ -11,37 +11,30 @@ import {
 import {StarIcon, DraftIcon, FolderIcon, SendIcon, TrashIcon, ArchiveIcon} from "@/icons";
 import { RepeatIcon} from "@chakra-ui/icons";
 import InboxTab from "@/components/inbox/tabs-components/inbox-tab";
-import {MailsTabProps, StateType} from "@/types";
+import {StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {getAllThreads} from "@/redux/threads/action-reducer";
 import {getSyncAccount} from "@/redux/accounts/action-reducer";
 import {ComposeIcon} from "@/icons/compose.icon";
-import {Thread} from "@/models";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 
-export function Mails(props: MailsTabProps) {
+export function Threads() {
     const [tab, setTab] = useState<string>('INBOX');
 
     const {threads, isLoading} = useSelector((state: StateType) => state.threads);
-    const {account, selectedAccount} = useSelector((state: StateType) => state.accounts);
+    const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const dispatch = useDispatch();
 
     const getAllThread = useCallback(() => {
         if (selectedAccount) {
             dispatch(getAllThreads({mailbox: tab, account: selectedAccount.id}));
         }
-    }, [dispatch, tab, selectedAccount]);
+    }, [dispatch, selectedAccount, tab]);
 
     useEffect(() => {
         getAllThread();
-    }, [getAllThread, selectedAccount])
-
-
-    const handleClick = (e: Thread, isShow: boolean = true) => {
-        props.show(isShow);
-        props.handleContent(e);
-    }
+    }, [getAllThread])
 
     const changeEmailTabs = (value) => {
         setTab(value);
@@ -56,13 +49,6 @@ export function Mails(props: MailsTabProps) {
     const openComposeBox = () => {
         dispatch(updateMessageState({isCompose: true}))
     }
-
-    useEffect(() => {
-        // setShowLoader(true);
-        if (selectedAccount) {
-            getAllThread();
-        }
-    }, [selectedAccount])
 
     return (
         <>
@@ -140,28 +126,7 @@ export function Mails(props: MailsTabProps) {
                     </TabList>
 
                     <TabPanels marginTop={5}>
-                        {/*<TabPanel>*/}
-                        <InboxTab content={threads} tab={tab} showLoader={isLoading}
-                                  handleClick={(e) => handleClick(e)}/>
-                        {/*</TabPanel>*/}
-                        {/*<TabPanel>*/}
-                        {/*    <InboxTab content={threads} tab={tab} showLoader={showLoader} handleClick={(e) => handleClick(e)}/>*/}
-                        {/*</TabPanel>*/}
-                        {/*<TabPanel>*/}
-                        {/*    <InboxTab content={threads} tab={tab} showLoader={showLoader} handleClick={(e) => handleClick(e)}/>*/}
-                        {/*</TabPanel>*/}
-                        {/*<TabPanel>*/}
-                        {/*    <InboxTab content={threads} tab={tab} showLoader={showLoader} handleClick={(e) => handleClick(e)}/>*/}
-                        {/*</TabPanel>*/}
-                        {/*<TabPanel>*/}
-                        {/*    <InboxTab content={threads} tab={tab} showLoader={showLoader} handleClick={(e) => handleClick(e)}/>*/}
-                        {/*</TabPanel>*/}
-                        {/*<TabPanel>*/}
-                        {/*    <InboxTab content={threads} tab={tab} showLoader={showLoader} handleClick={(e) => handleClick(e)}/>*/}
-                        {/*</TabPanel>*/}
-                        {/*<TabPanel>*/}
-                        {/*    <InboxTab content={threads} tab={tab} showLoader={showLoader} handleClick={(e) => handleClick(e)}/>*/}
-                        {/*</TabPanel>*/}
+                        <InboxTab content={threads} tab={tab} showLoader={isLoading}/>
                     </TabPanels>
                 </Tabs>
             </Flex>

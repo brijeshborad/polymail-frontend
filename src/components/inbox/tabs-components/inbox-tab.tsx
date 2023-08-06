@@ -1,17 +1,25 @@
-import {Badge, Button, Checkbox, Flex, Spinner} from "@chakra-ui/react";
+import {Badge, Button, Checkbox, Flex} from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
 import {DisneyIcon} from "@/icons";
 import styles2 from "@/styles/common.module.css";
 import {Time} from "@/components";
-import {InboxTabProps} from "@/types";
+import {InboxTabProps, StateType} from "@/types";
 import {Thread} from "@/models";
-import React, {useState} from "react";
+import React from "react";
 import {SpinnerUI} from "@/components/spinner";
-import Login from "@/pages/auth/login";
-import dayjs from "dayjs";
+import {useDispatch, useSelector} from "react-redux";
+import {updateMessageState} from "@/redux/messages/action-reducer";
+import {updateThreadState} from "@/redux/threads/action-reducer";
 
 export default function InboxTab(props: InboxTabProps) {
 
+    const {isLoading, selectedThread} = useSelector((state: StateType) => state.threads);
+    const dispatch = useDispatch();
+
+    const handleClick = (item: Thread) => {
+        dispatch(updateThreadState({selectedThread: item}));
+        dispatch(updateMessageState({selectedMessage: null}));
+    }
     return (
         <>
             {
@@ -39,11 +47,11 @@ export default function InboxTab(props: InboxTabProps) {
                 </div>
             }
 
-            {props.showLoader && <SpinnerUI />}
+            {isLoading && <SpinnerUI/>}
             <div>
                 <Flex direction={'column'} gap={1} marginTop={5} className={styles.mailList}>
                     {props.content && props.content.map((item: Thread, index: number) => (
-                        <div onClick={() => props.handleClick(item)} key={index}>
+                        <div onClick={() => handleClick(item)} key={index} className={selectedThread && selectedThread.id === item.id ? styles.selectedThread : ''}>
                             <div className={styles.mailDetails}>
                                 <Flex align={"center"} justify={'space-between'}>
                                     <Flex align={"center"} gap={1}>
@@ -52,7 +60,6 @@ export default function InboxTab(props: InboxTabProps) {
                                         </Flex>
                                     </Flex>
                                     <div className={styles2.receiveTime}>
-                                        {/*<p>{getOneDayAgo(item.updated)}</p>*/}
                                         <Time time={item.updated}/>
                                     </div>
                                 </Flex>

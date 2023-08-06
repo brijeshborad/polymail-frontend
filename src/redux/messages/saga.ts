@@ -5,10 +5,19 @@ import {AxiosError, AxiosResponse} from "axios";
 import {
     getAllMessages,
     getAllMessagesError,
-    getAllMessagesSuccess, getMessageParts, getMessagePartsError,
-    getMessagePartsSuccess, createDraft, createDraftSuccess, createDraftError, sendMessage, sendMessageSuccess, sendMessageError,
-    updateDraft, updateDraftSuccess, updateDraftError, updatePartialMessage,
-    updateCurrentDraft, updateCurrentDraftSuccess, updateCurrentDraftError
+    getAllMessagesSuccess,
+    getMessageParts,
+    getMessagePartsError,
+    getMessagePartsSuccess,
+    createDraft,
+    createDraftSuccess,
+    createDraftError,
+    sendMessage,
+    sendMessageSuccess,
+    sendMessageError,
+    updatePartialMessage,
+    updateCurrentDraftSuccess,
+    updateCurrentDraftError, updatePartialMessageSuccess, updatePartialMessageError
 } from "@/redux/messages/action-reducer";
 import {MessageRequestBody} from "@/models";
 
@@ -57,11 +66,10 @@ function* updateCurrentDrafts({payload: {id, body}}: PayloadAction<{ id: string,
 
 function* patchPartialMessage({payload: {id, body}}: PayloadAction<{ id: string, body: MessageRequestBody }>) {
     try {
-        let newBody = body;
         const response: AxiosResponse = yield ApiService.callPatch(`messages/${id}`, body);
-        yield put(updateCurrentDraftSuccess(response));
+        yield put(updatePartialMessageSuccess(response));
     } catch (error: AxiosError | any) {
-        yield put(updateCurrentDraftError(error.response.data));
+        yield put(updatePartialMessageError(error.response.data));
     }
 }
 
@@ -71,19 +79,6 @@ function* sendDraftMessage({payload: {id}}: PayloadAction<{ id: string }>) {
         yield put(sendMessageSuccess(response));
     } catch (error: AxiosError | any) {
         yield put(sendMessageError(error.response.data));
-    }
-}
-
-function* updateNewDraft({payload: {id, body}}: PayloadAction<{ id: string, body: object }>) {
-    try {
-        let newBody = body.body;
-
-        const response: AxiosResponse = yield ApiService.callPatch(`messages/${id}`, {
-            newBody,
-        });
-        yield put(updateDraftSuccess(response));
-    } catch (error: AxiosError | any) {
-        yield put(updateDraftError(error.response.data));
     }
 }
 
@@ -103,14 +98,6 @@ export function* watchSendDraftMessage() {
     yield takeLatest(sendMessage.type, sendDraftMessage);
 }
 
-export function* watchUpdateDraftMessage() {
-    yield takeLatest(updateDraft.type, updateNewDraft);
-}
-//
-// export function* watchUpdateCurrentDraftMessage() {
-//     yield takeLatest(updateCurrentDraft.type, updateCurrentDrafts);
-// }
-
 export function* watchUpdateCurrentDraftMessage() {
     yield takeLatest(updatePartialMessage.type, patchPartialMessage);
 }
@@ -121,7 +108,6 @@ export default function* rootSaga() {
         fork(watchGetMessagesPart),
         fork(watchCreateNewDraft),
         fork(watchSendDraftMessage),
-        fork(watchUpdateDraftMessage),
         fork(watchUpdateCurrentDraftMessage),
     ]);
 }

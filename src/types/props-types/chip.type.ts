@@ -3,4 +3,5 @@ export declare type IChipProps = {
     size?: string,
     variant?: string
     buttonClass?: string
+    click?: (item: MouseEvent | any) => void
 }

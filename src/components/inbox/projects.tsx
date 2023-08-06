@@ -11,7 +11,7 @@ import {StateType} from "@/types";
 export function Projects() {
     const dispatch = useDispatch();
 
-    const {projects, error} = useSelector((state: StateType) => state.projects);
+    const {projects} = useSelector((state: StateType) => state.projects);
 
     const getProjects = useCallback(() => {
         dispatch(getAllProjects(null));

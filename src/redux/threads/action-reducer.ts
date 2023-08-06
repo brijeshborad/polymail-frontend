@@ -7,6 +7,7 @@ const initialState = {
     thread: null,
     isLoading: false,
     error: null,
+    selectedThread: null,
 } as InitialThreadStateType
 
 const threadsSlice = createSlice({
@@ -21,9 +22,12 @@ const threadsSlice = createSlice({
         },
         getAllThreadsError: (state: InitialThreadStateType, {payload: error}: PayloadAction<{ error: any }>) => {
             return {...state, threads: [], isLoading: false, error}
+        },
+        updateThreadState: (state: InitialThreadStateType, action: PayloadAction<{ any }>) => {
+            return {...state, ...action.payload}
         }
     }
 })
 
-export const {getAllThreads, getAllThreadsSuccess, getAllThreadsError} = threadsSlice.actions
+export const {getAllThreads, getAllThreadsSuccess, getAllThreadsError, updateThreadState} = threadsSlice.actions
 export default threadsSlice.reducer
