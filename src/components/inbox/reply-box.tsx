@@ -148,11 +148,11 @@ export function ReplyBox() {
         }
 
         if (error) {
-            let successObject = {
+            let validationError = {
                 desc: error,
                 type: 'error'
             }
-            Toaster(successObject)
+            Toaster(validationError)
             return false;
         }
 

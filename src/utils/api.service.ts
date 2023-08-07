@@ -29,7 +29,7 @@ axiosInstance.interceptors.response.use((response) => {
 }, error => {
     if (error.response && error.response.data) {
         let err = {
-            desc: error.response.data,
+            desc: error.response.data.description,
             type: 'error'
         }
         Toaster(err);
