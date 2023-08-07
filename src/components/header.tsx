@@ -21,7 +21,7 @@ import Router from "next/router";
 import {StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
 import {getAllOrganizations, updateOrganizationState} from "@/redux/organizations/action-reducer";
-import {Account, Organization} from "@/models";
+import {Account, Organization, UserToken} from "@/models";
 import {getAllAccount, updateAccountState} from "@/redux/accounts/action-reducer";
 import LocalStorageService from "@/utils/localstorage.service";
 
@@ -35,7 +35,7 @@ export function Header() {
     } = useSelector((state: StateType) => state.organizations);
     const {accounts} = useSelector((state: StateType) => state.accounts);
     const {googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
-    const [userData, setUserData] = useState<any>(null);
+    const [userData, setUserData] = useState<UserToken>(null);
 
     const {user} = useSelector((state: StateType) => state.auth);
 

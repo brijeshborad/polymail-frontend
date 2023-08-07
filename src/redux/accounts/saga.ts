@@ -11,7 +11,7 @@ import {
 import ApiService from "@/utils/api.service";
 import {AxiosError, AxiosResponse} from "axios";
 
-function* getAccountDetails(payload: PayloadAction<any>) {
+function* getAccountDetails() {
     try {
         const response: AxiosResponse = yield ApiService.callGet(`accounts`, {});
         yield put(getAllAccountSuccess(response));
@@ -23,7 +23,6 @@ function* getAccountDetails(payload: PayloadAction<any>) {
 function* getAccountSync({payload: {id}}: PayloadAction<{ id: string }>) {
     try {
         const response: AxiosResponse = yield ApiService.callGet(`accounts/${id}/sync`, null);
-        console.log('response' , response)
         yield put(getSyncAccountSuccess(response));
     } catch (error: AxiosError | any) {
         yield put(getSyncAccountError(error.response.data));

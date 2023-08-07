@@ -8,6 +8,7 @@ import {createDraft, sendMessage, updateMessageState, updatePartialMessage} from
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {debounce, isEmail} from "@/utils/common.functions";
+import {Toaster} from "@/components/toaster";
 
 declare type RecipientsType = { items: string[], value: string };
 
@@ -24,10 +25,9 @@ export function ReplyBox() {
     });
 
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
-    const {selectedMessage, draft, isCompose} = useSelector((state: StateType) => state.messages);
+    const { selectedMessage, draft, isCompose, success: sendDraftSuccess } = useSelector((state: StateType) => state.messages);
 
     const dispatch = useDispatch();
-
 
     const handleChange = (evt: ChangeEvent | any, type: string) => {
         if (type === 'recipients') {
@@ -148,7 +148,11 @@ export function ReplyBox() {
         }
 
         if (error) {
-            // TODO:- SHOW ERROR TOAST
+            let successObject = {
+                desc: error,
+                type: 'error'
+            }
+            Toaster(successObject)
             return false;
         }
 
@@ -183,6 +187,18 @@ export function ReplyBox() {
             }));
         }
     }
+
+
+    useEffect(() => {
+        console.log('sendDraftSuccess' , sendDraftSuccess)
+        if (sendDraftSuccess) {
+            let successObject = {
+                desc: 'SuccessFull',
+                type: 'success'
+            }
+            Toaster(successObject)
+        }
+    }, [sendDraftSuccess])
 
     useEffect(() => {
         if (recipients && recipients.items && recipients.items.length && emailBody) {

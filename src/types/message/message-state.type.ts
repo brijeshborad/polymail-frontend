@@ -9,7 +9,8 @@ export declare type InitialMessageStateType = {
     isLoading: boolean,
     isCompose: boolean,
     messagePart: MessagePart | null,
-    error: Error | any
+    error: Error | any,
+    success: boolean
 }
 
 

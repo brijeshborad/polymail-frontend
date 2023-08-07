@@ -5,3 +5,16 @@ export interface User {
     createdAt?: string,
     updatedAt?: string,
 }
+
+export interface UserToken {
+    token?: string,
+}
+
+export interface LoginWithGoogle {
+    mode: string,
+    redirectUrl: string
+    accountType: string
+    platform: string,
+    withToken?: boolean
+}
+

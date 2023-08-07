@@ -40,11 +40,16 @@ export interface MessageAttachment {
     data?: string
 }
 
+export interface MessageDraftInfo {
+    body?: string,
+    attachments?:MessageAttachment[],
+}
+
 export interface MessageRequestBody {
     subject?: string,
     to?: string[],
     body? :string,
-    attachments:MessageAttachment[],
+    draftInfo: MessageDraftInfo,
     mailboxes: string[],
 
 }

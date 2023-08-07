@@ -1,6 +1,7 @@
 import axios, {AxiosInstance, CreateAxiosDefaults} from 'axios';
 import LocalStorageService from "./localstorage.service";
 import Router from "next/router";
+import {Toaster} from "@/components/toaster";
 
 const axiosInstance: AxiosInstance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -27,6 +28,11 @@ axiosInstance.interceptors.response.use((response) => {
     return response.data;
 }, error => {
     if (error.response && error.response.data) {
+        let err = {
+            desc: error.response.data,
+            type: 'error'
+        }
+        Toaster(err);
         if (error.response.data.description === 'Unauthorized') {
             LocalStorageService.clearStorage();
             Router.push(`/auth/login`);

@@ -5,10 +5,11 @@ import {Grid, GridItem,} from "@chakra-ui/react";
 import withAuth from "@/components/withAuth";
 import {useSelector} from "react-redux";
 import {StateType} from "@/types";
+import {UserToken} from "@/models";
 
 function Inbox() {
     const [size, setSize] = useState<number>(0);
-    const [userData, setUserData] = useState<any>(null);
+    const [userData, setUserData] = useState<UserToken>(null);
     const {user} = useSelector((state: StateType) => state.auth);
     const {selectedThread} = useSelector((state: StateType) => state.threads);
 

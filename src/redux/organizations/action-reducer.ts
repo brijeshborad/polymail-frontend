@@ -27,7 +27,7 @@ const organizationSlice = createSlice({
         addOrganization: (state: InitialOrganizationStateType, action: PayloadAction<{ name: string, accountId: string }>) => {
             return {...state, organization: null, error: null, isLoading: true}
         },
-        addOrganizationSuccess: (state: InitialOrganizationStateType, {payload: organization}: PayloadAction<any>) => {
+        addOrganizationSuccess: (state: InitialOrganizationStateType, {payload: organization}: PayloadAction<{organization: Organization}>) => {
             return {...state, organization, error: null, isLoading: false}
         },
         addOrganizationError: (state: InitialOrganizationStateType, {payload: error}: PayloadAction<any>) => {

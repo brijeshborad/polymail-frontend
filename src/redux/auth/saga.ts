@@ -17,8 +17,9 @@ import {
 import ApiService from "@/utils/api.service";
 import {AxiosError, AxiosResponse} from "axios";
 import LocalStorageService from "@/utils/localstorage.service";
+import {LoginWithGoogle, User} from "@/models";
 
-function* login({payload: {email, password}}: PayloadAction<any>) {
+function* login({payload: {email, password}}: PayloadAction<{ user: User }>) {
     try {
         const response: AxiosResponse = yield ApiService.callPost(`auth/login`, {email, password}, {
             'Skip-Headers': true
@@ -30,7 +31,7 @@ function* login({payload: {email, password}}: PayloadAction<any>) {
     }
 }
 
-function* register({payload: {email, password}}: PayloadAction<any>) {
+function* register({payload: {email, password}}: PayloadAction<{ user: User }>) {
     try {
         const response: AxiosResponse = yield ApiService.callPost(`users`, {
             email,
@@ -45,7 +46,7 @@ function* register({payload: {email, password}}: PayloadAction<any>) {
     }
 }
 
-function* getGoogleAuthLink({payload}: PayloadAction<any>) {
+function* getGoogleAuthLink({payload}: PayloadAction<{loginWithGoogle: LoginWithGoogle}>) {
     try {
         let headers = {};
         if(!payload.withToken) {

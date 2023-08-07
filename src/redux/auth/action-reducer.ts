@@ -1,6 +1,7 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {InitialAuthState} from "@/types";
 import LocalStorageService from "@/utils/localstorage.service";
+import {LoginWithGoogle, User} from "@/models";
 
 const initialState = {
     user: LocalStorageService.updateUser('get') || null,
@@ -16,7 +17,7 @@ const authSlice = createSlice({
         loginUser: (state: InitialAuthState, action: PayloadAction<{ email: string, password: string }>) => {
             return {...state, user: null, error: null, isLoading: true}
         },
-        loginSuccess: (state: InitialAuthState, {payload: user}: PayloadAction<any>) => {
+        loginSuccess: (state: InitialAuthState, {payload: user}: PayloadAction<{user: User}>) => {
             return {...state, user, error: null, isLoading: false}
         },
         loginError: (state: InitialAuthState, {payload: error}: PayloadAction<any>) => {
@@ -25,7 +26,7 @@ const authSlice = createSlice({
         registerUser: (state: InitialAuthState, action: PayloadAction<{ email: string, password: string }>) => {
             return {...state, user: null, error: null, isLoading: true}
         },
-        registerSuccess: (state: InitialAuthState, {payload: user}: PayloadAction<any>) => {
+        registerSuccess: (state: InitialAuthState, {payload: user}: PayloadAction<{user: User}>) => {
             return {...state, user, error: null, isLoading: false}
         },
         registerError: (state: InitialAuthState, {payload: error}: PayloadAction<any>) => {
@@ -34,16 +35,11 @@ const authSlice = createSlice({
         logoutUser: (state: InitialAuthState, action: PayloadAction<null>) => {
             return {...state, user: null, error: null, isLoading: false}
         },
-        googleAuthLink: (state: InitialAuthState, action: PayloadAction<{
-            mode: string,
-            redirectUrl: string
-            accountType: string
-            platform: string,
-            withToken?: boolean
-        }>) => {
+        googleAuthLink: (state: InitialAuthState, action: PayloadAction<{loginWithGoogle: LoginWithGoogle}>) => {
             return {...state, user: null, error: null, googleAuthRedirectionLink: null, isLoading: false}
         },
-        googleAuthLinkSuccess: (state: InitialAuthState, {payload: googleAuthRedirectionLink}: PayloadAction<any>) => {
+        googleAuthLinkSuccess: (state: InitialAuthState, {payload: googleAuthRedirectionLink}: PayloadAction<{loginWithGoogle: LoginWithGoogle}
+            >) => {
             return {...state, user: null, error: null, googleAuthRedirectionLink, isLoading: false}
         },
         googleAuthLinkError: (state: InitialAuthState, {payload: error}: PayloadAction<any>) => {

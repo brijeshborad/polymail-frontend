@@ -37,12 +37,12 @@ export function LoginSignup({type = 'login'}: LoginProps) {
         }
     }, [dispatch, router.query]);
 
-    const handleChange = (event: any) => {
+    const handleChange = (event) => {
         setFormValues(value => ({...value, [event.target.name]: event.target.value}))
     }
 
     useEffect(() => {
-        if (user) {
+        if (user && user.token) {
             Router.push('/inbox');
         }
     }, [user])

@@ -76,6 +76,7 @@ function* patchPartialMessage({payload: {id, body}}: PayloadAction<{ id: string,
 function* sendDraftMessage({payload: {id}}: PayloadAction<{ id: string }>) {
     try {
         const response: AxiosResponse = yield ApiService.callGet(`messages/${id}/send`, null);
+        console.log('response' , response)
         yield put(sendMessageSuccess(response));
     } catch (error: AxiosError | any) {
         yield put(sendMessageError(error.response.data));
