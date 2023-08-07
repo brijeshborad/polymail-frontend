@@ -191,7 +191,7 @@ export function ReplyBox() {
     useEffect(() => {
         if (sendDraftSuccess) {
             let successObject = {
-                desc: 'SuccessFull',
+                desc: 'Successful',
                 type: 'success'
             }
             Toaster(successObject)
