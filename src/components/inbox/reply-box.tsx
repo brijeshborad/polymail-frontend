@@ -23,8 +23,13 @@ export function ReplyBox() {
         items: [],
         value: "",
     });
+    const [bcc, setBCC] = useState<RecipientsType>({
+        items: [],
+        value: "",
+    });
 
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
+    const {selectedThread} = useSelector((state: StateType) => state.threads);
     const { selectedMessage, draft, isCompose, success: sendDraftSuccess } = useSelector((state: StateType) => state.messages);
 
     const dispatch = useDispatch();
@@ -37,6 +42,11 @@ export function ReplyBox() {
             }));
         } else if (type === 'cc') {
             setCC(prevState => ({
+                items: [...prevState.items],
+                value: evt.target.value
+            }));
+        } else if (type === 'bcc') {
+            setBCC(prevState => ({
                 items: [...prevState.items],
                 value: evt.target.value
             }));
@@ -61,6 +71,11 @@ export function ReplyBox() {
                     items: [...prevState.items, ...toBeAdded],
                     value: ''
                 }));
+            } else if (type === 'bcc') {
+                setBCC((prevState) => ({
+                    items: [...prevState.items, ...toBeAdded],
+                    value: ''
+                }));
             }
         }
     };
@@ -75,6 +90,9 @@ export function ReplyBox() {
             if (type === 'cc') {
                 value = cc.value.trim();
             }
+            if (type === 'bcc') {
+                value = bcc.value.trim();
+            }
             let emailArray = value.split(',');
             emailArray.map(item => {
                 if (item && isValid(item, type)) {
@@ -86,6 +104,12 @@ export function ReplyBox() {
                     }
                     if (type === 'cc') {
                         setCC((prevState) => ({
+                            items: [...prevState.items, item],
+                            value: "",
+                        }));
+                    }
+                    if (type === 'bcc') {
+                        setBCC((prevState) => ({
                             items: [...prevState.items, item],
                             value: "",
                         }));
@@ -104,7 +128,13 @@ export function ReplyBox() {
         }
         if (type === 'cc') {
             setCC({
-                items: recipients.items.filter(i => i !== item),
+                items: cc.items.filter(i => i !== item),
+                value: ""
+            });
+        }
+        if (type === 'bcc') {
+            setBCC({
+                items: bcc.items.filter(i => i !== item),
                 value: ""
             });
         }
@@ -112,20 +142,22 @@ export function ReplyBox() {
 
     const sendToDraft = (event: ChangeEvent | any) => {
         setEmailBody(event.target.value);
+        let body = {
+            subject: selectedMessage?.subject || 'New Mail Subject',
+            to: recipients?.items,
+            ...(selectedThread ? {thread: selectedThread.id} : {}),
+            ...(cc?.items && cc?.items.length > 0 ? {cc: cc?.items} : {}),
+            ...(bcc?.items && bcc?.items.length > 0 ? {bcc: bcc?.items} : {}),
+            draftInfo: {
+                body: emailBody
+            }
+        }
         debounce(() => {
             if (selectedAccount && selectedAccount.id) {
                 if (draft && draft.id) {
-                    let body = {
-                        subject: selectedMessage?.subject || 'New Mail Subject',
-                        to: recipients?.items,
-                        ...(cc?.items && cc?.items.length > 0 ? {cc: cc?.items} : {}),
-                        draftInfo: {
-                            body: emailBody
-                        }
-                    }
                     dispatch(updatePartialMessage({id: draft.id, body}));
                 } else {
-                    dispatch(createDraft({id: selectedAccount.id}));
+                    dispatch(createDraft({accountId: selectedAccount.id, body}));
                 }
             }
         });
@@ -136,6 +168,8 @@ export function ReplyBox() {
             return cc?.items?.includes(email);
         } else if (type === 'recipients') {
             return recipients?.items?.includes(email);
+        } else if (type === 'bcc') {
+            return bcc?.items?.includes(email);
         }
         return false;
     }
@@ -183,6 +217,10 @@ export function ReplyBox() {
                 items: [],
                 value: "",
             });
+            setBCC({
+                items: [],
+                value: "",
+            });
             setEmailBody('');
             dispatch(updateMessageState({
                 draft: null,
@@ -213,29 +251,38 @@ export function ReplyBox() {
     return (
         <div className={styles.mailFooter}>
             <Flex marginBottom={4} className={styles.mailReply} alignItems={'center'}>
-                <Heading as={'h1'} pr={'10px'} size={'sm'}>To</Heading>
-                <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} className={styles.replyBoxCC} gap={2}>
-                    {!!recipients?.items?.length && recipients.items.map((item: string | undefined, i: number) => (
-                        <Chip text={item} key={i} click={() => handleItemDelete(item!, 'recipients')}/>
-                    ))}
 
-                    <Input width={'auto'} padding={0} height={'23px'}
-                           fontSize={'12px'}
-                           value={recipients.value}
-                           onKeyDown={(e) => handleKeyDown(e, 'recipients')}
-                           onChange={(e) => handleChange(e, 'recipients')}
-                           onPaste={(e) => handlePaste(e, 'recipients')}
-                           border={0} className={styles.ccInput}
-                           placeholder={'Recipient\'s Email'}
-                    />
-                </Flex>
+
             </Flex>
 
             <Box className={styles.replyBox}>
+
                 <Flex justifyContent={'space-between'} padding={'8px 10px'}
                       borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>
-                    <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>
-                        <Heading as={'h1'} size={'sm'} pt={'6px'} marginRight={1}>CC:</Heading>
+                    <Flex width={'100%'} gap={1} alignItems={'center'} className={styles.replyBoxCC}>
+                        <Heading as={'h1'} size={'sm'} marginRight={1}>TO:</Heading>
+                        <Flex alignItems={'center'} wrap={'wrap'} width={'100%'}>
+                            {!!recipients?.items?.length && recipients.items.map((item: string | undefined, i: number) => (
+                                <Chip text={item} key={i} click={() => handleItemDelete(item!, 'recipients')}/>
+                            ))}
+
+                            <Input width={'auto'} padding={0} height={'23px'}
+                                   fontSize={'12px'}
+                                   value={recipients.value}
+                                   onKeyDown={(e) => handleKeyDown(e, 'recipients')}
+                                   onChange={(e) => handleChange(e, 'recipients')}
+                                   onPaste={(e) => handlePaste(e, 'recipients')}
+                                   border={0} className={styles.ccInput}
+                                   placeholder={'Recipient\'s Email'}
+                            />
+                        </Flex>
+                    </Flex>
+
+                </Flex>
+                <Flex justifyContent={'space-between'} padding={'8px 10px'}
+                      borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>
+                    <Flex width={'100%'} gap={1} alignItems={'center'} className={styles.replyBoxCC}>
+                        <Heading as={'h1'} size={'sm'} marginRight={1}>CC:</Heading>
                         <Flex alignItems={'center'} wrap={'wrap'} width={'100%'}>
                             {!!cc?.items?.length && cc.items.map((item: string | undefined, i: number) => (
                                 <Chip text={item} key={i} click={() => handleItemDelete(item!, 'cc')}/>
@@ -247,6 +294,28 @@ export function ReplyBox() {
                                    onKeyDown={(e) => handleKeyDown(e, 'cc')}
                                    onChange={(e) => handleChange(e, 'cc')}
                                    onPaste={(e) => handlePaste(e, 'cc')}
+                                   border={0} className={styles.ccInput}
+                            />
+                        </Flex>
+                    </Flex>
+                    <InfoOutlineIcon/>
+                </Flex>
+
+                <Flex justifyContent={'space-between'} padding={'8px 10px'}
+                      borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>
+                    <Flex width={'100%'} gap={1} alignItems={'center'} className={styles.replyBoxCC}>
+                        <Heading as={'h1'} size={'sm'} marginRight={1}>BCC:</Heading>
+                        <Flex alignItems={'center'} wrap={'wrap'} width={'100%'}>
+                            {!!bcc?.items?.length && bcc.items.map((item: string | undefined, i: number) => (
+                                <Chip text={item} key={i} click={() => handleItemDelete(item!, 'bcc')}/>
+                            ))}
+
+                            <Input width={'auto'} padding={0} height={'23px'}
+                                   fontSize={'12px'}
+                                   value={bcc.value}
+                                   onKeyDown={(e) => handleKeyDown(e, 'bcc')}
+                                   onChange={(e) => handleChange(e, 'bcc')}
+                                   onPaste={(e) => handlePaste(e, 'bcc')}
                                    border={0} className={styles.ccInput}
                             />
                         </Flex>

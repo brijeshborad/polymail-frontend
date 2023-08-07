@@ -16,6 +16,7 @@ import {
     sendMessageSuccess,
     sendMessageError
 } from "@/redux/messages/action-reducer";
+import {MessageDraft} from "@/models";
 
 function* getMessages({payload: {thread}}: PayloadAction<{ thread?: string }>) {
     try {
@@ -39,11 +40,9 @@ function* getMessagePart({payload: {id}}: PayloadAction<{ id: string }>) {
     }
 }
 
-function* createNewDraft({payload: {id}}: PayloadAction<{ id: string }>) {
+function* createNewDraft({payload: {accountId, body}}: PayloadAction<{ body: MessageDraft }>) {
     try {
-        const response: AxiosResponse = yield ApiService.callPost(`messages`, {
-            account: id,
-        });
+        const response: AxiosResponse = yield ApiService.callPost(`messages`, {account: accountId, ...body});
         yield put(createDraftSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
