@@ -131,7 +131,7 @@
 }
 
 .mailList {
-    max-height: calc(100vh - 295px);
+    max-height: calc(100vh - 270px);
     overflow-y: auto;
 }
 
@@ -334,8 +334,44 @@
     padding: 20px;
 }
 
+.composeReplyBox {
+    height: 100%;
+}
+
+.composeReplyBox .mailFooter {
+    padding: 0;
+    height: 100%;
+}
+
+.composeReplyBox .mailFooter .mailReply {
+    padding: 10px 20px 0;
+    margin-bottom: 0;
+}
+
+.composeReplyBox .mailFooter .replyBox {
+    border: 0;
+    height: calc(100% - 45px);
+}
+
+.composeReplyBox .mailFooter .replyBox .replyMessage {
+    height: calc(100% - 40px);
+}
+
+.composeReplyBox .mailFooter .replyBox .replyMessageArea {
+    height: calc(100% - 40px);
+}
+
+.composeReplyBox .mailFooter .replyBox .replyBoxCC {
+    padding-left: 10px;
+}
+
+.composeReplyBox .mailFooter .replyBoxCC button {
+    padding: 0 10px;
+}
+
 .mailBox .mailFooter svg {
     cursor: pointer;
+    margin: 0;
 }
 
 .mailReply h1 {
@@ -346,7 +382,7 @@
 .mailReply svg {
     width: 10px;
     height: 10px;
-    margin-right: 10px;
+    margin-right: 0;
     margin-left: 5px;
 }
 
@@ -416,7 +452,6 @@
 
 .syncButton {
     text-align: end;
-    margin-bottom: 20px;
 }
 .composeButton svg {
     width: 2em;
@@ -452,8 +487,9 @@
     height: 100%;
 }
 
-.selectedThread {
-    border: 1px solid red;
+.selectedThread .mailDetails {
+    border: 1px solid #266DF0;
+    background-color: rgba(38,109,240, 0.03);
 }
 
 /* Mail Box End */

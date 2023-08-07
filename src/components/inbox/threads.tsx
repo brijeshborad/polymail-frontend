@@ -52,7 +52,7 @@ export function Threads() {
 
     return (
         <>
-            <Flex align={'center'} justify={'space-between'}>
+            <Flex align={'center'} justify={'space-between'} marginBottom={"20px"}>
                 <Tooltip label='Compose' placement='bottom' bg='gray.300' color='black'>
                     <div className={styles.composeButton} onClick={() => openComposeBox()}>
                         <ComposeIcon />

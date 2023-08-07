@@ -172,23 +172,21 @@ export function Message() {
             </Flex>}
 
             {isCompose &&
-            <Flex justifyContent={'space-between'} flexDir={'column'} height={'100%'}>
-                <div className={styles.mailBoxFLex}>
-                    <div>
+            <div className={styles.composeReplyBox}>
+                <Flex justifyContent={'space-between'} flexDir={'column'} height={'100%'}>
+                    <div className={styles.mailBoxFLex}>
                         <Flex justifyContent={'space-between'} wrap={'wrap'} align={'center'}
-                              borderBottom={'1px solid rgba(8, 22, 47, 0.1)'}
-                              marginBottom={'15'} padding={'12px 20px'}>
+                              borderBottom={'1px solid rgba(8, 22, 47, 0.1)'} padding={'12px 20px'}>
                             <Flex alignItems={'center'} gap={2}>
                                 <div className={styles.closeIcon} onClick={() => onClose()}><CloseIcon/>
                                 </div>
                             </Flex>
                         </Flex>
-
                     </div>
-                </div>
 
-                <ReplyBox/>
-            </Flex>}
+                    <ReplyBox/>
+                </Flex>
+            </div>}
         </Box>
     )
 }
