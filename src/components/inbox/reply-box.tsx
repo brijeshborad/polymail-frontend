@@ -188,9 +188,7 @@ export function ReplyBox() {
         }
     }
 
-
     useEffect(() => {
-        console.log('sendDraftSuccess' , sendDraftSuccess)
         if (sendDraftSuccess) {
             let successObject = {
                 desc: 'SuccessFull',

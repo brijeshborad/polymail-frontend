@@ -52,10 +52,7 @@ const messagesSlice = createSlice({
         sendMessage: (state: InitialMessageStateType, action: PayloadAction<{ id: string }>) => {
             return {...state, sendMessage: null, error: null, isLoading: true}
         },
-        // getAllMessagesSuccess: (state: InitialMessageStateType, {payload: messages}: PayloadAction<{ messages: Message[] }>) => {
-        //             return {...state, messages, isLoading: false, error: null}
-        //         },
-        sendMessageSuccess: (state: InitialMessageStateType, {payload: sendMessage}: PayloadAction<{ messages: Message[]}>) => {
+        sendMessageSuccess: (state: InitialMessageStateType, {payload: sendMessage}: PayloadAction<{ messages: MessageDraft}>) => {
             return {...state, sendMessage, error: null, isLoading: false, success: true}
         },
         sendMessageError: (state: InitialMessageStateType, {payload: error}: PayloadAction<any>) => {
@@ -69,16 +66,6 @@ const messagesSlice = createSlice({
             return {...state, draft, error: null, isLoading: false}
         },
         updatePartialMessageError: (state: InitialMessageStateType, {payload: error}: PayloadAction<any>) => {
-            return {...state, draft: null, error, isLoading: false}
-        },
-
-        updateCurrentDraft: (state: InitialMessageStateType, action: PayloadAction<{ id: string, body: object }>) => {
-            return {...state, draft: null, error: null, isLoading: true}
-        },
-        updateCurrentDraftSuccess: (state: InitialMessageStateType, {payload: draft}: PayloadAction<{messageRequestBody: MessageRequestBody}>) => {
-            return {...state, draft, error: null, isLoading: false}
-        },
-        updateCurrentDraftError: (state: InitialMessageStateType, {payload: error}: PayloadAction<any>) => {
             return {...state, draft: null, error, isLoading: false}
         },
 
@@ -104,9 +91,6 @@ export const {
     updatePartialMessage,
     updatePartialMessageSuccess,
     updatePartialMessageError,
-    updateCurrentDraft,
-    updateCurrentDraftSuccess,
-    updateCurrentDraftError,
     updateMessageState
 } = messagesSlice.actions
 export default messagesSlice.reducer

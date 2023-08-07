@@ -14,10 +14,7 @@ import {
     createDraftError,
     sendMessage,
     sendMessageSuccess,
-    sendMessageError,
-    updatePartialMessage,
-    updateCurrentDraftSuccess,
-    updateCurrentDraftError, updatePartialMessageSuccess, updatePartialMessageError
+    sendMessageError, updatePartialMessageSuccess, updatePartialMessageError
 } from "@/redux/messages/action-reducer";
 import {MessageRequestBody} from "@/models";
 
@@ -52,18 +49,6 @@ function* createNewDraft({payload: {id}}: PayloadAction<{ id: string }>) {
     }
 }
 
-function* updateCurrentDrafts({payload: {id, body}}: PayloadAction<{ id: string, body: object }>) {
-    try {
-        let newBody = body.body
-        const response: AxiosResponse = yield ApiService.callPatch(`messages/${id}`, {
-            newBody,
-        });
-        yield put(updateCurrentDraftSuccess(response));
-    } catch (error: AxiosError | any) {
-        yield put(updateCurrentDraftError(error.response.data));
-    }
-}
-
 function* patchPartialMessage({payload: {id, body}}: PayloadAction<{ id: string, body: MessageRequestBody }>) {
     try {
         const response: AxiosResponse = yield ApiService.callPatch(`messages/${id}`, body);
@@ -76,8 +61,7 @@ function* patchPartialMessage({payload: {id, body}}: PayloadAction<{ id: string,
 function* sendDraftMessage({payload: {id}}: PayloadAction<{ id: string }>) {
     try {
         const response: AxiosResponse = yield ApiService.callGet(`messages/${id}/send`, null);
-        console.log('response' , response)
-        yield put(sendMessageSuccess(response));
+        yield put(sendMessageSuccess(response || {}));
     } catch (error: AxiosError | any) {
         yield put(sendMessageError(error.response.data));
     }
@@ -99,9 +83,6 @@ export function* watchSendDraftMessage() {
     yield takeLatest(sendMessage.type, sendDraftMessage);
 }
 
-export function* watchUpdateCurrentDraftMessage() {
-    yield takeLatest(updatePartialMessage.type, patchPartialMessage);
-}
 
 export default function* rootSaga() {
     yield all([
@@ -109,7 +90,6 @@ export default function* rootSaga() {
         fork(watchGetMessagesPart),
         fork(watchCreateNewDraft),
         fork(watchSendDraftMessage),
-        fork(watchUpdateCurrentDraftMessage),
     ]);
 }
 
