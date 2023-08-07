@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {LoginProps, StateType} from "@/types";
 import {useDispatch, useSelector} from "react-redux";
-import {useEffect, useState} from "react";
+import {ChangeEvent, useEffect, useState} from "react";
 import {googleAuthLink, loginUser, registerUser, updateAuthState} from "@/redux/auth/action-reducer";
 import {InfoIcon} from "@chakra-ui/icons";
 import Router, {useRouter} from "next/router";
@@ -37,7 +37,7 @@ export function LoginSignup({type = 'login'}: LoginProps) {
         }
     }, [dispatch, router.query]);
 
-    const handleChange = (event) => {
+    const handleChange = (event: ChangeEvent) => {
         setFormValues(value => ({...value, [event.target.name]: event.target.value}))
     }
 

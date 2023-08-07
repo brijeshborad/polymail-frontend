@@ -23,7 +23,7 @@ const threadsSlice = createSlice({
         getAllThreadsError: (state: InitialThreadStateType, {payload: error}: PayloadAction<{ error: any }>) => {
             return {...state, threads: [], isLoading: false, error}
         },
-        updateThreadState: (state: InitialThreadStateType, action: PayloadAction<{ any }>) => {
+        updateThreadState: (state: InitialThreadStateType, action: PayloadAction<InitialThreadStateType >) => {
             return {...state, ...action.payload}
         }
     }

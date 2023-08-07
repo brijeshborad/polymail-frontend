@@ -69,7 +69,7 @@ const messagesSlice = createSlice({
             return {...state, draft: null, error, isLoading: false}
         },
 
-        updateMessageState: (state: InitialMessageStateType, action: PayloadAction<any>) => {
+        updateMessageState: (state: InitialMessageStateType, action: PayloadAction<InitialMessageStateType>) => {
             return {...state, ...action.payload}
         },
     }

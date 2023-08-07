@@ -45,7 +45,7 @@ const authSlice = createSlice({
         googleAuthLinkError: (state: InitialAuthState, {payload: error}: PayloadAction<any>) => {
             return {...state, user: null, error, googleAuthRedirectionLink: null, isLoading: false}
         },
-        updateAuthState: (state: InitialAuthState, action: PayloadAction<any>) => {
+        updateAuthState: (state: InitialAuthState, action: PayloadAction<InitialAuthState>) => {
             return {...state, ...action.payload}
         },
     }
