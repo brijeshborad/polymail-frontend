@@ -119,7 +119,9 @@ export function ReplyBox() {
                         subject: selectedMessage?.subject || 'New Mail Subject',
                         to: recipients?.items,
                         ...(cc?.items && cc?.items.length > 0 ? {cc: cc?.items} : {}),
-                        body: emailBody,
+                        draftInfo: {
+                            body: emailBody
+                        }
                     }
                     dispatch(updatePartialMessage({id: draft.id, body}));
                 } else {
