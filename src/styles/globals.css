@@ -126,3 +126,13 @@ a {
 .text-center {
   text-align: center;
 }
+
+.chakra-toast .chakra-alert {
+  font-size: 12px;
+}
+
+.chakra-toast .chakra-alert button {
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+}
