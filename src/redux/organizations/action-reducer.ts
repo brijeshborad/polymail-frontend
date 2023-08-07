@@ -15,7 +15,7 @@ const organizationSlice = createSlice({
     name: 'organizations',
     initialState,
     reducers: {
-        getAllOrganizations: (state: InitialOrganizationStateType, action: PayloadAction<{}>) => {
+        getAllOrganizations: (state: InitialOrganizationStateType) => {
             return {...state, organizations: [], isLoading: true, error: null}
         },
         getAllOrganizationsSuccess: (state: InitialOrganizationStateType, {payload: organizations}: PayloadAction<{ organizations: Organization[] }>) => {
@@ -24,7 +24,7 @@ const organizationSlice = createSlice({
         getAllOrganizationsError: (state: InitialOrganizationStateType, {payload: error}: PayloadAction<{ error: any }>) => {
             return {...state, organizations: [], isLoading: false, error}
         },
-        addOrganization: (state: InitialOrganizationStateType, action: PayloadAction<{ name: string, accountId: string }>) => {
+        addOrganization: (state: InitialOrganizationStateType) => {
             return {...state, organization: null, error: null, isLoading: true}
         },
         addOrganizationSuccess: (state: InitialOrganizationStateType, {payload: organization}: PayloadAction<{organization: Organization}>) => {

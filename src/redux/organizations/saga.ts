@@ -5,11 +5,12 @@ import {AxiosError, AxiosResponse} from "axios";
 import {getAllOrganizations, getAllOrganizationsSuccess, getAllOrganizationsError, addOrganization, addOrganizationSuccess, addOrganizationError} from "@/redux/organizations/action-reducer";
 import {Organization} from "@/models";
 
-function* getOrganizations(payload: PayloadAction<{organization: Organization}>) {
+function* getOrganizations() {
     try {
         const response: AxiosResponse = yield ApiService.callGet(`organizations`, {});
         yield put(getAllOrganizationsSuccess(response));
-    } catch (error: AxiosError | any) {
+    } catch (error: any) {
+        error = error as AxiosError;
         yield put(getAllOrganizationsError(error.response.data));
     }
 }
@@ -18,7 +19,8 @@ function* addOrganizations({payload: {name, accountId}}: PayloadAction<{organiza
     try {
         const response: AxiosResponse = yield ApiService.callPost(`organizations`, {name, accountId});
         yield put(addOrganizationSuccess(response));
-    } catch (error: AxiosError | any) {
+    } catch (error: any) {
+        error = error as AxiosError;
         yield put(addOrganizationError(error.response.data));
     }
 }

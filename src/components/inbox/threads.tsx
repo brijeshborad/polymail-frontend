@@ -36,7 +36,7 @@ export function Threads() {
         getAllThread();
     }, [getAllThread])
 
-    const changeEmailTabs = (value) => {
+    const changeEmailTabs = (value: string) => {
         setTab(value);
     }
 
@@ -73,7 +73,7 @@ export function Threads() {
                                 <div className={`${tab === 'INBOX' ? styles.active : ''}`}
                                      onClick={() => changeEmailTabs('INBOX')}>
                                     <FolderIcon/>
-                                    <span>Inbox <Badge>{threads.length}</Badge></span>
+                                    <span>Inbox <Badge>{threads && threads.length || 0}</Badge></span>
                                 </div>
                             </Tooltip>
                         </Tab>
@@ -82,7 +82,7 @@ export function Threads() {
                                 <div className={`${tab === 'DRAFT' ? styles.active : ''}`}
                                      onClick={() => changeEmailTabs('DRAFT')}>
                                     <DraftIcon/>
-                                    <span>Draft <Badge>{threads.length}</Badge></span>
+                                    <span>Draft <Badge>{threads && threads.length || 0}</Badge></span>
                                 </div>
                             </Tooltip>
                         </Tab>
@@ -91,7 +91,7 @@ export function Threads() {
                                 <div className={`${tab === 'STARRED' ? styles.active : ''}`}
                                      onClick={() => changeEmailTabs('STARRED')}>
                                     <StarIcon/>
-                                    <span>Starred <Badge>{threads.length}</Badge></span>
+                                    <span>Starred <Badge>{threads && threads.length || 0}</Badge></span>
                                 </div>
                             </Tooltip>
                         </Tab>
@@ -100,7 +100,7 @@ export function Threads() {
                                 <div className={`${tab === 'SENT' ? styles.active : ''}`}
                                      onClick={() => changeEmailTabs('SENT')}>
                                     <SendIcon/>
-                                    <span>Sent <Badge>{threads.length}</Badge></span>
+                                    <span>Sent <Badge>{threads && threads.length || 0}</Badge></span>
                                 </div>
                             </Tooltip>
                         </Tab>
@@ -109,7 +109,7 @@ export function Threads() {
                                 <div className={`${tab === 'TRASH' ? styles.active : ''}`}
                                      onClick={() => changeEmailTabs('TRASH')}>
                                     <TrashIcon/>
-                                    <span>Trash <Badge>{threads.length}</Badge></span>
+                                    <span>Trash <Badge>{threads && threads.length || 0}</Badge></span>
                                 </div>
                             </Tooltip>
                         </Tab>
@@ -119,7 +119,7 @@ export function Threads() {
                                 <div className={`${tab === 'ARCHIVE' ? styles.active : ''}`}
                                      onClick={() => changeEmailTabs('ARCHIVE')}>
                                     <ArchiveIcon/>
-                                    <span>Archive <Badge>{threads.length}</Badge></span>
+                                    <span>Archive <Badge>{threads && threads.length || 0}</Badge></span>
                                 </div>
                             </Tooltip>
                         </Tab>

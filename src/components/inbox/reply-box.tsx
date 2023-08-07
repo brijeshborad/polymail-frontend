@@ -10,7 +10,7 @@ import {StateType} from "@/types";
 import {debounce, isEmail} from "@/utils/common.functions";
 import {Toaster} from "@/components/toaster";
 
-declare type RecipientsType = { items: string[], value: string };
+declare type RecipientsType = { items: (string | undefined)[], value: string };
 
 export function ReplyBox() {
     const [isToEmailAdded, setIsToEmailAdded] = useState<boolean>(false);
@@ -50,7 +50,7 @@ export function ReplyBox() {
         let emails = paste.match(/[\w\d\.-]+@[\w\d\.-]+\.[\w\d\.-]+/g);
 
         if (emails) {
-            let toBeAdded = emails.filter(email => !isInList(email, type));
+            let toBeAdded = emails.filter((item: string) => !isInList(item, type));
             if (type === 'recipients') {
                 setRecipients((prevState) => ({
                     items: [...prevState.items, ...toBeAdded],
@@ -131,15 +131,16 @@ export function ReplyBox() {
         });
     }
 
-    const isInList = (email, type) => {
+    const isInList = (email: string, type: string) => {
         if (type == 'cc') {
             return cc?.items?.includes(email);
         } else if (type === 'recipients') {
             return recipients?.items?.includes(email);
         }
+        return false;
     }
 
-    const isValid = (email, type) => {
+    const isValid = (email: string, type: string) => {
         let error = null;
         if (isInList(email, type)) {
             error = `This email has already been added.`;
@@ -175,7 +176,7 @@ export function ReplyBox() {
         if (draft && draft.id) {
             dispatch(sendMessage({id: draft.id}));
             setRecipients({
-                items: !isCompose ? [selectedMessage.from] : [],
+                items: !isCompose && selectedMessage ? [selectedMessage.from] : [],
                 value: "",
             });
             setCC({
@@ -214,8 +215,8 @@ export function ReplyBox() {
             <Flex marginBottom={4} className={styles.mailReply} alignItems={'center'}>
                 <Heading as={'h1'} pr={'10px'} size={'sm'}>To</Heading>
                 <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} className={styles.replyBoxCC} gap={2}>
-                    {!!recipients?.items?.length && recipients.items.map((item: string, i: number) => (
-                        <Chip text={item} key={i} click={() => handleItemDelete(item, 'recipients')}/>
+                    {!!recipients?.items?.length && recipients.items.map((item: string | undefined, i: number) => (
+                        <Chip text={item} key={i} click={() => handleItemDelete(item!, 'recipients')}/>
                     ))}
 
                     <Input width={'auto'} padding={0} height={'23px'}
@@ -236,8 +237,8 @@ export function ReplyBox() {
                     <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>
                         <Heading as={'h1'} size={'sm'} pt={'6px'} marginRight={1}>CC:</Heading>
                         <Flex alignItems={'center'} wrap={'wrap'} width={'100%'}>
-                            {!!cc?.items?.length && cc.items.map((item: string, i: number) => (
-                                <Chip text={item} key={i} click={() => handleItemDelete(item, 'cc')}/>
+                            {!!cc?.items?.length && cc.items.map((item: string | undefined, i: number) => (
+                                <Chip text={item} key={i} click={() => handleItemDelete(item!, 'cc')}/>
                             ))}
 
                             <Input width={'auto'} padding={0} height={'23px'}

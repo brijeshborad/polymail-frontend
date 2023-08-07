@@ -18,7 +18,8 @@ function* getThreads({
             ...(account ? {account}: {}),
         });
         yield put(getAllThreadsSuccess(response));
-    } catch (error: AxiosError | any) {
+    } catch (error: any) {
+        error = error as AxiosError;
         yield put(getAllThreadsError(error.response.data));
     }
 }

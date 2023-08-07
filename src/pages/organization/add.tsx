@@ -1,15 +1,16 @@
 import Image from "next/image";
 import {
     Button,
-    Flex, Heading, Input, useToast
+    Flex, Heading, Input
 } from "@chakra-ui/react";
-import React, {useEffect, useState} from "react";
+import React, {ChangeEvent, useEffect, useState} from "react";
 import {StateType} from "@/types";
 import styles from "@/styles/Organization.module.css";
 import {addOrganization} from "@/redux/organizations/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import Router from "next/router";
 import withAuth from "@/components/withAuth";
+import {Toaster} from "@/components/toaster";
 
 
 function AddOrganization() {
@@ -18,22 +19,22 @@ function AddOrganization() {
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const [organizationName, setOrganizationName] = useState<string>('');
 
-    const handleChange = (event) => {
+    const handleChange = (event: ChangeEvent | any) => {
         setOrganizationName(event.target.value);
     }
-    const toast = useToast()
-    const toastIdRef = React.useRef()
 
     const createOrganization = () => {
         if (organizationName.length === 0) {
-            toastIdRef.current = toast({description: 'Please enter the organization\'s name', status: 'error',})
+            Toaster({desc: 'Please enter the organization\'s name', type: 'error'})
             return;
         }
-        let body = {
-            name: organizationName,
-            accountId: selectedAccount.id
+        if (selectedAccount) {
+            let body = {
+                name: organizationName,
+                accountId: selectedAccount.id
+            }
+            dispatch(addOrganization(body));
         }
-        dispatch(addOrganization(body));
     }
 
     useEffect(() => {

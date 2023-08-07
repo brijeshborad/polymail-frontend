@@ -1,3 +1,3 @@
 export declare type TimeProps = {
-    time: string
+    time: string | undefined
 }

@@ -1,9 +1,6 @@
 import {PayloadAction} from "@reduxjs/toolkit";
 import {all, fork, put, takeLatest} from "@redux-saga/core/effects";
 import {
-    getAllAccountError,
-    getAllAccountSuccess,
-    getAllAccount,
     googleAuthLink,
     googleAuthLinkError,
     googleAuthLinkSuccess,
@@ -41,7 +38,8 @@ function* register({payload: {email, password}}: PayloadAction<{ user: User }>) 
         });
         LocalStorageService.updateUser('store', response)
         yield put(registerSuccess(response));
-    } catch (error: AxiosError | any) {
+    } catch (error: any) {
+        error = error as AxiosError;
         yield put(registerError(error.response.data));
     }
 }
@@ -58,7 +56,8 @@ function* getGoogleAuthLink({payload}: PayloadAction<{loginWithGoogle: LoginWith
 
         const response: AxiosResponse = yield ApiService.callPost(`auth/oauth2link`, payload, headers);
         yield put(googleAuthLinkSuccess(response));
-    } catch (error: AxiosError | any) {
+    } catch (error: any) {
+        error = error as AxiosError;
         yield put(googleAuthLinkError(error.response.data));
     }
 }

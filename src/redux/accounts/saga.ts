@@ -15,7 +15,8 @@ function* getAccountDetails() {
     try {
         const response: AxiosResponse = yield ApiService.callGet(`accounts`, {});
         yield put(getAllAccountSuccess(response));
-    } catch (error: AxiosError | any) {
+    } catch (error: any) {
+        error = error as AxiosError;
         yield put(getAllAccountError(error.response.data));
     }
 }
@@ -24,7 +25,8 @@ function* getAccountSync({payload: {id}}: PayloadAction<{ id: string }>) {
     try {
         const response: AxiosResponse = yield ApiService.callGet(`accounts/${id}/sync`, null);
         yield put(getSyncAccountSuccess(response));
-    } catch (error: AxiosError | any) {
+    } catch (error: any) {
+        error = error as AxiosError;
         yield put(getSyncAccountError(error.response.data));
     }
 }

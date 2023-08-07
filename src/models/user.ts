@@ -4,6 +4,7 @@ export interface User {
     lastName?: string,
     createdAt?: string,
     updatedAt?: string,
+    token?: string,
 }
 
 export interface UserToken {

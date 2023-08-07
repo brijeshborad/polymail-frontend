@@ -1,5 +1,4 @@
 import { createStandaloneToast } from "@chakra-ui/react";
-import React from "react";
 import {ToasterProps} from "@/types/props-types/toaster.type";
 const { toast } = createStandaloneToast()
 

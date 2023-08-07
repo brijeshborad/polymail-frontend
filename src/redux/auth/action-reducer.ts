@@ -14,7 +14,7 @@ const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        loginUser: (state: InitialAuthState, action: PayloadAction<{ email: string, password: string }>) => {
+        loginUser: (state: InitialAuthState) => {
             return {...state, user: null, error: null, isLoading: true}
         },
         loginSuccess: (state: InitialAuthState, {payload: user}: PayloadAction<{user: User}>) => {
@@ -23,7 +23,7 @@ const authSlice = createSlice({
         loginError: (state: InitialAuthState, {payload: error}: PayloadAction<any>) => {
             return {...state, user: null, error, isLoading: false}
         },
-        registerUser: (state: InitialAuthState, action: PayloadAction<{ email: string, password: string }>) => {
+        registerUser: (state: InitialAuthState) => {
             return {...state, user: null, error: null, isLoading: true}
         },
         registerSuccess: (state: InitialAuthState, {payload: user}: PayloadAction<{user: User}>) => {
@@ -32,10 +32,10 @@ const authSlice = createSlice({
         registerError: (state: InitialAuthState, {payload: error}: PayloadAction<any>) => {
             return {...state, user: null, error, isLoading: false}
         },
-        logoutUser: (state: InitialAuthState, action: PayloadAction<null>) => {
+        logoutUser: (state: InitialAuthState) => {
             return {...state, user: null, error: null, isLoading: false}
         },
-        googleAuthLink: (state: InitialAuthState, action: PayloadAction<{loginWithGoogle: LoginWithGoogle}>) => {
+        googleAuthLink: (state: InitialAuthState) => {
             return {...state, user: null, error: null, googleAuthRedirectionLink: null, isLoading: false}
         },
         googleAuthLinkSuccess: (state: InitialAuthState, {payload: googleAuthRedirectionLink}: PayloadAction<{loginWithGoogle: LoginWithGoogle}

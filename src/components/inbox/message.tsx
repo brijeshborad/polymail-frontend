@@ -1,7 +1,7 @@
 import styles from "@/styles/Inbox.module.css";
 import styles2 from "@/styles/common.module.css";
 import {Box, Button, Flex, Heading, Text, Tooltip} from "@chakra-ui/react";
-import {ChevronDownIcon, ChevronUpIcon, CloseIcon, InfoOutlineIcon} from "@chakra-ui/icons";
+import {ChevronDownIcon, ChevronUpIcon, CloseIcon} from "@chakra-ui/icons";
 import {Time} from "@/components";
 import {ArchiveIcon, FolderIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
 import Image from "next/image";
@@ -13,14 +13,13 @@ import {
     getMessageParts,
     updateMessageState, updatePartialMessage
 } from "@/redux/messages/action-reducer";
-import {Message} from "@/models";
 import {SpinnerUI} from '@/components/spinner';
 import {ReplyBox} from "@/components/inbox/reply-box";
-import {Compose} from "@/components/inbox/compose";
 import {updateThreadState} from "@/redux/threads/action-reducer";
+import {Message as MessageModel} from "@/models";
 
 export function Message() {
-    const [messageContent, setMessageContent] = useState<Message>(null);
+    const [messageContent, setMessageContent] = useState<MessageModel>();
     const [index, setIndex] = useState<number | null>(null);
     const [emailPart, setEmailPart] = useState<string>("");
 
@@ -67,12 +66,12 @@ export function Message() {
 
     const showPreNextMessage = (type: string) => {
         if (type === 'up') {
-            if (index > 0) {
-                setIndex(prevState => prevState - 1);
+            if (index && index > 0) {
+                setIndex(prevState => prevState ? (prevState - 1) :  null);
             }
         } else if (type === 'down') {
-            if (messages.length - 1 !== index) {
-                setIndex(prevState => prevState + 1);
+            if (messages && messages.length - 1 !== index) {
+                setIndex(prevState => prevState ? (prevState + 1) : null);
             }
         }
     }
@@ -110,14 +109,14 @@ export function Message() {
                                 <div className={`${styles.actionIcon} ${index === 0 ? styles.disabled : ''}`}
                                      onClick={() => showPreNextMessage('up')}><ChevronUpIcon/></div>
                                 <div
-                                    className={`${styles.actionIcon} ${messages?.length - 1 !== index ? '' : styles.disabled}`}
+                                    className={`${styles.actionIcon} ${messages && messages?.length - 1 !== index ? '' : styles.disabled}`}
                                     onClick={() => showPreNextMessage('down')}><ChevronDownIcon/></div>
 
                             </Flex>
 
                             <Flex alignItems={'center'} gap={3} className={styles.headerRightIcon}>
                                 {!isLoading && <Text className={styles.totalMessages}>
-                                    {index + 1} / {selectedThread.numMessages}
+                                    {index && index + 1} / {selectedThread.numMessages}
                                 </Text>}
                                 <Button className={styles.addToProject} leftIcon={<FolderIcon/>}>Add to
                                     Project <span

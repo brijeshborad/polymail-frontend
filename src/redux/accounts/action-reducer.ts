@@ -15,26 +15,26 @@ const accountSlice = createSlice({
     name: 'accounts',
     initialState,
     reducers: {
-        getAllAccount: (state: InitialAccountStateType, action: PayloadAction<{}>) => {
+        getAllAccount: (state: InitialAccountStateType) => {
             return {...state, accounts: [], isLoading: true, error: null}
         },
-        getAllAccountSuccess: (state: InitialAccountStateType, {payload: accounts}: PayloadAction<{ accounts: Account[] }>) => {
+        getAllAccountSuccess: (state: InitialAccountStateType, {payload: accounts}: PayloadAction<Account[]>) => {
             return {...state, accounts, isLoading: false, error: null}
         },
-        getAllAccountError: (state: InitialAccountStateType, {payload: error}: PayloadAction<{ error: any }>) => {
+        getAllAccountError: (state: InitialAccountStateType, {payload: error}: PayloadAction<any>) => {
             return {...state, accounts: [], isLoading: false, error}
         },
-        updateAccountState: (state: InitialAccountStateType, action: PayloadAction<{account: Account}>) => {
+        updateAccountState: (state: InitialAccountStateType, action: PayloadAction<InitialAccountStateType>) => {
             return {...state, ...action.payload}
         },
 
-        getSyncAccount: (state: InitialAccountStateType, action: PayloadAction<{}>) => {
+        getSyncAccount: (state: InitialAccountStateType) => {
             return {...state, account: null, isLoading: true, error: null}
         },
-        getSyncAccountSuccess: (state: InitialAccountStateType, {payload: account}: PayloadAction<{ account: null }>) => {
+        getSyncAccountSuccess: (state: InitialAccountStateType, {payload: account}: PayloadAction<null>) => {
             return {...state, account, isLoading: false, error: null}
         },
-        getSyncAccountError: (state: InitialAccountStateType, {payload: error}: PayloadAction<{ error: any }>) => {
+        getSyncAccountError: (state: InitialAccountStateType, {payload: error}: PayloadAction<any>) => {
             return {...state, account: null, isLoading: false, error}
         },
     }

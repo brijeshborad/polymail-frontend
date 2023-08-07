@@ -19,7 +19,7 @@ const messagesSlice = createSlice({
     name: 'messages',
     initialState,
     reducers: {
-        getAllMessages: (state: InitialMessageStateType, action: PayloadAction<{ thread?: string }>) => {
+        getAllMessages: (state: InitialMessageStateType) => {
             return {...state, messages: [], isLoading: true, error: null}
         },
         getAllMessagesSuccess: (state: InitialMessageStateType, {payload: messages}: PayloadAction<{ messages: Message[] }>) => {
@@ -29,7 +29,7 @@ const messagesSlice = createSlice({
             return {...state, messages: [], isLoading: false, error}
         },
 
-        getMessageParts: (state: InitialMessageStateType, action: PayloadAction<{ id: string }>) => {
+        getMessageParts: (state: InitialMessageStateType) => {
             return {...state, messagePart: null, isLoading: true, error: null}
         },
         getMessagePartsSuccess: (state: InitialMessageStateType, {payload: messagePart}: PayloadAction<{ messagePart: MessagePart }>) => {
@@ -39,7 +39,7 @@ const messagesSlice = createSlice({
             return {...state, messagePart: null, isLoading: false, error}
         },
 
-        createDraft: (state: InitialMessageStateType, action: PayloadAction<{ id: string }>) => {
+        createDraft: (state: InitialMessageStateType) => {
             return {...state, draft: null, error: null, isLoading: false}
         },
         createDraftSuccess: (state: InitialMessageStateType, {payload: draft}: PayloadAction<{messageDraft: MessageDraft}>) => {
@@ -49,7 +49,7 @@ const messagesSlice = createSlice({
             return {...state, draft: null, error, isLoading: false}
         },
 
-        sendMessage: (state: InitialMessageStateType, action: PayloadAction<{ id: string }>) => {
+        sendMessage: (state: InitialMessageStateType) => {
             return {...state, sendMessage: null, error: null, isLoading: true}
         },
         sendMessageSuccess: (state: InitialMessageStateType, {payload: sendMessage}: PayloadAction<{ messages: MessageDraft}>) => {
@@ -59,7 +59,7 @@ const messagesSlice = createSlice({
             return {...state, sendMessage: null, error, isLoading: false}
         },
 
-        updatePartialMessage: (state: InitialMessageStateType, action: PayloadAction<{ id: string, body: MessageRequestBody }>) => {
+        updatePartialMessage: (state: InitialMessageStateType) => {
             return {...state, draft: null, error: null, isLoading: false}
         },
         updatePartialMessageSuccess: (state: InitialMessageStateType, {payload: draft}: PayloadAction<{messageRequestBody: MessageRequestBody}>) => {

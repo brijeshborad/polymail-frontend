@@ -21,32 +21,34 @@ import Router from "next/router";
 import {StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
 import {getAllOrganizations, updateOrganizationState} from "@/redux/organizations/action-reducer";
-import {Account, Organization, UserToken} from "@/models";
+import {Account, Organization, User} from "@/models";
 import {getAllAccount, updateAccountState} from "@/redux/accounts/action-reducer";
 import LocalStorageService from "@/utils/localstorage.service";
 
 export function Header() {
     const dispatch = useDispatch();
-    const [workspace, setWorkspace] = useState<Organization>(null);
+    // const [workspace, setWorkspace] = useState<Organization>();
     const {
         organizations,
         isLoading: isOrganizationLoading,
-        selectedOrganization
+        // selectedOrganization
     } = useSelector((state: StateType) => state.organizations);
     const {accounts} = useSelector((state: StateType) => state.accounts);
     const {googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
-    const [userData, setUserData] = useState<UserToken>(null);
+    const [userData, setUserData] = useState<User>();
 
     const {user} = useSelector((state: StateType) => state.auth);
 
     useEffect(() => {
-        setUserData(user);
+        if (user) {
+            setUserData(user);
+        }
     }, [user]);
 
-    useEffect(() => {
-        setWorkspace(selectedOrganization);
-    }, [selectedOrganization])
-
+    // useEffect(() => {
+    //     setWorkspace(selectedOrganization);
+    // }, [selectedOrganization])
+    //
     useEffect(() => {
         if (googleAuthRedirectionLink) {
             window.location.href = googleAuthRedirectionLink.url;
@@ -54,7 +56,7 @@ export function Header() {
     }, [googleAuthRedirectionLink])
 
     const getAllAccountAndOrganizationsDetails = useCallback(() => {
-        dispatch(getAllAccount(null));
+        dispatch(getAllAccount());
         dispatch(getAllOrganizations(null));
     }, [dispatch])
 
@@ -116,7 +118,7 @@ export function Header() {
 
     function setAccounts(account: Account) {
         LocalStorageService.updateAccount('store', account);
-        dispatch(updateAccountState({selectedAccount: account}))
+        dispatch(updateAccountState({selectedAccount: account}));
     }
 
     if (!userData) {

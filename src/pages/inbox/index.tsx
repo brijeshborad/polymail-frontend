@@ -5,11 +5,11 @@ import {Grid, GridItem,} from "@chakra-ui/react";
 import withAuth from "@/components/withAuth";
 import {useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {UserToken} from "@/models";
+import {User} from "@/models";
 
 function Inbox() {
     const [size, setSize] = useState<number>(0);
-    const [userData, setUserData] = useState<UserToken>(null);
+    const [userData, setUserData] = useState<User | null | undefined>(null);
     const {user} = useSelector((state: StateType) => state.auth);
     const {selectedThread} = useSelector((state: StateType) => state.threads);
 
@@ -25,8 +25,12 @@ function Inbox() {
         if (typeof window !== "undefined") {
             window.addEventListener('resize', updateSize);
             updateSize();
-            return () => window.removeEventListener('resize', updateSize);
         }
+        return () => {
+            if (typeof window !== "undefined") {
+                window.removeEventListener('resize', updateSize)
+            }
+        };
     }, []);
 
     if (!userData) {
