@@ -16,13 +16,14 @@ export function Time(props: TimeProps) {
         const date1 = dayjs(props.time);
         const date2 = dayjs();
 
-        let days = date2.diff(date1, 'day');
+        let days: number = date2.diff(date1, 'day');
+        let timeString: string = '';
         if (days < 1) {
-            days = `${date2.diff(date1, 'hour')} hours ago`;
+            timeString = `${date2.diff(date1, 'hour')} hours ago`;
         } else {
-          days =  dayjs(props.time).format('MM/DD/YYYY hh:mm A')
+            timeString = dayjs(props.time).format('MM/DD/YYYY hh:mm A')
         }
-        setTime(days)
+        setTime(timeString)
     }, [props.time])
 
     // const getOneDayAgo = (newDate) => {
