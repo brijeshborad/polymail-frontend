@@ -36,7 +36,7 @@ const authSlice = createSlice({
         logoutUser: (state: InitialAuthState) => {
             return {...state, user: undefined, error: null, isLoading: false}
         },
-        logoutUserSuccess: (state: InitialAuthState) => {
+        logoutUserSuccess: (state: InitialAuthState, {payload: {}}: PayloadAction<{}>) => {
             return {...state, user: undefined, error: null, isLoading: false, isAuthenticated: false}
         },
         logoutUserError: (state: InitialAuthState, {payload: error}: PayloadAction<any>) => {
