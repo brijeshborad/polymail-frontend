@@ -100,8 +100,8 @@ export function Message() {
 
             {selectedThread && !isCompose &&
             <Flex justifyContent={'space-between'} flexDir={'column'} height={'100%'}>
-                <div className={styles.mailBoxFLex}>
-                    <div>
+                <Flex direction={'column'} className={styles.mailBoxFLex}>
+                    <div style={{flex: 'none'}}>
                         <Flex justifyContent={'space-between'} wrap={'wrap'} align={'center'}
                               borderBottom={'1px solid rgba(8, 22, 47, 0.1)'}
                               marginBottom={'15'} padding={'12px 20px'}>
@@ -145,7 +145,7 @@ export function Message() {
                         {isLoading && <SpinnerUI/>}
 
                         {(!isLoading && messageContent) &&
-                        <Flex alignItems={'center'} wrap={'wrap'} justifyContent={'space-between'} gap={2}
+                        <Flex alignItems={'center'} wrap={'wrap'} justifyContent={'space-between'} gap={5}
                               padding={'10px 20px'}>
                             <Flex alignItems={'center'}>
                                 <Image src={'/image/user.png'} alt={''} width={50} height={50}/>
@@ -159,8 +159,10 @@ export function Message() {
                             </div>
                         </Flex>}
                     </div>
-                    {(!isLoading && emailPart) && <iframe src={emailPart} className={styles.mailBody}/>}
-                </div>
+                    <div className={styles.mailBodyContent}>
+                        {(!isLoading && emailPart) && <iframe src={emailPart} className={styles.mailBody}/>}
+                    </div>
+                </Flex>
 
                 <ReplyBox/>
             </Flex>

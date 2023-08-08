@@ -1,5 +1,5 @@
 import styles from "@/styles/Inbox.module.css";
-import {Box, Button, Flex, Heading, Input, Textarea} from "@chakra-ui/react";
+import {Button, Flex, Heading, Input, Textarea} from "@chakra-ui/react";
 import {Chip} from "@/components/chip";
 import {ChevronDownIcon, InfoOutlineIcon} from "@chakra-ui/icons";
 import {EmojiIcon, FileIcon, LinkIcon, TextIcon} from "@/icons";
@@ -30,7 +30,12 @@ export function ReplyBox() {
 
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {selectedThread} = useSelector((state: StateType) => state.threads);
-    const { selectedMessage, draft, isCompose, success: sendDraftSuccess } = useSelector((state: StateType) => state.messages);
+    const {
+        selectedMessage,
+        draft,
+        isCompose,
+        success: sendDraftSuccess
+    } = useSelector((state: StateType) => state.messages);
 
     const dispatch = useDispatch();
 
@@ -139,11 +144,20 @@ export function ReplyBox() {
             });
         }
     };
+    const [subject, setSubject] = useState<string>('');
+
+    const addSubject = (event: ChangeEvent | any) => {
+        if (event.target.value) {
+            setSubject(event.target.value);
+        } else {
+            setSubject('New Mail Subject');
+        }
+    }
 
     const sendToDraft = (event: ChangeEvent | any) => {
         setEmailBody(event.target.value);
         let body = {
-            subject: selectedMessage?.subject || 'New Mail Subject',
+            subject: selectedMessage?.subject || subject,
             to: recipients?.items,
             ...(selectedThread ? {thread: selectedThread.id} : {}),
             ...(cc?.items && cc?.items.length > 0 ? {cc: cc?.items} : {}),
@@ -224,7 +238,7 @@ export function ReplyBox() {
             setEmailBody('');
             dispatch(updateMessageState({
                 draft: null,
-                ...(isCompose ? {isCompose: false}: {})
+                ...(isCompose ? {isCompose: false} : {})
             }));
         }
     }
@@ -250,80 +264,85 @@ export function ReplyBox() {
 
     return (
         <div className={styles.mailFooter}>
-            <Flex marginBottom={4} className={styles.mailReply} alignItems={'center'}>
+            <Flex direction={'column'} className={styles.replyBox}>
+                <div className={styles.replayBoxTags}>
+                    <Flex justifyContent={'space-between'} padding={'8px 10px'}
+                          borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>
+                        <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>
+                            <Heading as={'h1'} size={'sm'} paddingTop={1} marginRight={1}>TO:</Heading>
+                            <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
+                                {!!recipients?.items?.length && recipients.items.map((item: string | undefined, i: number) => (
+                                    <Chip text={item} key={i} click={() => handleItemDelete(item!, 'recipients')}/>
+                                ))}
 
-
-            </Flex>
-
-            <Box className={styles.replyBox}>
-
-                <Flex justifyContent={'space-between'} padding={'8px 10px'}
-                      borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>
-                    <Flex width={'100%'} gap={1} alignItems={'center'} className={styles.replyBoxCC}>
-                        <Heading as={'h1'} size={'sm'} marginRight={1}>TO:</Heading>
-                        <Flex alignItems={'center'} wrap={'wrap'} width={'100%'}>
-                            {!!recipients?.items?.length && recipients.items.map((item: string | undefined, i: number) => (
-                                <Chip text={item} key={i} click={() => handleItemDelete(item!, 'recipients')}/>
-                            ))}
-
-                            <Input width={'auto'} padding={0} height={'23px'}
-                                   fontSize={'12px'}
-                                   value={recipients.value}
-                                   onKeyDown={(e) => handleKeyDown(e, 'recipients')}
-                                   onChange={(e) => handleChange(e, 'recipients')}
-                                   onPaste={(e) => handlePaste(e, 'recipients')}
-                                   border={0} className={styles.ccInput}
-                                   placeholder={'Recipient\'s Email'}
-                            />
+                                <Input width={'auto'} padding={0} height={'23px'}
+                                       fontSize={'12px'}
+                                       value={recipients.value}
+                                       onKeyDown={(e) => handleKeyDown(e, 'recipients')}
+                                       onChange={(e) => handleChange(e, 'recipients')}
+                                       onPaste={(e) => handlePaste(e, 'recipients')}
+                                       border={0} className={styles.ccInput}
+                                       placeholder={'Recipient\'s Email'}
+                                />
+                            </Flex>
                         </Flex>
                     </Flex>
+                    <Flex justifyContent={'space-between'} gap={1} padding={'8px 10px'}
+                          borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>
+                        <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>
+                            <Heading as={'h1'} size={'sm'} paddingTop={1} marginRight={1}>CC:</Heading>
+                            <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
+                                {!!cc?.items?.length && cc.items.map((item: string | undefined, i: number) => (
+                                    <Chip text={item} key={i} click={() => handleItemDelete(item!, 'cc')}/>
+                                ))}
 
-                </Flex>
-                <Flex justifyContent={'space-between'} padding={'8px 10px'}
-                      borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>
-                    <Flex width={'100%'} gap={1} alignItems={'center'} className={styles.replyBoxCC}>
-                        <Heading as={'h1'} size={'sm'} marginRight={1}>CC:</Heading>
-                        <Flex alignItems={'center'} wrap={'wrap'} width={'100%'}>
-                            {!!cc?.items?.length && cc.items.map((item: string | undefined, i: number) => (
-                                <Chip text={item} key={i} click={() => handleItemDelete(item!, 'cc')}/>
-                            ))}
-
-                            <Input width={'auto'} padding={0} height={'23px'}
-                                   fontSize={'12px'}
-                                   value={cc.value}
-                                   onKeyDown={(e) => handleKeyDown(e, 'cc')}
-                                   onChange={(e) => handleChange(e, 'cc')}
-                                   onPaste={(e) => handlePaste(e, 'cc')}
-                                   border={0} className={styles.ccInput}
-                            />
+                                <Input width={'auto'} padding={0} height={'23px'}
+                                       fontSize={'12px'}
+                                       value={cc.value}
+                                       onKeyDown={(e) => handleKeyDown(e, 'cc')}
+                                       onChange={(e) => handleChange(e, 'cc')}
+                                       onPaste={(e) => handlePaste(e, 'cc')}
+                                       border={0} className={styles.ccInput}
+                                />
+                            </Flex>
                         </Flex>
+                        <InfoOutlineIcon/>
                     </Flex>
-                    <InfoOutlineIcon/>
-                </Flex>
 
-                <Flex justifyContent={'space-between'} padding={'8px 10px'}
-                      borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>
-                    <Flex width={'100%'} gap={1} alignItems={'center'} className={styles.replyBoxCC}>
-                        <Heading as={'h1'} size={'sm'} marginRight={1}>BCC:</Heading>
-                        <Flex alignItems={'center'} wrap={'wrap'} width={'100%'}>
-                            {!!bcc?.items?.length && bcc.items.map((item: string | undefined, i: number) => (
-                                <Chip text={item} key={i} click={() => handleItemDelete(item!, 'bcc')}/>
-                            ))}
+                    <Flex justifyContent={'space-between'} padding={'8px 10px'}
+                          borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>
+                        <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>
+                            <Heading as={'h1'} size={'sm'} paddingTop={1} marginRight={1}>BCC:</Heading>
+                            <Flex alignItems={'center'} gap={1} wrap={'wrap'} width={'100%'}>
+                                {!!bcc?.items?.length && bcc.items.map((item: string | undefined, i: number) => (
+                                    <Chip text={item} key={i} click={() => handleItemDelete(item!, 'bcc')}/>
+                                ))}
 
-                            <Input width={'auto'} padding={0} height={'23px'}
-                                   fontSize={'12px'}
-                                   value={bcc.value}
-                                   onKeyDown={(e) => handleKeyDown(e, 'bcc')}
-                                   onChange={(e) => handleChange(e, 'bcc')}
-                                   onPaste={(e) => handlePaste(e, 'bcc')}
-                                   border={0} className={styles.ccInput}
-                            />
+                                <Input width={'auto'} padding={0} height={'23px'}
+                                       fontSize={'12px'}
+                                       value={bcc.value}
+                                       onKeyDown={(e) => handleKeyDown(e, 'bcc')}
+                                       onChange={(e) => handleChange(e, 'bcc')}
+                                       onPaste={(e) => handlePaste(e, 'bcc')}
+                                       border={0} className={styles.ccInput}
+                                />
+                            </Flex>
                         </Flex>
+                        <InfoOutlineIcon/>
                     </Flex>
-                    <InfoOutlineIcon/>
-                </Flex>
+                    {isCompose &&
+                    <Flex width={'100%'} className={styles.subject}>
+                        <Input width={'100%'} padding={3} height={'23px'}
+                               fontSize={'12px'}
+                               border={0} className={styles.subjectInput}
+                               placeholder={'Subject'} onChange={(e) => addSubject(e)}
+                        />
+                    </Flex>
+                    }
 
-                <div className={styles.replyMessage}>
+                </div>
+
+                <Flex direction={'column'} className={styles.replyMessage}>
                     <Textarea className={styles.replyMessageArea} padding={0}
                               placeholder='Reply with anything you like or @mention someone to share this thread'
                               value={emailBody} onChange={(e) => sendToDraft(e)}
@@ -342,8 +361,8 @@ export function ReplyBox() {
                                     rightIcon={<ChevronDownIcon/>}>{isCompose ? 'Send' : 'Reply all'}</Button>
                         </Flex>
                     </Flex>
-                </div>
-            </Box>
+                </Flex>
+            </Flex>
         </div>
     )
 }

@@ -218,15 +218,16 @@
 }
 
 .mailBox .mailBody {
-    padding: 24px;
-    background: rgba(0, 0, 0, 0.03);
-    border-radius: 8px;
-    margin: 10px 20px 0;
     font-size: 16px;
     line-height: 1.5;
-    height: calc(100% - 145px);
-    overflow-y: auto;
-    width: calc(100% - 40px);
+    height: 100%;
+    width: 100%;
+}
+
+.mailBox .mailBodyContent {
+    padding: 15px;
+    flex: 1;
+    background: rgba(0, 0, 0, 0.03);
 }
 
 .mailBoxFLex {
@@ -340,7 +341,6 @@
 
 .composeReplyBox .mailFooter {
     padding: 0;
-    height: 100%;
 }
 
 .composeReplyBox .mailFooter .mailReply {
@@ -350,23 +350,27 @@
 
 .composeReplyBox .mailFooter .replyBox {
     border: 0;
-    height: calc(100% - 45px);
+    height: 100%;
 }
 
-.composeReplyBox .mailFooter .replyBox .replyMessage {
-    height: calc(100% - 40px);
+.composeReplyBox .mailFooter {
+    flex: 1 1 auto;
 }
 
-.composeReplyBox .mailFooter .replyBox .replyMessageArea {
-    height: calc(100% - 40px);
+.composeReplyBox .mailBoxFLex {
+    flex: none;
 }
 
-.composeReplyBox .mailFooter .replyBox .replyBoxCC {
-    padding-left: 10px;
+.composeReplyBox .mailFooter .replayBoxTags {
+    flex: none;
 }
 
-.composeReplyBox .mailFooter .replyBoxCC button {
-    padding: 0 10px;
+.composeReplyBox .mailFooter .replyMessage {
+    flex: 1 1 auto;
+}
+
+.composeReplyBox .mailFooter .replyMessageArea {
+    flex: 1 1;
 }
 
 .mailBox .mailFooter svg {
@@ -408,10 +412,30 @@
     resize: none;
 }
 
+.replyBoxCC .ccInput {
+    flex: 1 0 auto;
+}
+
 .replyBoxCC .ccInput:hover,
-.replyBoxCC .ccInput:focus-visible {
+.replyBoxCC .ccInput:focus-visible,
+.subject .subjectInput:hover,
+.subject .subjectInput:focus-visible {
     border: 0;
     box-shadow: none;
+}
+
+.subject .subjectInput {
+    height: auto;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.subject .subjectInput::placeholder {
+    color: #1A202C;
+}
+
+.subject {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 .replyBoxCC .error {
