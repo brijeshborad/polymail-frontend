@@ -15,3 +15,4 @@ export * from './link.icon';
 export * from './emoji.icon';
 export * from './text.icon';
 export * from './star.icon';
+export * from './menu.icon';

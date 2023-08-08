@@ -1,9 +1,21 @@
 import styles from "@/styles/Inbox.module.css";
 import styles2 from "@/styles/common.module.css";
-import {Box, Button, Flex, Heading, Text, Tooltip} from "@chakra-ui/react";
-import {ChevronDownIcon, ChevronUpIcon, CloseIcon} from "@chakra-ui/icons";
+import {
+    Box,
+    Button,
+    Flex,
+    Heading,
+    IconButton,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList,
+    Text,
+    Tooltip
+} from "@chakra-ui/react";
+import {ChevronDownIcon, ChevronUpIcon, CloseIcon, HamburgerIcon} from "@chakra-ui/icons";
 import {Time} from "@/components";
-import {ArchiveIcon, FolderIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
+import {ArchiveIcon, DotIcon, FolderIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
 import Image from "next/image";
 import {StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
@@ -85,9 +97,9 @@ export function Message() {
         if (messageContent && messageContent.id) {
             if (messageBox) {
                 let body = {
-                    Mailboxes: [
-                        messageBox
-                    ],
+                    mailboxes: [
+                        "DRAFT"
+                    ]
                 }
                 dispatch(updatePartialMessage({id: messageContent.id, body}));
             }
@@ -139,6 +151,23 @@ export function Message() {
                                     </div>
                                 </Tooltip>
 
+                                <div className={styles.mailMessageOption}>
+                                    <Menu>
+                                        <MenuButton
+                                            as={IconButton}
+                                            aria-label='Options'
+                                            variant='outline'
+                                            flexDirection={'column'}
+                                        >
+                                            <DotIcon /> <DotIcon /><DotIcon />
+                                        </MenuButton>
+                                        <MenuList>
+                                            <MenuItem onClick={() => updateMailBox('ARCHIVE')}>Read</MenuItem>
+                                            <MenuItem onClick={() => updateMailBox('STARRED')}>Starred</MenuItem>
+                                            <MenuItem onClick={() => updateMailBox('MAILBOX')}>MailBox</MenuItem>
+                                        </MenuList>
+                                    </Menu>
+                                </div>
                             </Flex>
                         </Flex>
 

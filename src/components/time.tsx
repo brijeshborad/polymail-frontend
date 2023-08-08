@@ -7,12 +7,22 @@ export function Time(props: TimeProps) {
     const [time, setTime] = useState<string | undefined>(props.time);
 
     useEffect(() => {
-        let date = dayjs(props.time).format('MM/DD/YYYY hh:mm A')
+        // let date = dayjs(props.time).format('MM/DD/YYYY hh:mm A')
+        //
+        // if (dayjs().diff(dayjs(props.time), 'h') < 12) {
+        //     date = dayjs(props.time).format('hh:mm A')
+        // }
+        // setTime(date)
+        const date1 = dayjs(props.time);
+        const date2 = dayjs();
 
-        if (dayjs().diff(dayjs(props.time), 'h') < 12) {
-            date = dayjs(props.time).format('hh:mm A')
+        let days = date2.diff(date1, 'day');
+        if (days < 1) {
+            days = `${date2.diff(date1, 'hour')} hours ago`;
+        } else {
+          days =  dayjs(props.time).format('MM/DD/YYYY hh:mm A')
         }
-        setTime(date)
+        setTime(days)
     }, [props.time])
 
     // const getOneDayAgo = (newDate) => {

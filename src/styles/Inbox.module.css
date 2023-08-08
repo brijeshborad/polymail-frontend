@@ -496,7 +496,6 @@
     border-radius: 0;
 }
 
-
 .replyMailBox .replyMessageArea:focus-visible {
     border: 0;
     box-shadow: none;
@@ -514,6 +513,30 @@
 .selectedThread .mailDetails {
     border: 1px solid #266DF0;
     background-color: rgba(38,109,240, 0.03);
+}
+
+.mailMessageOption button {
+    min-width: 10px ;
+    height: auto;
+    border: 0;
+}
+
+.mailMessageOption button span {
+    display: flex;
+    flex-direction: column;
+}
+
+.mailMessageOption button:hover,
+.mailMessageOption button:active {
+    background-color: transparent;
+}
+
+.mailMessageOption button svg {
+    margin-right: 0;
+    width: 5px;
+    height: 5px;
+    color: #5D5F62;
+    gap: 2px;
 }
 
 /* Mail Box End */

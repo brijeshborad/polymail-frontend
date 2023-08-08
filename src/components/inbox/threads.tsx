@@ -18,13 +18,12 @@ import {getAllThreads} from "@/redux/threads/action-reducer";
 import {getSyncAccount} from "@/redux/accounts/action-reducer";
 import {ComposeIcon} from "@/icons/compose.icon";
 import {updateMessageState} from "@/redux/messages/action-reducer";
-import LocalStorageService from "@/utils/localstorage.service";
 
 export function Threads() {
     const [tab, setTab] = useState<string>('INBOX');
 
     const {threads, isLoading} = useSelector((state: StateType) => state.threads);
-    const {selectedAccount} = useSelector((state: StateType) => state.accounts);
+    const {selectedAccount, account} = useSelector((state: StateType) => state.accounts);
     const dispatch = useDispatch();
 
     const getAllThread = useCallback(() => {
@@ -37,13 +36,16 @@ export function Threads() {
         getAllThread();
     }, [getAllThread])
 
+    useEffect(() => {
+        console.log('account' , account)
+    }, [account])
+
     const changeEmailTabs = (value: string) => {
         setTab(value);
     }
 
     const callSyncAPI = () => {
         if (selectedAccount && selectedAccount.id) {
-            LocalStorageService.updateUser('store', {token: 'heloo'})
             dispatch(getSyncAccount({id: selectedAccount.id}));
         }
     }

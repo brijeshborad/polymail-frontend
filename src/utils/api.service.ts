@@ -14,20 +14,20 @@ const axiosInstance: AxiosInstance = axios.create({
 } as CreateAxiosDefaults);
 
 axiosInstance.interceptors.request.use((config) => {
-    let userSession: any = LocalStorageService.updateUser('get');
-    if (config.headers.hasOwnProperty('Skip-Headers')) {
-        delete config.headers['Skip-Headers'];
-    } else {
-        if(!userSession || !userSession?.token) {
-            LocalStorageService.clearStorage();
-            Router.push(`/auth/login`);
-            return Promise.reject({error: 'Token not found!'});
+        let userSession: any = LocalStorageService.updateUser('get');
+        if (config.headers.hasOwnProperty('Skip-Headers')) {
+            delete config.headers['Skip-Headers'];
+        } else {
+            if (!userSession || !userSession?.token) {
+                LocalStorageService.clearStorage();
+                Router.push(`/auth/login`);
+                return Promise.reject({error: 'Token not found!'});
+            }
+            config.headers.Authorization = `Bearer PG ${userSession?.token}`;
+            delete config.headers['Skip-Headers'];
         }
-        config.headers.Authorization = `Bearer PG ${userSession?.token}`;
-        delete config.headers['Skip-Headers'];
-    }
-    return config;
-},
+        return config;
+    },
     (error) => {
         // Handle request errors here
 
