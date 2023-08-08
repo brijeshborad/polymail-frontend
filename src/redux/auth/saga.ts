@@ -6,7 +6,7 @@ import {
     googleAuthLinkSuccess,
     loginError,
     loginSuccess,
-    loginUser, logoutUser,
+    loginUser, logoutUser, logoutUserError, logoutUserSuccess,
     registerError,
     registerSuccess,
     registerUser
@@ -14,9 +14,9 @@ import {
 import ApiService from "@/utils/api.service";
 import {AxiosError, AxiosResponse} from "axios";
 import LocalStorageService from "@/utils/localstorage.service";
-import {LoginWithGoogle, User} from "@/models";
+// import {LoginWithGoogle, User} from "@/models";
 
-function* login({payload: {email, password}}: PayloadAction<{ user: User }>) {
+function* login({payload: {email, password}}: PayloadAction<{email: string, password: string}>) {
     try {
         const response: AxiosResponse = yield ApiService.callPost(`auth/login`, {email, password}, {
             'Skip-Headers': true
@@ -28,7 +28,7 @@ function* login({payload: {email, password}}: PayloadAction<{ user: User }>) {
     }
 }
 
-function* register({payload: {email, password}}: PayloadAction<{ user: User }>) {
+function* register({payload: {email, password}}: PayloadAction<{ email: string, password: string }>) {
     try {
         const response: AxiosResponse = yield ApiService.callPost(`users`, {
             email,
@@ -44,7 +44,12 @@ function* register({payload: {email, password}}: PayloadAction<{ user: User }>) 
     }
 }
 
-function* getGoogleAuthLink({payload}: PayloadAction<{loginWithGoogle: LoginWithGoogle}>) {
+function* getGoogleAuthLink({payload}: PayloadAction<{
+    mode?: string,
+    redirectUrl?: string
+    accountType?: string
+    platform?: string,
+    withToken?: boolean}>) {
     try {
         let headers = {};
         if(!payload.withToken) {
@@ -63,8 +68,15 @@ function* getGoogleAuthLink({payload}: PayloadAction<{loginWithGoogle: LoginWith
 }
 
 function* logout() {
-    yield ApiService.callGet(`auth/logout`, null);
-    LocalStorageService.clearStorage();
+    try {
+        const response: AxiosResponse = yield ApiService.callGet(`auth/logout`, null);
+        LocalStorageService.clearStorage();
+        yield put(logoutUserSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        yield put(logoutUserError(error.response.data));
+    }
+
 }
 
 export function* watchLoginUser() {

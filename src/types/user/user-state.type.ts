@@ -1,8 +1,9 @@
 import {User} from "../../models";
 
 export declare type InitialAuthState = {
-    user?: User | null,
+    user?: User | undefined,
     isLoading?: boolean
-    error?: Error | any | null
-    googleAuthRedirectionLink?: { url: string } | null
+    error?: Error | any | null,
+    googleAuthRedirectionLink?: { url?: string } | null,
+    isAuthenticated?: boolean,
 }

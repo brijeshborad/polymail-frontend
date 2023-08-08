@@ -14,9 +14,9 @@ import {
     createDraftError,
     sendMessage,
     sendMessageSuccess,
-    sendMessageError
+    sendMessageError, updatePartialMessageSuccess, updatePartialMessageError, updatePartialMessage
 } from "@/redux/messages/action-reducer";
-import {MessageDraft} from "@/models";
+import {MessageDraft, MessageRequestBody} from "@/models";
 
 function* getMessages({payload: {thread}}: PayloadAction<{ thread?: string }>) {
     try {
@@ -40,7 +40,7 @@ function* getMessagePart({payload: {id}}: PayloadAction<{ id: string }>) {
     }
 }
 
-function* createNewDraft({payload: {accountId, body}}: PayloadAction<{ body: MessageDraft }>) {
+function* createNewDraft({payload: {accountId, body}}: PayloadAction<{accountId: string, body: MessageDraft }>) {
     try {
         const response: AxiosResponse = yield ApiService.callPost(`messages`, {account: accountId, ...body});
         yield put(createDraftSuccess(response));
@@ -60,6 +60,17 @@ function* sendDraftMessage({payload: {id}}: PayloadAction<{ id: string }>) {
     }
 }
 
+function* patchPartialMessage({payload: {id, body}}: PayloadAction<{ id: string, body: MessageRequestBody }>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callPatch(`messages/${id}`, body);
+        yield put(updatePartialMessageSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+
+        yield put(updatePartialMessageError(error.response.data));
+    }
+}
+
 export function* watchGetMessages() {
     yield takeLatest(getAllMessages.type, getMessages);
 }
@@ -76,6 +87,10 @@ export function* watchSendDraftMessage() {
     yield takeLatest(sendMessage.type, sendDraftMessage);
 }
 
+export function* watchUpdateCurrentDraftMessage() {
+    yield takeLatest(updatePartialMessage.type, patchPartialMessage);
+}
+
 
 export default function* rootSaga() {
     yield all([
@@ -83,6 +98,7 @@ export default function* rootSaga() {
         fork(watchGetMessagesPart),
         fork(watchCreateNewDraft),
         fork(watchSendDraftMessage),
+        fork(watchUpdateCurrentDraftMessage),
     ]);
 }
 

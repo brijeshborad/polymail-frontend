@@ -1,9 +1,9 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {InitialOrganizationStateType} from "@/types";
-import {Organization} from "@/models";
+// import {Organization} from "@/models";
 import LocalStorageService from "@/utils/localstorage.service";
 
-const initialState = {
+const initialState: any = {
     organizations: [],
     organization: null,
     isLoading: false,
@@ -18,16 +18,16 @@ const organizationSlice = createSlice({
         getAllOrganizations: (state: InitialOrganizationStateType) => {
             return {...state, organizations: [], isLoading: true, error: null}
         },
-        getAllOrganizationsSuccess: (state: InitialOrganizationStateType, {payload: organizations}: PayloadAction<{ organizations: Organization[] }>) => {
+        getAllOrganizationsSuccess: (state: InitialOrganizationStateType, {payload: organizations}: PayloadAction<{}>) => {
             return {...state, organizations, isLoading: false, error: null}
         },
         getAllOrganizationsError: (state: InitialOrganizationStateType, {payload: error}: PayloadAction<{ error: any }>) => {
             return {...state, organizations: [], isLoading: false, error}
         },
-        addOrganization: (state: InitialOrganizationStateType) => {
-            return {...state, organization: null, error: null, isLoading: true}
+        addOrganization: (state: InitialOrganizationStateType, action: PayloadAction<{ name: string, accountId: string }>) => {
+            return {...state, organization: null, error: null, isLoading: true, action}
         },
-        addOrganizationSuccess: (state: InitialOrganizationStateType, {payload: organization}: PayloadAction<{organization: Organization}>) => {
+        addOrganizationSuccess: (state: InitialOrganizationStateType, {payload: organization}: PayloadAction<{}>) => {
             return {...state, organization, error: null, isLoading: false}
         },
         addOrganizationError: (state: InitialOrganizationStateType, {payload: error}: PayloadAction<{ error: any }>) => {

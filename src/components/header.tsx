@@ -51,13 +51,13 @@ export function Header() {
     //
     useEffect(() => {
         if (googleAuthRedirectionLink) {
-            window.location.href = googleAuthRedirectionLink.url;
+            window.location.href = googleAuthRedirectionLink.url || '';
         }
     }, [googleAuthRedirectionLink])
 
     const getAllAccountAndOrganizationsDetails = useCallback(() => {
         dispatch(getAllAccount());
-        dispatch(getAllOrganizations(null));
+        dispatch(getAllOrganizations());
     }, [dispatch])
 
     useEffect(() => {
@@ -95,8 +95,7 @@ export function Header() {
 
 
     function logout() {
-        dispatch(logoutUser(null));
-
+        dispatch(logoutUser());
         Router.push('/auth/login');
     }
 

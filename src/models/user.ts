@@ -12,10 +12,10 @@ export interface UserToken {
 }
 
 export interface LoginWithGoogle {
-    mode: string,
-    redirectUrl: string
-    accountType: string
-    platform: string,
+    mode?: string,
+    redirectUrl?: string
+    accountType?: string
+    platform?: string,
     withToken?: boolean
 }
 

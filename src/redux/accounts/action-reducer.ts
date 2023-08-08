@@ -1,9 +1,9 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {Account} from "@/models";
+// import {Account} from "@/models";
 import {InitialAccountStateType} from "@/types";
 import LocalStorageService from "@/utils/localstorage.service";
 
-const initialState = {
+const initialState: any = {
     accounts: [],
     account: null,
     isLoading: false,
@@ -18,7 +18,7 @@ const accountSlice = createSlice({
         getAllAccount: (state: InitialAccountStateType) => {
             return {...state, accounts: [], isLoading: true, error: null}
         },
-        getAllAccountSuccess: (state: InitialAccountStateType, {payload: accounts}: PayloadAction<Account[]>) => {
+        getAllAccountSuccess: (state: InitialAccountStateType, {payload: accounts}: PayloadAction<{}>) => {
             return {...state, accounts, isLoading: false, error: null}
         },
         getAllAccountError: (state: InitialAccountStateType, {payload: error}: PayloadAction<any>) => {
@@ -28,10 +28,10 @@ const accountSlice = createSlice({
             return {...state, ...action.payload}
         },
 
-        getSyncAccount: (state: InitialAccountStateType) => {
-            return {...state, account: null, isLoading: true, error: null}
+        getSyncAccount: (state: InitialAccountStateType, action: PayloadAction<{}>) => {
+            return {...state, account: null, isLoading: true, error: null, action}
         },
-        getSyncAccountSuccess: (state: InitialAccountStateType, {payload: account}: PayloadAction<null>) => {
+        getSyncAccountSuccess: (state: InitialAccountStateType, {payload: account}: PayloadAction<{}>) => {
             return {...state, account, isLoading: false, error: null}
         },
         getSyncAccountError: (state: InitialAccountStateType, {payload: error}: PayloadAction<any>) => {

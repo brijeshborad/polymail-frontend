@@ -3,7 +3,7 @@ import {all, fork, put, takeLatest} from "@redux-saga/core/effects";
 import ApiService from "@/utils/api.service";
 import {AxiosError, AxiosResponse} from "axios";
 import {getAllOrganizations, getAllOrganizationsSuccess, getAllOrganizationsError, addOrganization, addOrganizationSuccess, addOrganizationError} from "@/redux/organizations/action-reducer";
-import {Organization} from "@/models";
+// import {Organization} from "@/models";
 
 function* getOrganizations() {
     try {
@@ -15,7 +15,7 @@ function* getOrganizations() {
     }
 }
 
-function* addOrganizations({payload: {name, accountId}}: PayloadAction<{organization: Organization}>) {
+function* addOrganizations({payload: {name, accountId}}: PayloadAction<{name: string, accountId: string}>) {
     try {
         const response: AxiosResponse = yield ApiService.callPost(`organizations`, {name, accountId});
         yield put(addOrganizationSuccess(response));

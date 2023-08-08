@@ -1,4 +1,4 @@
-let timeout = null;
+let timeout: any = null;
 
 export function debounce(fun: () => void, timeOut: number = 1500) {
     if (timeout)
@@ -6,6 +6,6 @@ export function debounce(fun: () => void, timeOut: number = 1500) {
     timeout = setTimeout(fun, timeOut);
 }
 
-export const isEmail = (email) => {
+export const isEmail = (email: string) => {
     return /[\w\d\.-]+@[\w\d\.-]+\.[\w\d\.-]+/.test(email);
 }

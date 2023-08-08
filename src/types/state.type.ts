@@ -1,7 +1,6 @@
 import {
     InitialAccountStateType,
     InitialAuthState,
-    InitialMessagePartType,
     InitialMessageStateType,
     InitialOrganizationStateType,
     InitialProjectState,
@@ -15,5 +14,4 @@ export declare type StateType = {
     messages: InitialMessageStateType,
     organizations: InitialOrganizationStateType,
     accounts: InitialAccountStateType,
-    messagePart: InitialMessagePartType,
 }

@@ -1,8 +1,8 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {InitialThreadStateType} from "@/types";
-import {Thread} from "@/models";
+// import {Thread} from "@/models";
 
-const initialState = {
+const initialState: any = {
     threads: [],
     thread: null,
     isLoading: false,
@@ -14,10 +14,10 @@ const threadsSlice = createSlice({
     name: 'threads',
     initialState,
     reducers: {
-        getAllThreads: (state: InitialThreadStateType) => {
-            return {...state, threads: [], isLoading: true, error: null}
+        getAllThreads: (state: InitialThreadStateType, action: PayloadAction<{ mailbox?: string, project?: string, account?: string }>) => {
+            return {...state, threads: [], isLoading: true, error: null, action}
         },
-        getAllThreadsSuccess: (state: InitialThreadStateType, {payload: threads}: PayloadAction<{ threads: Thread[] }>) => {
+        getAllThreadsSuccess: (state: InitialThreadStateType, {payload: threads}: PayloadAction<{}>) => {
             return {...state, threads, isLoading: false, error: null}
         },
         getAllThreadsError: (state: InitialThreadStateType, {payload: error}: PayloadAction<{ error: any }>) => {

@@ -1,11 +1,11 @@
 import {combineReducers} from "redux";
+import {HYDRATE} from "next-redux-wrapper";
 import projects from './projects/action-reducer'
 import auth from './auth/action-reducer'
 import messages from './messages/action-reducer'
 import threads from './threads/action-reducer'
 import organizations from './organizations/action-reducer'
 import accounts from './accounts/action-reducer'
-import {HYDRATE} from "next-redux-wrapper";
 
 const combinedReducer = combineReducers({
     auth,
@@ -16,7 +16,7 @@ const combinedReducer = combineReducers({
     accounts
 });
 
-const reducers = (state, action) => {
+const reducers = (state: any, action: any) => {
     if (action.type === HYDRATE) {
         return {
             ...state, // use previous state

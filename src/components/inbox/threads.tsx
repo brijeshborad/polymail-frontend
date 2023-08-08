@@ -18,6 +18,7 @@ import {getAllThreads} from "@/redux/threads/action-reducer";
 import {getSyncAccount} from "@/redux/accounts/action-reducer";
 import {ComposeIcon} from "@/icons/compose.icon";
 import {updateMessageState} from "@/redux/messages/action-reducer";
+import LocalStorageService from "@/utils/localstorage.service";
 
 export function Threads() {
     const [tab, setTab] = useState<string>('INBOX');
@@ -42,6 +43,7 @@ export function Threads() {
 
     const callSyncAPI = () => {
         if (selectedAccount && selectedAccount.id) {
+            LocalStorageService.updateUser('store', {token: 'heloo'})
             dispatch(getSyncAccount({id: selectedAccount.id}));
         }
     }

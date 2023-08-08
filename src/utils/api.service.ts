@@ -18,11 +18,21 @@ axiosInstance.interceptors.request.use((config) => {
     if (config.headers.hasOwnProperty('Skip-Headers')) {
         delete config.headers['Skip-Headers'];
     } else {
+        if(!userSession || !userSession?.token) {
+            LocalStorageService.clearStorage();
+            Router.push(`/auth/login`);
+            return Promise.reject({error: 'Token not found!'});
+        }
         config.headers.Authorization = `Bearer PG ${userSession?.token}`;
         delete config.headers['Skip-Headers'];
     }
     return config;
-});
+},
+    (error) => {
+        // Handle request errors here
+
+        return Promise.reject(error);
+    });
 
 axiosInstance.interceptors.response.use((response) => {
     return response.data;
@@ -33,7 +43,7 @@ axiosInstance.interceptors.response.use((response) => {
             type: 'error'
         }
         Toaster(err);
-        if (error.response.data.description === 'Unauthorized') {
+        if (error.response.status === 401) {
             LocalStorageService.clearStorage();
             Router.push(`/auth/login`);
             return false;

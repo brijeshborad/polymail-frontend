@@ -26,13 +26,14 @@ export function LoginSignup({type = 'login'}: LoginProps) {
         if (router.query) {
             if (router.query.access_token) {
                 LocalStorageService.updateUser('store', {token: router.query.access_token})
-                dispatch(updateAuthState({user: {token: router.query.access_token}}));
+                dispatch(updateAuthState({user: {token: router.query.access_token.toString() || ''}, isAuthenticated: true}));
+                console.log('login 12')
                 Router.push('/inbox');
             }
 
             if (router.query.error) {
                 Router.replace('/auth/login', undefined, {shallow: true});
-                dispatch(updateAuthState({error: {description: 'Invalid account'}}));
+                dispatch(updateAuthState({error: {description: 'Invalid account'}, isAuthenticated: false}));
             }
         }
     }, [dispatch, router.query]);
@@ -43,13 +44,13 @@ export function LoginSignup({type = 'login'}: LoginProps) {
 
     useEffect(() => {
         if (user && user?.token) {
-            Router.push('/inbox');
+            // Router.push('/inbox');
         }
     }, [user])
 
     useEffect(() => {
         if (googleAuthRedirectionLink) {
-            window.location.href = googleAuthRedirectionLink.url;
+            window.location.href = googleAuthRedirectionLink.url || '';
         }
     }, [googleAuthRedirectionLink])
 
@@ -76,6 +77,7 @@ export function LoginSignup({type = 'login'}: LoginProps) {
         }
         dispatch(googleAuthLink(body));
     }
+
 
     return (
         <div className={styles.login}>

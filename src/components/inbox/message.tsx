@@ -83,12 +83,14 @@ export function Message() {
 
     const updateMailBox = (messageBox: string) => {
         if (messageContent && messageContent.id) {
-            let body = {
-                Mailboxes: [
-                    messageBox
-                ],
+            if (messageBox) {
+                let body = {
+                    Mailboxes: [
+                        messageBox
+                    ],
+                }
+                dispatch(updatePartialMessage({id: messageContent.id, body}));
             }
-            dispatch(updatePartialMessage({id: messageContent.id, body}));
         }
     }
 

@@ -49,7 +49,7 @@ export interface MessageRequestBody {
     subject?: string,
     to?: string[],
     body? :string,
-    draftInfo: MessageDraftInfo,
-    mailboxes: string[],
+    draftInfo?: MessageDraftInfo,
+    mailboxes?: string[] | undefined,
 
 }
