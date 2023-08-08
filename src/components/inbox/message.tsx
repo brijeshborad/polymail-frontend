@@ -13,7 +13,7 @@ import {
     Text,
     Tooltip
 } from "@chakra-ui/react";
-import {ChevronDownIcon, ChevronUpIcon, CloseIcon, HamburgerIcon} from "@chakra-ui/icons";
+import {ChevronDownIcon, ChevronUpIcon, CloseIcon} from "@chakra-ui/icons";
 import {Time} from "@/components";
 import {ArchiveIcon, DotIcon, FolderIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
 import Image from "next/image";
