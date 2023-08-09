@@ -27,7 +27,6 @@ export function LoginSignup({type = 'login'}: LoginProps) {
             if (router.query.access_token) {
                 LocalStorageService.updateUser('store', {token: router.query.access_token})
                 dispatch(updateAuthState({user: {token: router.query.access_token.toString() || ''}, isAuthenticated: true}));
-                console.log('login 12')
                 Router.push('/inbox');
             }
 

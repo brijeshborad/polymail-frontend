@@ -41,7 +41,7 @@ function Inbox() {
         <div>
             <div className={styles.mailBg}>
 
-                <Grid className={styles.mailGrid} templateColumns='30% auto' gap={6}>
+                <Grid className={styles.mailGrid} templateColumns='30% auto' gap={6} height={'100%'}>
                     <GridItem w='100%'>
                         {((size < 991 && !selectedThread) || size > 991) &&
                         <Threads/>}

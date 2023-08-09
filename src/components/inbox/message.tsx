@@ -98,7 +98,7 @@ export function Message() {
             if (messageBox) {
                 let body = {
                     mailboxes: [
-                        "DRAFT"
+                        messageBox
                     ]
                 }
                 dispatch(updatePartialMessage({id: messageContent.id, body}));
