@@ -186,14 +186,6 @@ export function Header() {
             {/*    </Menu>*/}
             {/*</div>*/}
 
-            {/*<Flex className={styles.composeButton} align={'center'}>*/}
-            {/*    <Flex align={'center'} className={styles.tabsActive} onClick={() => openComposeBox()}>*/}
-            {/*        <ComposeIcon />*/}
-            {/*        Compose*/}
-            {/*    </Flex>*/}
-            {/*</Flex>*/}
-
-            {/*<Button colorScheme='blue' >Compose</Button>*/}
             <Button className={styles.composeButton} leftIcon={<ComposeIcon />} colorScheme='blue' variant='outline' onClick={() => openComposeBox()}>
                 Compose
             </Button>

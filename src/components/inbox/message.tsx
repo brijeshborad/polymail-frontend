@@ -87,7 +87,7 @@ export function Message() {
             }
         } else if (type === 'down') {
             if (messages && messages.length - 1 !== index) {
-                setIndex(prevState => prevState ? (prevState + 1) : null);
+                setIndex(prevState => prevState || prevState === 0 ? (prevState + 1) : 0);
                 setHideCcFields(false);
                 setHideBccFields(false);
             }
