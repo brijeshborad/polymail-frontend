@@ -1,3 +1,4 @@
 export declare type TimeProps = {
-    time: string | undefined
+    time: string | undefined,
+    isShowFullTime: boolean
 }

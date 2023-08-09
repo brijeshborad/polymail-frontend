@@ -123,6 +123,10 @@
     transition: all 0.5s;
 }
 
+.image {
+    cursor: pointer;
+}
+
 .headerTabs div:hover {
     color: #266DF0;
 }
@@ -195,6 +199,20 @@
     height: fit-content;
 }
 
+.header .composeButton {
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.5s;
+    margin-right: 20px;
+    color: #266df0;
+    min-width: 130px;
+}
+
+.composeButton svg {
+    width: 20px;
+    height: 20px;
+}
 .notificationIcon {
     position: relative;
     height: 36px;
@@ -203,7 +221,7 @@
     background-color: rgba(38, 109, 240, 0.2);
     border: 1px solid rgba(38, 109, 240, 0.2);
     margin-left: 21px;
-    margin-right: 165px;
+    margin-right: 25px;
 }
 
 .notificationIcon span {

@@ -4,4 +4,5 @@ export interface Account {
     email: string,
     created?: string,
     updated?: string,
+    success?: boolean
 }

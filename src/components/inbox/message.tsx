@@ -5,17 +5,12 @@ import {
     Button,
     Flex,
     Heading,
-    IconButton,
-    Menu,
-    MenuButton,
-    MenuItem,
-    MenuList,
     Text,
     Tooltip
 } from "@chakra-ui/react";
-import {ChevronDownIcon, ChevronUpIcon, CloseIcon} from "@chakra-ui/icons";
+import {ChevronDownIcon, ChevronUpIcon, CloseIcon, CheckIcon} from "@chakra-ui/icons";
 import {Time} from "@/components";
-import {ArchiveIcon, DotIcon, FolderIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
+import {ArchiveIcon, FolderIcon, StarIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
 import Image from "next/image";
 import {StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
@@ -45,10 +40,15 @@ export function Message() {
             dispatch(getAllMessages({thread: selectedThread.id}));
         }
     }, [dispatch, selectedThread])
+    const [hideCcFields, setHideCcFields] = useState<boolean>(false);
+    const [hideBccFields, setHideBccFields] = useState<boolean>(false);
+
 
     useEffect(() => {
         if (selectedThread && selectedThread?.id) {
             setIndex(null);
+            setHideCcFields(false)
+            setHideBccFields(false)
             getAllThreadMessages();
         }
     }, [selectedThread, getAllThreadMessages])
@@ -56,6 +56,8 @@ export function Message() {
     useEffect(() => {
         if (messages && messages.length > 0) {
             setIndex(val => !val ? messages.length - 1 : val);
+            setHideCcFields(false)
+            setHideBccFields(false)
         }
     }, [messages])
 
@@ -80,10 +82,14 @@ export function Message() {
         if (type === 'up') {
             if (index && index > 0) {
                 setIndex(prevState => prevState ? (prevState - 1) :  null);
+                setHideCcFields(false);
+                setHideBccFields(false);
             }
         } else if (type === 'down') {
             if (messages && messages.length - 1 !== index) {
                 setIndex(prevState => prevState ? (prevState + 1) : null);
+                setHideCcFields(false);
+                setHideBccFields(false);
             }
         }
     }
@@ -105,7 +111,6 @@ export function Message() {
             }
         }
     }
-
 
     return (
         <Box className={styles.mailBox}>
@@ -130,7 +135,7 @@ export function Message() {
 
                             <Flex alignItems={'center'} gap={3} className={styles.headerRightIcon}>
                                 {!isLoading && <Text className={styles.totalMessages}>
-                                    {index && index + 1} / {selectedThread.numMessages}
+                                    {index ? index + 1 : 1} / {selectedThread.numMessages}
                                 </Text>}
                                 <Button className={styles.addToProject} leftIcon={<FolderIcon/>}>Add to
                                     Project <span
@@ -151,23 +156,23 @@ export function Message() {
                                     </div>
                                 </Tooltip>
 
-                                <div className={styles.mailMessageOption}>
-                                    <Menu>
-                                        <MenuButton
-                                            as={IconButton}
-                                            aria-label='Options'
-                                            variant='outline'
-                                            flexDirection={'column'}
-                                        >
-                                            <DotIcon /> <DotIcon /><DotIcon />
-                                        </MenuButton>
-                                        <MenuList>
-                                            <MenuItem onClick={() => updateMailBox('READ')}>Read</MenuItem>
-                                            <MenuItem onClick={() => updateMailBox('STARRED')}>Starred</MenuItem>
-                                            <MenuItem onClick={() => updateMailBox('MAILBOX')}>MailBox</MenuItem>
-                                        </MenuList>
-                                    </Menu>
-                                </div>
+                                <Tooltip label='Read' placement='bottom' bg='gray.300' color='black'>
+                                    <div onClick={() => updateMailBox('READ')}>
+                                        <CheckIcon />
+                                    </div>
+                                </Tooltip>
+
+                                <Tooltip label='Starred' placement='bottom' bg='gray.300' color='black'>
+                                    <div onClick={() => updateMailBox('STARRED')}>
+                                        <StarIcon />
+                                    </div>
+                                </Tooltip>
+
+                                <Tooltip label='MailBox' placement='bottom' bg='gray.300' color='black'>
+                                    <div onClick={() => updateMailBox('MAILBOX')}>
+                                        <FolderIcon/>
+                                    </div>
+                                </Tooltip>
                             </Flex>
                         </Flex>
 
@@ -184,7 +189,7 @@ export function Message() {
                                 </Flex>
                             </Flex>
                             <div className={styles2.receiveTime}>
-                                <Time time={messageContent?.created || ''}/>
+                                <Time time={messageContent?.created || ''} isShowFullTime={true}/>
                             </div>
                         </Flex>}
                     </div>
@@ -193,7 +198,7 @@ export function Message() {
                     </div>
                 </Flex>
 
-                <ReplyBox/>
+                <ReplyBox hideCcFields={hideCcFields} setHideCcFields={setHideCcFields} setHideBccFields={setHideBccFields} hideBccFields={hideBccFields}/>
             </Flex>
             }
 
@@ -216,7 +221,7 @@ export function Message() {
                         </Flex>
                     </div>
 
-                    <ReplyBox/>
+                    <ReplyBox  hideCcFields={hideCcFields} setHideCcFields={setHideCcFields} setHideBccFields={setHideBccFields} hideBccFields={hideBccFields}/>
                 </Flex>
             </div>}
         </Box>

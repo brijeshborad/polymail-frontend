@@ -9,10 +9,11 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {debounce, isEmail} from "@/utils/common.functions";
 import {Toaster} from "@/components/toaster";
+import {ReplayProps} from "@/types/props-types/replay.type";
 
 declare type RecipientsType = { items: (string | undefined)[], value: string };
 
-export function ReplyBox() {
+export function ReplyBox(props: ReplayProps) {
     const [isToEmailAdded, setIsToEmailAdded] = useState<boolean>(false);
     const [emailBody, setEmailBody] = useState<string>('');
     const [recipients, setRecipients] = useState<RecipientsType>({
@@ -38,6 +39,22 @@ export function ReplyBox() {
     } = useSelector((state: StateType) => state.messages);
 
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        props.setHideCcFields(false)
+        setCC({
+            items: [],
+            value: ""
+        });
+    }, [])
+
+    useEffect(() => {
+        props.setHideBccFields(false)
+        setBCC({
+            items: [],
+            value: ""
+        });
+    }, [])
 
     const handleChange = (evt: ChangeEvent | any, type: string) => {
         if (type === 'recipients') {
@@ -174,7 +191,7 @@ export function ReplyBox() {
                     dispatch(createDraft({accountId: selectedAccount.id, body}));
                 }
             }
-        });
+        },500);
     }
 
     const isInList = (email: string, type: string) => {
@@ -262,6 +279,33 @@ export function ReplyBox() {
     }, [recipients, emailBody])
 
 
+    const showCCFields = (type: string) => {
+        if (type === 'cc') {
+            props.setHideCcFields(true)
+            setCC({
+                items: [],
+                value: ""
+            });
+        } else if (type === 'bcc') {
+            props.setHideBccFields(true)
+            setBCC({
+                items: [],
+                value: ""
+            });
+        } else {
+            props.setHideCcFields(false)
+            props.setHideBccFields(false)
+            setBCC({
+                items: [],
+                value: ""
+            });
+            setCC({
+                items: [],
+                value: ""
+            });
+        }
+    }
+
     return (
         <div className={styles.mailFooter}>
             <Flex direction={'column'} className={styles.replyBox}>
@@ -284,11 +328,15 @@ export function ReplyBox() {
                                        border={0} className={styles.ccInput}
                                        placeholder={'Recipient\'s Email'}
                                 />
+                                {!props.hideCcFields && <span className={styles.ccButton} onClick={() => showCCFields('cc')}>Cc</span>}
+                                {!props.hideBccFields && <span className={styles.ccButton} onClick={() => showCCFields('bcc')}>Bcc</span>}
                             </Flex>
                         </Flex>
                     </Flex>
-                    <Flex justifyContent={'space-between'} gap={1} padding={'8px 10px'}
-                          borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>
+
+                     {/*cc*/}
+                    {props.hideCcFields && <Flex justifyContent={'space-between'} gap={1} padding={'8px 10px'}
+                                          borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>
                         <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>
                             <Heading as={'h1'} size={'sm'} paddingTop={1} marginRight={1}>CC:</Heading>
                             <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
@@ -307,10 +355,11 @@ export function ReplyBox() {
                             </Flex>
                         </Flex>
                         <InfoOutlineIcon/>
-                    </Flex>
+                    </Flex>}
 
-                    <Flex justifyContent={'space-between'} padding={'8px 10px'}
-                          borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>
+                    {/*bcc*/}
+                    {props.hideBccFields && <Flex justifyContent={'space-between'} padding={'8px 10px'}
+                                           borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>
                         <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>
                             <Heading as={'h1'} size={'sm'} paddingTop={1} marginRight={1}>BCC:</Heading>
                             <Flex alignItems={'center'} gap={1} wrap={'wrap'} width={'100%'}>
@@ -329,7 +378,8 @@ export function ReplyBox() {
                             </Flex>
                         </Flex>
                         <InfoOutlineIcon/>
-                    </Flex>
+                    </Flex> }
+
                     {isCompose &&
                     <Flex width={'100%'} className={styles.subject}>
                         <Input width={'100%'} padding={3} height={'23px'}

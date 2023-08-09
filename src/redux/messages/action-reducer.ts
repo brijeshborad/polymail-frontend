@@ -21,13 +21,13 @@ const messagesSlice = createSlice({
     initialState,
     reducers: {
         getAllMessages: (state: InitialMessageStateType, action: PayloadAction<{ thread?: string }>) => {
-            return {...state, messages: [], isLoading: true, error: null, action}
+            return {...state, messages: [], isLoading: true, error: null, draft:null, action}
         },
         getAllMessagesSuccess: (state: InitialMessageStateType, {payload: messages}: PayloadAction<{}>) => {
-            return {...state, messages, isLoading: false, error: null}
+            return {...state, messages, isLoading: false, error: null, draft:null}
         },
         getAllMessagesError: (state: InitialMessageStateType, {payload: error}: PayloadAction<{ error: any }>) => {
-            return {...state, messages: [], isLoading: false, error}
+            return {...state, messages: [], isLoading: false, error, draft:null}
         },
 
         getMessageParts: (state: InitialMessageStateType, action: PayloadAction<{ id: string }>) => {

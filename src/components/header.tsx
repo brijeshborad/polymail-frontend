@@ -22,8 +22,10 @@ import {StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
 import {getAllOrganizations, updateOrganizationState} from "@/redux/organizations/action-reducer";
 import {Account, Organization, User} from "@/models";
-import {getAllAccount, updateAccountState} from "@/redux/accounts/action-reducer";
+import {getAllAccount, getSyncAccount, updateAccountState} from "@/redux/accounts/action-reducer";
 import LocalStorageService from "@/utils/localstorage.service";
+import {ComposeIcon} from "@/icons/compose.icon";
+import {updateMessageState} from "@/redux/messages/action-reducer";
 
 export function Header() {
     const dispatch = useDispatch();
@@ -33,7 +35,7 @@ export function Header() {
         isLoading: isOrganizationLoading,
         // selectedOrganization
     } = useSelector((state: StateType) => state.organizations);
-    const {accounts} = useSelector((state: StateType) => state.accounts);
+    const {accounts , selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
     const [userData, setUserData] = useState<User>();
 
@@ -123,11 +125,20 @@ export function Header() {
     if (!userData) {
         return <></>;
     }
+    const callSyncAPI = () => {
+        if (selectedAccount && selectedAccount.id) {
+            dispatch(getSyncAccount({id: selectedAccount.id}));
+        }
+    }
+
+    const openComposeBox = () => {
+        dispatch(updateMessageState({isCompose: true}))
+    }
 
     return (
         <Flex className={styles.header} w='100%' align={'center'}>
             <div>
-                <Image width="30" height="30" src="/image/logo.png" alt=""/>
+                <Image width="30" height="30" src="/image/logo.png" alt="" className={styles.image} onClick={() => callSyncAPI()}/>
             </div>
             <Flex className={styles.headerTabs} align={'center'}>
                 <Flex align={'center'} className={styles.tabsActive}>
@@ -174,6 +185,18 @@ export function Header() {
             {/*        </MenuList>*/}
             {/*    </Menu>*/}
             {/*</div>*/}
+
+            {/*<Flex className={styles.composeButton} align={'center'}>*/}
+            {/*    <Flex align={'center'} className={styles.tabsActive} onClick={() => openComposeBox()}>*/}
+            {/*        <ComposeIcon />*/}
+            {/*        Compose*/}
+            {/*    </Flex>*/}
+            {/*</Flex>*/}
+
+            {/*<Button colorScheme='blue' >Compose</Button>*/}
+            <Button className={styles.composeButton} leftIcon={<ComposeIcon />} colorScheme='blue' variant='outline' onClick={() => openComposeBox()}>
+                Compose
+            </Button>
 
 
             <div className={styles.profile}>

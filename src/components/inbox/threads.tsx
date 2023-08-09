@@ -9,22 +9,24 @@ import {
     Tooltip
 } from "@chakra-ui/react";
 import {StarIcon, DraftIcon, FolderIcon, SendIcon, TrashIcon, ArchiveIcon} from "@/icons";
-import { RepeatIcon} from "@chakra-ui/icons";
 import InboxTab from "@/components/inbox/tabs-components/inbox-tab";
 import {StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {getAllThreads} from "@/redux/threads/action-reducer";
-import {getSyncAccount} from "@/redux/accounts/action-reducer";
-import {ComposeIcon} from "@/icons/compose.icon";
-import {updateMessageState} from "@/redux/messages/action-reducer";
 
 export function Threads() {
     const [tab, setTab] = useState<string>('INBOX');
 
     const {threads, isLoading} = useSelector((state: StateType) => state.threads);
-    const {selectedAccount} = useSelector((state: StateType) => state.accounts);
+    const {selectedAccount, account} = useSelector((state: StateType) => state.accounts);
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (account && account.success && selectedAccount) {
+            dispatch(getAllThreads({mailbox: tab, account: selectedAccount.id}));
+        }
+    }, [account, dispatch, selectedAccount, tab])
 
     const getAllThread = useCallback(() => {
         if (selectedAccount) {
@@ -40,30 +42,9 @@ export function Threads() {
         setTab(value);
     }
 
-    const callSyncAPI = () => {
-        if (selectedAccount && selectedAccount.id) {
-            dispatch(getSyncAccount({id: selectedAccount.id}));
-        }
-    }
-
-    const openComposeBox = () => {
-        dispatch(updateMessageState({isCompose: true}))
-    }
 
     return (
         <>
-            <Flex align={'center'} justify={'space-between'} marginBottom={"20px"}>
-                <Tooltip label='Compose' placement='bottom' bg='gray.300' color='black'>
-                    <div className={styles.composeButton} onClick={() => openComposeBox()}>
-                        <ComposeIcon />
-                    </div>
-                </Tooltip>
-                <div className={styles.syncButton}>
-                    <Tooltip label='Sync Data' placement='bottom' bg='gray.300' color='black'>
-                        <RepeatIcon onClick={() => callSyncAPI()}/>
-                    </Tooltip>
-                </div>
-            </Flex>
             <Flex direction={'column'} gap={5}>
                 <Tabs>
                     <TabList justifyContent={'space-between'} alignItems={'center'} className={styles.mailTabList}

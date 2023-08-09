@@ -539,6 +539,17 @@
     gap: 2px;
 }
 
+.ccButton {
+    cursor: pointer;
+    color: rgba(0, 0, 0, 0.8);
+    font-size: 14px;
+    line-height: 1;
+    text-align: right;
+}
+.ccButton:hover {
+    text-decoration: underline;
+}
+
 /* Mail Box End */
 
 @media (max-width: 991px) {
