@@ -162,7 +162,7 @@ export function Message() {
                                             <DotIcon /> <DotIcon /><DotIcon />
                                         </MenuButton>
                                         <MenuList>
-                                            <MenuItem onClick={() => updateMailBox('ARCHIVE')}>Read</MenuItem>
+                                            <MenuItem onClick={() => updateMailBox('READ')}>Read</MenuItem>
                                             <MenuItem onClick={() => updateMailBox('STARRED')}>Starred</MenuItem>
                                             <MenuItem onClick={() => updateMailBox('MAILBOX')}>MailBox</MenuItem>
                                         </MenuList>
