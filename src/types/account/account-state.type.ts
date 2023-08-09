@@ -6,5 +6,5 @@ export declare type InitialAccountStateType = {
     isLoading?: boolean
     error?: Error | any,
     selectedAccount?: Account | null,
-    success: boolean,
+    success?: boolean,
 }

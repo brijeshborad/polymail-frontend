@@ -10,7 +10,7 @@ import {
     Menu,
     MenuButton,
     MenuItem,
-    MenuList, Toast, Tooltip,
+    MenuList, Tooltip,
 } from "@chakra-ui/react";
 import {ChevronDownIcon, SearchIcon, CheckIcon, RepeatIcon} from "@chakra-ui/icons";
 import {EnergyIcon, FolderIcon, MailIcon} from "@/icons";
@@ -68,7 +68,6 @@ export function Header() {
     }, [getAllAccountAndOrganizationsDetails])
 
     useEffect(() => {
-        console.log('syncSuccess',syncSuccess)
         if(syncSuccess) {
             let data = {
                 desc: 'Syncing mails started!',

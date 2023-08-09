@@ -31,7 +31,7 @@ export function Time(props: TimeProps) {
             timeString = dayjs(props.time).format('MM/DD/YYYY')
         }
         setTime(timeString)
-    }, [props.time])
+    }, [props.time, props.isShowFullTime])
 
     // const getOneDayAgo = (newDate) => {
     //     const date1 = dayjs(newDate);
