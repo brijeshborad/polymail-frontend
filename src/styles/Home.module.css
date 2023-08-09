@@ -123,8 +123,18 @@
     transition: all 0.5s;
 }
 
-.image {
+.logoContainer {
     cursor: pointer;
+    width: 30px;
+}
+.logoContainer:hover .logo {
+    display: none;
+}
+.logoContainer:hover .refreshIcon {
+    display: block;
+}
+.logoContainer .refreshIcon {
+    display: none;
 }
 
 .headerTabs div:hover {
@@ -379,9 +389,9 @@
         filter: invert(1);
     }
 
-    .logo {
-        filter: invert(1) drop-shadow(0 0 0.3rem #ffffff70);
-    }
+    /*.logo {*/
+    /*    filter: invert(1) drop-shadow(0 0 0.3rem #ffffff70);*/
+    /*}*/
 }
 
 @keyframes rotate {

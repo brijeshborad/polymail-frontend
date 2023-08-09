@@ -9,6 +9,7 @@ const initialState: any = {
     isLoading: false,
     error: null,
     selectedAccount: LocalStorageService.updateAccount('get') || null,
+    success: false
 } as InitialAccountStateType
 
 const accountSlice = createSlice({
@@ -32,7 +33,7 @@ const accountSlice = createSlice({
             return {...state, account: null, isLoading: true, error: null, action}
         },
         getSyncAccountSuccess: (state: InitialAccountStateType, {payload: account}: PayloadAction<{}>) => {
-            return {...state, account, isLoading: false, error: null}
+               return {...state, ...account, isLoading: false, error: null}
         },
         getSyncAccountError: (state: InitialAccountStateType, {payload: error}: PayloadAction<any>) => {
             return {...state, account: null, isLoading: false, error}

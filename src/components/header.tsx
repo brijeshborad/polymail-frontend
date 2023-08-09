@@ -10,9 +10,9 @@ import {
     Menu,
     MenuButton,
     MenuItem,
-    MenuList,
+    MenuList, Toast, Tooltip,
 } from "@chakra-ui/react";
-import {ChevronDownIcon, SearchIcon, CheckIcon} from "@chakra-ui/icons";
+import {ChevronDownIcon, SearchIcon, CheckIcon, RepeatIcon} from "@chakra-ui/icons";
 import {EnergyIcon, FolderIcon, MailIcon} from "@/icons";
 import styles from '@/styles/Home.module.css'
 import {useDispatch, useSelector} from "react-redux";
@@ -26,6 +26,7 @@ import {getAllAccount, getSyncAccount, updateAccountState} from "@/redux/account
 import LocalStorageService from "@/utils/localstorage.service";
 import {ComposeIcon} from "@/icons/compose.icon";
 import {updateMessageState} from "@/redux/messages/action-reducer";
+import {Toaster} from "@/components/toaster";
 
 export function Header() {
     const dispatch = useDispatch();
@@ -35,7 +36,7 @@ export function Header() {
         isLoading: isOrganizationLoading,
         // selectedOrganization
     } = useSelector((state: StateType) => state.organizations);
-    const {accounts , selectedAccount} = useSelector((state: StateType) => state.accounts);
+    const {accounts , selectedAccount, success: syncSuccess} = useSelector((state: StateType) => state.accounts);
     const {googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
     const [userData, setUserData] = useState<User>();
 
@@ -65,6 +66,17 @@ export function Header() {
     useEffect(() => {
         getAllAccountAndOrganizationsDetails();
     }, [getAllAccountAndOrganizationsDetails])
+
+    useEffect(() => {
+        console.log('syncSuccess',syncSuccess)
+        if(syncSuccess) {
+            let data = {
+                desc: 'Syncing mails started!',
+                type: 'success'
+            }
+            Toaster(data);
+        }
+    }, [syncSuccess])
 
     useEffect(() => {
         let timer1 = setTimeout(() => {
@@ -137,8 +149,11 @@ export function Header() {
 
     return (
         <Flex className={styles.header} w='100%' align={'center'}>
-            <div>
-                <Image width="30" height="30" src="/image/logo.png" alt="" className={styles.image} onClick={() => callSyncAPI()}/>
+            <div className={styles.logoContainer}>
+                <Image width="30" height="30" src="/image/logo.png" alt="" className={styles.logo} onClick={() => callSyncAPI()}/>
+                <Tooltip label='Sync Mails' placement='bottom' bg='gray.300' color='black'>
+                    <RepeatIcon className={styles.refreshIcon} onClick={() => callSyncAPI()}/>
+                </Tooltip>
             </div>
             <Flex className={styles.headerTabs} align={'center'}>
                 <Flex align={'center'} className={styles.tabsActive}>
