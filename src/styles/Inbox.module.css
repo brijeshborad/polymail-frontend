@@ -491,33 +491,23 @@
     min-width: 130px;
 }
 
-.readThread {
-    margin-right: 0px;
-}
-
-.mailBox .replyButton {
-    width: fit-content;
-    margin: 0 auto;
-    font-size: 12px;
-    height: fit-content;
-    padding: 0 5px;
-    border-radius: 4px;
-}
-
-
-.mailBox .replyButton svg {
-    margin: 0 auto;
-}
-
 .mailBox .hideButton {
     width: fit-content;
-    margin: 0 auto;
+    margin: 5px auto -1px;
     font-size: 12px;
     height: fit-content;
-    padding: 0 5px;
-    border-radius: 0;
+    padding: 0 5px 0 10px;
+    border-radius: 5px 5px 0 0 ;
+    border: 1px solid rgba(8, 22, 47, 0.16);
     border-bottom: 1px solid #fff;
-    margin-bottom: -1px;
+}
+
+.mailBox .hideButton:hover {
+    background-color: #ffffff;
+}
+
+.mailBox .hideButton:focus-visible {
+    box-shadow: none;
 }
 
 .mailBox .hideButton svg {

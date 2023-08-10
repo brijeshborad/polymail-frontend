@@ -18,20 +18,6 @@ export default function InboxTab(props: InboxTabProps) {
 
     const handleClick = (item: Thread) => {
 
-        // if (item && item.id) {
-        //         let body = {}
-        //         if (item.mailboxes?.includes('UNREAD')) {
-        //             let data = item.mailboxes;
-        //             let newData = data.filter((item: string) => item !== 'UNREAD')
-        //             body = {
-        //                 mailboxes: [
-        //                     ...newData,
-        //                     'READ'
-        //                 ]
-        //             }
-        //         }
-        //         dispatch(updatePartialMessage({id: item.id, body}));
-        //     }
         dispatch(updateThreadState({selectedThread: item}));
         dispatch(updateMessageState({selectedMessage: null}));
     }
@@ -66,12 +52,9 @@ export default function InboxTab(props: InboxTabProps) {
             <div>
                 <Flex direction={'column'} gap={1} marginTop={5} className={styles.mailList}>
                     {props.content && !!props.content.length && props.content.map((item: Thread, index: number) => (
-                        // {item.mailboxes.includes('UNREAD')}
-                        //{`${styles.actionIcon} ${index === 0 ? styles.disabled : ''}`}
                         <div onClick={() => handleClick(item)} key={index}
                              className={selectedThread && selectedThread.id === item.id ? styles.selectedThread : ''}>
                             <div className={`${styles.mailDetails} ${(item.mailboxes || []).includes('UNREAD') ? styles.readThread : ''}`}>
-                            {/*<div className={styles.mailDetails}>*/}
                                 <Flex align={"center"} justify={'space-between'}>
                                     <Flex align={"center"} gap={1}>
                                         <Flex align={"center"} className={styles.senderDetails} gap={1}>
