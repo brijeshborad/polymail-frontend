@@ -70,7 +70,7 @@ export default function InboxTab(props: InboxTabProps) {
                         //{`${styles.actionIcon} ${index === 0 ? styles.disabled : ''}`}
                         <div onClick={() => handleClick(item)} key={index}
                              className={selectedThread && selectedThread.id === item.id ? styles.selectedThread : ''}>
-                            <div className={`${styles.mailDetails} ${item.mailboxes.includes('UNREAD') ? styles.readThread : ''}`}>
+                            <div className={`${styles.mailDetails} ${(item.mailboxes || []).includes('UNREAD') ? styles.readThread : ''}`}>
                             {/*<div className={styles.mailDetails}>*/}
                                 <Flex align={"center"} justify={'space-between'}>
                                     <Flex align={"center"} gap={1}>

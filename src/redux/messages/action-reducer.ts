@@ -61,13 +61,13 @@ const messagesSlice = createSlice({
         },
 
         updatePartialMessage: (state: InitialMessageStateType, action: PayloadAction<{ id: string, body: any}>) => {
-            return {...state, draft: null, error: null, isLoading: false, action}
+            return {...state, message: null, error: null, isLoading: false, action}
         },
-        updatePartialMessageSuccess: (state: InitialMessageStateType, {payload: draft}: PayloadAction<{}>) => {
-            return {...state, draft, error: null, isLoading: false}
+        updatePartialMessageSuccess: (state: InitialMessageStateType, {payload: message}: PayloadAction<{}>) => {
+            return {...state, message, error: null, isLoading: false}
         },
         updatePartialMessageError: (state: InitialMessageStateType, {payload: error}: PayloadAction<any>) => {
-            return {...state, draft: null, error, isLoading: false}
+            return {...state, message: null, error, isLoading: false}
         },
 
         updateMessageState: (state: InitialMessageStateType, action: PayloadAction<InitialMessageStateType>) => {

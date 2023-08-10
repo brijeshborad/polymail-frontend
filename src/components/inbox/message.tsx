@@ -31,7 +31,7 @@ export function Message() {
     const [index, setIndex] = useState<number | null>(null);
     const [emailPart, setEmailPart] = useState<string>("");
 
-    const {messages, messagePart, isCompose, isLoading, draft} = useSelector((state: StateType) => state.messages);
+    const {messages, messagePart, isCompose, isLoading, message} = useSelector((state: StateType) => state.messages);
     const {selectedThread} = useSelector((state: StateType) => state.threads);
 
     const dispatch = useDispatch();
@@ -79,10 +79,10 @@ export function Message() {
     }, [dispatch, index, messages])
 
     useEffect(() => {
-        if (draft) {
-            setMessageContent(draft)
+        if (message) {
+            setMessageContent(message)
         }
-    }, [draft])
+    }, [message])
 
     const showPreNextMessage = (type: string) => {
         if (type === 'up') {
@@ -109,8 +109,9 @@ export function Message() {
         if (messageContent && messageContent.id) {
             if (messageBox) {
                 let body = {}
+                let data = messageContent.mailboxes || [];
                 if (messageContent.mailboxes?.includes(messageBox)) {
-                    let data = messageContent.mailboxes;
+
                     let newData = data.filter((item: string) => item !== messageBox)
                     body = {
                         mailboxes: [
@@ -120,7 +121,7 @@ export function Message() {
                 } else {
                     body = {
                         mailboxes: [
-                            ...messageContent.mailboxes,
+                            ...data,
                             messageBox
                         ]
                     }
@@ -192,8 +193,8 @@ export function Message() {
 
                                 <Tooltip label='Starred' placement='bottom' bg='gray.300' color='black'>
                                     <div onClick={() => updateMailBox('STARRED')}>
-                                        {messageContent?.mailboxes.includes('STARRED') && <BlueStarIcon />}
-                                        {!messageContent?.mailboxes.includes('STARRED') && <StarIcon />}
+                                        {(messageContent?.mailboxes || []).includes('STARRED') && <BlueStarIcon />}
+                                        {!(messageContent?.mailboxes || []).includes('STARRED') && <StarIcon />}
                                     </div>
                                 </Tooltip>
 
