@@ -132,6 +132,8 @@
 }
 .logoContainer:hover .refreshIcon {
     display: block;
+    width: 20px;
+    height: 20px;
 }
 .logoContainer .refreshIcon {
     display: none;
