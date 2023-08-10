@@ -191,7 +191,7 @@ export function Message() {
                                     </div>
                                 </Tooltip>
 
-                                <Tooltip label='Starred' placement='bottom' bg='gray.300' color='black'>
+                                <Tooltip label={(messageContent?.mailboxes || []).includes('STARRED') ? 'Starred' : 'Not Starred'} placement='bottom' bg='gray.300' color='black'>
                                     <div onClick={() => updateMailBox('STARRED')}>
                                         {(messageContent?.mailboxes || []).includes('STARRED') && <BlueStarIcon />}
                                         {!(messageContent?.mailboxes || []).includes('STARRED') && <StarIcon />}
