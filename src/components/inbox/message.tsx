@@ -8,7 +8,7 @@ import {
     Text,
     Tooltip
 } from "@chakra-ui/react";
-import {ChevronDownIcon, ChevronUpIcon, CloseIcon, CheckIcon} from "@chakra-ui/icons";
+import {CheckIcon, ChevronDownIcon, ChevronUpIcon, CloseIcon} from "@chakra-ui/icons";
 import {Time} from "@/components";
 import {ArchiveIcon, FolderIcon, StarIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
 import Image from "next/image";
@@ -31,7 +31,7 @@ export function Message() {
     const [index, setIndex] = useState<number | null>(null);
     const [emailPart, setEmailPart] = useState<string>("");
 
-    const {messages, messagePart, isCompose, isLoading} = useSelector((state: StateType) => state.messages);
+    const {messages, messagePart, isCompose, isLoading, draft} = useSelector((state: StateType) => state.messages);
     const {selectedThread} = useSelector((state: StateType) => state.threads);
 
     const dispatch = useDispatch();
@@ -52,10 +52,6 @@ export function Message() {
             getAllThreadMessages();
         }
     }, [selectedThread, getAllThreadMessages])
-
-    useEffect(() => {
-        console.log('messageContent' , messageContent)
-    }, [messageContent])
 
     useEffect(() => {
         if (messages && messages.length > 0) {
@@ -82,6 +78,12 @@ export function Message() {
         }
     }, [dispatch, index, messages])
 
+    useEffect(() => {
+        if (draft) {
+            setMessageContent(draft)
+        }
+    }, [draft])
+
     const showPreNextMessage = (type: string) => {
         if (type === 'up') {
             if (index && index > 0) {
@@ -106,25 +108,23 @@ export function Message() {
     const updateMailBox = (messageBox: string) => {
         if (messageContent && messageContent.id) {
             if (messageBox) {
-                let body = {
-                    mailboxes: [
-                        ...messageContent.mailboxes,
-                        messageBox
-                    ]
+                let body = {}
+                if (messageContent.mailboxes?.includes(messageBox)) {
+                    let data = messageContent.mailboxes;
+                    let newData = data.filter((item: string) => item !== messageBox)
+                    body = {
+                        mailboxes: [
+                            ...newData
+                        ]
+                    }
+                } else {
+                    body = {
+                        mailboxes: [
+                            ...messageContent.mailboxes,
+                            messageBox
+                        ]
+                    }
                 }
-                // if (messageContent.mailboxes?.includes(messageBox)) {
-                //     mailboxes: [
-                //         ...messageContent.mailboxes,
-                //         messageBox
-                //     ]
-                // } else {
-                //     body = {
-                //         mailboxes: [
-                //             ...messageContent.mailboxes,
-                //             messageBox
-                //         ]
-                //     }
-                // }
                 dispatch(updatePartialMessage({id: messageContent.id, body}));
             }
         }
@@ -227,8 +227,8 @@ export function Message() {
                     </div>
                 </Flex>
 
-                <Button className={styles.ReplayButton} rightIcon={<ChevronUpIcon />}  colorScheme='blue' variant='outline' onClick={() => hideAndShowReplayBox()}>
-                    {hideAndShowReplyBox ? 'Hide reply box' : 'Show reply box'}
+                <Button className={styles.hideButton} rightIcon={hideAndShowReplyBox ? <ChevronDownIcon /> : <ChevronUpIcon />} variant='outline' onClick={() => hideAndShowReplayBox()}>
+                    {hideAndShowReplyBox ? 'Discard' : 'Reply box'}
                 </Button>
                 {hideAndShowReplyBox && <ReplyBox hideCcFields={hideCcFields} setHideCcFields={setHideCcFields} setHideBccFields={setHideBccFields} hideBccFields={hideBccFields}/> }
 

@@ -148,6 +148,10 @@
     cursor: pointer;
 }
 
+.mailDetails.readThread {
+    background-color: rgba(8, 22, 47, 0.03);
+}
+
 .mailDetails .SenderIcon svg {
     width: 20px;
     height: 20px;
@@ -487,7 +491,11 @@
     min-width: 130px;
 }
 
-.mailBox .ReplayButton {
+.readThread {
+    margin-right: 0px;
+}
+
+.mailBox .replyButton {
     width: fit-content;
     margin: 0 auto;
     font-size: 12px;
@@ -496,7 +504,23 @@
     border-radius: 4px;
 }
 
-.mailBox .ReplayButton svg {
+
+.mailBox .replyButton svg {
+    margin: 0 auto;
+}
+
+.mailBox .hideButton {
+    width: fit-content;
+    margin: 0 auto;
+    font-size: 12px;
+    height: fit-content;
+    padding: 0 5px;
+    border-radius: 0;
+    border-bottom: 1px solid #fff;
+    margin-bottom: -1px;
+}
+
+.mailBox .hideButton svg {
     margin: 0 auto;
 }
 
