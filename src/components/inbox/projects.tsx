@@ -24,7 +24,7 @@ export function Projects() {
     return (
         <div className={styles.filterTabs}>
             <Grid templateColumns='repeat(6, 1fr)' gap={3} overflowX={'auto'}>
-                {projects && projects.map((project, i) => (
+                {projects && projects.length && projects.map((project, i) => (
                     <GridItem w='100%' key={i + 1}>
                         <ProjectButton text={project?.name} iconStart={<DisneyIcon className={styles2.icon}/>}/>
                     </GridItem>

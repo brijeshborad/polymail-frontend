@@ -332,7 +332,7 @@
 }
 
 .mailBox .mailFooter {
-    padding: 20px;
+    padding: 0 20px 20px;
 }
 
 .composeReplyBox {
@@ -361,7 +361,7 @@
     flex: none;
 }
 
-.composeReplyBox .mailFooter .replayBoxTags {
+.composeReplyBox .mailFooter .replyBoxTags {
     flex: none;
 }
 
@@ -477,10 +477,27 @@
 .syncButton {
     text-align: end;
 }
-.composeButton svg {
-    width: 2em;
-    height: 2em;
+.composeButton {
     cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.5s;
+    margin-right: 20px;
+    color: #266df0;
+    min-width: 130px;
+}
+
+.mailBox .ReplayButton {
+    width: fit-content;
+    margin: 0 auto;
+    font-size: 12px;
+    height: fit-content;
+    padding: 0 5px;
+    border-radius: 4px;
+}
+
+.mailBox .ReplayButton svg {
+    margin: 0 auto;
 }
 
 .replyMailBox {

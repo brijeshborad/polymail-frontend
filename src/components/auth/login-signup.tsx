@@ -42,8 +42,8 @@ export function LoginSignup({type = 'login'}: LoginProps) {
     }
 
     useEffect(() => {
-        if (user && user?.token) {
-            // Router.push('/inbox');
+        if (user && user?.token && user?.type) {
+            Router.push('/inbox');
         }
     }, [user])
 

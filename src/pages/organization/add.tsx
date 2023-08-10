@@ -28,6 +28,10 @@ function AddOrganization() {
             Toaster({desc: 'Please enter the organization\'s name', type: 'error'})
             return;
         }
+        if (!selectedAccount) {
+            Toaster({desc: 'Your account is not created', type: 'error'})
+            return;
+        }
         if (selectedAccount) {
             let body = {
                 name: organizationName,

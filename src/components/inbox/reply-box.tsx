@@ -9,11 +9,11 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {debounce, isEmail} from "@/utils/common.functions";
 import {Toaster} from "@/components/toaster";
-import {ReplayProps} from "@/types/props-types/replay.type";
+import {ReplyProps} from "@/types/props-types/reply.type";
 
 declare type RecipientsType = { items: (string | undefined)[], value: string };
 
-export function ReplyBox(props: ReplayProps) {
+export function ReplyBox(props: ReplyProps) {
     const [isToEmailAdded, setIsToEmailAdded] = useState<boolean>(false);
     const [emailBody, setEmailBody] = useState<string>('');
     const [recipients, setRecipients] = useState<RecipientsType>({
@@ -309,7 +309,7 @@ export function ReplyBox(props: ReplayProps) {
     return (
         <div className={styles.mailFooter}>
             <Flex direction={'column'} className={styles.replyBox}>
-                <div className={styles.replayBoxTags}>
+                <div className={styles.replyBoxTags}>
                     <Flex justifyContent={'space-between'} padding={'8px 10px'}
                           borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>
                         <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>

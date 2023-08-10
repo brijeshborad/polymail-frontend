@@ -24,6 +24,7 @@ import {SpinnerUI} from '@/components/spinner';
 import {ReplyBox} from "@/components/inbox/reply-box";
 import {updateThreadState} from "@/redux/threads/action-reducer";
 import {Message as MessageModel} from "@/models";
+import {BlueStarIcon} from "@/icons/star-blue.icon";
 
 export function Message() {
     const [messageContent, setMessageContent] = useState<MessageModel>();
@@ -43,7 +44,6 @@ export function Message() {
     const [hideCcFields, setHideCcFields] = useState<boolean>(false);
     const [hideBccFields, setHideBccFields] = useState<boolean>(false);
 
-
     useEffect(() => {
         if (selectedThread && selectedThread?.id) {
             setIndex(null);
@@ -52,6 +52,10 @@ export function Message() {
             getAllThreadMessages();
         }
     }, [selectedThread, getAllThreadMessages])
+
+    useEffect(() => {
+        console.log('messageContent' , messageContent)
+    }, [messageContent])
 
     useEffect(() => {
         if (messages && messages.length > 0) {
@@ -104,11 +108,35 @@ export function Message() {
             if (messageBox) {
                 let body = {
                     mailboxes: [
+                        ...messageContent.mailboxes,
                         messageBox
                     ]
                 }
+                // if (messageContent.mailboxes?.includes(messageBox)) {
+                //     mailboxes: [
+                //         ...messageContent.mailboxes,
+                //         messageBox
+                //     ]
+                // } else {
+                //     body = {
+                //         mailboxes: [
+                //             ...messageContent.mailboxes,
+                //             messageBox
+                //         ]
+                //     }
+                // }
                 dispatch(updatePartialMessage({id: messageContent.id, body}));
             }
+        }
+    }
+
+    const [hideAndShowReplyBox, setHideAndShowReplyBox] = useState<boolean>(false);
+
+    const hideAndShowReplayBox = () => {
+        if (hideAndShowReplyBox) {
+            setHideAndShowReplyBox(false)
+        } else {
+            setHideAndShowReplyBox(true)
         }
     }
 
@@ -156,7 +184,7 @@ export function Message() {
                                     </div>
                                 </Tooltip>
 
-                                <Tooltip label='Read' placement='bottom' bg='gray.300' color='black'>
+                                <Tooltip label='Mark as unread' placement='bottom' bg='gray.300' color='black'>
                                     <div onClick={() => updateMailBox('READ')}>
                                         <CheckIcon />
                                     </div>
@@ -164,7 +192,8 @@ export function Message() {
 
                                 <Tooltip label='Starred' placement='bottom' bg='gray.300' color='black'>
                                     <div onClick={() => updateMailBox('STARRED')}>
-                                        <StarIcon />
+                                        {messageContent?.mailboxes.includes('STARRED') && <BlueStarIcon />}
+                                        {!messageContent?.mailboxes.includes('STARRED') && <StarIcon />}
                                     </div>
                                 </Tooltip>
 
@@ -198,7 +227,11 @@ export function Message() {
                     </div>
                 </Flex>
 
-                <ReplyBox hideCcFields={hideCcFields} setHideCcFields={setHideCcFields} setHideBccFields={setHideBccFields} hideBccFields={hideBccFields}/>
+                <Button className={styles.ReplayButton} rightIcon={<ChevronUpIcon />}  colorScheme='blue' variant='outline' onClick={() => hideAndShowReplayBox()}>
+                    {hideAndShowReplyBox ? 'Hide reply box' : 'Show reply box'}
+                </Button>
+                {hideAndShowReplyBox && <ReplyBox hideCcFields={hideCcFields} setHideCcFields={setHideCcFields} setHideBccFields={setHideBccFields} hideBccFields={hideBccFields}/> }
+
             </Flex>
             }
 

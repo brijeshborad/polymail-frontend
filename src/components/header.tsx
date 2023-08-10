@@ -191,7 +191,7 @@ export function Header() {
             {/*        </MenuButton>*/}
             {/*        <MenuList>*/}
             {/*            <MenuItem w='100%' onClick={() => Router.push('/organization/add')}>Add New</MenuItem>*/}
-            {/*            {organizations && organizations?.map((org, i) => (*/}
+            {/*            {organizations && organizations.length && organizations?.map((org, i) => (*/}
             {/*                <MenuItem w='100%' key={i + 1} onClick={() => setOrganization(org)}>*/}
             {/*                    {org.name}  <CheckIcon ml={8} bg={"green"} p={1} borderRadius={50} w={4} h={4} color={"white"} />*/}
             {/*                </MenuItem>*/}
@@ -212,7 +212,7 @@ export function Header() {
                     </MenuButton>
                     <MenuList>
                         <MenuItem onClick={() => addNewGoogleAccount()}>Add New Account</MenuItem>
-                        {accounts && accounts?.map((acc, i) => (
+                        {accounts && accounts.length && accounts?.map((acc, i) => (
                             <MenuItem w='100%' key={i + 1} onClick={() => setAccounts(acc)}>
                                 {acc.email} <CheckIcon ml={8} bg={"green"} p={1} borderRadius={50} w={4} h={4} color={"white"} />
                             </MenuItem>

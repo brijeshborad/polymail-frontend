@@ -5,6 +5,7 @@ export interface User {
     createdAt?: string,
     updatedAt?: string,
     token?: string,
+    type?: string,
 }
 
 export interface UserToken {

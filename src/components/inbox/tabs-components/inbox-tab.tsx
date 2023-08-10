@@ -12,7 +12,6 @@ import {updateMessageState} from "@/redux/messages/action-reducer";
 import {updateThreadState} from "@/redux/threads/action-reducer";
 
 export default function InboxTab(props: InboxTabProps) {
-
     const {isLoading, selectedThread} = useSelector((state: StateType) => state.threads);
     const dispatch = useDispatch();
 
@@ -50,7 +49,7 @@ export default function InboxTab(props: InboxTabProps) {
             {isLoading && <SpinnerUI/>}
             <div>
                 <Flex direction={'column'} gap={1} marginTop={5} className={styles.mailList}>
-                    {props.content && props.content.map((item: Thread, index: number) => (
+                    {props.content && props.content.length && props.content.map((item: Thread, index: number) => (
                         <div onClick={() => handleClick(item)} key={index}
                              className={selectedThread && selectedThread.id === item.id ? styles.selectedThread : ''}>
                             <div className={styles.mailDetails}>

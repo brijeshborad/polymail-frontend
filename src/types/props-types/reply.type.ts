@@ -1,4 +1,4 @@
-export declare type ReplayProps = {
+export declare type ReplyProps = {
     hideCcFields?: boolean,
     setHideCcFields?: any,
     hideBccFields?: boolean,
