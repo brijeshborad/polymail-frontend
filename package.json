@@ -10,7 +10,7 @@
     "postinstall": "cd ./node_modules/react-draft-wysiwyg && npm install --force && npm run build"
   },
   "engines": {
-    "node": "18.x"
+    "node": "16.x || 18.x"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.1.0",
@@ -31,6 +31,7 @@
     "@types/webpack-env": "^1.18.1",
     "axios": "^1.4.0",
     "bcryptjs": "^2.4.3",
+    "cross-env": "^7.0.3",
     "dayjs": "^1.11.9",
     "draft-js": "^0.11.7",
     "draftjs-to-html": "^0.9.1",
