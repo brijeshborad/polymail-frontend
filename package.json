@@ -10,7 +10,7 @@
     "postinstall": "cd ./node_modules/react-draft-wysiwyg && npm install --force && npm run build"
   },
   "engines": {
-    "node": "16.x || 18.x"
+    "node": "16.x"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.1.0",
