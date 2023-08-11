@@ -6,13 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "npm": "npm",
-    "postinstall": "cd ./node_modules/react-draft-wysiwyg && npm install --legacy-peer-deps && npm run build"
+    "lint": "next lint"
   },
   "engines": {
-    "node": "16.19.x",
-    "npm": ">=8.7.0"
+    "node": "16.x || 18.x"
   },
   "overrides": {
     "react": "$react"
