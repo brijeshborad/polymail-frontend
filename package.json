@@ -9,6 +9,9 @@
     "lint": "next lint",
     "postinstall": "cd ./node_modules/react-draft-wysiwyg && npm install --force && npm run build"
   },
+  "engines": {
+    "node": "18.x"
+  },
   "dependencies": {
     "@chakra-ui/icons": "^2.1.0",
     "@chakra-ui/next-js": "^2.1.5",
