@@ -2,6 +2,7 @@ import {useRouter} from 'next/router';
 import React, {useEffect} from 'react';
 import LocalStorageService from "@/utils/localstorage.service";
 import {Header} from "@/components/header";
+// import useWebSocket from "react-use-websocket";
 
 export default function withAuth(ProtectedComponent: any) {
     return function ProtectedRoute({...props}) {
@@ -10,9 +11,11 @@ export default function withAuth(ProtectedComponent: any) {
         const userIsAuthenticated = user !== null;
         useEffect(() => {
             if (!userIsAuthenticated) {
-                router.push('/auth/login');
+                router.push('/auth/signup');
             }
         }, [userIsAuthenticated, router]);
+
+        // useWebSocket(process.env.NEXT_PUBLIC_WEBSOCKT_URL, {share: true})
 
         return (
             <>

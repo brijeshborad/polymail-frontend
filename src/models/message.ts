@@ -15,7 +15,6 @@ export interface Message {
 }
 
 export interface MessageDraft {
-    accountId: string,
     contentRoot?: string,
     created?: string,
     draftInfo?: object,

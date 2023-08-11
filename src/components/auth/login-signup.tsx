@@ -26,13 +26,13 @@ export function LoginSignup({type = 'login'}: LoginProps) {
         if (router.query) {
             if (router.query.access_token) {
                 LocalStorageService.updateUser('store', {token: router.query.access_token})
-                dispatch(updateAuthState({user: {token: router.query.access_token.toString() || ''}, isAuthenticated: true}));
+                dispatch(updateAuthState({user: {token: router.query.access_token.toString() || ''}}));
                 Router.push('/inbox');
             }
 
             if (router.query.error) {
                 Router.replace('/auth/login', undefined, {shallow: true});
-                dispatch(updateAuthState({error: {description: 'Invalid account'}, isAuthenticated: false}));
+                dispatch(updateAuthState({error: {description: 'Invalid account'}}));
             }
         }
     }, [dispatch, router.query]);
@@ -42,7 +42,7 @@ export function LoginSignup({type = 'login'}: LoginProps) {
     }
 
     useEffect(() => {
-        if (user && user?.token && user?.type) {
+        if (user && user?.token) {
             Router.push('/inbox');
         }
     }, [user])

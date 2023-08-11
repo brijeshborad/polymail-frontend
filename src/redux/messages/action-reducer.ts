@@ -1,5 +1,6 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {InitialMessageStateType} from "@/types";
+import {MessageDraft} from "@/models";
 // import {MessageRequestBody} from "@/models";
 // import {Message, MessageDraft, MessagePart, MessageRequestBody} from "@/models";
 
@@ -20,8 +21,8 @@ const messagesSlice = createSlice({
     name: 'messages',
     initialState,
     reducers: {
-        getAllMessages: (state: InitialMessageStateType, action: PayloadAction<{ thread?: string }>) => {
-            return {...state, messages: [], isLoading: true, error: null, draft:null, action}
+        getAllMessages: (state: InitialMessageStateType, _action: PayloadAction<{ thread?: string }>) => {
+            return {...state, messages: [], isLoading: true, error: null, draft:null}
         },
         getAllMessagesSuccess: (state: InitialMessageStateType, {payload: messages}: PayloadAction<{}>) => {
             return {...state, messages, isLoading: false, error: null, draft:null}
@@ -30,8 +31,8 @@ const messagesSlice = createSlice({
             return {...state, messages: [], isLoading: false, error, draft:null}
         },
 
-        getMessageParts: (state: InitialMessageStateType, action: PayloadAction<{ id: string }>) => {
-            return {...state, messagePart: null, isLoading: true, error: null, action}
+        getMessageParts: (state: InitialMessageStateType, _action: PayloadAction<{ id: string }>) => {
+            return {...state, messagePart: null, isLoading: true, error: null}
         },
         getMessagePartsSuccess: (state: InitialMessageStateType, {payload: messagePart}: PayloadAction<{}>) => {
             return {...state, messagePart, isLoading: false, error: null}
@@ -40,8 +41,8 @@ const messagesSlice = createSlice({
             return {...state, messagePart: null, isLoading: false, error}
         },
 
-        createDraft: (state: InitialMessageStateType, action: PayloadAction<{ accountId: string, body: any }>) => {
-            return {...state, draft: null, error: null, isLoading: false, action}
+        createDraft: (state: InitialMessageStateType, _action: PayloadAction<{ accountId: string, body: MessageDraft }>) => {
+            return {...state, draft: null, error: null, isLoading: false}
         },
         createDraftSuccess: (state: InitialMessageStateType, {payload: draft}: PayloadAction<{}>) => {
             return {...state, draft, error: null, isLoading: false}
@@ -50,8 +51,8 @@ const messagesSlice = createSlice({
             return {...state, draft: null, error, isLoading: false}
         },
 
-        sendMessage: (state: InitialMessageStateType, action: PayloadAction<{ id: string }>) => {
-            return {...state, sendMessage: null, error: null, isLoading: true, action}
+        sendMessage: (state: InitialMessageStateType, _action: PayloadAction<{ id: string }>) => {
+            return {...state, sendMessage: null, error: null, isLoading: true}
         },
         sendMessageSuccess: (state: InitialMessageStateType, {payload: sendMessage}: PayloadAction<{ }>) => {
             return {...state, sendMessage, error: null, isLoading: false, success: true}
@@ -60,8 +61,8 @@ const messagesSlice = createSlice({
             return {...state, sendMessage: null, error, isLoading: false}
         },
 
-        updatePartialMessage: (state: InitialMessageStateType, action: PayloadAction<{ id: string, body: any}>) => {
-            return {...state, message: null, error: null, isLoading: false, action}
+        updatePartialMessage: (state: InitialMessageStateType, _action: PayloadAction<{ id: string, body: any}>) => {
+            return {...state, message: null, error: null, isLoading: false}
         },
         updatePartialMessageSuccess: (state: InitialMessageStateType, {payload: message}: PayloadAction<{}>) => {
             return {...state, message, error: null, isLoading: false}

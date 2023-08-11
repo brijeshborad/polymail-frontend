@@ -42,7 +42,7 @@ function* getMessagePart({payload: {id}}: PayloadAction<{ id: string }>) {
 
 function* createNewDraft({payload: {accountId, body}}: PayloadAction<{accountId: string, body: MessageDraft }>) {
     try {
-        const response: AxiosResponse = yield ApiService.callPost(`messages`, {account: accountId, ...body});
+        const response: AxiosResponse = yield ApiService.callPost(`messages`, {accountId, ...body});
         yield put(createDraftSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;

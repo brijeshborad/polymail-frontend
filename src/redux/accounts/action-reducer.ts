@@ -29,11 +29,11 @@ const accountSlice = createSlice({
             return {...state, ...action.payload}
         },
 
-        getSyncAccount: (state: InitialAccountStateType, action: PayloadAction<{}>) => {
-            return {...state, account: null, isLoading: true, error: null, action}
+        getSyncAccount: (state: InitialAccountStateType, _action: PayloadAction<{}>) => {
+            return {...state, account: null, isLoading: true, error: null}
         },
         getSyncAccountSuccess: (state: InitialAccountStateType, {payload: account}: PayloadAction<{}>) => {
-               return {...state, ...account, isLoading: false, error: null}
+            return {...state, ...account, isLoading: false, error: null}
         },
         getSyncAccountError: (state: InitialAccountStateType, {payload: error}: PayloadAction<any>) => {
             return {...state, account: null, isLoading: false, error}

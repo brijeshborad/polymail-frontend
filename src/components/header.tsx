@@ -90,13 +90,23 @@ export function Header() {
         }
     }, [isOrganizationLoading, organizations])
 
+    const setOrganization = useCallback((org: Organization) => {
+        LocalStorageService.updateOrg('store', org);
+        dispatch(updateOrganizationState({selectedOrganization: org}))
+    }, [dispatch])
+
+    const setAccounts = useCallback((account: Account) => {
+        LocalStorageService.updateAccount('store', account);
+        dispatch(updateAccountState({selectedAccount: account}));
+    }, [dispatch])
+
     useEffect(() => {
         if (organizations && organizations.length > 0) {
             if (!LocalStorageService.updateOrg('get')) {
                 setOrganization(organizations[0]);
             }
         }
-    }, [organizations]);
+    }, [organizations, setOrganization]);
 
     useEffect(() => {
         if (accounts && accounts.length > 0) {
@@ -104,7 +114,7 @@ export function Header() {
                 setAccounts(accounts[0]);
             }
         }
-    }, [accounts]);
+    }, [accounts, setAccounts]);
 
 
     function logout() {
@@ -121,16 +131,6 @@ export function Header() {
             withToken: true
         }
         dispatch(googleAuthLink(body));
-    }
-
-    function setOrganization(org: Organization) {
-        LocalStorageService.updateOrg('store', org);
-        dispatch(updateOrganizationState({selectedOrganization: org}))
-    }
-
-    function setAccounts(account: Account) {
-        LocalStorageService.updateAccount('store', account);
-        dispatch(updateAccountState({selectedAccount: account}));
     }
 
     if (!userData) {

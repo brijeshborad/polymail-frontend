@@ -4,6 +4,5 @@ export declare type InitialAuthState = {
     user?: User | undefined,
     isLoading?: boolean
     error?: Error | any | null,
-    googleAuthRedirectionLink?: { url?: string } | null,
-    isAuthenticated?: boolean,
+    googleAuthRedirectionLink?: { url?: string } | null
 }
