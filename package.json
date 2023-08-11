@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "cd ./node_modules/react-draft-wysiwyg && npm install --force && npm run build"
+    "postinstall": "cd ./node_modules/react-draft-wysiwyg && npm install --force --verbose && npm run build"
   },
   "engines": {
     "node": "16.x"
