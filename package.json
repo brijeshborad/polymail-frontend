@@ -7,10 +7,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "cd ./node_modules/react-draft-wysiwyg && npm install --force --verbose && npm run build"
+    "npm": "npm",
+    "postinstall": "cd ./node_modules/react-draft-wysiwyg && npm install --legacy-peer-deps && npm run build"
   },
   "engines": {
-    "node": "16.x"
+    "node": "16.19.x",
+    "npm": ">=8.7.0"
+  },
+  "overrides": {
+    "react": "$react"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.1.0",
