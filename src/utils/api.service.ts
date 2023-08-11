@@ -20,7 +20,7 @@ axiosInstance.interceptors.request.use((config) => {
         } else {
             if (!userSession || !userSession?.token) {
                 LocalStorageService.clearStorage();
-                Router.push(`/auth/login`);
+                Router.push(`/auth/signup`);
                 return Promise.reject({error: 'Token not found!'});
             }
             config.headers.Authorization = `Bearer PG ${userSession?.token}`;

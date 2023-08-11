@@ -217,6 +217,7 @@ export function Header() {
                                 {acc.email} <CheckIcon ml={8} bg={"green"} p={1} borderRadius={50} w={4} h={4} color={"white"} />
                             </MenuItem>
                         ))}
+                        <MenuItem>Settings</MenuItem>
                         <MenuItem onClick={() => logout()}>Logout</MenuItem>
                     </MenuList>
                 </Menu>

@@ -54,7 +54,7 @@ export default function InboxTab(props: InboxTabProps) {
                     {props.content && !!props.content.length && props.content.map((item: Thread, index: number) => (
                         <div onClick={() => handleClick(item)} key={index}
                              className={selectedThread && selectedThread.id === item.id ? styles.selectedThread : ''}>
-                            <div className={`${styles.mailDetails} ${(item.mailboxes || []).includes('UNREAD') ? styles.readThread : ''}`}>
+                            <div className={`${styles.mailDetails} ${(item.mailboxes || []).includes('UNREAD') ? '' : <styles className="readThread"></styles>}`}>
                                 <Flex align={"center"} justify={'space-between'}>
                                     <Flex align={"center"} gap={1}>
                                         <Flex align={"center"} className={styles.senderDetails} gap={1}>
