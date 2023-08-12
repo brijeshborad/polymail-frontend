@@ -17,7 +17,7 @@ export interface Message {
 export interface MessageDraft {
     contentRoot?: string,
     created?: string,
-    draftInfo?: object,
+    draftInfo?: MessageDraftInfo,
     from?: string,
     mailboxes?: string[],
     id?: string,
@@ -41,13 +41,13 @@ export interface MessageAttachment {
 
 export interface MessageDraftInfo {
     body?: string,
-    attachments?:MessageAttachment[],
+    attachments?: MessageAttachment[],
 }
 
 export interface MessageRequestBody {
     subject?: string,
     to?: string[],
-    body? :string,
+    body?: string,
     draftInfo?: MessageDraftInfo,
     mailboxes?: string[] | undefined,
 

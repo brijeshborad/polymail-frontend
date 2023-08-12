@@ -136,3 +136,11 @@ a {
   right: 10px;
   transform: translateY(-50%);
 }
+
+.rdw-editor-wrapper .rdw-editor-main {
+  height: calc(100% - 70px);
+}
+
+.rdw-editor-wrapper .rdw-editor-main .DraftEditor-root .DraftEditor-editorContainer .public-DraftEditor-content {
+  height: 100%;
+}

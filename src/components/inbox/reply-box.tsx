@@ -1,9 +1,9 @@
 import styles from "@/styles/Inbox.module.css";
 import {Button, Flex, Heading, Input} from "@chakra-ui/react";
 import {Chip} from "@/components/chip";
-import {ChevronDownIcon, InfoOutlineIcon} from "@chakra-ui/icons";
+import {ChevronDownIcon, CloseIcon, InfoOutlineIcon} from "@chakra-ui/icons";
 import {EmojiIcon, FileIcon, LinkIcon, TextIcon} from "@/icons";
-import React, {ChangeEvent, useEffect, useState} from "react";
+import React, {ChangeEvent, ChangeEventHandler, useEffect, useRef, useState} from "react";
 import {createDraft, sendMessage, updateMessageState, updatePartialMessage} from "@/redux/messages/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
@@ -30,6 +30,7 @@ export function ReplyBox() {
         items: [],
         value: "",
     });
+    const [attachments, setAttachments] = useState<{ filename: string, data: string }[] | null>(null);
 
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {selectedThread} = useSelector((state: StateType) => state.threads);
@@ -39,6 +40,8 @@ export function ReplyBox() {
         isCompose,
         success: sendDraftSuccess
     } = useSelector((state: StateType) => state.messages);
+
+    const inputFile = useRef<HTMLInputElement | null>(null)
 
     const dispatch = useDispatch();
 
@@ -173,8 +176,10 @@ export function ReplyBox() {
         }
     }
 
-    const sendToDraft = (value: string) => {
-        setEmailBody(value);
+    const sendToDraft = (value: string, isValueUpdate: boolean = true) => {
+        if (isValueUpdate) {
+            setEmailBody(value);
+        }
         let body = {
             subject: selectedMessage?.subject || subject,
             to: recipients?.items,
@@ -182,7 +187,8 @@ export function ReplyBox() {
             ...(cc?.items && cc?.items.length > 0 ? {cc: cc?.items} : {}),
             ...(bcc?.items && bcc?.items.length > 0 ? {bcc: bcc?.items} : {}),
             draftInfo: {
-                body: value
+                body: isValueUpdate ? value : emailBody,
+                ...(attachments && attachments.length > 0 ? {attachments}: {})
             }
         }
         debounce(() => {
@@ -193,7 +199,7 @@ export function ReplyBox() {
                     dispatch(createDraft({accountId: selectedAccount.id, body}));
                 }
             }
-        }, 500);
+        }, 1000);
     }
 
     const isInList = (email: string, type: string) => {
@@ -308,6 +314,31 @@ export function ReplyBox() {
         }
     }
 
+    function handleFileUpload(event: ChangeEventHandler | any) {
+        event.stopPropagation();
+        event.preventDefault();
+        const reader = new FileReader();
+        reader.readAsDataURL(event.target.files[0]);
+        reader.onload = function () {
+            setAttachments([...(attachments || []), {filename: event.target.files[0].name, data: reader.result.toString()}]);
+        };
+        reader.onerror = function (error) {
+            console.log('Error: ', error);
+        };
+    }
+
+    function removeAttachment(index: number) {
+        (attachments || []).splice(index, 1);
+        setAttachments([...attachments]);
+    }
+
+    useEffect(() => {
+        if (attachments) {
+            sendToDraft('', false);
+        }
+        // eslint-disable-next-line
+    }, [attachments])
+
     return (
         <div className={styles.mailFooter}>
             <Flex direction={'column'} className={styles.replyBox}>
@@ -401,9 +432,11 @@ export function ReplyBox() {
                                     placeholder='Reply with anything you like or @mention someone to share this thread'
                                     value={emailBody} onChange={(e) => sendToDraft(e)}/>
 
-                    < Flex align={'flex-end'} justify={"space-between"} gap={2}>
+                    <Flex align={'flex-end'} justify={"space-between"} gap={2}>
                         <Flex align={'center'} gap={3}>
-                            <FileIcon/>
+                            <FileIcon click={() => inputFile.current?.click()}/>
+                            <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e)}
+                                   style={{display: 'none'}}/>
                             <LinkIcon/>
                             <TextIcon/>
                             <EmojiIcon/>
@@ -414,6 +447,14 @@ export function ReplyBox() {
                                     rightIcon={<ChevronDownIcon/>}>{isCompose ? 'Send' : 'Reply all'}</Button>
                         </Flex>
                     </Flex>
+                    {attachments && attachments.length > 0 ? <div style={{marginTop: '20px'}}>
+                        {attachments.map((item: { filename: string, data: string }, index: number) => (
+                            <Flex align={'center'} key={index}>
+                                {item.filename}
+                                <div className={styles.closeIcon} onClick={() => removeAttachment(index)}><CloseIcon/></div>
+                            </Flex>
+                        ))}
+                    </div> : null}
                 </Flex>
             </Flex>
         </div>

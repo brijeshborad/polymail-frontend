@@ -8,7 +8,7 @@ import {
     Text,
     Tooltip
 } from "@chakra-ui/react";
-import {CheckIcon, ChevronDownIcon, ChevronUpIcon, CloseIcon} from "@chakra-ui/icons";
+import {CheckIcon, ChevronDownIcon, ChevronUpIcon, CloseIcon, WarningIcon} from "@chakra-ui/icons";
 import {Time} from "@/components";
 import {ArchiveIcon, FolderIcon, StarIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
 import Image from "next/image";
@@ -190,9 +190,11 @@ export function Message() {
                                     </div>
                                 </Tooltip>
 
-                                <Tooltip label='MailBox' placement='bottom' bg='gray.300' color='black'>
-                                    <div onClick={() => updateMailBox('MAILBOX')}>
-                                        <FolderIcon/>
+                                <Tooltip
+                                    label={(messageContent?.mailboxes || []).includes('SPAM') ? 'Spammed' : 'Mark As Spam'}
+                                    placement='bottom' bg='gray.300' color='black'>
+                                    <div onClick={() => updateMailBox('SPAM')}>
+                                        <WarningIcon/>
                                     </div>
                                 </Tooltip>
                             </Flex>
