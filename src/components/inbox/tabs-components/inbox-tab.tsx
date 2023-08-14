@@ -5,22 +5,98 @@ import styles2 from "@/styles/common.module.css";
 import {Time} from "@/components";
 import {InboxTabProps, StateType} from "@/types";
 import {Thread} from "@/models";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {SpinnerUI} from "@/components/spinner";
 import {useDispatch, useSelector} from "react-redux";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 import {updateThreadState} from "@/redux/threads/action-reducer";
 
+
+const useKeyPress = function (targetKey) {
+    const [keyPressed, setKeyPressed] = useState(false);
+
+    useEffect(() => {
+
+        function downHandler(event) {
+            event.preventDefault();
+
+            if (event.key === targetKey) {
+                setKeyPressed(true);
+            }
+        }
+
+        const upHandler = (event) => {
+            event.preventDefault();
+
+            if (event.key === targetKey) {
+                setKeyPressed(false);
+            }
+        };
+
+        window.addEventListener("keydown", downHandler);
+        window.addEventListener("keyup", upHandler);
+
+        return () => {
+            window.removeEventListener("keydown", downHandler);
+            window.removeEventListener("keyup", upHandler);
+        };
+    }, [targetKey]);
+
+    return keyPressed;
+};
+
+
 export default function InboxTab(props: InboxTabProps) {
     const {isLoading, selectedThread} = useSelector((state: StateType) => state.threads);
 
+    const downPress = useKeyPress("ArrowDown");
+    const upPress = useKeyPress("ArrowUp");
+    const [cursor, setCursor] = useState(0);
+    const [cachedThreads, setCachedThreads] = useState({});
+
     const dispatch = useDispatch();
 
-    const handleClick = (item: Thread) => {
+    useEffect(() => {
+        if (props.content.length) {
+            if (downPress) {
+                setCursor((prevState) => prevState < props.content.length - 1 ? prevState + 1 : prevState);
+            } else if (upPress) {
+                setCursor((prevState) => (prevState > 0 ? prevState - 1 : prevState));
+            }
 
+        }
+    }, [upPress, downPress]);
+    useEffect(() => {
+        if (props.content.length) {
+            handleClick(props.content[cursor]);
+        }
+    }, [cursor]);
+
+    useEffect(() => {
+        if (cachedThreads) {
+            console.log(cachedThreads);
+        }
+    }, [cachedThreads]);
+
+    useEffect(() => {
+        if (selectedThread) {
+            setCachedThreads((prevState: any) => ({
+                ...prevState,
+                 [selectedThread.id]: selectedThread
+            }));
+        }
+    }, [selectedThread]);
+
+    const handleClick = (item: Thread, isClicked: boolean = false) => {
+        if (isClicked) {
+            const itemIndex = props.content.indexOf(item);
+            setCursor(itemIndex);
+        }
         dispatch(updateThreadState({selectedThread: item}));
         dispatch(updateMessageState({selectedMessage: null}));
     }
+
+
     return (
         <>
             {
@@ -52,9 +128,10 @@ export default function InboxTab(props: InboxTabProps) {
             <div>
                 <Flex direction={'column'} gap={1} marginTop={5} className={styles.mailList}>
                     {props.content && !!props.content.length && props.content.map((item: Thread, index: number) => (
-                        <div onClick={() => handleClick(item)} key={index}
-                             className={selectedThread && selectedThread.id === item.id ? styles.selectedThread : ''}>
-                            <div className={`${styles.mailDetails} ${(item.mailboxes || []).includes('UNREAD') ? '' : styles.readThread}`}>
+                        <div onClick={() => handleClick(item, true)} key={index}
+                             className={`${selectedThread && selectedThread.id === item.id ? styles.selectedThread : ''}`}>
+                            <div
+                                className={`${styles.mailDetails} ${(item.mailboxes || []).includes('UNREAD') ? '' : styles.readThread}`}>
                                 <Flex align={"center"} justify={'space-between'}>
                                     <Flex align={"center"} gap={1}>
                                         <Flex align={"center"} className={styles.senderDetails} gap={1}>
@@ -62,7 +139,7 @@ export default function InboxTab(props: InboxTabProps) {
                                         </Flex>
                                     </Flex>
                                     <div className={styles2.receiveTime}>
-                                        <Time time={item.updated} isShowFullTime={false} />
+                                        <Time time={item.updated} isShowFullTime={false}/>
                                     </div>
                                 </Flex>
                                 <div className={styles.mailMessage}>

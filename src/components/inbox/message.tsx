@@ -30,7 +30,7 @@ export function Message() {
     const [messageContent, setMessageContent] = useState<MessageModel>();
     const [index, setIndex] = useState<number | null>(null);
     const [emailPart, setEmailPart] = useState<string>("");
-
+    const [cachedThreads, setCachedThreads] = useState({});
     const {messages, messagePart, isCompose, isLoading, message} = useSelector((state: StateType) => state.messages);
     const {selectedThread} = useSelector((state: StateType) => state.threads);
 
@@ -38,7 +38,11 @@ export function Message() {
 
     const getAllThreadMessages = useCallback(() => {
         if (selectedThread && selectedThread?.id) {
-            dispatch(getAllMessages({thread: selectedThread.id}));
+            if(!cachedThreads[selectedThread.id]) {
+                dispatch(getAllMessages({thread: selectedThread.id}));
+            } else {
+                dispatch(updateMessageState({messages: cachedThreads[selectedThread.id]}));
+            }
         }
     }, [dispatch, selectedThread])
 
@@ -51,6 +55,10 @@ export function Message() {
 
     useEffect(() => {
         if (messages && messages.length > 0) {
+            setCachedThreads((prevState: any) => ({
+                ...prevState,
+                [selectedThread.id]: messages
+            }));
             setIndex(val => !val ? messages.length - 1 : val);
         }
     }, [messages])
@@ -145,10 +153,14 @@ export function Message() {
                                 <div className={styles.closeIcon} onClick={() => onClose()}><CloseIcon/>
                                 </div>
                                 <div className={`${styles.actionIcon} ${index === 0 ? styles.disabled : ''}`}
-                                     onClick={() => showPreNextMessage('up')}><ChevronUpIcon/></div>
+                                     onClick={() => showPreNextMessage('up')}>
+                                    <ChevronUpIcon/>
+                                </div>
                                 <div
                                     className={`${styles.actionIcon} ${messages && messages?.length - 1 !== index ? '' : styles.disabled}`}
-                                    onClick={() => showPreNextMessage('down')}><ChevronDownIcon/></div>
+                                    onClick={() => showPreNextMessage('down')}>
+                                    <ChevronDownIcon/>
+                                </div>
 
                             </Flex>
 
@@ -245,7 +257,8 @@ export function Message() {
                         <Flex justifyContent={'space-between'} wrap={'wrap'} align={'center'}
                               borderBottom={'1px solid rgba(8, 22, 47, 0.1)'} padding={'12px 20px'}>
                             <Flex alignItems={'center'} gap={2}>
-                                <div className={styles.closeIcon} onClick={() => onClose()}><CloseIcon/>
+                                <div className={styles.closeIcon} onClick={() => onClose()}>
+                                    <CloseIcon/>
                                 </div>
                             </Flex>
                         </Flex>
