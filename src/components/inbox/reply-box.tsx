@@ -10,11 +10,11 @@ import {StateType} from "@/types";
 import {debounce, isEmail} from "@/utils/common.functions";
 import {Toaster} from "@/components/toaster";
 import RichTextEditor from "@/components/rich-text-editor";
-import {ReplyBoxType} from "@/types/props-types/replyBox.type";
+// import {ReplyBoxType} from "@/types/props-types/replyBox.type";
 
 declare type RecipientsType = { items: (string | undefined)[], value: string };
 
-export function ReplyBox(props: ReplyBoxType) {
+export function ReplyBox() {
     const [isToEmailAdded, setIsToEmailAdded] = useState<boolean>(false);
     const [emailBody, setEmailBody] = useState<string>('');
     const [hideCcFields, setHideCcFields] = useState<boolean>(false);
@@ -33,7 +33,7 @@ export function ReplyBox(props: ReplyBoxType) {
     });
     const [attachments, setAttachments] = useState<{ filename: string, data: string }[] | null>(null);
 
-    const {selectedAccount, accounts} = useSelector((state: StateType) => state.accounts);
+    const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {selectedThread} = useSelector((state: StateType) => state.threads);
     const {
         selectedMessage,
@@ -45,11 +45,11 @@ export function ReplyBox(props: ReplyBoxType) {
     const inputFile = useRef<HTMLInputElement | null>(null)
 
     const dispatch = useDispatch();
-    useEffect(() => {
-        if (accounts && accounts[0].signature) {
-            setEmailBody(accounts[0].signature);
-        }
-    }, [accounts])
+    // useEffect(() => {
+    //     if (accounts && accounts[0].signature) {
+    //         setEmailBody(accounts[0].signature);
+    //     }
+    // }, [accounts])
     useEffect(() => {
         setHideCcFields(false)
         setCC({
@@ -181,13 +181,13 @@ export function ReplyBox(props: ReplyBoxType) {
         }
     }
 
-    useEffect(() => {
-        // console.log('emailBody' , emailBody)
-        console.log('props============' , props.messageContent)
-        if ((props.messageContent?.mailboxes || []).includes('DRAFT')) {
-            setEmailBody(props.messageContent?.draftInfo?.body);
-        }
-    }, [props.messageContent])
+    // useEffect(() => {
+    //     // console.log('emailBody' , emailBody)
+    //     console.log('props============' , props.messageContent)
+    //     if ((props.messageContent?.mailboxes || []).includes('DRAFT')) {
+    //         setEmailBody(props.messageContent?.draftInfo?.body);
+    //     }
+    // }, [props.messageContent])
 
     useEffect(() => {
         console.log('emailBody' , emailBody)
