@@ -33,7 +33,7 @@ export function ReplyBox(props: ReplyBoxType) {
     });
     const [attachments, setAttachments] = useState<{ filename: string, data: string }[] | null>(null);
 
-    const {selectedAccount} = useSelector((state: StateType) => state.accounts);
+    const {selectedAccount, accounts} = useSelector((state: StateType) => state.accounts);
     const {selectedThread} = useSelector((state: StateType) => state.threads);
     const {
         selectedMessage,
@@ -45,7 +45,11 @@ export function ReplyBox(props: ReplyBoxType) {
     const inputFile = useRef<HTMLInputElement | null>(null)
 
     const dispatch = useDispatch();
-
+    useEffect(() => {
+        if (accounts && accounts[0].signature) {
+            setEmailBody(accounts[0].signature);
+        }
+    }, [accounts])
     useEffect(() => {
         setHideCcFields(false)
         setCC({

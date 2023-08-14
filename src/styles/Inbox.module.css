@@ -494,9 +494,9 @@
 .mailBox .hideButton {
     width: fit-content;
     margin: 5px auto -1px;
-    font-size: 12px;
+    font-size: 15px;
     height: fit-content;
-    padding: 0 5px 0 10px;
+    padding: 5px 10px 5px 15px;
     border-radius: 5px 5px 0 0 ;
     border: 1px solid rgba(8, 22, 47, 0.16);
     border-bottom: 1px solid #fff;

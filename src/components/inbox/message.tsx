@@ -154,7 +154,7 @@ export function Message() {
 
                             <Flex alignItems={'center'} gap={3} className={styles.headerRightIcon}>
                                 {!isLoading && <Text className={styles.totalMessages}>
-                                    {index ? index + 1 : 1} / {selectedThread.numMessages}
+                                    {index ? index + 1 : 1} / {messages.length}
                                 </Text>}
                                 <Button className={styles.addToProject} leftIcon={<FolderIcon/>}>Add to
                                     Project <span
@@ -225,7 +225,7 @@ export function Message() {
                 <Button className={styles.hideButton}
                         rightIcon={hideAndShowReplyBox ? <ChevronDownIcon/> : <ChevronUpIcon/>} variant='outline'
                         onClick={() => hideAndShowReplayBox()}>
-                    {hideAndShowReplyBox ? 'Discard' : 'Reply box'}
+                    {hideAndShowReplyBox ? 'Discard' : 'Reply'}
                 </Button>
                 {hideAndShowReplyBox && <ReplyBox messageContent={messageContent}/>}
 
