@@ -320,7 +320,9 @@ export function ReplyBox() {
         const reader = new FileReader();
         reader.readAsDataURL(event.target.files[0]);
         reader.onload = function () {
-            setAttachments([...(attachments || []), {filename: event.target.files[0].name, data: reader.result.toString()}]);
+            if (reader.result) {
+                setAttachments([...(attachments || []), {filename: event.target.files[0].name, data: reader.result.toString()}]);
+            }
         };
         reader.onerror = function (error) {
             console.log('Error: ', error);
@@ -329,7 +331,7 @@ export function ReplyBox() {
 
     function removeAttachment(index: number) {
         (attachments || []).splice(index, 1);
-        setAttachments([...attachments]);
+        setAttachments([...attachments!]);
     }
 
     useEffect(() => {
