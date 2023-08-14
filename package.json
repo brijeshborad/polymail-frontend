@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "ts-lint-commit-hook": "tsc --noEmit --incremental",
+    "prepare": "husky install"
   },
   "engines": {
     "node": "16.x || 18.x"
@@ -49,5 +51,8 @@
     "react-use-websocket": "^4.3.1",
     "redux-saga": "^1.2.3",
     "typescript": "5.1.6"
+  },
+  "devDependencies": {
+    "husky": "^8.0.0"
   }
 }
