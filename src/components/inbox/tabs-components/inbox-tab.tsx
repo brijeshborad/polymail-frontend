@@ -52,7 +52,6 @@ export default function InboxTab(props: InboxTabProps) {
     const downPress = useKeyPress("ArrowDown");
     const upPress = useKeyPress("ArrowUp");
     const [cursor, setCursor] = useState(0);
-    const [cachedThreads, setCachedThreads] = useState({});
 
     const dispatch = useDispatch();
 
@@ -72,20 +71,6 @@ export default function InboxTab(props: InboxTabProps) {
         }
     }, [cursor]);
 
-    useEffect(() => {
-        if (cachedThreads) {
-            console.log(cachedThreads);
-        }
-    }, [cachedThreads]);
-
-    useEffect(() => {
-        if (selectedThread) {
-            setCachedThreads((prevState: any) => ({
-                ...prevState,
-                 [selectedThread.id]: selectedThread
-            }));
-        }
-    }, [selectedThread]);
 
     const handleClick = (item: Thread, isClicked: boolean = false) => {
         if (isClicked) {

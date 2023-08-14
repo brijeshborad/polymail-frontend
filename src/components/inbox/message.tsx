@@ -23,14 +23,14 @@ import {
 import {SpinnerUI} from '@/components/spinner';
 import {ReplyBox} from "@/components/inbox/reply-box";
 import {updateThreadState} from "@/redux/threads/action-reducer";
-import {Message as MessageModel} from "@/models";
+import {Message as MessageModel, Thread} from "@/models";
 import {BlueStarIcon} from "@/icons/star-blue.icon";
 
 export function Message() {
     const [messageContent, setMessageContent] = useState<MessageModel>();
     const [index, setIndex] = useState<number | null>(null);
     const [emailPart, setEmailPart] = useState<string>("");
-    const [cachedThreads, setCachedThreads] = useState({});
+    const [cachedThreads, setCachedThreads] = useState<{[key:string]: Thread}>({});
     const {messages, messagePart, isCompose, isLoading, message} = useSelector((state: StateType) => state.messages);
     const {selectedThread} = useSelector((state: StateType) => state.threads);
 
