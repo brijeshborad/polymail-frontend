@@ -4,5 +4,6 @@ export interface Account {
     email: string,
     created?: string,
     updated?: string,
-    success?: boolean
+    success?: boolean,
+    signature?: string
 }

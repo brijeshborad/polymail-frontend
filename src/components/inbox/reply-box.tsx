@@ -46,6 +46,7 @@ export function ReplyBox() {
 
     const dispatch = useDispatch();
     // useEffect(() => {
+    //     console.log('accounts' , accounts)
     //     if (accounts && accounts[0].signature) {
     //         setEmailBody(accounts[0].signature);
     //     }

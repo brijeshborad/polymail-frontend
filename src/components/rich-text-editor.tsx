@@ -37,7 +37,7 @@ export default function RichTextEditor({onChange, placeholder, className}: RichT
             wrapperClassName={className}
             onEditorStateChange={setEditorState}
             toolbar={{
-                options: ['inline', 'link', 'list', 'textAlign', 'emoji'],
+                options: ['inline', 'link', 'list', 'emoji'],
                 inline: {
                     inDropdown: false,
                     options: ['bold', 'italic', 'strikethrough'],
@@ -49,10 +49,6 @@ export default function RichTextEditor({onChange, placeholder, className}: RichT
                 list: {
                     inDropdown: false,
                     options: ['unordered', 'ordered'],
-                },
-                textAlign: {
-                    inDropdown: false,
-                    options: ['left'],
                 },
                 emoji: {
                     className: undefined,
