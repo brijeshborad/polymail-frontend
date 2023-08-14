@@ -12,12 +12,12 @@ import {updateMessageState} from "@/redux/messages/action-reducer";
 import {updateThreadState} from "@/redux/threads/action-reducer";
 
 
-const useKeyPress = function (targetKey) {
+const useKeyPress = function (targetKey: string) {
     const [keyPressed, setKeyPressed] = useState(false);
 
     useEffect(() => {
 
-        function downHandler(event) {
+        function downHandler(event: KeyboardEvent) {
             event.preventDefault();
 
             if (event.key === targetKey) {
@@ -25,7 +25,7 @@ const useKeyPress = function (targetKey) {
             }
         }
 
-        const upHandler = (event) => {
+        const upHandler = (event: KeyboardEvent) => {
             event.preventDefault();
 
             if (event.key === targetKey) {
@@ -56,9 +56,9 @@ export default function InboxTab(props: InboxTabProps) {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (props.content.length) {
+        if (props.content && props.content.length) {
             if (downPress) {
-                setCursor((prevState) => prevState < props.content.length - 1 ? prevState + 1 : prevState);
+                setCursor((prevState) => (props.content && prevState < props.content.length - 1) ? prevState + 1 : prevState);
             } else if (upPress) {
                 setCursor((prevState) => (prevState > 0 ? prevState - 1 : prevState));
             }
@@ -66,14 +66,14 @@ export default function InboxTab(props: InboxTabProps) {
         }
     }, [upPress, downPress]);
     useEffect(() => {
-        if (props.content.length) {
+        if (props.content && props.content.length) {
             handleClick(props.content[cursor]);
         }
     }, [cursor]);
 
 
     const handleClick = (item: Thread, isClicked: boolean = false) => {
-        if (isClicked) {
+        if (isClicked && props.content) {
             const itemIndex = props.content.indexOf(item);
             setCursor(itemIndex);
         }

@@ -23,14 +23,14 @@ import {
 import {SpinnerUI} from '@/components/spinner';
 import {ReplyBox} from "@/components/inbox/reply-box";
 import {updateThreadState} from "@/redux/threads/action-reducer";
-import {Message as MessageModel, Thread} from "@/models";
+import {Message as MessageModel} from "@/models";
 import {BlueStarIcon} from "@/icons/star-blue.icon";
 
 export function Message() {
     const [messageContent, setMessageContent] = useState<MessageModel>();
     const [index, setIndex] = useState<number | null>(null);
     const [emailPart, setEmailPart] = useState<string>("");
-    const [cachedThreads, setCachedThreads] = useState<{[key:string]: Thread}>({});
+    const [cachedThreads, setCachedThreads] = useState<{[key:string]: MessageModel[]}>({});
     const {messages, messagePart, isCompose, isLoading, message} = useSelector((state: StateType) => state.messages);
     const {selectedThread} = useSelector((state: StateType) => state.threads);
 
@@ -54,14 +54,14 @@ export function Message() {
     }, [selectedThread, getAllThreadMessages])
 
     useEffect(() => {
-        if (messages && messages.length > 0) {
+        if (messages && messages.length > 0 && selectedThread) {
             setCachedThreads((prevState: any) => ({
                 ...prevState,
                 [selectedThread.id]: messages
             }));
             setIndex(val => !val ? messages.length - 1 : val);
         }
-    }, [messages])
+    }, [messages, selectedThread])
 
     useEffect(() => {
         if (messagePart && messagePart.data) {
