@@ -10,10 +10,11 @@ import {StateType} from "@/types";
 import {debounce, isEmail} from "@/utils/common.functions";
 import {Toaster} from "@/components/toaster";
 import RichTextEditor from "@/components/rich-text-editor";
+import {ReplyBoxType} from "@/types/props-types/replyBox.type";
 
 declare type RecipientsType = { items: (string | undefined)[], value: string };
 
-export function ReplyBox() {
+export function ReplyBox(props: ReplyBoxType) {
     const [isToEmailAdded, setIsToEmailAdded] = useState<boolean>(false);
     const [emailBody, setEmailBody] = useState<string>('');
     const [hideCcFields, setHideCcFields] = useState<boolean>(false);
@@ -176,6 +177,18 @@ export function ReplyBox() {
         }
     }
 
+    useEffect(() => {
+        // console.log('emailBody' , emailBody)
+        console.log('props============' , props.messageContent)
+        if ((props.messageContent?.mailboxes || []).includes('DRAFT')) {
+            setEmailBody(props.messageContent?.draftInfo?.body);
+        }
+    }, [props.messageContent])
+
+    useEffect(() => {
+        console.log('emailBody' , emailBody)
+    }, [emailBody])
+
     const sendToDraft = (value: string, isValueUpdate: boolean = true) => {
         if (isValueUpdate) {
             setEmailBody(value);
@@ -241,7 +254,7 @@ export function ReplyBox() {
                 items: !isCompose ? [selectedMessage.from] : [],
                 value: prevState.value
             }));
-            setEmailBody('');
+            // setEmailBody('');
         }
     }, [isCompose, selectedMessage])
 

@@ -227,7 +227,7 @@ export function Message() {
                         onClick={() => hideAndShowReplayBox()}>
                     {hideAndShowReplyBox ? 'Discard' : 'Reply box'}
                 </Button>
-                {hideAndShowReplyBox && <ReplyBox/>}
+                {hideAndShowReplyBox && <ReplyBox messageContent={messageContent}/>}
 
             </Flex>
             }
