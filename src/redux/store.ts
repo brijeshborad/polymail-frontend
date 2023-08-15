@@ -11,7 +11,7 @@ export function makeStore(initialState: any) {
     const store = configureStore({
         reducer: rootReducer,
         preloadedState: initialState,
-        middleware: (getDefaultMiddleware => getDefaultMiddleware().concat(sagaMiddleware))
+        middleware: (getDefaultMiddleware => getDefaultMiddleware({serializableCheck: false}).concat(sagaMiddleware))
     });
     sagaMiddleware.run(rootSaga);
 

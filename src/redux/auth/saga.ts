@@ -6,7 +6,7 @@ import {
     googleAuthLinkSuccess,
     loginError,
     loginSuccess,
-    loginUser, logoutUser, logoutUserError, logoutUserSuccess,
+    loginUser, logoutUser,
     registerError,
     registerSuccess,
     registerUser
@@ -14,7 +14,7 @@ import {
 import ApiService from "@/utils/api.service";
 import {AxiosError, AxiosResponse} from "axios";
 import LocalStorageService from "@/utils/localstorage.service";
-// import {LoginWithGoogle, User} from "@/models";
+import Router from "next/router";
 
 function* login({payload: {email, password}}: PayloadAction<{email: string, password: string}>) {
     try {
@@ -69,12 +69,12 @@ function* getGoogleAuthLink({payload}: PayloadAction<{
 
 function* logout() {
     try {
-        const response: AxiosResponse = yield ApiService.callGet(`auth/logout`, null);
+        yield ApiService.callGet(`auth/logout`, null);
         LocalStorageService.clearStorage();
-        yield put(logoutUserSuccess(response));
+        Router.push('/auth/login');
     } catch (error: any) {
-        error = error as AxiosError;
-        yield put(logoutUserError(error.response.data));
+        LocalStorageService.clearStorage();
+        Router.push('/auth/login');
     }
 
 }

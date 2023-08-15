@@ -34,12 +34,6 @@ const authSlice = createSlice({
         logoutUser: (state: InitialAuthState) => {
             return {...state, user: undefined, error: null, isLoading: false}
         },
-        logoutUserSuccess: (state: InitialAuthState, {payload: {}}: PayloadAction<{}>) => {
-            return {...state, user: undefined, error: null, isLoading: false}
-        },
-        logoutUserError: (state: InitialAuthState, {payload: error}: PayloadAction<any>) => {
-            return {...state, error, isLoading: false}
-        },
         googleAuthLink: (state: InitialAuthState, _action: PayloadAction<{
             mode: string,
             redirectUrl: string,
@@ -68,8 +62,6 @@ export const {
     registerSuccess,
     registerError,
     logoutUser,
-    logoutUserSuccess,
-    logoutUserError,
     googleAuthLink,
     googleAuthLinkSuccess,
     googleAuthLinkError,

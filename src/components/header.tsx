@@ -118,8 +118,7 @@ export function Header() {
 
 
     function logout() {
-        dispatch(logoutUser());
-        Router.push('/auth/login');
+        Router.push(`/auth/logout`);
     }
 
     function addNewGoogleAccount() {

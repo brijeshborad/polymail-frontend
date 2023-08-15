@@ -44,10 +44,15 @@ axiosInstance.interceptors.response.use((response) => {
         }
         Toaster(err);
         if (error.response.status === 401) {
-            LocalStorageService.clearStorage();
-            Router.push(`/auth/login`);
+            Router.push(`/auth/logout`);
             return false;
         }
+    } else if (error.code === 'ERR_NETWORK') {
+        let err = {
+            desc: error.message,
+            type: 'error'
+        }
+        Toaster(err);
     }
     return error
 });

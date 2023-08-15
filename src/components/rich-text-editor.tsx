@@ -7,11 +7,12 @@ const Editor = dynamic(
 )
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import {RichTextEditorProps} from "@/types";
-import {EditorState, convertToRaw, ContentState} from 'draft-js';
+import {EditorState, convertToRaw, ContentState, convertFromHTML} from 'draft-js';
 import draftToHtml from "draftjs-to-html";
 
 export default function RichTextEditor({onChange, placeholder, className}: RichTextEditorProps) {
     const [editorState, setEditorState] = useState<EditorState>(EditorState.createEmpty());
+    // const [sampleEditorContent, setSampleEditorContent] = useState<EditorState>(EditorState.createEmpty());
     const emojiArray = ["😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇", "🙂", "🙃", "😉", "😌", "😍", "🥰", "😘", "😗", "😙", "😚", "😋", "😛", "😝", "😜", "🤪", "👶", "👧", "🧒", "👦", "👩", "🧑", "👨", "👵", "🧓", "👴", "👮", "👷", "💂", "🕵️‍♂️", "👩‍⚕️", "👨‍⚕️", "👩‍🌾", "👨‍🌾", "👩‍🍳", "👨‍🍳", "👩‍🎓", "👨‍🎓", "👩‍🎤", "👨‍🎤", "👩‍🏫", "👨‍🏫", "🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🦝", "🐻", "🐨", "🐼", "🦁", "🐯", "🐮", "🐷", "🐽", "🐸", "🐵", "🙈", "🙉", "🙊", "🐒", "🦍", "🦧", "🐔", "🍔", "🍟", "🍕", "🌭", "🍿", "🧂", "🍞", "🥖", "🥐", "🥨", "🥯", "🥞", "🧇", "🍳", "🍗", "🍖", "🥩", "🍔", "🍟", "🍕", "🌭", "🍿", "🧂", "🚗", "🚕", "🚆", "🚇", "🚈", "🚂", "🚊", "🚝", "🚄", "🚅", "🚈", "🚞", "🚋", "🚲", "🛴", "🛵", "🏍️", "🚨", "🚍", "🚌", "🚒", "🚑", "🚓", "⚽", "🏀", "🏈", "⚾", "🥎", "🎾", "🏐", "🏉", "🎱", "🏓", "🏸", "🥏", "🥅", "🏒", "🏑", "🏏", "🥋", "🥊", "🥇", "🥈", "🥉", "🏆"]
     const updateParentComponent = useCallback(() => {
         if (onChange && editorState?.getCurrentContent().getPlainText().trim()) {
@@ -25,10 +26,10 @@ export default function RichTextEditor({onChange, placeholder, className}: RichT
     }, [updateParentComponent])
 
     // useEffect(() => {
-    //     if (props.value) {
-    //         setEditorState(EditorState.createWithContent(ContentState.createFromBlockArray(convertFromHTML(props.value) as any)));
+    //     if (value) {
+    //         setSampleEditorContent(EditorState.createWithContent(ContentState.createFromBlockArray(convertFromHTML(value) as any)));
     //     }
-    // }, [props, props.value])
+    // }, [value])
 
     return (
         <Editor
@@ -36,6 +37,7 @@ export default function RichTextEditor({onChange, placeholder, className}: RichT
             placeholder={placeholder}
             wrapperClassName={className}
             onEditorStateChange={setEditorState}
+            defaultEditorState={EditorState.createWithContent(ContentState.createFromBlockArray(convertFromHTML('<p>Brijesh Borad</p>') as any))}
             toolbar={{
                 options: ['inline', 'link', 'list', 'emoji'],
                 inline: {

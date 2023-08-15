@@ -33,7 +33,7 @@ export function ReplyBox() {
     });
     const [attachments, setAttachments] = useState<{ filename: string, data: string }[] | null>(null);
 
-    const {selectedAccount} = useSelector((state: StateType) => state.accounts);
+    const {selectedAccount, accounts} = useSelector((state: StateType) => state.accounts);
     const {selectedThread} = useSelector((state: StateType) => state.threads);
     const {
         selectedMessage,
@@ -45,12 +45,13 @@ export function ReplyBox() {
     const inputFile = useRef<HTMLInputElement | null>(null)
 
     const dispatch = useDispatch();
-    // useEffect(() => {
-    //     console.log('accounts' , accounts)
-    //     if (accounts && accounts[0].signature) {
-    //         setEmailBody(accounts[0].signature);
-    //     }
-    // }, [accounts])
+
+    useEffect(() => {
+        if (accounts && accounts[0] && accounts[0].signature) {
+            setEmailBody(accounts[0].signature);
+        }
+    }, [accounts])
+
     useEffect(() => {
         setHideCcFields(false)
         setCC({
@@ -182,18 +183,6 @@ export function ReplyBox() {
         }
     }
 
-    // useEffect(() => {
-    //     // console.log('emailBody' , emailBody)
-    //     console.log('props============' , props.messageContent)
-    //     if ((props.messageContent?.mailboxes || []).includes('DRAFT')) {
-    //         setEmailBody(props.messageContent?.draftInfo?.body);
-    //     }
-    // }, [props.messageContent])
-
-    useEffect(() => {
-        console.log('emailBody' , emailBody)
-    }, [emailBody])
-
     const sendToDraft = (value: string, isValueUpdate: boolean = true) => {
         if (isValueUpdate) {
             setEmailBody(value);
@@ -206,7 +195,7 @@ export function ReplyBox() {
             ...(bcc?.items && bcc?.items.length > 0 ? {bcc: bcc?.items} : {}),
             draftInfo: {
                 body: isValueUpdate ? value : emailBody,
-                ...(attachments && attachments.length > 0 ? {attachments}: {})
+                ...(attachments && attachments.length > 0 ? {attachments} : {})
             }
         }
         debounce(() => {
@@ -339,7 +328,10 @@ export function ReplyBox() {
         reader.readAsDataURL(event.target.files[0]);
         reader.onload = function () {
             if (reader.result) {
-                setAttachments([...(attachments || []), {filename: event.target.files[0].name, data: reader.result.toString()}]);
+                setAttachments([...(attachments || []), {
+                    filename: event.target.files[0].name,
+                    data: reader.result.toString()
+                }]);
             }
         };
         reader.onerror = function (error) {
@@ -451,7 +443,15 @@ export function ReplyBox() {
                     <RichTextEditor className={styles.replyMessageArea}
                                     placeholder='Reply with anything you like or @mention someone to share this thread'
                                     value={emailBody} onChange={(e) => sendToDraft(e)}/>
-
+                    {attachments && attachments.length > 0 ? <div style={{marginTop: '20px'}}>
+                        {attachments.map((item: { filename: string, data: string }, index: number) => (
+                            <Flex align={'center'} key={index}>
+                                {item.filename}
+                                <div className={styles.closeIcon} onClick={() => removeAttachment(index)}><CloseIcon/>
+                                </div>
+                            </Flex>
+                        ))}
+                    </div> : null}
                     <Flex align={'flex-end'} justify={"space-between"} gap={2}>
                         <Flex align={'center'} gap={3}>
                             <FileIcon click={() => inputFile.current?.click()}/>
@@ -467,14 +467,6 @@ export function ReplyBox() {
                                     rightIcon={<ChevronDownIcon/>}>{isCompose ? 'Send' : 'Reply all'}</Button>
                         </Flex>
                     </Flex>
-                    {attachments && attachments.length > 0 ? <div style={{marginTop: '20px'}}>
-                        {attachments.map((item: { filename: string, data: string }, index: number) => (
-                            <Flex align={'center'} key={index}>
-                                {item.filename}
-                                <div className={styles.closeIcon} onClick={() => removeAttachment(index)}><CloseIcon/></div>
-                            </Flex>
-                        ))}
-                    </div> : null}
                 </Flex>
             </Flex>
         </div>
