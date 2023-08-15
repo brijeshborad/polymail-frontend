@@ -54,10 +54,10 @@ export function Message() {
     }, [selectedThread, getAllThreadMessages])
 
     useEffect(() => {
-        if (messages && messages.length > 0 && selectedThread) {
+        if (messages && messages.length > 0 && selectedThread && selectedThread.id) {
             setCachedThreads((prevState: any) => ({
                 ...prevState,
-                [selectedThread.id]: messages
+                [(selectedThread?.id || '')]: messages
             }));
             setIndex(val => !val ? messages.length - 1 : val);
         }
@@ -77,7 +77,9 @@ export function Message() {
             if (messages[index]) {
                 setMessageContent(messages[index]);
                 dispatch(updateMessageState({selectedMessage: messages[index]}));
-                dispatch(getMessageParts({id: messages[index].id}));
+                if (!(messages[index].mailboxes || []).includes('DRAFT')) {
+                    dispatch(getMessageParts({id: messages[index].id}));
+                }
             }
         }
     }, [dispatch, index, messages])

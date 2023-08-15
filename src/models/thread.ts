@@ -1,6 +1,6 @@
 export interface Thread {
-    id: string,
-    from: string,
+    id?: string | undefined,
+    from?: string,
     created?: string,
     updated?: string,
     user?: string,
@@ -10,5 +10,10 @@ export interface Thread {
     subject?: string,
     snippet?: string,
     mailboxes?: string[],
-    numMessages: number,
+    numMessages?: number,
+}
+
+export interface ThreadsRequestBody {
+    mailboxes?: string[] | undefined,
+
 }

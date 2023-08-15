@@ -9,9 +9,8 @@ import React, {useCallback, useEffect, useRef, useState} from "react";
 import {SpinnerUI} from "@/components/spinner";
 import {useDispatch, useSelector} from "react-redux";
 import {updateMessageState} from "@/redux/messages/action-reducer";
-import {updateThreadState} from "@/redux/threads/action-reducer";
+import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {useKeyPress} from "@/hooks/use-key-press.hook";
-
 
 export default function InboxTab(props: InboxTabProps) {
     const {isLoading, selectedThread} = useSelector((state: StateType) => state.threads);
@@ -28,6 +27,18 @@ export default function InboxTab(props: InboxTabProps) {
         if (isClicked && props.content) {
             const itemIndex = props.content.indexOf(item);
             setCursor(itemIndex);
+        }
+        let body = {}
+        if ((item.mailboxes || []).includes('UNREAD')) {
+            let finalArray = (item.mailboxes || []).filter(function (item) {
+                return item !== 'UNREAD'
+            })
+            body = {
+                mailboxes: [
+                    ...finalArray
+                ]
+            }
+            dispatch(updateThreads({id: item.id, body}));
         }
         dispatch(updateThreadState({selectedThread: item}));
         dispatch(updateMessageState({selectedMessage: null}));
@@ -117,7 +128,7 @@ export default function InboxTab(props: InboxTabProps) {
                                         </Flex>
                                     </Flex>
                                     <div className={styles2.receiveTime}>
-                                        <Time time={item.updated} isShowFullTime={false}/>
+                                        <Time time={item.created} isShowFullTime={false}/>
                                     </div>
                                 </Flex>
                                 <div className={styles.mailMessage}>

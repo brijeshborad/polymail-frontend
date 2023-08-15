@@ -2,7 +2,7 @@ import styles from "@/styles/Inbox.module.css";
 import {Button, Flex, Heading, Input} from "@chakra-ui/react";
 import {Chip} from "@/components/chip";
 import {ChevronDownIcon, CloseIcon, InfoOutlineIcon} from "@chakra-ui/icons";
-import {EmojiIcon, FileIcon, LinkIcon, TextIcon} from "@/icons";
+import {FileIcon, LinkIcon, TextIcon} from "@/icons";
 import React, {ChangeEvent, ChangeEventHandler, useEffect, useRef, useState} from "react";
 import {createDraft, sendMessage, updateMessageState, updatePartialMessage} from "@/redux/messages/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
@@ -10,7 +10,6 @@ import {StateType} from "@/types";
 import {debounce, isEmail} from "@/utils/common.functions";
 import {Toaster} from "@/components/toaster";
 import RichTextEditor from "@/components/rich-text-editor";
-// import {ReplyBoxType} from "@/types/props-types/replyBox.type";
 
 declare type RecipientsType = { items: (string | undefined)[], value: string };
 
@@ -51,6 +50,12 @@ export function ReplyBox() {
             setEmailBody(accounts[0].signature);
         }
     }, [accounts])
+
+    useEffect(() => {
+        if (selectedMessage && selectedMessage.draftInfo && selectedMessage.draftInfo.body) {
+            setEmailBody(prevState => (selectedMessage?.draftInfo?.body || '').concat(prevState));
+        }
+    }, [selectedMessage])
 
     useEffect(() => {
         setHideCcFields(false)
@@ -442,7 +447,7 @@ export function ReplyBox() {
                 <Flex direction={'column'} className={styles.replyMessage}>
                     <RichTextEditor className={styles.replyMessageArea}
                                     placeholder='Reply with anything you like or @mention someone to share this thread'
-                                    value={emailBody} onChange={(e) => sendToDraft(e)}/>
+                                    value={emailBody} onChange={(e) => sendToDraft(e, false)}/>
                     {attachments && attachments.length > 0 ? <div style={{marginTop: '20px'}}>
                         {attachments.map((item: { filename: string, data: string }, index: number) => (
                             <Flex align={'center'} key={index} className={styles.attachmentsFile}>

@@ -12,6 +12,7 @@ export interface Message {
     to?: string[],
     headers?: MessageHeaders[],
     contentRoot?: string,
+    draftInfo?: MessageDraftInfo,
 }
 
 export interface MessageDraft {

@@ -16,7 +16,7 @@ import {ChevronDownIcon, SearchIcon, CheckIcon, RepeatIcon} from "@chakra-ui/ico
 import {EnergyIcon, FolderIcon, MailIcon} from "@/icons";
 import styles from '@/styles/Home.module.css'
 import {useDispatch, useSelector} from "react-redux";
-import {googleAuthLink, logoutUser} from "@/redux/auth/action-reducer";
+import {googleAuthLink} from "@/redux/auth/action-reducer";
 import Router from "next/router";
 import {StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
