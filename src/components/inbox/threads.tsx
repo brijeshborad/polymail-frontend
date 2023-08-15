@@ -13,7 +13,8 @@ import InboxTab from "@/components/inbox/tabs-components/inbox-tab";
 import {StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {getAllThreads} from "@/redux/threads/action-reducer";
+import {getAllThreads, updateThreadState} from "@/redux/threads/action-reducer";
+import {updateMessageState} from "@/redux/messages/action-reducer";
 
 export function Threads() {
     const [tab, setTab] = useState<string>('INBOX');
@@ -33,6 +34,13 @@ export function Threads() {
             dispatch(getAllThreads({mailbox: tab, account: selectedAccount.id}));
         }
     }, [dispatch, selectedAccount, tab]);
+
+    useEffect(() => {
+        if (threads && threads.length > 0) {
+            dispatch(updateThreadState({selectedThread: threads[0]}));
+            dispatch(updateMessageState({selectedMessage: null}));
+        }
+    }, [threads, dispatch])
 
     useEffect(() => {
         getAllThread();

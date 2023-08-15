@@ -44,7 +44,7 @@ export function Message() {
                 dispatch(updateMessageState({messages: cachedThreads[selectedThread.id]}));
             }
         }
-    }, [dispatch, selectedThread])
+    }, [cachedThreads, dispatch, selectedThread])
 
     useEffect(() => {
         if (selectedThread && selectedThread?.id) {
@@ -74,9 +74,11 @@ export function Message() {
 
     useEffect(() => {
         if (index !== null && messages && messages.length > 0) {
-            setMessageContent(messages[index]);
-            dispatch(updateMessageState({selectedMessage: messages[index]}));
-            dispatch(getMessageParts({id: messages[index].id}));
+            if (messages[index]) {
+                setMessageContent(messages[index]);
+                dispatch(updateMessageState({selectedMessage: messages[index]}));
+                dispatch(getMessageParts({id: messages[index].id}));
+            }
         }
     }, [dispatch, index, messages])
 

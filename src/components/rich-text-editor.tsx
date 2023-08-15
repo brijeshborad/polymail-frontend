@@ -10,9 +10,9 @@ import {RichTextEditorProps} from "@/types";
 import {EditorState, convertToRaw, ContentState, convertFromHTML} from 'draft-js';
 import draftToHtml from "draftjs-to-html";
 
-export default function RichTextEditor({onChange, placeholder, className}: RichTextEditorProps) {
+export default function RichTextEditor({onChange, placeholder, className, value}: RichTextEditorProps) {
     const [editorState, setEditorState] = useState<EditorState>(EditorState.createEmpty());
-    // const [sampleEditorContent, setSampleEditorContent] = useState<EditorState>(EditorState.createEmpty());
+    const [sampleEditorContent, setSampleEditorContent] = useState<EditorState>(EditorState.createEmpty());
     const emojiArray = ["😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇", "🙂", "🙃", "😉", "😌", "😍", "🥰", "😘", "😗", "😙", "😚", "😋", "😛", "😝", "😜", "🤪", "👶", "👧", "🧒", "👦", "👩", "🧑", "👨", "👵", "🧓", "👴", "👮", "👷", "💂", "🕵️‍♂️", "👩‍⚕️", "👨‍⚕️", "👩‍🌾", "👨‍🌾", "👩‍🍳", "👨‍🍳", "👩‍🎓", "👨‍🎓", "👩‍🎤", "👨‍🎤", "👩‍🏫", "👨‍🏫", "🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🦝", "🐻", "🐨", "🐼", "🦁", "🐯", "🐮", "🐷", "🐽", "🐸", "🐵", "🙈", "🙉", "🙊", "🐒", "🦍", "🦧", "🐔", "🍔", "🍟", "🍕", "🌭", "🍿", "🧂", "🍞", "🥖", "🥐", "🥨", "🥯", "🥞", "🧇", "🍳", "🍗", "🍖", "🥩", "🍔", "🍟", "🍕", "🌭", "🍿", "🧂", "🚗", "🚕", "🚆", "🚇", "🚈", "🚂", "🚊", "🚝", "🚄", "🚅", "🚈", "🚞", "🚋", "🚲", "🛴", "🛵", "🏍️", "🚨", "🚍", "🚌", "🚒", "🚑", "🚓", "⚽", "🏀", "🏈", "⚾", "🥎", "🎾", "🏐", "🏉", "🎱", "🏓", "🏸", "🥏", "🥅", "🏒", "🏑", "🏏", "🥋", "🥊", "🥇", "🥈", "🥉", "🏆"]
     const updateParentComponent = useCallback(() => {
         if (onChange && editorState?.getCurrentContent().getPlainText().trim()) {
@@ -25,19 +25,18 @@ export default function RichTextEditor({onChange, placeholder, className}: RichT
         updateParentComponent();
     }, [updateParentComponent])
 
-    // useEffect(() => {
-    //     if (value) {
-    //         setSampleEditorContent(EditorState.createWithContent(ContentState.createFromBlockArray(convertFromHTML(value) as any)));
-    //     }
-    // }, [value])
+    useEffect(() => {
+        if (value) {
+            setSampleEditorContent(EditorState.createWithContent(ContentState.createFromBlockArray(convertFromHTML(value) as any)));
+        }
+    }, [value])
 
     return (
         <Editor
-            editorState={editorState}
             placeholder={placeholder}
             wrapperClassName={className}
             onEditorStateChange={setEditorState}
-            defaultEditorState={EditorState.createWithContent(ContentState.createFromBlockArray(convertFromHTML('<p>Brijesh Borad</p>') as any))}
+            defaultEditorState={sampleEditorContent}
             toolbar={{
                 options: ['inline', 'link', 'list', 'emoji'],
                 inline: {

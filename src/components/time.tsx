@@ -7,19 +7,12 @@ export function Time(props: TimeProps) {
     const [time, setTime] = useState<string | undefined>(props.time);
 
     useEffect(() => {
-        // let date = dayjs(props.time).format('MM/DD/YYYY hh:mm A')
-        //
-        // if (dayjs().diff(dayjs(props.time), 'h') < 12) {
-        //     date = dayjs(props.time).format('hh:mm A')
-        // }
-        // setTime(date)
-
         const date1 = dayjs(props.time);
         const date2 = dayjs();
         let days: number = date2.diff(date1, 'day');
         let timeString: string = '';
         if (props.isShowFullTime) {
-           let timeString = dayjs(props.time).format('MM/DD/YYYY hh:mm A');
+            let timeString = dayjs(props.time).format('MM/DD/YYYY hh:mm A');
             setTime(timeString)
             return;
         }
@@ -33,21 +26,6 @@ export function Time(props: TimeProps) {
         setTime(timeString)
     }, [props.time, props.isShowFullTime])
 
-    // const getOneDayAgo = (newDate) => {
-    //     const date1 = dayjs(newDate);
-    //     const date2 = dayjs();
-    //
-    //     let days = date2.diff(date1, 'day');
-    //     if (days < 1) {
-    //         return `${date2.diff(date1, 'hour')} hours ago`;
-    //     } else if (date2.diff(date1, 'hour') < 1) {
-    //         return `${date2.diff(date1, 'minute')} minutes ago`;
-    //     } else if (date2.diff(date1, 'minute') < 1) {
-    //         return `${date2.diff(date1, 'second')} seconds`;
-    //     } else {
-    //         return `${days} days ago`;
-    //     }
-    // };
     return (
         <Text fontSize={'sm'}>{time}</Text>
     )

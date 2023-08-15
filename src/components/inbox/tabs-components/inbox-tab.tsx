@@ -1,59 +1,37 @@
-import {Badge, Button, Checkbox, Flex} from "@chakra-ui/react";
+import {Badge, Button, Checkbox, Flex, Input} from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
 import {DisneyIcon} from "@/icons";
 import styles2 from "@/styles/common.module.css";
 import {Time} from "@/components";
 import {InboxTabProps, StateType} from "@/types";
 import {Thread} from "@/models";
-import React, {useEffect, useState} from "react";
+import React, {MutableRefObject, useCallback, useEffect, useRef, useState} from "react";
 import {SpinnerUI} from "@/components/spinner";
 import {useDispatch, useSelector} from "react-redux";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 import {updateThreadState} from "@/redux/threads/action-reducer";
-
-
-const useKeyPress = function (targetKey: string) {
-    const [keyPressed, setKeyPressed] = useState(false);
-
-    useEffect(() => {
-
-        function downHandler(event: KeyboardEvent) {
-            event.preventDefault();
-
-            if (event.key === targetKey) {
-                setKeyPressed(true);
-            }
-        }
-
-        const upHandler = (event: KeyboardEvent) => {
-            event.preventDefault();
-
-            if (event.key === targetKey) {
-                setKeyPressed(false);
-            }
-        };
-
-        window.addEventListener("keydown", downHandler);
-        window.addEventListener("keyup", upHandler);
-
-        return () => {
-            window.removeEventListener("keydown", downHandler);
-            window.removeEventListener("keyup", upHandler);
-        };
-    }, [targetKey]);
-
-    return keyPressed;
-};
+import {useKeyPress} from "@/hooks/use-key-press.hook";
 
 
 export default function InboxTab(props: InboxTabProps) {
     const {isLoading, selectedThread} = useSelector((state: StateType) => state.threads);
 
-    const downPress = useKeyPress("ArrowDown");
-    const upPress = useKeyPress("ArrowUp");
+    const listRef = useRef<any>(null);
+    const activeDivRef = useRef<any>({});
+    const downPress = useKeyPress("ArrowDown", listRef);
+    const upPress = useKeyPress("ArrowUp", listRef);
     const [cursor, setCursor] = useState(0);
 
     const dispatch = useDispatch();
+
+    const handleClick = useCallback((item: Thread, isClicked: boolean = false) => {
+        if (isClicked && props.content) {
+            const itemIndex = props.content.indexOf(item);
+            setCursor(itemIndex);
+        }
+        dispatch(updateThreadState({selectedThread: item}));
+        dispatch(updateMessageState({selectedMessage: null}));
+    }, [dispatch, props.content])
 
     useEffect(() => {
         if (props.content && props.content.length) {
@@ -64,22 +42,29 @@ export default function InboxTab(props: InboxTabProps) {
             }
 
         }
-    }, [upPress, downPress]);
+    }, [upPress, downPress, props.content]);
+
     useEffect(() => {
         if (props.content && props.content.length) {
             handleClick(props.content[cursor]);
         }
-    }, [cursor]);
+    }, [cursor, handleClick, props.content]);
 
-
-    const handleClick = (item: Thread, isClicked: boolean = false) => {
-        if (isClicked && props.content) {
-            const itemIndex = props.content.indexOf(item);
-            setCursor(itemIndex);
+    useEffect(() => {
+        if (selectedThread) {
+            listRef?.current.focus();
         }
-        dispatch(updateThreadState({selectedThread: item}));
-        dispatch(updateMessageState({selectedMessage: null}));
-    }
+    }, [selectedThread, listRef])
+
+    useEffect(() => {
+        if (selectedThread) {
+            // @ts-ignore
+            if (activeDivRef && activeDivRef[selectedThread.id]) {
+                // @ts-ignore
+                activeDivRef[selectedThread.id].scrollIntoView({behavior: 'smooth', block: 'end'});
+            }
+        }
+    }, [selectedThread])
 
 
     return (
@@ -112,8 +97,15 @@ export default function InboxTab(props: InboxTabProps) {
             {isLoading && <SpinnerUI/>}
             <div>
                 <Flex direction={'column'} gap={1} marginTop={5} className={styles.mailList}>
+                    <Input type={'text'} opacity={0} height={0} width={0} padding={0} border={0} outline={0} ref={listRef}/>
                     {props.content && !!props.content.length && props.content.map((item: Thread, index: number) => (
-                        <div onClick={() => handleClick(item, true)} key={index}
+                        <div onClick={() => {
+                            handleClick(item, true);
+                            listRef?.current.focus();
+                        }} key={index} ref={ref => {
+                            // @ts-ignore
+                            activeDivRef[item.id] = ref
+                        }}
                              className={`${selectedThread && selectedThread.id === item.id ? styles.selectedThread : ''}`}>
                             <div
                                 className={`${styles.mailDetails} ${(item.mailboxes || []).includes('UNREAD') ? '' : styles.readThread}`}>
