@@ -46,12 +46,14 @@ export function ReplyBox() {
     const dispatch = useDispatch();
 
     useEffect(() => {
+        // Add signature to email body
         if (accounts && accounts[0] && accounts[0].signature) {
             setEmailBody(accounts[0].signature);
         }
     }, [accounts])
 
     useEffect(() => {
+        // Add signature and draft to email body
         if (selectedMessage && selectedMessage.draftInfo && selectedMessage.draftInfo.body) {
             setEmailBody(prevState => (selectedMessage?.draftInfo?.body || '').concat(prevState));
         }
