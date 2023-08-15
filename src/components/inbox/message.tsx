@@ -191,7 +191,7 @@ export function Message() {
 
                                 <Tooltip label='Mark as unread' placement='bottom' bg='gray.300' color='black'>
                                     <div onClick={() => updateMailBox('READ')}>
-                                        <CheckIcon/>
+                                        <CheckIcon className={styles.colorGray}/>
                                     </div>
                                 </Tooltip>
 
@@ -208,7 +208,7 @@ export function Message() {
                                     label={(messageContent?.mailboxes || []).includes('SPAM') ? 'Spammed' : 'Mark As Spam'}
                                     placement='bottom' bg='gray.300' color='black'>
                                     <div onClick={() => updateMailBox('SPAM')}>
-                                        <WarningIcon/>
+                                        <WarningIcon className={styles.colorGray}/>
                                     </div>
                                 </Tooltip>
                             </Flex>

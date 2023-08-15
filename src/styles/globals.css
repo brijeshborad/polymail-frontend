@@ -138,10 +138,35 @@ a {
   transform: translateY(-50%);
 }
 
-.rdw-editor-wrapper .rdw-editor-main {
-  height: calc(100% - 70px);
-}
-
 .rdw-editor-wrapper .rdw-editor-main .DraftEditor-root .DraftEditor-editorContainer .public-DraftEditor-content {
   height: 100%;
+}
+
+.rdw-editor-wrapper .rdw-editor-main .DraftEditor-root .DraftEditor-editorContainer .public-DraftEditor-content .public-DraftStyleDefault-block {
+  margin-top: 0;
+}
+
+.rdw-editor-wrapper .rdw-editor-toolbar .rdw-option-wrapper {
+  border: 0;
+  transition: all 0.3s;
+  background-color: transparent;
+}
+
+.rdw-editor-wrapper .rdw-editor-toolbar .rdw-option-wrapper:hover {
+  box-shadow: none;
+  background-color: rgba(32,33,36,0.059);
+}
+
+.rdw-editor-wrapper .rdw-editor-toolbar {
+  border: 0;
+  box-shadow: 0 0 4px 0 rgba(0,0,0,.14);
+  border-radius: 4px;
+  margin: 0;
+  width: fit-content;
+}
+
+.rdw-editor-wrapper .rdw-editor-toolbar .rdw-link-wrapper,
+.rdw-editor-wrapper .rdw-editor-toolbar .rdw-list-wrapper,
+.rdw-editor-wrapper .rdw-editor-toolbar .rdw-emoji-wrapper {
+  border-left: 1px solid rgba(8, 22, 47, 0.1);
 }

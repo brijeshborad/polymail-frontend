@@ -445,21 +445,21 @@ export function ReplyBox() {
                                     value={emailBody} onChange={(e) => sendToDraft(e)}/>
                     {attachments && attachments.length > 0 ? <div style={{marginTop: '20px'}}>
                         {attachments.map((item: { filename: string, data: string }, index: number) => (
-                            <Flex align={'center'} key={index}>
+                            <Flex align={'center'} key={index} className={styles.attachmentsFile}>
                                 {item.filename}
                                 <div className={styles.closeIcon} onClick={() => removeAttachment(index)}><CloseIcon/>
                                 </div>
                             </Flex>
                         ))}
                     </div> : null}
-                    <Flex align={'flex-end'} justify={"space-between"} gap={2}>
+                    <Flex align={'flex-end'} justify={"space-between"} gap={2} order={1}>
                         <Flex align={'center'} gap={3}>
                             <FileIcon click={() => inputFile.current?.click()}/>
                             <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e)}
                                    style={{display: 'none'}}/>
                             <LinkIcon/>
                             <TextIcon/>
-                            <EmojiIcon/>
+                            {/*<EmojiIcon/>*/}
                         </Flex>
                         <Flex align={'center'} gap={2}>
                             <Button className={styles.replyButton} colorScheme='blue'
