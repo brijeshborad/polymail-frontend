@@ -21,12 +21,13 @@ export const useKeyPress = function (targetKey: string, ref: MutableRefObject<an
         if (ref && ref.current) {
             ref.current.addEventListener("keydown", downHandler, false);
             ref.current.addEventListener("keyup", upHandler, false);
-            return function cleanup() {
+        }
+        return () => {
+            if (ref.current) {
                 ref.current.removeEventListener("keydown", downHandler, false);
                 ref.current.removeEventListener("keyup", upHandler, false);
-            };
-        }
-        return () => {}
+            }
+        };
     }, [targetKey, ref]);
 
     return keyPressed;

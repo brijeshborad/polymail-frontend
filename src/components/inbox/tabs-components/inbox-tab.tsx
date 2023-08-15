@@ -5,7 +5,7 @@ import styles2 from "@/styles/common.module.css";
 import {Time} from "@/components";
 import {InboxTabProps, StateType} from "@/types";
 import {Thread} from "@/models";
-import React, {MutableRefObject, useCallback, useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import {SpinnerUI} from "@/components/spinner";
 import {useDispatch, useSelector} from "react-redux";
 import {updateMessageState} from "@/redux/messages/action-reducer";
@@ -97,7 +97,8 @@ export default function InboxTab(props: InboxTabProps) {
             {isLoading && <SpinnerUI/>}
             <div>
                 <Flex direction={'column'} gap={1} marginTop={5} className={styles.mailList}>
-                    <Input type={'text'} opacity={0} height={0} width={0} padding={0} border={0} outline={0} ref={listRef}/>
+                    <Input type={'text'} opacity={0} height={0} width={0} padding={0} border={0} outline={0}
+                           ref={listRef}/>
                     {props.content && !!props.content.length && props.content.map((item: Thread, index: number) => (
                         <div onClick={() => {
                             handleClick(item, true);
