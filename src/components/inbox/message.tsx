@@ -40,6 +40,7 @@ export function Message() {
         if (selectedThread && selectedThread?.id) {
             if(!cachedThreads[selectedThread.id]) {
                 dispatch(getAllMessages({thread: selectedThread.id}));
+                setHideAndShowReplyBox(false)
             } else {
                 dispatch(updateMessageState({messages: cachedThreads[selectedThread.id]}));
             }
