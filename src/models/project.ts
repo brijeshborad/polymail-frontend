@@ -1,7 +1,8 @@
 export interface Project {
-    id: string,
-    name: string,
-    organizationId: string,
+    id?: string,
+    name?: string,
+    organizationId?: string,
+    accountId?: string,
     created?: string,
     updated?: string,
 }

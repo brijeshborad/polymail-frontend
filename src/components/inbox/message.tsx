@@ -193,7 +193,7 @@ export function Message() {
                                 </Tooltip>
 
                                 <Tooltip label='Mark as unread' placement='bottom' bg='gray.300' color='black'>
-                                    <div onClick={() => updateMailBox('READ')}>
+                                    <div onClick={() => updateMailBox('UNREAD')}>
                                         <CheckIcon className={styles.colorGray}/>
                                     </div>
                                 </Tooltip>
@@ -222,7 +222,7 @@ export function Message() {
                         {(!isLoading && messageContent) &&
                         <Flex alignItems={'center'} padding={'10px 20px'}>
                             <Image src={'/image/user.png'} alt={''} width={50} height={50}/>
-                            <Flex flexDir={'column'} marginLeft={'5'}>
+                            <Flex flexDir={'column'} marginLeft={'5'} width={'100%'}>
                                 <Heading as='h4' size='md'>{messageContent?.subject || ''}</Heading>
                                 <Flex justifyContent={'space-between'} align={'center'}>
                                     <Text fontSize='sm'>Michel Eisner to Lee Clow and 4 others</Text>

@@ -57,7 +57,7 @@ export function ReplyBox() {
         if (selectedMessage && selectedMessage.draftInfo && selectedMessage.draftInfo.body && !isCompose) {
             setEmailBody(prevState => (selectedMessage?.draftInfo?.body || '').concat(prevState));
         }
-    }, [selectedMessage])
+    }, [selectedMessage, isCompose])
 
     useEffect(() => {
         setHideCcFields(false)
