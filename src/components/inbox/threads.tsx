@@ -49,15 +49,15 @@ export function Threads() {
     useEffect(() => {
         if (threads && threads.length > 0) {
             const thread = threads[0];
-            if ((thread.mailboxes || []).includes('UNREAD')) {
-                let newData = (thread.mailboxes || []).filter((item: string) => item !== 'UNREAD')
-                const body = {
-                    mailboxes: [
-                        ...newData
-                    ]
-                }
-                dispatch(updateThreads({id: thread.id, body}));
-            }
+            // if ((thread.mailboxes || []).includes('UNREAD')) {
+            //     let newData = (thread.mailboxes || []).filter((item: string) => item !== 'UNREAD')
+            //     const body = {
+            //         mailboxes: [
+            //             ...newData
+            //         ]
+            //     }
+            //     dispatch(updateThreads({id: thread.id, body}));
+            // }
             dispatch(updateThreadState({selectedThread: thread}));
             dispatch(updateMessageState({selectedMessage: null}));
         }
