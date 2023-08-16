@@ -13,7 +13,7 @@ import InboxTab from "@/components/inbox/tabs-components/inbox-tab";
 import {StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {getAllThreads, updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
+import {getAllThreads, /*updateThreads,*/ updateThreadState} from "@/redux/threads/action-reducer";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 import {Thread} from "@/models";
 
