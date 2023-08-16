@@ -1,7 +1,8 @@
 export interface Thread {
     id?: string | undefined,
     from?: string,
-    created?: string,
+    firstMessage?: string,
+    lastMessage?: string,
     updated?: string,
     user?: string,
     account?: string,
