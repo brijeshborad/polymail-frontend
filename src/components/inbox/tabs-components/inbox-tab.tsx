@@ -1,4 +1,4 @@
-import {Badge, Button, Checkbox, Flex, Input} from "@chakra-ui/react";
+import { Button, Checkbox, Flex, Input} from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
 import {DisneyIcon} from "@/icons";
 import styles2 from "@/styles/common.module.css";
