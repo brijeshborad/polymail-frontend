@@ -16,7 +16,8 @@ export default function withAuth(ProtectedComponent: any) {
             }
         }, [userIsAuthenticated, router]);
 
-        useWebSocket(`${process.env.NEXT_PUBLIC_WEBSOCKT_URL}?token=${user?.token}`, {share: true})
+        const {lastMessage} = useWebSocket(`${process.env.NEXT_PUBLIC_WEBSOCKET_URL}?token=${user?.token}`, {share: true})
+        console.log(lastMessage);
 
         return (
             <>
