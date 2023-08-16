@@ -241,6 +241,7 @@
 .replyBox {
     border: 1px solid rgba(8, 22, 47, 0.1);
     border-radius: 20px;
+    position: relative;
 }
 
 .headerRightIcon svg {
@@ -516,6 +517,7 @@
     border-radius: 5px 5px 0 0 ;
     border: 1px solid rgba(8, 22, 47, 0.16);
     border-bottom: 1px solid #fff;
+    z-index: 1;
 }
 
 .mailBox .hideButton:hover {

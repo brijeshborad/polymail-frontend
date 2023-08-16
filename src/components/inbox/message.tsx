@@ -219,18 +219,17 @@ export function Message() {
                         {isLoading && <SpinnerUI/>}
 
                         {(!isLoading && messageContent) &&
-                        <Flex alignItems={'center'} wrap={'wrap'} justifyContent={'space-between'} gap={5}
-                              padding={'10px 20px'}>
-                            <Flex alignItems={'center'}>
-                                <Image src={'/image/user.png'} alt={''} width={50} height={50}/>
-                                <Flex flexDir={'column'} marginLeft={'5'}>
-                                    <Heading as='h4' size='md'>{messageContent?.subject || ''}</Heading>
+                        <Flex alignItems={'center'} padding={'10px 20px'}>
+                            <Image src={'/image/user.png'} alt={''} width={50} height={50}/>
+                            <Flex flexDir={'column'} marginLeft={'5'}>
+                                <Heading as='h4' size='md'>{messageContent?.subject || ''}</Heading>
+                                <Flex justifyContent={'space-between'} align={'center'}>
                                     <Text fontSize='sm'>Michel Eisner to Lee Clow and 4 others</Text>
+                                    <div className={styles2.receiveTime}>
+                                        <Time time={messageContent?.created || ''} isShowFullTime={true}/>
+                                    </div>
                                 </Flex>
                             </Flex>
-                            <div className={styles2.receiveTime}>
-                                <Time time={messageContent?.created || ''} isShowFullTime={true}/>
-                            </div>
                         </Flex>}
                     </div>
                     <div className={styles.mailBodyContent}>

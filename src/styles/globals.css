@@ -143,7 +143,7 @@ a {
 }
 
 .rdw-editor-wrapper .rdw-editor-main .DraftEditor-root .DraftEditor-editorContainer .public-DraftEditor-content .public-DraftStyleDefault-block {
-  margin-top: 0;
+  margin: 0;
 }
 
 .rdw-editor-wrapper .rdw-editor-toolbar .rdw-option-wrapper {
@@ -159,10 +159,13 @@ a {
 
 .rdw-editor-wrapper .rdw-editor-toolbar {
   border: 0;
-  box-shadow: 0 0 4px 0 rgba(0,0,0,.14);
   border-radius: 4px;
   margin: 0;
   width: fit-content;
+  background-color: transparent;
+  position: absolute;
+  bottom: 7px;
+  left: 102px;
 }
 
 .rdw-editor-wrapper .rdw-editor-toolbar .rdw-link-wrapper,
