@@ -90,13 +90,13 @@ export default function InboxTab(props: InboxTabProps) {
                         <div className={styles.mailOtherOption}>
                             <Flex align={'center'} gap={2}>
                                 <div className={styles.active}>
-                                    <Button colorScheme='white'>All Inboxes <Badge>12</Badge></Button>
+                                    <Button colorScheme='white'>All Inboxes</Button>
                                 </div>
                                 <div>
-                                    <Button colorScheme='white'>Inbox <Badge>7</Badge></Button>
+                                    <Button colorScheme='white'>Inbox</Button>
                                 </div>
                                 <div>
-                                    <Button colorScheme='white'>Projects Inbox <Badge>5</Badge></Button>
+                                    <Button colorScheme='white'>Projects Inbox</Button>
                                 </div>
                             </Flex>
                         </div>

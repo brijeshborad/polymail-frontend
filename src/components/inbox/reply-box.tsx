@@ -54,7 +54,7 @@ export function ReplyBox() {
 
     useEffect(() => {
         // Add signature and draft to email body
-        if (selectedMessage && selectedMessage.draftInfo && selectedMessage.draftInfo.body) {
+        if (selectedMessage && selectedMessage.draftInfo && selectedMessage.draftInfo.body && !isCompose) {
             setEmailBody(prevState => (selectedMessage?.draftInfo?.body || '').concat(prevState));
         }
     }, [selectedMessage])
