@@ -13,7 +13,7 @@ import InboxTab from "@/components/inbox/tabs-components/inbox-tab";
 import {StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {getAllThreads, updateThreadState} from "@/redux/threads/action-reducer";
+import {getAllThreads, updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 import {Thread} from "@/models";
 
@@ -36,19 +36,29 @@ export function Threads() {
 
     useEffect(() => {
         if (account && account.success && selectedAccount) {
-            dispatch(getAllThreads({mailbox: tab, account: selectedAccount.id}));
+            dispatch(getAllThreads({mailbox: tab, account: selectedAccount.id, enriched: true}));
         }
     }, [account, dispatch, selectedAccount, tab])
 
     const getAllThread = useCallback(() => {
         if (selectedAccount) {
-            dispatch(getAllThreads({mailbox: tab, account: selectedAccount.id}));
+            dispatch(getAllThreads({mailbox: tab, account: selectedAccount.id, enriched: true}));
         }
     }, [dispatch, selectedAccount, tab]);
 
     useEffect(() => {
         if (threads && threads.length > 0) {
-            dispatch(updateThreadState({selectedThread: threads[0]}));
+            const thread = threads[0];
+            if ((thread.mailboxes || []).includes('UNREAD')) {
+                let newData = (thread.mailboxes || []).filter((item: string) => item !== 'UNREAD')
+                const body = {
+                    mailboxes: [
+                        ...newData
+                    ]
+                }
+                dispatch(updateThreads({id: thread.id, body}));
+            }
+            dispatch(updateThreadState({selectedThread: thread}));
             dispatch(updateMessageState({selectedMessage: null}));
         }
     }, [threads, dispatch])

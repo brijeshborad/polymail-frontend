@@ -1,3 +1,5 @@
+import {Message} from "@/models/message";
+
 export interface Thread {
     id?: string | undefined,
     from?: string,
@@ -12,6 +14,7 @@ export interface Thread {
     snippet?: string,
     mailboxes?: string[],
     numMessages?: number,
+    messages?: Message[],
 }
 
 export interface ThreadsRequestBody {

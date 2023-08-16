@@ -1,25 +1,14 @@
 import styles from "@/styles/Inbox.module.css";
 import styles2 from "@/styles/common.module.css";
-import {
-    Box,
-    Button,
-    Flex,
-    Heading,
-    Text,
-    Tooltip
-} from "@chakra-ui/react";
+import {Box, Button, Flex, Heading, Text, Tooltip} from "@chakra-ui/react";
 import {CheckIcon, ChevronDownIcon, ChevronUpIcon, CloseIcon, WarningIcon} from "@chakra-ui/icons";
 import {Time} from "@/components";
 import {ArchiveIcon, FolderIcon, StarIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
 import Image from "next/image";
 import {StateType} from "@/types";
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {
-    getAllMessages,
-    getMessageParts,
-    updateMessageState
-} from "@/redux/messages/action-reducer";
+import {getMessageParts, updateMessageState} from "@/redux/messages/action-reducer";
 import {SpinnerUI} from '@/components/spinner';
 import {ReplyBox} from "@/components/inbox/reply-box";
 import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
@@ -30,39 +19,38 @@ export function Message() {
     const [messageContent, setMessageContent] = useState<MessageModel>();
     const [index, setIndex] = useState<number | null>(null);
     const [emailPart, setEmailPart] = useState<string>("");
-    const [cachedThreads, setCachedThreads] = useState<{ [key: string]: MessageModel[] }>({});
     const {messages, messagePart, isCompose, isLoading, message} = useSelector((state: StateType) => state.messages);
     const {selectedThread} = useSelector((state: StateType) => state.threads);
 
     const dispatch = useDispatch();
 
-    const getAllThreadMessages = useCallback(() => {
-        if (selectedThread && selectedThread?.id) {
-            if (!cachedThreads[selectedThread.id]) {
-                dispatch(getAllMessages({thread: selectedThread.id}));
-                setHideAndShowReplyBox(false)
-            } else {
-                dispatch(updateMessageState({messages: cachedThreads[selectedThread.id]}));
-            }
-        }
-    }, [cachedThreads, dispatch, selectedThread])
+    // const getAllThreadMessages = useCallback(() => {
+    //     if (selectedThread && selectedThread?.id) {
+    //         if (!cachedThreads[selectedThread.id]) {
+    //             dispatch(getAllMessages({thread: selectedThread.id}));
+    //             setHideAndShowReplyBox(false)
+    //         } else {
+    //             dispatch(updateMessageState({messages: cachedThreads[selectedThread.id]}));
+    //         }
+    //     }
+    // }, [cachedThreads, dispatch, selectedThread])
 
     useEffect(() => {
+        debugger;
         if (selectedThread && selectedThread?.id) {
             setIndex(null);
-            getAllThreadMessages();
+            dispatch(updateMessageState({messages: selectedThread.messages}));
+            //  getAllThreadMessages();
         }
-    }, [selectedThread, getAllThreadMessages])
+    }, [dispatch, selectedThread])
 
     useEffect(() => {
-        if (messages && messages.length > 0 && selectedThread && selectedThread.id) {
-            setCachedThreads((prevState: any) => ({
-                ...prevState,
-                [(selectedThread?.id || '')]: messages
-            }));
-            setIndex(val => !val ? messages.length - 1 : val);
+        if (messages && messages.length > 0) {
+            // remove draft messages and set index to last inbox message
+            const inboxMessages: MessageModel[] = messages.filter((msg: MessageModel) => !(msg.mailboxes || []).includes('DRAFT'));
+            setIndex(val => !val ? inboxMessages.length - 1 : val);
         }
-    }, [messages, selectedThread])
+    }, [messages])
 
     useEffect(() => {
         if (messagePart && messagePart.data) {
@@ -78,16 +66,16 @@ export function Message() {
             if (messages[index]) {
                 setMessageContent(messages[index]);
                 dispatch(updateMessageState({selectedMessage: messages[index]}));
-                if (!(messages[index].mailboxes || []).includes('DRAFT')) {
-                    dispatch(getMessageParts({id: messages[index].id}));
-                }
+                // We already set index to last inbox message
+                dispatch(getMessageParts({id: messages[index].id}));
+                
             }
         }
     }, [dispatch, index, messages])
 
     useEffect(() => {
         if (message) {
-            setMessageContent(message)
+            setMessageContent(message);
         }
     }, [message])
 
