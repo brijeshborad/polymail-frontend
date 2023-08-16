@@ -18,11 +18,11 @@ import {useDispatch, useSelector} from "react-redux";
 import {
     getAllMessages,
     getMessageParts,
-    updateMessageState, updatePartialMessage
+    updateMessageState
 } from "@/redux/messages/action-reducer";
 import {SpinnerUI} from '@/components/spinner';
 import {ReplyBox} from "@/components/inbox/reply-box";
-import {updateThreadState} from "@/redux/threads/action-reducer";
+import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {Message as MessageModel} from "@/models";
 import {BlueStarIcon} from "@/icons/star-blue.icon";
 
@@ -30,7 +30,7 @@ export function Message() {
     const [messageContent, setMessageContent] = useState<MessageModel>();
     const [index, setIndex] = useState<number | null>(null);
     const [emailPart, setEmailPart] = useState<string>("");
-    const [cachedThreads, setCachedThreads] = useState<{[key:string]: MessageModel[]}>({});
+    const [cachedThreads, setCachedThreads] = useState<{ [key: string]: MessageModel[] }>({});
     const {messages, messagePart, isCompose, isLoading, message} = useSelector((state: StateType) => state.messages);
     const {selectedThread} = useSelector((state: StateType) => state.threads);
 
@@ -38,7 +38,7 @@ export function Message() {
 
     const getAllThreadMessages = useCallback(() => {
         if (selectedThread && selectedThread?.id) {
-            if(!cachedThreads[selectedThread.id]) {
+            if (!cachedThreads[selectedThread.id]) {
                 dispatch(getAllMessages({thread: selectedThread.id}));
                 setHideAndShowReplyBox(false)
             } else {
@@ -109,11 +109,11 @@ export function Message() {
     }
 
     const updateMailBox = (messageBox: string) => {
-        if (messageContent && messageContent.id) {
+        if (selectedThread && selectedThread.id) {
             if (messageBox) {
                 let body = {}
-                let data = messageContent.mailboxes || [];
-                if (messageContent.mailboxes?.includes(messageBox)) {
+                let data = selectedThread.mailboxes || [];
+                if (selectedThread.mailboxes?.includes(messageBox)) {
 
                     let newData = data.filter((item: string) => item !== messageBox)
                     body = {
@@ -129,7 +129,9 @@ export function Message() {
                         ]
                     }
                 }
-                dispatch(updatePartialMessage({id: messageContent.id, body}));
+                // dispatch(updatePartialMessage({id: selectedThread.id, body}));
+
+                dispatch(updateThreads({id: selectedThread.id, body}));
             }
         }
     }
@@ -243,7 +245,7 @@ export function Message() {
                         onClick={() => hideAndShowReplayBox()}>
                     {hideAndShowReplyBox ? 'Discard' : 'Reply'}
                 </Button>
-                {hideAndShowReplyBox && <ReplyBox />}
+                {hideAndShowReplyBox && <ReplyBox/>}
 
             </Flex>
             }

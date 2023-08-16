@@ -15,13 +15,24 @@ import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {getAllThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {updateMessageState} from "@/redux/messages/action-reducer";
+import {Thread} from "@/models";
 
 export function Threads() {
     const [tab, setTab] = useState<string>('INBOX');
+    const [countUnreadMessages, setCountUnreadMessages] = useState<number>(0);
 
     const {threads, isLoading} = useSelector((state: StateType) => state.threads);
     const {selectedAccount, account} = useSelector((state: StateType) => state.accounts);
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        setCountUnreadMessages(0);
+        (threads || []).map((item: Thread) => {
+            if ((item.mailboxes || [])?.includes('UNREAD')) {
+                setCountUnreadMessages( prevState => prevState + 1)
+            }
+        })
+    }, [threads])
 
     useEffect(() => {
         if (account && account.success && selectedAccount) {
@@ -51,6 +62,7 @@ export function Threads() {
     }
 
 
+
     return (
         <>
             <Flex direction={'column'} gap={5}>
@@ -62,7 +74,7 @@ export function Threads() {
                                 <div className={`${tab === 'INBOX' ? styles.active : ''}`}
                                      onClick={() => changeEmailTabs('INBOX')}>
                                     <FolderIcon/>
-                                    <span>Inbox <Badge>{threads && threads.length || 0}</Badge></span>
+                                    <span>Inbox <Badge>{countUnreadMessages || 0}</Badge></span>
                                 </div>
                             </Tooltip>
                         </Tab>
