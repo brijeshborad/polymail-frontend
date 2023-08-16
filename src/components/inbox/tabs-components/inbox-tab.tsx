@@ -128,7 +128,7 @@ export default function InboxTab(props: InboxTabProps) {
                                         </Flex>
                                     </Flex>
                                     <div className={styles2.receiveTime}>
-                                        <Time time={item.created} isShowFullTime={false}/>
+                                        <Time time={item.lastMessage} isShowFullTime={false}/>
                                     </div>
                                 </Flex>
                                 <div className={styles.mailMessage}>
