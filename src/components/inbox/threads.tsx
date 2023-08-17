@@ -23,22 +23,8 @@ export function Threads() {
 
     const {threads, isLoading, selectedThread} = useSelector((state: StateType) => state.threads);
     const {selectedAccount, account} = useSelector((state: StateType) => state.accounts);
+    const {newMessage} = useSelector((state: StateType) => state.socket);
     const dispatch = useDispatch();
-
-    useEffect(() => {
-        setCountUnreadMessages(0);
-        (threads || []).map((item: Thread) => {
-            if ((item.mailboxes || [])?.includes('UNREAD')) {
-                setCountUnreadMessages( prevState => prevState + 1)
-            }
-        })
-    }, [threads])
-
-    useEffect(() => {
-        if (account && account.success && selectedAccount) {
-            dispatch(getAllThreads({mailbox: tab, account: selectedAccount.id, enriched: true}));
-        }
-    }, [account, dispatch, selectedAccount, tab])
 
     const getAllThread = useCallback(() => {
         if (selectedAccount) {
@@ -47,12 +33,34 @@ export function Threads() {
     }, [dispatch, selectedAccount, tab]);
 
     useEffect(() => {
+        console.log('newMessage', newMessage);
+        if (newMessage && newMessage.name === 'new_message') {
+            getAllThread();
+        }
+    }, [getAllThread, newMessage])
+
+    useEffect(() => {
+        setCountUnreadMessages(0);
+        (threads || []).map((item: Thread) => {
+            if ((item.mailboxes || [])?.includes('UNREAD')) {
+                setCountUnreadMessages(prevState => prevState + 1)
+            }
+        })
+    }, [threads])
+
+    useEffect(() => {
+        if (account && account.success) {
+            getAllThread()
+        }
+    }, [account, dispatch, getAllThread])
+
+    useEffect(() => {
         if (threads && threads.length > 0 && !selectedThread) {
             const thread = threads[0];
             dispatch(updateThreadState({selectedThread: thread}));
             dispatch(updateMessageState({selectedMessage: null}));
         }
-    }, [threads, dispatch])
+    }, [threads, dispatch, selectedThread])
 
     useEffect(() => {
         getAllThread();
@@ -61,7 +69,6 @@ export function Threads() {
     const changeEmailTabs = (value: string) => {
         setTab(value);
     }
-
 
 
     return (

@@ -19,6 +19,9 @@ export * from './organizations/organization-state.type';
 //Account
 export * from './account/account-state.type';
 
+//Socket
+export * from './socket/socket-state.type';
+
 // Props
 export * from './props-types/profile-button-props.type';
 export * from './props-types/time.type';

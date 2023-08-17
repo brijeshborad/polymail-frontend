@@ -69,7 +69,7 @@ export function Message() {
                 dispatch(updateMessageState({selectedMessage: messages[index]}));
                 // We already set index to last inbox message
                 dispatch(getMessageParts({id: messages[index].id}));
-                
+
             }
         }
     }, [dispatch, index, messages])

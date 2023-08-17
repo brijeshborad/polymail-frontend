@@ -4,6 +4,7 @@ import LocalStorageService from "@/utils/localstorage.service";
 import {Header} from "@/components/header";
 import useWebSocket from "react-use-websocket";
 import {User} from "@/models";
+import {updateLastMessage} from "@/redux/socket/action-reducer";
 
 export default function withAuth(ProtectedComponent: any) {
     return function ProtectedRoute({...props}) {
@@ -17,7 +18,15 @@ export default function withAuth(ProtectedComponent: any) {
         }, [userIsAuthenticated, router]);
 
         const {lastMessage} = useWebSocket(`${process.env.NEXT_PUBLIC_WEBSOCKET_URL}?token=${user?.token}`, {share: true})
-        console.log(lastMessage);
+        if (lastMessage) {
+            const reader = new FileReader();
+            reader.onload = function () {
+                if (reader.result) {
+                    updateLastMessage(JSON.parse(reader.result.toString()));
+                }
+            }
+            reader.readAsText(lastMessage.data);
+        }
 
         return (
             <>

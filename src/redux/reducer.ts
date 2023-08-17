@@ -6,6 +6,7 @@ import messages from './messages/action-reducer'
 import threads from './threads/action-reducer'
 import organizations from './organizations/action-reducer'
 import accounts from './accounts/action-reducer'
+import socket from './socket/action-reducer'
 
 const combinedReducer = combineReducers({
     auth,
@@ -13,7 +14,8 @@ const combinedReducer = combineReducers({
     messages,
     threads,
     organizations,
-    accounts
+    accounts,
+    socket
 });
 
 const reducers = (state: any, action: any) => {
