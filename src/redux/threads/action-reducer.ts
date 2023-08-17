@@ -29,11 +29,12 @@ const threadsSlice = createSlice({
             return {...state, thread: null, error: null, isLoading: false}
         },
         updateThreadsSuccess: (state: InitialThreadStateType, {payload: thread}: PayloadAction<{}>) => {
-            let currentThreads = [...current(state).threads];
-            let index1 = currentThreads.findIndex((item: Thread) => item.id === thread?.id);
+            let currentThreads = [...(current(state).threads || [])] as Thread[];
+            let threadData = {...(thread) || {}} as Thread;
+            let index1 = currentThreads.findIndex((item: Thread) => item.id === threadData?.id);
             currentThreads[index1] = {
                 ...currentThreads[index1],
-                mailboxes: [...thread.mailboxes]
+                mailboxes: [...(threadData.mailboxes ?? [])]
             };
             return {...state, threads: [...currentThreads], error: null, isLoading: false, selectedThread: thread}
         },

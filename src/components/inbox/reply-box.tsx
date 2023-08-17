@@ -1,5 +1,5 @@
 import styles from "@/styles/Inbox.module.css";
-import {Button, Flex, Heading, Input} from "@chakra-ui/react";
+import {Button, Flex, Heading, Input, MenuItem, MenuList, MenuButton, Menu} from "@chakra-ui/react";
 import {Chip} from "@/components/chip";
 import {ChevronDownIcon, CloseIcon, InfoOutlineIcon} from "@chakra-ui/icons";
 import {FileIcon, LinkIcon, TextIcon} from "@/icons";
@@ -10,10 +10,11 @@ import {StateType} from "@/types";
 import {debounce, isEmail} from "@/utils/common.functions";
 import {Toaster} from "@/components/toaster";
 import RichTextEditor from "@/components/rich-text-editor";
+import {ReplyBoxType} from "@/types/props-types/replyBox.type";
 
 declare type RecipientsType = { items: (string | undefined)[], value: string };
 
-export function ReplyBox() {
+export function ReplyBox(props: ReplyBoxType) {
     const [isToEmailAdded, setIsToEmailAdded] = useState<boolean>(false);
     const [emailBody, setEmailBody] = useState<string>('');
     const [hideCcFields, setHideCcFields] = useState<boolean>(false);
@@ -248,16 +249,53 @@ export function ReplyBox() {
 
         return true;
     }
+    const [htmlContent, setHtmlContent] = useState('');
 
     useEffect(() => {
         if (selectedMessage) {
+            if (props.replyType === 'reply-all') {
+                if (selectedMessage.cc) {
+                    // setCC((prevState) => ({
+                    //     items: selectedMessage.cc,
+                    //     value: ''
+                    // }));
+                    setCC({
+                        items: selectedMessage.cc,
+                        value: ''
+                    })
+                }
+            }
+            if (props.replyType === 'forward') {
+                // convert blob URL to HTML
+                const fetchBlobContent = async () => {
+                    const blobUrl: any = props.emailPart
+                    const response = await fetch(blobUrl);
+                    const blob = await response.blob();
+
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        const htmlString : any = reader.result;
+                        setHtmlContent(htmlString);
+                    };
+                    reader.readAsText(blob, 'utf-8');
+                };
+
+                fetchBlobContent();
+            }
             setRecipients((prevState) => ({
                 items: !isCompose ? [selectedMessage.from] : [],
                 value: prevState.value
             }));
             // setEmailBody('');
         }
-    }, [isCompose, selectedMessage])
+    }, [isCompose, selectedMessage, props])
+
+    useEffect(() => {
+        if (props.replyType === 'forward') {
+            // set converted html to email body
+            setEmailBody(prevState => (htmlContent || '').concat(prevState));
+        }
+    }, [htmlContent, props.replyType])
 
     const sendMessages = () => {
         if (draft && draft.id) {
@@ -468,10 +506,19 @@ export function ReplyBox() {
                             <TextIcon/>
                             {/*<EmojiIcon/>*/}
                         </Flex>
-                        <Flex align={'center'} gap={2}>
-                            <Button className={styles.replyButton} colorScheme='blue'
-                                    onClick={() => sendMessages()} isDisabled={!isToEmailAdded}
-                                    rightIcon={<ChevronDownIcon />}>{isCompose ? 'Send' : 'Reply all'}</Button>
+                        <Flex align={'center'} className={styles.replyButton}>
+                            <Button className={styles.replayTextButton} colorScheme='blue' onClick={() => sendMessages()} isDisabled={!isToEmailAdded}>
+                                {isCompose ? 'Send' : 'Reply all'}
+                            </Button>
+                            <Menu>
+                                <MenuButton className={styles.replayArrowIcon} as={Button} aria-label='Options' variant='outline'><ChevronDownIcon /></MenuButton>
+                                <MenuList>
+                                    <MenuItem> New Tab </MenuItem>
+                                    <MenuItem> New Window </MenuItem>
+                                    <MenuItem> Open Closed Tab </MenuItem>
+                                    <MenuItem> Open File... </MenuItem>
+                                </MenuList>
+                            </Menu>
                         </Flex>
                     </Flex>
                 </Flex>

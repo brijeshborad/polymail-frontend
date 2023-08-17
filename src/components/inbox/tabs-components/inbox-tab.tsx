@@ -5,7 +5,7 @@ import styles2 from "@/styles/common.module.css";
 import {Time} from "@/components";
 import {InboxTabProps, StateType} from "@/types";
 import {Thread} from "@/models";
-import React, {useCallback, useEffect, useRef, useState} from "react";
+import React, {useCallback, useRef, useState} from "react";
 import {SpinnerUI} from "@/components/spinner";
 import {useDispatch, useSelector} from "react-redux";
 import {updateMessageState} from "@/redux/messages/action-reducer";
@@ -17,17 +17,17 @@ export default function InboxTab(props: InboxTabProps) {
     const {isLoading, selectedThread} = useSelector((state: StateType) => state.threads);
 
     const listRef = useRef<any>(null);
-    const activeDivRef = useRef<any>({});
-    const downPress = useKeyPress("ArrowDown", listRef);
-    const upPress = useKeyPress("ArrowUp", listRef);
-    const [cursor, setCursor] = useState(0);
+    // const activeDivRef = useRef<any>({});
+    // const downPress = useKeyPress("ArrowDown", listRef);
+    // const upPress = useKeyPress("ArrowUp", listRef);
+    // const [cursor, setCursor] = useState(0);
 
     const dispatch = useDispatch();
 
     const handleClick = useCallback((item: Thread) => {
         // if (isClicked && props.content) {
-            const itemIndex = (props.content || []).indexOf(item);
-            setCursor(itemIndex);
+        //     const itemIndex = (props.content || []).indexOf(item);
+        //     setCursor(itemIndex);
         // }
         let body = {}
         if ((item.mailboxes || []).includes('UNREAD')) {
@@ -45,38 +45,38 @@ export default function InboxTab(props: InboxTabProps) {
         dispatch(updateMessageState({selectedMessage: null}));
     }, [dispatch, props.content])
 
-    useEffect(() => {
-        if (props.content && props.content.length) {
-            if (downPress) {
-                setCursor((prevState) => (props.content && prevState < props.content.length - 1) ? prevState + 1 : prevState);
-            } else if (upPress) {
-                setCursor((prevState) => (prevState > 0 ? prevState - 1 : prevState));
-            }
+    // useEffect(() => {
+    //     if (props.content && props.content.length) {
+    //         if (downPress) {
+    //             setCursor((prevState) => (props.content && prevState < props.content.length - 1) ? prevState + 1 : prevState);
+    //         } else if (upPress) {
+    //             setCursor((prevState) => (prevState > 0 ? prevState - 1 : prevState));
+    //         }
+    //
+    //     }
+    // }, [upPress, downPress, props.content]);
 
-        }
-    }, [upPress, downPress, props.content]);
-
-    useEffect(() => {
-        if (props.content && props.content.length) {
-           handleClick(props.content[cursor]);
-        }
-    }, [cursor, handleClick, props.content]);
-
-    useEffect(() => {
-        if (selectedThread) {
-            listRef?.current.focus();
-        }
-    }, [selectedThread, listRef])
-
-    useEffect(() => {
-        if (selectedThread) {
-            // @ts-ignore
-            if (activeDivRef && activeDivRef[selectedThread.id]) {
-                // @ts-ignore
-                activeDivRef[selectedThread.id].scrollIntoView({behavior: 'smooth', block: 'nearest'});
-            }
-        }
-    }, [selectedThread])
+    // useEffect(() => {
+    //     if (props.content && props.content.length) {
+    //        handleClick(props.content[cursor]);
+    //     }
+    // }, [cursor, handleClick, props.content]);
+    //
+    // useEffect(() => {
+    //     if (selectedThread) {
+    //         listRef?.current.focus();
+    //     }
+    // }, [selectedThread, listRef])
+    //
+    // useEffect(() => {
+    //     if (selectedThread) {
+    //         // @ts-ignore
+    //         if (activeDivRef && activeDivRef[selectedThread.id]) {
+    //             // @ts-ignore
+    //             activeDivRef[selectedThread.id].scrollIntoView({behavior: 'smooth', block: 'nearest'});
+    //         }
+    //     }
+    // }, [selectedThread])
 
 
     return (
@@ -112,10 +112,7 @@ export default function InboxTab(props: InboxTabProps) {
                     <Input type={'text'} opacity={0} height={0} width={0} padding={0} border={0} outline={0}
                            ref={listRef}/>
                     {props.content && !!props.content.length && props.content.map((item: Thread, index: number) => (
-                        <div onClick={() => handleClick(item) } key={index}  ref={ref => {
-                            // @ts-ignore
-                            activeDivRef[item.id] = ref
-                        }}
+                        <div onClick={() => handleClick(item) } key={index}
                              className={`${selectedThread && selectedThread.id === item.id ? styles.selectedThread : ''}`}>
                             <div
                                 className={`${styles.mailDetails} ${(item.mailboxes || []).includes('UNREAD') ? '' : styles.readThread}`}>

@@ -10,6 +10,7 @@ export interface Message {
     snippet?: string,
     from?: string,
     to?: string[],
+    cc?: string[],
     headers?: MessageHeaders[],
     contentRoot?: string,
     draftInfo?: MessageDraftInfo,

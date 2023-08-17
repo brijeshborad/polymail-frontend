@@ -53,10 +53,12 @@ export function Message() {
 
     useEffect(() => {
         if (messagePart && messagePart.data) {
-            let decoded = Buffer.from(messagePart.data, 'base64').toString('ascii');
+            let decoded = Buffer.from(messagePart.data || '', 'base64').toString('ascii');
             const blob = new Blob([decoded], {type: "text/html"});
             const blobUrl = window.URL.createObjectURL(blob);
             setEmailPart(blobUrl);
+        } else {
+            setEmailPart('')
         }
     }, [messagePart])
 
@@ -91,6 +93,7 @@ export function Message() {
     }
 
     const onClose = () => {
+        setHideAndShowReplyBox(false)
         dispatch(updateThreadState({selectedThread: null}));
         dispatch(updateMessageState({isCompose: false, selectedMessage: null}));
     }
@@ -124,8 +127,10 @@ export function Message() {
     }
 
     const [hideAndShowReplyBox, setHideAndShowReplyBox] = useState<boolean>(false);
+    const [replyType, setReplyType] = useState<string>('');
 
-    const hideAndShowReplayBox = () => {
+    const hideAndShowReplayBox = (type: string = '') => {
+            setReplyType(type)
         if (hideAndShowReplyBox) {
             setHideAndShowReplyBox(false)
         } else {
@@ -135,9 +140,9 @@ export function Message() {
 
     return (
         <Box className={styles.mailBox}>
-
             {selectedThread && !isCompose &&
             <Flex justifyContent={'space-between'} flexDir={'column'} height={'100%'}>
+                {!hideAndShowReplyBox &&
                 <Flex direction={'column'} className={styles.mailBoxFLex}>
                     <div style={{flex: 'none'}}>
                         <Flex justifyContent={'space-between'} wrap={'wrap'} align={'center'}
@@ -225,15 +230,43 @@ export function Message() {
                     <div className={styles.mailBodyContent}>
                         {(!isLoading && emailPart) && <iframe src={emailPart} className={styles.mailBody}/>}
                     </div>
-                </Flex>
+                </Flex>}
 
-                <Button className={styles.hideButton}
-                        rightIcon={hideAndShowReplyBox ? <ChevronDownIcon/> : <ChevronUpIcon/>} variant='outline'
-                        onClick={() => hideAndShowReplayBox()}>
-                    {hideAndShowReplyBox ? 'Discard' : 'Reply'}
-                </Button>
-                {hideAndShowReplyBox && <ReplyBox/>}
+                {!hideAndShowReplyBox &&
+                <Flex align={'center'} justify={'space-around'}>
+                    <Button className={styles.hideButton}
+                            rightIcon={hideAndShowReplyBox ? <ChevronDownIcon/> : <ChevronUpIcon/>} variant='outline'
+                            onClick={() => hideAndShowReplayBox('reply')}>
+                        Reply
+                    </Button>
+                    <Button className={styles.hideButton}
+                            rightIcon={hideAndShowReplyBox ? <ChevronDownIcon/> : <ChevronUpIcon/>} variant='outline'
+                            onClick={() => hideAndShowReplayBox('reply-all')}>
+                        Reply All
+                    </Button>
+                    <Button className={styles.hideButton}
+                            rightIcon={hideAndShowReplyBox ? <ChevronDownIcon/> : <ChevronUpIcon/>} variant='outline'
+                            onClick={() => hideAndShowReplayBox('forward')}>
+                        Forward
+                    </Button>
+                </Flex>}
 
+                {hideAndShowReplyBox && <div className={styles.replayBox}>
+                    <Flex justifyContent={'space-between'} flexDir={'column'} height={'100%'}>
+                        <div className={styles.mailBoxFLex}>
+                            <Flex justifyContent={'space-between'} wrap={'wrap'} align={'center'}
+                                  borderBottom={'1px solid rgba(8, 22, 47, 0.1)'} padding={'12px 20px'}>
+                                <Flex alignItems={'center'} gap={2}>
+                                    <div className={styles.closeIcon} onClick={() => onClose()}>
+                                        <CloseIcon/>
+                                    </div>
+                                </Flex>
+                            </Flex>
+                        </div>
+
+                        <ReplyBox replyType={replyType} emailPart={emailPart}/>
+                    </Flex>
+                </div>}
             </Flex>
             }
 

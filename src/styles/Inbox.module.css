@@ -475,19 +475,39 @@
     color: #000000;
 }
 
-.replyMessage .replyButton,
-.syncButton .replyButton {
-    background-color: #266DF0;
+.replyButton svg {
     color: #ffffff;
 }
 
-.replyMessage .replyButton:hover,
-.syncButton .replyButton:hover {
+.replyButton .replayTextButton,
+.replyButton .replayArrowIcon {
+    height: auto;
     background-color: #266DF0;
 }
 
-.replyButton svg {
-    margin-right: 0;
+.replyButton .replayTextButton {
+    border-radius: 5px 0 0 5px;
+    padding: 10px 0 10px 10px;
+}
+
+.replyButton .replayArrowIcon {
+    border: 0;
+    min-width: auto;
+    border-radius: 0 5px 5px 0;
+    padding: 9px;
+}
+
+.replyButton .replayArrowIcon:hover,
+.replyButton .replayArrowIcon:active,
+.replyButton .replayArrowIcon:focus-visible {
+    background-color: #266DF0;
+}
+
+.replyButton .replayTextButton:hover,
+.replyButton .replayTextButton:active,
+.replyButton .replayTextButton:focus-visible {
+    background-color: #266DF0;
+    box-shadow: none;
 }
 
 .actionIcon.disabled {
@@ -495,9 +515,6 @@
     cursor: not-allowed;
 }
 
-.syncButton {
-    text-align: end;
-}
 .composeButton {
     cursor: pointer;
     font-size: 13px;
@@ -510,14 +527,39 @@
 
 .mailBox .hideButton {
     width: fit-content;
-    margin: 5px auto -1px;
+    margin: 10px auto;
     font-size: 15px;
     height: fit-content;
     padding: 5px 10px 5px 15px;
-    border-radius: 5px 5px 0 0 ;
+    border-radius: 5px;
     border: 1px solid rgba(8, 22, 47, 0.16);
-    border-bottom: 1px solid #fff;
     z-index: 1;
+}
+
+.replayBox {
+    flex: 1;
+}
+
+.replayBox .mailFooter {
+    height: 100%;
+    padding: 0;
+}
+
+.replayBox .mailFooter .replyBox {
+    border: 0;
+    height: 100%;
+}
+
+.replayBox .mailFooter .replyBoxTags {
+    flex: none;
+}
+
+.replayBox .mailFooter .replyMessage {
+    flex: 1;
+}
+
+.replayBox .mailFooter .replyMessageArea {
+    flex: 1;
 }
 
 .mailBox .hideButton:hover {
