@@ -38,6 +38,7 @@ export function Message() {
     useEffect(() => {
         if (selectedThread && selectedThread?.id) {
             setIndex(null);
+            setHideAndShowReplyBox(false);
             dispatch(updateMessageState({messages: selectedThread.messages}));
             //  getAllThreadMessages();
         }
