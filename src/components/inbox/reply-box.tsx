@@ -19,6 +19,8 @@ export function ReplyBox(props: ReplyBoxType) {
     const [emailBody, setEmailBody] = useState<string>('');
     const [hideCcFields, setHideCcFields] = useState<boolean>(false);
     const [hideBccFields, setHideBccFields] = useState<boolean>(false);
+    const [htmlContent, setHtmlContent] = useState('');
+    const [subject, setSubject] = useState<string>('');
     const [recipients, setRecipients] = useState<RecipientsType>({
         items: [],
         value: ""
@@ -46,6 +48,7 @@ export function ReplyBox(props: ReplyBoxType) {
 
     const dispatch = useDispatch();
 
+
     useEffect(() => {
         // Add signature to email body
         if (accounts && accounts[0] && accounts[0].signature) {
@@ -53,12 +56,14 @@ export function ReplyBox(props: ReplyBoxType) {
         }
     }, [accounts])
 
+
     useEffect(() => {
         // Add signature and draft to email body
         if (selectedMessage && selectedMessage.draftInfo && selectedMessage.draftInfo.body && !isCompose) {
             setEmailBody(prevState => (selectedMessage?.draftInfo?.body || '').concat(prevState));
         }
     }, [selectedMessage, isCompose])
+
 
     useEffect(() => {
         setHideCcFields(false)
@@ -68,6 +73,7 @@ export function ReplyBox(props: ReplyBoxType) {
         });
     }, [])
 
+
     useEffect(() => {
         setHideBccFields(false)
         setBCC({
@@ -75,6 +81,7 @@ export function ReplyBox(props: ReplyBoxType) {
             value: ""
         });
     }, [])
+
 
     const handleChange = (evt: ChangeEvent | any, type: string) => {
         if (type === 'recipients') {
@@ -94,6 +101,7 @@ export function ReplyBox(props: ReplyBoxType) {
             }));
         }
     };
+
 
     const handlePaste = (evt: ClipboardEvent | any, type: string) => {
         evt.preventDefault();
@@ -121,6 +129,7 @@ export function ReplyBox(props: ReplyBoxType) {
             }
         }
     };
+
 
     const handleKeyDown = (evt: KeyboardEvent | any, type: string) => {
         if (["Enter", "Tab"].includes(evt.key)) {
@@ -161,6 +170,7 @@ export function ReplyBox(props: ReplyBoxType) {
         }
     };
 
+
     const handleItemDelete = (item: string, type: string) => {
         if (type === 'recipients') {
             setRecipients({
@@ -181,7 +191,7 @@ export function ReplyBox(props: ReplyBoxType) {
             });
         }
     };
-    const [subject, setSubject] = useState<string>('');
+
 
     const addSubject = (event: ChangeEvent | any) => {
         if (event.target.value) {
@@ -191,12 +201,13 @@ export function ReplyBox(props: ReplyBoxType) {
         }
     }
 
+
     const sendToDraft = (value: string, isValueUpdate: boolean = true) => {
         if (isValueUpdate) {
             setEmailBody(value);
         }
         let body = {
-            subject: selectedMessage?.subject || subject,
+            subject: subject || selectedMessage?.subject,
             to: recipients?.items,
             ...(selectedThread ? {threadId: selectedThread.id} : {}),
             ...(cc?.items && cc?.items.length > 0 ? {cc: cc?.items} : {}),
@@ -217,6 +228,7 @@ export function ReplyBox(props: ReplyBoxType) {
         }, 1000);
     }
 
+
     const isInList = (email: string, type: string) => {
         if (type == 'cc') {
             return cc?.items?.includes(email);
@@ -227,6 +239,7 @@ export function ReplyBox(props: ReplyBoxType) {
         }
         return false;
     }
+
 
     const isValid = (email: string, type: string) => {
         let error = null;
@@ -249,10 +262,11 @@ export function ReplyBox(props: ReplyBoxType) {
 
         return true;
     }
-    const [htmlContent, setHtmlContent] = useState('');
+
 
     useEffect(() => {
         if (selectedMessage) {
+            let emailSubject = `Re: ${selectedMessage.subject}`;
             if (props.replyType === 'reply-all') {
                 if (selectedMessage.cc) {
                     // setCC((prevState) => ({
@@ -265,7 +279,9 @@ export function ReplyBox(props: ReplyBoxType) {
                     })
                 }
             }
+
             if (props.replyType === 'forward') {
+                emailSubject = `Fwd: ${selectedMessage.subject}`;
                 // convert blob URL to HTML
                 const fetchBlobContent = async () => {
                     const blobUrl: any = props.emailPart
@@ -282,6 +298,9 @@ export function ReplyBox(props: ReplyBoxType) {
 
                 fetchBlobContent();
             }
+
+            // set subject when email is replied or forwarded.
+            setSubject(emailSubject || '');
             setRecipients((prevState) => ({
                 items: !isCompose ? [selectedMessage.from] : [],
                 value: prevState.value
@@ -290,12 +309,14 @@ export function ReplyBox(props: ReplyBoxType) {
         }
     }, [isCompose, selectedMessage, props])
 
+
     useEffect(() => {
         if (props.replyType === 'forward') {
             // set converted html to email body
             setEmailBody(prevState => (htmlContent || '').concat(prevState));
         }
     }, [htmlContent, props.replyType])
+
 
     const sendMessages = () => {
         if (draft && draft.id) {
@@ -320,6 +341,7 @@ export function ReplyBox(props: ReplyBoxType) {
         }
     }
 
+
     useEffect(() => {
         if (sendDraftSuccess) {
             let successObject = {
@@ -329,6 +351,7 @@ export function ReplyBox(props: ReplyBoxType) {
             Toaster(successObject)
         }
     }, [sendDraftSuccess])
+
 
     useEffect(() => {
         if (recipients && recipients.items && recipients.items.length && emailBody) {
@@ -366,6 +389,7 @@ export function ReplyBox(props: ReplyBoxType) {
         }
     }
 
+
     function handleFileUpload(event: ChangeEventHandler | any) {
         event.stopPropagation();
         event.preventDefault();
@@ -384,10 +408,12 @@ export function ReplyBox(props: ReplyBoxType) {
         };
     }
 
+
     function removeAttachment(index: number) {
         (attachments || []).splice(index, 1);
         setAttachments([...attachments!]);
     }
+
 
     useEffect(() => {
         if (attachments) {
@@ -395,6 +421,7 @@ export function ReplyBox(props: ReplyBoxType) {
         }
         // eslint-disable-next-line
     }, [attachments])
+
 
     return (
         <div className={styles.mailFooter}>
@@ -472,15 +499,15 @@ export function ReplyBox(props: ReplyBoxType) {
                         <InfoOutlineIcon/>
                     </Flex>}
 
-                    {isCompose &&
+                    {/* Subject */}
                     <Flex width={'100%'} className={styles.subject}>
                         <Input width={'100%'} padding={3} height={'23px'}
                                fontSize={'12px'}
+                               value={subject}
                                border={0} className={styles.subjectInput}
                                placeholder={'Subject'} onChange={(e) => addSubject(e)}
                         />
                     </Flex>
-                    }
 
                 </div>
 

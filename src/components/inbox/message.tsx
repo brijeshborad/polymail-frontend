@@ -130,12 +130,8 @@ export function Message() {
     const [replyType, setReplyType] = useState<string>('');
 
     const hideAndShowReplayBox = (type: string = '') => {
-            setReplyType(type)
-        if (hideAndShowReplyBox) {
-            setHideAndShowReplyBox(false)
-        } else {
-            setHideAndShowReplyBox(true)
-        }
+        setReplyType(type);
+        setHideAndShowReplyBox(!hideAndShowReplyBox);
     }
 
     return (
