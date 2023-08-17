@@ -18,8 +18,19 @@ export default function withAuth(ProtectedComponent: any) {
             }
         }, [userIsAuthenticated, router]);
 
-        const {lastMessage} = useWebSocket(`${process.env.NEXT_PUBLIC_WEBSOCKET_URL}?token=${user?.token}`, {share: true})
+        const {lastMessage} = useWebSocket(`${process.env.NEXT_PUBLIC_WEBSOCKET_URL}?token=${user?.token}`, {
+            share: true,
+            shouldReconnect: () => true,
+            onOpen: () => {
+                console.log('WebSocket connection established.');
+            },
+            onClose: () => {
+                console.log('WebSocket connection disconnected.');
+            }
+        })
+
         const dispatch = useDispatch();
+
         if (lastMessage) {
             const reader = new FileReader();
             reader.onload = function () {
