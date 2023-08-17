@@ -5,12 +5,12 @@ import styles2 from "@/styles/common.module.css";
 import {Time} from "@/components";
 import {InboxTabProps, StateType} from "@/types";
 import {Thread} from "@/models";
-import React, {useCallback, useRef, useState} from "react";
+import React, {useCallback, useRef} from "react";
 import {SpinnerUI} from "@/components/spinner";
 import {useDispatch, useSelector} from "react-redux";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
-import {useKeyPress} from "@/hooks/use-key-press.hook";
+// import {useKeyPress} from "@/hooks/use-key-press.hook";
 
 
 export default function InboxTab(props: InboxTabProps) {
@@ -43,7 +43,7 @@ export default function InboxTab(props: InboxTabProps) {
         }
         dispatch(updateThreadState({selectedThread: item}));
         dispatch(updateMessageState({selectedMessage: null}));
-    }, [dispatch, props.content])
+    }, [dispatch])
 
     // useEffect(() => {
     //     if (props.content && props.content.length) {

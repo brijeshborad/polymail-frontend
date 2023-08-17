@@ -26,16 +26,15 @@ export function Threads() {
     const {newMessage} = useSelector((state: StateType) => state.socket);
     const dispatch = useDispatch();
 
-    const getAllThread = useCallback(() => {
+    const getAllThread = useCallback((resetState: boolean = true) => {
         if (selectedAccount) {
-            dispatch(getAllThreads({mailbox: tab, account: selectedAccount.id, enriched: true}));
+            dispatch(getAllThreads({mailbox: tab, account: selectedAccount.id, enriched: true, resetState}));
         }
     }, [dispatch, selectedAccount, tab]);
 
     useEffect(() => {
-        console.log('newMessage', newMessage);
         if (newMessage && newMessage.name === 'new_message') {
-            getAllThread();
+            getAllThread(false);
         }
     }, [getAllThread, newMessage])
 

@@ -9,9 +9,8 @@ const socketSlice = createSlice({
     name: 'socket',
     initialState,
     reducers: {
-        updateLastMessage: (state: InitialSocketType, action: PayloadAction<{ userId: string, name: string }>) => {
-            console.log(action.payload)
-            return {...state, newMessage: action.payload};
+        updateLastMessage: (state: InitialSocketType, {payload: newMessage}: PayloadAction<{ userId: string, name: string }>) => {
+            return {...state, newMessage};
         }
     }
 })
