@@ -471,7 +471,7 @@ export function ReplyBox() {
                         <Flex align={'center'} gap={2}>
                             <Button className={styles.replyButton} colorScheme='blue'
                                     onClick={() => sendMessages()} isDisabled={!isToEmailAdded}
-                                    rightIcon={<ChevronDownIcon/>}>{isCompose ? 'Send' : 'Reply all'}</Button>
+                                    rightIcon={<ChevronDownIcon />}>{isCompose ? 'Send' : 'Reply all'}</Button>
                         </Flex>
                     </Flex>
                 </Flex>

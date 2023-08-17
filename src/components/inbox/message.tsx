@@ -36,7 +36,6 @@ export function Message() {
     // }, [cachedThreads, dispatch, selectedThread])
 
     useEffect(() => {
-        debugger;
         if (selectedThread && selectedThread?.id) {
             setIndex(null);
             dispatch(updateMessageState({messages: selectedThread.messages}));

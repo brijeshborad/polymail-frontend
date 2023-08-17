@@ -38,7 +38,7 @@ function* patchThreads({payload: {id, body}}: PayloadAction<{ id: string, body: 
         yield put(updateThreadsSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(updateThreadsError(error.response.data));
+        yield put(updateThreadsError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 

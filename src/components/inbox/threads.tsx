@@ -21,7 +21,7 @@ export function Threads() {
     const [tab, setTab] = useState<string>('INBOX');
     const [countUnreadMessages, setCountUnreadMessages] = useState<number>(0);
 
-    const {threads, isLoading} = useSelector((state: StateType) => state.threads);
+    const {threads, isLoading, selectedThread} = useSelector((state: StateType) => state.threads);
     const {selectedAccount, account} = useSelector((state: StateType) => state.accounts);
     const dispatch = useDispatch();
 
@@ -47,17 +47,8 @@ export function Threads() {
     }, [dispatch, selectedAccount, tab]);
 
     useEffect(() => {
-        if (threads && threads.length > 0) {
+        if (threads && threads.length > 0 && !selectedThread) {
             const thread = threads[0];
-            // if ((thread.mailboxes || []).includes('UNREAD')) {
-            //     let newData = (thread.mailboxes || []).filter((item: string) => item !== 'UNREAD')
-            //     const body = {
-            //         mailboxes: [
-            //             ...newData
-            //         ]
-            //     }
-            //     dispatch(updateThreads({id: thread.id, body}));
-            // }
             dispatch(updateThreadState({selectedThread: thread}));
             dispatch(updateMessageState({selectedMessage: null}));
         }

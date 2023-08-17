@@ -1,4 +1,4 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {createSlice, current, PayloadAction} from "@reduxjs/toolkit";
 import {InitialThreadStateType} from "@/types";
 import {Thread} from "@/models";
 // import {Thread} from "@/models";
@@ -28,17 +28,14 @@ const threadsSlice = createSlice({
         updateThreads: (state: InitialThreadStateType, _action: PayloadAction<{ id?: string, body?: Thread }>) => {
             return {...state, thread: null, error: null, isLoading: false}
         },
-        updateThreadsSuccess: (state: InitialThreadStateType, {payload: thread}: PayloadAction<any>) => {
-            let index1 = (state.threads || [])?.findIndex((item: Thread, index: number) => {
-                if (thread && thread.id) {
-                    if (item.id === thread?.id) {
-                        return index
-                    }
-                }
-                return;
-            });
-            (state.threads || [])[index1] = thread
-            // return {...state, thread, error: null, isLoading: false}
+        updateThreadsSuccess: (state: InitialThreadStateType, {payload: thread}: PayloadAction<{}>) => {
+            let currentThreads = [...current(state).threads];
+            let index1 = currentThreads.findIndex((item: Thread) => item.id === thread?.id);
+            currentThreads[index1] = {
+                ...currentThreads[index1],
+                mailboxes: [...thread.mailboxes]
+            };
+            return {...state, threads: [...currentThreads], error: null, isLoading: false, selectedThread: thread}
         },
         updateThreadsError: (state: InitialThreadStateType, {payload: error}: PayloadAction<any>) => {
             return {...state, thread: null, error, isLoading: false}
