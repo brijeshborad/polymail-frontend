@@ -9,7 +9,7 @@ import {
     MenuButton,
     Menu,
     Modal,
-    ModalContent, ModalHeader, useDisclosure, ModalOverlay, ModalBody, Text, ModalCloseButton
+    ModalContent, ModalHeader, useDisclosure, ModalOverlay, ModalBody, ModalCloseButton
 } from "@chakra-ui/react";
 import {Chip} from "@/components/chip";
 import {ChevronDownIcon, CloseIcon, InfoOutlineIcon} from "@chakra-ui/icons";
@@ -388,9 +388,6 @@ export function ReplyBox(props: ReplyBoxType) {
         }
     }
 
-    const openSendLaterModal = () => {
-        setIsSendLater(true);
-    }
 
     function handleFileUpload(event: ChangeEventHandler | any) {
         event.stopPropagation();
@@ -548,40 +545,23 @@ export function ReplyBox(props: ReplyBoxType) {
                                 <MenuButton className={styles.replayArrowIcon} as={Button} aria-label='Options' variant='outline'><ChevronDownIcon /></MenuButton>
                                 <MenuList>
                                     <MenuItem onClick={onOpen}> Send Later </MenuItem>
-                                    {/*<MenuItem> New Window </MenuItem>*/}
-                                    {/*<MenuItem> Open Closed Tab </MenuItem>*/}
-                                    {/*<MenuItem> Open File... </MenuItem>*/}
                                 </MenuList>
                             </Menu>
                             <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
                                 <ModalOverlay />
                                 <ModalContent>
                                     <ModalHeader display="flex" justifyContent="space-between" alignItems="center">
-                                        <div>
-                                            Schedule send
-                                            {/*<Text fontSize="sm" color="gray.500">*/}
-                                            {/*    India Standard Time*/}
-                                            {/*</Text>*/}
-                                        </div>
+                                        Schedule send
                                     </ModalHeader>
                                     <ModalCloseButton size={'xs'} />
                                     <ModalBody>
-                                        {/* Content of your modal */}
-                                        <p>This is the content of the modal.</p>
+                                        <p>Tomorrow 08:00 AM</p>
+                                        <p>2 days 08:00 AM</p>
+                                        <p>3 days 08:00 AM</p>
+                                        <p>This weekend (Saturday) 08:00 AM</p>
+                                        <p>Next week Sunday 08:00 AM</p>
                                     </ModalBody>
                                 </ModalContent>
-                                {/*<ModalContent>*/}
-                                {/*    <ModalHeader>Modal Title</ModalHeader>*/}
-                                {/*    <ModalBody>*/}
-                                {/*        /!* Content of your modal *!/*/}
-                                {/*        <p>This is the content of the modal.</p>*/}
-                                {/*    </ModalBody>*/}
-                                {/*    <ModalFooter>*/}
-                                {/*        /!* Additional buttons or actions *!/*/}
-                                {/*        <Button variant="ghost" onClick={onClose}>Close</Button>*/}
-                                {/*        <Button colorScheme="blue" mr={3}>Save</Button>*/}
-                                {/*    </ModalFooter>*/}
-                                {/*</ModalContent>*/}
                             </Modal>
 
                         </Flex>
