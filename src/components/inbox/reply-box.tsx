@@ -11,12 +11,13 @@ import {
     Modal,
     ModalContent, ModalHeader, useDisclosure, ModalOverlay, ModalBody, ModalCloseButton
 } from "@chakra-ui/react";
-import {Chip} from "@/components/chip";
-import {ChevronDownIcon, CloseIcon, InfoOutlineIcon} from "@chakra-ui/icons";
-import {FileIcon, LinkIcon, TextIcon} from "@/icons";
 import React, {ChangeEvent, ChangeEventHandler, useEffect, useRef, useState} from "react";
-import {createDraft, sendMessage, updateMessageState, updatePartialMessage} from "@/redux/messages/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
+import {ChevronDownIcon, CloseIcon, InfoOutlineIcon} from "@chakra-ui/icons";
+import {SingleDatepicker} from "chakra-dayzed-datepicker";
+import {Chip} from "@/components/chip";
+import {FileIcon, LinkIcon, TextIcon} from "@/icons";
+import {createDraft, sendMessage, updateMessageState, updatePartialMessage} from "@/redux/messages/action-reducer";
 import {StateType} from "@/types";
 import {debounce, isEmail} from "@/utils/common.functions";
 import {Toaster} from "@/components/toaster";
@@ -26,13 +27,15 @@ import {ReplyBoxType} from "@/types/props-types/replyBox.type";
 declare type RecipientsType = { items: (string | undefined)[], value: string };
 
 export function ReplyBox(props: ReplyBoxType) {
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const {isOpen, onOpen, onClose} = useDisclosure();
     const [isToEmailAdded, setIsToEmailAdded] = useState<boolean>(false);
     const [emailBody, setEmailBody] = useState<string>('');
     const [hideCcFields, setHideCcFields] = useState<boolean>(false);
     const [hideBccFields, setHideBccFields] = useState<boolean>(false);
     const [htmlContent, setHtmlContent] = useState('');
     const [subject, setSubject] = useState<string>('');
+    const [date, setDate] = useState(new Date());
+
     const [recipients, setRecipients] = useState<RecipientsType>({
         items: [],
         value: ""
@@ -59,7 +62,6 @@ export function ReplyBox(props: ReplyBoxType) {
     const inputFile = useRef<HTMLInputElement | null>(null)
 
     const dispatch = useDispatch();
-
 
     useEffect(() => {
         // Add signature to email body
@@ -290,7 +292,7 @@ export function ReplyBox(props: ReplyBoxType) {
 
                     const reader = new FileReader();
                     reader.onload = () => {
-                        const htmlString : any = reader.result;
+                        const htmlString: any = reader.result;
                         setHtmlContent(htmlString);
                     };
                     reader.readAsText(blob, 'utf-8');
@@ -413,7 +415,6 @@ export function ReplyBox(props: ReplyBoxType) {
         setAttachments([...attachments!]);
     }
 
-
     useEffect(() => {
         if (attachments) {
             sendToDraft('', false);
@@ -421,6 +422,9 @@ export function ReplyBox(props: ReplyBoxType) {
         // eslint-disable-next-line
     }, [attachments])
 
+    const openCalender = () => {
+        onOpen();
+    }
 
     return (
         <div className={styles.mailFooter}>
@@ -538,28 +542,33 @@ export function ReplyBox(props: ReplyBoxType) {
                         </Flex>
 
                         <Flex align={'center'} className={styles.replyButton}>
-                            <Button className={styles.replayTextButton} colorScheme='blue' onClick={() => sendMessages()} isDisabled={!isToEmailAdded}>
+                            <Button className={styles.replayTextButton} colorScheme='blue'
+                                    onClick={() => sendMessages()} isDisabled={!isToEmailAdded}>
                                 Send
                             </Button>
                             <Menu>
-                                <MenuButton className={styles.replayArrowIcon} as={Button} aria-label='Options' variant='outline'><ChevronDownIcon /></MenuButton>
+                                <MenuButton className={styles.replayArrowIcon} as={Button} aria-label='Options'
+                                            variant='outline'><ChevronDownIcon/></MenuButton>
                                 <MenuList>
-                                    <MenuItem onClick={onOpen}> Send Later </MenuItem>
+                                    <MenuItem onClick={() => openCalender()}> Send Later </MenuItem>
                                 </MenuList>
                             </Menu>
-                            <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
-                                <ModalOverlay />
-                                <ModalContent>
+                            <Modal isOpen={isOpen} onClose={onClose} isCentered={true} scrollBehavior={'outside'}>
+                                <ModalOverlay/>
+                                <ModalContent minHeight="440px">
                                     <ModalHeader display="flex" justifyContent="space-between" alignItems="center">
                                         Schedule send
                                     </ModalHeader>
-                                    <ModalCloseButton size={'xs'} />
+                                    <ModalCloseButton size={'xs'}/>
                                     <ModalBody>
-                                        <p>Tomorrow 08:00 AM</p>
-                                        <p>2 days 08:00 AM</p>
-                                        <p>3 days 08:00 AM</p>
-                                        <p>This weekend (Saturday) 08:00 AM</p>
-                                        <p>Next week Sunday 08:00 AM</p>
+
+                                        <SingleDatepicker
+                                            name="date-input"
+                                            date={date}
+                                            defaultIsOpen={true}
+                                            onDateChange={setDate}
+                                        />
+
                                     </ModalBody>
                                 </ModalContent>
                             </Modal>

@@ -1,15 +1,19 @@
 import '@/styles/globals.css'
 import type {AppProps} from 'next/app'
-import {ChakraBaseProvider, extendBaseTheme} from "@chakra-ui/react";
+import {ChakraBaseProvider, extendBaseTheme, ThemeConfig} from "@chakra-ui/react";
 import {wrapper} from "@/redux/store";
 import {Provider} from "react-redux";
 import chakraTheme from '@chakra-ui/theme'
 import {Inter} from "next/font/google";
 import Head from 'next/head'
 
-const {Button, Input, Menu, Checkbox, Heading, Divider, Alert, Modal, Tooltip, Textarea, Spinner} = chakraTheme.components
-
+const {Button, Input, Menu, Checkbox, Heading, Divider, Alert, Modal, Popover, Tooltip, Textarea, Spinner} = chakraTheme.components
+const config: ThemeConfig = {
+    initialColorMode: 'light',
+    useSystemColorMode: false,
+};
 const theme = extendBaseTheme({
+    config,
     components: {
         Button,
         Input,
@@ -21,6 +25,7 @@ const theme = extendBaseTheme({
         Modal,
         Tooltip,
         Textarea,
+        Popover,
         Spinner
     },
 })
