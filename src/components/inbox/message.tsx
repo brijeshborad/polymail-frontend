@@ -3,7 +3,7 @@ import styles2 from "@/styles/common.module.css";
 import {Box, Button, Flex, Heading, Text, Tooltip} from "@chakra-ui/react";
 import {CheckIcon, ChevronDownIcon, ChevronUpIcon, CloseIcon, WarningIcon} from "@chakra-ui/icons";
 import {Time} from "@/components";
-import {ArchiveIcon, FolderIcon, StarIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
+import {ArchiveIcon, FolderIcon, StarIcon, TimeSnoozeIcon, TrashIcon, ReplyIcon, ForwardIcon} from "@/icons";
 import Image from "next/image";
 import {StateType} from "@/types";
 import React, {useEffect, useState} from "react";
@@ -230,21 +230,17 @@ export function Message() {
                 </Flex>}
 
                 {!hideAndShowReplyBox &&
-                <Flex align={'center'} justify={'space-around'}>
-                    <Button className={styles.hideButton}
-                            rightIcon={hideAndShowReplyBox ? <ChevronDownIcon/> : <ChevronUpIcon/>} variant='outline'
-                            onClick={() => hideAndShowReplayBox('reply')}>
-                        Reply
+                <Flex align={'center'} padding={'10px 20px'}>
+                    <Button className={styles.hideButton} variant='outline' onClick={() => hideAndShowReplayBox('reply')}>
+                        <ReplyIcon/> Reply
                     </Button>
-                    <Button className={styles.hideButton}
-                            rightIcon={hideAndShowReplyBox ? <ChevronDownIcon/> : <ChevronUpIcon/>} variant='outline'
+                    <Button className={styles.hideButton} variant='outline'
                             onClick={() => hideAndShowReplayBox('reply-all')}>
-                        Reply All
+                        <ReplyIcon/> Reply All
                     </Button>
-                    <Button className={styles.hideButton}
-                            rightIcon={hideAndShowReplyBox ? <ChevronDownIcon/> : <ChevronUpIcon/>} variant='outline'
+                    <Button className={styles.forwardButton} variant='outline'
                             onClick={() => hideAndShowReplayBox('forward')}>
-                        Forward
+                        <ForwardIcon/> Forward
                     </Button>
                 </Flex>}
 

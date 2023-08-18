@@ -527,13 +527,37 @@
 
 .mailBox .hideButton {
     width: fit-content;
-    margin: 10px auto;
+    margin-right: 10px;
     font-size: 15px;
-    height: fit-content;
-    padding: 5px 10px 5px 15px;
+    padding: 5px 15px;
     border-radius: 5px;
     border: 1px solid rgba(8, 22, 47, 0.16);
     z-index: 1;
+}
+
+.mailBox .hideButton svg {
+    stroke: #000000;
+    margin-right: 10px;
+}
+
+.mailBox .forwardButton {
+    width: fit-content;
+    font-size: 15px;
+    color: #ffffff;
+    border-radius: 5px;
+    background-color: #266DF0;
+    padding: 5px 15px;
+    margin-right: 10px;
+    z-index: 1;
+}
+
+.mailBox .forwardButton svg {
+    stroke: #ffffff;
+    margin-right: 10px;
+}
+
+.mailBox .forwardButton:hover {
+    background-color: #266DF0;
 }
 
 .replayBox {
@@ -568,10 +592,6 @@
 
 .mailBox .hideButton:focus-visible {
     box-shadow: none;
-}
-
-.mailBox .hideButton svg {
-    margin: 0 auto;
 }
 
 .replyMailBox {

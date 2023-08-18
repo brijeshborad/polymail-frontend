@@ -16,3 +16,5 @@ export * from './emoji.icon';
 export * from './text.icon';
 export * from './star.icon';
 export * from './menu.icon';
+export * from './Reply.icon';
+export * from './forward.icon';
