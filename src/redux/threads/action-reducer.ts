@@ -1,7 +1,6 @@
 import {createSlice, current, PayloadAction} from "@reduxjs/toolkit";
 import {InitialThreadStateType} from "@/types";
 import {Thread} from "@/models";
-import {sort} from "next/dist/build/webpack/loaders/css-loader/src/utils";
 // import {Thread} from "@/models";
 
 const initialState: any = {
