@@ -1,6 +1,7 @@
 import {createSlice, current, PayloadAction} from "@reduxjs/toolkit";
 import {InitialThreadStateType} from "@/types";
 import {Thread} from "@/models";
+import {sort} from "next/dist/build/webpack/loaders/css-loader/src/utils";
 // import {Thread} from "@/models";
 
 const initialState: any = {
@@ -24,7 +25,9 @@ const threadsSlice = createSlice({
             }
         },
         getAllThreadsSuccess: (state: InitialThreadStateType, {payload: threads}: PayloadAction<{}>) => {
-            return {...state, threads, isLoading: false, error: null}
+            // Sort threads by latestMessage DESC
+            threads = (threads || []).sort((a,b) => new Date(b.latestMessage) - new Date(a.latestMessage));
+            return {...state, threads , isLoading: false, error: null}
         },
         getAllThreadsError: (state: InitialThreadStateType, {payload: error}: PayloadAction<{ error: any }>) => {
             return {...state, threads: [], isLoading: false, error}
