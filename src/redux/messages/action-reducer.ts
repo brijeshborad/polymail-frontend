@@ -60,10 +60,10 @@ const messagesSlice = createSlice({
             return {...state, draft: null, error, isLoading: false}
         },
 
-        sendMessage: (state: InitialMessageStateType, _action: PayloadAction<{ id: string }>) => {
+        sendMessage: (state: InitialMessageStateType, _action: PayloadAction<{ id: string, now?: boolean, delay?: number, undo?: boolean }>) => {
             return {...state, sendMessage: null, error: null, isLoading: true}
         },
-        sendMessageSuccess: (state: InitialMessageStateType, {payload: sendMessage}: PayloadAction<{ }>) => {
+        sendMessageSuccess: (state: InitialMessageStateType, {payload: sendMessage}: PayloadAction<{}>) => {
             return {...state, sendMessage, error: null, isLoading: false, success: true}
         },
         sendMessageError: (state: InitialMessageStateType, {payload: error}: PayloadAction<any>) => {

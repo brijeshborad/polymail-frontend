@@ -64,9 +64,14 @@ function* createNewDraft({payload: {accountId, body}}: PayloadAction<{accountId:
     }
 }
 
-function* sendDraftMessage({payload: {id}}: PayloadAction<{ id: string }>) {
+function* sendDraftMessage({payload: {id, now, delay, undo}}: PayloadAction<{ id: string, now?: boolean, delay?: number, undo?: boolean }>) {
     try {
-        const response: AxiosResponse = yield ApiService.callGet(`messages/${id}/send`, null);
+        const response: AxiosResponse = yield ApiService.callGet(`messages/${id}/send`,
+            {
+                ...(now ? {now}: {}),
+                ...(delay ? {delay}: {}),
+                ...(undo ? {undo}: {})
+            });
         yield put(sendMessageSuccess(response || {}));
     } catch (error: any) {
         error = error as AxiosError;

@@ -9,7 +9,7 @@ import {
     MenuButton,
     Menu,
     Modal,
-    ModalContent, ModalHeader, useDisclosure, ModalOverlay, ModalBody, ModalCloseButton
+    ModalContent, ModalHeader, useDisclosure, ModalOverlay, ModalBody, ModalCloseButton, ModalFooter
 } from "@chakra-ui/react";
 import React, {ChangeEvent, ChangeEventHandler, useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
@@ -23,6 +23,7 @@ import {debounce, isEmail} from "@/utils/common.functions";
 import {Toaster} from "@/components/toaster";
 import RichTextEditor from "@/components/rich-text-editor";
 import {ReplyBoxType} from "@/types/props-types/replyBox.type";
+import dayjs from "dayjs";
 
 declare type RecipientsType = { items: (string | undefined)[], value: string };
 
@@ -34,7 +35,7 @@ export function ReplyBox(props: ReplyBoxType) {
     const [hideBccFields, setHideBccFields] = useState<boolean>(false);
     const [htmlContent, setHtmlContent] = useState('');
     const [subject, setSubject] = useState<string>('');
-    const [date, setDate] = useState(new Date());
+    const [scheduledDate, setScheduledDate] = useState<Date>();
 
     const [recipients, setRecipients] = useState<RecipientsType>({
         items: [],
@@ -330,9 +331,22 @@ export function ReplyBox(props: ReplyBoxType) {
     }, [htmlContent, props.replyType])
 
 
-    const sendMessages = () => {
+    const sendMessages = (scheduled: boolean = false) => {
         if (draft && draft.id) {
-            dispatch(sendMessage({id: draft.id}));
+            let params = {};
+            if(scheduled) {
+                const targetDate = dayjs(scheduledDate).set('hour', 8);
+                console.log('targetDate=',targetDate);
+
+                // Get the current date and time
+                const currentDate = dayjs();
+                const secondsDifference = targetDate.diff(currentDate, 'second');
+                params = {
+                    delay: secondsDifference
+                }
+            }
+
+            dispatch(sendMessage({id: draft.id, ...params}));
             setRecipients({
                 items: !isCompose && selectedMessage ? [selectedMessage.from] : [],
                 value: "",
@@ -357,10 +371,14 @@ export function ReplyBox(props: ReplyBoxType) {
     useEffect(() => {
         if (sendDraftSuccess) {
             let successObject = {
-                desc: 'Successful',
+                desc: isOpen ? 'Message is scheduled successfully!' : 'Successful',
                 type: 'success'
             }
+            if(isOpen) {
+                onClose();
+            }
             Toaster(successObject)
+
         }
     }, [sendDraftSuccess])
 
@@ -424,6 +442,7 @@ export function ReplyBox(props: ReplyBoxType) {
 
     const openCalender = () => {
         onOpen();
+        setScheduledDate(new Date());
     }
 
     return (
@@ -564,12 +583,18 @@ export function ReplyBox(props: ReplyBoxType) {
 
                                         <SingleDatepicker
                                             name="date-input"
-                                            date={date}
+                                            date={scheduledDate}
                                             defaultIsOpen={true}
-                                            onDateChange={setDate}
+                                            onDateChange={setScheduledDate}
                                         />
 
                                     </ModalBody>
+                                    <ModalFooter>
+                                        <Button variant='ghost' onClick={onClose}>Cancel</Button>
+                                        <Button colorScheme='blue' mr={3}  onClick={() => sendMessages(true)}>
+                                            Schedule
+                                        </Button>
+                                    </ModalFooter>
                                 </ModalContent>
                             </Modal>
 

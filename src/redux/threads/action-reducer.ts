@@ -22,9 +22,9 @@ const threadsSlice = createSlice({
                 error: null
             }
         },
-        getAllThreadsSuccess: (state: InitialThreadStateType, {payload: threads}: PayloadAction<[]>) => {
+        getAllThreadsSuccess: (state: InitialThreadStateType, {payload: threads}: PayloadAction<any>) => {
             // Sort threads by latestMessage DESC
-            threads = (threads || []).sort((a,b) => new Date(b.latestMessage) - new Date(a.latestMessage));
+            threads = (threads || []).sort((a: Thread,b: Thread) => (new Date(b.latestMessage as string).valueOf() - new Date(a.latestMessage as string).valueOf()));
             return {...state, threads , isLoading: false, error: null}
         },
         getAllThreadsError: (state: InitialThreadStateType, {payload: error}: PayloadAction<{ error: any }>) => {
@@ -47,6 +47,7 @@ const threadsSlice = createSlice({
         updateThreadsError: (state: InitialThreadStateType, {payload: error}: PayloadAction<any>) => {
             return {...state, thread: null, error, isLoading: false}
         },
+
         updateThreadState: (state: InitialThreadStateType, action: PayloadAction<InitialThreadStateType>) => {
             return {...state, ...action.payload}
         }
