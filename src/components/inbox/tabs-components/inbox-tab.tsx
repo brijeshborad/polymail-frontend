@@ -13,7 +13,7 @@ import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
 
 
 export default function InboxTab(props: InboxTabProps) {
-    const {isLoading, selectedThread} = useSelector((state: StateType) => state.threads);
+    const {isLoading, selectedThread, threads} = useSelector((state: StateType) => state.threads);
 
     const listRef = useRef<any>(null);
     // const activeDivRef = useRef<any>({});
@@ -28,16 +28,24 @@ export default function InboxTab(props: InboxTabProps) {
         //     const itemIndex = (props.content || []).indexOf(item);
         //     setCursor(itemIndex);
         // }
-        let body = {}
+
         if ((item.mailboxes || []).includes('UNREAD')) {
+            let currentThreads = [...threads || []] as Thread[];
+            let threadData = {...(item) || {}} as Thread;
+            let index1 = currentThreads.findIndex((item: Thread) => item.id === threadData?.id);
             let finalArray = (item.mailboxes || []).filter(function (item: string) {
                 return item !== 'UNREAD'
             })
-            body = {
+            let body = {
                 mailboxes: [
                     ...finalArray
                 ]
             }
+            currentThreads[index1] = {
+                ...currentThreads[index1],
+                mailboxes: body?.mailboxes || []
+            };
+            dispatch(updateThreadState({threads: currentThreads}));
             dispatch(updateThreads({id: item.id, body}));
         }
         dispatch(updateThreadState({selectedThread: item}));
