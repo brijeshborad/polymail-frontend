@@ -1,4 +1,4 @@
-import {Message, MessageDraft, MessagePart} from "@/models";
+import {Message, MessageAttachments, MessageDraft, MessagePart} from "@/models";
 
 export declare type InitialMessageStateType = {
     messages?: Message[],
@@ -9,6 +9,7 @@ export declare type InitialMessageStateType = {
     isLoading?: boolean,
     isCompose?: boolean,
     messagePart?: MessagePart | null,
+    messageAttachments?: MessageAttachments[],
     error?: Error | any,
     success?: boolean
 }

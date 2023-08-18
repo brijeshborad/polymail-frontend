@@ -7,6 +7,7 @@ const initialState: any = {
     message: null,
     selectedMessage: null,
     messagePart: null,
+    messageAttachments: [],
     draft: null,
     sendMessage: null,
     isLoading: false,
@@ -37,6 +38,16 @@ const messagesSlice = createSlice({
         },
         getMessagePartsError: (state: InitialMessageStateType, {payload: error}: PayloadAction<{ error: any }>) => {
             return {...state, messagePart: null, isLoading: false, error}
+        },
+
+        getMessageAttachments: (state: InitialMessageStateType, _action: PayloadAction<{ id: string }>) => {
+            return {...state, messageAttachments: null, isLoading: true, error: null}
+        },
+        getMessageAttachmentsSuccess: (state: InitialMessageStateType, {payload: messageAttachments}: PayloadAction<{}>) => {
+            return {...state, messageAttachments, isLoading: false, error: null}
+        },
+        getMessageAttachmentsError: (state: InitialMessageStateType, {payload: error}: PayloadAction<{ error: any }>) => {
+            return {...state, messageAttachments: null, isLoading: false, error}
         },
 
         createDraft: (state: InitialMessageStateType, _action: PayloadAction<{ accountId: string, body: MessageDraft }>) => {
@@ -91,6 +102,9 @@ export const {
     updatePartialMessage,
     updatePartialMessageSuccess,
     updatePartialMessageError,
-    updateMessageState
+    updateMessageState,
+    getMessageAttachments,
+    getMessageAttachmentsSuccess,
+    getMessageAttachmentsError
 } = messagesSlice.actions
 export default messagesSlice.reducer

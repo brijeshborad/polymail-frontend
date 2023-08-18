@@ -213,7 +213,9 @@ export function Header() {
                         <MenuItem onClick={() => addNewGoogleAccount()}>Add New Account</MenuItem>
                         {accounts && !!accounts.length && accounts?.map((acc, i) => (
                             <MenuItem w='100%' key={i + 1} onClick={() => setAccounts(acc)}>
-                                {acc.email} <CheckIcon ml={8} bg={"green"} p={1} borderRadius={50} w={4} h={4} color={"white"} />
+                                {acc.email} {selectedAccount?.email === acc.email && (
+                                <CheckIcon ml={8} bg={"green"} p={1} borderRadius={50} w={4} h={4} color={"white"} />
+                            )}
                             </MenuItem>
                         ))}
                         <MenuItem>Settings</MenuItem>

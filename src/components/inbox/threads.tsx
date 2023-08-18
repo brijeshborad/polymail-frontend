@@ -13,7 +13,7 @@ import InboxTab from "@/components/inbox/tabs-components/inbox-tab";
 import {StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {getAllThreads, /*updateThreads,*/ updateThreadState} from "@/redux/threads/action-reducer";
+import {getAllThreads} from "@/redux/threads/action-reducer";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 import {Thread} from "@/models";
 
@@ -55,8 +55,6 @@ export function Threads() {
 
     useEffect(() => {
         if (threads && threads.length > 0 && !selectedThread) {
-            const thread = threads[0];
-            dispatch(updateThreadState({selectedThread: thread}));
             dispatch(updateMessageState({selectedMessage: null}));
         }
     }, [threads, dispatch, selectedThread])

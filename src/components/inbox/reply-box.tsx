@@ -1,5 +1,16 @@
 import styles from "@/styles/Inbox.module.css";
-import {Button, Flex, Heading, Input, MenuItem, MenuList, MenuButton, Menu} from "@chakra-ui/react";
+import {
+    Button,
+    Flex,
+    Heading,
+    Input,
+    MenuItem,
+    MenuList,
+    MenuButton,
+    Menu,
+    Modal,
+    ModalContent, ModalHeader, useDisclosure, ModalOverlay, ModalBody, Text, ModalCloseButton
+} from "@chakra-ui/react";
 import {Chip} from "@/components/chip";
 import {ChevronDownIcon, CloseIcon, InfoOutlineIcon} from "@chakra-ui/icons";
 import {FileIcon, LinkIcon, TextIcon} from "@/icons";
@@ -15,6 +26,7 @@ import {ReplyBoxType} from "@/types/props-types/replyBox.type";
 declare type RecipientsType = { items: (string | undefined)[], value: string };
 
 export function ReplyBox(props: ReplyBoxType) {
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const [isToEmailAdded, setIsToEmailAdded] = useState<boolean>(false);
     const [emailBody, setEmailBody] = useState<string>('');
     const [hideCcFields, setHideCcFields] = useState<boolean>(false);
@@ -35,7 +47,7 @@ export function ReplyBox(props: ReplyBoxType) {
     });
     const [attachments, setAttachments] = useState<{ filename: string, data: string }[] | null>(null);
 
-    const {selectedAccount, accounts} = useSelector((state: StateType) => state.accounts);
+    const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {selectedThread} = useSelector((state: StateType) => state.threads);
     const {
         selectedMessage,
@@ -51,10 +63,10 @@ export function ReplyBox(props: ReplyBoxType) {
 
     useEffect(() => {
         // Add signature to email body
-        if (accounts && accounts[0] && accounts[0].signature) {
-            setEmailBody(accounts[0].signature);
+        if (selectedAccount && selectedAccount.signature) {
+            setEmailBody(selectedAccount.signature);
         }
-    }, [accounts])
+    }, [selectedAccount])
 
 
     useEffect(() => {
@@ -84,6 +96,7 @@ export function ReplyBox(props: ReplyBoxType) {
 
 
     const handleChange = (evt: ChangeEvent | any, type: string) => {
+        console.log(evt.target.value);
         if (type === 'recipients') {
             setRecipients(prevState => ({
                 items: [...prevState.items],
@@ -265,21 +278,8 @@ export function ReplyBox(props: ReplyBoxType) {
 
 
     useEffect(() => {
-        if (selectedMessage) {
+        if (selectedMessage && !isCompose) {
             let emailSubject = `Re: ${selectedMessage.subject}`;
-            if (props.replyType === 'reply-all') {
-                if (selectedMessage.cc) {
-                    // setCC((prevState) => ({
-                    //     items: selectedMessage.cc,
-                    //     value: ''
-                    // }));
-                    setCC({
-                        items: selectedMessage.cc,
-                        value: ''
-                    })
-                }
-            }
-
             if (props.replyType === 'forward') {
                 emailSubject = `Fwd: ${selectedMessage.subject}`;
                 // convert blob URL to HTML
@@ -297,17 +297,27 @@ export function ReplyBox(props: ReplyBoxType) {
                 };
 
                 fetchBlobContent();
+            } else {
+                setRecipients((prevState) => ({
+                    items: !isCompose ? [selectedMessage.from] : [],
+                    value: prevState.value
+                }));
+
+                if (props.replyType === 'reply-all' && selectedMessage.cc) {
+                    setCC({
+                        items: selectedMessage.cc,
+                        value: ''
+                    });
+                    setHideCcFields(true);
+                }
             }
 
             // set subject when email is replied or forwarded.
             setSubject(emailSubject || '');
-            setRecipients((prevState) => ({
-                items: !isCompose ? [selectedMessage.from] : [],
-                value: prevState.value
-            }));
+
             // setEmailBody('');
         }
-    }, [isCompose, selectedMessage, props])
+    }, [isCompose, selectedMessage, props.replyType])
 
 
     useEffect(() => {
@@ -365,30 +375,22 @@ export function ReplyBox(props: ReplyBoxType) {
     const showCCFields = (type: string) => {
         if (type === 'cc') {
             setHideCcFields(true)
-            setCC({
-                items: [],
-                value: ""
-            });
+            setCC(prevState => ({
+                items: [...prevState.items],
+                value: ''
+            }));
         } else if (type === 'bcc') {
             setHideBccFields(true)
-            setBCC({
-                items: [],
-                value: ""
-            });
-        } else {
-            setHideCcFields(false)
-            setHideBccFields(false)
-            setBCC({
-                items: [],
-                value: ""
-            });
-            setCC({
-                items: [],
-                value: ""
-            });
+            setBCC(prevState => ({
+                items: [...prevState.items],
+                value: ''
+            }));
         }
     }
 
+    const openSendLaterModal = () => {
+        setIsSendLater(true);
+    }
 
     function handleFileUpload(event: ChangeEventHandler | any) {
         event.stopPropagation();
@@ -512,9 +514,11 @@ export function ReplyBox(props: ReplyBoxType) {
                 </div>
 
                 <Flex direction={'column'} className={styles.replyMessage}>
+
                     <RichTextEditor className={styles.replyMessageArea}
                                     placeholder='Reply with anything you like or @mention someone to share this thread'
                                     value={emailBody} onChange={(e) => sendToDraft(e, false)}/>
+
                     {attachments && attachments.length > 0 ? <div style={{marginTop: '20px'}}>
                         {attachments.map((item: { filename: string, data: string }, index: number) => (
                             <Flex align={'center'} key={index} className={styles.attachmentsFile}>
@@ -524,7 +528,9 @@ export function ReplyBox(props: ReplyBoxType) {
                             </Flex>
                         ))}
                     </div> : null}
+
                     <Flex align={'flex-end'} justify={"space-between"} gap={2} order={1}>
+
                         <Flex align={'center'} gap={3}>
                             <FileIcon click={() => inputFile.current?.click()}/>
                             <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e)}
@@ -533,20 +539,53 @@ export function ReplyBox(props: ReplyBoxType) {
                             <TextIcon/>
                             {/*<EmojiIcon/>*/}
                         </Flex>
+
                         <Flex align={'center'} className={styles.replyButton}>
                             <Button className={styles.replayTextButton} colorScheme='blue' onClick={() => sendMessages()} isDisabled={!isToEmailAdded}>
-                                {isCompose ? 'Send' : 'Reply all'}
+                                Send
                             </Button>
                             <Menu>
                                 <MenuButton className={styles.replayArrowIcon} as={Button} aria-label='Options' variant='outline'><ChevronDownIcon /></MenuButton>
                                 <MenuList>
-                                    <MenuItem> New Tab </MenuItem>
-                                    <MenuItem> New Window </MenuItem>
-                                    <MenuItem> Open Closed Tab </MenuItem>
-                                    <MenuItem> Open File... </MenuItem>
+                                    <MenuItem onClick={onOpen}> Send Later </MenuItem>
+                                    {/*<MenuItem> New Window </MenuItem>*/}
+                                    {/*<MenuItem> Open Closed Tab </MenuItem>*/}
+                                    {/*<MenuItem> Open File... </MenuItem>*/}
                                 </MenuList>
                             </Menu>
+                            <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
+                                <ModalOverlay />
+                                <ModalContent>
+                                    <ModalHeader display="flex" justifyContent="space-between" alignItems="center">
+                                        <div>
+                                            Schedule send
+                                            {/*<Text fontSize="sm" color="gray.500">*/}
+                                            {/*    India Standard Time*/}
+                                            {/*</Text>*/}
+                                        </div>
+                                    </ModalHeader>
+                                    <ModalCloseButton size={'xs'} />
+                                    <ModalBody>
+                                        {/* Content of your modal */}
+                                        <p>This is the content of the modal.</p>
+                                    </ModalBody>
+                                </ModalContent>
+                                {/*<ModalContent>*/}
+                                {/*    <ModalHeader>Modal Title</ModalHeader>*/}
+                                {/*    <ModalBody>*/}
+                                {/*        /!* Content of your modal *!/*/}
+                                {/*        <p>This is the content of the modal.</p>*/}
+                                {/*    </ModalBody>*/}
+                                {/*    <ModalFooter>*/}
+                                {/*        /!* Additional buttons or actions *!/*/}
+                                {/*        <Button variant="ghost" onClick={onClose}>Close</Button>*/}
+                                {/*        <Button colorScheme="blue" mr={3}>Save</Button>*/}
+                                {/*    </ModalFooter>*/}
+                                {/*</ModalContent>*/}
+                            </Modal>
+
                         </Flex>
+
                     </Flex>
                 </Flex>
             </Flex>

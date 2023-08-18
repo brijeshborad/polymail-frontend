@@ -8,19 +8,31 @@ import Image from "next/image";
 import {StateType} from "@/types";
 import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {getMessageParts, updateMessageState} from "@/redux/messages/action-reducer";
-import {SpinnerUI} from '@/components/spinner';
+import {getMessageAttachments, getMessageParts, updateMessageState} from "@/redux/messages/action-reducer";
 import {ReplyBox} from "@/components/inbox/reply-box";
 import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
-import {Message as MessageModel} from "@/models";
+import {Message as MessageModel, Thread} from "@/models";
 import {BlueStarIcon} from "@/icons/star-blue.icon";
+import {MessageAttachments} from "@/models/messageAttachments";
+
+type EmailState = string;
 
 export function Message() {
     const [messageContent, setMessageContent] = useState<MessageModel>();
     const [index, setIndex] = useState<number | null>(null);
     const [emailPart, setEmailPart] = useState<string>("");
-    const {messages, messagePart, isCompose, isLoading, message} = useSelector((state: StateType) => state.messages);
-    const {selectedThread} = useSelector((state: StateType) => state.threads);
+    const [emailAttachments, setEmailAttachments] = useState<any>([]);
+    const [hideAndShowReplyBox, setHideAndShowReplyBox] = useState<boolean>(false);
+    const [replyType, setReplyType] = useState<string>('');
+    const {
+        messages,
+        messagePart,
+        isCompose,
+        isLoading,
+        message,
+        messageAttachments
+    } = useSelector((state: StateType) => state.messages);
+    const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
 
     const dispatch = useDispatch();
 
@@ -64,12 +76,41 @@ export function Message() {
     }, [messagePart])
 
     useEffect(() => {
+        // convert blob url to image url
+        if (messageAttachments && messageAttachments.length) {
+            const emailParts = messageAttachments.map((attachment: MessageAttachments) => {
+                const decoded = Buffer.from(attachment.data || '', 'base64').toString('ascii');
+                let fileType = [''];
+                if (attachment.filename) {
+                    fileType = attachment.filename.split('.');
+                }
+                const blob = new Blob([decoded], {type: attachment.mimeType || `image/${fileType[1]}`});
+                const blobUrl = window.URL.createObjectURL(blob);
+                // const blobA = blobUrl.replace("blob:","")
+                // const blobB = blobA.replace('"','')
+                // return blobB || ''
+
+                return blobUrl || '';
+            });
+
+            setEmailAttachments((prevState: EmailState) => (prevState || '').concat(emailParts.join('')));
+        } else {
+            setEmailAttachments([])
+        }
+    }, [messageAttachments])
+
+    useEffect(() => {
+        console.log('emailAttachments' , emailAttachments)
+    }, [emailAttachments])
+
+    useEffect(() => {
         if (index !== null && messages && messages.length > 0) {
             if (messages[index]) {
                 setMessageContent(messages[index]);
                 dispatch(updateMessageState({selectedMessage: messages[index]}));
                 // We already set index to last inbox message
                 dispatch(getMessageParts({id: messages[index].id}));
+                dispatch(getMessageAttachments({id: messages[index].id}));
 
             }
         }
@@ -95,14 +136,25 @@ export function Message() {
 
     const onClose = () => {
         setHideAndShowReplyBox(false)
-        dispatch(updateThreadState({selectedThread: null}));
-        dispatch(updateMessageState({isCompose: false, selectedMessage: null}));
+        if (replyType.length) {
+            dispatch(updateThreadState({selectedThread: selectedThread}));
+        } else {
+            dispatch(updateThreadState({selectedThread: null}));
+        }
+        setReplyType('')
+        dispatch(updateMessageState({isCompose: false}));
     }
 
     const updateMailBox = (messageBox: string) => {
         if (selectedThread && selectedThread.id) {
             if (messageBox) {
-                let body = {}
+                let currentThreads = [...threads || []] as Thread[];
+                let threadData = {...(selectedThread) || {}} as Thread;
+                let index1 = currentThreads.findIndex((item: Thread) => item.id === threadData?.id);
+
+                let body = {
+                    mailboxes: ['']
+                };
                 let data = selectedThread.mailboxes || [];
                 if (selectedThread.mailboxes?.includes(messageBox)) {
 
@@ -120,17 +172,19 @@ export function Message() {
                         ]
                     }
                 }
-                // dispatch(updatePartialMessage({id: selectedThread.id, body}));
-
+                currentThreads[index1] = {
+                    ...currentThreads[index1],
+                    mailboxes: body?.mailboxes || []
+                };
+                dispatch(updateThreadState({threads: currentThreads}));
                 dispatch(updateThreads({id: selectedThread.id, body}));
             }
         }
     }
 
-    const [hideAndShowReplyBox, setHideAndShowReplyBox] = useState<boolean>(false);
-    const [replyType, setReplyType] = useState<string>('');
 
     const hideAndShowReplayBox = (type: string = '') => {
+        console.log('type', type)
         setReplyType(type);
         setHideAndShowReplyBox(!hideAndShowReplyBox);
     }
@@ -208,9 +262,7 @@ export function Message() {
                             </Flex>
                         </Flex>
 
-                        {isLoading && <SpinnerUI/>}
-
-                        {(!isLoading && messageContent) &&
+                        {messageContent &&
                         <Flex alignItems={'center'} padding={'10px 20px'}>
                             <Image src={'/image/user.png'} alt={''} width={50} height={50}/>
                             <Flex flexDir={'column'} marginLeft={'5'} width={'100%'}>

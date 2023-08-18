@@ -10,7 +10,6 @@ import {SpinnerUI} from "@/components/spinner";
 import {useDispatch, useSelector} from "react-redux";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
-// import {useKeyPress} from "@/hooks/use-key-press.hook";
 
 
 export default function InboxTab(props: InboxTabProps) {
@@ -77,7 +76,6 @@ export default function InboxTab(props: InboxTabProps) {
     //         }
     //     }
     // }, [selectedThread])
-
 
     return (
         <>

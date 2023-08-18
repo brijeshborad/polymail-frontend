@@ -14,7 +14,11 @@ import {
     createDraftError,
     sendMessage,
     sendMessageSuccess,
-    sendMessageError, updatePartialMessageSuccess, updatePartialMessageError, updatePartialMessage
+    sendMessageError,
+    updatePartialMessageSuccess,
+    updatePartialMessageError,
+    updatePartialMessage,
+    getMessageAttachmentsSuccess, getMessageAttachmentsError, getMessageAttachments
 } from "@/redux/messages/action-reducer";
 import {MessageDraft, MessageRequestBody} from "@/models";
 
@@ -32,11 +36,21 @@ function* getMessages({payload: {thread}}: PayloadAction<{ thread?: string }>) {
 
 function* getMessagePart({payload: {id}}: PayloadAction<{ id: string }>) {
     try {
-        const response: AxiosResponse = yield ApiService.callGet(`messages/${id}/parts`, null);
+        const response: AxiosResponse = yield ApiService.callGet(`messages/${id}/body`, null);
         yield put(getMessagePartsSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
         yield put(getMessagePartsError(error.response.data));
+    }
+}
+
+function* getMessageAttachment({payload: {id}}: PayloadAction<{ id: string }>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callGet(`messages/${id}/attachments`, null);
+        yield put(getMessageAttachmentsSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        yield put(getMessageAttachmentsError(error.response.data));
     }
 }
 
@@ -79,6 +93,10 @@ export function* watchGetMessagesPart() {
     yield takeLatest(getMessageParts.type, getMessagePart);
 }
 
+export function* watchGetMessagesAttachments() {
+    yield takeLatest(getMessageAttachments.type, getMessageAttachment);
+}
+
 export function* watchCreateNewDraft() {
     yield takeLatest(createDraft.type, createNewDraft);
 }
@@ -99,6 +117,7 @@ export default function* rootSaga() {
         fork(watchCreateNewDraft),
         fork(watchSendDraftMessage),
         fork(watchUpdateCurrentDraftMessage),
+        fork(watchGetMessagesAttachments),
     ]);
 }
 
