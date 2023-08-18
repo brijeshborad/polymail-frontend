@@ -170,7 +170,12 @@
     font-size: 12px;
     font-weight: 400;
     color: #000000;
-    line-height: 14.32px;
+    line-height: 15px;
+    max-width: 400px;
+    white-space: nowrap;
+    overflow: hidden;
+    display: inline-block;
+    text-overflow: ellipsis;
 }
 
 .mailDetails .senderDetails svg {
