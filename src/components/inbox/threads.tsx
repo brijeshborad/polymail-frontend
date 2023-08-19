@@ -83,6 +83,18 @@ export function Threads() {
         getAllThread();
     }, [getAllThread])
 
+    // Refresh threads every 10 seconds
+    useEffect(() => {
+
+        //Implementing the setInterval method
+        const interval = setInterval(() => {
+            getAllThread(false);
+        }, 10000);
+
+        //Clearing the interval
+        return () => clearInterval(interval);
+    }, [threads]);
+
     const changeEmailTabs = (value: string) => {
         setTab(value);
     }
@@ -152,7 +164,7 @@ export function Threads() {
                     </TabList>
 
                     <TabPanels marginTop={5}>
-                        <InboxTab content={threads} tab={tab} showLoader={isLoading}/>
+                        <InboxTab tab={tab} showLoader={isLoading}/>
                     </TabPanels>
                 </Tabs>
             </Flex>
