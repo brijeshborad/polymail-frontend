@@ -12,6 +12,7 @@ export declare type InitialMessageStateType = {
     messageAttachments?: MessageAttachments[],
     error?: Error | any,
     success?: boolean
+    draftSuccess?: boolean
 }
 
 

@@ -36,6 +36,7 @@ export function ReplyBox(props: ReplyBoxType) {
     const [htmlContent, setHtmlContent] = useState('');
     const [subject, setSubject] = useState<string>('');
     const [scheduledDate, setScheduledDate] = useState<Date>();
+    const [boxUpdatedFirstTime, setBoxUpdatedFirstTime] = useState<boolean>(false);
 
     const [recipients, setRecipients] = useState<RecipientsType>({
         items: [],
@@ -65,19 +66,16 @@ export function ReplyBox(props: ReplyBoxType) {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        // Add signature to email body
-        if (selectedAccount && selectedAccount.signature) {
-            setEmailBody(selectedAccount.signature);
-        }
-    }, [selectedAccount])
-
-
-    useEffect(() => {
         // Add signature and draft to email body
-        if (selectedMessage && selectedMessage.draftInfo && selectedMessage.draftInfo.body && !isCompose) {
-            setEmailBody(prevState => (selectedMessage?.draftInfo?.body || '').concat(prevState));
+        if (draft && draft.draftInfo && draft.draftInfo.body && !isCompose) {
+            setEmailBody(prevState => (draft?.draftInfo?.body || '').concat(prevState));
+        } else {
+            // Add signature to email body
+            if (selectedAccount && selectedAccount.signature) {
+                setEmailBody(selectedAccount.signature);
+            }
         }
-    }, [selectedMessage, isCompose])
+    }, [draft, isCompose, selectedAccount])
 
 
     useEffect(() => {
@@ -99,7 +97,6 @@ export function ReplyBox(props: ReplyBoxType) {
 
 
     const handleChange = (evt: ChangeEvent | any, type: string) => {
-        console.log(evt.target.value);
         if (type === 'recipients') {
             setRecipients(prevState => ({
                 items: [...prevState.items],
@@ -220,6 +217,9 @@ export function ReplyBox(props: ReplyBoxType) {
 
     const sendToDraft = (value: string, isValueUpdate: boolean = true) => {
         if (isValueUpdate) {
+            if (!boxUpdatedFirstTime) {
+                setBoxUpdatedFirstTime(true);
+            }
             setEmailBody(value);
         }
         let body = {
@@ -241,7 +241,7 @@ export function ReplyBox(props: ReplyBoxType) {
                     dispatch(createDraft({accountId: selectedAccount.id, body}));
                 }
             }
-        }, 1000);
+        }, 500);
     }
 
 
@@ -320,7 +320,7 @@ export function ReplyBox(props: ReplyBoxType) {
 
             // setEmailBody('');
         }
-    }, [isCompose, selectedMessage, props.replyType])
+    }, [isCompose, selectedMessage, props.replyType, props.emailPart])
 
 
     useEffect(() => {
@@ -334,10 +334,8 @@ export function ReplyBox(props: ReplyBoxType) {
     const sendMessages = (scheduled: boolean = false) => {
         if (draft && draft.id) {
             let params = {};
-            if(scheduled) {
+            if (scheduled) {
                 const targetDate = dayjs(scheduledDate).set('hour', 8);
-                console.log('targetDate=',targetDate);
-
                 // Get the current date and time
                 const currentDate = dayjs();
                 const secondsDifference = targetDate.diff(currentDate, 'second');
@@ -374,13 +372,13 @@ export function ReplyBox(props: ReplyBoxType) {
                 desc: isOpen ? 'Message is scheduled successfully!' : 'Successful',
                 type: 'success'
             }
-            if(isOpen) {
+            if (isOpen) {
                 onClose();
             }
             Toaster(successObject)
 
         }
-    }, [sendDraftSuccess])
+    }, [isOpen, onClose, sendDraftSuccess])
 
 
     useEffect(() => {
@@ -535,9 +533,9 @@ export function ReplyBox(props: ReplyBoxType) {
 
                 <Flex direction={'column'} className={styles.replyMessage}>
 
-                    <RichTextEditor className={styles.replyMessageArea}
+                    <RichTextEditor className={styles.replyMessageArea} initialUpdated={boxUpdatedFirstTime}
                                     placeholder='Reply with anything you like or @mention someone to share this thread'
-                                    value={emailBody} onChange={(e) => sendToDraft(e, false)}/>
+                                    value={emailBody} onChange={(e) => sendToDraft(e)}/>
 
                     {attachments && attachments.length > 0 ? <div style={{marginTop: '20px'}}>
                         {attachments.map((item: { filename: string, data: string }, index: number) => (
@@ -591,7 +589,7 @@ export function ReplyBox(props: ReplyBoxType) {
                                     </ModalBody>
                                     <ModalFooter>
                                         <Button variant='ghost' onClick={onClose}>Cancel</Button>
-                                        <Button colorScheme='blue' mr={3}  onClick={() => sendMessages(true)}>
+                                        <Button colorScheme='blue' mr={3} onClick={() => sendMessages(true)}>
                                             Schedule
                                         </Button>
                                     </ModalFooter>

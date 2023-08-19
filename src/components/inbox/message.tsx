@@ -60,9 +60,13 @@ export function Message() {
         if (messages && messages.length > 0) {
             // remove draft messages and set index to last inbox message
             const inboxMessages: MessageModel[] = messages.filter((msg: MessageModel) => !(msg.mailboxes || []).includes('DRAFT'));
+            const draftMessage = messages.findLast((msg: MessageModel) => (msg.mailboxes || []).includes('DRAFT'));
+            if (draftMessage) {
+                dispatch(updateMessageState({draft: draftMessage}));
+            }
             setIndex(val => !val ? inboxMessages.length - 1 : val);
         }
-    }, [messages])
+    }, [messages, dispatch])
 
     useEffect(() => {
         if (messagePart && messagePart.data) {
@@ -86,10 +90,6 @@ export function Message() {
                 }
                 const blob = new Blob([decoded], {type: attachment.mimeType || `image/${fileType[1]}`});
                 const blobUrl = window.URL.createObjectURL(blob);
-                // const blobA = blobUrl.replace("blob:","")
-                // const blobB = blobA.replace('"','')
-                // return blobB || ''
-
                 return blobUrl || '';
             });
 
@@ -98,10 +98,6 @@ export function Message() {
             setEmailAttachments([])
         }
     }, [messageAttachments])
-
-    useEffect(() => {
-        console.log('emailAttachments' , emailAttachments)
-    }, [emailAttachments])
 
     useEffect(() => {
         if (index !== null && messages && messages.length > 0) {
@@ -184,7 +180,6 @@ export function Message() {
 
 
     const hideAndShowReplayBox = (type: string = '') => {
-        console.log('type', type)
         setReplyType(type);
         setHideAndShowReplyBox(!hideAndShowReplyBox);
     }

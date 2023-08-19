@@ -8,7 +8,7 @@ import {
     getAllThreads,
     updateThreadsSuccess, updateThreadsError, updateThreads
 } from "@/redux/threads/action-reducer";
-import {ThreadsRequestBody} from "@/models";
+import {Thread, ThreadsRequestBody} from "@/models";
 
 function* getThreads({
                          payload: {

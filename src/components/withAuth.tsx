@@ -42,7 +42,6 @@ export default function withAuth(ProtectedComponent: any) {
         const dispatch = useDispatch();
 
         if (lastMessage) {
-            console.log(lastMessage)
             const reader = new FileReader();
             reader.onload = function () {
                 if (reader.result) {

@@ -13,15 +13,16 @@ import InboxTab from "@/components/inbox/tabs-components/inbox-tab";
 import {StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {getAllThreads} from "@/redux/threads/action-reducer";
+import {getAllThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {updateMessageState} from "@/redux/messages/action-reducer";
-import {Thread} from "@/models";
+import {Message, Thread} from "@/models";
 
 export function Threads() {
     const [tab, setTab] = useState<string>('INBOX');
     const [countUnreadMessages, setCountUnreadMessages] = useState<number>(0);
 
     const {threads, isLoading, selectedThread} = useSelector((state: StateType) => state.threads);
+    const {draftSuccess, draft} = useSelector((state: StateType) => state.messages);
     const {selectedAccount, account} = useSelector((state: StateType) => state.accounts);
     const {newMessage} = useSelector((state: StateType) => state.socket);
     const dispatch = useDispatch();
@@ -37,6 +38,25 @@ export function Threads() {
             getAllThread(false);
         }
     }, [getAllThread, newMessage])
+
+    useEffect(() => {
+        if (draftSuccess) {
+            if (draft && selectedThread && selectedThread.id && threads && threads.length > 0) {
+                let currentThreads = [...(threads || [])];
+                let currentThreadIndex = currentThreads.findIndex((thread: Thread) => thread.id === selectedThread.id);
+                let currentMessages = [...(selectedThread.messages || [])];
+                let draftIndex = currentMessages.findIndex((message: Message) => message.id === draft.id);
+                let messages = [...currentThreads[currentThreadIndex].messages!];
+                messages[draftIndex] = draft as Message;
+                currentThreads[currentThreadIndex] = {
+                    ...currentThreads[currentThreadIndex],
+                    messages: [...messages]
+                };
+                dispatch(updateMessageState({draftSuccess: false}));
+                dispatch(updateThreadState({threads: currentThreads}));
+            }
+        }
+    }, [draft, draftSuccess, getAllThread, selectedThread, threads, dispatch])
 
     useEffect(() => {
         setCountUnreadMessages(0);

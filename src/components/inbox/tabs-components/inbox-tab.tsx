@@ -49,7 +49,7 @@ export default function InboxTab(props: InboxTabProps) {
             dispatch(updateThreads({id: item.id, body}));
         }
         dispatch(updateThreadState({selectedThread: item}));
-        dispatch(updateMessageState({selectedMessage: null}));
+        dispatch(updateMessageState({selectedMessage: null, draft: null}));
     }, [dispatch, threads])
 
     // useEffect(() => {
