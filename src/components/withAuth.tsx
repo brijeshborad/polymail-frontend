@@ -30,6 +30,7 @@ export default function withAuth(ProtectedComponent: any) {
         const {lastMessage, sendMessage, readyState} = useWebSocket(socketUrl, {
             share: true,
             shouldReconnect: () => true,
+            reconnectInterval: 0,
             onOpen: () => {
                 console.log('WebSocket connection established.');
             },
