@@ -273,6 +273,7 @@ export function Message() {
                     </div>
                     <div className={styles.mailBodyContent}>
                         {(!isLoading && emailPart) && <iframe src={emailPart} className={styles.mailBody}/>}
+                        {emailAttachments && emailAttachments.length > 0 && ''}
                     </div>
                 </Flex>}
 
