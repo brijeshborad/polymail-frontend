@@ -118,7 +118,7 @@ export default function InboxTab(props: InboxTabProps) {
                     <Input type={'text'} opacity={0} height={0} width={0} padding={0} border={0} outline={0}
                            ref={listRef}/>
 
-                    {threads && threads.length && threads.map((item: Thread, index: number) => (
+                    {threads && threads.length > 0 && threads.map((item: Thread, index: number) => (
                         <div onClick={() => handleClick(item) } key={index}
                              className={`${selectedThread && selectedThread.id === item.id ? styles.selectedThread : ''}`}>
                             <div
