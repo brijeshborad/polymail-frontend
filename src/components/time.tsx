@@ -17,7 +17,20 @@ export function Time(props: TimeProps) {
             return;
         }
         if (days < 1) {
-            timeString = `${date2.diff(date1, 'hour')} hours ago`;
+            const hours = date2.diff(date1, 'hour');
+            if (hours < 1) {
+                const mins = date2.diff(date1, 'minutes');
+                if (mins < 1) {
+                    timeString = `${mins} mins ago`;
+                } else {
+                    const seconds = date2.diff(date1, 'seconds');
+                    if (seconds < 1) {
+                        timeString = `${seconds} seconds ago`;
+                    }
+                }
+            } else {
+                timeString = `${hours} hours ago`;
+            }
         } else if (date2.format('YYYY') === date1.format('YYYY')) {
             timeString = dayjs(props.time).format('MMM DD');
         } else {

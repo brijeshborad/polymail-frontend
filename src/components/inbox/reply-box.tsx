@@ -71,7 +71,7 @@ export function ReplyBox(props: ReplyBoxType) {
             setEmailBody(prevState => (draft?.draftInfo?.body || '').concat(prevState));
         } else {
             // Add signature to email body
-            if (selectedAccount && selectedAccount.signature) {
+            if (selectedAccount && selectedAccount.signature && props.replyType !== 'forward') {
                 setEmailBody(selectedAccount.signature);
             }
         }
@@ -222,10 +222,11 @@ export function ReplyBox(props: ReplyBoxType) {
             }
             setEmailBody(value);
         }
+
         let body = {
             subject: subject || selectedMessage?.subject,
             to: recipients?.items,
-            ...(selectedThread ? {threadId: selectedThread.id} : {}),
+            ...((selectedThread && props.replyType !== 'forward') ? {threadId: selectedThread.id} : {}),
             ...(cc?.items && cc?.items.length > 0 ? {cc: cc?.items} : {}),
             ...(bcc?.items && bcc?.items.length > 0 ? {bcc: bcc?.items} : {}),
             draftInfo: {
@@ -233,8 +234,7 @@ export function ReplyBox(props: ReplyBoxType) {
                 ...(attachments && attachments.length > 0 ? {attachments} : {})
             }
         }
-        console.log('draft---', draft);
-        console.log('body---', body);
+
         debounce(() => {
             if (selectedAccount && selectedAccount.id) {
                 if (draft && draft.id) {
@@ -287,21 +287,10 @@ export function ReplyBox(props: ReplyBoxType) {
             let emailSubject = `Re: ${selectedMessage.subject}`;
             if (props.replyType === 'forward') {
                 emailSubject = `Fwd: ${selectedMessage.subject}`;
-                // convert blob URL to HTML
-                const fetchBlobContent = async () => {
-                    const blobUrl: any = props.emailPart
-                    const response = await fetch(blobUrl);
-                    const blob = await response.blob();
 
-                    const reader = new FileReader();
-                    reader.onload = () => {
-                        const htmlString: any = reader.result;
-                        setHtmlContent(htmlString);
-                    };
-                    reader.readAsText(blob, 'utf-8');
-                };
+                let decoded = Buffer.from(props.emailPart || '', 'base64').toString('ascii');
+                setHtmlContent(decoded);
 
-                fetchBlobContent();
             } else {
                 setRecipients((prevState) => ({
                     items: !isCompose ? (draft ? draft.to : [selectedMessage.from]) : [],
@@ -326,19 +315,19 @@ export function ReplyBox(props: ReplyBoxType) {
 
 
     useEffect(() => {
-        if (props.replyType === 'forward' && selectedMessage && !draft) {
+        if (props.replyType === 'forward' && selectedMessage && !draft && htmlContent && selectedAccount) {
             const forwardContent: string = `
-                ---------- Forwarded message ---------<br/>
-From: ${selectedMessage.from}<br/>
-Date: ${dayjs(selectedMessage.created, 'ddd, MMM DD, YYYY [at] hh:mm A')}<br/>
-Subject: ${selectedMessage.subject}<br/>
-To: ${selectedMessage.to}<br/>
-${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}<br/><br/><br/>`;
+             <p>---------- Forwarded message ----------
+From: ${selectedMessage.from}
+Date: ${dayjs(selectedMessage.created, 'ddd, MMM DD, YYYY [at] hh:mm A')}
+Subject: ${selectedMessage.subject}
+To: ${selectedMessage.to}
+${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><br/><br/><br/>`;
 
             // set converted html to email body
-            setEmailBody(prevState => (forwardContent + (htmlContent || '')).concat(prevState));
+            setEmailBody(prevState => (forwardContent + (htmlContent || '') + (selectedAccount.signature || '')).concat(prevState));
         }
-    }, [htmlContent,selectedMessage,draft, props.replyType])
+    }, [htmlContent,selectedMessage,draft, props.replyType, selectedAccount])
 
 
     const sendMessages = (scheduled: boolean = false) => {

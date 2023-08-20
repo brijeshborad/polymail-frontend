@@ -321,7 +321,7 @@ export function Message() {
                             </Flex>
                         </div>
 
-                        <ReplyBox replyType={replyType} emailPart={emailPart}/>
+                        <ReplyBox replyType={replyType} emailPart={(messagePart?.data || '')}/>
                     </Flex>
                 </div>}
             </Flex>
