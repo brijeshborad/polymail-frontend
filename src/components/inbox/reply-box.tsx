@@ -326,19 +326,19 @@ export function ReplyBox(props: ReplyBoxType) {
 
 
     useEffect(() => {
-        if (props.replyType === 'forward' && selectedMessage) {
+        if (props.replyType === 'forward' && selectedMessage && !draft) {
             const forwardContent: string = `
-                ---------- Forwarded message ---------
-                From: ${selectedMessage.from}
-                Date: ${dayjs(selectedMessage.created, 'ddd, MMM DD, YYYY [at] hh:mm A')}
-                Subject: ${selectedMessage.subject}
-                To: ${selectedMessage.to}
-                Cc: ${selectedMessage.cc ? (selectedMessage.cc || []).join(',') : ''}<br/><br/><br/>`;
+                ---------- Forwarded message ---------<br/>
+From: ${selectedMessage.from}<br/>
+Date: ${dayjs(selectedMessage.created, 'ddd, MMM DD, YYYY [at] hh:mm A')}<br/>
+Subject: ${selectedMessage.subject}<br/>
+To: ${selectedMessage.to}<br/>
+${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}<br/><br/><br/>`;
 
             // set converted html to email body
             setEmailBody(prevState => (forwardContent + (htmlContent || '')).concat(prevState));
         }
-    }, [htmlContent,selectedMessage, props.replyType])
+    }, [htmlContent,selectedMessage,draft, props.replyType])
 
 
     const sendMessages = (scheduled: boolean = false) => {
