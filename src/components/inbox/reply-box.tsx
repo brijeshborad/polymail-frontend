@@ -25,7 +25,7 @@ import RichTextEditor from "@/components/rich-text-editor";
 import {ReplyBoxType} from "@/types/props-types/replyBox.type";
 import dayjs from "dayjs";
 
-declare type RecipientsType = { items: (string | undefined)[], value: string };
+declare type RecipientsType = { items: string[], value: string };
 
 export function ReplyBox(props: ReplyBoxType) {
     const {isOpen, onOpen, onClose} = useDisclosure();
@@ -233,6 +233,8 @@ export function ReplyBox(props: ReplyBoxType) {
                 ...(attachments && attachments.length > 0 ? {attachments} : {})
             }
         }
+        console.log('draft---', draft);
+        console.log('body---', body);
         debounce(() => {
             if (selectedAccount && selectedAccount.id) {
                 if (draft && draft.id) {
@@ -302,13 +304,13 @@ export function ReplyBox(props: ReplyBoxType) {
                 fetchBlobContent();
             } else {
                 setRecipients((prevState) => ({
-                    items: !isCompose ? [selectedMessage.from] : [],
+                    items: !isCompose ? (draft ? draft.to : [selectedMessage.from]) : [],
                     value: prevState.value
                 }));
 
                 if (props.replyType === 'reply-all' && selectedMessage.cc) {
                     setCC({
-                        items: selectedMessage.cc,
+                        items: draft ? (draft.cc || []) : selectedMessage.cc,
                         value: ''
                     });
                     setHideCcFields(true);

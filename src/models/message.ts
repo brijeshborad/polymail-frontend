@@ -9,7 +9,7 @@ export interface Message {
     subject?: string,
     snippet?: string,
     from: string,
-    to?: string[],
+    to: string[],
     cc?: string[],
     headers?: MessageHeaders[],
     contentRoot?: string,
@@ -17,14 +17,16 @@ export interface Message {
 }
 
 export interface MessageDraft {
+    id?: string,
+    from?: string,
+    to: string[],
+    cc?: string[],
+    threadId?: string,
+    mailboxes?: string[],
+    providerId?: string,
+    draftInfo?: MessageDraftInfo,
     contentRoot?: string,
     created?: string,
-    draftInfo?: MessageDraftInfo,
-    from?: string,
-    mailboxes?: string[],
-    id?: string,
-    providerId?: string,
-    threadId?: string,
 }
 
 export interface sendMessage {
@@ -48,7 +50,7 @@ export interface MessageDraftInfo {
 
 export interface MessageRequestBody {
     subject?: string,
-    to?: string[],
+    to: string[],
     body?: string,
     draftInfo?: MessageDraftInfo,
     mailboxes?: string[] | undefined,

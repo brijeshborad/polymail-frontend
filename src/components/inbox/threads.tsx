@@ -89,7 +89,7 @@ export function Threads() {
         //Implementing the setInterval method
         const interval = setInterval(() => {
             getAllThread(false);
-        }, 10000);
+        }, Number(process.env.THREAD_LIST_REFRESH_INTERVAL || 10000));
 
         //Clearing the interval
         return () => clearInterval(interval);

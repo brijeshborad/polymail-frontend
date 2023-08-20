@@ -11,7 +11,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {getMessageAttachments, getMessageParts, updateMessageState} from "@/redux/messages/action-reducer";
 import {ReplyBox} from "@/components/inbox/reply-box";
 import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
-import {Message as MessageModel, Thread} from "@/models";
+import {Message as MessageModel, MessageDraft, Thread} from "@/models";
 import {BlueStarIcon} from "@/icons/star-blue.icon";
 import {MessageAttachments} from "@/models/messageAttachments";
 
@@ -48,6 +48,7 @@ export function Message() {
     //     }
     // }, [cachedThreads, dispatch, selectedThread])
 
+
     useEffect(() => {
         if (selectedThread && selectedThread?.id) {
             setIndex(null);
@@ -57,17 +58,19 @@ export function Message() {
         }
     }, [dispatch, selectedThread])
 
+
     useEffect(() => {
         if (messages && messages.length > 0) {
             // remove draft messages and set index to last inbox message
             const inboxMessages: MessageModel[] = messages.filter((msg: MessageModel) => !(msg.mailboxes || []).includes('DRAFT'));
             const draftMessage = messages.findLast((msg: MessageModel) => (msg.mailboxes || []).includes('DRAFT'));
             if (draftMessage) {
-                dispatch(updateMessageState({draft: draftMessage}));
+                dispatch(updateMessageState({draft: draftMessage as MessageDraft}));
             }
             setIndex(val => !val ? inboxMessages.length - 1 : val);
         }
     }, [messages, dispatch])
+
 
     useEffect(() => {
         if (messagePart && messagePart.data) {
@@ -79,6 +82,7 @@ export function Message() {
             setEmailPart('')
         }
     }, [messagePart])
+
 
     useEffect(() => {
         // convert blob url to image url
@@ -100,6 +104,7 @@ export function Message() {
         }
     }, [messageAttachments])
 
+
     useEffect(() => {
         if (index !== null && messages && messages.length > 0) {
             if (messages[index]) {
@@ -114,11 +119,13 @@ export function Message() {
         }
     }, [dispatch, index, messages])
 
+
     useEffect(() => {
         if (message) {
             setMessageContent(message);
         }
     }, [message])
+
 
     const showPreNextMessage = (type: string) => {
         if (type === 'up') {
@@ -132,6 +139,7 @@ export function Message() {
         }
     }
 
+
     const onClose = () => {
         setHideAndShowReplyBox(false)
         if (replyType.length) {
@@ -142,6 +150,7 @@ export function Message() {
         setReplyType('')
         dispatch(updateMessageState({isCompose: false}));
     }
+
 
     const updateMailBox = (messageBox: string) => {
         if (selectedThread && selectedThread.id) {
@@ -185,6 +194,7 @@ export function Message() {
         setReplyType(type);
         setHideAndShowReplyBox(!hideAndShowReplyBox);
     }
+
 
     return (
         <Box className={styles.mailBox}>

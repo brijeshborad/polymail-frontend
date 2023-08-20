@@ -81,6 +81,7 @@ function* sendDraftMessage({payload: {id, now, delay, undo}}: PayloadAction<{ id
 
 function* patchPartialMessage({payload: {id, body}}: PayloadAction<{ id: string, body: MessageRequestBody }>) {
     try {
+        console.log('body----------', body);
         const response: AxiosResponse = yield ApiService.callPatch(`messages/${id}`, body);
         yield put(updatePartialMessageSuccess(response));
     } catch (error: any) {
