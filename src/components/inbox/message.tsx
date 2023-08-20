@@ -24,6 +24,7 @@ export function Message() {
     const [emailAttachments, setEmailAttachments] = useState<any>([]);
     const [hideAndShowReplyBox, setHideAndShowReplyBox] = useState<boolean>(false);
     const [replyType, setReplyType] = useState<string>('');
+    const [messageSenders, setMessageSenders] = useState<string[]>([]);
     const {
         messages,
         messagePart,
@@ -103,6 +104,7 @@ export function Message() {
         if (index !== null && messages && messages.length > 0) {
             if (messages[index]) {
                 setMessageContent(messages[index]);
+                setMessageSenders([messages[index].from,...(messages[index].cc || [])])
                 dispatch(updateMessageState({selectedMessage: messages[index]}));
                 // We already set index to last inbox message
                 dispatch(getMessageParts({id: messages[index].id}));
@@ -263,9 +265,9 @@ export function Message() {
                             <Flex flexDir={'column'} marginLeft={'5'} width={'100%'}>
                                 <Heading as='h4' size='md'>{messageContent?.subject || ''}</Heading>
                                 <Flex justifyContent={'space-between'} align={'center'}>
-                                    {messageContent?.to && messageContent?.to.length > 0 &&
+                                    {messageSenders && messageSenders.length > 0 &&
                                         <Text fontSize='sm'>
-                                            {messageContent?.to[0]} {messageContent?.to.length - 1 > 0 && `and ${messageContent?.to.length - 1} others`}
+                                            {messageSenders[0]} {messageSenders.length - 1 > 0 && `and ${messageSenders.length - 1} others`}
                                         </Text>
                                     }
                                     <div className={styles2.receiveTime}>

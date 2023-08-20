@@ -8,7 +8,7 @@ export interface Message {
     mailboxes?: string[],
     subject?: string,
     snippet?: string,
-    from?: string,
+    from: string,
     to?: string[],
     cc?: string[],
     headers?: MessageHeaders[],
