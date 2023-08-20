@@ -84,6 +84,23 @@ export function Message() {
     }, [messagePart])
 
 
+    // function convertInternalCssToInline() {
+    //     var elements = document.querySelectorAll('*'); // Select all elements
+    //
+    //     elements.forEach(function (element) {
+    //         var computedStyles = getComputedStyle(element); // Get computed styles
+    //
+    //         for (var prop in computedStyles) {
+    //             if (computedStyles.hasOwnProperty(prop)) {
+    //                 if (typeof computedStyles[prop] === 'string') {
+    //                     // Apply computed styles as inline styles
+    //                     element.style[prop] = computedStyles[prop];
+    //                 }
+    //             }
+    //         }
+    //     });
+    // }
+
     useEffect(() => {
         // convert blob url to image url
         if (messageAttachments && messageAttachments.length) {
