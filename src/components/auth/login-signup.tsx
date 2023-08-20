@@ -113,7 +113,7 @@ export function LoginSignup({type = 'login'}: LoginProps) {
                 <Text className={styles.loginInfo}>
                     {type === 'login' ? `Don't have an account?` : 'Already have an account?'}
                     <Link href={type === 'login' ? '/auth/signup' : '/auth/login'}>
-                        Sign{type === 'login' ? `Up` : 'In'}
+                        Sign {type === 'login' ? `Up` : 'In'}
                     </Link>
                 </Text>
             </Flex>

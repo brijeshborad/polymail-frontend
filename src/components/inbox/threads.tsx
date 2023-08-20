@@ -93,7 +93,7 @@ export function Threads() {
 
         //Clearing the interval
         return () => clearInterval(interval);
-    }, [threads]);
+    }, [threads, getAllThread]);
 
     const changeEmailTabs = (value: string) => {
         setTab(value);
