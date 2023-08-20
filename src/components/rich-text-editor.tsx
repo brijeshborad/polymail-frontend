@@ -11,9 +11,13 @@ import {
     EditorState,
     convertToRaw,
     ContentState,
-    convertFromHTML,
 } from 'draft-js';
 import draftToHtml from "draftjs-to-html";
+
+let htmlToDraft: any = null;
+if (typeof window === 'object') {
+    htmlToDraft = require('html-to-draftjs').default;
+}
 
 export default function RichTextEditor({onChange, placeholder, className, value, initialUpdated}: RichTextEditorProps) {
     const [editorState, setEditorState] = useState<EditorState>(EditorState.createEmpty());
@@ -32,7 +36,7 @@ export default function RichTextEditor({onChange, placeholder, className, value,
     useEffect(() => {
         if (value) {
             if (!initialUpdated) {
-                setEditorState(EditorState.createWithContent(ContentState.createFromBlockArray(convertFromHTML(value) as any)));
+                setEditorState(EditorState.createWithContent(ContentState.createFromBlockArray(htmlToDraft(value))));
             }
         }
     }, [value, initialUpdated])
