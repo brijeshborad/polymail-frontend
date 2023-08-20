@@ -263,7 +263,11 @@ export function Message() {
                             <Flex flexDir={'column'} marginLeft={'5'} width={'100%'}>
                                 <Heading as='h4' size='md'>{messageContent?.subject || ''}</Heading>
                                 <Flex justifyContent={'space-between'} align={'center'}>
-                                    <Text fontSize='sm'>Michel Eisner to Lee Clow and 4 others</Text>
+                                    {messageContent?.to && messageContent?.to.length > 0 &&
+                                        <Text fontSize='sm'>
+                                            {messageContent?.to[0]} {messageContent?.to.length - 1 > 0 && `and ${messageContent?.to.length - 1} others`}
+                                        </Text>
+                                    }
                                     <div className={styles2.receiveTime}>
                                         <Time time={messageContent?.created || ''} isShowFullTime={true}/>
                                     </div>

@@ -66,7 +66,7 @@ export default function withAuth(ProtectedComponent: any) {
                             previousHeartbeats[socketUrl] = Date.now();
                         }
                     }
-                }, 2000);
+                }, 5000);
             }
 
             return () => {
