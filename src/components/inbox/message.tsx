@@ -74,7 +74,7 @@ export function Message() {
 
 
     const cacheMessage = useCallback((body: Object | any) => {
-        if (index && messages && messages[index]) {
+        if (index !== null && messages && messages[index]) {
             setCacheMessages(prev => ({
                 ...prev,
                 [messages[index].id]: {
@@ -139,7 +139,6 @@ export function Message() {
         }
     }, [messageAttachments, cacheMessage])
 
-    console.log(cacheMessages);
     useEffect(() => {
         if (index !== null && messages && messages.length > 0) {
             if (messages[index]) {
@@ -162,7 +161,7 @@ export function Message() {
 
             }
         }
-    }, [dispatch, index, messages])
+    }, [cacheMessages, dispatch, index, messages])
 
 
     useEffect(() => {
