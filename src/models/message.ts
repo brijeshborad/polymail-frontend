@@ -1,3 +1,6 @@
+import {MessagePart} from "@/models/messagesPart";
+import {MessageAttachments} from "@/models/messageAttachments";
+
 export interface Message {
     id: string,
     created?: string,
@@ -14,6 +17,8 @@ export interface Message {
     headers?: MessageHeaders[],
     contentRoot?: string,
     draftInfo?: MessageDraftInfo,
+    cachedBody: MessagePart | null,
+    cachedAttachments: MessageAttachments[] | [],
 }
 
 export interface MessageDraft {

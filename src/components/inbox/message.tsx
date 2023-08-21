@@ -6,12 +6,12 @@ import {Time} from "@/components";
 import {ArchiveIcon, FolderIcon, StarIcon, TimeSnoozeIcon, TrashIcon, ReplyIcon, ForwardIcon} from "@/icons";
 import Image from "next/image";
 import {StateType} from "@/types";
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {getMessageAttachments, getMessageParts, updateMessageState} from "@/redux/messages/action-reducer";
 import {ReplyBox} from "@/components/inbox/reply-box";
 import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
-import {Message as MessageModel, MessageDraft, Thread} from "@/models";
+import {Message as MessageModel, MessageDraft, MessagePart, Thread} from "@/models";
 import {BlueStarIcon} from "@/icons/star-blue.icon";
 import {MessageAttachments} from "@/models/messageAttachments";
 
@@ -34,6 +34,7 @@ export function Message() {
         messageAttachments
     } = useSelector((state: StateType) => state.messages);
     const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
+    const [cacheMessages, setCacheMessages] = useState<{ [key: string]: { body: MessagePart, attachments: MessageAttachments[] } }>({});
 
     const dispatch = useDispatch();
 
@@ -72,16 +73,31 @@ export function Message() {
     }, [messages, dispatch])
 
 
+    const cacheMessage = useCallback((body: Object | any) => {
+        if (index && messages && messages[index]) {
+            setCacheMessages(prev => ({
+                ...prev,
+                [messages[index].id]: {
+                    ...prev[messages[index].id],
+                    ...body
+                }
+            }))
+        }
+    }, [index, messages])
+
+
     useEffect(() => {
         if (messagePart && messagePart.data) {
+            cacheMessage({body: messagePart});
             let decoded = Buffer.from(messagePart.data || '', 'base64').toString('ascii');
             const blob = new Blob([decoded], {type: "text/html"});
             const blobUrl = window.URL.createObjectURL(blob);
             setEmailPart(blobUrl);
         } else {
+            cacheMessage({body: {data: ''}});
             setEmailPart('')
         }
-    }, [messagePart])
+    }, [messagePart, cacheMessage])
 
 
     // function convertInternalCssToInline() {
@@ -104,6 +120,7 @@ export function Message() {
     useEffect(() => {
         // convert blob url to image url
         if (messageAttachments && messageAttachments.length) {
+            cacheMessage({attachments: messageAttachments});
             const emailParts = messageAttachments.map((attachment: MessageAttachments) => {
                 const decoded = Buffer.from(attachment.data || '', 'base64').toString('ascii');
                 let fileType = [''];
@@ -117,20 +134,31 @@ export function Message() {
 
             setEmailAttachments((prevState: EmailState) => (prevState || '').concat(emailParts.join('')));
         } else {
+            cacheMessage({attachments: []});
             setEmailAttachments([])
         }
-    }, [messageAttachments])
+    }, [messageAttachments, cacheMessage])
 
-
+    console.log(cacheMessages);
     useEffect(() => {
         if (index !== null && messages && messages.length > 0) {
             if (messages[index]) {
                 setMessageContent(messages[index]);
                 setMessageSenders([messages[index].from, ...(messages[index].cc || [])])
                 dispatch(updateMessageState({selectedMessage: messages[index]}));
+
                 // We already set index to last inbox message
-                dispatch(getMessageParts({id: messages[index].id}));
-                dispatch(getMessageAttachments({id: messages[index].id}));
+                if (cacheMessages[messages[index].id] && cacheMessages[messages[index].id].body) {
+                    dispatch(updateMessageState({messagePart: cacheMessages[messages[index].id].body}));
+                } else {
+                    dispatch(getMessageParts({id: messages[index].id}));
+                }
+
+                if (cacheMessages[messages[index].id] && cacheMessages[messages[index].id].attachments) {
+                    dispatch(updateMessageState({messageAttachments: cacheMessages[messages[index].id].attachments}));
+                } else {
+                    dispatch(getMessageAttachments({id: messages[index].id}));
+                }
 
             }
         }
