@@ -24,32 +24,42 @@ export default function InboxTab(props: InboxTabProps) {
     const dispatch = useDispatch();
 
     const handleClick = useCallback((item: Thread) => {
-        // if (isClicked && props.content) {
-        //     const itemIndex = (props.content || []).indexOf(item);
-        //     setCursor(itemIndex);
-        // }
-
-        if ((item.mailboxes || []).includes('UNREAD')) {
-            let currentThreads = [...threads || []] as Thread[];
-            let threadData = {...(item) || {}} as Thread;
-            let index1 = currentThreads.findIndex((item: Thread) => item.id === threadData?.id);
-            let finalArray = (item.mailboxes || []).filter(function (item: string) {
-                return item !== 'UNREAD'
-            })
-            let body = {
-                mailboxes: [
-                    ...finalArray
-                ]
+        if (props.tab === 'DRAFT') {
+            if (item && item.messages && item.messages[0]) {
+                dispatch(updateMessageState({isCompose: false}));
+                setTimeout(() => {
+                    if (item && item.messages && item.messages[0]) {
+                        dispatch(updateMessageState({
+                            selectedMessage: null,
+                            draft: {...item.messages[0]},
+                            isCompose: true
+                        }));
+                    }
+                }, 500)
             }
-            currentThreads[index1] = {
-                ...currentThreads[index1],
-                mailboxes: body?.mailboxes || []
-            };
-            dispatch(updateThreadState({threads: currentThreads}));
-            dispatch(updateThreads({id: item.id, body}));
+        } else {
+            if ((item.mailboxes || []).includes('UNREAD')) {
+                let currentThreads = [...threads || []] as Thread[];
+                let threadData = {...(item) || {}} as Thread;
+                let index1 = currentThreads.findIndex((item: Thread) => item.id === threadData?.id);
+                let finalArray = (item.mailboxes || []).filter(function (item: string) {
+                    return item !== 'UNREAD'
+                })
+                let body = {
+                    mailboxes: [
+                        ...finalArray
+                    ]
+                }
+                currentThreads[index1] = {
+                    ...currentThreads[index1],
+                    mailboxes: body?.mailboxes || []
+                };
+                dispatch(updateThreadState({threads: currentThreads}));
+                dispatch(updateThreads({id: item.id, body}));
+            }
+            dispatch(updateThreadState({selectedThread: item}));
+            dispatch(updateMessageState({selectedMessage: null, draft: null}));
         }
-        dispatch(updateThreadState({selectedThread: item}));
-        dispatch(updateMessageState({selectedMessage: null, draft: null}));
     }, [dispatch, threads])
 
     // useEffect(() => {

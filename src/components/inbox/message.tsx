@@ -126,7 +126,7 @@ export function Message() {
         if (index !== null && messages && messages.length > 0) {
             if (messages[index]) {
                 setMessageContent(messages[index]);
-                setMessageSenders([messages[index].from,...(messages[index].cc || [])])
+                setMessageSenders([messages[index].from, ...(messages[index].cc || [])])
                 dispatch(updateMessageState({selectedMessage: messages[index]}));
                 // We already set index to last inbox message
                 dispatch(getMessageParts({id: messages[index].id}));
@@ -200,7 +200,7 @@ export function Message() {
                     ...currentThreads[index1],
                     mailboxes: body?.mailboxes || []
                 };
-                dispatch(updateThreadState({threads: currentThreads}));
+                dispatch(updateThreadState({threads: currentThreads, selectedThread: currentThreads[index1]}));
                 dispatch(updateThreads({id: selectedThread.id, body}));
             }
         }
@@ -268,16 +268,16 @@ export function Message() {
                                 </Tooltip>
 
                                 <Tooltip
-                                    label={(messageContent?.mailboxes || []).includes('STARRED') ? 'Starred' : 'Not Starred'}
+                                    label={(selectedThread?.mailboxes || []).includes('STARRED') ? 'Starred' : 'Not Starred'}
                                     placement='bottom' bg='gray.300' color='black'>
                                     <div onClick={() => updateMailBox('STARRED')}>
-                                        {(messageContent?.mailboxes || []).includes('STARRED') && <BlueStarIcon/>}
-                                        {!(messageContent?.mailboxes || []).includes('STARRED') && <StarIcon/>}
+                                        {(selectedThread?.mailboxes || []).includes('STARRED') && <BlueStarIcon/>}
+                                        {!(selectedThread?.mailboxes || []).includes('STARRED') && <StarIcon/>}
                                     </div>
                                 </Tooltip>
 
                                 <Tooltip
-                                    label={(messageContent?.mailboxes || []).includes('SPAM') ? 'Spammed' : 'Mark As Spam'}
+                                    label={(selectedThread?.mailboxes || []).includes('SPAM') ? 'Spammed' : 'Mark As Spam'}
                                     placement='bottom' bg='gray.300' color='black'>
                                     <div onClick={() => updateMailBox('SPAM')}>
                                         <WarningIcon className={styles.colorGray}/>
@@ -293,9 +293,9 @@ export function Message() {
                                 <Heading as='h4' size='md'>{messageContent?.subject || ''}</Heading>
                                 <Flex justifyContent={'space-between'} align={'center'}>
                                     {messageSenders && messageSenders.length > 0 &&
-                                        <Text fontSize='sm'>
-                                            {messageSenders[0]} {messageSenders.length - 1 > 0 && `and ${messageSenders.length - 1} others`}
-                                        </Text>
+                                    <Text fontSize='sm'>
+                                        {messageSenders[0]} {messageSenders.length - 1 > 0 && `and ${messageSenders.length - 1} others`}
+                                    </Text>
                                     }
                                     <div className={styles2.receiveTime}>
                                         <Time time={messageContent?.created || ''} isShowFullTime={true}/>
@@ -312,7 +312,8 @@ export function Message() {
 
                 {!hideAndShowReplyBox &&
                 <Flex align={'center'} padding={'10px 20px'}>
-                    <Button className={styles.hideButton} variant='outline' onClick={() => hideAndShowReplayBox('reply')}>
+                    <Button className={styles.hideButton} variant='outline'
+                            onClick={() => hideAndShowReplayBox('reply')}>
                         <ReplyIcon/> Reply
                     </Button>
                     <Button className={styles.hideButton} variant='outline'

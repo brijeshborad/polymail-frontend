@@ -67,15 +67,20 @@ export function ReplyBox(props: ReplyBoxType) {
 
     useEffect(() => {
         // Add signature and draft to email body
-        if (draft && draft.draftInfo && draft.draftInfo.body && !isCompose) {
-            setEmailBody(prevState => (draft?.draftInfo?.body || '').concat(prevState));
+        if (draft && draft.draftInfo && draft.draftInfo.body) {
+            if (!isCompose) {
+                setEmailBody(prevState => (draft?.draftInfo?.body || '').concat(prevState));
+            } else {
+                // setBoxUpdatedFirstTime(false);
+                setEmailBody(draft?.draftInfo?.body || '');
+            }
         } else {
             // Add signature to email body
             if (selectedAccount && selectedAccount.signature && props.replyType !== 'forward') {
                 setEmailBody(selectedAccount.signature);
             }
         }
-    }, [draft, isCompose, selectedAccount])
+    }, [draft, isCompose, props.replyType, selectedAccount])
 
 
     useEffect(() => {

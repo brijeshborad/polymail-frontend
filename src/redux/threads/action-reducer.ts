@@ -8,6 +8,7 @@ const initialState: any = {
     isLoading: false,
     error: null,
     selectedThread: null,
+    updateSuccess: false,
 } as InitialThreadStateType
 
 const threadsSlice = createSlice({
@@ -32,7 +33,7 @@ const threadsSlice = createSlice({
         },
 
         updateThreads: (state: InitialThreadStateType, _action: PayloadAction<{ id?: string, body?: Thread }>) => {
-            return {...state, thread: null, error: null, isLoading: false}
+            return {...state, thread: null, error: null, isLoading: false, updateSuccess: false}
         },
         updateThreadsSuccess: (state: InitialThreadStateType, {payload: thread}: PayloadAction<{}>) => {
             let currentThreads = [...(current(state).threads || [])] as Thread[];
@@ -42,10 +43,10 @@ const threadsSlice = createSlice({
                 ...currentThreads[index1],
                 mailboxes: [...(threadData.mailboxes ?? [])]
             };
-            return {...state, threads: [...currentThreads], error: null, isLoading: false}
+            return {...state, threads: [...currentThreads], error: null, isLoading: false, updateSuccess: true}
         },
         updateThreadsError: (state: InitialThreadStateType, {payload: error}: PayloadAction<any>) => {
-            return {...state, thread: null, error, isLoading: false}
+            return {...state, thread: null, error, isLoading: false, updateSuccess: false}
         },
 
         updateThreadState: (state: InitialThreadStateType, action: PayloadAction<InitialThreadStateType>) => {

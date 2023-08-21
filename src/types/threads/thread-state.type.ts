@@ -6,4 +6,5 @@ export declare type InitialThreadStateType = {
     isLoading?: boolean
     error?: Error | any
     selectedThread?: Thread | null
+    updateSuccess?: boolean
 }

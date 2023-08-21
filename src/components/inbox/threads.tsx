@@ -21,7 +21,7 @@ export function Threads() {
     const [tab, setTab] = useState<string>('INBOX');
     const [countUnreadMessages, setCountUnreadMessages] = useState<number>(0);
 
-    const {threads, isLoading, selectedThread} = useSelector((state: StateType) => state.threads);
+    const {threads, isLoading, selectedThread, updateSuccess} = useSelector((state: StateType) => state.threads);
     const {draftSuccess, draft} = useSelector((state: StateType) => state.messages);
     const {selectedAccount, account} = useSelector((state: StateType) => state.accounts);
     const {newMessage} = useSelector((state: StateType) => state.socket);
@@ -38,6 +38,12 @@ export function Threads() {
             getAllThread(false);
         }
     }, [getAllThread, newMessage])
+
+    useEffect(() => {
+        if (updateSuccess) {
+            getAllThread(false);
+        }
+    }, [updateSuccess, getAllThread])
 
     useEffect(() => {
         if (draftSuccess) {
