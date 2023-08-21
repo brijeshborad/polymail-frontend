@@ -19,7 +19,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {googleAuthLink} from "@/redux/auth/action-reducer";
 import Router from "next/router";
 import {StateType} from "@/types";
-import React, {useCallback, useEffect, useState} from "react";
+import React, {ChangeEvent, useCallback, useEffect, useState} from "react";
 import {getAllOrganizations, updateOrganizationState} from "@/redux/organizations/action-reducer";
 import {Account, Organization, User} from "@/models";
 import {getAllAccount, getSyncAccount, updateAccountState} from "@/redux/accounts/action-reducer";
@@ -27,6 +27,7 @@ import LocalStorageService from "@/utils/localstorage.service";
 import {ComposeIcon} from "@/icons/compose.icon";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 import {Toaster} from "@/components/toaster";
+import {getAllThreads} from "@/redux/threads/action-reducer";
 
 export function Header() {
     const dispatch = useDispatch();
@@ -48,10 +49,6 @@ export function Header() {
         }
     }, [user]);
 
-    // useEffect(() => {
-    //     setWorkspace(selectedOrganization);
-    // }, [selectedOrganization])
-    //
     useEffect(() => {
         if (googleAuthRedirectionLink) {
             window.location.href = googleAuthRedirectionLink.url || '';
@@ -68,7 +65,7 @@ export function Header() {
     }, [getAllAccountAndOrganizationsDetails])
 
     useEffect(() => {
-        if(syncSuccess) {
+        if (syncSuccess) {
             let data = {
                 desc: 'Syncing mails started!',
                 type: 'success'
@@ -145,10 +142,17 @@ export function Header() {
         dispatch(updateMessageState({isCompose: true}))
     }
 
+    const searchThreads = (event: ChangeEvent | any) => {
+        if (event.target.value) {
+            dispatch(getAllThreads({query: event.target.value}));
+        }
+    }
+
     return (
         <Flex className={styles.header} w='100%' align={'center'}>
             <div className={styles.logoContainer}>
-                <Image width="30" height="30" src="/image/logo.png" alt="" className={styles.logo} onClick={() => callSyncAPI()}/>
+                <Image width="30" height="30" src="/image/logo.png" alt="" className={styles.logo}
+                       onClick={() => callSyncAPI()}/>
                 <Tooltip label='Sync Mails' placement='bottom' bg='gray.300' color='black'>
                     <RepeatIcon className={styles.refreshIcon} onClick={() => callSyncAPI()}/>
                 </Tooltip>
@@ -168,7 +172,7 @@ export function Header() {
                     <InputLeftElement pointerEvents='none'>
                         <SearchIcon/>
                     </InputLeftElement>
-                    <Input type='text' placeholder='Search'/>
+                    <Input type='text' placeholder='Search' onChange={(e) => searchThreads(e)}/>
                     <InputRightElement>
                         <div className={styles.inputRight}>
                             ⌘K
@@ -199,7 +203,8 @@ export function Header() {
             {/*    </Menu>*/}
             {/*</div>*/}
 
-            <Button className={styles.composeButton} leftIcon={<ComposeIcon />} colorScheme='blue' variant='outline' onClick={() => openComposeBox()}>
+            <Button className={styles.composeButton} leftIcon={<ComposeIcon/>} colorScheme='blue' variant='outline'
+                    onClick={() => openComposeBox()}>
                 Compose
             </Button>
 
@@ -214,7 +219,7 @@ export function Header() {
                         {accounts && !!accounts.length && accounts?.map((acc, i) => (
                             <MenuItem w='100%' key={i + 1} onClick={() => setAccounts(acc)}>
                                 {acc.email} {selectedAccount?.email === acc.email && (
-                                <CheckIcon ml={8} bg={"green"} p={1} borderRadius={50} w={4} h={4} color={"white"} />
+                                <CheckIcon ml={8} bg={"green"} p={1} borderRadius={50} w={4} h={4} color={"white"}/>
                             )}
                             </MenuItem>
                         ))}

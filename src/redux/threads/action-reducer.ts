@@ -14,7 +14,7 @@ const threadsSlice = createSlice({
     name: 'threads',
     initialState,
     reducers: {
-        getAllThreads: (state: InitialThreadStateType, _action: PayloadAction<{ mailbox?: string, project?: string, account?: string, enriched?: boolean, resetState?: boolean }>) => {
+        getAllThreads: (state: InitialThreadStateType, _action: PayloadAction<{ mailbox?: string, project?: string, account?: string, enriched?: boolean, resetState?: boolean, query?: string }>) => {
             return {
                 ...state,
                 ...(_action.payload.hasOwnProperty('resetState') && _action.payload.resetState ? {threads: []} : {}),
