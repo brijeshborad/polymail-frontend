@@ -4,5 +4,6 @@ export declare type InitialSocketType = {
 
 export declare type SocketMessageType = {
     userId: string,
-    name: string
+    name: string,
+    data?: any
 }

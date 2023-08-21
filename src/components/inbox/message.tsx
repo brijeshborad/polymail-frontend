@@ -8,20 +8,18 @@ import Image from "next/image";
 import {StateType} from "@/types";
 import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {getMessageAttachments, getMessageParts, updateMessageState} from "@/redux/messages/action-reducer";
+import {getImageUrl, getMessageAttachments, getMessageParts, updateMessageState} from "@/redux/messages/action-reducer";
 import {ReplyBox} from "@/components/inbox/reply-box";
 import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {Message as MessageModel, MessageDraft, Thread} from "@/models";
 import {BlueStarIcon} from "@/icons/star-blue.icon";
 import {MessageAttachments} from "@/models/messageAttachments";
 
-type EmailState = string;
-
 export function Message() {
     const [messageContent, setMessageContent] = useState<MessageModel>();
     const [index, setIndex] = useState<number | null>(null);
     const [emailPart, setEmailPart] = useState<string>("");
-    const [emailAttachments, setEmailAttachments] = useState<any>([]);
+    // const [emailAttachments, setEmailAttachments] = useState<any>([]);
     const [hideAndShowReplyBox, setHideAndShowReplyBox] = useState<boolean>(false);
     const [replyType, setReplyType] = useState<string>('');
     const [messageSenders, setMessageSenders] = useState<string[]>([]);
@@ -31,7 +29,8 @@ export function Message() {
         isCompose,
         isLoading,
         message,
-        messageAttachments
+        messageAttachments,
+        selectedMessage
     } = useSelector((state: StateType) => state.messages);
     const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
 
@@ -101,25 +100,18 @@ export function Message() {
     //     });
     // }
 
-    useEffect(() => {
-        // convert blob url to image url
-        if (messageAttachments && messageAttachments.length) {
-            const emailParts = messageAttachments.map((attachment: MessageAttachments) => {
-                const decoded = Buffer.from(attachment.data || '', 'base64').toString('ascii');
-                let fileType = [''];
-                if (attachment.filename) {
-                    fileType = attachment.filename.split('.');
-                }
-                const blob = new Blob([decoded], {type: attachment.mimeType || `image/${fileType[1]}`});
-                const blobUrl = window.URL.createObjectURL(blob);
-                return blobUrl || '';
-            });
-
-            setEmailAttachments((prevState: EmailState) => (prevState || '').concat(emailParts.join('')));
-        } else {
-            setEmailAttachments([])
-        }
-    }, [messageAttachments])
+    // useEffect(() => {
+    //     // convert blob url to image url
+    //     if (messageAttachments && messageAttachments.length) {
+    //         const emailParts = messageAttachments.map((attachment: MessageAttachments) => {
+    //             return attachment.filename || '';
+    //         });
+    //
+    //         setEmailAttachments((prevState: EmailState) => (prevState || '').concat(emailParts.join('')));
+    //     } else {
+    //         setEmailAttachments([])
+    //     }
+    // }, [messageAttachments])
 
 
     useEffect(() => {
@@ -212,6 +204,11 @@ export function Message() {
         setHideAndShowReplyBox(!hideAndShowReplyBox);
     }
 
+    const downloadImage = (item: MessageAttachments) => {
+        if (selectedMessage && selectedMessage.id) {
+            dispatch(getImageUrl({id: selectedMessage.id, attachment: item.id}));
+        }
+    }
 
     return (
         <Box className={styles.mailBox}>
@@ -306,7 +303,7 @@ export function Message() {
                     </div>
                     <div className={styles.mailBodyContent}>
                         {(!isLoading && emailPart) && <iframe src={emailPart} className={styles.mailBody}/>}
-                        {emailAttachments && emailAttachments.length > 0 && ''}
+                        {messageAttachments && !!messageAttachments.length && messageAttachments?.map((item: MessageAttachments, i) => (<p key={i + 1} onClick={() => downloadImage(item)} >{item.filename}</p>))}
                     </div>
                 </Flex>}
 

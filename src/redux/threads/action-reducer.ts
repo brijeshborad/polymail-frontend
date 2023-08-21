@@ -5,6 +5,7 @@ import {Thread} from "@/models";
 const initialState: any = {
     threads: [],
     thread: null,
+    searchThreads: [],
     isLoading: false,
     error: null,
     selectedThread: null,
@@ -49,6 +50,16 @@ const threadsSlice = createSlice({
             return {...state, thread: null, error, isLoading: false, updateSuccess: false}
         },
 
+        searchThreads: (state: InitialThreadStateType, _action: PayloadAction<{ query?: string }>) => {
+            return {  ...state, searchThreads: [], error: null, isLoading: false }
+        },
+        searchThreadsSuccess: (state: InitialThreadStateType, {payload: searchThreads}: PayloadAction<any>) => {
+            return {...state, searchThreads, isLoading: false, error: null}
+        },
+        searchThreadsError: (state: InitialThreadStateType, {payload: error}: PayloadAction<{ error: any }>) => {
+            return {...state, searchThreads: [], isLoading: false, error}
+        },
+
         updateThreadState: (state: InitialThreadStateType, action: PayloadAction<InitialThreadStateType>) => {
             return {...state, ...action.payload}
         }
@@ -62,6 +73,9 @@ export const {
     updateThreadState,
     updateThreads,
     updateThreadsSuccess,
-    updateThreadsError
+    updateThreadsError,
+    searchThreads,
+    searchThreadsSuccess,
+    searchThreadsError
 } = threadsSlice.actions
 export default threadsSlice.reducer

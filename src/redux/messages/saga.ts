@@ -18,7 +18,11 @@ import {
     updatePartialMessageSuccess,
     updatePartialMessageError,
     updatePartialMessage,
-    getMessageAttachmentsSuccess, getMessageAttachmentsError, getMessageAttachments
+    getMessageAttachmentsSuccess,
+    getMessageAttachmentsError,
+    getMessageAttachments,
+    getImageUrlSuccess,
+    getImageUrlError, getImageUrl, AddImageUrlError, AddImageUrlSuccess, AddImageUrl
 } from "@/redux/messages/action-reducer";
 import {MessageDraft, MessageRequestBody} from "@/models";
 
@@ -85,8 +89,30 @@ function* patchPartialMessage({payload: {id, body}}: PayloadAction<{ id: string,
         yield put(updatePartialMessageSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-
         yield put(updatePartialMessageError(error.response.data));
+    }
+}
+
+function* GetImageUrl({payload: {id, attachment}}: PayloadAction<{ id: string, attachment: string }>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callGet(`messages/${id}/attachments/${attachment}`, {});
+        yield put(getImageUrlSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        yield put(getImageUrlError(error.response.data));
+    }
+}
+
+function* AddImageUrlToS3({payload: {id, filename, mimeType}}: PayloadAction<{ id: string,
+        filename?: string,
+        mimeType?: string
+     }>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callPost(`messages/${id}/attachments`, {filename, mimeType});
+        yield put(AddImageUrlSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        yield put(AddImageUrlError(error.response.data));
     }
 }
 
@@ -114,6 +140,14 @@ export function* watchUpdateCurrentDraftMessage() {
     yield takeLatest(updatePartialMessage.type, patchPartialMessage);
 }
 
+export function* watchGetImageUrl() {
+    yield takeLatest(getImageUrl.type, GetImageUrl);
+}
+
+export function* watchAddImageUrlToS3() {
+    yield takeLatest(AddImageUrl.type, AddImageUrlToS3);
+}
+
 
 export default function* rootSaga() {
     yield all([
@@ -123,6 +157,8 @@ export default function* rootSaga() {
         fork(watchSendDraftMessage),
         fork(watchUpdateCurrentDraftMessage),
         fork(watchGetMessagesAttachments),
+        fork(watchGetImageUrl),
+        fork(watchAddImageUrlToS3),
     ]);
 }
 

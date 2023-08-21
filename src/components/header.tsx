@@ -27,7 +27,7 @@ import LocalStorageService from "@/utils/localstorage.service";
 import {ComposeIcon} from "@/icons/compose.icon";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 import {Toaster} from "@/components/toaster";
-import {getAllThreads} from "@/redux/threads/action-reducer";
+import {getAllThreads, searchThreads, updateThreadState} from "@/redux/threads/action-reducer";
 
 export function Header() {
     const dispatch = useDispatch();
@@ -38,8 +38,10 @@ export function Header() {
         // selectedOrganization
     } = useSelector((state: StateType) => state.organizations);
     const {accounts , selectedAccount, success: syncSuccess} = useSelector((state: StateType) => state.accounts);
+    const {threads} = useSelector((state: StateType) => state.threads);
     const {googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
     const [userData, setUserData] = useState<User>();
+    const {newMessage} = useSelector((state: StateType) => state.socket);
 
     const {user} = useSelector((state: StateType) => state.auth);
 
@@ -48,6 +50,16 @@ export function Header() {
             setUserData(user);
         }
     }, [user]);
+
+    useEffect(() => {
+        if (newMessage && newMessage.name === 'SearchResult') {
+            if (newMessage?.data) {
+                Object.keys(newMessage?.data).map((id: string) => {
+                    dispatch(updateThreadState({threads: [newMessage.data[id]]}));
+                })
+            }
+        }
+    }, [newMessage, threads])
 
     useEffect(() => {
         if (googleAuthRedirectionLink) {
@@ -142,9 +154,14 @@ export function Header() {
         dispatch(updateMessageState({isCompose: true}))
     }
 
-    const searchThreads = (event: ChangeEvent | any) => {
+    const searchThreadsData = (event: ChangeEvent | any) => {
         if (event.target.value) {
-            dispatch(getAllThreads({query: event.target.value}));
+            let searchString = `label:${event.target.value}`
+            dispatch(searchThreads({query: searchString}));
+        } else {
+            if (selectedAccount && selectedAccount.id) {
+                dispatch(getAllThreads({mailbox: 'INBOX', account: selectedAccount.id, enriched: true}));
+            }
         }
     }
 
@@ -172,7 +189,7 @@ export function Header() {
                     <InputLeftElement pointerEvents='none'>
                         <SearchIcon/>
                     </InputLeftElement>
-                    <Input type='text' placeholder='Search' onChange={(e) => searchThreads(e)}/>
+                    <Input type='text' placeholder='Search' onChange={(e) => searchThreadsData(e)}/>
                     <InputRightElement>
                         <div className={styles.inputRight}>
                             ⌘K

@@ -6,7 +6,7 @@ import {
     getAllThreadsError,
     getAllThreadsSuccess,
     getAllThreads,
-    updateThreadsSuccess, updateThreadsError, updateThreads
+    updateThreadsSuccess, updateThreadsError, updateThreads, searchThreadsSuccess, searchThreadsError, searchThreads
 } from "@/redux/threads/action-reducer";
 import {ThreadsRequestBody} from "@/models";
 
@@ -44,6 +44,22 @@ function* patchThreads({payload: {id, body}}: PayloadAction<{ id: string, body: 
     }
 }
 
+function* searchAndGetThreads({
+                         payload: {
+                             query
+                         }
+                     }: PayloadAction<{  query?: string }>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callGet(`search`, {
+            ...(query ? {query} : {})
+        });
+        yield put(searchThreadsSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        yield put(searchThreadsError(error.response.data));
+    }
+}
+
 export function* watchGetThreads() {
     yield takeLatest(getAllThreads.type, getThreads);
 }
@@ -52,10 +68,15 @@ export function* watchUpdateThreads() {
     yield takeLatest(updateThreads.type, patchThreads);
 }
 
+export function* watchSearchAndGetThreads() {
+    yield takeLatest(searchThreads.type, searchAndGetThreads);
+}
+
 export default function* rootSaga() {
     yield all([
         fork(watchGetThreads),
         fork(watchUpdateThreads),
+        fork(watchSearchAndGetThreads),
     ]);
 }
 

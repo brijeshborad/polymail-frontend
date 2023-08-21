@@ -14,7 +14,8 @@ const initialState: any = {
     error: null,
     isCompose: false,
     success: false,
-    draftSuccess: false
+    draftSuccess: false,
+    imageUrl: null
 } as InitialMessageStateType
 
 const messagesSlice = createSlice({
@@ -81,6 +82,31 @@ const messagesSlice = createSlice({
             return {...state, error, isLoading: false, draftSuccess: false}
         },
 
+        getImageUrl: (state: InitialMessageStateType, _action: PayloadAction<{ id?: string, attachment?: string }>) => {
+            return {...state, error: null, isLoading: false, success: false}
+        },
+        getImageUrlSuccess: (state: InitialMessageStateType, {payload: imageUrl}: PayloadAction<{}>) => {
+            return {...state, imageUrl, error: null, isLoading: false, success: true}
+        },
+        getImageUrlError: (state: InitialMessageStateType, {payload: error}: PayloadAction<any>) => {
+            return {...state, error, isLoading: false, success: false}
+        },
+
+        AddImageUrl: (state: InitialMessageStateType, _action: PayloadAction<{
+            id?: string,
+                filename?: string,
+                mimeType?: string
+
+        }>) => {
+            return {...state, error: null, isLoading: false, success: false}
+        },
+        AddImageUrlSuccess: (state: InitialMessageStateType, {payload: addImageUrl}: PayloadAction<{}>) => {
+            return {...state, addImageUrl, error: null, isLoading: false, success: true}
+        },
+        AddImageUrlError: (state: InitialMessageStateType, {payload: error}: PayloadAction<any>) => {
+            return {...state, error, isLoading: false, success: false}
+        },
+
         updateMessageState: (state: InitialMessageStateType, action: PayloadAction<InitialMessageStateType>) => {
             return {...state, ...action.payload}
         },
@@ -106,6 +132,12 @@ export const {
     updateMessageState,
     getMessageAttachments,
     getMessageAttachmentsSuccess,
-    getMessageAttachmentsError
+    getMessageAttachmentsError,
+    getImageUrl,
+    getImageUrlSuccess,
+    getImageUrlError,
+    AddImageUrl,
+    AddImageUrlSuccess,
+    AddImageUrlError
 } = messagesSlice.actions
 export default messagesSlice.reducer

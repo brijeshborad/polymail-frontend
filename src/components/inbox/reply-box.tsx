@@ -9,7 +9,15 @@ import {
     MenuButton,
     Menu,
     Modal,
-    ModalContent, ModalHeader, useDisclosure, ModalOverlay, ModalBody, ModalCloseButton, ModalFooter
+    ModalContent,
+    ModalHeader,
+    useDisclosure,
+    ModalOverlay,
+    ModalBody,
+    ModalCloseButton,
+    ModalFooter,
+    Box,
+    createStandaloneToast
 } from "@chakra-ui/react";
 import React, {ChangeEvent, ChangeEventHandler, useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
@@ -17,7 +25,13 @@ import {ChevronDownIcon, CloseIcon, InfoOutlineIcon} from "@chakra-ui/icons";
 import {SingleDatepicker} from "chakra-dayzed-datepicker";
 import {Chip} from "@/components/chip";
 import {FileIcon, LinkIcon, TextIcon} from "@/icons";
-import {createDraft, sendMessage, updateMessageState, updatePartialMessage} from "@/redux/messages/action-reducer";
+import {
+    AddImageUrl,
+    createDraft,
+    sendMessage,
+    updateMessageState,
+    updatePartialMessage
+} from "@/redux/messages/action-reducer";
 import {StateType} from "@/types";
 import {debounce, isEmail} from "@/utils/common.functions";
 import {Toaster} from "@/components/toaster";
@@ -58,7 +72,8 @@ export function ReplyBox(props: ReplyBoxType) {
         selectedMessage,
         draft,
         isCompose,
-        success: sendDraftSuccess
+        success: sendDraftSuccess,
+        addImageUrl
     } = useSelector((state: StateType) => state.messages);
 
     const inputFile = useRef<HTMLInputElement | null>(null)
@@ -82,6 +97,12 @@ export function ReplyBox(props: ReplyBoxType) {
         }
     }, [draft, isCompose, props.replyType, selectedAccount])
 
+    // useEffect(() => {
+    //     console.log('addImageUrl' , addImageUrl)
+    //     if (addImageUrl.url) {
+    //
+    //     }
+    // }, [addImageUrl])
 
     useEffect(() => {
         setHideCcFields(false)
@@ -332,8 +353,26 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
             // set converted html to email body
             setEmailBody(prevState => (forwardContent + (htmlContent || '') + (selectedAccount.signature || '')).concat(prevState));
         }
-    }, [htmlContent,selectedMessage,draft, props.replyType, selectedAccount])
+    }, [htmlContent, selectedMessage, draft, props.replyType, selectedAccount])
 
+    const {toast} = createStandaloneToast()
+    const undoClick = (type: string) => {
+        if (draft && draft.id) {
+            let params = {};
+
+                if (type === 'undo') {
+                    params = {
+                        undo: true
+                    }
+                } else if (type === 'send-now') {
+                    params = {
+                        now: true
+                    }
+                }   
+                dispatch(sendMessage({id: draft.id, ...params}));
+            }
+
+    }
 
     const sendMessages = (scheduled: boolean = false) => {
         if (draft && draft.id) {
@@ -346,9 +385,26 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
                 params = {
                     delay: secondsDifference
                 }
+            } else {
+                let undoToaster: any = {
+                    id: 'poly-toast',
+                    title: 'Success',
+                    status: 'success',
+                    duration: 2000,
+                    isClosable: true,
+                    render: () => (
+                        <Box color='white' p={3} bg='blue.500'>
+                            Send scheduled for Tomorrow, 8:00AM
+                            <Button onClick={() => undoClick('undo')}>Undo</Button>
+                            <Button onClick={() => undoClick('sechangesnd-now')}>Send Now</Button>
+                        </Box>
+                    ),
+                    position: 'bottom-left'
+                }
+                toast(undoToaster)
             }
-
             dispatch(sendMessage({id: draft.id, ...params}));
+
             setRecipients({
                 items: !isCompose && selectedMessage ? [selectedMessage.from] : [],
                 value: "",
@@ -412,21 +468,36 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
 
 
     function handleFileUpload(event: ChangeEventHandler | any) {
-        event.stopPropagation();
-        event.preventDefault();
-        const reader = new FileReader();
-        reader.readAsDataURL(event.target.files[0]);
-        reader.onload = function () {
-            if (reader.result) {
-                setAttachments([...(attachments || []), {
-                    filename: event.target.files[0].name,
-                    data: reader.result.toString()
-                }]);
-            }
-        };
-        reader.onerror = function (error) {
-            console.log('Error: ', error);
-        };
+        let filename = event.target.files[0].name;
+        let mimeType = event.target.files[0].type;
+        console.log('draft' , draft)
+        console.log('selectedMessage' , selectedMessage)
+        if (draft && draft.id) {
+            dispatch(AddImageUrl({id: draft.id, filename, mimeType}));
+        }
+        console.log('imageUrl', addImageUrl)
+        // setAttachments([...(attachments || []), {
+        //     filename: event.target.files[0].name,
+        //     mimeType: event.target.files[0].type
+        // }]);
+
+
+        // event.stopPropagation();
+        // event.preventDefault();
+        // const reader = new FileReader();
+        // reader.readAsDataURL(event.target.files[0]);
+        // reader.onload = function () {
+        //     if (reader.result) {
+        //         setAttachments([...(attachments || []), {
+        //             filename: event.target.files[0].name,
+        //             mimeType: event.target.files[0].type
+        //         }]);
+        //     }
+        // };
+        // reader.onerror = function (error) {
+        //     console.log('Error: ', error);
+        // };
+
     }
 
 
@@ -444,7 +515,9 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
 
     const openCalender = () => {
         onOpen();
-        setScheduledDate(new Date());
+        let today = new Date();
+        today.setDate(today.getDate() + 1);
+        setScheduledDate(today);
     }
 
     return (
