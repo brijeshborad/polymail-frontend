@@ -21,8 +21,8 @@ import {
     getMessageAttachmentsSuccess,
     getMessageAttachmentsError,
     getMessageAttachments,
-    getImageUrlSuccess,
-    getImageUrlError, getImageUrl, AddImageUrlError, AddImageUrlSuccess, AddImageUrl
+    getAttachmentDownloadUrl,
+    getAttachmentDownloadUrlError, getAttachmentDownloadUrlSuccess, AddImageUrlError, AddImageUrlSuccess, AddImageUrl
 } from "@/redux/messages/action-reducer";
 import {MessageDraft, MessageRequestBody} from "@/models";
 
@@ -93,22 +93,29 @@ function* patchPartialMessage({payload: {id, body}}: PayloadAction<{ id: string,
     }
 }
 
-function* GetImageUrl({payload: {id, attachment}}: PayloadAction<{ id: string, attachment: string }>) {
+function* getAttachmentUrl({payload: {id, attachment}}: PayloadAction<{ id: string, attachment: string }>) {
     try {
         const response: AxiosResponse = yield ApiService.callGet(`messages/${id}/attachments/${attachment}`, {});
-        yield put(getImageUrlSuccess(response));
+        yield put(getAttachmentDownloadUrlSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(getImageUrlError(error.response.data));
+        yield put(getAttachmentDownloadUrlError(error.response.data));
     }
 }
 
-function* AddImageUrlToS3({payload: {id, filename, mimeType}}: PayloadAction<{ id: string,
-        filename?: string,
-        mimeType?: string
+function* generateAttachmentUploadUrl({payload: {id, file}}: PayloadAction<{ id: string,
+        file: File
      }>) {
     try {
-        const response: AxiosResponse = yield ApiService.callPost(`messages/${id}/attachments`, {filename, mimeType});
+        console.log(file);
+        const {name, type} = file;
+        const response: AxiosResponse = yield ApiService.callPost(`messages/${id}/attachments`, {filename: name, mimeType: type});
+
+        // TODO: uncomment below code
+        // if(response && response?.url) {
+           // const response2: AxiosResponse = yield ApiService.callPut(response?.url, file, {"Content-Type": type, 'Skip-Headers': true});
+        // }
+
         yield put(AddImageUrlSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
@@ -140,12 +147,12 @@ export function* watchUpdateCurrentDraftMessage() {
     yield takeLatest(updatePartialMessage.type, patchPartialMessage);
 }
 
-export function* watchGetImageUrl() {
-    yield takeLatest(getImageUrl.type, GetImageUrl);
+export function* watchGetAttachmentUrl() {
+    yield takeLatest(getAttachmentDownloadUrl.type, getAttachmentUrl);
 }
 
-export function* watchAddImageUrlToS3() {
-    yield takeLatest(AddImageUrl.type, AddImageUrlToS3);
+export function* watchAddAttachmentUrlToS3() {
+    yield takeLatest(AddImageUrl.type, generateAttachmentUploadUrl);
 }
 
 
@@ -157,8 +164,8 @@ export default function* rootSaga() {
         fork(watchSendDraftMessage),
         fork(watchUpdateCurrentDraftMessage),
         fork(watchGetMessagesAttachments),
-        fork(watchGetImageUrl),
-        fork(watchAddImageUrlToS3),
+        fork(watchGetAttachmentUrl),
+        fork(watchAddAttachmentUrlToS3),
     ]);
 }
 

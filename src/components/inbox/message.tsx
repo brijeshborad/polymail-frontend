@@ -3,12 +3,12 @@ import styles2 from "@/styles/common.module.css";
 import {Box, Button, Flex, Heading, Text, Tooltip} from "@chakra-ui/react";
 import {CheckIcon, ChevronDownIcon, ChevronUpIcon, CloseIcon, WarningIcon} from "@chakra-ui/icons";
 import {Time} from "@/components";
-import {ArchiveIcon, FolderIcon, StarIcon, TimeSnoozeIcon, TrashIcon, ReplyIcon, ForwardIcon} from "@/icons";
+import {ArchiveIcon, FolderIcon, ForwardIcon, ReplyIcon, StarIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
 import Image from "next/image";
 import {StateType} from "@/types";
 import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {getImageUrl, getMessageAttachments, getMessageParts, updateMessageState} from "@/redux/messages/action-reducer";
+import {getAttachmentDownloadUrl, getMessageAttachments, getMessageParts, updateMessageState} from "@/redux/messages/action-reducer";
 import {ReplyBox} from "@/components/inbox/reply-box";
 import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {Message as MessageModel, MessageDraft, Thread} from "@/models";
@@ -30,6 +30,7 @@ export function Message() {
         isLoading,
         message,
         messageAttachments,
+        attachmentUrl,
         selectedMessage
     } = useSelector((state: StateType) => state.messages);
     const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
@@ -47,6 +48,11 @@ export function Message() {
     //     }
     // }, [cachedThreads, dispatch, selectedThread])
 
+    useEffect(() => {
+        if(attachmentUrl) {
+            console.log('attachmentUrl=', attachmentUrl);
+        }
+    }, [attachmentUrl])
 
     useEffect(() => {
         if (selectedThread && selectedThread?.id) {
@@ -206,7 +212,7 @@ export function Message() {
 
     const downloadImage = (item: MessageAttachments) => {
         if (selectedMessage && selectedMessage.id) {
-            dispatch(getImageUrl({id: selectedMessage.id, attachment: item.id}));
+            dispatch(getAttachmentDownloadUrl({id: selectedMessage.id, attachment: item.id}));
         }
     }
 
@@ -303,7 +309,8 @@ export function Message() {
                     </div>
                     <div className={styles.mailBodyContent}>
                         {(!isLoading && emailPart) && <iframe src={emailPart} className={styles.mailBody}/>}
-                        {messageAttachments && !!messageAttachments.length && messageAttachments?.map((item: MessageAttachments, i) => (<p key={i + 1} onClick={() => downloadImage(item)} >{item.filename}</p>))}
+                        {messageAttachments && !!messageAttachments.length && messageAttachments?.map((item: MessageAttachments, i) => (
+                            <p key={i + 1} onClick={() => downloadImage(item)}>{item.filename}</p>))}
                     </div>
                 </Flex>}
 

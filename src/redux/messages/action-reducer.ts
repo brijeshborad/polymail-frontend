@@ -82,22 +82,17 @@ const messagesSlice = createSlice({
             return {...state, error, isLoading: false, draftSuccess: false}
         },
 
-        getImageUrl: (state: InitialMessageStateType, _action: PayloadAction<{ id?: string, attachment?: string }>) => {
+        getAttachmentDownloadUrl: (state: InitialMessageStateType, _action: PayloadAction<{ id?: string, attachment?: string }>) => {
             return {...state, error: null, isLoading: false, success: false}
         },
-        getImageUrlSuccess: (state: InitialMessageStateType, {payload: imageUrl}: PayloadAction<{}>) => {
-            return {...state, imageUrl, error: null, isLoading: false, success: true}
+        getAttachmentDownloadUrlSuccess: (state: InitialMessageStateType, {payload: attachmentUrl}: PayloadAction<{}>) => {
+            return {...state, attachmentUrl, error: null, isLoading: false, success: true}
         },
-        getImageUrlError: (state: InitialMessageStateType, {payload: error}: PayloadAction<any>) => {
+        getAttachmentDownloadUrlError: (state: InitialMessageStateType, {payload: error}: PayloadAction<any>) => {
             return {...state, error, isLoading: false, success: false}
         },
 
-        AddImageUrl: (state: InitialMessageStateType, _action: PayloadAction<{
-            id?: string,
-                filename?: string,
-                mimeType?: string
-
-        }>) => {
+        AddImageUrl: (state: InitialMessageStateType, _action: PayloadAction<{ id?: string, file?: File }>) => {
             return {...state, error: null, isLoading: false, success: false}
         },
         AddImageUrlSuccess: (state: InitialMessageStateType, {payload: addImageUrl}: PayloadAction<{}>) => {
@@ -133,9 +128,9 @@ export const {
     getMessageAttachments,
     getMessageAttachmentsSuccess,
     getMessageAttachmentsError,
-    getImageUrl,
-    getImageUrlSuccess,
-    getImageUrlError,
+    getAttachmentDownloadUrl,
+    getAttachmentDownloadUrlSuccess,
+    getAttachmentDownloadUrlError,
     AddImageUrl,
     AddImageUrlSuccess,
     AddImageUrlError

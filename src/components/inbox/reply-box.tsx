@@ -1,23 +1,23 @@
 import styles from "@/styles/Inbox.module.css";
 import {
+    Box,
     Button,
+    createStandaloneToast,
     Flex,
     Heading,
     Input,
+    Menu,
+    MenuButton,
     MenuItem,
     MenuList,
-    MenuButton,
-    Menu,
     Modal,
-    ModalContent,
-    ModalHeader,
-    useDisclosure,
-    ModalOverlay,
     ModalBody,
     ModalCloseButton,
+    ModalContent,
     ModalFooter,
-    Box,
-    createStandaloneToast
+    ModalHeader,
+    ModalOverlay,
+    useDisclosure
 } from "@chakra-ui/react";
 import React, {ChangeEvent, ChangeEventHandler, useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
@@ -28,6 +28,7 @@ import {FileIcon, LinkIcon, TextIcon} from "@/icons";
 import {
     AddImageUrl,
     createDraft,
+    getMessageAttachments,
     sendMessage,
     updateMessageState,
     updatePartialMessage
@@ -38,6 +39,7 @@ import {Toaster} from "@/components/toaster";
 import RichTextEditor from "@/components/rich-text-editor";
 import {ReplyBoxType} from "@/types/props-types/replyBox.type";
 import dayjs from "dayjs";
+import {MessageAttachments, MessageDraft} from "@/models";
 
 declare type RecipientsType = { items: string[], value: string };
 
@@ -64,7 +66,7 @@ export function ReplyBox(props: ReplyBoxType) {
         items: [],
         value: "",
     });
-    const [attachments, setAttachments] = useState<{ filename: string, data: string }[] | null>(null);
+    const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
 
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {selectedThread} = useSelector((state: StateType) => state.threads);
@@ -73,6 +75,7 @@ export function ReplyBox(props: ReplyBoxType) {
         draft,
         isCompose,
         success: sendDraftSuccess,
+        messageAttachments,
         addImageUrl
     } = useSelector((state: StateType) => state.messages);
 
@@ -95,14 +98,67 @@ export function ReplyBox(props: ReplyBoxType) {
                 setEmailBody(selectedAccount.signature);
             }
         }
+
+        if (draft) {
+            dispatch(getMessageAttachments({id: draft.id as string}));
+        }
     }, [draft, isCompose, props.replyType, selectedAccount])
 
-    // useEffect(() => {
-    //     console.log('addImageUrl' , addImageUrl)
-    //     if (addImageUrl.url) {
-    //
-    //     }
-    // }, [addImageUrl])
+
+    useEffect(() => {
+        if (selectedMessage && !isCompose) {
+            let emailSubject = `Re: ${selectedMessage.subject}`;
+            if (props.replyType === 'forward') {
+                emailSubject = `Fwd: ${selectedMessage.subject}`;
+
+                let decoded = Buffer.from(props.emailPart || '', 'base64').toString('ascii');
+                setHtmlContent(decoded);
+
+            } else {
+                setRecipients((prevState) => ({
+                    items: !isCompose ? (draft ? draft.to : [selectedMessage.from]) : [],
+                    value: prevState.value
+                }));
+
+                if (props.replyType === 'reply-all' && selectedMessage.cc) {
+                    setCC({
+                        items: draft ? (draft.cc || []) : selectedMessage.cc,
+                        value: ''
+                    });
+                    setHideCcFields(true);
+                }
+            }
+
+            // set subject when email is replied or forwarded.
+            setSubject(emailSubject || '');
+
+            // setEmailBody('');
+        }
+    }, [isCompose, draft, selectedMessage, props.replyType, props.emailPart])
+
+
+    useEffect(() => {
+        if (props.replyType === 'forward' && selectedMessage && !draft && htmlContent && selectedAccount) {
+            const forwardContent: string = `
+             <p>---------- Forwarded message ----------
+From: ${selectedMessage.from}
+Date: ${dayjs(selectedMessage.created, 'ddd, MMM DD, YYYY [at] hh:mm A')}
+Subject: ${selectedMessage.subject}
+To: ${selectedMessage.to}
+${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><br/><br/><br/>`;
+
+            // set converted html to email body
+            setEmailBody(prevState => (forwardContent + (htmlContent || '') + (selectedAccount.signature || '')).concat(prevState));
+        }
+    }, [htmlContent, selectedMessage, draft, props.replyType, selectedAccount])
+
+
+    useEffect(() => {
+
+        if (messageAttachments && messageAttachments.length > 0) {
+            setAttachments(messageAttachments);
+        }
+    }, [messageAttachments])
 
     useEffect(() => {
         setHideCcFields(false)
@@ -125,7 +181,7 @@ export function ReplyBox(props: ReplyBoxType) {
     const handleChange = (evt: ChangeEvent | any, type: string) => {
         if (type === 'recipients') {
             setRecipients(prevState => ({
-                items: [...prevState.items],
+                items: [...(prevState.items || [])],
                 value: evt.target.value
             }));
         } else if (type === 'cc') {
@@ -256,8 +312,7 @@ export function ReplyBox(props: ReplyBoxType) {
             ...(cc?.items && cc?.items.length > 0 ? {cc: cc?.items} : {}),
             ...(bcc?.items && bcc?.items.length > 0 ? {bcc: bcc?.items} : {}),
             draftInfo: {
-                body: isValueUpdate ? value : emailBody,
-                ...(attachments && attachments.length > 0 ? {attachments} : {})
+                body: isValueUpdate ? value : emailBody
             }
         }
 
@@ -307,70 +362,22 @@ export function ReplyBox(props: ReplyBoxType) {
         return true;
     }
 
-
-    useEffect(() => {
-        if (selectedMessage && !isCompose) {
-            let emailSubject = `Re: ${selectedMessage.subject}`;
-            if (props.replyType === 'forward') {
-                emailSubject = `Fwd: ${selectedMessage.subject}`;
-
-                let decoded = Buffer.from(props.emailPart || '', 'base64').toString('ascii');
-                setHtmlContent(decoded);
-
-            } else {
-                setRecipients((prevState) => ({
-                    items: !isCompose ? (draft ? draft.to : [selectedMessage.from]) : [],
-                    value: prevState.value
-                }));
-
-                if (props.replyType === 'reply-all' && selectedMessage.cc) {
-                    setCC({
-                        items: draft ? (draft.cc || []) : selectedMessage.cc,
-                        value: ''
-                    });
-                    setHideCcFields(true);
-                }
-            }
-
-            // set subject when email is replied or forwarded.
-            setSubject(emailSubject || '');
-
-            // setEmailBody('');
-        }
-    }, [isCompose, draft, selectedMessage, props.replyType, props.emailPart])
-
-
-    useEffect(() => {
-        if (props.replyType === 'forward' && selectedMessage && !draft && htmlContent && selectedAccount) {
-            const forwardContent: string = `
-             <p>---------- Forwarded message ----------
-From: ${selectedMessage.from}
-Date: ${dayjs(selectedMessage.created, 'ddd, MMM DD, YYYY [at] hh:mm A')}
-Subject: ${selectedMessage.subject}
-To: ${selectedMessage.to}
-${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><br/><br/><br/>`;
-
-            // set converted html to email body
-            setEmailBody(prevState => (forwardContent + (htmlContent || '') + (selectedAccount.signature || '')).concat(prevState));
-        }
-    }, [htmlContent, selectedMessage, draft, props.replyType, selectedAccount])
-
     const {toast} = createStandaloneToast()
     const undoClick = (type: string) => {
         if (draft && draft.id) {
             let params = {};
 
-                if (type === 'undo') {
-                    params = {
-                        undo: true
-                    }
-                } else if (type === 'send-now') {
-                    params = {
-                        now: true
-                    }
-                }   
-                dispatch(sendMessage({id: draft.id, ...params}));
+            if (type === 'undo') {
+                params = {
+                    undo: true
+                }
+            } else if (type === 'send-now') {
+                params = {
+                    now: true
+                }
             }
+            dispatch(sendMessage({id: draft.id, ...params}));
+        }
 
     }
 
@@ -468,12 +475,12 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
 
 
     function handleFileUpload(event: ChangeEventHandler | any) {
-        let filename = event.target.files[0].name;
-        let mimeType = event.target.files[0].type;
-        console.log('draft' , draft)
-        console.log('selectedMessage' , selectedMessage)
+        console.log(event.target.files);
+
+        const file = event.target.files[0];
+
         if (draft && draft.id) {
-            dispatch(AddImageUrl({id: draft.id, filename, mimeType}));
+            dispatch(AddImageUrl({id: draft.id, file}));
         }
         console.log('imageUrl', addImageUrl)
         // setAttachments([...(attachments || []), {
@@ -506,12 +513,12 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
         setAttachments([...attachments!]);
     }
 
-    useEffect(() => {
-        if (attachments) {
-            sendToDraft('', false);
-        }
-        // eslint-disable-next-line
-    }, [attachments])
+    // useEffect(() => {
+    //     if (attachments) {
+    //         sendToDraft('', false);
+    //     }
+    //     // eslint-disable-next-line
+    // }, [attachments])
 
     const openCalender = () => {
         onOpen();
@@ -615,7 +622,7 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
                                     value={emailBody} onChange={(e) => sendToDraft(e)}/>
 
                     {attachments && attachments.length > 0 ? <div style={{marginTop: '20px'}}>
-                        {attachments.map((item: { filename: string, data: string }, index: number) => (
+                        {attachments.map((item, index: number) => (
                             <Flex align={'center'} key={index} className={styles.attachmentsFile}>
                                 {item.filename}
                                 <div className={styles.closeIcon} onClick={() => removeAttachment(index)}><CloseIcon/>
