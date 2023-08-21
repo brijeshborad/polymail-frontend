@@ -22,9 +22,7 @@ export function Time(props: TimeProps) {
                 const mins = date2.diff(date1, 'minutes');
                 if (mins < 1) {
                     const seconds = date2.diff(date1, 'seconds');
-                    if (seconds < 1) {
-                        timeString = `${seconds} seconds ago`;
-                    }
+                    timeString = `${seconds} seconds ago`;
                 } else {
                     timeString = `${mins} mins ago`;
                 }
