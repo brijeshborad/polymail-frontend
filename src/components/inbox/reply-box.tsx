@@ -75,8 +75,7 @@ export function ReplyBox(props: ReplyBoxType) {
         draft,
         isCompose,
         success: sendDraftSuccess,
-        messageAttachments,
-        addImageUrl
+        messageAttachments
     } = useSelector((state: StateType) => state.messages);
 
     const inputFile = useRef<HTMLInputElement | null>(null)
@@ -394,16 +393,12 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
                 }
             } else {
                 let undoToaster: any = {
-                    id: 'poly-toast',
-                    title: 'Success',
-                    status: 'success',
-                    duration: 2000,
-                    isClosable: true,
+                    duration: 1500,
                     render: () => (
-                        <Box color='white' p={3} bg='blue.500'>
+                        <Box color='white' p={3} bg='#000000' borderRadius={'5px'} ml={10} className={styles.mailSendToaster} fontSize={'14px'} padding={'5px 23px'}>
                             Send scheduled for Tomorrow, 8:00AM
-                            <Button onClick={() => undoClick('undo')}>Undo</Button>
-                            <Button onClick={() => undoClick('sechangesnd-now')}>Send Now</Button>
+                            <Button onClick={() => undoClick('undo')} ml={3} height={"auto"} padding={'7px 15px'}>Undo</Button>
+                            <Button onClick={() => undoClick('send-now')} height={"auto"} padding={'7px 15px'}>Send Now</Button>
                         </Box>
                     ),
                     position: 'bottom-left'
@@ -475,14 +470,11 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
 
 
     function handleFileUpload(event: ChangeEventHandler | any) {
-        console.log(event.target.files);
-
         const file = event.target.files[0];
-
         if (draft && draft.id) {
             dispatch(AddImageUrl({id: draft.id, file}));
         }
-        console.log('imageUrl', addImageUrl)
+
         // setAttachments([...(attachments || []), {
         //     filename: event.target.files[0].name,
         //     mimeType: event.target.files[0].type
@@ -509,8 +501,9 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
 
 
     function removeAttachment(index: number) {
-        (attachments || []).splice(index, 1);
-        setAttachments([...attachments!]);
+        const newArr = [...attachments];
+        (newArr || []).splice(index, 1);
+        setAttachments([...newArr!]);
     }
 
     // useEffect(() => {

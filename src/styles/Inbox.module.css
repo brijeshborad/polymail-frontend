@@ -694,3 +694,14 @@
     }
 }
 
+
+.mailSendToaster button {
+    background-color: transparent;
+    color: #266DF0;
+    font-size: 14px;
+}
+
+.mailSendToaster button:hover {
+    background-color: rgba(38,109, 240, 0.3);
+    color: #266DF0;
+}

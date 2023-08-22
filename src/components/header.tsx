@@ -44,6 +44,7 @@ export function Header() {
     const {newMessage} = useSelector((state: StateType) => state.socket);
 
     const {user} = useSelector((state: StateType) => state.auth);
+    const [searchString, setSearchString] = useState<string>('');
 
     useEffect(() => {
         if (user) {
@@ -154,13 +155,26 @@ export function Header() {
         dispatch(updateMessageState({isCompose: true}))
     }
 
-    const searchThreadsData = (event: ChangeEvent | any) => {
-        if (event.target.value) {
-            let searchString = `label:${event.target.value}`
-            dispatch(searchThreads({query: searchString}));
-        } else {
-            if (selectedAccount && selectedAccount.id) {
-                dispatch(getAllThreads({mailbox: 'INBOX', account: selectedAccount.id, enriched: true}));
+    // const searchThreadsData = (event: ChangeEvent | any) => {
+    //     if (searchString && searchString.length >= 4) {
+    //         let searchString = `label:${event.target.value}`
+    //         dispatch(searchThreads({query: searchString}));
+    //     } else {
+    //         if (selectedAccount && selectedAccount.id) {
+    //             dispatch(getAllThreads({mailbox: 'INBOX', account: selectedAccount.id, enriched: true}));
+    //         }
+    //     }
+    // }
+
+    const handleKeyPress = (event) => {
+        if (event.key.toLowerCase() === 'enter') {
+            if (searchString) {
+                let searchString = `label:${event.target.value}`
+                dispatch(searchThreads({query: searchString}));
+            } else {
+                if (selectedAccount && selectedAccount.id) {
+                    dispatch(getAllThreads({mailbox: 'INBOX', account: selectedAccount.id, enriched: true}));
+                }
             }
         }
     }
@@ -189,7 +203,12 @@ export function Header() {
                     <InputLeftElement pointerEvents='none'>
                         <SearchIcon/>
                     </InputLeftElement>
-                    <Input type='text' placeholder='Search' onChange={(e) => searchThreadsData(e)}/>
+                    <Input type='text'
+                           placeholder='Search'
+                           // onChange={(e) => searchThreadsData(e)}
+                        onChange={event => {setSearchString(event.target.value)}}
+                           onKeyPress={(e) => handleKeyPress(e)}
+                    />
                     <InputRightElement>
                         <div className={styles.inputRight}>
                             ⌘K

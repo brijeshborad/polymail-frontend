@@ -112,9 +112,9 @@ function* generateAttachmentUploadUrl({payload: {id, file}}: PayloadAction<{ id:
         const response: AxiosResponse = yield ApiService.callPost(`messages/${id}/attachments`, {filename: name, mimeType: type});
 
         // TODO: uncomment below code
-        // if(response && response?.url) {
-           // const response2: AxiosResponse = yield ApiService.callPut(response?.url, file, {"Content-Type": type, 'Skip-Headers': true});
-        // }
+        if(response && response?.url) {
+           const response2: AxiosResponse = yield ApiService.callPut(response?.url, file, {"Content-Type": type, 'Skip-Headers': true});
+        }
 
         yield put(AddImageUrlSuccess(response));
     } catch (error: any) {
