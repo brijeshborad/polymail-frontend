@@ -6,6 +6,7 @@ import useWebSocket from "react-use-websocket";
 import {User} from "@/models";
 import {updateLastMessage} from "@/redux/socket/action-reducer";
 import {useDispatch} from "react-redux";
+import {Flex} from "@chakra-ui/react";
 
 // Multiple instances of the hook can exist simultaneously.
 // This stores the timestamp of the last heartbeat for a given socket url,
@@ -76,8 +77,10 @@ export default function withAuth(ProtectedComponent: any) {
 
         return (
             <>
-                <Header/>
-                <ProtectedComponent {...props} />
+                <Flex direction={'column'} h={'100vh'}>
+                    <Header/>
+                    <ProtectedComponent {...props} />
+                </Flex>
             </>);
     };
 }

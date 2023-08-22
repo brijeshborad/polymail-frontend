@@ -118,6 +118,10 @@ export function Header() {
         Router.push(`/auth/logout`);
     }
 
+    function openSetting() {
+        Router.push('/settings');
+    }
+
     function addNewGoogleAccount() {
         let body = {
             mode: 'create',
@@ -149,7 +153,7 @@ export function Header() {
     }
 
     return (
-        <Flex className={styles.header} w='100%' align={'center'}>
+        <Flex className={styles.header} w='100%' align={'center'} flex={'none'}>
             <div className={styles.logoContainer}>
                 <Image width="30" height="30" src="/image/logo.png" alt="" className={styles.logo}
                        onClick={() => callSyncAPI()}/>
@@ -223,7 +227,7 @@ export function Header() {
                             )}
                             </MenuItem>
                         ))}
-                        <MenuItem>Settings</MenuItem>
+                        <MenuItem onClick={() => openSetting()}>Settings</MenuItem>
                         <MenuItem onClick={() => logout()}>Logout</MenuItem>
                     </MenuList>
                 </Menu>

@@ -1,0 +1,373 @@
+.setting {
+    flex: 1;
+    background-color: #FCFCFD;
+}
+
+/*Setting page New UI*/
+.settingSideBar {
+    background-color: #FFFFFF;
+}
+
+.settingSideBar .settingTitle {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1;
+    color: #101828;
+}
+
+.settingListTitle {
+    opacity: 0.4;
+    color: #101828;
+}
+
+.settingListTitle svg {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px
+}
+
+.settingSideBar .settingList {
+    list-style: none;
+    flex-direction: column;
+}
+
+.settingSideBar .settingList li {
+    padding: 3px 7px;
+    color: #1D2939;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5384;
+    border-radius: 4px;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.settingSideBar .settingList li:hover {
+    background-color: rgba(0,0,0, 0.1);
+}
+
+.settingSideBar .settingList li.active {
+    background-color: rgba(0,0,0, 0.1);
+}
+
+.settingSubTitle {
+    color: #475467;
+}
+
+.settingProfile .profileDetails .userImage {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.settingProfile .ProfileImage .userImage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.settingProfile .profileDetails .ProfileText {
+    font-size: 13px;
+    font-weight: 500;
+    color: #000000;
+    line-height: 1;
+}
+
+.profileAccount {
+    text-align: left;
+    width: 100%;
+}
+
+.profileAccount p {
+    font-size: 13px;
+    line-height: 1;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.profileAccount input {
+    background-color: #ffffff;
+    border: 1px solid #E5E5E5;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 13px;
+    color: #000000;
+}
+
+.profileAccount input::placeholder {
+    color: #000000;
+}
+
+.changeProfileButton button {
+    font-size: 14px;
+    font-weight: 600;
+    color: #000000;
+}
+
+.changeProfileButton button:hover {
+    background-color: transparent;
+}
+
+.changeProfileButton .deleteProfile {
+    opacity: 0.4;
+}
+
+.profileButton button {
+    font-size: 14px;
+    font-weight: 500;
+    height: auto;
+    padding: 10px 20px;
+}
+
+.settingButton button {
+    font-size: 14px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.settingButton button.settingSave {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+.settingButton button.settingCancel {
+    background-color: rgba(0,0,0, 0.1);
+    color: #000000;
+}
+
+.SettingDetails .settingSignature {
+    max-width: 320px;
+}
+
+.profileAccount textarea {
+    background-color: #ffffff;
+    border: 1px solid #E5E5E5;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 13px;
+    color: #000000;
+    resize: none;
+}
+
+.profileAccount textarea::placeholder {
+    color: #000000;
+}
+
+.profileAccount textarea:focus-visible {
+    border-color: #E5E5E5;
+    box-shadow: none;
+}
+
+.settingSignatureIcon svg {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.settingEmailAddress {
+    max-width: 320px;
+}
+
+.settingEmailAddress .settingSocialLink button {
+    font-size: 14px;
+    font-weight: 500;
+    background-color: #000;
+    color: #ffffff;
+    border-radius: 8px;
+    display: flex;
+    padding: 15px;
+    height: auto;
+}
+
+.settingSocialLink button svg {
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+}
+
+.addedEmailAddress .settingAddedEmailAddress {
+    background-color: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #E5E5E5;
+    padding: 4px;
+    width: 100%;
+}
+
+.settingAddedEmailAddress .settingAddressSocialIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.settingAddedEmailAddress .settingAddressSocialIcon svg {
+    fill: #000000;
+}
+
+.settingAddedEmailAddress .closeIcon {
+    margin-right: 10px;
+    color: rgba(0,0,0, 0.3);
+    width: 12px;
+    height: 12px;
+}
+
+.settingBilling {
+    max-width: 420px;
+}
+
+.settingBilling .settingBillingPlan {
+    border: 2px solid #000000;
+    border-radius: 12px;
+    background-color: #F9F9F9;
+    padding: 16px;
+}
+
+.settingBillingPlan .planMonth {
+    color: #252525;
+}
+
+.settingBillPlan .changePlan {
+    margin-top: 13px;
+    font-size: 14px;
+}
+
+.settingBillPlan .changePlan:hover {
+    background-color: transparent;
+}
+
+.billingPlanDetails > div {
+    font-size: 14px;
+    color: #252525;
+}
+
+.paymentMethod .selectedCard {
+    background-color: #FFFFFF;
+    border: 1px solid #000000;
+    border-radius: 8px;
+    height: auto;
+    font-size: 13px;
+    padding: 7px 32px 7px 16px;
+}
+
+.paymentMethod .selectedCard:hover {
+    border: 1px solid #000000;
+}
+
+.paymentMethod .selectedCard:focus-visible {
+    border: 1px solid #000000;
+    box-shadow: none;
+}
+
+.paymentMethod .addPaymentMethod:hover {
+    background-color: transparent;
+}
+
+.paymentMethod .addPaymentMethod:focus-visible {
+    box-shadow: none;
+}
+
+.newPaymentInput input,
+.newPaymentInput select{
+    background-color: #FFFFFF;
+    border: 1px solid #E5E5E5;
+    border-radius: 8px;
+    color: #000000;
+    font-size: 13px;
+}
+
+.newPaymentInput .inputIcon {
+    position: relative;
+}
+
+.newPaymentInput .inputIcon input {
+    padding-left: 45px;
+}
+
+.newPaymentInput .inputIcon .icon {
+    position: absolute;
+    width: 34px;
+    height: 24px;
+    top: 50%;
+    left: 4px;
+    transform: translateY(-50%);
+    background-color: #FFFFFF;
+    border: 1px solid #F2F4F7;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.newPaymentInput .inputIcon .icon svg {
+    width: 23px;
+    height: 14px;
+}
+
+.newPaymentInput input:hover,
+.newPaymentInput select:hover {
+    border: 1px solid #E5E5E5;
+}
+
+.newPaymentInput input:focus-visible,
+.newPaymentInput input:focus,
+.newPaymentInput select:focus-visible,
+.newPaymentInput select:focus {
+    border: 1px solid #000000;
+    box-shadow: none;
+}
+
+.newPaymentInput p {
+    line-height: 1.19;
+}
+
+.memberTable {
+    background-color: #FFFFFF;
+    border: 1px solid #EAECF0;
+    border-radius: 12px;
+}
+
+.memberTable .inviteMemberButton:hover {
+    background-color: #000000;
+}
+
+.memberTable .inviteMemberButton:focus-visible {
+    box-shadow: none;
+}
+
+.memberTable .tableCheckBox span {
+    width: 20px;
+    height: 20px;
+    background: #FFFFFF;
+    border: 1px solid #D0D5DD;
+    border-radius: 6px;
+}
+
+.memberTable .tableCheckBox input:checked + span {
+    background: #266DF0;
+}
+
+.memberTable .tableUserImage {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.memberTable .tableUserImage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.memberTable .statusButton {
+    font-size: 12px;
+    font-weight: 500;
+    color: #000000;
+    line-height: 1.5;
+    width: fit-content;
+    padding: 2px 8px;
+    border-radius: 50px;
+    border: 1px solid #B6B6B6;
+    background-color: #F9F9F9;
+}
