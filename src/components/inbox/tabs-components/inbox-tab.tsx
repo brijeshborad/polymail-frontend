@@ -13,13 +13,7 @@ import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
 
 export function InboxTab(props: InboxTabProps) {
     const {isLoading, selectedThread, threads} = useSelector((state: StateType) => state.threads);
-
     const listRef = useRef<any>(null);
-    // const activeDivRef = useRef<any>({});
-    // const downPress = useKeyPress("ArrowDown", listRef);
-    // const upPress = useKeyPress("ArrowUp", listRef);
-    // const [cursor, setCursor] = useState(0);
-
     const dispatch = useDispatch();
 
     const handleClick = useCallback((item: Thread) => {
@@ -60,39 +54,6 @@ export function InboxTab(props: InboxTabProps) {
             dispatch(updateMessageState({selectedMessage: null, draft: null}));
         }
     }, [dispatch, threads])
-
-    // useEffect(() => {
-    //     if (props.content && props.content.length) {
-    //         if (downPress) {
-    //             setCursor((prevState) => (props.content && prevState < props.content.length - 1) ? prevState + 1 : prevState);
-    //         } else if (upPress) {
-    //             setCursor((prevState) => (prevState > 0 ? prevState - 1 : prevState));
-    //         }
-    //
-    //     }
-    // }, [upPress, downPress, props.content]);
-
-    // useEffect(() => {
-    //     if (props.content && props.content.length) {
-    //        handleClick(props.content[cursor]);
-    //     }
-    // }, [cursor, handleClick, props.content]);
-    //
-    // useEffect(() => {
-    //     if (selectedThread) {
-    //         listRef?.current.focus();
-    //     }
-    // }, [selectedThread, listRef])
-    //
-    // useEffect(() => {
-    //     if (selectedThread) {
-    //         // @ts-ignore
-    //         if (activeDivRef && activeDivRef[selectedThread.id]) {
-    //             // @ts-ignore
-    //             activeDivRef[selectedThread.id].scrollIntoView({behavior: 'smooth', block: 'nearest'});
-    //         }
-    //     }
-    // }, [selectedThread])
 
     return (
         <>

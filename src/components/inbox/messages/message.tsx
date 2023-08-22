@@ -1,17 +1,12 @@
 import styles from "@/styles/Inbox.module.css";
 import styles2 from "@/styles/common.module.css";
-import {Box, Button, Flex, Heading, Text, Tooltip} from "@chakra-ui/react";
-import {CheckIcon, ChevronDownIcon, ChevronUpIcon, CloseIcon, WarningIcon} from "@chakra-ui/icons";
+import {Box, Button, Flex, Heading, Text} from "@chakra-ui/react";
+import {CloseIcon} from "@chakra-ui/icons";
 import {Time} from "@/components/common";
 import {
-    ArchiveIcon,
-    FolderIcon,
+    DownloadIcon,
     ForwardIcon,
     ReplyIcon,
-    StarIcon,
-    TimeSnoozeIcon,
-    TrashIcon,
-    BlueStarIcon
 } from "@/icons";
 import Image from "next/image";
 import {StateType} from "@/types";
@@ -24,8 +19,9 @@ import {
     updateMessageState
 } from "@/redux/messages/action-reducer";
 import {ReplyBox} from "@/components/inbox/reply-box";
-import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
-import {Message as MessageModel, MessageDraft, MessagePart, Thread, MessageAttachments} from "@/models";
+import {updateThreadState} from "@/redux/threads/action-reducer";
+import {Message as MessageModel, MessageDraft, MessagePart, MessageAttachments} from "@/models";
+import {MessagesHeader} from "@/components/inbox/messages/messages-header";
 
 export function Message() {
     const [messageContent, setMessageContent] = useState<MessageModel>();
@@ -43,10 +39,10 @@ export function Message() {
         isLoading,
         message,
         messageAttachments,
-        attachmentUrl,
-        selectedMessage
+        selectedMessage,
+        attachmentUrl
     } = useSelector((state: StateType) => state.messages);
-    const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
+    const {selectedThread} = useSelector((state: StateType) => state.threads);
     const [cacheMessages, setCacheMessages] = useState<{ [key: string]: { body: MessagePart, attachments: MessageAttachments[] } }>({});
 
     const dispatch = useDispatch();
@@ -74,16 +70,16 @@ export function Message() {
 
 
     const cacheMessage = useCallback((body: Object | any) => {
-        if (index !== null && messages && messages[index]) {
+        if (index !== null && inboxMessages && inboxMessages[index]) {
             setCacheMessages(prev => ({
                 ...prev,
-                [messages[index].id]: {
-                    ...prev[messages[index].id],
+                [inboxMessages[index].id]: {
+                    ...prev[inboxMessages[index].id],
                     ...body
                 }
             }))
         }
-    }, [index, messages])
+    }, [index, inboxMessages])
 
 
     useEffect(() => {
@@ -110,8 +106,7 @@ export function Message() {
         }
     }, [messageAttachments, cacheMessage])
 
-
-    useEffect(() => {
+    const getEmailNBodyAndAttachments = useCallback(() => {
         if (index !== null && inboxMessages && inboxMessages.length > 0) {
             if (inboxMessages[index]) {
                 setMessageContent(inboxMessages[index]);
@@ -134,12 +129,31 @@ export function Message() {
         }
     }, [cacheMessages, dispatch, index, inboxMessages])
 
+    useEffect(() => {
+        getEmailNBodyAndAttachments()
+    }, [getEmailNBodyAndAttachments])
 
     useEffect(() => {
         if (message) {
             setMessageContent(message);
         }
     }, [message])
+
+    useEffect(() => {
+        if (attachmentUrl) {
+            const link: HTMLAnchorElement = document.createElement('a');
+            link.href = attachmentUrl.url!;
+            link.setAttribute('download', '');
+            link.setAttribute('target', '_blank');
+            link.setAttribute('rel', 'noopener noreferrer');
+            document.body.appendChild(link);
+            link.click();
+            if (link.parentNode) {
+                link.parentNode.removeChild(link);
+            }
+            dispatch(updateMessageState({attachmentUrl: null}));
+        }
+    }, [attachmentUrl])
 
 
     const showPreNextMessage = (type: string) => {
@@ -167,44 +181,6 @@ export function Message() {
     }
 
 
-    const updateMailBox = (messageBox: string) => {
-        if (selectedThread && selectedThread.id) {
-            if (messageBox) {
-                let currentThreads = [...threads || []] as Thread[];
-                let threadData = {...(selectedThread) || {}} as Thread;
-                let index1 = currentThreads.findIndex((item: Thread) => item.id === threadData?.id);
-
-                let body = {
-                    mailboxes: ['']
-                };
-                let data = selectedThread.mailboxes || [];
-                if (selectedThread.mailboxes?.includes(messageBox)) {
-
-                    let newData = data.filter((item: string) => item !== messageBox)
-                    body = {
-                        mailboxes: [
-                            ...newData
-                        ]
-                    }
-                } else {
-                    body = {
-                        mailboxes: [
-                            ...data,
-                            messageBox
-                        ]
-                    }
-                }
-                currentThreads[index1] = {
-                    ...currentThreads[index1],
-                    mailboxes: body?.mailboxes || []
-                };
-                dispatch(updateThreadState({threads: currentThreads, selectedThread: currentThreads[index1]}));
-                dispatch(updateThreads({id: selectedThread.id, body}));
-            }
-        }
-    }
-
-
     const hideAndShowReplayBox = (type: string = '') => {
         setReplyType(type);
         setHideAndShowReplyBox(!hideAndShowReplyBox);
@@ -221,98 +197,45 @@ export function Message() {
             {selectedThread && !isCompose &&
             <Flex justifyContent={'space-between'} flexDir={'column'} height={'100%'}>
                 {!hideAndShowReplyBox &&
-                <Flex direction={'column'} className={styles.mailBoxFLex}>
-                    <div style={{flex: 'none'}}>
-                        <Flex justifyContent={'space-between'} wrap={'wrap'} align={'center'}
-                              borderBottom={'1px solid rgba(8, 22, 47, 0.1)'}
-                              marginBottom={'15'} padding={'12px 20px'}>
-                            <Flex alignItems={'center'} gap={2}>
-                                <div className={styles.closeIcon} onClick={() => onClose()}><CloseIcon/>
+                <>
+                    <MessagesHeader inboxMessages={inboxMessages} index={index} onClose={onClose}
+                                    showPreNextMessage={showPreNextMessage}/>
+                    {messageContent &&
+                    <Flex alignItems={'center'} padding={'10px 20px'}>
+                        <Image src={'/image/user.png'} alt={''} width={50} height={50}/>
+                        <Flex flexDir={'column'} marginLeft={'5'} width={'100%'}>
+                            <Heading as='h4' size='md'>{messageContent?.subject || ''}</Heading>
+                            <Flex justifyContent={'space-between'} align={'center'}>
+                                {messageSenders && messageSenders.length > 0 &&
+                                <Text fontSize='sm'>
+                                    {messageSenders[0]} {messageSenders.length - 1 > 0 && `and ${messageSenders.length - 1} others`}
+                                </Text>
+                                }
+                                <div className={styles2.receiveTime}>
+                                    <Time time={messageContent?.created || ''} isShowFullTime={true}/>
                                 </div>
-                                <div className={`${styles.actionIcon} ${index === 0 ? styles.disabled : ''}`}
-                                     onClick={() => showPreNextMessage('up')}>
-                                    <ChevronUpIcon/>
-                                </div>
-                                <div
-                                    className={`${styles.actionIcon} ${inboxMessages && inboxMessages?.length - 1 !== index ? '' : styles.disabled}`}
-                                    onClick={() => showPreNextMessage('down')}>
-                                    <ChevronDownIcon/>
-                                </div>
-
-                            </Flex>
-
-                            <Flex alignItems={'center'} gap={3} className={styles.headerRightIcon}>
-                                {!isLoading && <Text className={styles.totalMessages}>
-                                    {index ? index + 1 : 1} / {inboxMessages && inboxMessages.length}
-                                </Text>}
-                                <Button className={styles.addToProject} leftIcon={<FolderIcon/>}>Add to
-                                    Project <span
-                                        className={styles.RightContent}>⌘P</span></Button>
-                                <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
-                                    <div onClick={() => updateMailBox('ARCHIVE')}>
-                                        <ArchiveIcon/>
-                                    </div>
-                                </Tooltip>
-                                <Tooltip label='Trash' placement='bottom' bg='gray.300' color='black'>
-                                    <div onClick={() => updateMailBox('TRASH')}>
-                                        <TrashIcon/>
-                                    </div>
-                                </Tooltip>
-                                <Tooltip label='Snooze' placement='bottom' bg='gray.300' color='black'>
-                                    <div onClick={() => updateMailBox('SNOOZE')}>
-                                        <TimeSnoozeIcon/>
-                                    </div>
-                                </Tooltip>
-
-                                <Tooltip label='Mark as unread' placement='bottom' bg='gray.300' color='black'>
-                                    <div onClick={() => updateMailBox('UNREAD')}>
-                                        <CheckIcon className={styles.colorGray}/>
-                                    </div>
-                                </Tooltip>
-
-                                <Tooltip
-                                    label={(selectedThread?.mailboxes || []).includes('STARRED') ? 'Starred' : 'Not Starred'}
-                                    placement='bottom' bg='gray.300' color='black'>
-                                    <div onClick={() => updateMailBox('STARRED')}>
-                                        {(selectedThread?.mailboxes || []).includes('STARRED') && <BlueStarIcon/>}
-                                        {!(selectedThread?.mailboxes || []).includes('STARRED') && <StarIcon/>}
-                                    </div>
-                                </Tooltip>
-
-                                <Tooltip
-                                    label={(selectedThread?.mailboxes || []).includes('SPAM') ? 'Spammed' : 'Mark As Spam'}
-                                    placement='bottom' bg='gray.300' color='black'>
-                                    <div onClick={() => updateMailBox('SPAM')}>
-                                        <WarningIcon className={styles.colorGray}/>
-                                    </div>
-                                </Tooltip>
                             </Flex>
                         </Flex>
-
-                        {messageContent &&
-                        <Flex alignItems={'center'} padding={'10px 20px'}>
-                            <Image src={'/image/user.png'} alt={''} width={50} height={50}/>
-                            <Flex flexDir={'column'} marginLeft={'5'} width={'100%'}>
-                                <Heading as='h4' size='md'>{messageContent?.subject || ''}</Heading>
-                                <Flex justifyContent={'space-between'} align={'center'}>
-                                    {messageSenders && messageSenders.length > 0 &&
-                                    <Text fontSize='sm'>
-                                        {messageSenders[0]} {messageSenders.length - 1 > 0 && `and ${messageSenders.length - 1} others`}
-                                    </Text>
-                                    }
-                                    <div className={styles2.receiveTime}>
-                                        <Time time={messageContent?.created || ''} isShowFullTime={true}/>
-                                    </div>
-                                </Flex>
-                            </Flex>
-                        </Flex>}
-                    </div>
+                    </Flex>
+                    }
                     <div className={styles.mailBodyContent}>
                         {(!isLoading && emailPart) && <iframe src={emailPart} className={styles.mailBody}/>}
-                        {messageAttachments && !!messageAttachments.length && messageAttachments?.map((item: MessageAttachments, i) => (
-                            <p key={i + 1} onClick={() => downloadImage(item)}>{item.filename}</p>))}
                     </div>
-                </Flex>}
+                    <div className={styles.mailBodyAttachments}>
+                        {
+                            messageAttachments && !!messageAttachments.length && messageAttachments?.map((item: MessageAttachments, i) => (
+                                <Flex align={'center'} key={i} className={styles.attachmentsFile}>
+                                    {item.filename}
+                                    <div className={`${styles.closeIcon} ${styles.downloadIcon}`}
+                                         onClick={() => downloadImage(item)}>
+                                        <DownloadIcon/>
+                                    </div>
+                                </Flex>
+                            ))
+                        }
+                    </div>
+                </>
+                }
 
                 {!hideAndShowReplyBox &&
                 <Flex align={'center'} padding={'10px 20px'}>

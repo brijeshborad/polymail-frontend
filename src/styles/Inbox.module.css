@@ -239,6 +239,11 @@
     background: rgba(0, 0, 0, 0.03);
 }
 
+.mailBox .mailBodyAttachments {
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.03);
+}
+
 .mailBoxFLex {
     flex: 1;
 }
@@ -320,6 +325,11 @@
     color: rgba(0, 0, 0, 0.5);
     font-weight: 700;
     margin: 0;
+}
+
+.downloadIcon svg {
+    width: 20px;
+    height: 20px;
 }
 
 .actionIcon {
@@ -628,11 +638,11 @@
 
 .selectedThread .mailDetails {
     border: 1px solid #266DF0;
-    background-color: rgba(38,109,240, 0.03);
+    background-color: rgba(38, 109, 240, 0.03);
 }
 
 .mailMessageOption button {
-    min-width: 10px ;
+    min-width: 10px;
     height: auto;
     border: 0;
 }
@@ -662,6 +672,7 @@
     line-height: 1;
     text-align: right;
 }
+
 .ccButton:hover {
     text-decoration: underline;
 }
@@ -702,6 +713,6 @@
 }
 
 .mailSendToaster button:hover {
-    background-color: rgba(38,109, 240, 0.3);
+    background-color: rgba(38, 109, 240, 0.3);
     color: #266DF0;
 }

@@ -13,7 +13,7 @@ export declare type InitialMessageStateType = {
     error?: Error | any,
     success?: boolean
     draftSuccess?: boolean,
-    attachmentUrl?: null
+    attachmentUrl?: MessageAttachments | null
     addImageUrl?: null
 }
 

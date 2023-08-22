@@ -29,4 +29,5 @@ export * from './props-types/chip.type';
 export * from './props-types/inbox-page.type';
 export * from './props-types/login.type';
 export * from './props-types/rich-text-editor-props.type';
+export * from './props-types/message-header.types';
 

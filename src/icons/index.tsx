@@ -19,3 +19,4 @@ export * from './menu.icon';
 export * from './Reply.icon';
 export * from './forward.icon';
 export * from './star-blue.icon';
+export * from './download.icon';
