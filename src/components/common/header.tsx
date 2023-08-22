@@ -58,7 +58,7 @@ export function Header() {
                 })
             }
         }
-    }, [newMessage, threads])
+    }, [dispatch, newMessage, threads])
 
     useEffect(() => {
         if (googleAuthRedirectionLink) {

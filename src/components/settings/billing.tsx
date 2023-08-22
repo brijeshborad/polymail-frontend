@@ -2,9 +2,9 @@ import styles from "@/styles/setting.module.css";
 import {Button, Flex, Select, Text} from "@chakra-ui/react";
 import {CheckCircleIcon} from "@chakra-ui/icons";
 import React from "react";
-import {BillingTypes} from "@/types/props-types/BillingProps";
+import {BillingTypes} from "@/types";
 
-function Billing(props: BillingTypes) {
+export function Billing(props: BillingTypes) {
     return (
         <div>
             <Flex direction={"column"}  gap={10} className={styles.settingBilling}>
@@ -38,5 +38,3 @@ function Billing(props: BillingTypes) {
         </div>
     )
 }
-
-export default Billing;

@@ -16,10 +16,10 @@ import {
 } from "@chakra-ui/react";
 import Image from "next/image";
 import React from "react";
-import {BillingTypes} from "@/types/props-types/BillingProps";
+import {BillingTypes} from "@/types";
 import {MenuIcon, TextIcon} from "@/icons";
 
-function Members(props: BillingTypes) {
+export function Members(props: BillingTypes) {
     return (
         <div>
             <div className={styles.memberTable}>
@@ -361,5 +361,3 @@ function Members(props: BillingTypes) {
 
     )
 }
-
-export default Members;

@@ -57,7 +57,7 @@ export function InboxTab(props: InboxTabProps) {
             dispatch(updateMessageState({selectedMessage: null}));
             dispatch(updateDraftState({draft: null}));
         }
-    }, [dispatch, threads])
+    }, [dispatch, threads, props.tab])
 
     return (
         <>

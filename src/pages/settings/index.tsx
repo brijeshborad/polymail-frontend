@@ -21,11 +21,8 @@ import {
 } from "@chakra-ui/react";
 import styles from "@/styles/setting.module.css";
 import {UserIcon, MasterCardIcon} from "@/icons";
-import Profile from "@/pages/settings/profile";
-import {Signature} from "@/pages/settings/signature";
-import {EmailAddress} from "@/pages/settings/emailAddress";
-import Billing from "@/pages/settings/billing";
-import Members from "@/pages/settings/members";
+import {Billing, EmailAddress, Members, Profile, Signature} from "@/components/settings";
+
 
 function Index() {
     const {isOpen, onOpen, onClose} = useDisclosure();
@@ -50,7 +47,7 @@ function Index() {
             setTabTitle('Members');
             setCurrentTab(<Members onOpen={onOpen} isOpen={isOpen} onClose={onClose}/>);
         }
-    }, []);
+    }, [isOpen, onClose, onOpen]);
 
     useEffect(() => {
         openTabs()

@@ -33,4 +33,5 @@ export * from './props-types/inbox-page.type';
 export * from './props-types/login.type';
 export * from './props-types/rich-text-editor-props.type';
 export * from './props-types/message-header.types';
+export * from './props-types/billing-type';
 
