@@ -381,6 +381,7 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
     }
 
     const sendMessages = (scheduled: boolean = false) => {
+        console.log('draft' ,draft)
         if (draft && draft.id) {
             let params = {};
             if (scheduled) {
@@ -393,10 +394,10 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
                 }
             } else {
                 let undoToaster: any = {
-                    duration: 1500,
+                    duration: 1500000,
                     render: () => (
-                        <Box color='white' p={3} bg='#000000' borderRadius={'5px'} ml={10} className={styles.mailSendToaster} fontSize={'14px'} padding={'5px 23px'}>
-                            Send scheduled for Tomorrow, 8:00AM
+                        <Box display={'flex'} color='white' p={3} bg='#000000' borderRadius={'5px'} ml={10} className={styles.mailSendToaster} fontSize={'14px'} padding={'5px 23px'}>
+                            {`Your Message to ${draft && draft.to && draft.to.join(', ')} has been sent!`}
                             <Button onClick={() => undoClick('undo')} ml={3} height={"auto"} padding={'7px 15px'}>Undo</Button>
                             <Button onClick={() => undoClick('send-now')} height={"auto"} padding={'7px 15px'}>Send Now</Button>
                         </Box>
