@@ -65,12 +65,7 @@ export function Threads() {
     }, [draft, draftSuccess, getAllThread, selectedThread, threads, dispatch])
 
     useEffect(() => {
-        setCountUnreadMessages(0);
-        (threads || []).map((item: Thread) => {
-            if ((item.mailboxes || [])?.includes('UNREAD')) {
-                setCountUnreadMessages(prevState => prevState + 1)
-            }
-        })
+        setCountUnreadMessages((threads || []).filter(item => (item.mailboxes || [])?.includes('UNREAD')).length);
     }, [threads])
 
     useEffect(() => {

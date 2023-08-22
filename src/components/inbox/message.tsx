@@ -3,10 +3,19 @@ import styles2 from "@/styles/common.module.css";
 import {Box, Button, Flex, Heading, Text, Tooltip} from "@chakra-ui/react";
 import {CheckIcon, ChevronDownIcon, ChevronUpIcon, CloseIcon, WarningIcon} from "@chakra-ui/icons";
 import {Time} from "@/components/common";
-import {ArchiveIcon, FolderIcon, ForwardIcon, ReplyIcon, StarIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
+import {
+    ArchiveIcon,
+    FolderIcon,
+    ForwardIcon,
+    ReplyIcon,
+    StarIcon,
+    TimeSnoozeIcon,
+    TrashIcon,
+    BlueStarIcon
+} from "@/icons";
 import Image from "next/image";
 import {StateType} from "@/types";
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {
     getAttachmentDownloadUrl,
@@ -16,15 +25,13 @@ import {
 } from "@/redux/messages/action-reducer";
 import {ReplyBox} from "@/components/inbox/reply-box";
 import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
-import {Message as MessageModel, MessageDraft, Thread} from "@/models";
-import {BlueStarIcon} from "@/icons/star-blue.icon";
-import {MessageAttachments} from "@/models/messageAttachments";
+import {Message as MessageModel, MessageDraft, MessagePart, Thread, MessageAttachments} from "@/models";
 
 export function Message() {
     const [messageContent, setMessageContent] = useState<MessageModel>();
     const [index, setIndex] = useState<number | null>(null);
     const [emailPart, setEmailPart] = useState<string>("");
-    // const [emailAttachments, setEmailAttachments] = useState<any>([]);
+    const [emailAttachments, setEmailAttachments] = useState<MessageAttachments[]>([]);
     const [hideAndShowReplyBox, setHideAndShowReplyBox] = useState<boolean>(false);
     const [replyType, setReplyType] = useState<string>('');
     const [messageSenders, setMessageSenders] = useState<string[]>([]);
@@ -40,6 +47,7 @@ export function Message() {
         selectedMessage
     } = useSelector((state: StateType) => state.messages);
     const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
+    const [cacheMessages, setCacheMessages] = useState<{ [key: string]: { body: MessagePart, attachments: MessageAttachments[] } }>({});
 
     const dispatch = useDispatch();
 
@@ -65,29 +73,42 @@ export function Message() {
     }, [messages, dispatch])
 
 
+    const cacheMessage = useCallback((body: Object | any) => {
+        if (index !== null && messages && messages[index]) {
+            setCacheMessages(prev => ({
+                ...prev,
+                [messages[index].id]: {
+                    ...prev[messages[index].id],
+                    ...body
+                }
+            }))
+        }
+    }, [index, messages])
+
+
     useEffect(() => {
         if (messagePart && messagePart.data) {
+            cacheMessage({body: messagePart});
             let decoded = Buffer.from(messagePart.data || '', 'base64').toString('ascii');
             const blob = new Blob([decoded], {type: "text/html"});
             const blobUrl = window.URL.createObjectURL(blob);
             setEmailPart(blobUrl);
         } else {
+            cacheMessage({body: {data: ''}});
             setEmailPart('')
         }
-    }, [messagePart])
+    }, [messagePart, cacheMessage])
 
-    // useEffect(() => {
-    //     // convert blob url to image url
-    //     if (messageAttachments && messageAttachments.length) {
-    //         const emailParts = messageAttachments.map((attachment: MessageAttachments) => {
-    //             return attachment.filename || '';
-    //         });
-    //
-    //         setEmailAttachments((prevState: EmailState) => (prevState || '').concat(emailParts.join('')));
-    //     } else {
-    //         setEmailAttachments([])
-    //     }
-    // }, [messageAttachments])
+    useEffect(() => {
+        // convert blob url to image url
+        if (messageAttachments && messageAttachments.length) {
+            cacheMessage({attachments: messageAttachments});
+            setEmailAttachments((prevState) => (prevState || []).concat(messageAttachments));
+        } else {
+            cacheMessage({attachments: []});
+            setEmailAttachments([])
+        }
+    }, [messageAttachments, cacheMessage])
 
 
     useEffect(() => {
@@ -97,12 +118,21 @@ export function Message() {
                 setMessageSenders([inboxMessages[index].from, ...(inboxMessages[index].cc || [])])
                 dispatch(updateMessageState({selectedMessage: inboxMessages[index]}));
                 // We already set index to last inbox message
-                dispatch(getMessageParts({id: inboxMessages[index].id}));
-                dispatch(getMessageAttachments({id: inboxMessages[index].id}));
+                if (cacheMessages[inboxMessages[index].id] && cacheMessages[inboxMessages[index].id].body) {
+                    dispatch(updateMessageState({messagePart: cacheMessages[inboxMessages[index].id].body}));
+                } else {
+                    dispatch(getMessageParts({id: inboxMessages[index].id}));
+                }
+
+                if (cacheMessages[inboxMessages[index].id] && cacheMessages[inboxMessages[index].id].attachments) {
+                    dispatch(updateMessageState({messageAttachments: cacheMessages[inboxMessages[index].id].attachments}));
+                } else {
+                    dispatch(getMessageAttachments({id: inboxMessages[index].id}));
+                }
 
             }
         }
-    }, [dispatch, index, inboxMessages])
+    }, [cacheMessages, dispatch, index, inboxMessages])
 
 
     useEffect(() => {
