@@ -107,7 +107,7 @@ export function Message() {
         if (index !== null && inboxMessages && inboxMessages.length > 0) {
             if (inboxMessages[index]) {
                 setMessageContent(inboxMessages[index]);
-                setMessageSenders([inboxMessages[index].from, ...(inboxMessages[index].cc || [])])
+                setMessageSenders([inboxMessages[index].from, ...(inboxMessages[index].cc || [])].filter(t => t))
                 dispatch(updateMessageState({selectedMessage: inboxMessages[index]}));
                 // We already set index to last inbox message
                 if (cacheMessages[inboxMessages[index].id] && cacheMessages[inboxMessages[index].id].body) {

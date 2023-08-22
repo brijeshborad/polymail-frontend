@@ -123,14 +123,17 @@ export function ReplyBox(props: ReplyBoxType) {
                 }));
 
                 if (props.replyType === 'reply-all' && selectedMessage.cc) {
-                    setEmailRecipients((prevState) => ({
-                        ...prevState,
-                        cc: {
-                            items: (draft ? (draft.cc || []) : selectedMessage.cc)!,
-                            value: ''
-                        }
-                    }));
-                    setHideShowCCBccFields(prev => ({...prev, cc: true}));
+                    let items: string[] = (draft ? (draft.cc || []) : selectedMessage.cc)!.filter(t => t);
+                    if (items.length > 0) {
+                        setEmailRecipients((prevState) => ({
+                            ...prevState,
+                            cc: {
+                                items: items,
+                                value: ''
+                            }
+                        }));
+                        setHideShowCCBccFields(prev => ({...prev, cc: true}));
+                    }
                 }
             }
 
@@ -363,21 +366,19 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
             }));
         }
     }
-
-
-    useEffect(() => {
-        if (sendDraftSuccess) {
-            let successObject = {
-                desc: isOpen ? 'Message is scheduled successfully!' : 'Successful',
-                type: 'success'
-            }
-            if (isOpen) {
-                onClose();
-            }
-            Toaster(successObject)
-
-        }
-    }, [isOpen, onClose, sendDraftSuccess])
+    //
+    // useEffect(() => {
+    //     if (sendDraftSuccess) {
+    //         let successObject = {
+    //             desc: isOpen ? 'Message is scheduled successfully!' : 'Successful',
+    //             type: 'success'
+    //         }
+    //         if (isOpen) {
+    //             onClose();
+    //         }
+    //         Toaster(successObject)
+    //     }
+    // }, [isOpen, onClose, sendDraftSuccess])
 
     const showCCFields = (type: string) => {
         setHideShowCCBccFields(prev => ({...prev, [type]: true}));
