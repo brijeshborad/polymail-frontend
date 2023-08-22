@@ -8,7 +8,12 @@ import Image from "next/image";
 import {StateType} from "@/types";
 import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {getAttachmentDownloadUrl, getMessageAttachments, getMessageParts, updateMessageState} from "@/redux/messages/action-reducer";
+import {
+    getAttachmentDownloadUrl,
+    getMessageAttachments,
+    getMessageParts,
+    updateMessageState
+} from "@/redux/messages/action-reducer";
 import {ReplyBox} from "@/components/inbox/reply-box";
 import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {Message as MessageModel, MessageDraft, Thread} from "@/models";
@@ -23,6 +28,7 @@ export function Message() {
     const [hideAndShowReplyBox, setHideAndShowReplyBox] = useState<boolean>(false);
     const [replyType, setReplyType] = useState<string>('');
     const [messageSenders, setMessageSenders] = useState<string[]>([]);
+    const [inboxMessages, setInboxMessages] = useState<MessageModel[]>([]);
     const {
         messages,
         messagePart,
@@ -37,37 +43,19 @@ export function Message() {
 
     const dispatch = useDispatch();
 
-    // const getAllThreadMessages = useCallback(() => {
-    //     if (selectedThread && selectedThread?.id) {
-    //         if (!cachedThreads[selectedThread.id]) {
-    //             dispatch(getAllMessages({thread: selectedThread.id}));
-    //             setHideAndShowReplyBox(false)
-    //         } else {
-    //             dispatch(updateMessageState({messages: cachedThreads[selectedThread.id]}));
-    //         }
-    //     }
-    // }, [cachedThreads, dispatch, selectedThread])
-
-    useEffect(() => {
-        if(attachmentUrl) {
-            console.log('attachmentUrl=', attachmentUrl);
-        }
-    }, [attachmentUrl])
-
     useEffect(() => {
         if (selectedThread && selectedThread?.id) {
             setIndex(null);
             setHideAndShowReplyBox(false);
             dispatch(updateMessageState({messages: selectedThread.messages}));
-            //  getAllThreadMessages();
         }
     }, [dispatch, selectedThread])
-
 
     useEffect(() => {
         if (messages && messages.length > 0) {
             // remove draft messages and set index to last inbox message
             const inboxMessages: MessageModel[] = messages.filter((msg: MessageModel) => !(msg.mailboxes || []).includes('DRAFT'));
+            setInboxMessages(inboxMessages);
             const draftMessage = messages.findLast((msg: MessageModel) => (msg.mailboxes || []).includes('DRAFT'));
             if (draftMessage) {
                 dispatch(updateMessageState({draft: draftMessage as MessageDraft}));
@@ -88,24 +76,6 @@ export function Message() {
         }
     }, [messagePart])
 
-
-    // function convertInternalCssToInline() {
-    //     var elements = document.querySelectorAll('*'); // Select all elements
-    //
-    //     elements.forEach(function (element) {
-    //         var computedStyles = getComputedStyle(element); // Get computed styles
-    //
-    //         for (var prop in computedStyles) {
-    //             if (computedStyles.hasOwnProperty(prop)) {
-    //                 if (typeof computedStyles[prop] === 'string') {
-    //                     // Apply computed styles as inline styles
-    //                     element.style[prop] = computedStyles[prop];
-    //                 }
-    //             }
-    //         }
-    //     });
-    // }
-
     // useEffect(() => {
     //     // convert blob url to image url
     //     if (messageAttachments && messageAttachments.length) {
@@ -121,20 +91,18 @@ export function Message() {
 
 
     useEffect(() => {
-        if (index !== null && messages && messages.length > 0) {
-            if (messages[index]) {
-                setMessageContent(messages[index]);
-                setMessageSenders([messages[index].from, ...(messages[index].cc || [])])
-                dispatch(updateMessageState({selectedMessage: messages[index]}));
+        if (index !== null && inboxMessages && inboxMessages.length > 0) {
+            if (inboxMessages[index]) {
+                setMessageContent(inboxMessages[index]);
+                setMessageSenders([inboxMessages[index].from, ...(inboxMessages[index].cc || [])])
+                dispatch(updateMessageState({selectedMessage: inboxMessages[index]}));
                 // We already set index to last inbox message
-                dispatch(getMessageParts({id: messages[index].id}));
-                dispatch(getMessageAttachments({id: messages[index].id}));
+                dispatch(getMessageParts({id: inboxMessages[index].id}));
+                dispatch(getMessageAttachments({id: inboxMessages[index].id}));
 
             }
         }
-    }, [dispatch, index, messages])
-
-
+    }, [dispatch, index, inboxMessages])
 
 
     useEffect(() => {
@@ -150,7 +118,7 @@ export function Message() {
                 setIndex(prevState => prevState ? (prevState - 1) : null);
             }
         } else if (type === 'down') {
-            if (messages && messages.length - 1 !== index) {
+            if (inboxMessages && inboxMessages.length - 1 !== index) {
                 setIndex(prevState => prevState || prevState === 0 ? (prevState + 1) : 0);
             }
         }
@@ -236,7 +204,7 @@ export function Message() {
                                     <ChevronUpIcon/>
                                 </div>
                                 <div
-                                    className={`${styles.actionIcon} ${messages && messages?.length - 1 !== index ? '' : styles.disabled}`}
+                                    className={`${styles.actionIcon} ${inboxMessages && inboxMessages?.length - 1 !== index ? '' : styles.disabled}`}
                                     onClick={() => showPreNextMessage('down')}>
                                     <ChevronDownIcon/>
                                 </div>
@@ -245,7 +213,7 @@ export function Message() {
 
                             <Flex alignItems={'center'} gap={3} className={styles.headerRightIcon}>
                                 {!isLoading && <Text className={styles.totalMessages}>
-                                    {index ? index + 1 : 1} / {messages && messages.length}
+                                    {index ? index + 1 : 1} / {inboxMessages && inboxMessages.length}
                                 </Text>}
                                 <Button className={styles.addToProject} leftIcon={<FolderIcon/>}>Add to
                                     Project <span
