@@ -9,13 +9,13 @@ import {
     Tooltip
 } from "@chakra-ui/react";
 import {StarIcon, DraftIcon, FolderIcon, SendIcon, TrashIcon, ArchiveIcon} from "@/icons";
-import InboxTab from "@/components/inbox/tabs-components/inbox-tab";
 import {StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {getAllThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 import {Message, Thread} from "@/models";
+import {InboxTab} from "@/components/inbox";
 
 export function Threads() {
     const [tab, setTab] = useState<string>('INBOX');

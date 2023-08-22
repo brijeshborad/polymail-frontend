@@ -23,7 +23,7 @@ import React, {ChangeEvent, ChangeEventHandler, useEffect, useRef, useState} fro
 import {useDispatch, useSelector} from "react-redux";
 import {ChevronDownIcon, CloseIcon, InfoOutlineIcon} from "@chakra-ui/icons";
 import {SingleDatepicker} from "chakra-dayzed-datepicker";
-import {Chip} from "@/components/chip";
+import {Chip, Toaster, RichTextEditor} from "@/components/common";
 import {FileIcon, LinkIcon, TextIcon} from "@/icons";
 import {
     AddImageUrl,
@@ -35,11 +35,9 @@ import {
 } from "@/redux/messages/action-reducer";
 import {StateType} from "@/types";
 import {debounce, isEmail} from "@/utils/common.functions";
-import {Toaster} from "@/components/toaster";
-import RichTextEditor from "@/components/rich-text-editor";
 import {ReplyBoxType} from "@/types/props-types/replyBox.type";
 import dayjs from "dayjs";
-import {MessageAttachments, MessageDraft} from "@/models";
+import {MessageAttachments} from "@/models";
 
 declare type RecipientsType = { items: string[], value: string };
 

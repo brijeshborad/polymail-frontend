@@ -58,7 +58,7 @@ function* getMessageAttachment({payload: {id}}: PayloadAction<{ id: string }>) {
     }
 }
 
-function* createNewDraft({payload: {accountId, body}}: PayloadAction<{accountId: string, body: MessageDraft }>) {
+function* createNewDraft({payload: {accountId, body}}: PayloadAction<{ accountId: string, body: MessageDraft }>) {
     try {
         const response: AxiosResponse = yield ApiService.callPost(`messages`, {accountId, ...body});
         yield put(createDraftSuccess(response));
@@ -68,13 +68,20 @@ function* createNewDraft({payload: {accountId, body}}: PayloadAction<{accountId:
     }
 }
 
-function* sendDraftMessage({payload: {id, now, delay, undo}}: PayloadAction<{ id: string, now?: boolean, delay?: number, undo?: boolean }>) {
+function* sendDraftMessage({
+                               payload: {
+                                   id,
+                                   now,
+                                   delay,
+                                   undo
+                               }
+                           }: PayloadAction<{ id: string, now?: boolean, delay?: number, undo?: boolean }>) {
     try {
         const response: AxiosResponse = yield ApiService.callGet(`messages/${id}/send`,
             {
-                ...(now ? {now}: {}),
-                ...(delay ? {delay}: {}),
-                ...(undo ? {undo}: {})
+                ...(now ? {now} : {}),
+                ...(delay ? {delay} : {}),
+                ...(undo ? {undo} : {})
             });
         yield put(sendMessageSuccess(response || {}));
     } catch (error: any) {
@@ -103,17 +110,19 @@ function* getAttachmentUrl({payload: {id, attachment}}: PayloadAction<{ id: stri
     }
 }
 
-function* generateAttachmentUploadUrl({payload: {id, file}}: PayloadAction<{ id: string,
-        file: File
-     }>) {
+function* generateAttachmentUploadUrl({payload: {id, file}}: PayloadAction<{
+    id: string,
+    file: File
+}>) {
     try {
-        console.log(file);
         const {name, type} = file;
-        const response: AxiosResponse = yield ApiService.callPost(`messages/${id}/attachments`, {filename: name, mimeType: type});
-
+        let response: AxiosResponse = yield ApiService.callPost(`messages/${id}/attachments`, {
+            filename: name,
+            mimeType: type
+        });
         // TODO: uncomment below code
-        if(response && response?.url) {
-           const response2: AxiosResponse = yield ApiService.callPut(response?.url, file, {"Content-Type": type, 'Skip-Headers': true});
+        if (response && (response as any)?.url) {
+            yield ApiService.callPut((response as any)?.url, file, {"Content-Type": type, 'Skip-Headers': true});
         }
 
         yield put(AddImageUrlSuccess(response));

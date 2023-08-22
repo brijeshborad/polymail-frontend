@@ -2,17 +2,16 @@ import { Button, Checkbox, Flex, Input} from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
 import {DisneyIcon} from "@/icons";
 import styles2 from "@/styles/common.module.css";
-import {Time} from "@/components";
 import {InboxTabProps, StateType} from "@/types";
 import {Thread} from "@/models";
 import React, {useCallback, useRef} from "react";
-import {SpinnerUI} from "@/components/spinner";
+import {SpinnerUI, Time} from "@/components/common";
 import {useDispatch, useSelector} from "react-redux";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
 
 
-export default function InboxTab(props: InboxTabProps) {
+export function InboxTab(props: InboxTabProps) {
     const {isLoading, selectedThread, threads} = useSelector((state: StateType) => state.threads);
 
     const listRef = useRef<any>(null);

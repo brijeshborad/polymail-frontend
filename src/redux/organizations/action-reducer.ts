@@ -1,6 +1,5 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {InitialOrganizationStateType} from "@/types";
-// import {Organization} from "@/models";
 import LocalStorageService from "@/utils/localstorage.service";
 
 const initialState: any = {

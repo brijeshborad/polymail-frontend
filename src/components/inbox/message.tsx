@@ -2,7 +2,7 @@ import styles from "@/styles/Inbox.module.css";
 import styles2 from "@/styles/common.module.css";
 import {Box, Button, Flex, Heading, Text, Tooltip} from "@chakra-ui/react";
 import {CheckIcon, ChevronDownIcon, ChevronUpIcon, CloseIcon, WarningIcon} from "@chakra-ui/icons";
-import {Time} from "@/components";
+import {Time} from "@/components/common";
 import {ArchiveIcon, FolderIcon, ForwardIcon, ReplyIcon, StarIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
 import Image from "next/image";
 import {StateType} from "@/types";

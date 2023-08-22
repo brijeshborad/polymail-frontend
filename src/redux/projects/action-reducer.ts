@@ -1,6 +1,5 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {InitialProjectState} from "@/types";
-// import {Project} from "@/models";
 
 const initialState: any = {
     projects: [],

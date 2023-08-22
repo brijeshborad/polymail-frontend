@@ -1,5 +1,4 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-// import {Account} from "@/models";
 import {InitialAccountStateType} from "@/types";
 import LocalStorageService from "@/utils/localstorage.service";
 

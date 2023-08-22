@@ -10,7 +10,7 @@ import {addOrganization} from "@/redux/organizations/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import Router from "next/router";
 import withAuth from "@/components/withAuth";
-import {Toaster} from "@/components/toaster";
+import {Toaster} from "@/components/common";
 
 
 function AddOrganization() {

@@ -1,7 +1,7 @@
 import axios, {AxiosInstance, CreateAxiosDefaults} from 'axios';
 import LocalStorageService from "./localstorage.service";
 import Router from "next/router";
-import {Toaster} from "@/components/toaster";
+import {Toaster} from "@/components/common";
 
 const axiosInstance: AxiosInstance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -9,8 +9,7 @@ const axiosInstance: AxiosInstance = axios.create({
     headers: {
         'Accept': 'application/json',
         'Content-Type': ' application/json'
-    },
-    // withCredentials: true
+    }
 } as CreateAxiosDefaults);
 
 axiosInstance.interceptors.request.use((config) => {

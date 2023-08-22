@@ -19,25 +19,23 @@ import {useDispatch, useSelector} from "react-redux";
 import {googleAuthLink} from "@/redux/auth/action-reducer";
 import Router from "next/router";
 import {StateType} from "@/types";
-import React, {ChangeEvent, useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {getAllOrganizations, updateOrganizationState} from "@/redux/organizations/action-reducer";
 import {Account, Organization, User} from "@/models";
 import {getAllAccount, getSyncAccount, updateAccountState} from "@/redux/accounts/action-reducer";
 import LocalStorageService from "@/utils/localstorage.service";
 import {ComposeIcon} from "@/icons/compose.icon";
 import {updateMessageState} from "@/redux/messages/action-reducer";
-import {Toaster} from "@/components/toaster";
+import {Toaster} from "@/components/common";
 import {getAllThreads, searchThreads, updateThreadState} from "@/redux/threads/action-reducer";
 
 export function Header() {
     const dispatch = useDispatch();
-    // const [workspace, setWorkspace] = useState<Organization>();
     const {
         organizations,
-        isLoading: isOrganizationLoading,
-        // selectedOrganization
+        isLoading: isOrganizationLoading
     } = useSelector((state: StateType) => state.organizations);
-    const {accounts , selectedAccount, success: syncSuccess} = useSelector((state: StateType) => state.accounts);
+    const {accounts, selectedAccount, success: syncSuccess} = useSelector((state: StateType) => state.accounts);
     const {threads} = useSelector((state: StateType) => state.threads);
     const {googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
     const [userData, setUserData] = useState<User>();
@@ -166,7 +164,7 @@ export function Header() {
     //     }
     // }
 
-    const handleKeyPress = (event) => {
+    const handleKeyPress = (event: KeyboardEvent | any) => {
         if (event.key.toLowerCase() === 'enter') {
             if (searchString) {
                 let searchString = `label:${event.target.value}`
@@ -205,8 +203,10 @@ export function Header() {
                     </InputLeftElement>
                     <Input type='text'
                            placeholder='Search'
-                           // onChange={(e) => searchThreadsData(e)}
-                        onChange={event => {setSearchString(event.target.value)}}
+                        // onChange={(e) => searchThreadsData(e)}
+                           onChange={event => {
+                               setSearchString(event.target.value)
+                           }}
                            onKeyPress={(e) => handleKeyPress(e)}
                     />
                     <InputRightElement>

@@ -2,7 +2,7 @@ import {useCallback, useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {Grid, GridItem} from "@chakra-ui/react";
 import {DisneyIcon, FolderIcon} from "@/icons";
-import {ProjectButton} from "@/components";
+import {ProjectButton} from "@/components/common";
 import styles from "@/styles/Inbox.module.css";
 import styles2 from "@/styles/common.module.css";
 import {getAllProjects} from "@/redux/projects/action-reducer";
