@@ -5,6 +5,7 @@ import projectsSagas from './projects/saga';
 import threadsSagas from './threads/saga';
 import messageSagas from './messages/saga';
 import accountSagas from './accounts/saga';
+import userSagas from './users/saga';
 import draftSagas from './draft/saga';
 
 export default function* rootSaga() {
@@ -16,5 +17,6 @@ export default function* rootSaga() {
         organizationsSagas(),
         accountSagas(),
         draftSagas(),
+        userSagas(),
     ]);
 }

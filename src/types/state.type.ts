@@ -18,4 +18,5 @@ export declare type StateType = {
     accounts: InitialAccountStateType,
     socket: InitialSocketType,
     draft: InitialDraftStateType,
+    users: InitialAuthState,
 }

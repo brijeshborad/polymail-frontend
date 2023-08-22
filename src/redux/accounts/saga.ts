@@ -6,7 +6,7 @@ import {
     getAllAccount,
     getSyncAccount,
     getSyncAccountSuccess,
-    getSyncAccountError
+    getSyncAccountError, updateAccountDetailsSuccess, updateAccountDetailsError, updateAccountDetails
 } from "@/redux/accounts/action-reducer";
 import ApiService from "@/utils/api.service";
 import {AxiosError, AxiosResponse} from "axios";
@@ -31,6 +31,18 @@ function* getAccountSync({payload: {id}}: PayloadAction<{ id: string }>) {
     }
 }
 
+function* updateAccountDetail({payload: {signature, id}}: PayloadAction<{ signature?: string,  id: string }>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callPatch(`accounts/${id}`, {
+            ...(signature ? {signature} : {}),
+        });
+        yield put(updateAccountDetailsSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        yield put(updateAccountDetailsError(error.response.data));
+    }
+}
+
 export function* watchGetAccount() {
     yield takeLatest(getAllAccount.type, getAccountDetails);
 }
@@ -39,10 +51,15 @@ export function* watchGetSyncAccount() {
     yield takeLatest(getSyncAccount.type, getAccountSync);
 }
 
+export function* watchUpdateAccountDetails() {
+    yield takeLatest(updateAccountDetails.type, updateAccountDetail);
+}
+
 export default function* rootSaga() {
     yield all([
         fork(watchGetAccount),
         fork(watchGetSyncAccount),
+        fork(watchUpdateAccountDetails),
     ]);
 }
 

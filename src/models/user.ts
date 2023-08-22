@@ -8,15 +8,23 @@ export interface User {
     type?: string,
 }
 
-export interface UserToken {
-    token?: string,
+export interface Preferences {
+    timeZone?: string,
+    defaultSendDelay?: number
 }
 
-export interface LoginWithGoogle {
-    mode?: string,
-    redirectUrl?: string
-    accountType?: string
-    platform?: string,
-    withToken?: boolean
+export interface UserDetails {
+    id?: string,
+    created?: string,
+    updated?: string,
+    lastSeen?: string,
+    status?: string,
+    email?: string,
+    firstName?: string,
+    lastName?: string,
+    middleName?: string,
+    deviceIds?: string,
+    preferences?: Preferences | null
 }
+
 

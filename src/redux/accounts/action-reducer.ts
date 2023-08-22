@@ -37,6 +37,17 @@ const accountSlice = createSlice({
         getSyncAccountError: (state: InitialAccountStateType, {payload: error}: PayloadAction<any>) => {
             return {...state, account: null, isLoading: false, error}
         },
+
+        updateAccountDetails: (state: InitialAccountStateType, _action: PayloadAction<{ signature: string, id: string }>) => {
+            return {...state, error: null, isLoading: false}
+        },
+        updateAccountDetailsSuccess: (state: InitialAccountStateType, {payload: account}: PayloadAction<{}>) => {
+            LocalStorageService.updateAccount('store', account);
+            return {...state, account, error: null, isLoading: false}
+        },
+        updateAccountDetailsError: (state: InitialAccountStateType, {payload: error}: PayloadAction<any>) => {
+            return {...state, error, isLoading: false}
+        },
     }
 })
 
@@ -47,6 +58,9 @@ export const {
     updateAccountState,
     getSyncAccount,
     getSyncAccountSuccess,
-    getSyncAccountError
+    getSyncAccountError,
+    updateAccountDetails,
+    updateAccountDetailsSuccess,
+    updateAccountDetailsError
 } = accountSlice.actions
 export default accountSlice.reducer

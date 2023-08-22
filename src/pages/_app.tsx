@@ -7,7 +7,7 @@ import chakraTheme from '@chakra-ui/theme'
 import {Inter} from "next/font/google";
 import Head from 'next/head'
 
-const {Button, Input, Menu, Checkbox, Heading, Divider, Alert, Modal, Popover, Tooltip, Textarea, Spinner} = chakraTheme.components
+const {Button, Input, Menu, Checkbox, Heading, Divider, Alert, Modal, Popover, Tooltip, Textarea, Spinner, List, Select, Table} = chakraTheme.components
 const config: ThemeConfig = {
     initialColorMode: 'light',
     useSystemColorMode: false,
@@ -26,7 +26,10 @@ const theme = extendBaseTheme({
         Tooltip,
         Textarea,
         Popover,
-        Spinner
+        Spinner,
+        List,
+        Select,
+        Table
     },
 })
 

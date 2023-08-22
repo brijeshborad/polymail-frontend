@@ -3,5 +3,6 @@ export declare type RichTextEditorProps = {
     placeholder?: string,
     value?: string,
     onChange?: (_e: string) => void
-    initialUpdated?: boolean
+    initialUpdated?: boolean,
+    hideToolBar?: boolean
 }

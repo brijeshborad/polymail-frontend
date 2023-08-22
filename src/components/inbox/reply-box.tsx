@@ -51,7 +51,7 @@ export function ReplyBox(props: ReplyBoxType) {
         bcc: false
     })
     const [htmlContent, setHtmlContent] = useState('');
-    const [subject, setSubject] = useState<string>('New Mail Subject');
+    const [subject, setSubject] = useState<string>('');
     const [scheduledDate, setScheduledDate] = useState<Date>();
     const [boxUpdatedFirstTime, setBoxUpdatedFirstTime] = useState<boolean>(false);
     const [emailRecipients, setEmailRecipients] = useState<RecipientsType>({
@@ -238,11 +238,7 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
 
 
     const addSubject = (event: ChangeEvent | any) => {
-        if (event.target.value) {
-            setSubject(event.target.value);
-        } else {
-            setSubject('New Mail Subject');
-        }
+            setSubject(event.target.value || '');
     }
 
 
