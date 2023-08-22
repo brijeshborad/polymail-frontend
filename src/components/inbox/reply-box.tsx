@@ -68,8 +68,7 @@ export function ReplyBox(props: ReplyBoxType) {
         isCompose
     } = useSelector((state: StateType) => state.messages);
     const {
-        draft,
-        success: sendDraftSuccess,
+        draft
     } = useSelector((state: StateType) => state.draft);
 
     const inputFile = useRef<HTMLInputElement | null>(null)

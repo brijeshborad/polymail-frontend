@@ -1,4 +1,4 @@
-import {Message, MessageAttachments, MessageDraft, MessagePart} from "@/models";
+import {Message, MessageAttachments, MessagePart} from "@/models";
 
 export declare type InitialMessageStateType = {
     messages?: Message[],

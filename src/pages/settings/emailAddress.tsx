@@ -1,7 +1,7 @@
 import {Button, Flex, Link, Text} from "@chakra-ui/react";
 import styles from "@/styles/setting.module.css";
 import {AppleIcon, GoogleIcon} from "@/icons";
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {Account} from "@/models";

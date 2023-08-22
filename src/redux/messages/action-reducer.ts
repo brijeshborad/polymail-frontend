@@ -1,6 +1,5 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {InitialMessageStateType} from "@/types";
-import {MessageDraft} from "@/models";
 
 const initialState: any = {
     messages: [],

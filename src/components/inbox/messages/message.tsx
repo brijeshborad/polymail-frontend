@@ -145,7 +145,7 @@ export function Message() {
             }
             dispatch(updateMessageState({attachmentUrl: null}));
         }
-    }, [attachmentUrl])
+    }, [dispatch, attachmentUrl])
 
 
     const showPreNextMessage = (type: string) => {

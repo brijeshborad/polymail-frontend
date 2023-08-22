@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import withAuth from "@/components/withAuth";
 import {
     Grid,
@@ -33,11 +33,7 @@ function Index() {
     const [currentTab, setCurrentTab] = useState<any>(null);
     const [tabTitle, setTabTitle] = useState<any>(null);
 
-    useEffect(() => {
-        openTabs()
-    }, [])
-
-    const openTabs = (type: string = 'profile') => {
+    const openTabs = useCallback((type: string = 'profile') => {
         if (type === 'profile') {
             setTabTitle('Profile');
             setCurrentTab(<Profile/>);
@@ -54,7 +50,12 @@ function Index() {
             setTabTitle('Members');
             setCurrentTab(<Members onOpen={onOpen} isOpen={isOpen} onClose={onClose}/>);
         }
-    }
+    }, []);
+
+    useEffect(() => {
+        openTabs()
+    }, [openTabs])
+
 
     return (
         <div className={styles.setting}>
