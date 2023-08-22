@@ -1,6 +1,6 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 // import {Account} from "@/models";
-import {InitialAccountStateType} from "@/types";
+import {InitialAccountStateType, InitialAuthState} from "@/types";
 import LocalStorageService from "@/utils/localstorage.service";
 
 const initialState: any = {
@@ -38,6 +38,17 @@ const accountSlice = createSlice({
         getSyncAccountError: (state: InitialAccountStateType, {payload: error}: PayloadAction<any>) => {
             return {...state, account: null, isLoading: false, error}
         },
+
+        updateAccountDetails: (state: InitialAuthState, _action: PayloadAction<{ signature: string, id: string }>) => {
+            return {...state, error: null, isLoading: false}
+        },
+        updateAccountDetailsSuccess: (state: InitialAuthState, {payload: account}: PayloadAction<{}>) => {
+            LocalStorageService.updateAccount('store', account);
+            return {...state, account, error: null, isLoading: false}
+        },
+        updateAccountDetailsError: (state: InitialAuthState, {payload: error}: PayloadAction<any>) => {
+            return {...state, error, isLoading: false}
+        },
     }
 })
 
@@ -48,6 +59,9 @@ export const {
     updateAccountState,
     getSyncAccount,
     getSyncAccountSuccess,
-    getSyncAccountError
+    getSyncAccountError,
+    updateAccountDetails,
+    updateAccountDetailsSuccess,
+    updateAccountDetailsError
 } = accountSlice.actions
 export default accountSlice.reducer

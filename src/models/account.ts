@@ -1,7 +1,7 @@
 export interface Account {
-    id: string,
+    id?: string,
     name: string,
-    email: string,
+    email?: string,
     created?: string,
     updated?: string,
     success?: boolean,

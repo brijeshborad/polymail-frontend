@@ -5,7 +5,7 @@ import {
     InitialOrganizationStateType,
     InitialProjectState,
     InitialThreadStateType,
-    InitialSocketType
+    InitialSocketType,
 } from "./";
 
 export declare type StateType = {
@@ -16,4 +16,5 @@ export declare type StateType = {
     organizations: InitialOrganizationStateType,
     accounts: InitialAccountStateType,
     socket: InitialSocketType,
+    users: InitialAuthState,
 }

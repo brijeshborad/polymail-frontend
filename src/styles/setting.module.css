@@ -268,12 +268,14 @@
 }
 
 .newPaymentInput input,
-.newPaymentInput select{
+.newPaymentInput select,
+.newPaymentInput textarea {
     background-color: #FFFFFF;
     border: 1px solid #E5E5E5;
     border-radius: 8px;
     color: #000000;
     font-size: 13px;
+    resize: none;
 }
 
 .newPaymentInput .inputIcon {
@@ -305,14 +307,17 @@
 }
 
 .newPaymentInput input:hover,
-.newPaymentInput select:hover {
+.newPaymentInput select:hover,
+.newPaymentInput textarea:hover {
     border: 1px solid #E5E5E5;
 }
 
 .newPaymentInput input:focus-visible,
 .newPaymentInput input:focus,
 .newPaymentInput select:focus-visible,
-.newPaymentInput select:focus {
+.newPaymentInput select:focus,
+.newPaymentInput textarea:focus-visible,
+.newPaymentInput textarea:focus {
     border: 1px solid #000000;
     box-shadow: none;
 }
@@ -370,4 +375,20 @@
     border-radius: 50px;
     border: 1px solid #B6B6B6;
     background-color: #F9F9F9;
+}
+
+.memberTable .OptionButton:hover,
+.memberTable .OptionButton:focus-visible,
+.memberTable .OptionButton:active {
+    background-color: transparent;
+    box-shadow: none;
+}
+
+.changePassword {
+
+}
+
+.replyMessageArea {
+    border: 1px solid;
+    height: 100px;
 }
