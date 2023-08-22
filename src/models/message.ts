@@ -46,7 +46,7 @@ export interface MessageAttachment {
 
 export interface MessageDraftInfo {
     body?: string,
-    attachments?: MessageAttachment[],
+    attachments?: MessageAttachments[],
 }
 
 export interface MessageRequestBody {

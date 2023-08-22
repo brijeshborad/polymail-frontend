@@ -16,13 +16,14 @@ import {getAllThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 import {Message, Thread} from "@/models";
 import {InboxTab} from "@/components/inbox";
+import {updateDraftState} from "@/redux/draft/action-reducer";
 
 export function Threads() {
     const [tab, setTab] = useState<string>('INBOX');
     const [countUnreadMessages, setCountUnreadMessages] = useState<number>(0);
 
     const {threads, isLoading, selectedThread, updateSuccess} = useSelector((state: StateType) => state.threads);
-    const {draftSuccess, draft} = useSelector((state: StateType) => state.messages);
+    const {success: draftSuccess, draft} = useSelector((state: StateType) => state.draft);
     const {selectedAccount, account} = useSelector((state: StateType) => state.accounts);
     const {newMessage} = useSelector((state: StateType) => state.socket);
     const dispatch = useDispatch();
@@ -58,7 +59,7 @@ export function Threads() {
                     ...currentThreads[currentThreadIndex],
                     messages: [...messages]
                 };
-                dispatch(updateMessageState({draftSuccess: false}));
+                dispatch(updateDraftState({success: false}));
                 dispatch(updateThreadState({threads: currentThreads}));
             }
         }

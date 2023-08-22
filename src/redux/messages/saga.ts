@@ -9,22 +9,16 @@ import {
     getMessageParts,
     getMessagePartsError,
     getMessagePartsSuccess,
-    createDraft,
-    createDraftSuccess,
-    createDraftError,
-    sendMessage,
-    sendMessageSuccess,
-    sendMessageError,
-    updatePartialMessageSuccess,
-    updatePartialMessageError,
-    updatePartialMessage,
     getMessageAttachmentsSuccess,
     getMessageAttachmentsError,
     getMessageAttachments,
     getAttachmentDownloadUrl,
-    getAttachmentDownloadUrlError, getAttachmentDownloadUrlSuccess, AddImageUrlError, AddImageUrlSuccess, AddImageUrl
+    getAttachmentDownloadUrlError,
+    getAttachmentDownloadUrlSuccess,
+    uploadAttachmentError,
+    uploadAttachmentSuccess,
+    uploadAttachment
 } from "@/redux/messages/action-reducer";
-import {MessageDraft, MessageRequestBody} from "@/models";
 
 function* getMessages({payload: {thread}}: PayloadAction<{ thread?: string }>) {
     try {
@@ -58,48 +52,6 @@ function* getMessageAttachment({payload: {id}}: PayloadAction<{ id: string }>) {
     }
 }
 
-function* createNewDraft({payload: {accountId, body}}: PayloadAction<{ accountId: string, body: MessageDraft }>) {
-    try {
-        const response: AxiosResponse = yield ApiService.callPost(`messages`, {accountId, ...body});
-        yield put(createDraftSuccess(response));
-    } catch (error: any) {
-        error = error as AxiosError;
-        yield put(createDraftError(error.response.data));
-    }
-}
-
-function* sendDraftMessage({
-                               payload: {
-                                   id,
-                                   now,
-                                   delay,
-                                   undo
-                               }
-                           }: PayloadAction<{ id: string, now?: boolean, delay?: number, undo?: boolean }>) {
-    try {
-        const response: AxiosResponse = yield ApiService.callGet(`messages/${id}/send`,
-            {
-                ...(now ? {now} : {}),
-                ...(delay ? {delay} : {}),
-                ...(undo ? {undo} : {})
-            });
-        yield put(sendMessageSuccess(response || {}));
-    } catch (error: any) {
-        error = error as AxiosError;
-        yield put(sendMessageError(error.response.data));
-    }
-}
-
-function* patchPartialMessage({payload: {id, body}}: PayloadAction<{ id: string, body: MessageRequestBody }>) {
-    try {
-        const response: AxiosResponse = yield ApiService.callPatch(`messages/${id}`, body);
-        yield put(updatePartialMessageSuccess(response));
-    } catch (error: any) {
-        error = error as AxiosError;
-        yield put(updatePartialMessageError(error.response.data));
-    }
-}
-
 function* getAttachmentUrl({payload: {id, attachment}}: PayloadAction<{ id: string, attachment: string }>) {
     try {
         const response: AxiosResponse = yield ApiService.callGet(`messages/${id}/attachments/${attachment}`, {});
@@ -125,10 +77,10 @@ function* generateAttachmentUploadUrl({payload: {id, file}}: PayloadAction<{
             yield ApiService.callPut((response as any)?.url, file, {"Content-Type": type, 'Skip-Headers': true});
         }
 
-        yield put(AddImageUrlSuccess(response));
+        yield put(uploadAttachmentSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(AddImageUrlError(error.response.data));
+        yield put(uploadAttachmentError(error.response.data));
     }
 }
 
@@ -144,24 +96,12 @@ export function* watchGetMessagesAttachments() {
     yield takeLatest(getMessageAttachments.type, getMessageAttachment);
 }
 
-export function* watchCreateNewDraft() {
-    yield takeLatest(createDraft.type, createNewDraft);
-}
-
-export function* watchSendDraftMessage() {
-    yield takeLatest(sendMessage.type, sendDraftMessage);
-}
-
-export function* watchUpdateCurrentDraftMessage() {
-    yield takeLatest(updatePartialMessage.type, patchPartialMessage);
-}
-
 export function* watchGetAttachmentUrl() {
     yield takeLatest(getAttachmentDownloadUrl.type, getAttachmentUrl);
 }
 
 export function* watchAddAttachmentUrlToS3() {
-    yield takeLatest(AddImageUrl.type, generateAttachmentUploadUrl);
+    yield takeLatest(uploadAttachment.type, generateAttachmentUploadUrl);
 }
 
 
@@ -169,9 +109,6 @@ export default function* rootSaga() {
     yield all([
         fork(watchGetMessages),
         fork(watchGetMessagesPart),
-        fork(watchCreateNewDraft),
-        fork(watchSendDraftMessage),
-        fork(watchUpdateCurrentDraftMessage),
         fork(watchGetMessagesAttachments),
         fork(watchGetAttachmentUrl),
         fork(watchAddAttachmentUrlToS3),

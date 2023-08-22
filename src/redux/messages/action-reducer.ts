@@ -8,14 +8,11 @@ const initialState: any = {
     selectedMessage: null,
     messagePart: null,
     messageAttachments: [],
-    draft: null,
-    sendMessage: null,
     isLoading: false,
     error: null,
     isCompose: false,
     success: false,
-    draftSuccess: false,
-    imageUrl: null
+    attachmentUrl: null
 } as InitialMessageStateType
 
 const messagesSlice = createSlice({
@@ -23,13 +20,13 @@ const messagesSlice = createSlice({
     initialState,
     reducers: {
         getAllMessages: (state: InitialMessageStateType, _action: PayloadAction<{ thread?: string }>) => {
-            return {...state, messages: [], isLoading: true, error: null, draft: null}
+            return {...state, messages: [], isLoading: true, error: null}
         },
         getAllMessagesSuccess: (state: InitialMessageStateType, {payload: messages}: PayloadAction<{}>) => {
-            return {...state, messages, isLoading: false, error: null, draft: null}
+            return {...state, messages, isLoading: false, error: null}
         },
         getAllMessagesError: (state: InitialMessageStateType, {payload: error}: PayloadAction<{ error: any }>) => {
-            return {...state, messages: [], isLoading: false, error, draft: null}
+            return {...state, messages: [], isLoading: false, error}
         },
 
         getMessageParts: (state: InitialMessageStateType, _action: PayloadAction<{ id: string }>) => {
@@ -52,36 +49,6 @@ const messagesSlice = createSlice({
             return {...state, messageAttachments: null, isLoading: false, error}
         },
 
-        createDraft: (state: InitialMessageStateType, _action: PayloadAction<{ accountId: string, body: MessageDraft }>) => {
-            return {...state, draft: null, error: null, isLoading: false, draftSuccess: false}
-        },
-        createDraftSuccess: (state: InitialMessageStateType, {payload: draft}: PayloadAction<{}>) => {
-            return {...state, draft, error: null, isLoading: false, draftSuccess: true}
-        },
-        createDraftError: (state: InitialMessageStateType, {payload: error}: PayloadAction<any>) => {
-            return {...state, draft: null, error, isLoading: false, draftSuccess: false}
-        },
-
-        sendMessage: (state: InitialMessageStateType, _action: PayloadAction<{ id: string, now?: boolean, delay?: number, undo?: boolean }>) => {
-            return {...state, sendMessage: null, error: null, isLoading: true}
-        },
-        sendMessageSuccess: (state: InitialMessageStateType, {payload: sendMessage}: PayloadAction<{}>) => {
-            return {...state, sendMessage, error: null, isLoading: false, success: true}
-        },
-        sendMessageError: (state: InitialMessageStateType, {payload: error}: PayloadAction<any>) => {
-            return {...state, sendMessage: null, error, isLoading: false}
-        },
-
-        updatePartialMessage: (state: InitialMessageStateType, _action: PayloadAction<{ id: string, body: MessageDraft }>) => {
-            return {...state, error: null, isLoading: false, draftSuccess: false}
-        },
-        updatePartialMessageSuccess: (state: InitialMessageStateType, {payload: draft}: PayloadAction<{}>) => {
-            return {...state, draft, error: null, isLoading: false, draftSuccess: true}
-        },
-        updatePartialMessageError: (state: InitialMessageStateType, {payload: error}: PayloadAction<any>) => {
-            return {...state, error, isLoading: false, draftSuccess: false}
-        },
-
         getAttachmentDownloadUrl: (state: InitialMessageStateType, _action: PayloadAction<{ id?: string, attachment?: string }>) => {
             return {...state, error: null, isLoading: false, success: false}
         },
@@ -92,13 +59,13 @@ const messagesSlice = createSlice({
             return {...state, error, isLoading: false, success: false}
         },
 
-        AddImageUrl: (state: InitialMessageStateType, _action: PayloadAction<{ id?: string, file?: File }>) => {
+        uploadAttachment: (state: InitialMessageStateType, _action: PayloadAction<{ id?: string, file?: File }>) => {
             return {...state, error: null, isLoading: false, success: false}
         },
-        AddImageUrlSuccess: (state: InitialMessageStateType, {payload: addImageUrl}: PayloadAction<{}>) => {
-            return {...state, addImageUrl, error: null, isLoading: false, success: true}
+        uploadAttachmentSuccess: (state: InitialMessageStateType, _action: PayloadAction<{}>) => {
+            return {...state, error: null, isLoading: false, success: true}
         },
-        AddImageUrlError: (state: InitialMessageStateType, {payload: error}: PayloadAction<any>) => {
+        uploadAttachmentError: (state: InitialMessageStateType, {payload: error}: PayloadAction<any>) => {
             return {...state, error, isLoading: false, success: false}
         },
 
@@ -115,15 +82,6 @@ export const {
     getMessageParts,
     getMessagePartsSuccess,
     getMessagePartsError,
-    createDraft,
-    createDraftSuccess,
-    createDraftError,
-    sendMessage,
-    sendMessageSuccess,
-    sendMessageError,
-    updatePartialMessage,
-    updatePartialMessageSuccess,
-    updatePartialMessageError,
     updateMessageState,
     getMessageAttachments,
     getMessageAttachmentsSuccess,
@@ -131,8 +89,8 @@ export const {
     getAttachmentDownloadUrl,
     getAttachmentDownloadUrlSuccess,
     getAttachmentDownloadUrlError,
-    AddImageUrl,
-    AddImageUrlSuccess,
-    AddImageUrlError
+    uploadAttachment,
+    uploadAttachmentSuccess,
+    uploadAttachmentError
 } = messagesSlice.actions
 export default messagesSlice.reducer

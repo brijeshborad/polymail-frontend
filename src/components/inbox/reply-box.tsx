@@ -26,55 +26,51 @@ import {SingleDatepicker} from "chakra-dayzed-datepicker";
 import {Chip, Toaster, RichTextEditor} from "@/components/common";
 import {FileIcon, LinkIcon, TextIcon} from "@/icons";
 import {
-    AddImageUrl,
-    createDraft,
-    getMessageAttachments,
-    sendMessage,
+    uploadAttachment,
     updateMessageState,
-    updatePartialMessage
 } from "@/redux/messages/action-reducer";
+import {
+    createDraft,
+    sendMessage, updateDraftState,
+    updatePartialMessage
+} from "@/redux/draft/action-reducer";
 import {StateType} from "@/types";
 import {debounce, isEmail} from "@/utils/common.functions";
 import {ReplyBoxType} from "@/types/props-types/replyBox.type";
 import dayjs from "dayjs";
 import {MessageAttachments} from "@/models";
 
-declare type RecipientsType = { items: string[], value: string };
+declare type RecipientsValue = { items: string[], value: string };
+declare type RecipientsType = { cc: RecipientsValue, bcc: RecipientsValue, recipients: RecipientsValue };
 
 export function ReplyBox(props: ReplyBoxType) {
     const {isOpen, onOpen, onClose} = useDisclosure();
-    const [isToEmailAdded, setIsToEmailAdded] = useState<boolean>(false);
     const [emailBody, setEmailBody] = useState<string>('');
-    const [hideCcFields, setHideCcFields] = useState<boolean>(false);
-    const [hideBccFields, setHideBccFields] = useState<boolean>(false);
+    const [hideShowCCBccFields, setHideShowCCBccFields] = useState<{ cc: boolean, bcc: boolean }>({
+        cc: false,
+        bcc: false
+    })
     const [htmlContent, setHtmlContent] = useState('');
-    const [subject, setSubject] = useState<string>('');
+    const [subject, setSubject] = useState<string>('New Mail Subject');
     const [scheduledDate, setScheduledDate] = useState<Date>();
     const [boxUpdatedFirstTime, setBoxUpdatedFirstTime] = useState<boolean>(false);
-
-    const [recipients, setRecipients] = useState<RecipientsType>({
-        items: [],
-        value: ""
-    });
-    const [cc, setCC] = useState<RecipientsType>({
-        items: [],
-        value: "",
-    });
-    const [bcc, setBCC] = useState<RecipientsType>({
-        items: [],
-        value: "",
-    });
+    const [emailRecipients, setEmailRecipients] = useState<RecipientsType>({
+        cc: {items: [], value: ""},
+        bcc: {items: [], value: ""},
+        recipients: {items: [], value: ""},
+    })
     const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
 
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {selectedThread} = useSelector((state: StateType) => state.threads);
     const {
         selectedMessage,
-        draft,
-        isCompose,
-        success: sendDraftSuccess,
-        messageAttachments
+        isCompose
     } = useSelector((state: StateType) => state.messages);
+    const {
+        draft,
+        success: sendDraftSuccess,
+    } = useSelector((state: StateType) => state.draft);
 
     const inputFile = useRef<HTMLInputElement | null>(null)
 
@@ -82,22 +78,28 @@ export function ReplyBox(props: ReplyBoxType) {
 
     useEffect(() => {
         // Add signature and draft to email body
-        if (draft && draft.draftInfo && draft.draftInfo.body) {
-            if (!isCompose) {
-                setEmailBody(prevState => (draft?.draftInfo?.body || '').concat(prevState));
-            } else {
-                // setBoxUpdatedFirstTime(false);
-                setEmailBody(draft?.draftInfo?.body || '');
+        if (draft && draft.draftInfo) {
+            if (draft.draftInfo.body) {
+                if (!isCompose) {
+                    setEmailBody(prevState => (draft?.draftInfo?.body || '').concat(prevState));
+                } else {
+                    // setBoxUpdatedFirstTime(false);
+                    setEmailBody(draft?.draftInfo?.body || '');
+                }
+            }
+            if (draft.draftInfo.attachments) {
+                setAttachments([
+                    ...draft.draftInfo.attachments.map(t => ({
+                        filename: t.filename,
+                        mimeType: t.mimeType
+                    }))
+                ]);
             }
         } else {
             // Add signature to email body
             if (selectedAccount && selectedAccount.signature && props.replyType !== 'forward') {
                 setEmailBody(selectedAccount.signature);
             }
-        }
-
-        if (draft) {
-            dispatch(getMessageAttachments({id: draft.id as string}));
         }
     }, [draft, isCompose, props.replyType, selectedAccount])
 
@@ -112,17 +114,23 @@ export function ReplyBox(props: ReplyBoxType) {
                 setHtmlContent(decoded);
 
             } else {
-                setRecipients((prevState) => ({
-                    items: !isCompose ? (draft ? draft.to : [selectedMessage.from]) : [],
-                    value: prevState.value
+                setEmailRecipients((prevState) => ({
+                    ...prevState,
+                    recipients: {
+                        items: !isCompose ? (draft ? draft.to : [selectedMessage.from]) : [],
+                        value: prevState.recipients.value
+                    }
                 }));
 
                 if (props.replyType === 'reply-all' && selectedMessage.cc) {
-                    setCC({
-                        items: draft ? (draft.cc || []) : selectedMessage.cc,
-                        value: ''
-                    });
-                    setHideCcFields(true);
+                    setEmailRecipients((prevState) => ({
+                        ...prevState,
+                        cc: {
+                            items: (draft ? (draft.cc || []) : selectedMessage.cc)!,
+                            value: ''
+                        }
+                    }));
+                    setHideShowCCBccFields(prev => ({...prev, cc: true}));
                 }
             }
 
@@ -149,49 +157,30 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
         }
     }, [htmlContent, selectedMessage, draft, props.replyType, selectedAccount])
 
-
     useEffect(() => {
-
-        if (messageAttachments && messageAttachments.length > 0) {
-            setAttachments(messageAttachments);
-        }
-    }, [messageAttachments])
-
-    useEffect(() => {
-        setHideCcFields(false)
-        setCC({
-            items: [],
-            value: ""
-        });
-    }, [])
-
-
-    useEffect(() => {
-        setHideBccFields(false)
-        setBCC({
-            items: [],
-            value: ""
-        });
+        setHideShowCCBccFields({cc: false, bcc: false});
+        setEmailRecipients((prevState) => ({
+            ...prevState,
+            cc: {
+                items: [],
+                value: "",
+            },
+            bcc: {
+                items: [],
+                value: "",
+            }
+        }));
     }, [])
 
 
     const handleChange = (evt: ChangeEvent | any, type: string) => {
-        if (type === 'recipients') {
-            setRecipients(prevState => ({
-                items: [...(prevState.items || [])],
+        setEmailRecipients((prevState) => ({
+            ...prevState,
+            [type as keyof RecipientsType]: {
+                items: [...(prevState[type as keyof RecipientsType].items || [])],
                 value: evt.target.value
-            }));
-        } else if (type === 'cc') {
-            setCC(prevState => ({
-                items: [...prevState.items],
-                value: evt.target.value
-            }));
-        } else if (type === 'bcc') {
-            setBCC(prevState => ({
-                items: [...prevState.items],
-                value: evt.target.value
-            }));
-        }
+            }
+        }));
     };
 
 
@@ -202,23 +191,14 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
         let emails = paste.match(/[\w\d\.-]+@[\w\d\.-]+\.[\w\d\.-]+/g);
 
         if (emails) {
-            let toBeAdded = emails.filter((item: string) => !isInList(item, type));
-            if (type === 'recipients') {
-                setRecipients((prevState) => ({
-                    items: [...prevState.items, ...toBeAdded],
+            let toBeAdded = emails.filter((item: string) => !emailRecipients[type as keyof RecipientsType].items.includes(item));
+            setEmailRecipients((prevState) => ({
+                ...prevState,
+                [type as keyof RecipientsType]: {
+                    items: [...prevState[type as keyof RecipientsType].items, ...toBeAdded],
                     value: ''
-                }));
-            } else if (type === 'cc') {
-                setCC((prevState) => ({
-                    items: [...prevState.items, ...toBeAdded],
-                    value: ''
-                }));
-            } else if (type === 'bcc') {
-                setBCC((prevState) => ({
-                    items: [...prevState.items, ...toBeAdded],
-                    value: ''
-                }));
-            }
+                }
+            }));
         }
     };
 
@@ -226,37 +206,17 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
     const handleKeyDown = (evt: KeyboardEvent | any, type: string) => {
         if (["Enter", "Tab"].includes(evt.key)) {
             evt.preventDefault();
-            let value = '';
-            if (type === 'recipients') {
-                value = recipients.value.trim();
-            }
-            if (type === 'cc') {
-                value = cc.value.trim();
-            }
-            if (type === 'bcc') {
-                value = bcc.value.trim();
-            }
+            let value = emailRecipients[type as keyof RecipientsType].value.trim();
             let emailArray = value.split(',');
             emailArray.map(item => {
                 if (item && isValid(item, type)) {
-                    if (type === 'recipients') {
-                        setRecipients((prevState) => ({
-                            items: [...prevState.items, item],
-                            value: "",
-                        }));
-                    }
-                    if (type === 'cc') {
-                        setCC((prevState) => ({
-                            items: [...prevState.items, item],
-                            value: "",
-                        }));
-                    }
-                    if (type === 'bcc') {
-                        setBCC((prevState) => ({
-                            items: [...prevState.items, item],
-                            value: "",
-                        }));
-                    }
+                    setEmailRecipients((prevState) => ({
+                        ...prevState,
+                        [type as keyof RecipientsType]: {
+                            items: [...prevState[type as keyof RecipientsType].items, item],
+                            value: ''
+                        }
+                    }));
                 }
             })
         }
@@ -264,24 +224,13 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
 
 
     const handleItemDelete = (item: string, type: string) => {
-        if (type === 'recipients') {
-            setRecipients({
-                items: recipients.items.filter(i => i !== item),
-                value: ""
-            });
-        }
-        if (type === 'cc') {
-            setCC({
-                items: cc.items.filter(i => i !== item),
-                value: ""
-            });
-        }
-        if (type === 'bcc') {
-            setBCC({
-                items: bcc.items.filter(i => i !== item),
-                value: ""
-            });
-        }
+        setEmailRecipients((prevState) => ({
+            ...prevState,
+            [type as keyof RecipientsType]: {
+                items: prevState[type as keyof RecipientsType].items.filter(i => i !== item),
+                value: ''
+            }
+        }));
     };
 
 
@@ -304,10 +253,10 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
 
         let body = {
             subject: subject || selectedMessage?.subject,
-            to: recipients?.items,
+            to: emailRecipients.recipients?.items,
             ...((selectedThread && props.replyType !== 'forward') ? {threadId: selectedThread.id} : {}),
-            ...(cc?.items && cc?.items.length > 0 ? {cc: cc?.items} : {}),
-            ...(bcc?.items && bcc?.items.length > 0 ? {bcc: bcc?.items} : {}),
+            ...(emailRecipients.cc?.items && emailRecipients.cc?.items.length > 0 ? {cc: emailRecipients.cc?.items} : {}),
+            ...(emailRecipients.bcc?.items && emailRecipients.bcc?.items.length > 0 ? {bcc: emailRecipients.bcc?.items} : {}),
             draftInfo: {
                 body: isValueUpdate ? value : emailBody
             }
@@ -324,22 +273,9 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
         }, 500);
     }
 
-
-    const isInList = (email: string, type: string) => {
-        if (type == 'cc') {
-            return cc?.items?.includes(email);
-        } else if (type === 'recipients') {
-            return recipients?.items?.includes(email);
-        } else if (type === 'bcc') {
-            return bcc?.items?.includes(email);
-        }
-        return false;
-    }
-
-
     const isValid = (email: string, type: string) => {
         let error = null;
-        if (isInList(email, type)) {
+        if (emailRecipients[type as keyof RecipientsType].items.includes(email)) {
             error = `This email has already been added.`;
         }
 
@@ -374,12 +310,12 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
                 }
             }
             dispatch(sendMessage({id: draft.id, ...params}));
+            toast.close('send-now');
         }
 
     }
 
     const sendMessages = (scheduled: boolean = false) => {
-        console.log('draft' ,draft)
         if (draft && draft.id) {
             let params = {};
             if (scheduled) {
@@ -392,12 +328,16 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
                 }
             } else {
                 let undoToaster: any = {
+                    id: 'send-now',
                     duration: 1500000,
                     render: () => (
-                        <Box display={'flex'} color='white' p={3} bg='#000000' borderRadius={'5px'} ml={10} className={styles.mailSendToaster} fontSize={'14px'} padding={'5px 23px'}>
+                        <Box display={'flex'} color='white' p={3} bg='#000000' borderRadius={'5px'} ml={10}
+                             className={styles.mailSendToaster} fontSize={'14px'} padding={'5px 23px'}>
                             {`Your Message to ${draft && draft.to && draft.to.join(', ')} has been sent!`}
-                            <Button onClick={() => undoClick('undo')} ml={3} height={"auto"} padding={'7px 15px'}>Undo</Button>
-                            <Button onClick={() => undoClick('send-now')} height={"auto"} padding={'7px 15px'}>Send Now</Button>
+                            <Button onClick={() => undoClick('undo')} ml={3} height={"auto"}
+                                    padding={'7px 15px'}>Undo</Button>
+                            <Button onClick={() => undoClick('send-now')} height={"auto"} padding={'7px 15px'}>Send
+                                Now</Button>
                         </Box>
                     ),
                     position: 'bottom-left'
@@ -405,22 +345,20 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
                 toast(undoToaster)
             }
             dispatch(sendMessage({id: draft.id, ...params}));
+            if (props.onClose) {
+                props.onClose();
+            }
 
-            setRecipients({
-                items: !isCompose && selectedMessage ? [selectedMessage.from] : [],
-                value: "",
-            });
-            setCC({
-                items: [],
-                value: "",
-            });
-            setBCC({
-                items: [],
-                value: "",
+            setEmailRecipients({
+                cc: {items: [], value: ""},
+                bcc: {items: [], value: ""},
+                recipients: {items: !isCompose && selectedMessage ? [selectedMessage.from] : [], value: ''}
             });
             setEmailBody('');
-            dispatch(updateMessageState({
+            dispatch(updateDraftState({
                 draft: null,
+            }));
+            dispatch(updateMessageState({
                 ...(isCompose ? {isCompose: false} : {})
             }));
         }
@@ -441,61 +379,42 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
         }
     }, [isOpen, onClose, sendDraftSuccess])
 
-
-    useEffect(() => {
-        if (recipients && recipients.items && recipients.items.length && emailBody) {
-            setIsToEmailAdded(true);
-        } else {
-            setIsToEmailAdded(false)
-        }
-    }, [recipients, emailBody])
-
-
     const showCCFields = (type: string) => {
-        if (type === 'cc') {
-            setHideCcFields(true)
-            setCC(prevState => ({
-                items: [...prevState.items],
+        setHideShowCCBccFields(prev => ({...prev, [type]: true}));
+        setEmailRecipients((prevState) => ({
+            ...prevState,
+            [type as keyof RecipientsType]: {
+                items: [...prevState[type as keyof RecipientsType].items],
                 value: ''
-            }));
-        } else if (type === 'bcc') {
-            setHideBccFields(true)
-            setBCC(prevState => ({
-                items: [...prevState.items],
-                value: ''
-            }));
-        }
+            }
+        }));
     }
 
 
     function handleFileUpload(event: ChangeEventHandler | any) {
         const file = event.target.files[0];
         if (draft && draft.id) {
-            dispatch(AddImageUrl({id: draft.id, file}));
+            event.stopPropagation();
+            event.preventDefault();
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function () {
+                if (reader.result) {
+                    setAttachments([
+                        ...(attachments || []),
+                        {
+                            filename: event.target.files[0].name,
+                            mimeType: event.target.files[0].type
+                        }
+                    ]);
+                    dispatch(uploadAttachment({id: draft.id, file}));
+                    sendToDraft('', false);
+                }
+            };
+            reader.onerror = function (error) {
+                console.log('Error: ', error);
+            };
         }
-
-        // setAttachments([...(attachments || []), {
-        //     filename: event.target.files[0].name,
-        //     mimeType: event.target.files[0].type
-        // }]);
-
-
-        // event.stopPropagation();
-        // event.preventDefault();
-        // const reader = new FileReader();
-        // reader.readAsDataURL(event.target.files[0]);
-        // reader.onload = function () {
-        //     if (reader.result) {
-        //         setAttachments([...(attachments || []), {
-        //             filename: event.target.files[0].name,
-        //             mimeType: event.target.files[0].type
-        //         }]);
-        //     }
-        // };
-        // reader.onerror = function (error) {
-        //     console.log('Error: ', error);
-        // };
-
     }
 
 
@@ -504,13 +423,6 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
         (newArr || []).splice(index, 1);
         setAttachments([...newArr!]);
     }
-
-    // useEffect(() => {
-    //     if (attachments) {
-    //         sendToDraft('', false);
-    //     }
-    //     // eslint-disable-next-line
-    // }, [attachments])
 
     const openCalender = () => {
         onOpen();
@@ -528,40 +440,40 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
                         <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>
                             <Heading as={'h1'} size={'sm'} paddingTop={1} marginRight={1}>TO:</Heading>
                             <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
-                                {!!recipients?.items?.length && recipients.items.map((item: string | undefined, i: number) => (
+                                {emailRecipients.recipients.items.map((item: string | undefined, i: number) => (
                                     <Chip text={item} key={i} click={() => handleItemDelete(item!, 'recipients')}/>
                                 ))}
 
                                 <Input width={'auto'} padding={0} height={'23px'}
                                        fontSize={'12px'}
-                                       value={recipients.value}
+                                       value={emailRecipients.recipients.value}
                                        onKeyDown={(e) => handleKeyDown(e, 'recipients')}
                                        onChange={(e) => handleChange(e, 'recipients')}
                                        onPaste={(e) => handlePaste(e, 'recipients')}
                                        border={0} className={styles.ccInput}
                                        placeholder={'Recipient\'s Email'}
                                 />
-                                {!hideCcFields &&
+                                {!hideShowCCBccFields.cc &&
                                 <span className={styles.ccButton} onClick={() => showCCFields('cc')}>Cc</span>}
-                                {!hideBccFields &&
+                                {!hideShowCCBccFields.bcc &&
                                 <span className={styles.ccButton} onClick={() => showCCFields('bcc')}>Bcc</span>}
                             </Flex>
                         </Flex>
                     </Flex>
 
                     {/*cc*/}
-                    {hideCcFields && <Flex justifyContent={'space-between'} gap={1} padding={'8px 10px'}
-                                           borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>
+                    {hideShowCCBccFields.cc && <Flex justifyContent={'space-between'} gap={1} padding={'8px 10px'}
+                                                     borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>
                         <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>
                             <Heading as={'h1'} size={'sm'} paddingTop={1} marginRight={1}>CC:</Heading>
                             <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
-                                {!!cc?.items?.length && cc.items.map((item: string | undefined, i: number) => (
+                                {emailRecipients.cc.items.map((item: string | undefined, i: number) => (
                                     <Chip text={item} key={i} click={() => handleItemDelete(item!, 'cc')}/>
                                 ))}
 
                                 <Input width={'auto'} padding={0} height={'23px'}
                                        fontSize={'12px'}
-                                       value={cc.value}
+                                       value={emailRecipients.cc.value}
                                        onKeyDown={(e) => handleKeyDown(e, 'cc')}
                                        onChange={(e) => handleChange(e, 'cc')}
                                        onPaste={(e) => handlePaste(e, 'cc')}
@@ -573,18 +485,18 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
                     </Flex>}
 
                     {/*bcc*/}
-                    {hideBccFields && <Flex justifyContent={'space-between'} padding={'8px 10px'}
-                                            borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>
+                    {hideShowCCBccFields.bcc && <Flex justifyContent={'space-between'} padding={'8px 10px'}
+                                                      borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>
                         <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>
                             <Heading as={'h1'} size={'sm'} paddingTop={1} marginRight={1}>BCC:</Heading>
                             <Flex alignItems={'center'} gap={1} wrap={'wrap'} width={'100%'}>
-                                {!!bcc?.items?.length && bcc.items.map((item: string | undefined, i: number) => (
+                                {emailRecipients.bcc.items.map((item: string | undefined, i: number) => (
                                     <Chip text={item} key={i} click={() => handleItemDelete(item!, 'bcc')}/>
                                 ))}
 
                                 <Input width={'auto'} padding={0} height={'23px'}
                                        fontSize={'12px'}
-                                       value={bcc.value}
+                                       value={emailRecipients.bcc.value}
                                        onKeyDown={(e) => handleKeyDown(e, 'bcc')}
                                        onChange={(e) => handleChange(e, 'bcc')}
                                        onPaste={(e) => handlePaste(e, 'bcc')}
@@ -636,7 +548,8 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
 
                         <Flex align={'center'} className={styles.replyButton}>
                             <Button className={styles.replayTextButton} colorScheme='blue'
-                                    onClick={() => sendMessages()} isDisabled={!isToEmailAdded}>
+                                    onClick={() => sendMessages()}
+                                    isDisabled={!(emailRecipients.recipients.items.length && emailBody)}>
                                 Send
                             </Button>
                             <Menu>

@@ -19,15 +19,14 @@ import {
     updateMessageState
 } from "@/redux/messages/action-reducer";
 import {ReplyBox} from "@/components/inbox/reply-box";
-import {updateThreadState} from "@/redux/threads/action-reducer";
 import {Message as MessageModel, MessageDraft, MessagePart, MessageAttachments} from "@/models";
 import {MessagesHeader} from "@/components/inbox/messages/messages-header";
+import {updateDraftState} from "@/redux/draft/action-reducer";
 
 export function Message() {
     const [messageContent, setMessageContent] = useState<MessageModel>();
     const [index, setIndex] = useState<number | null>(null);
     const [emailPart, setEmailPart] = useState<string>("");
-    const [emailAttachments, setEmailAttachments] = useState<MessageAttachments[]>([]);
     const [hideAndShowReplyBox, setHideAndShowReplyBox] = useState<boolean>(false);
     const [replyType, setReplyType] = useState<string>('');
     const [messageSenders, setMessageSenders] = useState<string[]>([]);
@@ -62,7 +61,7 @@ export function Message() {
             setInboxMessages(inboxMessages);
             const draftMessage = messages.findLast((msg: MessageModel) => (msg.mailboxes || []).includes('DRAFT'));
             if (draftMessage) {
-                dispatch(updateMessageState({draft: draftMessage as MessageDraft}));
+                dispatch(updateDraftState({draft: draftMessage as MessageDraft}));
             }
             setIndex(val => !val ? inboxMessages.length - 1 : val);
         }
@@ -99,14 +98,12 @@ export function Message() {
         // convert blob url to image url
         if (messageAttachments && messageAttachments.length) {
             cacheMessage({attachments: messageAttachments});
-            setEmailAttachments((prevState) => (prevState || []).concat(messageAttachments));
         } else {
             cacheMessage({attachments: []});
-            setEmailAttachments([])
         }
     }, [messageAttachments, cacheMessage])
 
-    const getEmailNBodyAndAttachments = useCallback(() => {
+    useEffect(() => {
         if (index !== null && inboxMessages && inboxMessages.length > 0) {
             if (inboxMessages[index]) {
                 setMessageContent(inboxMessages[index]);
@@ -118,7 +115,6 @@ export function Message() {
                 } else {
                     dispatch(getMessageParts({id: inboxMessages[index].id}));
                 }
-
                 if (cacheMessages[inboxMessages[index].id] && cacheMessages[inboxMessages[index].id].attachments) {
                     dispatch(updateMessageState({messageAttachments: cacheMessages[inboxMessages[index].id].attachments}));
                 } else {
@@ -127,11 +123,7 @@ export function Message() {
 
             }
         }
-    }, [cacheMessages, dispatch, index, inboxMessages])
-
-    useEffect(() => {
-        getEmailNBodyAndAttachments()
-    }, [getEmailNBodyAndAttachments])
+    }, [dispatch, index, inboxMessages])
 
     useEffect(() => {
         if (message) {
@@ -168,15 +160,9 @@ export function Message() {
         }
     }
 
-
     const onClose = () => {
         setHideAndShowReplyBox(false)
-        if (replyType.length) {
-            dispatch(updateThreadState({selectedThread: selectedThread}));
-        } else {
-            dispatch(updateThreadState({selectedThread: null}));
-        }
-        setReplyType('')
+        setReplyType('');
         dispatch(updateMessageState({isCompose: false}));
     }
 
@@ -194,6 +180,11 @@ export function Message() {
 
     return (
         <Box className={styles.mailBox}>
+            {!selectedThread && !isCompose &&
+            <Flex justifyContent={'center'} alignItems={'center'} flexDir={'column'}
+                  height={'100%'}>
+                <Heading as='h3' size='md'>Click on a thread from list to view messages!</Heading>
+            </Flex>}
             {selectedThread && !isCompose &&
             <Flex justifyContent={'space-between'} flexDir={'column'} height={'100%'}>
                 {!hideAndShowReplyBox &&
@@ -234,24 +225,22 @@ export function Message() {
                             ))
                         }
                     </div>
+                    <Flex align={'center'} padding={'10px 20px'}>
+                        <Button className={styles.hideButton} variant='outline'
+                                onClick={() => hideAndShowReplayBox('reply')}>
+                            <ReplyIcon/> Reply
+                        </Button>
+                        <Button className={styles.hideButton} variant='outline'
+                                onClick={() => hideAndShowReplayBox('reply-all')}>
+                            <ReplyIcon/> Reply All
+                        </Button>
+                        <Button className={styles.forwardButton} variant='outline'
+                                onClick={() => hideAndShowReplayBox('forward')}>
+                            <ForwardIcon/> Forward
+                        </Button>
+                    </Flex>
                 </>
                 }
-
-                {!hideAndShowReplyBox &&
-                <Flex align={'center'} padding={'10px 20px'}>
-                    <Button className={styles.hideButton} variant='outline'
-                            onClick={() => hideAndShowReplayBox('reply')}>
-                        <ReplyIcon/> Reply
-                    </Button>
-                    <Button className={styles.hideButton} variant='outline'
-                            onClick={() => hideAndShowReplayBox('reply-all')}>
-                        <ReplyIcon/> Reply All
-                    </Button>
-                    <Button className={styles.forwardButton} variant='outline'
-                            onClick={() => hideAndShowReplayBox('forward')}>
-                        <ForwardIcon/> Forward
-                    </Button>
-                </Flex>}
 
                 {hideAndShowReplyBox && <div className={styles.replayBox}>
                     <Flex justifyContent={'space-between'} flexDir={'column'} height={'100%'}>
@@ -266,17 +255,11 @@ export function Message() {
                             </Flex>
                         </div>
 
-                        <ReplyBox replyType={replyType} emailPart={(messagePart?.data || '')}/>
+                        <ReplyBox replyType={replyType} emailPart={(messagePart?.data || '')} onClose={onClose}/>
                     </Flex>
                 </div>}
             </Flex>
             }
-
-            {!selectedThread && !isCompose &&
-            <Flex justifyContent={'center'} alignItems={'center'} flexDir={'column'}
-                  height={'100%'}>
-                <Heading as='h3' size='md'>Click on a thread from list to view messages!</Heading>
-            </Flex>}
 
             {isCompose &&
             <div className={styles.composeReplyBox}>
@@ -292,7 +275,7 @@ export function Message() {
                         </Flex>
                     </div>
 
-                    <ReplyBox/>
+                    <ReplyBox onClose={onClose}/>
                 </Flex>
             </div>}
         </Box>

@@ -22,6 +22,9 @@ export * from './account/account-state.type';
 //Socket
 export * from './socket/socket-state.type';
 
+//Draft
+export * from './draft/draft-state.type';
+
 // Props
 export * from './props-types/profile-button-props.type';
 export * from './props-types/time.type';

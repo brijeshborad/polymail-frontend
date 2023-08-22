@@ -9,6 +9,7 @@ import {SpinnerUI, Time} from "@/components/common";
 import {useDispatch, useSelector} from "react-redux";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
+import {updateDraftState} from "@/redux/draft/action-reducer";
 
 
 export function InboxTab(props: InboxTabProps) {
@@ -24,8 +25,10 @@ export function InboxTab(props: InboxTabProps) {
                     if (item && item.messages && item.messages[0]) {
                         dispatch(updateMessageState({
                             selectedMessage: null,
-                            draft: {...item.messages[0]},
                             isCompose: true
+                        }));
+                        dispatch(updateDraftState({
+                            draft: {...item.messages[0]}
                         }));
                     }
                 }, 500)
@@ -51,7 +54,8 @@ export function InboxTab(props: InboxTabProps) {
                 dispatch(updateThreads({id: item.id, body}));
             }
             dispatch(updateThreadState({selectedThread: item}));
-            dispatch(updateMessageState({selectedMessage: null, draft: null}));
+            dispatch(updateMessageState({selectedMessage: null}));
+            dispatch(updateDraftState({draft: null}));
         }
     }, [dispatch, threads])
 
