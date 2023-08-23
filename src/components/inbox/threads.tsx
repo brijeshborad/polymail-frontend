@@ -17,34 +17,63 @@ import {updateMessageState} from "@/redux/messages/action-reducer";
 import {Message, Thread} from "@/models";
 import {InboxTab} from "@/components/inbox";
 import {updateDraftState} from "@/redux/draft/action-reducer";
+import {updateLastMessage} from "@/redux/socket/action-reducer";
+
+let cacheThreads: { [key: string]: Thread[] } = {};
 
 export function Threads() {
     const [tab, setTab] = useState<string>('INBOX');
     const [countUnreadMessages, setCountUnreadMessages] = useState<number>(0);
 
-    const {threads, isLoading, selectedThread, updateSuccess} = useSelector((state: StateType) => state.threads);
+    const {
+        threads,
+        isLoading,
+        selectedThread,
+        updateSuccess,
+        success: threadListSuccess
+    } = useSelector((state: StateType) => state.threads);
     const {success: draftSuccess, draft} = useSelector((state: StateType) => state.draft);
     const {selectedAccount, account} = useSelector((state: StateType) => state.accounts);
     const {newMessage} = useSelector((state: StateType) => state.socket);
     const dispatch = useDispatch();
 
-    const getAllThread = useCallback((resetState: boolean = true) => {
+    const getAllThread = useCallback((resetState: boolean = true, force: boolean = false) => {
         if (selectedAccount) {
-            dispatch(getAllThreads({mailbox: tab, account: selectedAccount.id, enriched: true, resetState}));
+            if (!cacheThreads[`${tab}-${selectedAccount.id}`] && !force) {
+                force = true;
+            }
+            if (force) {
+                dispatch(getAllThreads({mailbox: tab, account: selectedAccount.id, enriched: true, resetState}));
+                return;
+            }
+            dispatch(updateThreadState({threads: cacheThreads[`${tab}-${selectedAccount.id}`]}));
         }
     }, [dispatch, selectedAccount, tab]);
 
     useEffect(() => {
         if (newMessage && newMessage.name === 'new_message') {
-            getAllThread(false);
+            dispatch(updateLastMessage(null));
+            getAllThread(false, true);
         }
-    }, [getAllThread, newMessage])
+    }, [getAllThread, newMessage, dispatch])
 
     useEffect(() => {
         if (updateSuccess) {
+            dispatch(updateThreadState({updateSuccess: false}));
             getAllThread(false);
         }
-    }, [updateSuccess, getAllThread])
+    }, [updateSuccess, getAllThread, dispatch])
+
+    useEffect(() => {
+        if (threadListSuccess && selectedAccount) {
+            cacheThreads = {
+                ...cacheThreads,
+                [`${tab}-${selectedAccount?.id}`]: threads ? [...threads]: []
+            }
+            dispatch(updateThreadState({success: false}));
+            console.log(cacheThreads);
+        }
+    }, [selectedAccount, tab, threadListSuccess, threads, dispatch])
 
     useEffect(() => {
         if (draftSuccess) {
@@ -63,7 +92,7 @@ export function Threads() {
                 dispatch(updateThreadState({threads: currentThreads}));
             }
         }
-    }, [draft, draftSuccess, getAllThread, selectedThread, threads, dispatch])
+    }, [draft, draftSuccess, selectedThread, threads, dispatch])
 
     useEffect(() => {
         setCountUnreadMessages((threads || []).filter(item => (item.mailboxes || [])?.includes('UNREAD')).length);
@@ -71,7 +100,8 @@ export function Threads() {
 
     useEffect(() => {
         if (account && account.success) {
-            getAllThread()
+            console.log('CALLED FORM HERE 3')
+            getAllThread(true, true);
         }
     }, [account, dispatch, getAllThread])
 
@@ -82,15 +112,19 @@ export function Threads() {
     }, [threads, dispatch, selectedThread])
 
     useEffect(() => {
-        getAllThread();
-    }, [getAllThread])
+        if (tab !== '') {
+            console.log('CALLED INITIAL');
+            getAllThread();
+        }
+    }, [getAllThread, tab])
 
     // Refresh threads every 10 seconds
     useEffect(() => {
 
         //Implementing the setInterval method
         const interval = setInterval(() => {
-            getAllThread(false);
+            console.log('CALLED FORM HERE 5')
+            getAllThread(false, true);
         }, Number(process.env.NEXT_PUBLIC_THREAD_LIST_REFRESH_INTERVAL || 10000));
 
         //Clearing the interval

@@ -10,6 +10,7 @@ const initialState: any = {
     error: null,
     selectedThread: null,
     updateSuccess: false,
+    success: false
 } as InitialThreadStateType
 
 const threadsSlice = createSlice({
@@ -21,20 +22,21 @@ const threadsSlice = createSlice({
                 ...state,
                 ...(_action.payload.hasOwnProperty('resetState') && _action.payload.resetState ? {threads: []} : {}),
                 isLoading: _action.payload.hasOwnProperty('resetState') ? _action.payload.resetState : true,
-                error: null
+                error: null,
+                success: false
             }
         },
         getAllThreadsSuccess: (state: InitialThreadStateType, {payload: threads}: PayloadAction<any>) => {
             // Sort threads by latestMessage DESC
             threads = (threads || []).sort((a: Thread, b: Thread) => (new Date(b.latestMessage as string).valueOf() - new Date(a.latestMessage as string).valueOf()));
-            return {...state, threads, isLoading: false, error: null}
+            return {...state, threads, isLoading: false, error: null, success: true}
         },
         getAllThreadsError: (state: InitialThreadStateType, {payload: error}: PayloadAction<{ error: any }>) => {
-            return {...state, threads: [], isLoading: false, error}
+            return {...state, threads: [], isLoading: false, error, success: false}
         },
 
         updateThreads: (state: InitialThreadStateType, _action: PayloadAction<{ id?: string, body?: Thread }>) => {
-            return {...state, thread: null, error: null, isLoading: false, updateSuccess: false}
+            return {...state, thread: null, error: null, isLoading: false, updateSuccess: false, success: false}
         },
         updateThreadsSuccess: (state: InitialThreadStateType, {payload: thread}: PayloadAction<{}>) => {
             let currentThreads = [...(current(state).threads || [])] as Thread[];
@@ -44,10 +46,10 @@ const threadsSlice = createSlice({
                 ...currentThreads[index1],
                 mailboxes: [...(threadData.mailboxes ?? [])]
             };
-            return {...state, threads: [...currentThreads], error: null, isLoading: false, updateSuccess: true}
+            return {...state, threads: [...currentThreads], error: null, isLoading: false, updateSuccess: true, success: true}
         },
         updateThreadsError: (state: InitialThreadStateType, {payload: error}: PayloadAction<any>) => {
-            return {...state, thread: null, error, isLoading: false, updateSuccess: false}
+            return {...state, thread: null, error, isLoading: false, updateSuccess: false, success: false}
         },
 
         searchThreads: (state: InitialThreadStateType, _action: PayloadAction<{ query?: string }>) => {

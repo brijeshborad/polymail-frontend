@@ -7,4 +7,5 @@ export declare type InitialThreadStateType = {
     error?: Error | any
     selectedThread?: Thread | null
     updateSuccess?: boolean
+    success?: boolean
 }
