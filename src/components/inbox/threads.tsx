@@ -100,7 +100,6 @@ export function Threads() {
 
     useEffect(() => {
         if (account && account.success) {
-            console.log('CALLED FORM HERE 3')
             getAllThread(true, true);
         }
     }, [account, dispatch, getAllThread])
@@ -113,7 +112,6 @@ export function Threads() {
 
     useEffect(() => {
         if (tab !== '') {
-            console.log('CALLED INITIAL');
             getAllThread();
         }
     }, [getAllThread, tab])
@@ -123,7 +121,6 @@ export function Threads() {
 
         //Implementing the setInterval method
         const interval = setInterval(() => {
-            console.log('CALLED FORM HERE 5')
             getAllThread(false, true);
         }, Number(process.env.NEXT_PUBLIC_THREAD_LIST_REFRESH_INTERVAL || 10000));
 
