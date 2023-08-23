@@ -11,28 +11,26 @@ import withAuth from "@/components/withAuth";
 
 function Signature() {
 
-    const [emailBody, setEmailBody] = useState<string>('');
+    const [signature, setSignature] = useState<string>('');
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const dispatch = useDispatch();
 
     useEffect(() => {
         // Add signature to email body
         if (selectedAccount && selectedAccount.signature) {
-            setEmailBody(selectedAccount.signature);
+            setSignature(selectedAccount.signature);
         }
     }, [selectedAccount])
 
 
-    const sendToDraft = (value: string) => {
-        setEmailBody(value)
+    const addSignature = (value: string) => {
+        setSignature(value)
     }
-    useEffect(() => {
-    }, [emailBody])
 
     const submit = () => {
-        if (emailBody) {
+        if (signature) {
             if (selectedAccount && selectedAccount.id) {
-                dispatch(updateAccountDetails({signature: emailBody, id: selectedAccount.id}));
+                dispatch(updateAccountDetails({signature: signature, id: selectedAccount.id}));
             }
         }
     }
@@ -59,7 +57,7 @@ function Signature() {
 
                                     <RichTextEditor className={styles.emailSignature} initialUpdated={true} hideToolBar={true}
                                                     placeholder='Add Your Email Signature'
-                                                    value={emailBody} onChange={(e) => sendToDraft(e)}/>
+                                                    value={signature} onChange={(e) => addSignature(e)}/>
 
                                     <Flex align={'center'} gap={3} className={styles.settingSignatureIcon}>
                                         <FileIcon/>
@@ -73,7 +71,7 @@ function Signature() {
                                 <Flex direction={"column"} className={styles.SettingDetails}>
                                     <Text fontSize={'14px'}>Preview</Text>
                                     <div className={styles.signaturePreview}>
-                                        <iframe srcDoc={emailBody}/>
+                                        <span dangerouslySetInnerHTML={{__html: `<p style="margin-bottom: 12px">Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p> ${signature}`}} />
                                     </div>
                                 </Flex>
 

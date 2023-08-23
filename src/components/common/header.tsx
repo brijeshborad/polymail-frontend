@@ -10,9 +10,9 @@ import {
     Menu,
     MenuButton,
     MenuItem,
-    MenuList, Tooltip,
+    MenuList,
 } from "@chakra-ui/react";
-import {ChevronDownIcon, SearchIcon, CheckIcon, RepeatIcon} from "@chakra-ui/icons";
+import {ChevronDownIcon, SearchIcon, CheckIcon} from "@chakra-ui/icons";
 import {EnergyIcon, FolderIcon, MailIcon} from "@/icons";
 import styles from '@/styles/Home.module.css'
 import {useDispatch, useSelector} from "react-redux";
@@ -22,11 +22,10 @@ import {StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
 import {getAllOrganizations, updateOrganizationState} from "@/redux/organizations/action-reducer";
 import {Account, Organization, User} from "@/models";
-import {getAllAccount, getSyncAccount, updateAccountState} from "@/redux/accounts/action-reducer";
+import {getAllAccount, updateAccountState} from "@/redux/accounts/action-reducer";
 import LocalStorageService from "@/utils/localstorage.service";
 import {ComposeIcon} from "@/icons/compose.icon";
 import {updateMessageState} from "@/redux/messages/action-reducer";
-import {Toaster} from "@/components/common";
 import {getAllThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {useSocket} from "@/hooks/use-socket.hook";
 import {updateUsersDetailsSuccess} from "@/redux/users/action-reducer";
@@ -37,7 +36,7 @@ export function Header() {
         organizations,
         isLoading: isOrganizationLoading
     } = useSelector((state: StateType) => state.organizations);
-    const {accounts, selectedAccount, success: syncSuccess} = useSelector((state: StateType) => state.accounts);
+    const {accounts, selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {threads} = useSelector((state: StateType) => state.threads);
     const {googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
     const {userDetails} = useSelector((state: StateType) => state.users);
@@ -81,16 +80,6 @@ export function Header() {
     useEffect(() => {
         getAllAccountAndOrganizationsDetails();
     }, [getAllAccountAndOrganizationsDetails])
-
-    useEffect(() => {
-        if (syncSuccess) {
-            let data = {
-                desc: 'Syncing mails started!',
-                type: 'success'
-            }
-            Toaster(data);
-        }
-    }, [syncSuccess])
 
     useEffect(() => {
         let timer1 = setTimeout(() => {
@@ -163,11 +152,6 @@ export function Header() {
     if (!userData) {
         return <></>;
     }
-    const callSyncAPI = () => {
-        if (selectedAccount && selectedAccount.id) {
-            dispatch(getSyncAccount({id: selectedAccount.id}));
-        }
-    }
 
     const openComposeBox = () => {
         dispatch(updateMessageState({isCompose: true}))
@@ -194,12 +178,8 @@ export function Header() {
 
     return (
         <Flex className={styles.header} w='100%' align={'center'} flex={'none'}>
-            <div className={styles.logoContainer}>
-                <Image width="30" height="30" src="/image/logo.png" alt="" className={styles.logo}
-                       onClick={() => callSyncAPI()}/>
-                <Tooltip label='Sync Mails' placement='bottom' bg='gray.300' color='black'>
-                    <RepeatIcon className={styles.refreshIcon} onClick={() => callSyncAPI()}/>
-                </Tooltip>
+            <div >
+                <Image width="30" height="30" src="/image/logo.png" alt="" className={styles.logo} />
             </div>
             <Flex className={styles.headerTabs} align={'center'}>
                 <Flex align={'center'} className={currentRoute[currentRoute.length - 1] === 'inbox' ? styles.tabsActive : ''} onClick={() => Router.push('/inbox')}>

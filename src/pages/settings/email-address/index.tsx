@@ -9,6 +9,7 @@ import {googleAuthLink} from "@/redux/auth/action-reducer";
 import Index from "@/pages/settings";
 import withAuth from "@/components/withAuth";
 import {CloseIcon} from "@chakra-ui/icons";
+import {removeAccountDetails} from "@/redux/accounts/action-reducer";
 
 
 function EmailAddress() {
@@ -33,6 +34,12 @@ function EmailAddress() {
             window.location.href = googleAuthRedirectionLink.url || '';
         }
     }, [googleAuthRedirectionLink])
+
+    const removeAccount = (item: Account) => {
+        if (item && item.id) {
+            dispatch(removeAccountDetails({id: item.id}));
+        }
+    }
 
     return (
         <div className={styles.setting}>
@@ -59,7 +66,7 @@ function EmailAddress() {
 
                                 <Flex direction={"column"} gap={1} className={styles.addedEmailAddress}>
                                     <Text fontSize={'13px'} mb={2} color={'#08162F'}>Added Email Addresses:</Text>
-                                    {accounts && (accounts || []).map((item: Account, index: number) => (
+                                    {accounts && !!accounts.length && (accounts || []).map((item: Account, index: number) => (
                                         <Flex direction={'column'} gap={1} key={index}>
                                             <Flex alignItems={'center'} justify={'space-between'} p={1} gap={2}
                                                   width={'100%'} className={styles.settingAddedEmailAddress}>
@@ -71,7 +78,7 @@ function EmailAddress() {
                                                     <Link fontSize={'13px'} fontWeight={'500'} href='mailto:emailaddress@example.com'
                                                           isExternal>{item.email} </Link>
                                                 </Flex>
-                                                <CloseIcon className={styles.closeIcon} cursor={"pointer"} />
+                                                <CloseIcon className={styles.closeIcon} cursor={"pointer"} onClick={() => removeAccount(item)}/>
                                             </Flex>
                                         </Flex>
 

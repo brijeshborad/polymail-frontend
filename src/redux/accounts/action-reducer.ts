@@ -28,16 +28,6 @@ const accountSlice = createSlice({
             return {...state, ...action.payload}
         },
 
-        getSyncAccount: (state: InitialAccountStateType, _action: PayloadAction<{}>) => {
-            return {...state, account: null, isLoading: true, error: null}
-        },
-        getSyncAccountSuccess: (state: InitialAccountStateType, {payload: account}: PayloadAction<{}>) => {
-            return {...state, ...account, isLoading: false, error: null}
-        },
-        getSyncAccountError: (state: InitialAccountStateType, {payload: error}: PayloadAction<any>) => {
-            return {...state, account: null, isLoading: false, error}
-        },
-
         updateAccountDetails: (state: InitialAccountStateType, _action: PayloadAction<{ signature: string, id: string }>) => {
             return {...state, error: null, isLoading: false}
         },
@@ -48,6 +38,16 @@ const accountSlice = createSlice({
         updateAccountDetailsError: (state: InitialAccountStateType, {payload: error}: PayloadAction<any>) => {
             return {...state, error, isLoading: false}
         },
+
+        removeAccountDetails: (state: InitialAccountStateType, _action: PayloadAction<{ id: string }>) => {
+            return {...state, error: null, isLoading: false}
+        },
+        removeAccountDetailsSuccess: (state: InitialAccountStateType, {payload: success}: PayloadAction<{}>) => {
+            return {...state, success, error: null, isLoading: false}
+        },
+        removeAccountDetailsError: (state: InitialAccountStateType, {payload: error}: PayloadAction<any>) => {
+            return {...state, error, isLoading: false}
+        },
     }
 })
 
@@ -56,11 +56,11 @@ export const {
     getAllAccountSuccess,
     getAllAccountError,
     updateAccountState,
-    getSyncAccount,
-    getSyncAccountSuccess,
-    getSyncAccountError,
     updateAccountDetails,
     updateAccountDetailsSuccess,
-    updateAccountDetailsError
+    updateAccountDetailsError,
+    removeAccountDetails,
+    removeAccountDetailsSuccess,
+    removeAccountDetailsError
 } = accountSlice.actions
 export default accountSlice.reducer

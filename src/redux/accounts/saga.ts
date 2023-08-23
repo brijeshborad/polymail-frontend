@@ -4,9 +4,10 @@ import {
     getAllAccountError,
     getAllAccountSuccess,
     getAllAccount,
-    getSyncAccount,
-    getSyncAccountSuccess,
-    getSyncAccountError, updateAccountDetailsSuccess, updateAccountDetailsError, updateAccountDetails
+    updateAccountDetailsSuccess,
+    updateAccountDetailsError,
+    updateAccountDetails,
+    removeAccountDetailsSuccess, removeAccountDetailsError, removeAccountDetails
 } from "@/redux/accounts/action-reducer";
 import ApiService from "@/utils/api.service";
 import {AxiosError, AxiosResponse} from "axios";
@@ -18,16 +19,6 @@ function* getAccountDetails() {
     } catch (error: any) {
         error = error as AxiosError;
         yield put(getAllAccountError(error.response.data));
-    }
-}
-
-function* getAccountSync({payload: {id}}: PayloadAction<{ id: string }>) {
-    try {
-        const response: AxiosResponse = yield ApiService.callGet(`accounts/${id}/sync`, null);
-        yield put(getSyncAccountSuccess(response));
-    } catch (error: any) {
-        error = error as AxiosError;
-        yield put(getSyncAccountError(error.response.data));
     }
 }
 
@@ -43,23 +34,33 @@ function* updateAccountDetail({payload: {signature, id}}: PayloadAction<{ signat
     }
 }
 
-export function* watchGetAccount() {
-    yield takeLatest(getAllAccount.type, getAccountDetails);
+function* removeAccount({payload: {id}}: PayloadAction<{ id: string }>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callDelete(`accounts/${id}`, {});
+        yield put(removeAccountDetailsSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        yield put(removeAccountDetailsError(error.response.data));
+    }
 }
 
-export function* watchGetSyncAccount() {
-    yield takeLatest(getSyncAccount.type, getAccountSync);
+export function* watchGetAccount() {
+    yield takeLatest(getAllAccount.type, getAccountDetails);
 }
 
 export function* watchUpdateAccountDetails() {
     yield takeLatest(updateAccountDetails.type, updateAccountDetail);
 }
 
+export function* watchRemoveAccountDetails() {
+    yield takeLatest(removeAccountDetails.type, removeAccount);
+}
+
 export default function* rootSaga() {
     yield all([
         fork(watchGetAccount),
-        fork(watchGetSyncAccount),
         fork(watchUpdateAccountDetails),
+        fork(watchRemoveAccountDetails),
     ]);
 }
 
