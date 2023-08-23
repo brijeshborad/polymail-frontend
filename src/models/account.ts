@@ -6,4 +6,5 @@ export interface Account {
     updated?: string,
     success?: boolean,
     signature?: string
+    userId?: string
 }

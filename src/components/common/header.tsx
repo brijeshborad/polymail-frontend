@@ -27,7 +27,9 @@ import LocalStorageService from "@/utils/localstorage.service";
 import {ComposeIcon} from "@/icons/compose.icon";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 import {Toaster} from "@/components/common";
-import {getAllThreads, searchThreads, updateThreadState} from "@/redux/threads/action-reducer";
+import {getAllThreads, updateThreadState} from "@/redux/threads/action-reducer";
+import {useSocket} from "@/hooks/use-socket.hook";
+import {updateUsersDetailsSuccess} from "@/redux/users/action-reducer";
 
 export function Header() {
     const dispatch = useDispatch();
@@ -38,11 +40,13 @@ export function Header() {
     const {accounts, selectedAccount, success: syncSuccess} = useSelector((state: StateType) => state.accounts);
     const {threads} = useSelector((state: StateType) => state.threads);
     const {googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
+    const {userDetails} = useSelector((state: StateType) => state.users);
     const [userData, setUserData] = useState<User>();
     const {newMessage} = useSelector((state: StateType) => state.socket);
 
     const {user} = useSelector((state: StateType) => state.auth);
     const [searchString, setSearchString] = useState<string>('');
+    const {sendMessage} = useSocket();
 
     useEffect(() => {
         if (user) {
@@ -121,8 +125,17 @@ export function Header() {
             if (!LocalStorageService.updateAccount('get')) {
                 setAccounts(accounts[0]);
             }
+
+            if (!(userDetails && userDetails.id)) {
+                dispatch(updateUsersDetailsSuccess({
+                    ...(userDetails ? {
+                        ...userDetails,
+                        id: accounts[0].userId
+                    } : userDetails)
+                }));
+            }
         }
-    }, [accounts, setAccounts]);
+    }, [accounts, dispatch, setAccounts, userDetails]);
 
 
     function logout() {
@@ -157,22 +170,17 @@ export function Header() {
         dispatch(updateMessageState({isCompose: true}))
     }
 
-    // const searchThreadsData = (event: ChangeEvent | any) => {
-    //     if (searchString && searchString.length >= 4) {
-    //         let searchString = `label:${event.target.value}`
-    //         dispatch(searchThreads({query: searchString}));
-    //     } else {
-    //         if (selectedAccount && selectedAccount.id) {
-    //             dispatch(getAllThreads({mailbox: 'INBOX', account: selectedAccount.id, enriched: true}));
-    //         }
-    //     }
-    // }
-
     const handleKeyPress = (event: KeyboardEvent | any) => {
         if (event.key.toLowerCase() === 'enter') {
             if (searchString) {
-                let searchString = `label:${event.target.value}`
-                dispatch(searchThreads({query: searchString}));
+                sendMessage(JSON.stringify({
+                    "userId": userDetails?.id,
+                    "name": "SearchRequest",
+                    "data": {
+                        // [searchString]: `label:inbox`
+                        "query": searchString
+                    }
+                }))
             } else {
                 if (selectedAccount && selectedAccount.id) {
                     dispatch(getAllThreads({mailbox: 'INBOX', account: selectedAccount.id, enriched: true}));

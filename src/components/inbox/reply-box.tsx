@@ -50,7 +50,6 @@ export function ReplyBox(props: ReplyBoxType) {
         cc: false,
         bcc: false
     })
-    const [htmlContent, setHtmlContent] = useState('');
     const [subject, setSubject] = useState<string>('');
     const [scheduledDate, setScheduledDate] = useState<Date>();
     const [boxUpdatedFirstTime, setBoxUpdatedFirstTime] = useState<boolean>(false);
@@ -108,10 +107,16 @@ export function ReplyBox(props: ReplyBoxType) {
             let emailSubject = `Re: ${selectedMessage.subject}`;
             if (props.replyType === 'forward') {
                 emailSubject = `Fwd: ${selectedMessage.subject}`;
-
                 let decoded = Buffer.from(props.emailPart || '', 'base64').toString('ascii');
-                setHtmlContent(decoded);
-
+                setEmailBody(getForwardContent() + (decoded || '') + (selectedAccount?.signature || ''));
+                if (draft && draft.draftInfo && draft.draftInfo.attachments) {
+                    setAttachments([
+                        ...draft.draftInfo.attachments.map(t => ({
+                            filename: t.filename,
+                            mimeType: t.mimeType
+                        }))
+                    ]);
+                }
             } else {
                 setEmailRecipients((prevState) => ({
                     ...prevState,
@@ -143,21 +148,16 @@ export function ReplyBox(props: ReplyBoxType) {
         }
     }, [isCompose, draft, selectedMessage, props.replyType, props.emailPart])
 
-
-    useEffect(() => {
-        if (props.replyType === 'forward' && selectedMessage && !draft && htmlContent && selectedAccount) {
-            const forwardContent: string = `
-             <p>---------- Forwarded message ----------
-From: ${selectedMessage.from}
-Date: ${dayjs(selectedMessage.created, 'ddd, MMM DD, YYYY [at] hh:mm A')}
-Subject: ${selectedMessage.subject}
-To: ${selectedMessage.to}
-${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><br/><br/><br/>`;
-
-            // set converted html to email body
-            setEmailBody(prevState => (forwardContent + (htmlContent || '') + (selectedAccount.signature || '')).concat(prevState));
-        }
-    }, [htmlContent, selectedMessage, draft, props.replyType, selectedAccount])
+    function getForwardContent() {
+        const forwardContent: string = `
+             <p style="color: black; background: none">---------- Forwarded message ----------
+From: ${selectedMessage?.from}
+Date: ${dayjs(selectedMessage?.created, 'ddd, MMM DD, YYYY [at] hh:mm A')}
+Subject: ${selectedMessage?.subject}
+To: ${selectedMessage?.to}
+${selectedMessage?.cc ? 'Cc: ' + (selectedMessage?.cc || []).join(',') : ''}</p><br/><br/><br/>`;
+        return forwardContent;
+    }
 
     useEffect(() => {
         setHideShowCCBccFields({cc: false, bcc: false});
@@ -237,7 +237,7 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
 
 
     const addSubject = (event: ChangeEvent | any) => {
-            setSubject(event.target.value || '');
+        setSubject(event.target.value || '');
     }
 
 
@@ -329,9 +329,10 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
                     id: 'send-now',
                     duration: 1500,
                     render: () => (
-                        <Box display={'flex'} alignItems={'center'} color='white' p={3} bg='#000000' borderRadius={'5px'}
+                        <Box display={'flex'} alignItems={'center'} color='white' p={3} bg='#000000'
+                             borderRadius={'5px'}
                              className={styles.mailSendToaster} fontSize={'14px'} padding={'13px 25px'}>
-                            {`Your message has been sent to ${draft.to[0]} ${draft.to.length >= 1 ? `and ${draft.to.length - 1} others`: '' }`}
+                            {`Your message has been sent to ${draft.to[0]} ${draft.to.length >= 1 ? `and ${draft.to.length - 1} others` : ''}`}
                             <Button onClick={() => undoClick('undo')} ml={3} height={"auto"}
                                     padding={'7px 15px'}>Undo</Button>
                             <Button onClick={() => undoClick('send-now')} height={"auto"} padding={'7px 15px'}>Send

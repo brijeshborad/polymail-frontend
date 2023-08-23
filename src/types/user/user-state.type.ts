@@ -5,9 +5,9 @@ export declare type InitialAuthState = {
     user?: User | undefined,
     isLoading?: boolean
     error?: Error | any | null,
-    googleAuthRedirectionLink?: { url?: string } | null,
-    userDetails?: UserDetails | undefined,
+    googleAuthRedirectionLink?: { url?: string } | null
 }
+
 export declare type InitialUserState = {
     user?: User | undefined,
     isLoading?: boolean

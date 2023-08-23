@@ -2,11 +2,11 @@ import {useRouter} from 'next/router';
 import React, {useEffect, useRef} from 'react';
 import LocalStorageService from "@/utils/localstorage.service";
 import {Header} from "@/components/common";
-import useWebSocket from "react-use-websocket";
 import {User} from "@/models";
 import {updateLastMessage} from "@/redux/socket/action-reducer";
 import {useDispatch} from "react-redux";
 import {Flex} from "@chakra-ui/react";
+import {useSocket} from "@/hooks/use-socket.hook";
 
 // Multiple instances of the hook can exist simultaneously.
 // This stores the timestamp of the last heartbeat for a given socket url,
@@ -27,19 +27,7 @@ export default function withAuth(ProtectedComponent: any) {
             }
         }, [userIsAuthenticated, router]);
 
-        const socketUrl: string = `${process.env.NEXT_PUBLIC_WEBSOCKET_URL}?token=${user?.token}`;
-        const {lastMessage, sendMessage, readyState} = useWebSocket(socketUrl, {
-            share: true,
-            shouldReconnect: () => true,
-            reconnectInterval: 0,
-            onOpen: () => {
-                console.log('WebSocket connection established.');
-            },
-            onClose: () => {
-                console.log('WebSocket connection disconnected.');
-            }
-        })
-
+        const {lastMessage, sendMessage, readyState, socketUrl} = useSocket();
         const dispatch = useDispatch();
 
         if (lastMessage) {
