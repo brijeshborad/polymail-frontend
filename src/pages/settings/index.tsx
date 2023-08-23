@@ -5,42 +5,52 @@ import {
     GridItem,
     Heading,
     Flex,
-    Text,
     UnorderedList,
     ListItem,
 } from "@chakra-ui/react";
 import styles from "@/styles/setting.module.css";
 import {UserIcon} from "@/icons";
-import {Billing, EmailAddress, Members, Profile, Signature} from "@/components/settings";
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
 
+let activeTab = ''
 
 function Index() {
-    const [currentTab, setCurrentTab] = useState<any>(null);
-    const [tabTitle, setTabTitle] = useState<any>(null);
+    const router = useRouter()
 
-    const openTabs = useCallback((type: string = 'profile') => {
+    let currentRoute = router.pathname.split('/');
+    const openTabs = useCallback((type: string) => {
         if (type === 'profile') {
-            setTabTitle('Profile');
+            activeTab = 'Profile'
             Router.push('/settings/profile');
         } else if (type === 'signature') {
-            setTabTitle('Signature');
+            activeTab = 'Signature'
             Router.push('/settings/signature');
-        } else if (type === 'email_address') {
-            setTabTitle('Email Address');
-            Router.push('/settings/emailAddress');
+        } else if (type === 'email_address' ) {
+            activeTab = 'Email Address'
+            Router.push('/settings/email-address');
         } else if (type === 'billing') {
-            setTabTitle('Billing');
+            activeTab = 'Billing'
             Router.push('/settings/billing');
         } else if (type === 'members') {
             Router.push('/settings/members');
-            setTabTitle('Members');
+            activeTab = 'Members'
         }
     }, []);
 
     useEffect(() => {
-        openTabs()
-    }, [openTabs])
+        console.log('currentRoute' , currentRoute[currentRoute.length - 1])
+        if (currentRoute[currentRoute.length - 1] === 'profile') {
+            activeTab = 'Profile'
+        } else if (currentRoute[currentRoute.length - 1] === 'signature') {
+            activeTab = 'Signature'
+        } else if (currentRoute[currentRoute.length - 1] === 'email-address') {
+            activeTab = 'Email Address'
+        } else if (currentRoute[currentRoute.length - 1] === 'billing') {
+            activeTab = 'Billing'
+        } else if (currentRoute[currentRoute.length - 1] === 'members') {
+            activeTab = 'Members'
+        }
+    }, [currentRoute])
 
 
     return (
@@ -57,14 +67,14 @@ function Index() {
 
                         <UnorderedList display={'flex'} gap={1} className={styles.settingList}>
                             <ListItem onClick={() => openTabs('profile')}
-                                      className={tabTitle === 'Profile' ? styles.active : ''}>Profile</ListItem>
+                                      className={activeTab === 'Profile' ? styles.active : ''}>Profile</ListItem>
                             <ListItem onClick={() => openTabs('signature')}
-                                      className={tabTitle === 'Signature' ? styles.active : ''}>Signature</ListItem>
+                                      className={activeTab === 'Signature' ? styles.active : ''}>Signature</ListItem>
                             <ListItem onClick={() => openTabs('email_address')}
-                                      className={tabTitle === 'Email Address' ? styles.active : ''}>Email
+                                      className={activeTab === 'Email Address' ? styles.active : ''}>Email
                                 Addresses</ListItem>
                             <ListItem onClick={() => openTabs('billing')}
-                                      className={tabTitle === 'Billing' ? styles.active : ''}>Billing</ListItem>
+                                      className={activeTab === 'Billing' ? styles.active : ''}>Billing</ListItem>
                         </UnorderedList>
                     </Flex>
 
@@ -75,22 +85,8 @@ function Index() {
 
                         <UnorderedList className={styles.settingList}>
                             <ListItem onClick={() => openTabs('members')}
-                                      className={tabTitle === 'Members' ? styles.active : ''}>Members</ListItem>
+                                      className={activeTab === 'Members' ? styles.active : ''}>Members</ListItem>
                         </UnorderedList>
-                    </Flex>
-                </GridItem>
-
-                <GridItem w='100%'>
-                    <Flex direction={'column'} h={'100%'} padding={'50px 40px 40px'}>
-                        <Flex direction={'column'} pb={8} mb={8} borderBottom={'1px solid #D9D9D9'}>
-                            <Heading as='h4' size='lg' gap={1}> {tabTitle} </Heading>
-                            <Text fontSize='sm' className={styles.settingSubTitle}>Manage your team and preferences
-                                here.</Text>
-                        </Flex>
-
-                        <Flex direction={"column"} className={styles.SettingDetails}>
-                            {currentTab}
-                        </Flex>
                     </Flex>
                 </GridItem>
             </Grid>

@@ -384,11 +384,30 @@
     box-shadow: none;
 }
 
+.memberTable .OptionButton:hover,
+.memberTable .OptionButton:focus-visible,
+.memberTable .OptionButton:active {
+    background-color: transparent;
+    box-shadow: none;
+}
+
+.emailSignature {
+    border: 1px solid #E5E5E5;
+    height: 100px;
+    background-color: #FFFFFF;
+    padding: 8px 16px;
+    border-radius: 8px;
+}
+
+.copyLinkDetails svg {
+    width: 20px;
+    height: 20px;
+}
+
 .changePassword {
 
 }
 
 .replyMessageArea {
-    border: 1px solid;
-    height: 100px;
+
 }

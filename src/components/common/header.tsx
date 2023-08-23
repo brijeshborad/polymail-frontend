@@ -130,7 +130,7 @@ export function Header() {
     }
 
     function openSetting() {
-        Router.push('/settings');
+        Router.push('/settings/profile');
     }
 
     function addNewGoogleAccount() {
