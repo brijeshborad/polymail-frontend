@@ -17,7 +17,7 @@ import {EnergyIcon, FolderIcon, MailIcon} from "@/icons";
 import styles from '@/styles/Home.module.css'
 import {useDispatch, useSelector} from "react-redux";
 import {googleAuthLink} from "@/redux/auth/action-reducer";
-import Router from "next/router";
+import Router, {useRouter} from "next/router";
 import {StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
 import {getAllOrganizations, updateOrganizationState} from "@/redux/organizations/action-reducer";
@@ -47,6 +47,9 @@ export function Header() {
     const {user} = useSelector((state: StateType) => state.auth);
     const [searchString, setSearchString] = useState<string>('');
     const {sendMessage} = useSocket();
+    const router = useRouter()
+
+    let currentRoute = router.pathname.split('/');
 
     useEffect(() => {
         if (user) {
@@ -199,11 +202,11 @@ export function Header() {
                 </Tooltip>
             </div>
             <Flex className={styles.headerTabs} align={'center'}>
-                <Flex align={'center'} className={styles.tabsActive}>
+                <Flex align={'center'} className={currentRoute[currentRoute.length - 1] === 'inbox' ? styles.tabsActive : ''} onClick={() => Router.push('/inbox')}>
                     <MailIcon/>
                     Inbox
                 </Flex>
-                <Flex align={'center'}>
+                <Flex align={'center'} className={currentRoute[currentRoute.length - 1] === 'projects' ? styles.tabsActive : ''}>
                     <FolderIcon/>
                     Projects
                 </Flex>

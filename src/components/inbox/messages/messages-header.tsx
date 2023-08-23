@@ -1,7 +1,7 @@
 import styles from "@/styles/Inbox.module.css";
 import {Button, Flex, Text, Tooltip} from "@chakra-ui/react";
-import {CheckIcon, ChevronDownIcon, ChevronUpIcon, CloseIcon, WarningIcon} from "@chakra-ui/icons";
-import {ArchiveIcon, BlueStarIcon, FolderIcon, StarIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
+import {ChevronDownIcon, ChevronUpIcon, CloseIcon, WarningIcon} from "@chakra-ui/icons";
+import {ArchiveIcon, BlueStarIcon, FolderIcon, StarIcon, TimeSnoozeIcon, TrashIcon, EnvelopeIcon} from "@/icons";
 import React from "react";
 import {Thread} from "@/models";
 import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
@@ -94,8 +94,8 @@ export function MessagesHeader({onClose, inboxMessages, index, showPreNextMessag
                         </Tooltip>
 
                         <Tooltip label='Mark as unread' placement='bottom' bg='gray.300' color='black'>
-                            <div onClick={() => updateMailBox('UNREAD')}>
-                                <CheckIcon className={styles.colorGray}/>
+                            <div className={styles.envelopeIcon} onClick={() => updateMailBox('UNREAD')}>
+                                <EnvelopeIcon/>
                             </div>
                         </Tooltip>
 

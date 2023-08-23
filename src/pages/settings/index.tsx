@@ -7,7 +7,7 @@ import {
 } from "@chakra-ui/react";
 import styles from "@/styles/setting.module.css";
 import {UserIcon} from "@/icons";
-import Router, { useRouter } from "next/router";
+import Router, {useRouter} from "next/router";
 
 let activeTab = ''
 
@@ -22,7 +22,7 @@ function Index() {
         } else if (type === 'signature') {
             activeTab = 'Signature'
             Router.push('/settings/signature');
-        } else if (type === 'email_address' ) {
+        } else if (type === 'email_address') {
             activeTab = 'Email Address'
             Router.push('/settings/email-address');
         } else if (type === 'billing') {
@@ -35,7 +35,6 @@ function Index() {
     }, []);
 
     useEffect(() => {
-        console.log('currentRoute' , currentRoute[currentRoute.length - 1])
         if (currentRoute[currentRoute.length - 1] === 'profile') {
             activeTab = 'Profile'
         } else if (currentRoute[currentRoute.length - 1] === 'signature') {
@@ -56,7 +55,8 @@ function Index() {
 
             <Flex direction={'column'} mb={8}>
                 <Heading display={'flex'} alignItems={'center'} mb={2} as='h5' size='sm'
-                         className={styles.settingListTitle} textTransform={'uppercase'}><UserIcon/> My Account</Heading>
+                         className={styles.settingListTitle} textTransform={'uppercase'}><UserIcon/> My
+                    Account</Heading>
 
                 <UnorderedList display={'flex'} gap={1} className={styles.settingList}>
                     <ListItem onClick={() => openTabs('profile')}
