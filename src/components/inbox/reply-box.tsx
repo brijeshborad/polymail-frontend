@@ -327,18 +327,18 @@ ${selectedMessage.cc ? 'Cc: ' + (selectedMessage.cc || []).join(',') : ''}</p><b
             } else {
                 let undoToaster: any = {
                     id: 'send-now',
-                    duration: 1500000,
+                    duration: 1500,
                     render: () => (
-                        <Box display={'flex'} color='white' p={3} bg='#000000' borderRadius={'5px'} ml={10}
-                             className={styles.mailSendToaster} fontSize={'14px'} padding={'5px 23px'}>
-                            {`Your Message to ${draft && draft.to && draft.to.join(', ')} has been sent!`}
+                        <Box display={'flex'} alignItems={'center'} color='white' p={3} bg='#000000' borderRadius={'5px'}
+                             className={styles.mailSendToaster} fontSize={'14px'} padding={'13px 25px'}>
+                            {`Your message has been sent to ${draft.to[0]} ${draft.to.length > 1 ? `and ${draft.to.length - 1} others`: 'ss' }`}
                             <Button onClick={() => undoClick('undo')} ml={3} height={"auto"}
                                     padding={'7px 15px'}>Undo</Button>
                             <Button onClick={() => undoClick('send-now')} height={"auto"} padding={'7px 15px'}>Send
                                 Now</Button>
                         </Box>
                     ),
-                    position: 'bottom-left'
+                    position: 'bottom-center'
                 }
                 toast(undoToaster)
             }

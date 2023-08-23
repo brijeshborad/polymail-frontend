@@ -1,19 +1,41 @@
 import {Button, Flex, Link, Text} from "@chakra-ui/react";
 import styles from "@/styles/setting.module.css";
 import {AppleIcon, GoogleIcon} from "@/icons";
-import React from "react";
-import {useSelector} from "react-redux";
+import React, {useEffect} from "react";
+import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {Account} from "@/models";
+import {googleAuthLink} from "@/redux/auth/action-reducer";
 
 
-export function EmailAddress() {
+export default function EmailAddress() {
     const {accounts} = useSelector((state: StateType) => state.accounts);
+    const {googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
+
+    const dispatch = useDispatch();
+
+    function addNewGoogleAccount() {
+        let body = {
+            mode: 'create',
+            redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}/inbox`,
+            accountType: "google",
+            platform: "web",
+            withToken: true
+        }
+        dispatch(googleAuthLink(body));
+    }
+
+    useEffect(() => {
+        if (googleAuthRedirectionLink) {
+            window.location.href = googleAuthRedirectionLink.url || '';
+        }
+    }, [googleAuthRedirectionLink])
+
     return (
         <div>
             <Flex direction={"column"} gap={10} className={styles.settingEmailAddress} >
                 <Flex direction={"column"} gap={2} className={styles.settingSocialLink}>
-                    <Button colorScheme='blue'><GoogleIcon/> Add email address via Google</Button>
+                    <Button colorScheme='blue' onClick={() => addNewGoogleAccount()}><GoogleIcon/> Add email address via Google</Button>
                     <Button colorScheme='blue'><AppleIcon/> Add email address via Apple</Button>
                 </Flex>
 

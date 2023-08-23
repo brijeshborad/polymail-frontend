@@ -7,7 +7,7 @@ import {StateType} from "@/types";
 import {getUsersDetails, updateUsersDetails} from "@/redux/users/action-reducer";
 import {UserDetails} from "@/models";
 
-export function Profile() {
+export default function Profile() {
     const {userDetails} = useSelector((state: StateType) => state.users);
     const dispatch = useDispatch();
 

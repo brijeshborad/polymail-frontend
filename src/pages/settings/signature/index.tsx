@@ -7,7 +7,7 @@ import {StateType} from "@/types";
 import {RichTextEditor} from "@/components/common";
 import {updateAccountDetails} from "@/redux/accounts/action-reducer";
 
-export function Signature() {
+export default function Signature() {
 
     const [emailBody, setEmailBody] = useState<string>('');
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);

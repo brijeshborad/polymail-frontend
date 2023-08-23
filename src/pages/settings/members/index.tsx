@@ -12,20 +12,21 @@ import {
     Text, Textarea,
     Th,
     Thead,
-    Tr
+    Tr, useDisclosure
 } from "@chakra-ui/react";
 import Image from "next/image";
 import React from "react";
-import {BillingTypes} from "@/types";
 import {MenuIcon, TextIcon} from "@/icons";
 
-export function Members(props: BillingTypes) {
+export default function Members() {
+    const {isOpen, onOpen, onClose} = useDisclosure();
+
     return (
         <div>
             <div className={styles.memberTable}>
                 <Flex alignItems={'center'} justify={'space-between'} gap={4} padding={'20px 24px'}>
                     <Heading as='h4' fontSize={'18px'} fontWeight={600} color={'#101828'}>Team members</Heading>
-                    <Button className={styles.inviteMemberButton} fontSize={'14px'} onClick={props.onOpen} backgroundColor={'black'} color={'white'} height={'auto'} padding={'10px 20px'}>Invite</Button>
+                    <Button className={styles.inviteMemberButton} fontSize={'14px'} onClick={onOpen} backgroundColor={'black'} color={'white'} height={'auto'} padding={'10px 20px'}>Invite</Button>
                 </Flex>
                 <TableContainer>
                     <Table variant='simple'>
@@ -333,7 +334,7 @@ export function Members(props: BillingTypes) {
                     </Table>
                 </TableContainer>
             </div>
-            <Modal isOpen={props.isOpen as boolean} onClose={() => props.onClose} closeOnOverlayClick={false} isCentered>
+            <Modal isOpen={isOpen} onClose={() => onClose} closeOnOverlayClick={false} isCentered>
                 <ModalOverlay />
                 <ModalContent maxWidth={'490px'}>
                     <ModalHeader padding={'40px 40px 24px 40px'}>
@@ -352,7 +353,7 @@ export function Members(props: BillingTypes) {
                     </ModalBody>
 
                     <ModalFooter className={styles.settingButton} paddingBottom={'40px'}>
-                        <Button className={styles.settingCancel} colorScheme='blue' mr={3} onClick={props.onClose}> Cancel </Button>
+                        <Button className={styles.settingCancel} colorScheme='blue' mr={3} onClick={onClose}> Cancel </Button>
                         <Button className={styles.settingSave} variant='ghost'>Send Invite</Button>
                     </ModalFooter>
                 </ModalContent>

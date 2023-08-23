@@ -5,49 +5,38 @@ import {
     GridItem,
     Heading,
     Flex,
-    Button,
-    Input,
     Text,
     UnorderedList,
     ListItem,
-    Select,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    useDisclosure
 } from "@chakra-ui/react";
 import styles from "@/styles/setting.module.css";
-import {UserIcon, MasterCardIcon} from "@/icons";
+import {UserIcon} from "@/icons";
 import {Billing, EmailAddress, Members, Profile, Signature} from "@/components/settings";
+import Router from "next/router";
 
 
 function Index() {
-    const {isOpen, onOpen, onClose} = useDisclosure();
-
     const [currentTab, setCurrentTab] = useState<any>(null);
     const [tabTitle, setTabTitle] = useState<any>(null);
 
     const openTabs = useCallback((type: string = 'profile') => {
         if (type === 'profile') {
             setTabTitle('Profile');
-            setCurrentTab(<Profile/>);
+            Router.push('/settings/profile');
         } else if (type === 'signature') {
             setTabTitle('Signature');
-            setCurrentTab(<Signature/>);
+            Router.push('/settings/signature');
         } else if (type === 'email_address') {
             setTabTitle('Email Address');
-            setCurrentTab(<EmailAddress/>);
+            Router.push('/settings/emailAddress');
         } else if (type === 'billing') {
             setTabTitle('Billing');
-            setCurrentTab(<Billing onOpen={onOpen}/>);
+            Router.push('/settings/billing');
         } else if (type === 'members') {
+            Router.push('/settings/members');
             setTabTitle('Members');
-            setCurrentTab(<Members onOpen={onOpen} isOpen={isOpen} onClose={onClose}/>);
         }
-    }, [isOpen, onClose, onOpen]);
+    }, []);
 
     useEffect(() => {
         openTabs()
@@ -68,14 +57,14 @@ function Index() {
 
                         <UnorderedList display={'flex'} gap={1} className={styles.settingList}>
                             <ListItem onClick={() => openTabs('profile')}
-                                      className={tabTitle === 'profile' ? styles.active : ''}>Profile</ListItem>
+                                      className={tabTitle === 'Profile' ? styles.active : ''}>Profile</ListItem>
                             <ListItem onClick={() => openTabs('signature')}
-                                      className={tabTitle === 'signature' ? styles.active : ''}>Signature</ListItem>
+                                      className={tabTitle === 'Signature' ? styles.active : ''}>Signature</ListItem>
                             <ListItem onClick={() => openTabs('email_address')}
-                                      className={tabTitle === 'email_address' ? styles.active : ''}>Email
+                                      className={tabTitle === 'Email Address' ? styles.active : ''}>Email
                                 Addresses</ListItem>
                             <ListItem onClick={() => openTabs('billing')}
-                                      className={tabTitle === 'billing' ? styles.active : ''}>Billing</ListItem>
+                                      className={tabTitle === 'Billing' ? styles.active : ''}>Billing</ListItem>
                         </UnorderedList>
                     </Flex>
 
@@ -86,7 +75,7 @@ function Index() {
 
                         <UnorderedList className={styles.settingList}>
                             <ListItem onClick={() => openTabs('members')}
-                                      className={tabTitle === 'members' ? styles.active : ''}>Members</ListItem>
+                                      className={tabTitle === 'Members' ? styles.active : ''}>Members</ListItem>
                         </UnorderedList>
                     </Flex>
                 </GridItem>
@@ -105,69 +94,6 @@ function Index() {
                     </Flex>
                 </GridItem>
             </Grid>
-
-            {/*add New Payment Modal*/}
-            <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false} isCentered>
-                <ModalOverlay/>
-                <ModalContent maxWidth={'490px'}>
-                    <ModalHeader padding={'40px 40px 24px 40px'}>
-                        <Heading as='h3' size='lg' pb={1} color={'#101828'}> Add Payment Method </Heading>
-                        <Text fontSize='md' color={'#475467'} fontWeight={'400'}>Add new payment method</Text>
-                    </ModalHeader>
-                    {/*<ModalCloseButton />*/}
-                    <ModalBody padding={'8px 40px 16px'}>
-                        <Flex direction={'column'} gap={4}>
-                            <div className={styles.newPaymentInput}>
-                                <Text mb='8px' fontSize={'13px'} fontWeight={500} color={'#000000'}>Name on card</Text>
-                                <Input placeholder='Card Holder Name' size='sm'/>
-                            </div>
-                            <div className={styles.newPaymentInput}>
-                                <Text mb='8px' fontSize={'13px'} fontWeight={500} color={'#000000'}>Card number</Text>
-                                <div className={styles.inputIcon}>
-                                    <Input placeholder='**** **** **** 1234' size='sm'/>
-                                    <div className={styles.icon}>
-                                        <MasterCardIcon/>
-                                    </div>
-                                </div>
-                            </div>
-                            <Grid templateColumns='repeat(2, 1fr)' gap={6}>
-                                <GridItem w='100%'>
-                                    <div className={styles.newPaymentInput}>
-                                        <Text mb='8px' fontSize={'13px'} fontWeight={500}
-                                              color={'#000000'}>Expiry</Text>
-                                        <Input placeholder='mm/yy' size='sm'/>
-                                    </div>
-                                </GridItem>
-                                <GridItem w='100%'>
-                                    <div className={styles.newPaymentInput}>
-                                        <Text mb='8px' fontSize={'13px'} fontWeight={500} color={'#000000'}>CVV</Text>
-                                        <Input placeholder='123' size='sm'/>
-                                    </div>
-                                </GridItem>
-                            </Grid>
-                            <div className={styles.newPaymentInput}>
-                                <Text mb='8px' fontSize={'13px'} fontWeight={500} color={'#000000'}>ZIP code</Text>
-                                <Input placeholder='123456' size='sm'/>
-                            </div>
-                            <div className={styles.newPaymentInput}>
-                                <Text mb='8px' fontSize={'13px'} fontWeight={500}
-                                      color={'#000000'}>Country/Region</Text>
-                                <Select placeholder='Select Country' size='sm'>
-                                    <option value='option1'>Option 1</option>
-                                    <option value='option2'>Option 2</option>
-                                    <option value='option3'>Option 3</option>
-                                </Select>
-                            </div>
-                        </Flex>
-                    </ModalBody>
-
-                    <ModalFooter className={styles.settingButton} paddingBottom={'40px'}>
-                        <Button className={styles.settingCancel} colorScheme='blue' mr={3}
-                                onClick={onClose}> Cancel </Button>
-                        <Button className={styles.settingSave} variant='ghost'>Add</Button>
-                    </ModalFooter>
-                </ModalContent>
-            </Modal>
         </div>
     )
 }
