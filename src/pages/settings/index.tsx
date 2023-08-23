@@ -1,8 +1,5 @@
 import React, {useCallback, useEffect} from "react";
-import withAuth from "@/components/withAuth";
 import {
-    Grid,
-    GridItem,
     Heading,
     Flex,
     UnorderedList,
@@ -54,44 +51,38 @@ function Index() {
 
 
     return (
-        <div className={styles.setting}>
-            <Grid templateColumns='232px auto' gap={6} h={'100%'}>
-                <GridItem w='100%' className={styles.settingSideBar} padding={'40px 30px 40px 40px'}
-                          borderRight={'1px solid #E1E3E6'}>
+        <>
+            <Heading as='h4' mb={8} className={styles.settingTitle}> Settings </Heading>
 
-                    <Heading as='h4' mb={8} className={styles.settingTitle}> Settings </Heading>
+            <Flex direction={'column'} mb={8}>
+                <Heading display={'flex'} alignItems={'center'} mb={2} as='h5' size='sm'
+                         className={styles.settingListTitle} textTransform={'uppercase'}><UserIcon/> My Account</Heading>
 
-                    <Flex direction={'column'} mb={8}>
-                        <Heading display={'flex'} alignItems={'center'} mb={2} as='h5' size='sm'
-                                 className={styles.settingListTitle} textTransform={'uppercase'}><UserIcon/> My Account</Heading>
+                <UnorderedList display={'flex'} gap={1} className={styles.settingList}>
+                    <ListItem onClick={() => openTabs('profile')}
+                              className={activeTab === 'Profile' ? styles.active : ''}>Profile</ListItem>
+                    <ListItem onClick={() => openTabs('signature')}
+                              className={activeTab === 'Signature' ? styles.active : ''}>Signature</ListItem>
+                    <ListItem onClick={() => openTabs('email_address')}
+                              className={activeTab === 'Email Address' ? styles.active : ''}>Email
+                        Addresses</ListItem>
+                    <ListItem onClick={() => openTabs('billing')}
+                              className={activeTab === 'Billing' ? styles.active : ''}>Billing</ListItem>
+                </UnorderedList>
+            </Flex>
 
-                        <UnorderedList display={'flex'} gap={1} className={styles.settingList}>
-                            <ListItem onClick={() => openTabs('profile')}
-                                      className={activeTab === 'Profile' ? styles.active : ''}>Profile</ListItem>
-                            <ListItem onClick={() => openTabs('signature')}
-                                      className={activeTab === 'Signature' ? styles.active : ''}>Signature</ListItem>
-                            <ListItem onClick={() => openTabs('email_address')}
-                                      className={activeTab === 'Email Address' ? styles.active : ''}>Email
-                                Addresses</ListItem>
-                            <ListItem onClick={() => openTabs('billing')}
-                                      className={activeTab === 'Billing' ? styles.active : ''}>Billing</ListItem>
-                        </UnorderedList>
-                    </Flex>
+            <Flex direction={'column'}>
+                <Heading display={'flex'} alignItems={'center'} mb={2} as='h5' size='sm'
+                         className={styles.settingListTitle}
+                         textTransform={'uppercase'}><UserIcon/> Workspace</Heading>
 
-                    <Flex direction={'column'}>
-                        <Heading display={'flex'} alignItems={'center'} mb={2} as='h5' size='sm'
-                                 className={styles.settingListTitle}
-                                 textTransform={'uppercase'}><UserIcon/> Workspace</Heading>
-
-                        <UnorderedList className={styles.settingList}>
-                            <ListItem onClick={() => openTabs('members')}
-                                      className={activeTab === 'Members' ? styles.active : ''}>Members</ListItem>
-                        </UnorderedList>
-                    </Flex>
-                </GridItem>
-            </Grid>
-        </div>
+                <UnorderedList className={styles.settingList}>
+                    <ListItem onClick={() => openTabs('members')}
+                              className={activeTab === 'Members' ? styles.active : ''}>Members</ListItem>
+                </UnorderedList>
+            </Flex>
+        </>
     )
 }
 
-export default withAuth(Index);
+export default Index;
