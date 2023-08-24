@@ -6,7 +6,8 @@ const initialState: any = {
     userDetails: {},
     isLoading: false,
     error: null,
-    profilePicture: {}
+    profilePicture: {},
+    profilePictureUpdated: false
 } as InitialUserState;
 
 const userSlice = createSlice({
@@ -24,7 +25,7 @@ const userSlice = createSlice({
         },
 
         getUsersDetails: (state: InitialUserState, _action: PayloadAction<UserDetails>) => {
-            return {...state, userDetails: {}, error: null, isLoading: false}
+            return {...state, userDetails: {}, profilePictureUpdated: false, error: null, isLoading: false}
         },
         getUsersDetailsSuccess: (state: InitialUserState, {payload: userDetails}: PayloadAction<{}>) => {
             return {...state, userDetails, error: null, isLoading: false}
@@ -34,20 +35,20 @@ const userSlice = createSlice({
         },
 
         uploadProfilePicture: (state: InitialUserState, _action: PayloadAction<{ file?: File }>) => {
-            return {...state, error: null, isLoading: false, success: false}
+            return {...state, error: null, profilePictureUpdated: false, isLoading: false, success: false}
         },
         uploadProfilePictureSuccess: (state: InitialUserState, {payload: profilePicture}: PayloadAction<{}>) => {
-            return {...state, profilePicture,  error: null, isLoading: false, success: true}
+            return {...state, profilePicture, profilePictureUpdated: true,  error: null, isLoading: false, success: true}
         },
         uploadProfilePictureError: (state: InitialUserState, {payload: error}: PayloadAction<any>) => {
             return {...state, error, isLoading: false, success: false}
         },
 
         getProfilePicture: (state: InitialUserState, _action: PayloadAction<{}>) => {
-            return {...state, error: null, isLoading: false, success: false}
+            return {...state, profilePicture: null, error: null, isLoading: false, success: false}
         },
         getProfilePictureSuccess: (state: InitialUserState, {payload: profilePicture}: PayloadAction<{}>) => {
-            return {...state,profilePicture, error: null, isLoading: false, success: true}
+            return {...state, profilePicture, error: null, isLoading: false, success: true}
         },
         getProfilePictureError: (state: InitialUserState, {payload: error}: PayloadAction<any>) => {
             return {...state, error, isLoading: false, success: false}

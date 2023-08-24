@@ -1,4 +1,4 @@
-import React, {useCallback} from "react";
+import React, {useCallback, useEffect} from "react";
 import {Flex, Heading, ListItem, UnorderedList,} from "@chakra-ui/react";
 import styles from "@/styles/setting.module.css";
 import {UserIcon} from "@/icons";
@@ -38,12 +38,24 @@ const tabMenu = [
         ]
     }
 ];
-
+let currentRoute: string = '';
 function Index() {
     const router = useRouter()
 
-    let currentRoute: string = router.pathname;
-    const openTabs = useCallback((menuItem: {route: string, title:string}) => {
+
+    useEffect(() => {
+        const routePaths = router.pathname.split('/');
+        if (routePaths[routePaths.length - 1] === 'settings') {
+            console.log(routePaths)
+            currentRoute = '/settings/profile';
+            Router.push('/settings/profile');
+        } else {
+            currentRoute = router.pathname;
+        }
+        console.log(currentRoute);
+    }, [router.pathname]);
+
+    const openTabs = useCallback((menuItem: { route: string, title: string }) => {
         currentRoute = menuItem.route;
         Router.push(menuItem.route);
     }, [])
@@ -60,12 +72,12 @@ function Index() {
                         <UserIcon/>{tab.title}
                     </Heading>
                     {tab.children &&
-                        <UnorderedList display={'flex'} gap={1} className={styles.settingList}>
-                            {tab.children.map((item, i: number) => (
-                                <ListItem key={i+1} onClick={() => openTabs(item)}
-                                          className={currentRoute === item.route ? styles.active : ''}>{item.title}</ListItem>
-                            ))}
-                        </UnorderedList>
+                    <UnorderedList display={'flex'} gap={1} className={styles.settingList}>
+                        {tab.children.map((item, i: number) => (
+                            <ListItem key={i + 1} onClick={() => openTabs(item)}
+                                      className={currentRoute === item.route ? styles.active : ''}>{item.title}</ListItem>
+                        ))}
+                    </UnorderedList>
                     }
                 </Flex>
             ))}

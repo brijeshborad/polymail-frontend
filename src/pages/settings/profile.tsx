@@ -16,7 +16,7 @@ import withAuth from "@/components/withAuth";
 import {EditIcon} from "@chakra-ui/icons";
 
 function Profile() {
-    const {userDetails, profilePicture} = useSelector((state: StateType) => state.users);
+    const {userDetails, profilePicture, profilePictureUpdated} = useSelector((state: StateType) => state.users);
     const dispatch = useDispatch();
     const inputFile = useRef<HTMLInputElement | null>(null)
 
@@ -38,10 +38,10 @@ function Profile() {
     }
 
     useEffect(() => {
-        if (profilePicture && profilePicture.url) {
+       if (profilePictureUpdated) {
             dispatch(getProfilePicture({}));
         }
-    }, [profilePicture && profilePicture.url]);
+    }, [dispatch, profilePictureUpdated]);
 
     useEffect(() => {
         if (userDetails) {

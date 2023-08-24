@@ -13,5 +13,6 @@ export declare type InitialUserState = {
     isLoading?: boolean
     error?: Error | any | null,
     userDetails?: UserDetails | undefined,
-    profilePicture?: Avatar | undefined
+    profilePicture?: Avatar | undefined,
+    profilePictureUpdated?: boolean | undefined
 }
