@@ -1,0 +1,259 @@
+.projectPage .imgWrapper {
+    width: 29px;
+    height: 29px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.projectPage .imgWrapper img,
+.projectPage .userImage img,
+.mailBox .imgWrapper img,
+.projectMemberModal .addMemberImage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.projectPage .userImage,
+.mailBox .imgWrapper {
+    width: 32px;
+    min-width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.projectPage .manageMembers:hover {
+    background-color: #000000;
+}
+
+.checkBoxLabel span {
+    color: #5D5F62;
+    font-size: 13px;
+    font-weight: 400;
+    white-space: nowrap;
+}
+
+.projectPage .allInboxes {
+    color: #08162F;
+    padding: 7px 12px;
+}
+
+.projectPage .allInboxes:hover,
+.projectPage .allInboxes:active {
+    background-color: #FFFFFF;
+}
+
+.mailList {
+    max-height: calc(100vh - 240px);
+    overflow-y: auto;
+}
+
+.mailDetails .senderDetails {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 20px;
+    padding: 1px 6px 1px 1px;
+    font-size: 12px;
+    font-weight: 400;
+    color: #000000;
+    line-height: 15px;
+    max-width: 400px;
+    white-space: nowrap;
+    overflow: hidden;
+    display: inline-block;
+    text-overflow: ellipsis;
+}
+
+.mailDetails .senderDetails svg {
+    width: 20px;
+    height: 20px;
+}
+
+.mailDetails .mailMessage {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: rgba(0, 0, 0, 0.8);
+    margin-top: 4px;
+}
+
+.mailDetails {
+    background-color: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    padding: 8px;
+    cursor: pointer;
+}
+
+.closeIcon {
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.closeIcon svg {
+    width: 0.7rem;
+    height: 0.7rem;
+    color: rgba(0, 0, 0, 0.5);
+    font-weight: 700;
+    margin: 0;
+}
+
+.actionIcon {
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+.actionIcon svg {
+    width: 1rem;
+    height: 1rem;
+    margin: 0;
+    color: #4A4A4A;
+}
+
+.headerRightIcon .colorGray {
+    color: #5D5F62;
+    opacity: 0.8;
+}
+
+.closeIcon svg {
+    width: 12px;
+}
+
+.addProjectMember {
+    background: #F5F5F5;
+    border-radius: 8px;
+    padding: 16px;
+}
+
+
+.addProjectMember .emailAddress {
+    background: #FFFFFF;
+    border: 1px solid #E5E5E5;
+    border-radius: 8px;
+}
+.emailAddress input::placeholder {
+    color: rgba(0,0,0, 0.3);
+}
+.emailAddress input:focus-visible {
+    box-shadow: none;
+    border: 0;
+}
+
+.emailAddress .memberButton:hover,
+.emailAddress .memberButton:active {
+    background-color: transparent;
+}
+
+.addProjectMember .addMemberButton:hover {
+    background-color: #000000;
+}
+
+.projectMemberModal .addMemberImage {
+    min-width: 24px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.mailBox .mailBoxBackground {
+    background-color: rgba(0, 0, 0, 0.03);
+    padding: 24px;
+    border-radius: 8px;
+    height: fit-content;
+}
+
+.replyButton input::placeholder {
+    color: rgba(0,0,0, 0.6);
+    font-weight: 500;
+}
+
+.replyButton input:focus-visible,
+.replyBoxCC .ccInput:focus-visible {
+    border: 0;
+    box-shadow: none;
+}
+
+.replyBoxCC .buttonClass:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+.replyBoxCC .buttonClass.ButtonClassBorder {
+    background-color: #FFFFFF;
+    border: 1px solid rgba(8, 22, 47, 0.24);
+}
+
+.replyButtonBottom svg {
+    color: #ffffff;
+}
+
+.replyButtonBottom .replayTextButton,
+.replyButtonBottom .replayArrowIcon {
+    height: auto;
+    background-color: #000000;
+    font-weight: 400;
+}
+
+.replyButtonBottom .replayTextButton {
+    border-radius: 5px 0 0 5px;
+    padding: 10px 0 10px 10px;
+}
+
+.replyButtonBottom .replayArrowIcon {
+    border: 0;
+    min-width: auto;
+    border-radius: 0 5px 5px 0;
+    padding: 9px;
+}
+
+.replyButtonBottom .replayArrowIcon:hover,
+.replyButtonBottom .replayArrowIcon:active,
+.replyButtonBottom .replayArrowIcon[data-active],
+.replyButtonBottom .replayArrowIcon:focus-visible,
+.replyButtonBottom .replayArrowIcon:hover:disabled,
+.replyButtonBottom .replayArrowIcon:hover[disabled] {
+    background-color: #000000;
+}
+
+.replyButtonBottom .replayTextButton:hover,
+.replyButtonBottom .replayTextButton:active,
+.replyButtonBottom .replayTextButton:focus-visible {
+    background-color: #000000;
+    box-shadow: none;
+}
+
+.replyBoxTags .replayBoxTextArea:focus-visible {
+    box-shadow: none;
+    border: 0;
+}
+
+.replyBoxTags .replayBoxTextArea::placeholder {
+    color: #000000;
+    font-weight: 500;
+}
+
+.replyBoxIcon svg {
+    width: 20px;
+    height: 20px    ;
+}
+
+.readMail .mailDetails {
+    background-color: #F5F5F5;
+    border-color: #EBEBEB;
+    box-shadow: 0 4px 4px 0 rgba(0,0,0, 0.04);
+}
+
+.readMail .mailDetails .senderDetails {
+    background-color: #FFFFFF;
+}

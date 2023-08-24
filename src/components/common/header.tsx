@@ -187,7 +187,7 @@ export function Header() {
                     <MailIcon/>
                     Inbox
                 </Flex>
-                <Flex align={'center'} className={currentRoute[currentRoute.length - 1] === 'projects' ? styles.tabsActive : ''}>
+                <Flex align={'center'} className={currentRoute[currentRoute.length - 1] === 'project' ? styles.tabsActive : ''}>
                     <FolderIcon/>
                     Projects
                 </Flex>
