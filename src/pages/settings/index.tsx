@@ -42,7 +42,7 @@ const tabMenu = [
 function Index() {
     const router = useRouter()
 
-    let currentRoute = router.pathname;
+    let currentRoute: string = router.pathname;
     const openTabs = useCallback((menuItem: {route: string, title:string}) => {
         currentRoute = menuItem.route;
         Router.push(menuItem.route);
