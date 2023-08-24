@@ -113,12 +113,6 @@ export function Header() {
         }
     }, [organizations, setOrganization]);
 
-
-
-    useEffect(() => {
-        console.log('profilePicture' , profilePicture)
-    }, [profilePicture])
-
     useEffect(() => {
         if (accounts && accounts.length > 0) {
             if (!LocalStorageService.updateAccount('get')) {
@@ -250,7 +244,10 @@ export function Header() {
             <div className={styles.profile}>
                 <Menu>
                     <MenuButton as={Button} rightIcon={<ChevronDownIcon/>} className={styles.profileButton}>
-                        <Image src={profilePicture && profilePicture.url || "/image/user.png"} width="36" height="36"  alt=""/>
+                        <div className={styles.profileImage}>
+                            <Image src={profilePicture && profilePicture.url || "/image/user.png"} width="36" height="36"  alt=""/>
+                        </div>
+
                     </MenuButton>
                     <MenuList>
                         <MenuItem onClick={() => addNewGoogleAccount()}>Add New Account</MenuItem>
