@@ -6,6 +6,8 @@ import {Provider} from "react-redux";
 import chakraTheme from '@chakra-ui/theme'
 import {Inter} from "next/font/google";
 import Head from 'next/head'
+import {Header} from "@/components/common";
+import React from "react";
 
 const {Button, Input, Menu, Checkbox, Heading, Divider, Alert, Modal, Popover, Tooltip, Textarea, Spinner, List, Select, Table} = chakraTheme.components
 const config: ThemeConfig = {
@@ -49,6 +51,7 @@ export default function App({Component, ...rest}: AppProps) {
                     <link rel="icon" href="/favicon.ico"/>
                 </Head>
                 <main className={`main ${inter.className}`}>
+                    {store.getState().auth?.user && <Header/> }
                     <Component {...pageProps} />
                 </main>
             </ChakraBaseProvider>

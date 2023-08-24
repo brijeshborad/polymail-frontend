@@ -66,7 +66,6 @@ export default function withAuth(ProtectedComponent: any) {
         return (
             <>
                 <Flex direction={'column'} h={'100vh'}>
-                    <Header/>
                     <ProtectedComponent {...props} />
                 </Flex>
             </>);
