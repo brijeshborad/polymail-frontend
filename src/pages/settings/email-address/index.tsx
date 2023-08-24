@@ -1,7 +1,7 @@
 import {Button, Flex, Grid, GridItem, Heading, Link, Text} from "@chakra-ui/react";
 import styles from "@/styles/setting.module.css";
 import {AppleIcon, GoogleIcon} from "@/icons";
-import React, {useEffect} from "react";
+import React, { useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {Account} from "@/models";
@@ -9,11 +9,10 @@ import {googleAuthLink} from "@/redux/auth/action-reducer";
 import Index from "@/pages/settings";
 import withAuth from "@/components/withAuth";
 import {CloseIcon} from "@chakra-ui/icons";
-import {removeAccountDetails} from "@/redux/accounts/action-reducer";
-
+import {removeAccountDetails, updateAccountState} from "@/redux/accounts/action-reducer";
 
 function EmailAddress() {
-    const {accounts} = useSelector((state: StateType) => state.accounts);
+    let {accounts, success} = useSelector((state: StateType) => state.accounts);
     const {googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
 
     const dispatch = useDispatch();
@@ -34,12 +33,22 @@ function EmailAddress() {
             window.location.href = googleAuthRedirectionLink.url || '';
         }
     }, [googleAuthRedirectionLink])
+    const [accountData, setAccountData] = useState<Account>();
 
     const removeAccount = (item: Account) => {
         if (item && item.id) {
+            setAccountData(item)
             dispatch(removeAccountDetails({id: item.id}));
         }
     }
+
+    useEffect(() => {
+        console.log('success' , success)
+        if (success && accountData && accountData.id) {
+            let data = (accounts || []).filter((item: Account) => item.id !== accountData.id)
+            dispatch(updateAccountState({accounts: data}));
+        }
+    }, [success, accountData, dispatch])
 
     return (
         <div className={styles.setting}>

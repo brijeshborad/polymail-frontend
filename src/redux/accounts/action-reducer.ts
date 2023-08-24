@@ -10,6 +10,10 @@ const initialState: any = {
     selectedAccount: LocalStorageService.updateAccount('get') || null,
     success: false
 } as InitialAccountStateType
+interface SuccessData {
+    success: boolean;
+    // Add other properties if there are any
+}
 
 const accountSlice = createSlice({
     name: 'accounts',
@@ -24,6 +28,7 @@ const accountSlice = createSlice({
         getAllAccountError: (state: InitialAccountStateType, {payload: error}: PayloadAction<any>) => {
             return {...state, accounts: [], isLoading: false, error}
         },
+
         updateAccountState: (state: InitialAccountStateType, action: PayloadAction<InitialAccountStateType>) => {
             return {...state, ...action.payload}
         },
@@ -43,7 +48,12 @@ const accountSlice = createSlice({
             return {...state, error: null, isLoading: false}
         },
         removeAccountDetailsSuccess: (state: InitialAccountStateType, {payload: success}: PayloadAction<{}>) => {
-            return {...state, success, error: null, isLoading: false}
+            return {
+                ...state,
+                success: success && 'success' in success ? (success as SuccessData).success : false,
+                error: null,
+                isLoading: false
+            };
         },
         removeAccountDetailsError: (state: InitialAccountStateType, {payload: error}: PayloadAction<any>) => {
             return {...state, error, isLoading: false}
