@@ -88,7 +88,7 @@ export function InboxTab(props: InboxTabProps) {
 
             {isLoading && <SpinnerUI/>}
             <div>
-                <Flex direction={'column'} gap={1} marginTop={5} className={styles.mailList}>
+                <Flex direction={'column'} gap={1} marginTop={5} className={`${styles.mailList} ${props.tab !== 'INBOX' ? styles.mailListForArchive : ''}`}>
                     <Input type={'text'} opacity={0} height={0} width={0} padding={0} border={0} outline={0}
                            ref={listRef}/>
 

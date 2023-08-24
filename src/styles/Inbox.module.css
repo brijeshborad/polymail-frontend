@@ -135,6 +135,10 @@
     overflow-y: auto;
 }
 
+.mailListForArchive {
+    max-height: calc(100vh - 170px);
+}
+
 .mailOpen .mailDetails {
     border-color: rgba(38, 109, 240, 0.15);
     background-color: rgba(38, 109, 240, 0.03);
@@ -510,7 +514,9 @@
 
 .replyButton .replayArrowIcon:hover,
 .replyButton .replayArrowIcon:active,
-.replyButton .replayArrowIcon:focus-visible {
+.replyButton .replayArrowIcon:focus-visible,
+.replyButton .replayArrowIcon:hover:disabled,
+.replyButton .replayArrowIcon:hover[disabled] {
     background-color: #266DF0;
 }
 
