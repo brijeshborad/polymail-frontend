@@ -14,7 +14,7 @@ import {
 import {CheckCircleIcon} from "@chakra-ui/icons";
 import React from "react";
 import {MasterCardIcon} from "@/icons";
-import Index from "@/pages/settings";
+import Index from "@/pages/settings/index";
 import withAuth from "@/components/withAuth";
 
 function Billing() {

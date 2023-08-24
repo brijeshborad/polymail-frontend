@@ -1,12 +1,12 @@
 import {Button, Flex, Grid, GridItem, Heading, Link, Text} from "@chakra-ui/react";
 import styles from "@/styles/setting.module.css";
-import {AppleIcon, GoogleIcon} from "@/icons";
+import {GoogleIcon} from "@/icons";
 import React, { useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {Account} from "@/models";
 import {googleAuthLink} from "@/redux/auth/action-reducer";
-import Index from "@/pages/settings";
+import Index from "@/pages/settings/index";
 import withAuth from "@/components/withAuth";
 import {CloseIcon} from "@chakra-ui/icons";
 import {removeAccountDetails, updateAccountState} from "@/redux/accounts/action-reducer";
@@ -69,7 +69,7 @@ function EmailAddress() {
                                 <Flex direction={"column"} gap={2} className={styles.settingSocialLink}>
                                     <Button colorScheme='blue' onClick={() => addNewGoogleAccount()}><GoogleIcon/> Add email
                                         address via Google</Button>
-                                    <Button colorScheme='blue'><AppleIcon/> Add email address via Apple</Button>
+                                    {/*<Button colorScheme='blue'><AppleIcon/> Add email address via Apple</Button>*/}
                                 </Flex>
 
                                 <Flex direction={"column"} gap={1} className={styles.addedEmailAddress}>
@@ -83,7 +83,7 @@ function EmailAddress() {
                                                           className={styles.settingAddressSocialIcon}>
                                                         <GoogleIcon/>
                                                     </Flex>
-                                                    <Link fontSize={'13px'} fontWeight={'500'} href='mailto:emailaddress@example.com'
+                                                    <Link fontSize={'13px'} fontWeight={'500'}
                                                           isExternal>{item.email} </Link>
                                                 </Flex>
                                                 <CloseIcon className={styles.closeIcon} cursor={"pointer"} onClick={() => removeAccount(item)}/>

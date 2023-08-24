@@ -245,7 +245,7 @@ export function Header() {
                 <Menu>
                     <MenuButton as={Button} rightIcon={<ChevronDownIcon/>} className={styles.profileButton}>
                         <div className={styles.profileImage}>
-                            <Image src={profilePicture && profilePicture.url || "/image/user.png"} width="36" height="36"  alt=""/>
+                            {profilePicture && profilePicture.url && <Image src={profilePicture && profilePicture.url} width="36" height="36"  alt=""/>}
                         </div>
 
                     </MenuButton>

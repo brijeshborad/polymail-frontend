@@ -11,8 +11,9 @@ import {
     uploadProfilePicture
 } from "@/redux/users/action-reducer";
 import {UserDetails} from "@/models";
-import Index from "@/pages/settings";
+import Index from "@/pages/settings/index";
 import withAuth from "@/components/withAuth";
+import {EditIcon} from "@chakra-ui/icons";
 
 function Profile() {
     const {userDetails, profilePicture} = useSelector((state: StateType) => state.users);
@@ -119,8 +120,11 @@ function Profile() {
                                     <div className={styles.ProfileImage}>
                                         <Text fontSize='sm' className={styles.ProfileText} mb={3}>Profile Picture</Text>
                                         <div className={styles.userImage}  onClick={() => inputFile.current?.click()}>
-                                            <Image src={profilePicture && profilePicture.url || "/image/profile.jpg"} width="100" height="100" alt=""/>
+                                            {profilePicture && profilePicture.url && <Image src={profilePicture && profilePicture.url} width="100" height="100" alt=""/>}
 
+                                            <div className={styles.userEditIcon}>
+                                                <EditIcon/>
+                                            </div>
                                             <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e)}
                                                    style={{display: 'none'}}/>
                                         </div>

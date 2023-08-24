@@ -15,7 +15,7 @@ import {
     Tr, useDisclosure, Image, Grid
 } from "@chakra-ui/react";
 import React from "react";
-import Index from "@/pages/settings";
+import Index from "@/pages/settings/index";
 import {MenuIcon, TextIcon} from "@/icons";
 import withAuth from "@/components/withAuth";
 

@@ -6,7 +6,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {RichTextEditor} from "@/components/common";
 import {updateAccountDetails} from "@/redux/accounts/action-reducer";
-import Index from "@/pages/settings";
+import Index from "@/pages/settings/index";
 import withAuth from "@/components/withAuth";
 
 function Signature() {
