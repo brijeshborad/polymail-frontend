@@ -43,7 +43,6 @@ function EmailAddress() {
     }
 
     useEffect(() => {
-        console.log('success' , success)
         if (success && accountData && accountData.id) {
             let data = (accounts || []).filter((item: Account) => item.id !== accountData.id)
             dispatch(updateAccountState({accounts: data}));

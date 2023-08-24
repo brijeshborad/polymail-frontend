@@ -1,7 +1,6 @@
 import {useRouter} from 'next/router';
 import React, {useEffect, useRef} from 'react';
 import LocalStorageService from "@/utils/localstorage.service";
-import {Header} from "@/components/common";
 import {User} from "@/models";
 import {updateLastMessage} from "@/redux/socket/action-reducer";
 import {useDispatch} from "react-redux";

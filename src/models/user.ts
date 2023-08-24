@@ -13,6 +13,13 @@ export interface Preferences {
     defaultSendDelay?: number
 }
 
+export interface Avatar {
+    filename?: string,
+    id?: string,
+    mimeType?: string,
+    url?: string
+}
+
 export interface UserDetails {
     id?: string,
     created?: string,
@@ -24,7 +31,8 @@ export interface UserDetails {
     lastName?: string,
     middleName?: string,
     deviceIds?: string,
-    preferences?: Preferences | null
+    preferences?: Preferences | null,
+    avatar?: Avatar | null
 }
 
 

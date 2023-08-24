@@ -1,17 +1,23 @@
 import styles from "@/styles/setting.module.css";
 import {Button, Flex, Grid, GridItem, Heading, Input, Text} from "@chakra-ui/react";
 import Image from "next/image";
-import React, {ChangeEvent, useEffect, useState} from "react";
+import React, {ChangeEvent, ChangeEventHandler, useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {getUsersDetails, updateUsersDetails} from "@/redux/users/action-reducer";
+import {
+    getProfilePicture,
+    getUsersDetails,
+    updateUsersDetails,
+    uploadProfilePicture
+} from "@/redux/users/action-reducer";
 import {UserDetails} from "@/models";
 import Index from "@/pages/settings";
 import withAuth from "@/components/withAuth";
 
 function Profile() {
-    const {userDetails} = useSelector((state: StateType) => state.users);
+    const {userDetails, profilePicture} = useSelector((state: StateType) => state.users);
     const dispatch = useDispatch();
+    const inputFile = useRef<HTMLInputElement | null>(null)
 
 
     const [profileDetails, setProfileDetails] = useState<UserDetails>({
@@ -29,6 +35,12 @@ function Profile() {
             });
         }
     }
+
+    useEffect(() => {
+        if (profilePicture && profilePicture.url) {
+            dispatch(getProfilePicture({}));
+        }
+    }, [profilePicture && profilePicture.url]);
 
     useEffect(() => {
         if (userDetails) {
@@ -63,10 +75,28 @@ function Profile() {
         dispatch(getUsersDetails({}));
     }, [dispatch])
 
+
     const submit = () => {
         if (profileDetails) {
             dispatch(updateUsersDetails(profileDetails));
         }
+    }
+
+    function handleFileUpload(event: ChangeEventHandler | any) {
+        const file = event.target.files[0];
+
+        event.stopPropagation();
+            event.preventDefault();
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function () {
+                if (reader.result) {
+                    dispatch(uploadProfilePicture({file}));
+                }
+            };
+            reader.onerror = function (error) {
+                console.log('Error: ', error);
+            };
     }
     return (
         <div className={styles.setting}>
@@ -88,8 +118,11 @@ function Profile() {
                                 <div className={styles.profileDetails}>
                                     <div className={styles.ProfileImage}>
                                         <Text fontSize='sm' className={styles.ProfileText} mb={3}>Profile Picture</Text>
-                                        <div className={styles.userImage}>
-                                            <Image src="/image/profile.jpg" width="100" height="100" alt=""/>
+                                        <div className={styles.userImage}  onClick={() => inputFile.current?.click()}>
+                                            <Image src={profilePicture && profilePicture.url || "/image/profile.jpg"} width="100" height="100" alt=""/>
+
+                                            <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e)}
+                                                   style={{display: 'none'}}/>
                                         </div>
                                     </div>
 

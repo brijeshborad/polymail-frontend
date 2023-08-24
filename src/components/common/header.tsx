@@ -28,7 +28,7 @@ import {ComposeIcon} from "@/icons/compose.icon";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 import {getAllThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {useSocket} from "@/hooks/use-socket.hook";
-import {updateUsersDetailsSuccess} from "@/redux/users/action-reducer";
+import {getProfilePicture, updateUsersDetailsSuccess} from "@/redux/users/action-reducer";
 
 export function Header() {
     const dispatch = useDispatch();
@@ -39,7 +39,7 @@ export function Header() {
     const {accounts, selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {threads} = useSelector((state: StateType) => state.threads);
     const {googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
-    const {userDetails} = useSelector((state: StateType) => state.users);
+    const {userDetails, profilePicture} = useSelector((state: StateType) => state.users);
     const [userData, setUserData] = useState<User>();
     const {newMessage} = useSelector((state: StateType) => state.socket);
 
@@ -75,6 +75,7 @@ export function Header() {
     const getAllAccountAndOrganizationsDetails = useCallback(() => {
         dispatch(getAllAccount());
         dispatch(getAllOrganizations());
+        dispatch(getProfilePicture({}));
     }, [dispatch])
 
     useEffect(() => {
@@ -111,6 +112,12 @@ export function Header() {
             }
         }
     }, [organizations, setOrganization]);
+
+
+
+    useEffect(() => {
+        console.log('profilePicture' , profilePicture)
+    }, [profilePicture])
 
     useEffect(() => {
         if (accounts && accounts.length > 0) {
@@ -243,7 +250,7 @@ export function Header() {
             <div className={styles.profile}>
                 <Menu>
                     <MenuButton as={Button} rightIcon={<ChevronDownIcon/>} className={styles.profileButton}>
-                        <Image src="/image/user.png" width="36" height="36" alt=""/>
+                        <Image src={profilePicture && profilePicture.url || "/image/user.png"} width="36" height="36"  alt=""/>
                     </MenuButton>
                     <MenuList>
                         <MenuItem onClick={() => addNewGoogleAccount()}>Add New Account</MenuItem>

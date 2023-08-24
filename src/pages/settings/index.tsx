@@ -18,18 +18,18 @@ function Index() {
     const openTabs = useCallback((type: string) => {
         if (type === 'profile') {
             activeTab = 'Profile'
-            Router.push('/settings/profile');
+            Router.push('/settings/profile', undefined, {shallow: true});
         } else if (type === 'signature') {
             activeTab = 'Signature'
-            Router.push('/settings/signature');
+            Router.push('/settings/signature', undefined, {shallow: true});
         } else if (type === 'email_address') {
             activeTab = 'Email Address'
-            Router.push('/settings/email-address');
+            Router.push('/settings/email-address', undefined, {shallow: true});
         } else if (type === 'billing') {
             activeTab = 'Billing'
-            Router.push('/settings/billing');
+            Router.push('/settings/billing', undefined, {shallow: true});
         } else if (type === 'members') {
-            Router.push('/settings/members');
+            Router.push('/settings/members', undefined, {shallow: true});
             activeTab = 'Members'
         }
     }, []);

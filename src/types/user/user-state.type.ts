@@ -1,5 +1,5 @@
 import {User} from "../../models";
-import {UserDetails} from "@/models";
+import {Avatar, UserDetails} from "@/models";
 
 export declare type InitialAuthState = {
     user?: User | undefined,
@@ -13,4 +13,5 @@ export declare type InitialUserState = {
     isLoading?: boolean
     error?: Error | any | null,
     userDetails?: UserDetails | undefined,
+    profilePicture?: Avatar | undefined
 }

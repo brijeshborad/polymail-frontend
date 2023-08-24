@@ -6,6 +6,7 @@ const initialState: any = {
     userDetails: {},
     isLoading: false,
     error: null,
+    profilePicture: {}
 } as InitialUserState;
 
 const userSlice = createSlice({
@@ -31,6 +32,31 @@ const userSlice = createSlice({
         getUsersDetailsError: (state: InitialUserState, {payload: error}: PayloadAction<any>) => {
             return {...state, error, isLoading: false}
         },
+
+        uploadProfilePicture: (state: InitialUserState, _action: PayloadAction<{ file?: File }>) => {
+            return {...state, error: null, isLoading: false, success: false}
+        },
+        uploadProfilePictureSuccess: (state: InitialUserState, {payload: profilePicture}: PayloadAction<{}>) => {
+            return {...state, profilePicture,  error: null, isLoading: false, success: true}
+        },
+        uploadProfilePictureError: (state: InitialUserState, {payload: error}: PayloadAction<any>) => {
+            return {...state, error, isLoading: false, success: false}
+        },
+
+        getProfilePicture: (state: InitialUserState, _action: PayloadAction<{}>) => {
+            return {...state, error: null, isLoading: false, success: false}
+        },
+        getProfilePictureSuccess: (state: InitialUserState, {payload: profilePicture}: PayloadAction<{}>) => {
+            return {...state,profilePicture, error: null, isLoading: false, success: true}
+        },
+        getProfilePictureError: (state: InitialUserState, {payload: error}: PayloadAction<any>) => {
+            return {...state, error, isLoading: false, success: false}
+        },
+
+
+        updateUserState: (state: InitialUserState, action: PayloadAction<InitialUserState>) => {
+            return {...state, ...action.payload}
+        }
     }
 })
 
@@ -41,6 +67,13 @@ export const {
     updateUsersDetailsError,
     getUsersDetails,
     getUsersDetailsSuccess,
-    getUsersDetailsError
+    getUsersDetailsError,
+    uploadProfilePicture,
+    uploadProfilePictureSuccess,
+    uploadProfilePictureError,
+    getProfilePicture,
+    getProfilePictureSuccess,
+    getProfilePictureError,
+    updateUserState
 } = userSlice.actions
 export default userSlice.reducer
