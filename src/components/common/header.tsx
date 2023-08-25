@@ -10,7 +10,7 @@ import {
     Menu,
     MenuButton,
     MenuItem,
-    MenuList,
+    MenuList, useDisclosure,
 } from "@chakra-ui/react";
 import {ChevronDownIcon, SearchIcon, CheckIcon} from "@chakra-ui/icons";
 import {EnergyIcon, FolderIcon, MailIcon} from "@/icons";
@@ -187,7 +187,7 @@ export function Header() {
                     <MailIcon/>
                     Inbox
                 </Flex>
-                <Flex align={'center'} className={currentRoute[currentRoute.length - 1] === 'project' ? styles.tabsActive : ''}>
+                <Flex align={'center'} className={currentRoute[currentRoute.length - 1] === 'project' ? styles.tabsActive : ''} onClick={() => Router.push('/project')}>
                     <FolderIcon/>
                     Projects
                 </Flex>
