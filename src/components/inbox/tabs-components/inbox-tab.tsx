@@ -81,7 +81,6 @@ export function InboxTab(props: InboxTabProps) {
                                 </div>
                             </Flex>
                         </div>
-
                     </Flex>
                 </div>
             }

@@ -1,5 +1,13 @@
 import styles from "@/styles/setting.module.css";
-import {Button, Flex, Grid, GridItem, Heading, Input, Text} from "@chakra-ui/react";
+import {
+    Button, Flex, Grid, GridItem, Heading, Input, Text, Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    ModalCloseButton, useDisclosure,
+} from "@chakra-ui/react";
 import Image from "next/image";
 import React, {ChangeEvent, ChangeEventHandler, useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
@@ -20,6 +28,7 @@ import LocalStorageService from "@/utils/localstorage.service";
 function Profile() {
     const {userDetails, profilePicture, profilePictureUpdated} = useSelector((state: StateType) => state.users);
     const dispatch = useDispatch();
+    const { isOpen, onOpen, onClose } = useDisclosure()
     const inputFile = useRef<HTMLInputElement | null>(null)
     let {accounts, success, selectedAccount} = useSelector((state: StateType) => state.accounts);
 
@@ -122,7 +131,7 @@ function Profile() {
     }
     return (
         <div className={styles.setting}>
-            <Grid templateColumns='232px auto' gap={6} h={'100%'}>
+            <Grid templateColumns='232px auto' gap={6} h={'100%'} minHeight={'calc(100vh - 65px)'}>
                 <GridItem w='100%' className={styles.settingSideBar} padding={'40px 30px 40px 40px'}
                           borderRight={'1px solid #E1E3E6'}>
                     <Index />
@@ -168,10 +177,9 @@ function Profile() {
                                     </Flex>
                                 </div>
                                 <Flex align={'center'} className={styles.changeProfileButton} gap={5}>
-                                    <Button height={'auto'} padding={'0'} className={styles.changePassword}
-                                            variant='ghost'> Change
-                                        Password </Button>
-                                    <Button height={'auto'} padding={'0'} className={styles.deleteProfile} onClick={() => removeAccount()}
+                                    <Button height={'auto'} padding={'0'} className={styles.changePassword} onClick={onOpen}
+                                            variant='ghost'> Change Password </Button>
+                                    <Button height={'auto'} padding={'0'} className={styles.deleteProfile}
                                             variant='ghost'> Delete
                                         Profile </Button>
                                 </Flex>
@@ -185,6 +193,33 @@ function Profile() {
                     </Flex>
                 </GridItem>
             </Grid>
+
+            <Modal isOpen={isOpen} onClose={onClose} isCentered closeOnOverlayClick={false}>
+                <ModalOverlay />
+                <ModalContent className={styles.changePasswordModal}>
+                    <ModalHeader>Change Password</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <Flex direction={'column'} mb={3}>
+                            <Text fontSize={'11px'} fontWeight={600}>Old Password</Text>
+                            <Input borderRadius={8} border={'1px solid #E5E5E5'} fontSize={'13px'} placeholder='Enter Old Password' size='sm' />
+                        </Flex>
+                        <Flex direction={'column'} mb={3}>
+                            <Text fontSize={'11px'} fontWeight={600}>New Password</Text>
+                            <Input borderRadius={8} border={'1px solid #E5E5E5'} fontSize={'13px'} placeholder='Enter New Password' size='sm' />
+                        </Flex>
+                        <Flex direction={'column'} mb={3}>
+                            <Text fontSize={'11px'} fontWeight={600}>Confirm Password</Text>
+                            <Input borderRadius={8} border={'1px solid #E5E5E5'} fontSize={'13px'} placeholder='Confirm Password' size='sm' />
+                        </Flex>
+                    </ModalBody>
+
+                    <ModalFooter className={styles.modalFooterButton}>
+                        <Button className={styles.closeButton} backgroundColor={'#ffffff'} border={'1px solid #000000'} borderRadius={8} height={'auto'} padding={'10px 20px'} color={'#000000'} fontSize={'14px'} mr={3} onClick={onClose}> Close </Button>
+                        <Button className={styles.saveButton} backgroundColor={'#000000'} borderRadius={8} height={'auto'} padding={'10px 20px'} color={'#FFFFFF'} fontSize={'14px'} variant='ghost'>Save</Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
         </div>
     )
 }

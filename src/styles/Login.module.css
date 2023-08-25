@@ -75,6 +75,37 @@
     transform: translate(-50%, 50%);
 }
 
+.forgotPasswordButton {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.forgotPasswordButton a {
+   color: #761799;
+}
+
+.forgotPassword .centerDivider {
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.forgotInput {
+    width: 100%;
+}
+
+
+.forgotInput .loginInput {
+    height: auto;
+    font-size: 15px;
+    padding: 8px 16px;
+    background-color: #FFFFFF;
+    border-color: #E5E5E5;
+}
+.forgotInput .loginInput:focus-visible {
+    box-shadow: none;
+    border-color: #E5E5E5;
+}
+
 @media (max-width: 576px) {
 
     .loginGoogleButton button {
