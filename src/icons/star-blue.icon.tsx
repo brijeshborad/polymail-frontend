@@ -2,8 +2,8 @@ import {Icon} from "@chakra-ui/react";
 
 export function BlueStarIcon() {
     return (
-        <Icon viewBox="0 0 24 24" width="20" height="20" fill="#266DF0" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/>
+        <Icon viewBox="0 0 14 15" fill="#266DF0" stroke="#266DF0" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7.0026 1.41992L8.46094 6.00325H13.0443L9.29427 8.91992L10.5443 13.5033L7.0026 10.5866L3.46094 13.5033L4.71094 8.91992L0.960938 6.00325H5.54427L7.0026 1.41992Z" stroke-linecap="round" stroke-linejoin="round"/>
         </Icon>
     )
 }

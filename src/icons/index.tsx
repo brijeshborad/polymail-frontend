@@ -26,3 +26,5 @@ export * from './master-card.icon';
 export * from './star-blue.icon';
 export * from './download.icon';
 export * from './envelope.icon';
+export * from './drag.icon';
+export * from './lock.icon';

@@ -8,7 +8,9 @@
 .projectPage .imgWrapper img,
 .projectPage .userImage img,
 .mailBox .imgWrapper img,
-.projectMemberModal .addMemberImage img {
+.projectMemberModal .addMemberImage img,
+.projectList .projectIcon img,
+.memberImages .memberPhoto img{
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -256,4 +258,48 @@
 
 .readMail .mailDetails .senderDetails {
     background-color: #FFFFFF;
+}
+
+.projects:hover {
+    box-shadow: 0 4px 8px 0 rgba(8, 22, 47, 0.08);
+}
+
+.projects .projectIcon,
+.memberImages .memberPhoto {
+    min-width: 24px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.memberImages .memberPhoto + .memberPhoto {
+    margin-left: -12px;
+}
+
+.memberImages .memberPhoto + .memberPhoto + .memberPhoto {
+    display: flex;
+    align-items: center;
+    background-color: #266DF0;
+    justify-content: center;
+    color: #FFFFFF;
+    font-size: 11px;
+}
+
+.projects .dragIcon {
+    height: 24px;
+}
+
+.projects .dragIcon svg {
+    height: 24px;
+    width: 24px;
+    opacity: 0;
+}
+
+.projects:hover .dragIcon svg {
+    opacity: 1;
+}
+
+.projects .borderStar svg {
+    fill: none;
 }

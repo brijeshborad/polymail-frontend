@@ -51,7 +51,7 @@ function EmailAddress() {
 
     return (
         <div className={styles.setting}>
-            <Grid templateColumns='232px auto' gap={6} h={'100%'}>
+            <Grid templateColumns='232px auto' gap={6} h={'100%'} minHeight={'calc(100vh - 65px)'}>
                 <GridItem w='100%' className={styles.settingSideBar} padding={'40px 30px 40px 40px'}
                           borderRight={'1px solid #E1E3E6'}>
                     <Index />
