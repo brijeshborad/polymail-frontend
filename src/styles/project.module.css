@@ -280,7 +280,7 @@
 .memberImages .memberPhoto + .memberPhoto + .memberPhoto {
     display: flex;
     align-items: center;
-    background-color: #266DF0;
+    background-color: #000000;
     justify-content: center;
     color: #FFFFFF;
     font-size: 11px;
@@ -302,4 +302,7 @@
 
 .projects .borderStar svg {
     fill: none;
+}
+.projectListPage .createProjectButton:hover {
+    background-color: #000000;
 }
