@@ -106,6 +106,13 @@ export function LoginSignup({type = 'login'}: LoginProps) {
                        className={`${styles.loginInput}`} type={'email'}/>
                 <Input onChange={handleChange} name={'password'} placeholder={'password'}
                        className={`${styles.loginInput}`} type={'password'}/>
+
+               <div className={styles.forgotPasswordButton}>
+                   <Link href={'/auth/reset-password'}>
+                       Forgot Password?
+                   </Link>
+               </div>
+
                 <Button onClick={() => signIn()} className={styles.loginButton}
                         py={'25px'}>Sign {type === 'login' ? `In` : 'Up'} With
                     Email</Button>

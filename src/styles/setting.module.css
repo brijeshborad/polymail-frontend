@@ -448,6 +448,19 @@
     background: linear-gradient(180deg, rgba(252,252,253,1) 27%, rgba(252,252,253,0) 100%);
 }
 
-.changePassword {
+.changePasswordModal input:hover {
+    border: 1px solid #E5E5E5;
+}
 
+.changePasswordModal input:focus-visible {
+    border: 1px solid #E5E5E5;
+    box-shadow: none;
+}
+
+.modalFooterButton button.closeButton:hover {
+    background-color: #FFFFFF;
+}
+
+.modalFooterButton button.saveButton:hover {
+    background-color: #000000;
 }
