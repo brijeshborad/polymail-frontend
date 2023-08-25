@@ -10,15 +10,18 @@ import {
     updateUsersDetails,
     uploadProfilePicture
 } from "@/redux/users/action-reducer";
-import {UserDetails} from "@/models";
+import {Account, UserDetails} from "@/models";
 import Index from "@/pages/settings/index";
 import withAuth from "@/components/withAuth";
 import {EditIcon} from "@chakra-ui/icons";
+import {removeAccountDetails, updateAccountState} from "@/redux/accounts/action-reducer";
+import LocalStorageService from "@/utils/localstorage.service";
 
 function Profile() {
     const {userDetails, profilePicture, profilePictureUpdated} = useSelector((state: StateType) => state.users);
     const dispatch = useDispatch();
     const inputFile = useRef<HTMLInputElement | null>(null)
+    let {accounts, success, selectedAccount} = useSelector((state: StateType) => state.accounts);
 
 
     const [profileDetails, setProfileDetails] = useState<UserDetails>({
@@ -82,6 +85,24 @@ function Profile() {
             dispatch(updateUsersDetails(profileDetails));
         }
     }
+    const [accountData, setAccountData] = useState<Account>();
+
+    const removeAccount = () => {
+        if (selectedAccount && selectedAccount.id) {
+            setAccountData(selectedAccount)
+            dispatch(removeAccountDetails({id: selectedAccount.id}));
+        }
+    }
+
+    useEffect(() => {
+        if (success && accountData && accountData.id) {
+            let data = (accounts || []).filter((item: Account) => item.id !== accountData.id)
+            LocalStorageService.updateAccount('store', data[0]);
+
+            dispatch(updateAccountState({accounts: data, selectedAccount: data[0]}));
+        }
+    }, [success, accountData, dispatch])
+
 
     function handleFileUpload(event: ChangeEventHandler | any) {
         const file = event.target.files[0];
@@ -150,7 +171,7 @@ function Profile() {
                                     <Button height={'auto'} padding={'0'} className={styles.changePassword}
                                             variant='ghost'> Change
                                         Password </Button>
-                                    <Button height={'auto'} padding={'0'} className={styles.deleteProfile}
+                                    <Button height={'auto'} padding={'0'} className={styles.deleteProfile} onClick={() => removeAccount()}
                                             variant='ghost'> Delete
                                         Profile </Button>
                                 </Flex>

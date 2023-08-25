@@ -46,13 +46,11 @@ function Index() {
     useEffect(() => {
         const routePaths = router.pathname.split('/');
         if (routePaths[routePaths.length - 1] === 'settings') {
-            console.log(routePaths)
             currentRoute = '/settings/profile';
             Router.push('/settings/profile');
         } else {
             currentRoute = router.pathname;
         }
-        console.log(currentRoute);
     }, [router.pathname]);
 
     const openTabs = useCallback((menuItem: { route: string, title: string }) => {
