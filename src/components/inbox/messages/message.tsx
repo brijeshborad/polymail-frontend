@@ -195,7 +195,7 @@ export function Message() {
                     <Flex alignItems={'center'} padding={'10px 20px'}>
                         <Image src={'/image/user.png'} alt={''} width={50} height={50}/>
                         <Flex flexDir={'column'} marginLeft={'5'} width={'100%'}>
-                            <Heading as='h4' size='md'>{messageContent?.subject || ''}</Heading>
+                            <Heading as='h4' size='md'>{messageContent?.subject || '(no subject)'}</Heading>
                             <Flex justifyContent={'space-between'} align={'center'}>
                                 {messageSenders && messageSenders.length > 0 &&
                                 <Text fontSize='sm'>

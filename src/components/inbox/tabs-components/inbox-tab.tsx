@@ -108,7 +108,7 @@ export function InboxTab(props: InboxTabProps) {
                                     </div>
                                 </Flex>
                                 <div className={styles.mailMessage}>
-                                    {item.subject}
+                                    {item.subject || "(no subject)"}
                                 </div>
                             </div>
                         </div>
