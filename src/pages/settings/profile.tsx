@@ -22,7 +22,7 @@ import {Account, UserDetails} from "@/models";
 import Index from "@/pages/settings/index";
 import withAuth from "@/components/withAuth";
 import {EditIcon} from "@chakra-ui/icons";
-import {removeAccountDetails, updateAccountState} from "@/redux/accounts/action-reducer";
+import {updateAccountState} from "@/redux/accounts/action-reducer";
 import LocalStorageService from "@/utils/localstorage.service";
 
 function Profile() {
@@ -30,7 +30,7 @@ function Profile() {
     const dispatch = useDispatch();
     const { isOpen, onOpen, onClose } = useDisclosure()
     const inputFile = useRef<HTMLInputElement | null>(null)
-    let {accounts, success, selectedAccount} = useSelector((state: StateType) => state.accounts);
+    let {accounts, success} = useSelector((state: StateType) => state.accounts);
 
 
     const [profileDetails, setProfileDetails] = useState<UserDetails>({
@@ -94,14 +94,14 @@ function Profile() {
             dispatch(updateUsersDetails(profileDetails));
         }
     }
-    const [accountData, setAccountData] = useState<Account>();
+    const [accountData] = useState<Account>();
 
-    const removeAccount = () => {
-        if (selectedAccount && selectedAccount.id) {
-            setAccountData(selectedAccount)
-            dispatch(removeAccountDetails({id: selectedAccount.id}));
-        }
-    }
+    // const removeAccount = () => {
+    //     if (selectedAccount && selectedAccount.id) {
+    //         setAccountData(selectedAccount)
+    //         dispatch(removeAccountDetails({id: selectedAccount.id}));
+    //     }
+    // }
 
     useEffect(() => {
         if (success && accountData && accountData.id) {

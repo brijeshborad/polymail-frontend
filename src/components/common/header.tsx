@@ -10,13 +10,12 @@ import {
     Menu,
     MenuButton,
     MenuItem,
-    MenuList, useDisclosure,
+    MenuList
 } from "@chakra-ui/react";
 import {ChevronDownIcon, SearchIcon, CheckIcon} from "@chakra-ui/icons";
 import {EnergyIcon, FolderIcon, MailIcon} from "@/icons";
 import styles from '@/styles/Home.module.css'
 import {useDispatch, useSelector} from "react-redux";
-import {googleAuthLink} from "@/redux/auth/action-reducer";
 import Router, {useRouter} from "next/router";
 import {StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
@@ -139,16 +138,16 @@ export function Header() {
         Router.push('/settings/profile');
     }
 
-    function addNewGoogleAccount() {
-        let body = {
-            mode: 'create',
-            redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}/inbox`,
-            accountType: "google",
-            platform: "web",
-            withToken: true
-        }
-        dispatch(googleAuthLink(body));
-    }
+    // function addNewGoogleAccount() {
+    //     let body = {
+    //         mode: 'create',
+    //         redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}/inbox`,
+    //         accountType: "google",
+    //         platform: "web",
+    //         withToken: true
+    //     }
+    //     dispatch(googleAuthLink(body));
+    // }
 
     if (!userData) {
         return <></>;

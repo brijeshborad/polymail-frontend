@@ -1,10 +1,8 @@
 import {
-    Box,
     Button,
     Checkbox,
     Flex,
-    Grid,
-    GridItem, Heading,
+    GridItem,
     Menu,
     MenuButton,
     MenuItem,
@@ -12,10 +10,9 @@ import {
     Text
 } from "@chakra-ui/react";
 import styles from "@/styles/project.module.css";
-import {ChevronDownIcon, ChevronUpIcon, CloseIcon, WarningIcon} from "@chakra-ui/icons";
-import {ArchiveIcon, DisneyIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
+import {ChevronDownIcon} from "@chakra-ui/icons";
+import {DisneyIcon} from "@/icons";
 import styles2 from "@/styles/common.module.css";
-import Image from "next/image";
 import React from "react";
 
 

@@ -1,7 +1,7 @@
-import {AbsoluteCenter, Alert, Box, Button, ButtonGroup, Divider, Flex, Heading, Input, Text} from "@chakra-ui/react";
+import {Button, Flex, Heading, Input, Text} from "@chakra-ui/react";
 import styles from "@/styles/Login.module.css";
 import Image from "next/image";
-import {ArrowBackIcon, InfoIcon} from "@chakra-ui/icons";
+import {ArrowBackIcon} from "@chakra-ui/icons";
 import Link from "next/link";
 
 
@@ -15,7 +15,7 @@ export default function ResetPassword() {
                 </Flex>
 
                 <Heading marginLeft={'10px'} as={'h6'} mb={1} size='md'>Forgot Password?</Heading>
-                <Text fontSize={'13px'} mb={10} opacity={'0.5'}>No worries, we'll send you reset instructions.</Text>
+                <Text fontSize={'13px'} mb={10} opacity={'0.5'}>No worries, we&apos;ll send you reset instructions.</Text>
 
                 <div className={styles.forgotInput}>
                     <Text fontSize={'13px'} fontWeight={500} textAlign={'left'}>Enter Email</Text>
@@ -40,7 +40,7 @@ export default function ResetPassword() {
                 <Button className={styles.loginButton} py={'25px'} mb={12}>Open email app</Button>
 
                 <Text className={styles.loginInfo} mb={10}>
-                    Didn't receive the email?<Link color={'#761799'} href={'#'}>Click to resend </Link>
+                    Didn&apos;t receive the email?<Link color={'#761799'} href={'#'}>Click to resend </Link>
                 </Text>
 
                 <Link href={'#'}> <Flex align={'center'} justify={'center'}> <ArrowBackIcon marginRight={1} /> Back to login </Flex> </Link>

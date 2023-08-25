@@ -8,7 +8,7 @@ import {
     Menu,
     MenuButton,
     MenuItem,
-    MenuList, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay,
+    MenuList,
     Text, Textarea
 } from "@chakra-ui/react";
 import styles from "@/styles/project.module.css";
@@ -23,8 +23,6 @@ import {
 import {ArchiveIcon, FileIcon, LinkIcon, TextIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
 import Image from "next/image";
 import React from "react";
-import {Chip} from "@/components/common";
-import {SingleDatepicker} from "chakra-dayzed-datepicker";
 
 
 export function ProjectReplyBox() {
