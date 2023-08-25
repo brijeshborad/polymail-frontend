@@ -250,7 +250,7 @@ export function Header() {
 
                     </MenuButton>
                     <MenuList>
-                        <MenuItem onClick={() => addNewGoogleAccount()}>Add New Account</MenuItem>
+                        {/*<MenuItem onClick={() => addNewGoogleAccount()}>Add New Account</MenuItem>*/}
                         {accounts && !!accounts.length && accounts?.map((acc, i) => (
                             <MenuItem w='100%' key={i + 1} onClick={() => setAccounts(acc)}>
                                 {acc.email} {selectedAccount?.email === acc.email && (
