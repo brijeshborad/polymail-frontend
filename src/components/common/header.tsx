@@ -235,7 +235,7 @@ export function Header() {
             {/*    </Menu>*/}
             {/*</div>*/}
 
-            <Button className={styles.composeButton} leftIcon={<ComposeIcon/>} colorScheme='blue' variant='outline'
+            <Button className={styles.composeButton} color={'#000000'} leftIcon={<ComposeIcon/>} colorScheme='blue' variant='outline'
                     onClick={() => openComposeBox()}>
                 Compose
             </Button>

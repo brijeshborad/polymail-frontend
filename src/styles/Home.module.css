@@ -121,6 +121,8 @@
     font-size: 13px;
     font-weight: 500;
     transition: all 0.5s;
+    opacity: 0.4;
+    color: #08162F;
 }
 
 .logoContainer {
@@ -140,16 +142,18 @@
 }
 
 .headerTabs div:hover {
-    color: #266DF0;
+    color: #000000;
+    opacity: 1;
 }
 
 .headerTabs div:hover svg {
-    stroke: #266DF0;
+    stroke: #000000;
 }
 
 .headerTabs .tabsActive {
-    color: #266DF0;
+    color: #000000;
     position: relative;
+    opacity: 1;
 }
 
 .headerTabs .tabsActive:after {
@@ -157,12 +161,12 @@
     content: '';
     width: 100%;
     height: 2px;
-    background: #266DF0;
-    bottom: -21px;
+    background: #000000;
+    bottom: -23px;
 }
 
 .headerTabs .tabsActive svg {
-    stroke: #266DF0;
+    stroke: #000000;
     transition: all 0.5s;
 }
 
@@ -217,8 +221,11 @@
     font-weight: 500;
     transition: all 0.5s;
     margin-right: 20px;
-    color: #266df0;
     min-width: 130px;
+}
+
+.header .composeButton:hover {
+    background-color: rgba(8, 22, 47, 0.05);
 }
 
 .composeButton svg {
@@ -230,8 +237,8 @@
     height: 36px;
     width: 36px;
     border-radius: 50px;
-    background-color: rgba(38, 109, 240, 0.2);
-    border: 1px solid rgba(38, 109, 240, 0.2);
+    background-color: rgba(8, 22, 47, 0.05);
+    border: 1px solid rgba(8, 22, 47, 0.2);
     margin-left: 21px;
     margin-right: 25px;
 }
@@ -239,7 +246,7 @@
 .notificationIcon span {
     position: absolute;
     border-radius: 50px;
-    background-color: #266DF0;
+    background-color: #08162F;
     color: #ffffff;
     width: 16px;
     height: 16px;
