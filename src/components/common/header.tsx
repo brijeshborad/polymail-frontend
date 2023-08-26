@@ -1,7 +1,10 @@
 import Image from "next/image";
 import {
     Badge,
+    Box,
     Button,
+    createStandaloneToast,
+    Divider,
     Flex,
     Input,
     InputGroup,
@@ -10,9 +13,10 @@ import {
     Menu,
     MenuButton,
     MenuItem,
-    MenuList
+    MenuList,
+    Text,
 } from "@chakra-ui/react";
-import {ChevronDownIcon, SearchIcon, CheckIcon} from "@chakra-ui/icons";
+import {CheckIcon, ChevronDownIcon, SearchIcon} from "@chakra-ui/icons";
 import {EnergyIcon, FolderIcon, MailIcon} from "@/icons";
 import styles from '@/styles/Home.module.css'
 import {useDispatch, useSelector} from "react-redux";
@@ -28,6 +32,7 @@ import {updateMessageState} from "@/redux/messages/action-reducer";
 import {getAllThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {useSocket} from "@/hooks/use-socket.hook";
 import {getProfilePicture, updateUsersDetailsSuccess} from "@/redux/users/action-reducer";
+import {googleAuthLink} from "@/redux/auth/action-reducer";
 
 export function Header() {
     const dispatch = useDispatch();
@@ -48,6 +53,7 @@ export function Header() {
     const router = useRouter()
 
     let currentRoute = router.pathname.split('/');
+    const {toast} = createStandaloneToast();
 
     useEffect(() => {
         if (user) {
@@ -56,11 +62,42 @@ export function Header() {
     }, [user]);
 
     useEffect(() => {
-        if (newMessage && newMessage.name === 'SearchResult') {
-            if (newMessage?.data) {
+        if (newMessage) {
+
+            if (newMessage.name === 'SearchResult' && newMessage?.data) {
                 Object.keys(newMessage?.data).map((id: string) => {
                     dispatch(updateThreadState({threads: [newMessage.data[id]]}));
                 })
+            }
+
+            if (newMessage.name === 'authenticate' && newMessage?.data && accounts!.length > 0) {
+                let accountForReAuth = accounts!.find(account => account.id === newMessage.data.account)!;
+                if (accountForReAuth) {
+                    toast({
+                        id: 're-auth-account',
+                        isClosable: true,
+                        duration: null,
+                        render: () => (
+                            <Box display={'flex'} alignItems={'center'} color='white' p={3} bg='#000'
+                                 borderRadius={'10px'} fontSize={'14px'} padding={'13px 25px'}>
+                                <div>
+                                    Seems like your session has been expired for <Text as={"span"}
+                                                                                       color={"blue.400"}>{accountForReAuth.email}</Text>!
+                                </div>
+                                <Button onClick={() => connectGoogleAccount()} ml={1} mr={2} variant="link"
+                                        color={"blue.300"} padding={'7px 15px'}>Re-Authenticate</Button>
+
+                                <Divider height={"20px"} orientation='vertical'/>
+
+                                <Button onClick={() => toast.close('re-auth-account')} ml={2} variant="link"
+                                        color={"blue.100"} size={"sm"} padding={'7px 5px'}>Close</Button>
+                            </Box>
+                        ),
+                        position: 'top-right'
+                    } as any);
+                }
+
+
             }
         }
     }, [dispatch, newMessage, threads])
@@ -138,16 +175,16 @@ export function Header() {
         Router.push('/settings/profile');
     }
 
-    // function addNewGoogleAccount() {
-    //     let body = {
-    //         mode: 'create',
-    //         redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}/inbox`,
-    //         accountType: "google",
-    //         platform: "web",
-    //         withToken: true
-    //     }
-    //     dispatch(googleAuthLink(body));
-    // }
+    function connectGoogleAccount() {
+        let body = {
+            mode: 'create',
+            redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}/inbox`,
+            accountType: "google",
+            platform: "web",
+            withToken: true
+        }
+        dispatch(googleAuthLink(body));
+    }
 
     if (!userData) {
         return <></>;

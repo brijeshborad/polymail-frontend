@@ -339,7 +339,7 @@ ${selectedMessage?.cc ? 'Cc: ' + (selectedMessage?.cc || []).join(',') : ''}</p>
                                 Now</Button>
                         </Box>
                     ),
-                    position: 'bottom-center'
+                    position: 'bottom'
                 }
                 toast(undoToaster)
             }

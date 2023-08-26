@@ -26,18 +26,16 @@ export function MessagesHeader({onClose, inboxMessages, index, showPreNextMessag
                 if (selectedThread.mailboxes?.includes(messageBox)) {
 
                     let newData = data.filter((item: string) => item !== messageBox)
-                    body = {
-                        mailboxes: [
+                    body.mailboxes = [
                             ...newData
                         ]
-                    }
+
                 } else {
-                    body = {
-                        mailboxes: [
+                    body.mailboxes = [
                             ...data,
                             messageBox
                         ]
-                    }
+
                 }
                 currentThreads[index1] = {
                     ...currentThreads[index1],

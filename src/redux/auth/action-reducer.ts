@@ -41,13 +41,13 @@ const authSlice = createSlice({
             accountType: string,
             platform: string
         }>) => {
-            return {...state, user: undefined, error: null, googleAuthRedirectionLink: null, isLoading: false}
+            return {...state, error: null, googleAuthRedirectionLink: null, isLoading: false}
         },
         googleAuthLinkSuccess: (state: InitialAuthState, {payload: googleAuthRedirectionLink}: PayloadAction<{}>) => {
-            return {...state, user: undefined, error: null, googleAuthRedirectionLink, isLoading: false}
+            return {...state, error: null, googleAuthRedirectionLink, isLoading: false}
         },
         googleAuthLinkError: (state: InitialAuthState, {payload: error}: PayloadAction<any>) => {
-            return {...state, user: undefined, error, googleAuthRedirectionLink: null, isLoading: false}
+            return {...state, error, googleAuthRedirectionLink: null, isLoading: false}
         },
         updateAuthState: (state: InitialAuthState, action: PayloadAction<InitialAuthState>) => {
             return {...state, ...action.payload}
