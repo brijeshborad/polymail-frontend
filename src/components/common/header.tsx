@@ -71,6 +71,9 @@ export function Header() {
             }
 
             if (newMessage.name === 'authenticate' && newMessage?.data && accounts!.length > 0) {
+                if (toast.isActive('re-auth-account')) {
+                    return;
+                }
                 let accountForReAuth = accounts!.find(account => account.id === newMessage.data.account)!;
                 if (accountForReAuth) {
                     toast({
