@@ -9,3 +9,8 @@ export function debounce(fun: () => void, timeOut: number = 1500) {
 export const isEmail = (email: string) => {
     return /[\w\d\.-]+@[\w\d\.-]+\.[\w\d\.-]+/.test(email);
 }
+
+export const encryptData = (value: string) => {
+    const bcrypt = require('bcryptjs');
+    return bcrypt.hashSync(value, 10);
+}

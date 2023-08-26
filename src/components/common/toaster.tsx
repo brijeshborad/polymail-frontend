@@ -12,7 +12,7 @@ export function Toaster(props: ToasterProps) {
             id: 'poly-toast',
             title: props.desc,
             status: props.type === 'error' ? 'error' : 'success',
-            duration: 2000,
+            duration: 4000,
             isClosable: true,
             position: 'top-right'
         })

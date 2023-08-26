@@ -6,6 +6,7 @@ export declare type InitialAuthState = {
     isLoading?: boolean
     error?: Error | any | null,
     googleAuthRedirectionLink?: { url?: string } | null
+    passwordChangeSuccess?: boolean
 }
 
 export declare type InitialUserState = {

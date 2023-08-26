@@ -178,15 +178,19 @@ export function Header() {
 
     return (
         <Flex className={styles.header} w='100%' align={'center'} flex={'none'}>
-            <div >
-                <Image width="30" height="30" src="/image/logo.png" alt="" className={styles.logo} />
+            <div>
+                <Image width="30" height="30" src="/image/logo.png" alt="" className={styles.logo}/>
             </div>
             <Flex className={styles.headerTabs} align={'center'}>
-                <Flex align={'center'} className={currentRoute[currentRoute.length - 1] === 'inbox' ? styles.tabsActive : ''} onClick={() => Router.push('/inbox')}>
+                <Flex align={'center'}
+                      className={currentRoute[currentRoute.length - 1] === 'inbox' ? styles.tabsActive : ''}
+                      onClick={() => Router.push('/inbox')}>
                     <MailIcon/>
                     Inbox
                 </Flex>
-                <Flex align={'center'} className={currentRoute[currentRoute.length - 1] === 'project' ? styles.tabsActive : ''} onClick={() => Router.push('/project')}>
+                <Flex align={'center'}
+                      className={currentRoute[currentRoute.length - 1] === 'project' ? styles.tabsActive : ''}
+                      onClick={() => Router.push('/project')}>
                     <FolderIcon/>
                     Projects
                 </Flex>
@@ -234,7 +238,8 @@ export function Header() {
             {/*    </Menu>*/}
             {/*</div>*/}
 
-            <Button className={styles.composeButton} color={'#000000'} leftIcon={<ComposeIcon/>} colorScheme='blue' variant='outline'
+            <Button className={styles.composeButton} color={'#000000'} leftIcon={<ComposeIcon/>} colorScheme='blue'
+                    variant='outline'
                     onClick={() => openComposeBox()}>
                 Compose
             </Button>
@@ -244,7 +249,8 @@ export function Header() {
                 <Menu>
                     <MenuButton as={Button} rightIcon={<ChevronDownIcon/>} className={styles.profileButton}>
                         <div className={styles.profileImage}>
-                            {profilePicture && profilePicture.url && <Image src={profilePicture && profilePicture.url} width="36" height="36"  alt=""/>}
+                            {profilePicture && profilePicture.url &&
+                            <Image src={profilePicture && profilePicture.url} width="36" height="36" alt=""/>}
                         </div>
 
                     </MenuButton>
@@ -257,10 +263,10 @@ export function Header() {
                         {/*    )}*/}
                         {/*    </MenuItem>*/}
                         {/*))}*/}
-                        <MenuItem w='100%'>
+                        {selectedAccount && <MenuItem w='100%'>
                             {selectedAccount?.email}
                             <CheckIcon ml={8} bg={"green"} p={1} borderRadius={50} w={4} h={4} color={"white"}/>
-                        </MenuItem>
+                        </MenuItem>}
                         <MenuItem onClick={() => openSetting()}>Settings</MenuItem>
                         <MenuItem onClick={() => logout()}>Logout</MenuItem>
                     </MenuList>

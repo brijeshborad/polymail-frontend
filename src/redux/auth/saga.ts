@@ -1,6 +1,7 @@
 import {PayloadAction} from "@reduxjs/toolkit";
 import {all, fork, put, takeLatest} from "@redux-saga/core/effects";
 import {
+    changePassword, changePasswordError, changePasswordSuccess,
     googleAuthLink,
     googleAuthLinkError,
     googleAuthLinkSuccess,
@@ -16,7 +17,7 @@ import {AxiosError, AxiosResponse} from "axios";
 import LocalStorageService from "@/utils/localstorage.service";
 import Router from "next/router";
 
-function* login({payload: {email, password}}: PayloadAction<{email: string, password: string}>) {
+function* login({payload: {email, password}}: PayloadAction<{ email: string, password: string }>) {
     try {
         const response: AxiosResponse = yield ApiService.callPost(`auth/login`, {email, password}, {
             'Skip-Headers': true
@@ -49,10 +50,11 @@ function* getGoogleAuthLink({payload}: PayloadAction<{
     redirectUrl?: string
     accountType?: string
     platform?: string,
-    withToken?: boolean}>) {
+    withToken?: boolean
+}>) {
     try {
         let headers = {};
-        if(!payload.withToken) {
+        if (!payload.withToken) {
             headers = {
                 'Skip-Headers': true
             }
@@ -76,7 +78,24 @@ function* logout() {
         LocalStorageService.clearStorage();
         Router.push('/auth/login');
     }
+}
 
+function* passwordChange({
+                             payload: {
+                                 password,
+                                 newPasswordTwo,
+                                 newPasswordOne
+                             }
+                         }: PayloadAction<{ password: string, newPasswordOne: string, newPasswordTwo: string }>) {
+    try {
+        yield ApiService.callPost(`auth/change`, {
+            password, newPasswordTwo, newPasswordOne
+        });
+        yield put(changePasswordSuccess());
+    } catch (error: any) {
+        error = error as AxiosError;
+        yield put(changePasswordError(error.response.data));
+    }
 }
 
 export function* watchLoginUser() {
@@ -95,12 +114,17 @@ export function* watchLogoutUser() {
     yield takeLatest(logoutUser.type, logout);
 }
 
+export function* watchChangePassword() {
+    yield takeLatest(changePassword.type, passwordChange);
+}
+
 export default function* rootSaga() {
     yield all([
         fork(watchLoginUser),
         fork(watchRegisterUser),
         fork(watchGoogleAuthLink),
         fork(watchLogoutUser),
+        fork(watchChangePassword),
     ]);
 }
 

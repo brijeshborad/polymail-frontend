@@ -6,7 +6,8 @@ const initialState = {
     user: LocalStorageService.updateUser('get') || null,
     isLoading: false,
     error: null,
-    googleAuthRedirectionLink: null
+    googleAuthRedirectionLink: null,
+    passwordChangeSuccess: false
 } as InitialAuthState
 
 const authSlice = createSlice({
@@ -51,6 +52,15 @@ const authSlice = createSlice({
         updateAuthState: (state: InitialAuthState, action: PayloadAction<InitialAuthState>) => {
             return {...state, ...action.payload}
         },
+        changePassword: (state: InitialAuthState, _action: PayloadAction<{ password: string, newPasswordOne: string, newPasswordTwo: string }>) => {
+            return {...state, error: null, isLoading: true, passwordChangeSuccess: false}
+        },
+        changePasswordSuccess: (state: InitialAuthState) => {
+            return {...state, error: null, isLoading: false, passwordChangeSuccess: true}
+        },
+        changePasswordError: (state: InitialAuthState, {payload: error}: PayloadAction<any>) => {
+            return {...state, error, isLoading: false, passwordChangeSuccess: false}
+        },
     }
 })
 
@@ -65,6 +75,6 @@ export const {
     googleAuthLink,
     googleAuthLinkSuccess,
     googleAuthLinkError,
-    updateAuthState
+    updateAuthState, changePassword, changePasswordError, changePasswordSuccess
 } = authSlice.actions
 export default authSlice.reducer
