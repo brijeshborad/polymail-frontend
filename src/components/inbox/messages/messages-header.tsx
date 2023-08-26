@@ -43,7 +43,7 @@ export function MessagesHeader({onClose, inboxMessages, index, showPreNextMessag
                     ...currentThreads[index1],
                     mailboxes: body?.mailboxes || []
                 };
-                dispatch(updateThreadState({threads: currentThreads, selectedThread: currentThreads[index1]}));
+                dispatch(updateThreadState({threads: currentThreads, selectedThread: currentThreads[index1], success: true}));
                 dispatch(updateThreads({id: selectedThread.id, body}));
             }
         }

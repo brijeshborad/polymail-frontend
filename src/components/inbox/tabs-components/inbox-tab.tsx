@@ -50,7 +50,7 @@ export function InboxTab(props: InboxTabProps) {
                     ...currentThreads[index1],
                     mailboxes: body?.mailboxes || []
                 };
-                dispatch(updateThreadState({threads: currentThreads}));
+                dispatch(updateThreadState({threads: currentThreads, success: true}));
                 dispatch(updateThreads({id: item.id, body}));
             }
             dispatch(updateThreadState({selectedThread: item}));

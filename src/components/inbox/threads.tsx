@@ -20,6 +20,7 @@ import {updateDraftState} from "@/redux/draft/action-reducer";
 import {updateLastMessage} from "@/redux/socket/action-reducer";
 
 let cacheThreads: { [key: string]: Thread[] } = {};
+let currentCacheTab = 'INBOX';
 
 export function Threads() {
     const [tab, setTab] = useState<string>('INBOX');
@@ -46,7 +47,10 @@ export function Threads() {
                 dispatch(getAllThreads({mailbox: tab, account: selectedAccount.id, enriched: true, resetState}));
                 return;
             }
-            dispatch(updateThreadState({threads: cacheThreads[`${tab}-${selectedAccount.id}`]}));
+            if (currentCacheTab !== tab) {
+                currentCacheTab = tab;
+                dispatch(updateThreadState({threads: cacheThreads[`${tab}-${selectedAccount.id}`]}));
+            }
         }
     }, [dispatch, selectedAccount, tab]);
 
@@ -66,12 +70,12 @@ export function Threads() {
 
     useEffect(() => {
         if (threadListSuccess && selectedAccount) {
+            currentCacheTab = tab;
             cacheThreads = {
                 ...cacheThreads,
-                [`${tab}-${selectedAccount?.id}`]: threads ? [...threads]: []
+                [`${tab}-${selectedAccount?.id}`]: threads ? [...threads] : []
             }
             dispatch(updateThreadState({success: false}));
-            console.log(cacheThreads);
         }
     }, [selectedAccount, tab, threadListSuccess, threads, dispatch])
 
