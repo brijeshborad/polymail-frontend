@@ -1,4 +1,4 @@
-import {Organization} from "@/models";
+import {Organization, TeamMember} from "@/models";
 
 export declare type InitialOrganizationStateType = {
     organizations?: Organization[],
@@ -6,4 +6,5 @@ export declare type InitialOrganizationStateType = {
     isLoading?: boolean
     error?: Error | any,
     selectedOrganization?: Organization | null
+    members?: TeamMember[],
 }

@@ -229,8 +229,8 @@ export function Header() {
                     Inbox
                 </Flex>
                 <Flex align={'center'}
-                      className={currentRoute[currentRoute.length - 1] === 'project' ? styles.tabsActive : ''}
-                      onClick={() => Router.push('/project')}>
+                      className={currentRoute[currentRoute.length - 1] === 'projects' ? styles.tabsActive : ''}
+                      onClick={() => Router.push('/projects')}>
                     <FolderIcon/>
                     Projects
                 </Flex>

@@ -144,11 +144,11 @@ export function Threads() {
                     <TabList justifyContent={'space-between'} alignItems={'center'} className={styles.mailTabList}
                              overflowX={"auto"}>
                         <Tab className={styles.emailTabs}>
-                            <Tooltip label='Inbox' placement='bottom' bg='gray.300' color='black'>
+                            <Tooltip label='Project' placement='bottom' bg='gray.300' color='black'>
                                 <div className={`${tab === 'INBOX' ? styles.active : ''}`}
                                      onClick={() => changeEmailTabs('INBOX')}>
                                     <FolderIcon/>
-                                    <span>Inbox {countUnreadMessages > 0 && <Badge>{countUnreadMessages}</Badge>}</span>
+                                    <span>Project {countUnreadMessages > 0 && <Badge>{countUnreadMessages}</Badge>}</span>
                                 </div>
                             </Tooltip>
                         </Tab>
