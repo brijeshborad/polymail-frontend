@@ -1,6 +1,6 @@
 import styles from "@/styles/Inbox.module.css";
 import {
-    Badge,
+    Badge, Button,
     Flex,
     Tab,
     TabList,
@@ -8,7 +8,7 @@ import {
     Tabs,
     Tooltip
 } from "@chakra-ui/react";
-import {StarIcon, DraftIcon, FolderIcon, SendIcon, TrashIcon, ArchiveIcon} from "@/icons";
+import {StarIcon, DraftIcon, FolderIcon, SendIcon, TrashIcon, ArchiveIcon, EditIcon} from "@/icons";
 import {StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
@@ -136,69 +136,78 @@ export function Threads() {
         setTab(value);
     }
 
+    const openComposeBox = () => {
+        dispatch(updateMessageState({isCompose: true}))
+    }
+
 
     return (
         <>
-            <Flex direction={'column'} gap={5}>
+            <Flex direction={'column'} gap={5} className={styles.mailListTabs}>
                 <Tabs>
-                    <TabList justifyContent={'space-between'} alignItems={'center'} className={styles.mailTabList}
-                             overflowX={"auto"}>
-                        <Tab className={styles.emailTabs}>
-                            <Tooltip label='Project' placement='bottom' bg='gray.300' color='black'>
-                                <div className={`${tab === 'INBOX' ? styles.active : ''}`}
-                                     onClick={() => changeEmailTabs('INBOX')}>
-                                    <FolderIcon/>
-                                    <span>Project {countUnreadMessages > 0 && <Badge>{countUnreadMessages}</Badge>}</span>
-                                </div>
-                            </Tooltip>
-                        </Tab>
-                        <Tab className={styles.emailTabs}>
-                            <Tooltip label='Draft' placement='bottom' bg='gray.300' color='black'>
-                                <div className={`${tab === 'DRAFT' ? styles.active : ''}`}
-                                     onClick={() => changeEmailTabs('DRAFT')}>
-                                    <DraftIcon/>
-                                    <span>Draft</span>
-                                </div>
-                            </Tooltip>
-                        </Tab>
-                        <Tab className={styles.emailTabs}>
-                            <Tooltip label='Starred' placement='bottom' bg='gray.300' color='black'>
-                                <div className={`${tab === 'STARRED' ? styles.active : ''}`}
-                                     onClick={() => changeEmailTabs('STARRED')}>
-                                    <StarIcon/>
-                                    <span>Starred</span>
-                                </div>
-                            </Tooltip>
-                        </Tab>
-                        <Tab className={styles.emailTabs}>
-                            <Tooltip label='Sent' placement='bottom' bg='gray.300' color='black'>
-                                <div className={`${tab === 'SENT' ? styles.active : ''}`}
-                                     onClick={() => changeEmailTabs('SENT')}>
-                                    <SendIcon/>
-                                    <span>Sent</span>
-                                </div>
-                            </Tooltip>
-                        </Tab>
-                        <Tab className={styles.emailTabs}>
-                            <Tooltip label='Trash' placement='bottom' bg='gray.300' color='black'>
-                                <div className={`${tab === 'TRASH' ? styles.active : ''}`}
-                                     onClick={() => changeEmailTabs('TRASH')}>
-                                    <TrashIcon/>
-                                    <span>Trash</span>
-                                </div>
-                            </Tooltip>
-                        </Tab>
+                    <Flex align={'center'} gap={'3'}>
+                        <TabList justifyContent={'space-between'} alignItems={'center'} className={styles.mailTabList}
+                                 overflowX={"auto"}>
+                            <Tab className={styles.emailTabs}>
+                                <Tooltip label='Project' placement='bottom' bg='gray.300' color='black'>
+                                    <div className={`${tab === 'INBOX' ? styles.active : ''}`}
+                                         onClick={() => changeEmailTabs('INBOX')}>
+                                        <FolderIcon/>
+                                        <span>Project {countUnreadMessages > 0 && <Badge>{countUnreadMessages}</Badge>}</span>
+                                    </div>
+                                </Tooltip>
+                            </Tab>
+                            <Tab className={styles.emailTabs}>
+                                <Tooltip label='Draft' placement='bottom' bg='gray.300' color='black'>
+                                    <div className={`${tab === 'DRAFT' ? styles.active : ''}`}
+                                         onClick={() => changeEmailTabs('DRAFT')}>
+                                        <DraftIcon/>
+                                        <span>Draft</span>
+                                    </div>
+                                </Tooltip>
+                            </Tab>
+                            <Tab className={styles.emailTabs}>
+                                <Tooltip label='Starred' placement='bottom' bg='gray.300' color='black'>
+                                    <div className={`${tab === 'STARRED' ? styles.active : ''}`}
+                                         onClick={() => changeEmailTabs('STARRED')}>
+                                        <StarIcon/>
+                                        <span>Starred</span>
+                                    </div>
+                                </Tooltip>
+                            </Tab>
+                            <Tab className={styles.emailTabs}>
+                                <Tooltip label='Sent' placement='bottom' bg='gray.300' color='black'>
+                                    <div className={`${tab === 'SENT' ? styles.active : ''}`}
+                                         onClick={() => changeEmailTabs('SENT')}>
+                                        <SendIcon/>
+                                        <span>Sent</span>
+                                    </div>
+                                </Tooltip>
+                            </Tab>
+                            <Tab className={styles.emailTabs}>
+                                <Tooltip label='Trash' placement='bottom' bg='gray.300' color='black'>
+                                    <div className={`${tab === 'TRASH' ? styles.active : ''}`}
+                                         onClick={() => changeEmailTabs('TRASH')}>
+                                        <TrashIcon/>
+                                        <span>Trash</span>
+                                    </div>
+                                </Tooltip>
+                            </Tab>
 
-                        <Tab className={styles.emailTabs}>
-                            <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
-                                <div className={`${tab === 'ARCHIVE' ? styles.active : ''}`}
-                                     onClick={() => changeEmailTabs('ARCHIVE')}>
-                                    <ArchiveIcon/>
-                                    <span>Archive</span>
-                                </div>
-                            </Tooltip>
-                        </Tab>
-                    </TabList>
+                            <Tab className={styles.emailTabs}>
+                                <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
+                                    <div className={`${tab === 'ARCHIVE' ? styles.active : ''}`}
+                                         onClick={() => changeEmailTabs('ARCHIVE')}>
+                                        <ArchiveIcon/>
+                                        <span>Archive</span>
+                                    </div>
+                                </Tooltip>
+                            </Tab>
+                        </TabList>
+
+                        <Button className={styles.composeButton} borderRadius={8} height={'auto'} padding={'10px'} minWidth={'101px'} backgroundColor={'#FFFFFF'} color={'#374151'} borderColor={'#E5E7EB'} leftIcon={<EditIcon/>} colorScheme='blue'
+                                variant='outline' onClick={() => openComposeBox()}>Compose</Button>
+                    </Flex>
 
                     <TabPanels marginTop={5}>
                         <InboxTab tab={tab} showLoader={isLoading}/>

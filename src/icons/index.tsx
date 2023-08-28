@@ -28,3 +28,4 @@ export * from './download.icon';
 export * from './envelope.icon';
 export * from './drag.icon';
 export * from './lock.icon';
+export * from './edit.icon';

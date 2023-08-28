@@ -210,22 +210,20 @@ export function ProjectMessage() {
                         </Flex>
                     </Flex>
                     }
-                    <div className={styles.mailBodyContent}>
+                    <div className={`${styles.mailBodyContent} ${styles.projectMailBodyContent}`}>
                         {(!isLoading && emailPart) && <iframe src={emailPart} className={styles.mailBody}/>}
                     </div>
-                    <div className={styles.mailBodyAttachments}>
-                        {
-                            messageAttachments && !!messageAttachments.length && messageAttachments?.map((item: MessageAttachments, i) => (
-                                <Flex align={'center'} key={i} className={styles.attachmentsFile}>
-                                    {item.filename}
-                                    <div className={`${styles.closeIcon} ${styles.downloadIcon}`}
-                                         onClick={() => downloadImage(item)}>
-                                        <DownloadIcon/>
-                                    </div>
-                                </Flex>
-                            ))
-                        }
-                    </div>
+                    {messageAttachments && !!messageAttachments.length && messageAttachments?.map((item: MessageAttachments, i) => (
+                        <div className={styles.mailBodyAttachments}>
+                            <Flex align={'center'} key={i} className={styles.attachmentsFile}>
+                                {item.filename}
+                                <div className={`${styles.closeIcon} ${styles.downloadIcon}`}
+                                     onClick={() => downloadImage(item)}>
+                                    <DownloadIcon/>
+                                </div>
+                            </Flex>
+                        </div>
+                    ))}
                     <Flex align={'center'} padding={'10px 20px'}>
                         <Button className={styles.hideButton} variant='outline'
                                 onClick={() => hideAndShowReplayBox('reply')}>

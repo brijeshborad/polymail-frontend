@@ -35,6 +35,10 @@
     color: #266DF0 !important;
 }
 
+.receiveTime {
+    min-width: 68px;
+}
+
 .receiveTime p {
     color: rgba(0, 0, 0, 0.4);
     font-size: 11px;

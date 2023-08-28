@@ -51,6 +51,10 @@
     overflow-y: auto;
 }
 
+.mailList.projectThreadList {
+    max-height: calc(100vh - 250px);
+}
+
 .mailDetails .senderDetails {
     background-color: rgba(0, 0, 0, 0.05);
     border-radius: 20px;
@@ -210,6 +214,7 @@
 .replyButtonBottom .replayTextButton {
     border-radius: 5px 0 0 5px;
     padding: 10px 0 10px 10px;
+    line-height: 1.1;
 }
 
 .replyButtonBottom .replayArrowIcon {
@@ -314,4 +319,19 @@
 
 .mailDetails.readThread {
     background-color: #eeeeee;
+}
+
+@media (max-width: 991px) {
+    .projectPage .mailGrid {
+        grid-template-columns: 100% 100%;
+        display: flex;
+    }
+
+    .projectPage {
+        padding: 15px 20px !important;
+    }
+
+    .mailList.projectThreadList {
+        max-height: calc(100vh - 236px);
+    }
 }

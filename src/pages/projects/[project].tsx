@@ -68,7 +68,7 @@ function ProjectInbox() {
     return (
         <>
             <Flex direction={'column'} padding={'28px 40px 16px'} className={styles.projectPage}
-                  backgroundColor={'#FCFCFD'} height={'100%'}>
+                  backgroundColor={'#FCFCFD'} height={'100%'} flex={1}>
 
                 <Flex align={'center'} justify={'space-between'} gap={4} paddingBottom={6}
                       borderBottom={'1px solid rgba(8, 22, 47, 0.12)'}>
@@ -96,29 +96,14 @@ function ProjectInbox() {
                     </Flex>
                 </Flex>
 
-                {/*<Grid templateColumns='30% auto' mt={7} gap={10} height={'100%'}>*/}
-                {/*    <ProjectThreads/>*/}
-                {/*    <ProjectMessage/>*/}
-
-                    <div className={styles1.mailBg}>
-
-                        <Grid className={styles1.mailGrid} templateColumns='30% auto' gap={6} height={'100%'}>
-                            <GridItem w='100%'>
-                                {((size < 991 && !selectedThread) || size > 991) &&
-                                <ProjectThreads/>
-                                }
-                            </GridItem>
-                            <GridItem w='100%'>
-                                {((size < 991 && selectedThread) || size > 991) && <ProjectMessage/>}
-                            </GridItem>
-                        </Grid>
-                    </div>
-
-                    {/*<Threads />*/}
-                    {/*<Message />*/}
-                {/*</Grid>*/}
-
-
+                <Grid className={styles.mailGrid} templateColumns='30% auto' paddingTop={8} gap={6} flex={1}>
+                    {((size < 991 && !selectedThread) || size > 991) &&
+                    <ProjectThreads/>
+                    }
+                    <GridItem w='100%' flex={1}>
+                        {((size < 991 && selectedThread) || size > 991) && <ProjectMessage/>}
+                    </GridItem>
+                </Grid>
             </Flex>
 
             <Modal isOpen={isOpen} onClose={onClose} isCentered>
@@ -177,13 +162,6 @@ function ProjectInbox() {
                             ))}
                         </Flex>
                     </ModalBody>
-
-                    {/*<ModalFooter>*/}
-                    {/*    <Button colorScheme='blue' mr={3} onClick={onClose}>*/}
-                    {/*        Close*/}
-                    {/*    </Button>*/}
-                    {/*    <Button variant='ghost'>Secondary Action</Button>*/}
-                    {/*</ModalFooter>*/}
                 </ModalContent>
             </Modal>
         </>

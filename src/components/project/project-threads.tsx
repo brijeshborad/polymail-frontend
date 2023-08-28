@@ -87,27 +87,27 @@ export function ProjectThreads() {
                     </Flex>
                     {isLoading && <SpinnerUI/>}
 
-                    {threads && threads.length > 0 && threads.map((item: Thread, index: number) => (
-                        <div onClick={() => handleClick(item) } key={index}
-                             className={`${selectedThread && selectedThread.id === item.id ? styles.selectedThread : ''}`}>
-                            <div
-                                className={`${styles.mailDetails} ${(item.mailboxes || []).includes('UNREAD') ? '' : styles.readThread}`}>
-                                <Flex align={"center"} justify={'space-between'}>
-                                    <Flex align={"center"} gap={1}>
+                    <Flex direction={'column'} gap={1} className={`${styles.mailList} ${styles.projectThreadList}`}>
+                        {threads && threads.length > 0 && threads.map((item: Thread, index: number) => (
+                            <div onClick={() => handleClick(item) } key={index}
+                                 className={`${selectedThread && selectedThread.id === item.id ? styles.selectedThread : ''}`}>
+                                <div
+                                    className={`${styles.mailDetails} ${(item.mailboxes || []).includes('UNREAD') ? '' : styles.readThread}`}>
+                                    <Flex align={"center"} justify={'space-between'} gap={1}>
                                         <Flex align={"center"} className={styles.senderDetails} gap={1}>
                                             <DisneyIcon/> {item.from || 'Anonymous'}
                                         </Flex>
+                                        <div className={styles2.receiveTime}>
+                                            <Time time={item.latestMessage} isShowFullTime={false}/>
+                                        </div>
                                     </Flex>
-                                    <div className={styles2.receiveTime}>
-                                        <Time time={item.latestMessage} isShowFullTime={false}/>
+                                    <div className={styles.mailMessage}>
+                                        {item.subject || "(no subject)"}
                                     </div>
-                                </Flex>
-                                <div className={styles.mailMessage}>
-                                    {item.subject || "(no subject)"}
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </Flex>
                 </Flex>
             </GridItem>
         </>

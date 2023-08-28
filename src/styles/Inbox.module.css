@@ -252,13 +252,13 @@
     background: rgba(0, 0, 0, 0.03);
 }
 
+.mailBox .mailBodyContent.projectMailBodyContent {
+    padding: 0;
+}
+
 .mailBox .mailBodyAttachments {
     padding: 15px;
     background: rgba(0, 0, 0, 0.03);
-}
-
-.mailBoxFLex {
-    flex: 1;
 }
 
 .replyBox {
@@ -512,6 +512,7 @@
 .replyButton .replayTextButton {
     border-radius: 5px 0 0 5px;
     padding: 10px 0 10px 10px;
+    line-height: 1.1;
 }
 
 .replyButton .replayArrowIcon {
@@ -531,6 +532,8 @@
 
 .replyButton .replayTextButton:hover,
 .replyButton .replayTextButton:active,
+.replyButton .replayTextButton:hover[disabled],
+.replyButton .replayTextButton:hover:disabled,
 .replyButton .replayTextButton:focus-visible {
     background-color: #000000;
     box-shadow: none;
@@ -541,14 +544,24 @@
     cursor: not-allowed;
 }
 
-.composeButton {
-    cursor: pointer;
+.mailListTabs .composeButton {
     font-size: 13px;
     font-weight: 500;
     transition: all 0.5s;
-    margin-right: 20px;
-    color: #000000;
-    min-width: 130px;
+    letter-spacing: -0.13px;
+}
+
+.mailListTabs .composeButton:hover {
+    background-color: #FFFFFF;
+}
+
+.mailListTabs .composeButton svg {
+    width: 20px;
+    height: 20px;
+}
+
+.mailListTabs .composeButton span {
+    margin-right: 5px;
 }
 
 .mailBox .hideButton {
@@ -593,6 +606,7 @@
 .replayBox .mailFooter {
     height: 100%;
     padding: 0;
+    flex: 1;
 }
 
 .replayBox .mailFooter .replyBox {
@@ -610,6 +624,7 @@
 
 .replayBox .mailFooter .replyMessageArea {
     flex: 1;
+    max-height: calc(100vh - 421px);
 }
 
 .mailBox .hideButton:hover {
@@ -705,8 +720,11 @@
     }
 
     .mailList {
-        max-height: calc(100vh - 288px);
-        overflow-y: auto;
+        max-height: calc(100vh - 210px);
+    }
+
+    .replayBox .mailFooter .replyMessageArea {
+        max-height: calc(100vh - 407px);
     }
 }
 

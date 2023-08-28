@@ -399,6 +399,50 @@
     }
 }
 
+
+.mailToaster .toastIcon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mailToaster .toastIcon svg {
+    width: 12px;
+    height: 12px;
+}
+
+.mailToaster .toastIcon.toastCloseIcon {
+    background-color: #FFC9B9;
+    color: #67074A;
+}
+
+.mailToaster .toastIcon.toastSuccessIcon {
+    background-color: #DBF7DD;
+    color: #0C4F44;
+}
+
+.mailToaster .toasterCloseIcon:hover {
+    background-color: transparent;
+}
+
+.mailToaster .toasterUndoButton:hover {
+    background-color: #1F2937;
+}
+
+.mailToaster .toasterCloseIcon svg {
+    width: 20px;
+    height: 20px;
+    color: #6B7280;
+}
+
+div:has(> .mailToaster) {
+    min-width: 360px;
+    margin-right: 20px;
+}
+
 /* Tablet and Smaller Desktop */
 @media (min-width: 701px) and (max-width: 1120px) {
     .grid {
