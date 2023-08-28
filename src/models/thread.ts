@@ -15,9 +15,11 @@ export interface Thread {
     mailboxes?: string[],
     numMessages?: number,
     messages?: Message[],
+    project?: string
 }
 
 export interface ThreadsRequestBody {
     mailboxes?: string[] | undefined,
+    project?: string
 
 }

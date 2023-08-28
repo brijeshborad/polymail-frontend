@@ -216,21 +216,22 @@ export function Header() {
         }
     }
 
+    const inboxClick = () => {
+        dispatch(updateThreadState({success: false}));
+        Router.push('/inbox')
+    }
+
     return (
         <Flex className={styles.header} w='100%' align={'center'} flex={'none'}>
             <div>
                 <Image width="30" height="30" src="/image/logo.png" alt="" className={styles.logo}/>
             </div>
             <Flex className={styles.headerTabs} align={'center'}>
-                <Flex align={'center'}
-                      className={currentRoute[currentRoute.length - 1] === 'inbox' ? styles.tabsActive : ''}
-                      onClick={() => Router.push('/inbox')}>
+                <Flex align={'center'} className={currentRoute[1] === 'inbox' ? styles.tabsActive : ''} onClick={() => inboxClick()}>
                     <MailIcon/>
                     Inbox
                 </Flex>
-                <Flex align={'center'}
-                      className={currentRoute[currentRoute.length - 1] === 'project' ? styles.tabsActive : ''}
-                      onClick={() => Router.push('/project')}>
+                <Flex align={'center'} className={currentRoute[1] === 'project' ? styles.tabsActive : ''} onClick={() => Router.push('/project')}>
                     <FolderIcon/>
                     Projects
                 </Flex>

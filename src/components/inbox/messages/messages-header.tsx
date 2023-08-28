@@ -1,17 +1,25 @@
 import styles from "@/styles/Inbox.module.css";
-import {Button, Flex, Text, Tooltip} from "@chakra-ui/react";
+import {Button, Flex, Menu, MenuButton, MenuItem, MenuList, Text, Tooltip} from "@chakra-ui/react";
 import {ChevronDownIcon, ChevronUpIcon, CloseIcon, WarningIcon} from "@chakra-ui/icons";
 import {ArchiveIcon, BlueStarIcon, FolderIcon, StarIcon, TimeSnoozeIcon, TrashIcon, EnvelopeIcon} from "@/icons";
-import React from "react";
-import {Thread} from "@/models";
+import React, {useEffect} from "react";
+import {Project, Thread} from "@/models";
 import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType, MessageHeaderTypes} from "@/types";
+import {getAllProjects} from "@/redux/projects/action-reducer";
 
 export function MessagesHeader({onClose, inboxMessages, index, showPreNextMessage}: MessageHeaderTypes) {
     const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
     const {isLoading} = useSelector((state: StateType) => state.messages);
+    let {projects} = useSelector((state: StateType) => state.projects);
+
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(getAllProjects({}));
+    }, [dispatch])
+
     const updateMailBox = (messageBox: string) => {
         if (selectedThread && selectedThread.id) {
             if (messageBox) {
@@ -47,6 +55,15 @@ export function MessagesHeader({onClose, inboxMessages, index, showPreNextMessag
         }
     }
 
+    const addThreadToProject = (item: Project) => {
+        let body = {
+            project: item.id
+        };
+        if (selectedThread && selectedThread.id) {
+            dispatch(updateThreads({id: selectedThread.id, body}));
+        }
+    }
+
     return (
         <Flex direction={'column'}>
             <div style={{flex: 'none'}}>
@@ -72,9 +89,25 @@ export function MessagesHeader({onClose, inboxMessages, index, showPreNextMessag
                         {!isLoading && <Text className={styles.totalMessages}>
                             {index ? index + 1 : 1} / {inboxMessages && inboxMessages.length}
                         </Text>}
-                        <Button className={styles.addToProject} leftIcon={<FolderIcon/>}>Add to
-                            Project <span
-                                className={styles.RightContent}>⌘P</span></Button>
+                        {/*<Button className={styles.addToProject} leftIcon={<FolderIcon/>}>Add to*/}
+                        {/*    Project <span*/}
+                        {/*        className={styles.RightContent}>⌘P</span></Button>*/}
+
+                        <Menu>
+                            {/*<MenuButton className={styles.allInboxes} backgroundColor={'#ffffff'}*/}
+                            {/*            borderRadius={'50px'} border={'1px solid rgba(8, 22, 47, 0.14)'}*/}
+                            {/*            fontSize={'14px'} lineHeight={'1'} height={'auto'} as={Button}*/}
+                            {/*            rightIcon={<ChevronDownIcon/>}> All Inboxes </MenuButton>*/}
+                            <MenuButton className={styles.addToProject} as={Button} leftIcon={<FolderIcon/>}>Add to Project <span className={styles.RightContent}>⌘P</span></MenuButton>
+                            <MenuList>
+                                {projects && !!projects.length && (projects || []).map((item: Project, index: number) => (
+                                    <MenuItem key={index} onClick={() => addThreadToProject(item)}>{item.name}</MenuItem>
+
+                                ))
+
+                                }
+                            </MenuList>
+                        </Menu>
                         <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
                             <div onClick={() => updateMailBox('ARCHIVE')}>
                                 <ArchiveIcon/>

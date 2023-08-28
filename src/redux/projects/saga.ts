@@ -8,6 +8,7 @@ import {
     getAllProjectsError,
     getAllProjectsSuccess
 } from "@/redux/projects/action-reducer";
+import {PayloadAction} from "@reduxjs/toolkit";
 
 function* getProjects() {
     try {
@@ -19,9 +20,9 @@ function* getProjects() {
     }
 }
 
-function* addProjects() {
+function* addProjects({payload: {name, accountId, organizationId}}: PayloadAction<{name: string, accountId: string, organizationId: string}>) {
     try {
-        const response: AxiosResponse = yield ApiService.callPost(`projects`, null);
+        const response: AxiosResponse = yield ApiService.callPost(`projects`, {name, accountId, organizationId});
         yield put(createProjectsSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;

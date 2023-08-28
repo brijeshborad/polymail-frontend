@@ -14,7 +14,7 @@ export function Projects() {
     const {projects} = useSelector((state: StateType) => state.projects);
 
     const getProjects = useCallback(() => {
-        dispatch(getAllProjects());
+        dispatch(getAllProjects({}));
     }, [dispatch])
 
     useEffect(() => {

@@ -1,36 +1,43 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {createSlice, current, PayloadAction} from "@reduxjs/toolkit";
 import {InitialProjectState} from "@/types";
+import {Project} from "@/models";
 
 const initialState: any = {
     projects: [],
     project: null,
     isLoading: false,
     error: null,
+    selectedProject: null
 } as InitialProjectState
 
 const projectsSlice = createSlice({
     name: 'projects',
     initialState,
     reducers: {
-        getAllProjects: (state: InitialProjectState) => {
+        getAllProjects: (state: InitialProjectState, _action: PayloadAction<any>) => {
             return {...state, projects: [], isLoading: true, error: null}
         },
         getAllProjectsSuccess: (state: InitialProjectState, {payload: projects}: PayloadAction<{ }>) => {
+            // projects = (projects || []).sort((a: Project, b: Project) => (new Date(b.created as string).valueOf() - new Date(a.created as string).valueOf()));
             return {...state, projects, isLoading: false, error: null}
         },
         getAllProjectsError: (state: InitialProjectState, {payload: error}: PayloadAction<{ error: any }>) => {
             return {...state, projects: [], isLoading: false, error}
         },
-
-        createProjects: (state: InitialProjectState, _action: PayloadAction<{ name: string, accountId: string, organizationId: string }>) => {
+        createProjects: (state: InitialProjectState, _action: PayloadAction<{ name?: string, accountId?: string, organizationId?: string }>) => {
             return {...state, project: null, isLoading: true, error: null}
         },
         createProjectsSuccess: (state: InitialProjectState, {payload: project}: PayloadAction<{ }>) => {
-            return {...state, project, isLoading: false, error: null}
+            let currentThreads = [...(current(state).projects || [])] as Project[];
+            return {...state, projects: [project, ...currentThreads], project, isLoading: false, error: null}
         },
         createProjectsError: (state: InitialProjectState, {payload: error}: PayloadAction<{ error: any }>) => {
             return {...state, project: null, isLoading: false, error}
-        }
+        },
+
+        updateProjectState: (state: InitialProjectState, action: PayloadAction<InitialProjectState>) => {
+            return {...state, ...action.payload}
+        },
     }
 })
 
@@ -40,6 +47,7 @@ export const {
     getAllProjectsError,
     createProjects,
     createProjectsSuccess,
-    createProjectsError
+    createProjectsError,
+    updateProjectState
 } = projectsSlice.actions
 export default projectsSlice.reducer

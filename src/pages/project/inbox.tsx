@@ -15,10 +15,17 @@ import Image from "next/image";
 import {ProjectReplyBox, ProjectThreads} from "@/components/project";
 import {ChevronDownIcon} from "@chakra-ui/icons";
 import React from "react";
+import {useSelector} from "react-redux";
+import {StateType} from "@/types";
 
 
-function ProjectInbox() {
+function Inbox() {
     const {isOpen, onOpen, onClose} = useDisclosure();
+    let {selectedProject} = useSelector((state: StateType) => state.projects);
+    const {
+        threads
+    } = useSelector((state: StateType) => state.threads);
+
 
     return (
         <>
@@ -30,9 +37,9 @@ function ProjectInbox() {
                         <div className={styles.imgWrapper}>
                             <Image src="/image/user.png" width="36" height="36" alt=""/>
                         </div>
-                        <Heading as='h4' fontSize={'24px'} color={'#08162F'}>Disney Launch</Heading>
+                        <Heading as='h4' fontSize={'24px'} color={'#08162F'}>{selectedProject?.name}</Heading>
                         <Badge color={'#000000'} fontSize={'14px'} fontWeight={'600'} backgroundColor={'#E9E9E9'}
-                               padding={'3px 6px'} borderRadius={'4px'} lineHeight={'1.19'}>4 threads</Badge>
+                               padding={'3px 6px'} borderRadius={'4px'} lineHeight={'1.19'}>{threads && threads.length} threads</Badge>
                     </Flex>
                     <Flex align={'center'} gap={1}>
                         <div className={styles.userImage}>
@@ -49,14 +56,10 @@ function ProjectInbox() {
                                 height={'auto'} padding={'12px 16px'}> Manage Members</Button>
                     </Flex>
                 </Flex>
-
                 <Grid templateColumns='30% auto' mt={7} gap={10} height={'100%'}>
                     <ProjectThreads />
                     <ProjectReplyBox />
                 </Grid>
-
-
-
 
             </Flex>
 
@@ -213,4 +216,4 @@ function ProjectInbox() {
     )
 }
 
-export default ProjectInbox;
+export default Inbox;
