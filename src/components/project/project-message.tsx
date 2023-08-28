@@ -161,7 +161,7 @@ export function ProjectMessage() {
         }
     }
 
-    const onClose = () => {
+    const closeCompose = () => {
         setHideAndShowReplyBox(false)
         setReplyType('');
         dispatch(updateMessageState({isCompose: false}));
@@ -190,7 +190,7 @@ export function ProjectMessage() {
             <Flex justifyContent={'space-between'} flexDir={'column'} height={'100%'}>
                 {!hideAndShowReplyBox &&
                 <>
-                    <MessagesHeader inboxMessages={inboxMessages} index={index} onClose={onClose}
+                    <MessagesHeader inboxMessages={inboxMessages} index={index} closeCompose={closeCompose}
                                     showPreNextMessage={showPreNextMessage} herderType={'projects'}/>
                     {messageContent &&
                     <Flex alignItems={'center'} padding={'10px 20px'}>
@@ -247,14 +247,14 @@ export function ProjectMessage() {
                             <Flex justifyContent={'space-between'} wrap={'wrap'} align={'center'}
                                   borderBottom={'1px solid rgba(8, 22, 47, 0.1)'} padding={'12px 20px'}>
                                 <Flex alignItems={'center'} gap={2}>
-                                    <div className={styles.closeIcon} onClick={() => onClose()}>
+                                    <div className={styles.closeIcon} onClick={() => closeCompose()}>
                                         <CloseIcon/>
                                     </div>
                                 </Flex>
                             </Flex>
                         </div>
 
-                        <ReplyBox replyType={replyType} emailPart={(messagePart?.data || '')} onClose={onClose}/>
+                        <ReplyBox replyType={replyType} emailPart={(messagePart?.data || '')} onClose={closeCompose}/>
                     </Flex>
                 </div>}
             </Flex>
@@ -267,14 +267,14 @@ export function ProjectMessage() {
                         <Flex justifyContent={'space-between'} wrap={'wrap'} align={'center'}
                               borderBottom={'1px solid rgba(8, 22, 47, 0.1)'} padding={'12px 20px'}>
                             <Flex alignItems={'center'} gap={2}>
-                                <div className={styles.closeIcon} onClick={() => onClose()}>
+                                <div className={styles.closeIcon} onClick={() => closeCompose()}>
                                     <CloseIcon/>
                                 </div>
                             </Flex>
                         </Flex>
                     </div>
 
-                    <ProjectReplyBox onClose={onClose}/>
+                    <ProjectReplyBox onClose={closeCompose}/>
                 </Flex>
             </div>}
         </Box>

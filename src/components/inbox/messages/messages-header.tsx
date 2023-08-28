@@ -10,7 +10,7 @@ import {
     Tooltip,
     Input,
     InputGroup,
-    InputLeftElement
+    InputLeftElement, useDisclosure
 } from "@chakra-ui/react";
 import {ChevronDownIcon, ChevronUpIcon, CloseIcon, WarningIcon, SearchIcon, SmallAddIcon} from "@chakra-ui/icons";
 import {
@@ -29,13 +29,15 @@ import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType, MessageHeaderTypes} from "@/types";
 import {getAllProjects} from "@/redux/projects/action-reducer";
+import CreateNewProject from "@/components/project/create-new-project";
 
-export function MessagesHeader({onClose, inboxMessages, index, showPreNextMessage, herderType}: MessageHeaderTypes) {
+export function MessagesHeader({closeCompose, inboxMessages, index, showPreNextMessage, herderType}: MessageHeaderTypes) {
     const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
     const {isLoading} = useSelector((state: StateType) => state.messages);
     let {projects} = useSelector((state: StateType) => state.projects);
 
     const dispatch = useDispatch();
+    const {isOpen, onOpen, onClose} = useDisclosure();
 
     useEffect(() => {
         dispatch(getAllProjects());
@@ -92,7 +94,7 @@ export function MessagesHeader({onClose, inboxMessages, index, showPreNextMessag
                       borderBottom={'1px solid rgba(8, 22, 47, 0.1)'}
                       marginBottom={'15'} padding={'12px 20px'}>
                     <Flex alignItems={'center'} gap={2}>
-                        <div className={styles.closeIcon} onClick={() => onClose()}><CloseIcon/>
+                        <div className={styles.closeIcon} onClick={() => closeCompose()}><CloseIcon/>
                         </div>
                         <div className={`${styles.actionIcon} ${index === 0 ? styles.disabled : ''}`}
                              onClick={() => showPreNextMessage('up')}>
@@ -127,7 +129,7 @@ export function MessagesHeader({onClose, inboxMessages, index, showPreNextMessag
                                         <InputLeftElement h={'27px'} pointerEvents='none'>
                                             <SearchIcon/>
                                         </InputLeftElement>
-                                        <Input placeholder='Phone number' />
+                                        <Input placeholder='Search project' />
                                     </InputGroup>
                                 </div>
 
@@ -138,7 +140,7 @@ export function MessagesHeader({onClose, inboxMessages, index, showPreNextMessag
 
                                 ))}
                                 <div className={styles.addNewProject}>
-                                    <Button backgroundColor={'transparent'} w={'100%'} borderRadius={0} justifyContent={'flex-start'}>
+                                    <Button backgroundColor={'transparent'} w={'100%'} borderRadius={0} justifyContent={'flex-start'} onClick={onOpen}>
                                         <div className={styles.plusIcon}>
                                             <SmallAddIcon/>
                                         </div>
@@ -189,6 +191,9 @@ export function MessagesHeader({onClose, inboxMessages, index, showPreNextMessag
                     </Flex>
                 </Flex>
             </div>
+
+            <CreateNewProject onOpen={onOpen} isOpen={isOpen} onClose={onClose}/>
+
         </Flex>
     )
 }

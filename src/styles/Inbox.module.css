@@ -50,7 +50,7 @@
     display: none;
 }
 
-.emailTabs[aria-selected="true"] > div {
+.emailTabs > div.active {
     background-color: #ffffff;
     color: #000000;
 }
@@ -99,6 +99,17 @@
 
 .mailTabList .tabListMoreButton svg {
     width: 9px;
+}
+
+.mailTabList .tabListDropDown button {
+    gap: 8px;
+    padding: 10px 12px;
+}
+
+.mailTabList .tabListDropDown svg {
+    width: 20px;
+    height: 20px;
+    stroke: #6B7280;
 }
 
 .checkBoxLabel span {
@@ -437,6 +448,7 @@
 
 .composeReplyBox .mailFooter .replyMessageArea {
     flex: 1 1;
+    max-height: calc(100vh - 313px);
 }
 
 .mailBox .mailFooter svg {
@@ -657,7 +669,7 @@
 
 .replayBox .mailFooter .replyMessageArea {
     flex: 1;
-    max-height: calc(100vh - 421px);
+    max-height: calc(100vh - 319px);
 }
 
 .mailBox .hideButton:hover {

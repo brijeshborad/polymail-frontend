@@ -293,8 +293,8 @@ export function Header() {
                         </div>
 
                     </MenuButton>
-                    <MenuList>
-                        {selectedAccount && <MenuItem w='100%'>
+                    <MenuList className={'drop-down-list'}>
+                        {selectedAccount && <MenuItem justifyContent={'space-between'} gap={1} w='100%'>
                             {selectedAccount?.email}
                             <CheckIcon ml={8} bg={"green"} p={1} borderRadius={50} w={4} h={4} color={"white"}/>
                         </MenuItem>}

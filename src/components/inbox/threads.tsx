@@ -145,8 +145,6 @@ export function Threads() {
     return (
         <>
             <Flex direction={'column'} gap={5} className={styles.mailListTabs}>
-                {tab}
-
                 <Tabs>
                     <Flex align={'center'} gap={'3'}>
                         <TabList justifyContent={'space-between'} flex={1} alignItems={'center'}
@@ -224,23 +222,23 @@ export function Threads() {
                             <Menu>
                                 <MenuButton className={styles.tabListMoreButton} borderLeft={'1px solid #D1D5DB'}
                                             borderRadius={0} backgroundColor={'transparent'} height={'auto'}
-                                            fontSize={'13px'} color={'#6B7280'} as={Button}
+                                            fontSize={'13px'} color={'#6B7280'} as={Button} marginLeft={1}
                                             rightIcon={<TriangleDownIcon/>}>
                                     More
                                 </MenuButton>
-                                <MenuList>
+                                <MenuList className={`${styles.tabListDropDown} drop-down-list`}>
                                     {['TRASH', 'STARRED', 'ARCHIVE'].includes(tab) &&
-                                    <MenuItem onClick={() => changeEmailTabs('SENT')} icon={<SendIcon />}>sent</MenuItem>
+                                    <MenuItem onClick={() => changeEmailTabs('SENT')}><SendIcon /> sent</MenuItem>
                                     }
 
                                     {tab !== 'TRASH' &&
-                                    <MenuItem onClick={() => changeEmailTabs('TRASH')} icon={<TrashIcon />}>Trash</MenuItem>
+                                    <MenuItem onClick={() => changeEmailTabs('TRASH')}><TrashIcon /> Trash</MenuItem>
                                     }
                                     {tab !== 'STARRED' &&
-                                    <MenuItem onClick={() => changeEmailTabs('STARRED')} icon={<StarIcon />}>Starred</MenuItem>
+                                    <MenuItem onClick={() => changeEmailTabs('STARRED')}><StarIcon /> Starred</MenuItem>
                                     }
                                     {tab !== 'ARCHIVE' &&
-                                    <MenuItem onClick={() => changeEmailTabs('ARCHIVE')} icon={<TimeSnoozeIcon />}>Archive</MenuItem>
+                                    <MenuItem onClick={() => changeEmailTabs('ARCHIVE')}><TimeSnoozeIcon /> Archive</MenuItem>
                                     }
                                 </MenuList>
                             </Menu>

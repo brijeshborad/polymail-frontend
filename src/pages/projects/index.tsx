@@ -4,10 +4,7 @@ import {
     Badge,
     Button,
     Flex,
-    Heading, Input, Modal, ModalBody,
-    ModalCloseButton, ModalContent,
-    ModalHeader,
-    ModalOverlay,
+    Heading,
     Text,
     useDisclosure
 } from "@chakra-ui/react";
@@ -16,11 +13,12 @@ import Image from "next/image";
 import {BlueStarIcon, DragIcon, LockIcon} from "@/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {createProjects, getAllProjects} from "@/redux/projects/action-reducer";
+import { getAllProjects} from "@/redux/projects/action-reducer";
 import {useRouter} from "next/router";
 // import {isUndefined} from "util";
 import {Project} from "@/models";
-import {SpinnerUI, Toaster} from "@/components/common";
+import {SpinnerUI} from "@/components/common";
+import CreateNewProject from "@/components/project/create-new-project";
 // import {POSITION_GAP} from "@/utils/common.functions";
 
 
@@ -29,9 +27,9 @@ function Index() {
     const {isOpen, onOpen, onClose} = useDisclosure();
     const router = useRouter();
     const dispatch = useDispatch();
-    const {selectedAccount} = useSelector((state: StateType) => state.accounts);
-    const {selectedOrganization} = useSelector((state: StateType) => state.organizations);
-    const [projectName, setProjectName] = useState<string>('');
+    // const {selectedAccount} = useSelector((state: StateType) => state.accounts);
+    // const {selectedOrganization} = useSelector((state: StateType) => state.organizations);
+    // const [projectName, setProjectName] = useState<string>('');
 
     useEffect(() => {
         dispatch(getAllProjects());
@@ -83,36 +81,36 @@ function Index() {
         setItemList(newItems);
     };
 
-    const handleChange = (event: ChangeEvent | any) => {
-        setProjectName(event.target.value);
-    }
-
-    const addNewProject = () => {
-        if (projectName.length === 0) {
-            Toaster({desc: 'Please enter the project\'s name',title: 'Add Project Name', type: 'error'})
-            return;
-        }
-        if (!selectedAccount) {
-            Toaster({desc: 'Your account is not created',title: 'Add Account', type: 'error'})
-            return;
-        }
-
-        if (!selectedOrganization) {
-            Toaster({desc: 'Your organization is not created',title: 'Add Organization', type: 'error'})
-            return;
-        }
-
-        if (selectedAccount && selectedOrganization) {
-            let body = {
-                name: projectName,
-                accountId: selectedAccount.id,
-                organizationId: selectedOrganization.id
-            }
-            dispatch(createProjects(body));
-        }
-        setProjectName('')
-        onClose()
-    }
+    // const handleChange = (event: ChangeEvent | any) => {
+    //     setProjectName(event.target.value);
+    // }
+    //
+    // const addNewProject = () => {
+    //     if (projectName.length === 0) {
+    //         Toaster({desc: 'Please enter the project\'s name',title: 'Add Project Name', type: 'error'})
+    //         return;
+    //     }
+    //     if (!selectedAccount) {
+    //         Toaster({desc: 'Your account is not created',title: 'Add Account', type: 'error'})
+    //         return;
+    //     }
+    //
+    //     if (!selectedOrganization) {
+    //         Toaster({desc: 'Your organization is not created',title: 'Add Organization', type: 'error'})
+    //         return;
+    //     }
+    //
+    //     if (selectedAccount && selectedOrganization) {
+    //         let body = {
+    //             name: projectName,
+    //             accountId: selectedAccount.id,
+    //             organizationId: selectedOrganization.id
+    //         }
+    //         dispatch(createProjects(body));
+    //     }
+    //     setProjectName('')
+    //     onClose()
+    // }
 
     return (
         <>
@@ -179,37 +177,7 @@ function Index() {
                 </Flex>
             </Flex>
 
-            {/*create Project Model*/}
-            <Modal isOpen={isOpen} onClose={onClose} isCentered>
-                <ModalOverlay/>
-                <ModalContent maxWidth={'480px'} className={styles.projectMemberModal}>
-                    <ModalHeader fontSize={'13px'} color={'#08162F'} borderBottom={'1px solid rgba(0, 0, 0, 0.1)'}>Create
-                        project
-                    </ModalHeader>
-                    <ModalCloseButton top={'13px'} right={'17px'} className={styles.closeIcon}/>
-                    <ModalBody padding={'12px 16px 16px'}>
-                        <div className={styles.addProjectMember}>
-                            <Heading as='h6' size='xs' mb={2}>Add Project Name</Heading>
-                            <Flex direction={'column'} gap={6}>
-                                <Flex align={'center'} position={"relative"} className={styles.emailAddress}
-                                      padding={'6px 8px 6px 16px'} width={'100%'}>
-                                    <Input p={0} h={'auto'} border={0} placeholder='Enter Project Name' size='md'
-                                           onChange={handleChange}/>
-                                </Flex>
-                                <Flex align={'space-between'}>
-                                    <Button className={styles.addMemberButton} backgroundColor={'#000000'} borderRadius={8}
-                                            width={'fit-content'} onClick={() => addNewProject()}
-                                            color={'#ffffff'} minWidth={'120px'} size='sm'> Add </Button>
-
-                                    <Button className={styles.addMemberButton} backgroundColor={'#000000'} borderRadius={8} ml={2}
-                                            width={'fit-content'} onClick={() => onClose()}
-                                            color={'#ffffff'} minWidth={'120px'} size='sm'> Cancel </Button>
-                                </Flex>
-                            </Flex>
-                        </div>
-                    </ModalBody>
-                </ModalContent>
-            </Modal>
+            <CreateNewProject onOpen={onOpen} isOpen={isOpen} onClose={onClose}/>
         </>
     )
 }
