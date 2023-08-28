@@ -8,6 +8,7 @@ const initialState: any = {
     isLoading: false,
     error: null,
     selectedOrganization: LocalStorageService.updateOrg('get') || null,
+    members: []
 } as InitialOrganizationStateType
 
 const organizationSlice = createSlice({
@@ -23,6 +24,17 @@ const organizationSlice = createSlice({
         getAllOrganizationsError: (state: InitialOrganizationStateType, {payload: error}: PayloadAction<{ error: any }>) => {
             return {...state, organizations: [], isLoading: false, error}
         },
+
+        getOrganizationMembers: (state: InitialOrganizationStateType,  _action: PayloadAction<{ orgId: string }>) => {
+            return {...state, members: [], isLoading: true, error: null}
+        },
+        getOrganizationMembersSuccess: (state: InitialOrganizationStateType, {payload: members}: PayloadAction<{}>) => {
+            return {...state, members, isLoading: false, error: null}
+        },
+        getOrganizationMembersError: (state: InitialOrganizationStateType, {payload: error}: PayloadAction<{ error: any }>) => {
+            return {...state, members: [], isLoading: false, error}
+        },
+
         addOrganization: (state: InitialOrganizationStateType, _action: PayloadAction<{ name?: string, accountId?: string }>) => {
             return {...state, organization: null, error: null, isLoading: true}
         },
@@ -32,6 +44,7 @@ const organizationSlice = createSlice({
         addOrganizationError: (state: InitialOrganizationStateType, {payload: error}: PayloadAction<{ error: any }>) => {
             return {...state, organization: null, error, isLoading: false}
         },
+
         updateOrganizationState: (state: InitialOrganizationStateType, action: PayloadAction<InitialOrganizationStateType>) => {
             return {...state, ...action.payload}
         },
@@ -45,6 +58,9 @@ export const {
     addOrganization,
     addOrganizationSuccess,
     addOrganizationError,
+    getOrganizationMembers,
+    getOrganizationMembersSuccess,
+    getOrganizationMembersError,
     updateOrganizationState
 } = organizationSlice.actions
 export default organizationSlice.reducer

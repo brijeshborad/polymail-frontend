@@ -1,5 +1,5 @@
 import {createSlice, current, PayloadAction} from "@reduxjs/toolkit";
-import {InitialProjectState} from "@/types";
+import {InitialProjectState, InitialOrganizationStateType} from "@/types";
 import {Project} from "@/models";
 
 const initialState: any = {
@@ -8,6 +8,7 @@ const initialState: any = {
     isLoading: false,
     error: null,
     selectedProject: null
+    members: []
 } as InitialProjectState
 
 const projectsSlice = createSlice({
@@ -35,6 +36,16 @@ const projectsSlice = createSlice({
             return {...state, project: null, isLoading: false, error}
         },
 
+        getProjectMembers: (state: InitialOrganizationStateType,  _action: PayloadAction<{ projectId: string }>) => {
+            return {...state, members: [], isLoading: true, error: null}
+        },
+        getProjectMembersSuccess: (state: InitialOrganizationStateType, {payload: members}: PayloadAction<{}>) => {
+            return {...state, members, isLoading: false, error: null}
+        },
+        getProjectMembersError: (state: InitialOrganizationStateType, {payload: error}: PayloadAction<{ error: any }>) => {
+            return {...state, members: [], isLoading: false, error}
+        },
+
         updateProjectState: (state: InitialProjectState, action: PayloadAction<InitialProjectState>) => {
             return {...state, ...action.payload}
         },
@@ -48,6 +59,9 @@ export const {
     createProjects,
     createProjectsSuccess,
     createProjectsError,
-    updateProjectState
+    updateProjectStat,
+    getProjectMembers,
+    getProjectMembersSuccess,
+    getProjectMembersError,
 } = projectsSlice.actions
 export default projectsSlice.reducer

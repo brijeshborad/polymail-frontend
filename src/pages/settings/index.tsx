@@ -28,7 +28,7 @@ const tabMenu = [
         ]
     },
     {
-        title: 'Workspace',
+        title: 'Organization',
         children: [
             {
                 title: 'Members',

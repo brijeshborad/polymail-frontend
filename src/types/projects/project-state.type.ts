@@ -1,9 +1,11 @@
-import {Project} from "../../models";
+import {Project, TeamMember} from "@/models";
 
 export declare type InitialProjectState = {
     projects: Project[],
     project: Project | null,
     selectedProject: Project | null,
     isLoading: boolean,
-    error: Error | any
+    error: Error | any,
+    members?: TeamMember[]
+
 }

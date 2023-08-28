@@ -2,7 +2,18 @@ import {PayloadAction} from "@reduxjs/toolkit";
 import {all, fork, put, takeLatest} from "@redux-saga/core/effects";
 import ApiService from "@/utils/api.service";
 import {AxiosError, AxiosResponse} from "axios";
-import {getAllOrganizations, getAllOrganizationsSuccess, getAllOrganizationsError, addOrganization, addOrganizationSuccess, addOrganizationError} from "@/redux/organizations/action-reducer";
+import {
+    addOrganization,
+    addOrganizationError,
+    addOrganizationSuccess,
+    getAllOrganizations,
+    getAllOrganizationsError,
+    getAllOrganizationsSuccess,
+    getOrganizationMembers,
+    getOrganizationMembersSuccess,
+    getOrganizationMembersError,
+} from "@/redux/organizations/action-reducer";
+
 // import {Organization} from "@/models";
 
 function* getOrganizations() {
@@ -15,7 +26,7 @@ function* getOrganizations() {
     }
 }
 
-function* addOrganizations({payload: {name, accountId}}: PayloadAction<{name: string, accountId: string}>) {
+function* addOrganizations({payload: {name, accountId}}: PayloadAction<{ name: string, accountId: string }>) {
     try {
         const response: AxiosResponse = yield ApiService.callPost(`organizations`, {name, accountId});
         yield put(addOrganizationSuccess(response));
@@ -25,18 +36,38 @@ function* addOrganizations({payload: {name, accountId}}: PayloadAction<{name: st
     }
 }
 
+
+function* getOrganizationMembersService({payload: {orgId}}: PayloadAction<{ orgId: string }>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callGet(`organizations/${orgId}/accounts`, {});
+        yield put(getOrganizationMembersSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        yield put(getOrganizationMembersError(error.response.data));
+    }
+}
+
+
 export function* watchGetOrganizations() {
     yield takeLatest(getAllOrganizations.type, getOrganizations);
 }
+
 
 export function* watchPostOrganizations() {
     yield takeLatest(addOrganization.type, addOrganizations);
 }
 
+
+export function* watchGetOrganizationMembers() {
+    yield takeLatest(getOrganizationMembers.type, getOrganizationMembersService);
+}
+
+
 export default function* rootSaga() {
     yield all([
         fork(watchGetOrganizations),
         fork(watchPostOrganizations),
+        fork(watchGetOrganizationMembers),
     ]);
 }
 

@@ -14,13 +14,28 @@ import {
     Thead,
     Tr, useDisclosure, Image, Grid
 } from "@chakra-ui/react";
-import React from "react";
+import React, {useEffect} from "react";
 import Index from "@/pages/settings/index";
 import {MenuIcon, TextIcon} from "@/icons";
 import withAuth from "@/components/withAuth";
+import {getOrganizationMembers} from "@/redux/organizations/action-reducer";
+import {useDispatch, useSelector} from "react-redux";
+import {StateType} from "@/types";
+import dayjs from "dayjs";
 
 function Members() {
     const {isOpen, onOpen, onClose} = useDisclosure();
+   const {members, organizations} = useSelector((state: StateType) => state.organizations);
+
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        if(organizations && organizations.length > 0) {
+            dispatch(getOrganizationMembers({orgId:organizations[0].id}));
+        }
+    },[dispatch, organizations])
+
 
     return (
         <div className={styles.setting}>
@@ -56,299 +71,38 @@ function Members() {
                                             </Tr>
                                         </Thead>
                                         <Tbody>
-                                            <Tr>
-                                                <Td>
-                                                    <Flex gap={3} align={'center'}>
-                                                        <Checkbox className={styles.tableCheckBox} />
-                                                        <div className={styles.tableUserImage}>
-                                                            <Image src="/image/user.png" width="40" height="40" alt=""/>
-                                                        </div>
-                                                        <Text fontSize='sm' fontWeight={500} color={'#101828'}>John Doe</Text>
-                                                    </Flex>
-                                                </Td>
-                                                <Td><div className={styles.statusButton}> Pending </div></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>Admin</Text></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>john@polymail.com</Text></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>12/12/2012</Text></Td>
-                                                <Td padding={4}>
-                                                    <Menu>
-                                                        <MenuButton className={styles.OptionButton} as={IconButton} aria-label='Options' icon={<MenuIcon />} variant='outline' padding={0} height={'32px'} minWidth={'32px'} border={'0'}/>
-                                                        <MenuList>
-                                                            <MenuItem>Edit</MenuItem>
-                                                            <MenuItem>Delete</MenuItem>
-                                                        </MenuList>
-                                                    </Menu>
-                                                </Td>
-                                            </Tr>
-                                            <Tr>
-                                                <Td>
-                                                    <Flex gap={3} align={'center'}>
-                                                        <Checkbox className={styles.tableCheckBox} />
-                                                        <div className={styles.tableUserImage}>
-                                                            <Image src="/image/user.png" width="40" height="40" alt=""/>
-                                                        </div>
-                                                        <Text fontSize='sm' fontWeight={500} color={'#101828'}>John Doe</Text>
-                                                    </Flex>
-                                                </Td>
-                                                <Td><div className={styles.statusButton}> Pending </div></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>Teammate</Text></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>john@polymail.com</Text></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>12/12/2012</Text></Td>
-                                                <Td padding={4}>
-                                                    <Menu>
-                                                        <MenuButton className={styles.OptionButton} as={IconButton} aria-label='Options' icon={<MenuIcon />} variant='outline' padding={0} height={'32px'} minWidth={'32px'} border={'0'}/>
-                                                        <MenuList>
-                                                            <MenuItem>Edit</MenuItem>
-                                                            <MenuItem>Delete</MenuItem>
-                                                        </MenuList>
-                                                    </Menu>
-                                                </Td>
-                                            </Tr>
-                                            <Tr>
-                                                <Td>
-                                                    <Flex gap={3} align={'center'}>
-                                                        <Checkbox className={styles.tableCheckBox} />
-                                                        <div className={styles.tableUserImage}>
-                                                            <Image src="/image/user.png" width="40" height="40" alt=""/>
-                                                        </div>
-                                                        <Text fontSize='sm' fontWeight={500} color={'#101828'}>John Doe</Text>
-                                                    </Flex>
-                                                </Td>
-                                                <Td><div className={styles.statusButton}> Pending </div></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>Teammate</Text></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>john@polymail.com</Text></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>12/12/2012</Text></Td>
-                                                <Td padding={4}>
-                                                    <Menu>
-                                                        <MenuButton className={styles.OptionButton} as={IconButton} aria-label='Options' icon={<MenuIcon />} variant='outline' padding={0} height={'32px'} minWidth={'32px'} border={'0'}/>
-                                                        <MenuList>
-                                                            <MenuItem>Edit</MenuItem>
-                                                            <MenuItem>Delete</MenuItem>
-                                                        </MenuList>
-                                                    </Menu>
-                                                </Td>
-                                            </Tr>
-                                            <Tr>
-                                                <Td>
-                                                    <Flex gap={3} align={'center'}>
-                                                        <Checkbox className={styles.tableCheckBox} />
-                                                        <div className={styles.tableUserImage}>
-                                                            <Image src="/image/user.png" width="40" height="40" alt=""/>
-                                                        </div>
-                                                        <Text fontSize='sm' fontWeight={500} color={'#101828'}>John Doe</Text>
-                                                    </Flex>
-                                                </Td>
-                                                <Td><div className={styles.statusButton}> Deactivated </div></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>Teammate</Text></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>john@polymail.com</Text></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>12/12/2012</Text></Td>
-                                                <Td padding={4}>
-                                                    <Menu>
-                                                        <MenuButton className={styles.OptionButton} as={IconButton} aria-label='Options' icon={<MenuIcon />} variant='outline' padding={0} height={'32px'} minWidth={'32px'} border={'0'}/>
-                                                        <MenuList>
-                                                            <MenuItem>Edit</MenuItem>
-                                                            <MenuItem>Delete</MenuItem>
-                                                        </MenuList>
-                                                    </Menu>
-                                                </Td>
-                                            </Tr>
-                                            <Tr>
-                                                <Td>
-                                                    <Flex gap={3} align={'center'}>
-                                                        <Checkbox className={styles.tableCheckBox} />
-                                                        <div className={styles.tableUserImage}>
-                                                            <Image src="/image/user.png" width="40" height="40" alt=""/>
-                                                        </div>
-                                                        <Text fontSize='sm' fontWeight={500} color={'#101828'}>John Doe</Text>
-                                                    </Flex>
-                                                </Td>
-                                                <Td><div className={styles.statusButton}> Deactivated </div></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>Teammate</Text></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>john@polymail.com</Text></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>12/12/2012</Text></Td>
-                                                <Td padding={4}>
-                                                    <Menu>
-                                                        <MenuButton className={styles.OptionButton} as={IconButton} aria-label='Options' icon={<MenuIcon />} variant='outline' padding={0} height={'32px'} minWidth={'32px'} border={'0'}/>
-                                                        <MenuList>
-                                                            <MenuItem>Edit</MenuItem>
-                                                            <MenuItem>Delete</MenuItem>
-                                                        </MenuList>
-                                                    </Menu>
-                                                </Td>
-                                            </Tr>
-                                            <Tr>
-                                                <Td>
-                                                    <Flex gap={3} align={'center'}>
-                                                        <Checkbox className={styles.tableCheckBox} />
-                                                        <div className={styles.tableUserImage}>
-                                                            <Image src="/image/user.png" width="40" height="40" alt=""/>
-                                                        </div>
-                                                        <Text fontSize='sm' fontWeight={500} color={'#101828'}>John Doe</Text>
-                                                    </Flex>
-                                                </Td>
-                                                <Td><div className={styles.statusButton}> Active </div></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>Teammate</Text></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>john@polymail.com</Text></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>12/12/2012</Text></Td>
-                                                <Td padding={4}>
-                                                    <Menu>
-                                                        <MenuButton className={styles.OptionButton} as={IconButton} aria-label='Options' icon={<MenuIcon />} variant='outline' padding={0} height={'32px'} minWidth={'32px'} border={'0'}/>
-                                                        <MenuList>
-                                                            <MenuItem>Edit</MenuItem>
-                                                            <MenuItem>Delete</MenuItem>
-                                                        </MenuList>
-                                                    </Menu>
-                                                </Td>
-                                            </Tr>
-                                            <Tr>
-                                                <Td>
-                                                    <Flex gap={3} align={'center'}>
-                                                        <Checkbox className={styles.tableCheckBox} />
-                                                        <div className={styles.tableUserImage}>
-                                                            <Image src="/image/user.png" width="40" height="40" alt=""/>
-                                                        </div>
-                                                        <Text fontSize='sm' fontWeight={500} color={'#101828'}>John Doe</Text>
-                                                    </Flex>
-                                                </Td>
-                                                <Td><div className={styles.statusButton}> Active </div></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>Teammate</Text></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>john@polymail.com</Text></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>12/12/2012</Text></Td>
-                                                <Td padding={4}>
-                                                    <Menu>
-                                                        <MenuButton className={styles.OptionButton} as={IconButton} aria-label='Options' icon={<MenuIcon />} variant='outline' padding={0} height={'32px'} minWidth={'32px'} border={'0'}/>
-                                                        <MenuList>
-                                                            <MenuItem>Edit</MenuItem>
-                                                            <MenuItem>Delete</MenuItem>
-                                                        </MenuList>
-                                                    </Menu>
-                                                </Td>
-                                            </Tr>
-                                            <Tr>
-                                                <Td>
-                                                    <Flex gap={3} align={'center'}>
-                                                        <Checkbox className={styles.tableCheckBox} />
-                                                        <div className={styles.tableUserImage}>
-                                                            <Image src="/image/user.png" width="40" height="40" alt=""/>
-                                                        </div>
-                                                        <Text fontSize='sm' fontWeight={500} color={'#101828'}>John Doe</Text>
-                                                    </Flex>
-                                                </Td>
-                                                <Td><div className={styles.statusButton}> Deactivated </div></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>Teammate</Text></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>john@polymail.com</Text></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>12/12/2012</Text></Td>
-                                                <Td padding={4}>
-                                                    <Menu>
-                                                        <MenuButton className={styles.OptionButton} as={IconButton} aria-label='Options' icon={<MenuIcon />} variant='outline' padding={0} height={'32px'} minWidth={'32px'} border={'0'}/>
-                                                        <MenuList>
-                                                            <MenuItem>Edit</MenuItem>
-                                                            <MenuItem>Delete</MenuItem>
-                                                        </MenuList>
-                                                    </Menu>
-                                                </Td>
-                                            </Tr>
-                                            <Tr>
-                                                <Td>
-                                                    <Flex gap={3} align={'center'}>
-                                                        <Checkbox className={styles.tableCheckBox} />
-                                                        <div className={styles.tableUserImage}>
-                                                            <Image src="/image/user.png" width="40" height="40" alt=""/>
-                                                        </div>
-                                                        <Text fontSize='sm' fontWeight={500} color={'#101828'}>John Doe</Text>
-                                                    </Flex>
-                                                </Td>
-                                                <Td><div className={styles.statusButton}> Active </div></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>Teammate</Text></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>john@polymail.com</Text></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>12/12/2012</Text></Td>
-                                                <Td padding={4}>
-                                                    <Menu>
-                                                        <MenuButton className={styles.OptionButton} as={IconButton} aria-label='Options' icon={<MenuIcon />} variant='outline' padding={0} height={'32px'} minWidth={'32px'} border={'0'}/>
-                                                        <MenuList>
-                                                            <MenuItem>Edit</MenuItem>
-                                                            <MenuItem>Delete</MenuItem>
-                                                        </MenuList>
-                                                    </Menu>
-                                                </Td>
-                                            </Tr>
-                                            <Tr>
-                                                <Td>
-                                                    <Flex gap={3} align={'center'}>
-                                                        <Checkbox className={styles.tableCheckBox} />
-                                                        <div className={styles.tableUserImage}>
-                                                            <Image src="/image/user.png" width="40" height="40" alt=""/>
-                                                        </div>
-                                                        <Text fontSize='sm' fontWeight={500} color={'#101828'}>John Doe</Text>
-                                                    </Flex>
-                                                </Td>
-                                                <Td><div className={styles.statusButton}> Pending </div></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>Teammate</Text></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>john@polymail.com</Text></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>12/12/2012</Text></Td>
-                                                <Td padding={4}>
-                                                    <Menu>
-                                                        <MenuButton className={styles.OptionButton} as={IconButton} aria-label='Options' icon={<MenuIcon />} variant='outline' padding={0} height={'32px'} minWidth={'32px'} border={'0'}/>
-                                                        <MenuList>
-                                                            <MenuItem>Edit</MenuItem>
-                                                            <MenuItem>Delete</MenuItem>
-                                                        </MenuList>
-                                                    </Menu>
-                                                </Td>
-                                            </Tr>
-                                            <Tr>
-                                                <Td>
-                                                    <Flex gap={3} align={'center'}>
-                                                        <Checkbox className={styles.tableCheckBox} />
-                                                        <div className={styles.tableUserImage}>
-                                                            <Image src="/image/user.png" width="40" height="40" alt=""/>
-                                                        </div>
-                                                        <Text fontSize='sm' fontWeight={500} color={'#101828'}>John Doe</Text>
-                                                    </Flex>
-                                                </Td>
-                                                <Td><div className={styles.statusButton}> Pending </div></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>Teammate</Text></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>john@polymail.com</Text></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>12/12/2012</Text></Td>
-                                                <Td padding={4}>
-                                                    <Menu>
-                                                        <MenuButton className={styles.OptionButton} as={IconButton} aria-label='Options' icon={<MenuIcon />} variant='outline' padding={0} height={'32px'} minWidth={'32px'} border={'0'}/>
-                                                        <MenuList>
-                                                            <MenuItem>Edit</MenuItem>
-                                                            <MenuItem>Delete</MenuItem>
-                                                        </MenuList>
-                                                    </Menu>
-                                                </Td>
-                                            </Tr>
-                                            <Tr>
-                                                <Td>
-                                                    <Flex gap={3} align={'center'}>
-                                                        <Checkbox className={styles.tableCheckBox} />
-                                                        <div className={styles.tableUserImage}>
-                                                            <Image src="/image/user.png" width="40" height="40" alt=""/>
-                                                        </div>
-                                                        <Text fontSize='sm' fontWeight={500} color={'#101828'}>John Doe</Text>
-                                                    </Flex>
-                                                </Td>
-                                                <Td><div className={styles.statusButton}> Pending </div></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>Teammate</Text></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>john@polymail.com</Text></Td>
-                                                <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>12/12/2012</Text></Td>
-                                                <Td padding={4}>
-                                                    <Menu>
-                                                        <MenuButton className={styles.OptionButton} as={IconButton} aria-label='Options' icon={<MenuIcon />} variant='outline' padding={0} height={'32px'} minWidth={'32px'} border={'0'}/>
-                                                        <MenuList>
-                                                            <MenuItem>Edit</MenuItem>
-                                                            <MenuItem>Delete</MenuItem>
-                                                        </MenuList>
-                                                    </Menu>
-                                                </Td>
-                                            </Tr>
+                                            {members && members.length > 0 && members.map((member, index) => (
+                                                <Tr key={index + 1}>
+                                                    <Td>
+                                                        <Flex gap={3} align={'center'}>
+                                                            <Checkbox className={styles.tableCheckBox} />
+                                                            <div className={styles.tableUserImage}>
+                                                                <Image src="/image/user.png" width="40" height="40" alt=""/>
+                                                            </div>
+                                                            <Text fontSize='sm' fontWeight={500} color={'#101828'}>{member.name}</Text>
+                                                        </Flex>
+                                                    </Td>
+                                                    <Td><div className={styles.statusButton}> {member.status} </div></Td>
+                                                    <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>Admin</Text></Td>
+                                                    <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>{member.email}</Text></Td>
+                                                    <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>{member.created ? dayjs(member.created).format('MM/DD/YYYY') : ''}</Text></Td>
+                                                    <Td padding={4}>
+                                                        <Menu>
+                                                            <MenuButton className={styles.OptionButton} as={IconButton} aria-label='Options' icon={<MenuIcon />} variant='outline' padding={0} height={'32px'} minWidth={'32px'} border={'0'}/>
+                                                            <MenuList>
+                                                                <MenuItem>Edit</MenuItem>
+                                                                <MenuItem>Delete</MenuItem>
+                                                            </MenuList>
+                                                        </Menu>
+                                                    </Td>
+                                                </Tr>
+                                            ))}
 
                                         </Tbody>
                                     </Table>
                                 </TableContainer>
                             </div>
+
                             <Modal isOpen={isOpen} onClose={() => onClose} closeOnOverlayClick={false} isCentered>
                                 <ModalOverlay />
                                 <ModalContent maxWidth={'490px'}>

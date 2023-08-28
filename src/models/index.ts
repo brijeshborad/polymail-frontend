@@ -6,3 +6,4 @@ export * from "./organization";
 export * from "./account";
 export * from "./messagesPart";
 export * from "./messageAttachments";
+export * from "./teamMember";
