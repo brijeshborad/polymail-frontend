@@ -151,7 +151,7 @@ export function Threads() {
                                  className={styles.mailTabList}
                                  overflowX={"auto"}>
                             <Tab className={styles.emailTabs}>
-                                <Tooltip label='Project' placement='bottom' bg='gray.300' color='black'>
+                                <Tooltip label='Inbox' placement='bottom' bg='gray.300' color='black'>
                                     <div className={`${tab === 'INBOX' ? styles.active : ''}`}
                                          onClick={() => changeEmailTabs('INBOX')}>
                                         <InboxIcon/>
