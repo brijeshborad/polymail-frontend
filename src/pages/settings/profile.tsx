@@ -77,6 +77,7 @@ function Profile() {
             onClose();
             Toaster({
                 desc: "Password changed successfully",
+                title: "Password changed",
                 type: 'success'
             });
             dispatch(updateAuthState({passwordChangeSuccess: false}));

@@ -273,7 +273,7 @@ ${selectedMessage?.cc ? 'Cc: ' + (selectedMessage?.cc || []).join(',') : ''}</p>
 
     const isValid = (email: string, type: string) => {
         let error = null;
-        if (emailRecipients[type as keyof RecipientsType].items.includes(email)) {
+        if ((emailRecipients[type as keyof RecipientsType].items || []).includes(email)) {
             error = `This email has already been added.`;
         }
 
@@ -284,6 +284,7 @@ ${selectedMessage?.cc ? 'Cc: ' + (selectedMessage?.cc || []).join(',') : ''}</p>
         if (error) {
             let validationError = {
                 desc: error,
+                title: 'Email validation error',
                 type: 'error'
             }
             Toaster(validationError)
@@ -437,7 +438,7 @@ ${selectedMessage?.cc ? 'Cc: ' + (selectedMessage?.cc || []).join(',') : ''}</p>
                         <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>
                             <Heading as={'h1'} size={'sm'} paddingTop={1} marginRight={1}>TO:</Heading>
                             <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
-                                {emailRecipients.recipients.items.map((item: string | undefined, i: number) => (
+                                {(emailRecipients.recipients.items || []).map((item: string | undefined, i: number) => (
                                     <Chip text={item} key={i} click={() => handleItemDelete(item!, 'recipients')}/>
                                 ))}
 
@@ -546,11 +547,11 @@ ${selectedMessage?.cc ? 'Cc: ' + (selectedMessage?.cc || []).join(',') : ''}</p>
                         <Flex align={'center'} className={styles.replyButton}>
                             <Button className={styles.replayTextButton} colorScheme='blue'
                                     onClick={() => sendMessages()}
-                                    isDisabled={!(emailRecipients.recipients.items.length && emailBody)}>
+                                    isDisabled={!(emailRecipients.recipients.items && emailRecipients.recipients.items.length && emailBody)}>
                                 Send
                             </Button>
                             <Menu>
-                                <MenuButton className={styles.replayArrowIcon} as={Button} aria-label='Options' isDisabled={!(emailRecipients.recipients.items.length && emailBody)}
+                                <MenuButton className={styles.replayArrowIcon} as={Button} aria-label='Options' isDisabled={!(emailRecipients.recipients.items && emailRecipients.recipients.items.length && emailBody)}
                                             variant='outline'><ChevronDownIcon/></MenuButton>
 
                                 <MenuList>

@@ -241,7 +241,7 @@
     background-color: rgba(8, 22, 47, 0.05);
     border: 1px solid rgba(8, 22, 47, 0.2);
     margin-left: 21px;
-    margin-right: 25px;
+    margin-right: 160px;
 }
 
 .notificationIcon span {
@@ -439,6 +439,10 @@
     .header {
         padding: 12px 25px;
     }
+
+    .notificationIcon {
+        margin-right: 70px;
+    }
 }
 
 
@@ -472,7 +476,51 @@
     .notificationIcon {
         width: 30px;
         height: 30px;
+        margin-right: 25px;
     }
+}
+
+.mailToaster .toastIcon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mailToaster .toastIcon svg {
+    width: 12px;
+    height: 12px;
+}
+
+.mailToaster .toastIcon.toastCloseIcon {
+    background-color: #FFC9B9;
+    color: #67074A;
+}
+
+.mailToaster .toastIcon.toastSuccessIcon {
+    background-color: #DBF7DD;
+    color: #0C4F44;
+}
+
+.mailToaster .toasterCloseIcon:hover {
+    background-color: transparent;
+}
+
+.mailToaster .toasterUndoButton:hover {
+    background-color: #1F2937;
+}
+
+.mailToaster .toasterCloseIcon svg {
+    width: 20px;
+    height: 20px;
+    color: #6B7280;
+}
+
+div:has(> .mailToaster) {
+    min-width: 360px;
+    margin-right: 20px;
 }
 
 @media (max-width: 576px) {

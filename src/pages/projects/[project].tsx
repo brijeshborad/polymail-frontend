@@ -21,7 +21,7 @@ import {
 import styles from "@/styles/project.module.css";
 import styles1 from "@/styles/Home.module.css";
 import Image from "next/image";
-import {ProjectReplyBox, ProjectThreads} from "@/components/project";
+import { ProjectThreads} from "@/components/project";
 import {ChevronDownIcon} from "@chakra-ui/icons";
 import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
@@ -29,8 +29,6 @@ import {getProjectById, getProjectMembers} from "@/redux/projects/action-reducer
 import {StateType} from "@/types";
 import {useRouter} from "next/router";
 import {ProjectMessage} from "@/components/project/project-message";
-import {Threads} from "@/components/inbox";
-import {Message} from "@/models";
 
 
 function ProjectInbox() {
@@ -50,7 +48,7 @@ function ProjectInbox() {
 
     const [size, setSize] = useState<number>(0);
 
-    const {selectedThread} = useSelector((state: StateType) => state.threads);
+    const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
     function updateSize() {
         setSize(window.innerWidth);
     }
@@ -80,7 +78,7 @@ function ProjectInbox() {
                         </div>
                         <Heading as='h4' fontSize={'24px'} color={'#08162F'}>{project && project.name}</Heading>
                         <Badge color={'#000000'} fontSize={'14px'} fontWeight={'600'} backgroundColor={'#E9E9E9'}
-                               padding={'3px 6px'} borderRadius={'4px'} lineHeight={'1.19'}>4 threads</Badge>
+                               padding={'3px 6px'} borderRadius={'4px'} lineHeight={'1.19'}>{threads && threads.length} threads</Badge>
                     </Flex>
                     <Flex align={'center'} gap={1}>
                         <div className={styles.userImage}>

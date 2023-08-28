@@ -9,7 +9,6 @@ import {
     MenuList
 } from "@chakra-ui/react";
 import styles from "@/styles/project.module.css";
-import styles1 from "@/styles/Inbox.module.css";
 
 import {ChevronDownIcon} from "@chakra-ui/icons";
 import {DisneyIcon} from "@/icons";
@@ -35,7 +34,7 @@ export function ProjectThreads() {
 
     useEffect(() => {
         if (router.query.project) {
-            dispatch(getAllThreads({ project: router.query.project, enriched: true, mailbox: 'INBOX'}));
+            dispatch(getAllThreads({ project: router.query.project as string, enriched: true}));
         }
     }, [dispatch, router.query.project])
 

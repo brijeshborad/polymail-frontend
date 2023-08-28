@@ -16,7 +16,7 @@ import styles from "@/styles/project.module.css";
 import Image from "next/image";
 import {BlueStarIcon, DragIcon} from "@/icons";
 import {useDispatch, useSelector} from "react-redux";
-import {createProjects, getAllProjects, updateProjectState} from "@/redux/projects/action-reducer";
+import {createProjects, getAllProjects} from "@/redux/projects/action-reducer";
 import {StateType} from "@/types";
 import {Project} from "@/models";
 import Router from "next/router";
@@ -40,13 +40,10 @@ function Index() {
     }, [projects])
 
     useEffect(() => {
-        dispatch(getAllProjects({}));
+        dispatch(getAllProjects());
     }, [dispatch])
 
-    const selectedProjects = (item: Project) => {
-        if (item) {
-            dispatch(updateProjectState({selectedProject: item}))
-        }
+    const selectedProjects = () => {
         Router.push('/project/inbox')
     }
 
@@ -56,16 +53,16 @@ function Index() {
 
     const addNewProject = () => {
         if (projectName.length === 0) {
-            Toaster({desc: 'Please enter the project\'s name', type: 'error'})
+            Toaster({desc: 'Please enter the project\'s name',title: 'Add Project Name', type: 'error'})
             return;
         }
         if (!selectedAccount) {
-            Toaster({desc: 'Your account is not created', type: 'error'})
+            Toaster({desc: 'Your account is not created',title: 'Add Account', type: 'error'})
             return;
         }
 
         if (!selectedOrganization) {
-            Toaster({desc: 'Your organization is not created', type: 'error'})
+            Toaster({desc: 'Your organization is not created',title: 'Add Organization', type: 'error'})
             return;
         }
 
@@ -114,7 +111,7 @@ function Index() {
                 <Flex align={'center'} direction={'column'} gap={3}>
                     {itemList && !!itemList.length && (itemList || []).map((item: Project, index: number) => (
                         <Flex width={'100%'} className={styles.projects} cursor={'pointer'} align={'center'} key={index}
-                              onClick={() => selectedProjects(item)}
+                              onClick={() => selectedProjects()}
                               draggable
                               onDragStart={(e) => handleDragStart(e, index)}
                               onDragOver={handleDragOver}

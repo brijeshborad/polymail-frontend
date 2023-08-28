@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {ChangeEvent, useEffect, useState} from "react";
 import withAuth from "@/components/withAuth";
 import {Badge, Button, Flex, Heading, Text} from "@chakra-ui/react";
 import styles from "@/styles/project.module.css";
@@ -8,6 +8,9 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {getAllProjects} from "@/redux/projects/action-reducer";
 import {useRouter} from "next/router";
+// import {isUndefined} from "util";
+import {Project} from "@/models";
+// import {POSITION_GAP} from "@/utils/common.functions";
 
 
 function Index() {
@@ -20,6 +23,49 @@ function Index() {
 
     }, [dispatch])
 
+    const [itemList, setItemList] = useState<Project[]>([]);
+
+    useEffect(() => {
+        if (projects && projects.length) {
+            setItemList(projects)
+        }
+    }, [projects])
+
+    const handleDragStart = (index: number, e: ChangeEvent | any) => {
+    // const handleDragStart = (items: Project[], index: number, excludedId: Project, e: ChangeEvent | any) => {
+        // const filteredItems = isUndefined(excludedId) ? items : items.filter((item) => item.id !== excludedId.id);
+        //
+        // if (isUndefined(index)) {
+        //     const lastItem = filteredItems[filteredItems.length - 1];
+        //
+        //     return (lastItem ? lastItem.position : 0) + POSITION_GAP;
+        // }
+        //
+        // const prevItem = filteredItems[index - 1];
+        // const nextItem = filteredItems[index];
+        //
+        // const prevPosition = prevItem ? prevItem.position : 0;
+        //
+        // if (!nextItem) {
+        //     return prevPosition + POSITION_GAP;
+        // }
+        e.dataTransfer.setData('index', index);
+        // return e.dataTransfer.setData('index', prevPosition + (nextItem.position - prevPosition) / 2);
+    };
+
+    const handleDragOver = (e: ChangeEvent | any) => {
+        e.preventDefault();
+    };
+
+    const handleDrop = (e: ChangeEvent | any, dropIndex: number) => {
+        const draggedIndex = +e.dataTransfer.getData('index');
+        const draggedItem = itemList[draggedIndex];
+
+        const newItems = (itemList || []).filter((_, index) => index !== draggedIndex);
+        newItems.splice(dropIndex, 0, draggedItem);
+
+        setItemList(newItems);
+    };
 
     return (
         <>
@@ -34,9 +80,13 @@ function Index() {
                         Project</Button>
                 </Flex>
                 <Flex align={'center'} direction={'column'} gap={3}>
-                    {projects && projects.length > 0 && projects.map((project, index) => (
+                    {itemList && itemList.length > 0 && itemList.map((project: Project, index: number) => (
                         <Flex key={index+1} width={'100%'} className={styles.projects} cursor={'pointer'} align={'center'}
                               justify={'space-between'} gap={3} padding={5} backgroundColor={'#ffffff'} borderRadius={8}
+                              draggable
+                              onDragStart={(e) => handleDragStart(index, e)}
+                              onDragOver={handleDragOver}
+                              onDrop={(e) => handleDrop(e, index)}
                               border={'1px solid rgba(8, 22, 47, 0.14)'} onClick={() => router.push(`/projects/${project.id}`)}>
 
                             <Flex align={'center'} gap={2}>

@@ -442,6 +442,7 @@ ${selectedMessage?.cc ? 'Cc: ' + (selectedMessage?.cc || []).join(',') : ''}</p>
         if (error) {
             let validationError = {
                 desc: error,
+                title: 'Email validation error',
                 type: 'error'
             }
             Toaster(validationError)

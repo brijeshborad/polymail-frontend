@@ -27,8 +27,6 @@ import {getAllOrganizations, updateOrganizationState} from "@/redux/organization
 import {Account, Organization, User} from "@/models";
 import {getAllAccount, updateAccountState} from "@/redux/accounts/action-reducer";
 import LocalStorageService from "@/utils/localstorage.service";
-import {ComposeIcon} from "@/icons/compose.icon";
-import {updateMessageState} from "@/redux/messages/action-reducer";
 import {getAllThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {useSocket} from "@/hooks/use-socket.hook";
 import {getProfilePicture, updateUsersDetailsSuccess} from "@/redux/users/action-reducer";
@@ -193,9 +191,9 @@ export function Header() {
         return <></>;
     }
 
-    const openComposeBox = () => {
-        dispatch(updateMessageState({isCompose: true}))
-    }
+    // const openComposeBox = () => {
+    //     dispatch(updateMessageState({isCompose: true}))
+    // }
 
     const handleKeyPress = (event: KeyboardEvent | any) => {
         if (event.key.toLowerCase() === 'enter') {
@@ -279,11 +277,11 @@ export function Header() {
             {/*    </Menu>*/}
             {/*</div>*/}
 
-            <Button className={styles.composeButton} color={'#000000'} leftIcon={<ComposeIcon/>} colorScheme='blue'
-                    variant='outline'
-                    onClick={() => openComposeBox()}>
-                Compose
-            </Button>
+            {/*<Button className={styles.composeButton} color={'#000000'} leftIcon={<ComposeIcon/>} colorScheme='blue'*/}
+            {/*        variant='outline'*/}
+            {/*        onClick={() => openComposeBox()}>*/}
+            {/*    Compose*/}
+            {/*</Button>*/}
 
 
             <div className={styles.profile}>

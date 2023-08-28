@@ -39,6 +39,7 @@ axiosInstance.interceptors.response.use((response) => {
     if (error.response && error.response.data) {
         let err = {
             desc: error.response.data.description,
+            title: error.response.data.description,
             type: 'error'
         }
         Toaster(err);
@@ -49,6 +50,7 @@ axiosInstance.interceptors.response.use((response) => {
     } else if (error.code === 'ERR_NETWORK') {
         let err = {
             desc: error.message,
+            title: error.message,
             type: 'error'
         }
         Toaster(err);

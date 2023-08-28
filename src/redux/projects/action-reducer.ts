@@ -15,7 +15,7 @@ const projectsSlice = createSlice({
     name: 'projects',
     initialState,
     reducers: {
-        getAllProjects: (state: InitialProjectState, _action: PayloadAction<any>) => {
+        getAllProjects: (state: InitialProjectState) => {
             return {...state, projects: [], isLoading: true, error: null}
         },
         getAllProjectsSuccess: (state: InitialProjectState, {payload: projects}: PayloadAction<{ }>) => {

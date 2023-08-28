@@ -17,7 +17,7 @@ export function MessagesHeader({onClose, inboxMessages, index, showPreNextMessag
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(getAllProjects({}));
+        dispatch(getAllProjects());
     }, [dispatch])
 
     const updateMailBox = (messageBox: string) => {

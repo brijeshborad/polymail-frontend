@@ -5,4 +5,5 @@ export declare type MessageHeaderTypes = {
     index: number | null,
     showPreNextMessage: (_type: string) => void,
     inboxMessages: Message[],
+    herderType: string
 }

@@ -14,3 +14,6 @@ export const encryptData = (value: string) => {
     const bcrypt = require('bcryptjs');
     return bcrypt.hashSync(value, 10);
 }
+
+export const POSITION_GAP = 65535;
+

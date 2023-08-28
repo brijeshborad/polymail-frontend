@@ -25,11 +25,11 @@ function AddOrganization() {
 
     const createOrganization = () => {
         if (organizationName.length === 0) {
-            Toaster({desc: 'Please enter the organization\'s name', type: 'error'})
+            Toaster({desc: 'Please enter the organization\'s name',title: 'Add Organization', type: 'error'})
             return;
         }
         if (!selectedAccount) {
-            Toaster({desc: 'Your account is not created', type: 'error'})
+            Toaster({desc: 'Your account is not created',title: 'Add Account', type: 'error'})
             return;
         }
         if (selectedAccount) {
