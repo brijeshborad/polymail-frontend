@@ -155,7 +155,7 @@ export function Threads() {
                                     <div className={`${tab === 'INBOX' ? styles.active : ''}`}
                                          onClick={() => changeEmailTabs('INBOX')}>
                                         <InboxIcon/>
-                                        <span>Index {countUnreadMessages > 0 &&
+                                        <span>Inbox {countUnreadMessages > 0 &&
                                         <Badge>{countUnreadMessages}</Badge>}</span>
                                     </div>
                                 </Tooltip>
