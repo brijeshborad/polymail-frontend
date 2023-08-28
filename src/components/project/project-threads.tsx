@@ -40,7 +40,6 @@ export function ProjectThreads() {
 
 
     const handleClick = useCallback((item: Thread) => {
-        console.log('item' , item)
             if ((item.mailboxes || []).includes('UNREAD')) {
                 let currentThreads = [...threads || []] as Thread[];
                 let threadData = {...(item) || {}} as Thread;
