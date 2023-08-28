@@ -8,7 +8,7 @@ import {
     Tabs,
     Tooltip
 } from "@chakra-ui/react";
-import {FolderIcon, TimeSnoozeIcon, EditIcon, SendIcon, InboxIcon} from "@/icons";
+import { TimeSnoozeIcon, EditIcon, SendIcon, InboxIcon} from "@/icons";
 import {StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
@@ -18,7 +18,7 @@ import {Message, Thread} from "@/models";
 import {InboxTab} from "@/components/inbox";
 import {updateDraftState} from "@/redux/draft/action-reducer";
 import {updateLastMessage} from "@/redux/socket/action-reducer";
-import {ChevronDownIcon, TriangleDownIcon} from "@chakra-ui/icons";
+import { TriangleDownIcon} from "@chakra-ui/icons";
 
 let cacheThreads: { [key: string]: Thread[] } = {};
 let currentCacheTab = 'INBOX';
