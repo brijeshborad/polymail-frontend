@@ -7,7 +7,7 @@ const initialState: any = {
     project: null,
     isLoading: false,
     error: null,
-    selectedProject: null
+    selectedProject: null,
     members: []
 } as InitialProjectState
 
