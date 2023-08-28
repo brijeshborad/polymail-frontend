@@ -1,16 +1,22 @@
 import {PayloadAction} from "@reduxjs/toolkit";
 import {all, fork, put, takeLatest} from "@redux-saga/core/effects";
 import {
-    changePassword, changePasswordError, changePasswordSuccess,
+    changePassword,
+    changePasswordError,
+    changePasswordSuccess,
+    forgotPassword,
+    forgotPasswordError,
+    forgotPasswordSuccess,
     googleAuthLink,
     googleAuthLinkError,
     googleAuthLinkSuccess,
     loginError,
     loginSuccess,
-    loginUser, logoutUser,
+    loginUser,
+    logoutUser, magicCode, magicCodeError, magicCodeSuccess,
     registerError,
     registerSuccess,
-    registerUser
+    registerUser, resetPassword, resetPasswordError, resetPasswordSuccess
 } from "@/redux/auth/action-reducer";
 import ApiService from "@/utils/api.service";
 import {AxiosError, AxiosResponse} from "axios";
@@ -98,6 +104,57 @@ function* passwordChange({
     }
 }
 
+function* forgotOldPassword({
+                             payload: {
+                                 email,
+                                 url
+                             }
+                         }: PayloadAction<{ email: string, url: string }>) {
+    try {
+        yield ApiService.callPost(`auth/forgot`, {
+            email, url
+        }, {
+            'Skip-Headers': true
+        });
+        yield put(forgotPasswordSuccess());
+    } catch (error: any) {
+        error = error as AxiosError;
+        yield put(forgotPasswordError(error.response.data));
+    }
+}
+
+function* updateNewPassword({
+                                payload: {
+                                    Password,
+                                    code
+                                }
+                            }: PayloadAction<{ Password: string, code: string }>) {
+    try {
+        yield ApiService.callPost(`auth/reset?code=${code}`, {
+            Password
+        }, {
+            'Skip-Headers': true
+        });
+        yield put(resetPasswordSuccess());
+    } catch (error: any) {
+        error = error as AxiosError;
+        yield put(resetPasswordError(error.response.data));
+    }
+}
+
+function* compareCode({ payload: {code}}: PayloadAction<{ code: string }>) {
+    try {
+        console.log('=========', code)
+        const response: AxiosResponse =  yield ApiService.callPost(`auth/magic`, {code}, {
+            'Skip-Headers': true
+        });
+        yield put(magicCodeSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        yield put(magicCodeError(error.response.data));
+    }
+}
+
 export function* watchLoginUser() {
     yield takeLatest(loginUser.type, login);
 }
@@ -118,6 +175,18 @@ export function* watchChangePassword() {
     yield takeLatest(changePassword.type, passwordChange);
 }
 
+export function* watchResetPassword() {
+    yield takeLatest(forgotPassword.type, forgotOldPassword);
+}
+
+export function* watchUpdateNewPassword() {
+    yield takeLatest(resetPassword.type, updateNewPassword);
+}
+
+export function* watchCompareCode() {
+    yield takeLatest(magicCode.type, compareCode);
+}
+
 export default function* rootSaga() {
     yield all([
         fork(watchLoginUser),
@@ -125,6 +194,9 @@ export default function* rootSaga() {
         fork(watchGoogleAuthLink),
         fork(watchLogoutUser),
         fork(watchChangePassword),
+        fork(watchResetPassword),
+        fork(watchUpdateNewPassword),
+        fork(watchCompareCode),
     ]);
 }
 

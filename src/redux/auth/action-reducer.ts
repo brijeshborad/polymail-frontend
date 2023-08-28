@@ -7,7 +7,8 @@ const initialState = {
     isLoading: false,
     error: null,
     googleAuthRedirectionLink: null,
-    passwordChangeSuccess: false
+    passwordChangeSuccess: false,
+    magicCodeSuccess: false,
 } as InitialAuthState
 
 const authSlice = createSlice({
@@ -61,6 +62,36 @@ const authSlice = createSlice({
         changePasswordError: (state: InitialAuthState, {payload: error}: PayloadAction<any>) => {
             return {...state, error, isLoading: false, passwordChangeSuccess: false}
         },
+
+        forgotPassword: (state: InitialAuthState, _action: PayloadAction<{ email: string, url: string }>) => {
+            return {...state, error: null, isLoading: true, passwordResetSuccess: false}
+        },
+        forgotPasswordSuccess: (state: InitialAuthState) => {
+            return {...state, error: null, isLoading: false, passwordResetSuccess: true}
+        },
+        forgotPasswordError: (state: InitialAuthState, {payload: error}: PayloadAction<any>) => {
+            return {...state, error, isLoading: false, passwordResetSuccess: false}
+        },
+
+        resetPassword: (state: InitialAuthState, _action: PayloadAction<{ Password: string, code: string }>) => {
+            return {...state, error: null, isLoading: true, passwordResetSuccess: false}
+        },
+        resetPasswordSuccess: (state: InitialAuthState) => {
+            return {...state, error: null, isLoading: false, passwordResetSuccess: true}
+        },
+        resetPasswordError: (state: InitialAuthState, {payload: error}: PayloadAction<any>) => {
+            return {...state, error, isLoading: false, passwordResetSuccess: false}
+        },
+
+        magicCode: (state: InitialAuthState, _action: PayloadAction<{ code: string }>) => {
+            return {...state, error: null, isLoading: true, magicCodeSuccess: false}
+        },
+        magicCodeSuccess: (state: InitialAuthState) => {
+            return {...state, error: null, isLoading: false, magicCodeSuccess: true}
+        },
+        magicCodeError: (state: InitialAuthState, {payload: error}: PayloadAction<any>) => {
+            return {...state, error, isLoading: false, magicCodeSuccess: false}
+        },
     }
 })
 
@@ -75,6 +106,15 @@ export const {
     googleAuthLink,
     googleAuthLinkSuccess,
     googleAuthLinkError,
-    updateAuthState, changePassword, changePasswordError, changePasswordSuccess
+    updateAuthState, changePassword, changePasswordError, changePasswordSuccess,
+    forgotPassword,
+    forgotPasswordSuccess,
+    forgotPasswordError,
+    resetPassword,
+    resetPasswordSuccess,
+    resetPasswordError,
+    magicCode,
+    magicCodeSuccess,
+    magicCodeError
 } = authSlice.actions
 export default authSlice.reducer
