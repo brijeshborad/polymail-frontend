@@ -1,7 +1,28 @@
 import styles from "@/styles/Inbox.module.css";
-import {Button, Flex, Menu, MenuButton, MenuItem, MenuList, Text, Tooltip} from "@chakra-ui/react";
-import {ChevronDownIcon, ChevronUpIcon, CloseIcon, WarningIcon} from "@chakra-ui/icons";
-import {ArchiveIcon, BlueStarIcon, FolderIcon, StarIcon, TimeSnoozeIcon, TrashIcon, EnvelopeIcon} from "@/icons";
+import {
+    Button,
+    Flex,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList,
+    Text,
+    Tooltip,
+    Input,
+    InputGroup,
+    InputLeftElement
+} from "@chakra-ui/react";
+import {ChevronDownIcon, ChevronUpIcon, CloseIcon, WarningIcon, SearchIcon, SmallAddIcon} from "@chakra-ui/icons";
+import {
+    ArchiveIcon,
+    BlueStarIcon,
+    FolderIcon,
+    StarIcon,
+    TimeSnoozeIcon,
+    TrashIcon,
+    EnvelopeIcon,
+    DisneyIcon
+} from "@/icons";
 import React, {useEffect} from "react";
 import {Project, Thread} from "@/models";
 import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
@@ -99,13 +120,31 @@ export function MessagesHeader({onClose, inboxMessages, index, showPreNextMessag
                             {/*            rightIcon={<ChevronDownIcon/>}> All Inboxes </MenuButton>*/}
 
                             <MenuButton className={styles.addToProject} as={Button} leftIcon={<FolderIcon/>}>Add to Project <span className={styles.RightContent}>⌘P</span></MenuButton>
-                            <MenuList>
+                            <MenuList className={`${styles.addToProjectList} drop-down-list`}>
+
+                                <div className={'dropdown-searchbar'}>
+                                    <InputGroup>
+                                        <InputLeftElement h={'27px'} pointerEvents='none'>
+                                            <SearchIcon/>
+                                        </InputLeftElement>
+                                        <Input placeholder='Phone number' />
+                                    </InputGroup>
+                                </div>
+
                                 {projects && !!projects.length && (projects || []).map((item: Project, index: number) => (
-                                    <MenuItem key={index} onClick={() => addThreadToProject(item)}>{item.name}</MenuItem>
+                                    <MenuItem gap={2} key={index} onClick={() => addThreadToProject(item)}>
+                                        <DisneyIcon/> {item.name}
+                                    </MenuItem>
 
-                                ))
-
-                                }
+                                ))}
+                                <div className={styles.addNewProject}>
+                                    <Button backgroundColor={'transparent'} w={'100%'} borderRadius={0} justifyContent={'flex-start'}>
+                                        <div className={styles.plusIcon}>
+                                            <SmallAddIcon/>
+                                        </div>
+                                        Create New Project
+                                    </Button>
+                                </div>
                             </MenuList>
                         </Menu>}
 

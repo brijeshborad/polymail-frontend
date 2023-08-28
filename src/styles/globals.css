@@ -170,3 +170,54 @@ a {
 .rdw-editor-wrapper .rdw-editor-toolbar .rdw-emoji-wrapper {
   border-left: 1px solid rgba(8, 22, 47, 0.1);
 }
+
+.drop-down-list {
+  padding: 0 !important;
+  box-shadow: 0 0 12px 0 rgba(0,0,0,0.08) !important;
+  border-radius: 16px !important;
+  border: 1px solid #E5E7EB;
+  overflow: auto;
+}
+
+.drop-down-list button {
+  color: #374151;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 12px;
+}
+
+.drop-down-list button svg {
+  margin: 0;
+}
+
+.drop-down-list button:hover {
+  background-color: rgba(8, 22, 47, 0.05);
+}
+
+.drop-down-list .dropdown-searchbar {
+  max-width: calc(100% - 24px);
+  margin: 0 auto;
+  padding: 12px 0;
+  position: relative;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.drop-down-list .dropdown-searchbar svg {
+  width: 15px;
+  height: 15px;
+  color: #6B7280;
+}
+
+.drop-down-list .dropdown-searchbar input {
+  border-radius: 50px;
+  border: 0;
+  background-color: #F3F4F6;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 3px 15px 3px 30px;
+  height: auto;
+}
+
+.drop-down-list .dropdown-searchbar input::placeholder {
+  color: #9CA3AF;
+}

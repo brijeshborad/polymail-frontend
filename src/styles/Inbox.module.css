@@ -50,7 +50,7 @@
     display: none;
 }
 
-.emailTabs > .active {
+.emailTabs[aria-selected="true"] > div {
     background-color: #ffffff;
     color: #000000;
 }
@@ -296,7 +296,8 @@
     height: fit-content;
 }
 
-.mailBox .addToProject:hover {
+.mailBox .addToProject:hover,
+.mailBox .addToProject[data-active] {
     background: #000000;
 }
 
@@ -311,6 +312,28 @@
 .mailBox .addToProject svg {
     stroke: #FFFFFF;
     margin: 0;
+}
+
+.mailBox .addToProjectList .addNewProject {
+    width: calc(100% - 24px);
+    margin: 0 auto;
+}
+
+.mailBox .addToProjectList .addNewProject button {
+    border-top: 1px solid #F3F4F6;
+    padding: 0;
+    gap: 8px;
+}
+.mailBox .addToProjectList .addNewProject button:hover {
+    background-color: transparent;
+}
+
+.mailBox .addToProjectList .addNewProject button .plusIcon {
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    background-color: #1F2937;
+    color: #FFFFFF;
 }
 
 .replyBox h1 {
