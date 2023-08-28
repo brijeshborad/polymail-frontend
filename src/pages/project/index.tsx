@@ -16,7 +16,7 @@ import styles from "@/styles/project.module.css";
 import Image from "next/image";
 import {BlueStarIcon, DragIcon} from "@/icons";
 import {useDispatch, useSelector} from "react-redux";
-import {createProjects, getAllProjects, updateProjectState,} from "@/redux/projects/action-reducer";
+import {createProjects, getAllProjects, updateProjectState} from "@/redux/projects/action-reducer";
 import {StateType} from "@/types";
 import {Project} from "@/models";
 import Router from "next/router";

@@ -28,7 +28,7 @@ function Index() {
                 <Flex align={'center'} justify={'space-between'}>
                     <Heading as='h4' fontSize={'24px'} fontWeight={600} color={'#08162F'}>Projects <Badge
                         backgroundColor={'rgba(8, 22, 47, 0.04)'} fontSize={'14px'} color={'#08162F'}
-                        padding={'3px 6px'}>4</Badge></Heading>
+                        padding={'3px 6px'}>{projects && projects.length}</Badge></Heading>
                     <Button className={styles.createProjectButton} color={'#ffffff'} backgroundColor={'#000000'}
                             h={'auto'} borderRadius={'8px'} fontSize={'14px'} fontWeight={'500'} padding={'10px 20px'}>Create
                         Project</Button>

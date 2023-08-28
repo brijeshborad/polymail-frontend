@@ -9,7 +9,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType, MessageHeaderTypes} from "@/types";
 import {getAllProjects} from "@/redux/projects/action-reducer";
 
-export function MessagesHeader({onClose, inboxMessages, index, showPreNextMessage}: MessageHeaderTypes) {
+export function MessagesHeader({onClose, inboxMessages, index, showPreNextMessage, herderType}: MessageHeaderTypes) {
     const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
     const {isLoading} = useSelector((state: StateType) => state.messages);
     let {projects} = useSelector((state: StateType) => state.projects);
@@ -92,12 +92,12 @@ export function MessagesHeader({onClose, inboxMessages, index, showPreNextMessag
                         {/*<Button className={styles.addToProject} leftIcon={<FolderIcon/>}>Add to*/}
                         {/*    Project <span*/}
                         {/*        className={styles.RightContent}>⌘P</span></Button>*/}
-
-                        <Menu>
+                        {herderType === 'inbox' && <Menu>
                             {/*<MenuButton className={styles.allInboxes} backgroundColor={'#ffffff'}*/}
                             {/*            borderRadius={'50px'} border={'1px solid rgba(8, 22, 47, 0.14)'}*/}
                             {/*            fontSize={'14px'} lineHeight={'1'} height={'auto'} as={Button}*/}
                             {/*            rightIcon={<ChevronDownIcon/>}> All Inboxes </MenuButton>*/}
+
                             <MenuButton className={styles.addToProject} as={Button} leftIcon={<FolderIcon/>}>Add to Project <span className={styles.RightContent}>⌘P</span></MenuButton>
                             <MenuList>
                                 {projects && !!projects.length && (projects || []).map((item: Project, index: number) => (
@@ -107,7 +107,8 @@ export function MessagesHeader({onClose, inboxMessages, index, showPreNextMessag
 
                                 }
                             </MenuList>
-                        </Menu>
+                        </Menu>}
+
                         <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
                             <div onClick={() => updateMailBox('ARCHIVE')}>
                                 <ArchiveIcon/>

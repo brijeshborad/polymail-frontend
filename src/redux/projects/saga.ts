@@ -9,7 +9,7 @@ import {
     getAllProjectsSuccess,
     getProjectMembers,
     getProjectMembersSuccess,
-    getProjectMembersError,
+    getProjectMembersError, getProjectById, getProjectByIdSuccess, getProjectByIdError,
 } from "@/redux/projects/action-reducer";
 import {PayloadAction} from "@reduxjs/toolkit";
 
@@ -21,6 +21,16 @@ function* getProjects() {
     } catch (error: any) {
         error = error as AxiosError;
         yield put(getAllProjectsError(error.response.data));
+    }
+}
+
+function* getProject({payload: {id}}: PayloadAction<{id: string}>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callGet(`projects/${id}`, null);
+        yield put(getProjectByIdSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        yield put(getProjectByIdError(error.response.data));
     }
 }
 
@@ -58,11 +68,16 @@ export function* watchGetProjectMembers() {
     yield takeLatest(getProjectMembers.type, getProjectMembersService);
 }
 
+export function* watchGetProjectById() {
+    yield takeLatest(getProjectById.type, getProject);
+}
+
 export default function* rootSaga() {
     yield all([
         fork(watchGetProjects),
         fork(watchAddProjects),
         fork(watchGetProjectMembers),
+        fork(watchGetProjectById),
     ]);
 }
 

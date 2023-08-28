@@ -22,8 +22,9 @@ import {ReplyBox} from "@/components/inbox/reply-box";
 import {Message as MessageModel, MessageDraft, MessagePart, MessageAttachments} from "@/models";
 import {MessagesHeader} from "@/components/inbox/messages/messages-header";
 import {updateDraftState} from "@/redux/draft/action-reducer";
+import {ProjectReplyBox} from "@/components/project/peoject-reply-box";
 
-export function Message() {
+export function ProjectMessage() {
     const [messageContent, setMessageContent] = useState<MessageModel>();
     const [index, setIndex] = useState<number | null>(null);
     const [emailPart, setEmailPart] = useState<string>("");
@@ -190,7 +191,7 @@ export function Message() {
                 {!hideAndShowReplyBox &&
                 <>
                     <MessagesHeader inboxMessages={inboxMessages} index={index} onClose={onClose}
-                                    showPreNextMessage={showPreNextMessage} herderType={'inbox'}/>
+                                    showPreNextMessage={showPreNextMessage} herderType={'projects'}/>
                     {messageContent &&
                     <Flex alignItems={'center'} padding={'10px 20px'}>
                         <Image src={'/image/user.png'} alt={''} width={50} height={50}/>
@@ -275,7 +276,7 @@ export function Message() {
                         </Flex>
                     </div>
 
-                    <ReplyBox onClose={onClose}/>
+                    <ProjectReplyBox onClose={onClose}/>
                 </Flex>
             </div>}
         </Box>

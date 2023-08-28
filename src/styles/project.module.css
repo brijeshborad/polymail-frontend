@@ -306,3 +306,12 @@
 .projectListPage .createProjectButton:hover {
     background-color: #000000;
 }
+
+.selectedThread .mailDetails {
+    border: 1px solid #373737;
+    background-color: rgba(8, 22, 47, 0.03);
+}
+
+.mailDetails.readThread {
+    background-color: #eeeeee;
+}

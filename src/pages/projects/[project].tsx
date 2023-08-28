@@ -2,7 +2,7 @@ import {
     Badge,
     Button,
     Flex,
-    Grid,
+    Grid, GridItem,
     Heading,
     Input,
     Menu,
@@ -19,29 +19,53 @@ import {
     useDisclosure
 } from "@chakra-ui/react";
 import styles from "@/styles/project.module.css";
+import styles1 from "@/styles/Home.module.css";
 import Image from "next/image";
 import {ProjectReplyBox, ProjectThreads} from "@/components/project";
 import {ChevronDownIcon} from "@chakra-ui/icons";
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {getProjectMembers} from "@/redux/projects/action-reducer";
+import {getProjectById, getProjectMembers} from "@/redux/projects/action-reducer";
 import {StateType} from "@/types";
 import {useRouter} from "next/router";
+import {ProjectMessage} from "@/components/project/project-message";
+import {Threads} from "@/components/inbox";
+import {Message} from "@/models";
 
 
 function ProjectInbox() {
     const {isOpen, onOpen, onClose} = useDisclosure();
-    const {members} = useSelector((state: StateType) => state.projects);
+    const {members, project} = useSelector((state: StateType) => state.projects);
     const router = useRouter();
 
     const dispatch = useDispatch();
 
     useEffect(() => {
         if (router.query.project) {
-            dispatch(getProjectMembers({projectId: router.query.project as string}));
+            let projectId = router.query.project as string
+            dispatch(getProjectById({ id: projectId}));
+            dispatch(getProjectMembers({projectId: projectId}));
         }
     }, [dispatch, router.query.project])
 
+    const [size, setSize] = useState<number>(0);
+
+    const {selectedThread} = useSelector((state: StateType) => state.threads);
+    function updateSize() {
+        setSize(window.innerWidth);
+    }
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            window.addEventListener('resize', updateSize);
+            updateSize();
+        }
+        return () => {
+            if (typeof window !== "undefined") {
+                window.removeEventListener('resize', updateSize)
+            }
+        };
+    }, []);
 
     return (
         <>
@@ -54,7 +78,7 @@ function ProjectInbox() {
                         <div className={styles.imgWrapper}>
                             <Image src="/image/user.png" width="36" height="36" alt=""/>
                         </div>
-                        <Heading as='h4' fontSize={'24px'} color={'#08162F'}>Disney Launch</Heading>
+                        <Heading as='h4' fontSize={'24px'} color={'#08162F'}>{project && project.name}</Heading>
                         <Badge color={'#000000'} fontSize={'14px'} fontWeight={'600'} backgroundColor={'#E9E9E9'}
                                padding={'3px 6px'} borderRadius={'4px'} lineHeight={'1.19'}>4 threads</Badge>
                     </Flex>
@@ -74,10 +98,27 @@ function ProjectInbox() {
                     </Flex>
                 </Flex>
 
-                <Grid templateColumns='30% auto' mt={7} gap={10} height={'100%'}>
-                    <ProjectThreads/>
-                    <ProjectReplyBox/>
-                </Grid>
+                {/*<Grid templateColumns='30% auto' mt={7} gap={10} height={'100%'}>*/}
+                {/*    <ProjectThreads/>*/}
+                {/*    <ProjectMessage/>*/}
+
+                    <div className={styles1.mailBg}>
+
+                        <Grid className={styles1.mailGrid} templateColumns='30% auto' gap={6} height={'100%'}>
+                            <GridItem w='100%'>
+                                {((size < 991 && !selectedThread) || size > 991) &&
+                                <ProjectThreads/>
+                                }
+                            </GridItem>
+                            <GridItem w='100%'>
+                                {((size < 991 && selectedThread) || size > 991) && <ProjectMessage/>}
+                            </GridItem>
+                        </Grid>
+                    </div>
+
+                    {/*<Threads />*/}
+                    {/*<Message />*/}
+                {/*</Grid>*/}
 
 
             </Flex>

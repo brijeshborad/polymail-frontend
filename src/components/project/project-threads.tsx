@@ -14,32 +14,58 @@ import styles1 from "@/styles/Inbox.module.css";
 import {ChevronDownIcon} from "@chakra-ui/icons";
 import {DisneyIcon} from "@/icons";
 import styles2 from "@/styles/common.module.css";
-import React, { useEffect} from "react";
+import React, {useCallback, useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {getAllThreads} from "@/redux/threads/action-reducer";
+import {getAllThreads, updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {Thread} from "@/models";
-import {Time} from "@/components/common";
-
+import {SpinnerUI, Time} from "@/components/common";
+import {useRouter} from "next/router";
+import {updateMessageState} from "@/redux/messages/action-reducer";
+import {updateDraftState} from "@/redux/draft/action-reducer";
 
 export function ProjectThreads() {
-    let {selectedProject} = useSelector((state: StateType) => state.projects);
     const {
         threads,
-        selectedThread
+        selectedThread,
+        isLoading
     } = useSelector((state: StateType) => state.threads);
     const dispatch = useDispatch();
-
+    const router = useRouter();
 
     useEffect(() => {
-        if (selectedProject && selectedProject.id) {
-            dispatch(getAllThreads({ project: selectedProject.id}));
+        if (router.query.project) {
+            dispatch(getAllThreads({ project: router.query.project, enriched: true, mailbox: 'INBOX'}));
         }
-    }, [dispatch])
+    }, [dispatch, router.query.project])
 
-    const handleClick = (item: Thread) => {
+
+    const handleClick = useCallback((item: Thread) => {
         console.log('item' , item)
-    }
+            if ((item.mailboxes || []).includes('UNREAD')) {
+                let currentThreads = [...threads || []] as Thread[];
+                let threadData = {...(item) || {}} as Thread;
+                let index1 = currentThreads.findIndex((item: Thread) => item.id === threadData?.id);
+                let finalArray = (item.mailboxes || []).filter(function (item: string) {
+                    return item !== 'UNREAD'
+                })
+                let body = {
+                    mailboxes: [
+                        ...finalArray
+                    ]
+                }
+                currentThreads[index1] = {
+                    ...currentThreads[index1],
+                    mailboxes: body?.mailboxes || []
+                };
+                dispatch(updateThreadState({threads: currentThreads, success: true}));
+                dispatch(updateThreads({id: item.id, body}));
+            }
+            dispatch(updateThreadState({selectedThread: item}));
+            dispatch(updateMessageState({selectedMessage: null}));
+            dispatch(updateDraftState({draft: null}));
+    }, [dispatch, threads])
+
     return (
         <>
             <GridItem w='100%' h='100%'>
@@ -60,12 +86,13 @@ export function ProjectThreads() {
                             </MenuList>
                         </Menu>
                     </Flex>
+                    {isLoading && <SpinnerUI/>}
 
                     {threads && threads.length > 0 && threads.map((item: Thread, index: number) => (
                         <div onClick={() => handleClick(item) } key={index}
-                             className={`${selectedThread && selectedThread.id === item.id ? styles1.selectedThread : ''}`}>
+                             className={`${selectedThread && selectedThread.id === item.id ? styles.selectedThread : ''}`}>
                             <div
-                                className={`${styles.mailDetails} ${(item.mailboxes || []).includes('UNREAD') ? '' : styles1.readThread}`}>
+                                className={`${styles.mailDetails} ${(item.mailboxes || []).includes('UNREAD') ? '' : styles.readThread}`}>
                                 <Flex align={"center"} justify={'space-between'}>
                                     <Flex align={"center"} gap={1}>
                                         <Flex align={"center"} className={styles.senderDetails} gap={1}>
@@ -77,7 +104,7 @@ export function ProjectThreads() {
                                     </div>
                                 </Flex>
                                 <div className={styles.mailMessage}>
-                                    {item.subject}
+                                    {item.subject || "(no subject)"}
                                 </div>
                             </div>
                         </div>

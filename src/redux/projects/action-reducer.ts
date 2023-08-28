@@ -25,6 +25,17 @@ const projectsSlice = createSlice({
         getAllProjectsError: (state: InitialProjectState, {payload: error}: PayloadAction<{ error: any }>) => {
             return {...state, projects: [], isLoading: false, error}
         },
+
+        getProjectById: (state: InitialProjectState, _action: PayloadAction<{id?: string}>) => {
+            return {...state, projects: {}, isLoading: true, error: null}
+        },
+        getProjectByIdSuccess: (state: InitialProjectState, {payload: project}: PayloadAction<{ }>) => {
+            return {...state, project, isLoading: false, error: null}
+        },
+        getProjectByIdError: (state: InitialProjectState, {payload: error}: PayloadAction<{ error: any }>) => {
+            return {...state, projects: {}, isLoading: false, error}
+        },
+
         createProjects: (state: InitialProjectState, _action: PayloadAction<{ name?: string, accountId?: string, organizationId?: string }>) => {
             return {...state, project: null, isLoading: true, error: null}
         },
@@ -59,9 +70,12 @@ export const {
     createProjects,
     createProjectsSuccess,
     createProjectsError,
-    updateProjectStat,
+    updateProjectState,
     getProjectMembers,
     getProjectMembersSuccess,
     getProjectMembersError,
+    getProjectById,
+    getProjectByIdSuccess,
+    getProjectByIdError
 } = projectsSlice.actions
 export default projectsSlice.reducer
