@@ -213,8 +213,8 @@ export function ProjectMessage() {
                     <div className={`${styles.mailBodyContent} ${styles.projectMailBodyContent}`}>
                         {(!isLoading && emailPart) && <iframe src={emailPart} className={styles.mailBody}/>}
                     </div>
-                    {messageAttachments && !!messageAttachments.length && messageAttachments?.map((item: MessageAttachments, i) => (
-                        <div className={styles.mailBodyAttachments}>
+                    {messageAttachments && !!messageAttachments.length && messageAttachments?.map((item: MessageAttachments, i: number) => (
+                        <div className={styles.mailBodyAttachments} key={i}>
                             <Flex align={'center'} key={i} className={styles.attachmentsFile}>
                                 {item.filename}
                                 <div className={`${styles.closeIcon} ${styles.downloadIcon}`}

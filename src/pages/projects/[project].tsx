@@ -19,7 +19,6 @@ import {
     useDisclosure
 } from "@chakra-ui/react";
 import styles from "@/styles/project.module.css";
-import styles1 from "@/styles/Home.module.css";
 import Image from "next/image";
 import { ProjectThreads} from "@/components/project";
 import {ChevronDownIcon} from "@chakra-ui/icons";
