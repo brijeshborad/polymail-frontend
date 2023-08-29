@@ -1,54 +1,79 @@
-import {Button, Flex, Heading, Input, Text, useQuery} from "@chakra-ui/react";
+import {Button, Flex, Heading, Input, InputGroup, InputRightElement, Text, useQuery} from "@chakra-ui/react";
 import styles from "@/styles/Login.module.css";
 import Image from "next/image";
-import {ArrowBackIcon} from "@chakra-ui/icons";
+import {ArrowBackIcon, ViewIcon, ViewOffIcon} from "@chakra-ui/icons";
 import Link from "next/link";
-import {magicCode, resetPassword} from "@/redux/auth/action-reducer";
+import {changePassword, magicCode, resetPassword, updateAuthState} from "@/redux/auth/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
-import {ChangeEvent, useEffect, useState} from "react";
+import React, {ChangeEvent, useEffect, useState} from "react";
 import {encryptData} from "@/utils/common.functions";
-import {useRouter} from "next/router";
+import Router, {useRouter} from "next/router";
 import {StateType} from "@/types";
+import {Toaster} from "@/components/common";
+import LocalStorageService from "@/utils/localstorage.service";
 
 
 export default function Reset() {
     const dispatch = useDispatch();
     const router = useRouter();
-    const {magicCodeSuccess} = useSelector((state: StateType) => state.auth);
+    const {magicCodeSuccess, magicCodeResponse, passwordChangeSuccess} = useSelector((state: StateType) => state.auth);
 
     const [newPassword, setNewPassword] = useState<string>('');
+
+    const [passwordShow, setPasswordShow] = useState<boolean>(false);
 
     const handleChange = (event: ChangeEvent | any) => {
         setNewPassword(event.target.value.trim());
     }
+    function handlePasswordShow() {
+        setPasswordShow(prevState => (!prevState))
+    }
 
     useEffect(() => {
-        if (router.query) {
-            console.log('here', router.query)
-            if (router.query.code) {
-                let body = {
-                    code: router.query.code
-                }
-                dispatch(magicCode(body))
+        if (magicCodeResponse) {
+            if (magicCodeResponse.error) {
+                Toaster({
+                    desc: magicCodeResponse.error,
+                    title: magicCodeResponse.error,
+                    type: 'error'
+                });
+            }
+
+        }
+    }, [magicCodeResponse])
+
+    useEffect(() => {
+        if (passwordChangeSuccess) {
+            Toaster({
+                desc: "Password changed successfully",
+                title: "Password changed",
+                type: 'success'
+            });
+            dispatch(updateAuthState({passwordChangeSuccess: false}));
+            LocalStorageService.clearStorage();
+            Router.push(`/auth/login`);
+            if (magicCodeResponse && magicCodeResponse.token) {
+                dispatch(updateAuthState({magicCodeSuccess: false}));
             }
         }
-    }, [dispatch])
+    })
 
     useEffect(() => {
-        console.log('magicCodeSuccess' , magicCodeSuccess)
-    }, [magicCodeSuccess])
-
-    const updatePassword = () => {
         if (router.query) {
             if (router.query.code) {
-                let newPHash = encryptData(newPassword);
                 let body = {
-                    Password: newPHash,
                     code: router.query.code
                 }
-                console.log('body', body)
-                dispatch(resetPassword(body));
+                dispatch(magicCode(body));
             }
+        }
+    }, [dispatch, router.query])
+
+    const updatePassword = () => {
+        if (magicCodeSuccess) {
+            let newPHash = encryptData(newPassword);
+            dispatch(changePassword({newPasswordTwo: newPHash, newPasswordOne: newPHash}));
+
         }
 
     }
@@ -66,10 +91,24 @@ export default function Reset() {
                     to previously used passwords.</Text>
 
                 <div className={styles.forgotInput}>
-                    <Flex direction={'column'}>
+                    <Flex direction={'column'} mb={5}>
                         <Text fontSize={'13px'} fontWeight={500} textAlign={'left'}>New Password</Text>
-                        <Input placeholder={'Enter New Password'} size='md' onChange={handleChange}
-                               className={`${styles.loginInput}`} type={'email'}/>
+                        {/*<Input placeholder={'Enter New Password'} size='md' onChange={handleChange}*/}
+                        {/*       className={`${styles.loginInput}`} type={'email'}/>*/}
+
+                        <InputGroup size='sm'>
+                            <Input tabIndex={3} onChange={handleChange}
+                                   borderRadius={8} className={`${styles.loginInput}`}
+                                   border={'1px solid #E5E5E5'} fontSize={'13px'} placeholder='Confirm Password'
+                                   size='sm' type={passwordShow ? 'text' : 'password'}
+                                   isInvalid={!newPassword}/>
+                            <InputRightElement width='fit-content' h='40px'>
+                                <Button h='40px' background={"transparent"} size='sm'
+                                        onClick={(e) => handlePasswordShow()}>
+                                    {!passwordShow ? <ViewOffIcon/> : <ViewIcon/>}
+                                </Button>
+                            </InputRightElement>
+                        </InputGroup>
                     </Flex>
                     {/*<Flex direction={'column'}>*/}
                     {/*    <Text fontSize={'13px'} fontWeight={500} textAlign={'left'}>Confirm Password</Text>*/}

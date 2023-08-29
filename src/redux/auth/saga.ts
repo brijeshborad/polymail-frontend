@@ -144,8 +144,7 @@ function* updateNewPassword({
 
 function* compareCode({ payload: {code}}: PayloadAction<{ code: string }>) {
     try {
-        console.log('=========', code)
-        const response: AxiosResponse =  yield ApiService.callPost(`auth/magic`, {code}, {
+        const response: AxiosResponse =  yield ApiService.callGet(`auth/magic?code=${code}`, {}, {
             'Skip-Headers': true
         });
         yield put(magicCodeSuccess(response));

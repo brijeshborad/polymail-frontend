@@ -86,8 +86,12 @@ const authSlice = createSlice({
         magicCode: (state: InitialAuthState, _action: PayloadAction<{ code: string }>) => {
             return {...state, error: null, isLoading: true, magicCodeSuccess: false}
         },
-        magicCodeSuccess: (state: InitialAuthState) => {
-            return {...state, error: null, isLoading: false, magicCodeSuccess: true}
+        magicCodeSuccess: (state: InitialAuthState, {payload: magicCodeResponse}: PayloadAction<{}>) => {
+            if (magicCodeResponse && magicCodeResponse.token) {
+                LocalStorageService.updateUser('store', {passwordResetToken: magicCodeResponse.token});
+
+            }
+            return {...state,magicCodeResponse, error: null, isLoading: false, magicCodeSuccess: true}
         },
         magicCodeError: (state: InitialAuthState, {payload: error}: PayloadAction<any>) => {
             return {...state, error, isLoading: false, magicCodeSuccess: false}

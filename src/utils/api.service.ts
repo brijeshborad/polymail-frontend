@@ -17,12 +17,12 @@ axiosInstance.interceptors.request.use((config) => {
         if (config.headers.hasOwnProperty('Skip-Headers')) {
             delete config.headers['Skip-Headers'];
         } else {
-            if (!userSession || !userSession?.token) {
+            if (!userSession || (!userSession?.token && !userSession?.passwordResetToken)) {
                 LocalStorageService.clearStorage();
                 Router.push(`/auth/signup`);
                 return Promise.reject({error: 'Token not found!'});
             }
-            config.headers.Authorization = `Bearer PG ${userSession?.token}`;
+            config.headers.Authorization = `Bearer PG ${userSession?.token || userSession?.passwordResetToken}`;
             delete config.headers['Skip-Headers'];
         }
         return config;
