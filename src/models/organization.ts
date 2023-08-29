@@ -5,7 +5,8 @@ export interface Organization {
     preferences: {
         blacklistEmails: Array<string>,
         disableSyncBlacklistEmailsToCRM: boolean,
-        disableBlockTrackingPixels: boolean
+        disableBlockTrackingPixels: boolean,
+        approvedDomains: Array<string>
     }
     created?: string,
     updated?: string,
