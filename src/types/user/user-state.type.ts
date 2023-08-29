@@ -1,5 +1,5 @@
 import {User} from "../../models";
-import {Avatar, UserDetails} from "@/models";
+import {Avatar, MagicCode, UserDetails} from "@/models";
 
 export declare type InitialAuthState = {
     user?: User | undefined,
@@ -8,7 +8,8 @@ export declare type InitialAuthState = {
     googleAuthRedirectionLink?: { url?: string } | null
     passwordChangeSuccess?: boolean
     passwordResetSuccess?: boolean
-    magicCodeSuccess?: boolean
+    magicCodeSuccess?: boolean,
+    magicCodeResponse?: MagicCode | null
 }
 
 export declare type InitialUserState = {

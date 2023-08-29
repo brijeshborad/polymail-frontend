@@ -92,7 +92,7 @@ function* passwordChange({
                                  newPasswordTwo,
                                  newPasswordOne
                              }
-                         }: PayloadAction<{ password: string, newPasswordOne: string, newPasswordTwo: string }>) {
+                         }: PayloadAction<{ password?: string, newPasswordOne: string, newPasswordTwo: string }>) {
     try {
         yield ApiService.callPost(`auth/change`, {
             password, newPasswordTwo, newPasswordOne
@@ -142,7 +142,7 @@ function* updateNewPassword({
     }
 }
 
-function* compareCode({ payload: {code}}: PayloadAction<{ code: string }>) {
+function* compareCode({ payload: {code}}: PayloadAction<{ code?: string }>) {
     try {
         const response: AxiosResponse =  yield ApiService.callGet(`auth/magic?code=${code}`, {}, {
             'Skip-Headers': true

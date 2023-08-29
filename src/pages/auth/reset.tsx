@@ -1,9 +1,9 @@
-import {Button, Flex, Heading, Input, InputGroup, InputRightElement, Text, useQuery} from "@chakra-ui/react";
+import {Button, Flex, Heading, Input, InputGroup, InputRightElement, Text} from "@chakra-ui/react";
 import styles from "@/styles/Login.module.css";
 import Image from "next/image";
 import {ArrowBackIcon, ViewIcon, ViewOffIcon} from "@chakra-ui/icons";
 import Link from "next/link";
-import {changePassword, magicCode, resetPassword, updateAuthState} from "@/redux/auth/action-reducer";
+import {changePassword, magicCode, updateAuthState} from "@/redux/auth/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import React, {ChangeEvent, useEffect, useState} from "react";
 import {encryptData} from "@/utils/common.functions";
@@ -30,19 +30,6 @@ export default function Reset() {
     }
 
     useEffect(() => {
-        if (magicCodeResponse) {
-            if (magicCodeResponse.error) {
-                Toaster({
-                    desc: magicCodeResponse.error,
-                    title: magicCodeResponse.error,
-                    type: 'error'
-                });
-            }
-
-        }
-    }, [magicCodeResponse])
-
-    useEffect(() => {
         if (passwordChangeSuccess) {
             Toaster({
                 desc: "Password changed successfully",
@@ -62,7 +49,7 @@ export default function Reset() {
         if (router.query) {
             if (router.query.code) {
                 let body = {
-                    code: router.query.code
+                    code: router.query.code.toString()
                 }
                 dispatch(magicCode(body));
             }
@@ -104,7 +91,7 @@ export default function Reset() {
                                    isInvalid={!newPassword}/>
                             <InputRightElement width='fit-content' h='40px'>
                                 <Button h='40px' background={"transparent"} size='sm'
-                                        onClick={(e) => handlePasswordShow()}>
+                                        onClick={() => handlePasswordShow()}>
                                     {!passwordShow ? <ViewOffIcon/> : <ViewIcon/>}
                                 </Button>
                             </InputRightElement>

@@ -9,6 +9,7 @@ const initialState = {
     googleAuthRedirectionLink: null,
     passwordChangeSuccess: false,
     magicCodeSuccess: false,
+    magicCodeResponse: null
 } as InitialAuthState
 
 const authSlice = createSlice({
@@ -53,7 +54,7 @@ const authSlice = createSlice({
         updateAuthState: (state: InitialAuthState, action: PayloadAction<InitialAuthState>) => {
             return {...state, ...action.payload}
         },
-        changePassword: (state: InitialAuthState, _action: PayloadAction<{ password: string, newPasswordOne: string, newPasswordTwo: string }>) => {
+        changePassword: (state: InitialAuthState, _action: PayloadAction<{ password?: string, newPasswordOne: string, newPasswordTwo: string }>) => {
             return {...state, error: null, isLoading: true, passwordChangeSuccess: false}
         },
         changePasswordSuccess: (state: InitialAuthState) => {
@@ -83,10 +84,10 @@ const authSlice = createSlice({
             return {...state, error, isLoading: false, passwordResetSuccess: false}
         },
 
-        magicCode: (state: InitialAuthState, _action: PayloadAction<{ code: string }>) => {
+        magicCode: (state: InitialAuthState, _action: PayloadAction<{ code?: string }>) => {
             return {...state, error: null, isLoading: true, magicCodeSuccess: false}
         },
-        magicCodeSuccess: (state: InitialAuthState, {payload: magicCodeResponse}: PayloadAction<{}>) => {
+        magicCodeSuccess: (state: InitialAuthState, {payload: magicCodeResponse}: PayloadAction<any>) => {
             if (magicCodeResponse && magicCodeResponse.token) {
                 LocalStorageService.updateUser('store', {passwordResetToken: magicCodeResponse.token});
 

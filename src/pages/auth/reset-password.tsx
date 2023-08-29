@@ -3,7 +3,7 @@ import styles from "@/styles/Login.module.css";
 import Image from "next/image";
 import {ArrowBackIcon} from "@chakra-ui/icons";
 import Link from "next/link";
-import {ChangeEvent, useEffect, useState} from "react";
+import {ChangeEvent, useState} from "react";
 import {Toaster} from "@/components/common";
 import {useDispatch, useSelector} from "react-redux";
 import {forgotPassword} from "@/redux/auth/action-reducer";
@@ -20,19 +20,9 @@ export default function ResetPassword() {
     }
     const {passwordResetSuccess} = useSelector((state: StateType) => state.auth);
 
-    useEffect(() => {
-        if (passwordResetSuccess) {
-            Toaster({
-                desc: "Email send successfully",
-                title: "Email send",
-                type: 'success'
-            });
-        }
-    }, [passwordResetSuccess])
-
     const updatePassword = () => {
         if (email.length === 0) {
-            Toaster({desc: 'Please enter the proper email',title: 'Add email', type: 'error'})
+            Toaster({desc: 'Please enter valid email',title: 'Add email', type: 'error'})
             return;
         }
         let body = {
@@ -40,6 +30,13 @@ export default function ResetPassword() {
             url: `${window.location.origin}/auth/reset`,
         }
         dispatch(forgotPassword(body));
+        if (passwordResetSuccess) {
+            Toaster({
+                desc: "Email send successfully, Please check your email provider",
+                title: "Email send successfully",
+                type: 'success'
+            });
+        }
         Router.push(`/auth/login`);
 
     }
