@@ -7,6 +7,7 @@ import {useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {User} from "@/models";
 
+
 function Inbox() {
     const [size, setSize] = useState<number>(0);
     const [userData, setUserData] = useState<User | null | undefined>(null);

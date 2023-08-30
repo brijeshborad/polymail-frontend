@@ -34,7 +34,7 @@ export function ProjectThreads() {
 
     useEffect(() => {
         if (router.query.project) {
-            dispatch(getAllThreads({ project: router.query.project as string, enriched: true}));
+            dispatch(getAllThreads({ project: router.query.project as string, enriched: true, resetState: true}));
         }
     }, [dispatch, router.query.project])
 
