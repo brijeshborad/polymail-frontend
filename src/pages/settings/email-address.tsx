@@ -1,7 +1,7 @@
 import {Button, Flex, Grid, GridItem, Heading, Link, Text} from "@chakra-ui/react";
 import styles from "@/styles/setting.module.css";
 import {GoogleIcon} from "@/icons";
-import React, { useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {Account} from "@/models";
@@ -35,12 +35,12 @@ function EmailAddress() {
     }, [googleAuthRedirectionLink])
     const [accountData, setAccountData] = useState<Account>();
 
-    const removeAccount = (item: Account) => {
+    const removeAccount = useCallback((item: Account) => {
         if (item && item.id) {
             setAccountData(item)
             dispatch(removeAccountDetails({id: item.id}));
         }
-    }
+    }, [dispatch])
 
     useEffect(() => {
         if (success && accountData && accountData.id) {

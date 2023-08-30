@@ -23,9 +23,10 @@ import {
     EnvelopeIcon,
     DisneyIcon
 } from "@/icons";
-import React, {useEffect} from "react";
+import React, {useCallback, useEffect} from "react";
 import {Project, Thread} from "@/models";
 import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
+import {addThreadToProject} from "@/redux/memberships/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType, MessageHeaderTypes} from "@/types";
 import {getAllProjects} from "@/redux/projects/action-reducer";
@@ -39,9 +40,11 @@ export function MessagesHeader({closeCompose, inboxMessages, index, showPreNextM
     const dispatch = useDispatch();
     const {isOpen, onOpen, onClose} = useDisclosure();
 
+
     useEffect(() => {
         dispatch(getAllProjects());
-    }, [dispatch])
+    }, [dispatch]);
+
 
     const updateMailBox = (messageBox: string) => {
         if (selectedThread && selectedThread.id) {
@@ -78,14 +81,18 @@ export function MessagesHeader({closeCompose, inboxMessages, index, showPreNextM
         }
     }
 
-    const addThreadToProject = (item: Project) => {
-        let body = {
-            project: item.id
-        };
+    const addToProject = useCallback( (item: Project) => {
+
         if (selectedThread && selectedThread.id) {
-            dispatch(updateThreads({id: selectedThread.id, body}));
+            let reqBody = {
+                threadId: selectedThread.id,
+                role: 'member',
+                groupType:'project',
+                groupId: item.id
+            }
+            dispatch(addThreadToProject(reqBody));
         }
-    }
+    }, [dispatch, selectedThread]);
 
     return (
         <Flex direction={'column'}>
@@ -134,11 +141,12 @@ export function MessagesHeader({closeCompose, inboxMessages, index, showPreNextM
                                 </div>
 
                                 {projects && !!projects.length && (projects || []).map((item: Project, index: number) => (
-                                    <MenuItem gap={2} key={index} onClick={() => addThreadToProject(item)}>
+                                    <MenuItem gap={2} key={index} onClick={() => addToProject(item)}>
                                         <DisneyIcon/> {item.name}
                                     </MenuItem>
 
                                 ))}
+
                                 <div className={styles.addNewProject}>
                                     <Button backgroundColor={'transparent'} w={'100%'} borderRadius={0} justifyContent={'flex-start'} onClick={onOpen}>
                                         <div className={styles.plusIcon}>

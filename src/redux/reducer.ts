@@ -9,6 +9,7 @@ import accounts from './accounts/action-reducer'
 import socket from './socket/action-reducer'
 import draft from './draft/action-reducer'
 import users from './users/action-reducer'
+import memberships from './memberships/action-reducer'
 
 const combinedReducer = combineReducers({
     auth,
@@ -19,7 +20,8 @@ const combinedReducer = combineReducers({
     accounts,
     socket,
     draft,
-    users
+    users,
+    memberships
 });
 
 const reducers = (state: any, action: any) => {
