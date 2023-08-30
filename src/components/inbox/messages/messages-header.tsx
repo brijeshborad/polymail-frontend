@@ -86,7 +86,7 @@ export function MessagesHeader({closeCompose, inboxMessages, index, showPreNextM
         if (selectedThread && selectedThread.id) {
             let reqBody = {
                 threadId: selectedThread.id,
-                role: 'member',
+                role: 'n/a',
                 groupType:'project',
                 groupId: item.id
             }
