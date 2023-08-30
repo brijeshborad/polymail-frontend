@@ -1,4 +1,4 @@
-import { Button, Checkbox, Flex, Input} from "@chakra-ui/react";
+import {Button, Checkbox, Flex, Input} from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
 import {DisneyIcon} from "@/icons";
 import styles2 from "@/styles/common.module.css";
@@ -51,7 +51,9 @@ export function InboxTab(props: InboxTabProps) {
                     mailboxes: body?.mailboxes || []
                 };
                 dispatch(updateThreadState({threads: currentThreads, success: true}));
-                dispatch(updateThreads({id: item.id, body}));
+                if (item && item.id) {
+                    dispatch(updateThreads({id: item.id, body}));
+                }
             }
             dispatch(updateThreadState({selectedThread: item}));
             dispatch(updateMessageState({selectedMessage: null}));
@@ -87,12 +89,13 @@ export function InboxTab(props: InboxTabProps) {
 
             {isLoading && <SpinnerUI/>}
             <div>
-                <Flex direction={'column'} gap={1} marginTop={5} className={`${styles.mailList} ${props.tab !== 'INBOX' ? styles.mailListForArchive : ''}`}>
+                <Flex direction={'column'} gap={1} marginTop={5}
+                      className={`${styles.mailList} ${props.tab !== 'INBOX' ? styles.mailListForArchive : ''}`}>
                     <Input type={'text'} opacity={0} height={0} width={0} padding={0} border={0} outline={0}
                            ref={listRef}/>
 
                     {threads && threads.length > 0 && threads.map((item: Thread, index: number) => (
-                        <div onClick={() => handleClick(item) } key={index}
+                        <div onClick={() => handleClick(item)} key={index}
                              className={`${selectedThread && selectedThread.id === item.id ? styles.selectedThread : ''}`}>
                             <div
                                 className={`${styles.mailDetails} ${(item.mailboxes || []).includes('UNREAD') ? '' : styles.readThread}`}>
