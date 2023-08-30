@@ -30,14 +30,6 @@ export function ProjectThreads() {
         isLoading
     } = useSelector((state: StateType) => state.threads);
     const dispatch = useDispatch();
-    const router = useRouter();
-
-    useEffect(() => {
-        if (router.query.project) {
-            dispatch(getAllThreads({ project: router.query.project as string, enriched: true, resetState: true}));
-        }
-    }, [dispatch, router.query.project])
-
 
     const handleClick = useCallback((item: Thread) => {
             if ((item.mailboxes || []).includes('UNREAD')) {

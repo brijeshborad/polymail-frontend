@@ -23,7 +23,7 @@ export function Toaster(props: ToasterProps) {
         // })
         toast({
             id: 'poly-toast',
-            duration: 2000,
+            duration: 2500,
             isClosable: true,
             render: () => {
                 // toastRefs.current.push(onClose);
