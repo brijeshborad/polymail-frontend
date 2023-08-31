@@ -65,20 +65,14 @@ const organizationSlice = createSlice({
             return {...state, organization: null, error, isLoading: false, isOrganizationAddOrRemoveSuccess: false}
         },
 
-        editOrganization: (state: InitialOrganizationStateType, _action: PayloadAction<{ name?: string, accountId?: string, id?: string }>) => {
+        editOrganization: (state: InitialOrganizationStateType, _action: PayloadAction<{ id?: string, body?: Organization }>) => {
             return {...state, organization: null, error: null, isLoading: true, isOrganizationAddOrRemoveSuccess: false}
         },
         editOrganizationSuccess: (state: InitialOrganizationStateType, {payload: organization}: PayloadAction<{}>) => {
-            let currentOrganizations = [...(current(state).organizations || [])] as Organization[];
-            let organizationData = {...(organization) || {}} as Organization;
-            let index1 = currentOrganizations.findIndex((item: Organization) => item.id === organizationData?.id);
-            currentOrganizations[index1] = {
-                ...currentOrganizations[index1],
-                name: organizationData.name
-            };
+            LocalStorageService.updateOrg('store', organization);
+
             return {
                 ...state,
-                organizations: [...currentOrganizations],
                 organization,
                 isLoading: false,
                 error: null,

@@ -16,6 +16,7 @@ import {
     removeOrganizationSuccess,
     removeOrganizationError, editOrganizationSuccess, editOrganizationError, editOrganization
 } from "@/redux/organizations/action-reducer";
+import {OrganizationRequestBody} from "@/models";
 
 // import {Organization} from "@/models";
 
@@ -39,9 +40,9 @@ function* addOrganizations({payload: {name, accountId}}: PayloadAction<{ name: s
     }
 }
 
-function* updateOrganizations({payload: {name, accountId, id}}: PayloadAction<{ name?: string, accountId?: string, id?: string }>) {
+function* updateOrganizations({payload: {preferences, id}}: PayloadAction<{ body?: OrganizationRequestBody, id?: string }>) {
     try {
-        const response: AxiosResponse = yield ApiService.callPatch(`organizations/${id}`, {name, accountId});
+        const response: AxiosResponse = yield ApiService.callPatch(`organizations/${id}`, {preferences});
         yield put(editOrganizationSuccess(response));
 
     } catch (error: any) {

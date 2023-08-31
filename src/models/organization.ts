@@ -11,3 +11,9 @@ export interface Organization {
     created?: string,
     updated?: string,
 }
+
+export interface OrganizationRequestBody {
+    preferences: {
+        approvedDomains?: string[] | undefined,
+    }
+}
