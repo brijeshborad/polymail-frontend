@@ -79,9 +79,11 @@ export function Header() {
             if (newMessage.name === 'SearchResult' && newMessage?.data) {
                 Object.keys(newMessage?.data).map((id: string) => {
                     if (iSNewSearch) {
+                        console.log('---', newMessage.data[id]);
                         iSNewSearch = false;
                         dispatch(updateThreadState({threads: [newMessage.data[id]]}));
                     } else {
+                        console.log('---', newMessage.data[id]);
                         dispatch(updateThreadState({threads: [...(threads || []), newMessage.data[id]]}));
                     }
                 })
