@@ -13,7 +13,7 @@ import Image from "next/image";
 import {BlueStarIcon, DragIcon, LockIcon} from "@/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import { getAllProjects} from "@/redux/projects/action-reducer";
+import {getAllProjects} from "@/redux/projects/action-reducer";
 import {useRouter} from "next/router";
 // import {isUndefined} from "util";
 import {Project} from "@/models";
@@ -39,7 +39,7 @@ function Index() {
     const [itemList, setItemList] = useState<Project[]>([]);
 
     useEffect(() => {
-        if (projects && projects.length) {
+        if (projects && projects.length > 0) {
             setItemList(projects)
         }
     }, [projects])
@@ -126,7 +126,7 @@ function Index() {
                 </Flex>
                 {isLoading && <SpinnerUI/>}
                 <Flex align={'center'} direction={'column'} gap={3}>
-                    {itemList && itemList.length > 0 && itemList.map((project: Project, index: number) => (
+                    {projects && projects.length > 0 && projects.map((project: Project, index: number) => (
                         <Flex key={index+1} width={'100%'} className={styles.projects} cursor={'pointer'} align={'center'}
                               justify={'space-between'} gap={3} padding={5} backgroundColor={'#ffffff'} borderRadius={8}
                               draggable

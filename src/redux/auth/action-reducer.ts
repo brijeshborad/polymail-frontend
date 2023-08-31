@@ -9,7 +9,8 @@ const initialState = {
     googleAuthRedirectionLink: null,
     passwordChangeSuccess: false,
     magicCodeSuccess: false,
-    magicCodeResponse: null
+    magicCodeResponse: null,
+    passwordResetSuccess: false,
 } as InitialAuthState
 
 const authSlice = createSlice({
@@ -97,6 +98,7 @@ const authSlice = createSlice({
         magicCodeError: (state: InitialAuthState, {payload: error}: PayloadAction<any>) => {
             return {...state, error, isLoading: false, magicCodeSuccess: false}
         },
+
     }
 })
 

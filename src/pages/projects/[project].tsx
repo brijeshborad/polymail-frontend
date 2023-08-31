@@ -18,36 +18,38 @@ import {
     Text,
     useDisclosure
 } from "@chakra-ui/react";
-import styles from "@/styles/project.module.css";
-import Image from "next/image";
-import { ProjectThreads} from "@/components/project";
-import {ChevronDownIcon} from "@chakra-ui/icons";
 import React, {useEffect, useState} from "react";
+import Image from "next/image";
 import {useDispatch, useSelector} from "react-redux";
-import {getProjectById, getProjectMembers} from "@/redux/projects/action-reducer";
-import {StateType} from "@/types";
 import {useRouter} from "next/router";
+import {StateType} from "@/types";
+import {ChevronDownIcon} from "@chakra-ui/icons";
+import styles from "@/styles/project.module.css";
+import {ProjectThreads} from "@/components/project";
+import {getProjectById, getProjectMembers} from "@/redux/projects/action-reducer";
+import {getAllThreads} from "@/redux/threads/action-reducer";;
 import {ProjectMessage} from "@/components/project/project-message";
 
 
 function ProjectInbox() {
     const {isOpen, onOpen, onClose} = useDisclosure();
     const {members, project} = useSelector((state: StateType) => state.projects);
+    const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
+    const [size, setSize] = useState<number>(0);
+
     const router = useRouter();
 
     const dispatch = useDispatch();
 
     useEffect(() => {
         if (router.query.project) {
-            let projectId = router.query.project as string
+            let projectId = router.query.project as string;
             dispatch(getProjectById({ id: projectId}));
             dispatch(getProjectMembers({projectId: projectId}));
+            dispatch(getAllThreads({ project: projectId, enriched: true, resetState: true}));
         }
     }, [dispatch, router.query.project])
 
-    const [size, setSize] = useState<number>(0);
-
-    const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
     function updateSize() {
         setSize(window.innerWidth);
     }

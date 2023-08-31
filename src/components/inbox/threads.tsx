@@ -19,6 +19,8 @@ import {InboxTab} from "@/components/inbox";
 import {updateDraftState} from "@/redux/draft/action-reducer";
 import {updateLastMessage} from "@/redux/socket/action-reducer";
 import {TriangleDownIcon} from "@chakra-ui/icons";
+import {useSocket} from "@/hooks/use-socket.hook";
+import {useRouter} from "next/router";
 
 let cacheThreads: { [key: string]: Thread[] } = {};
 let currentCacheTab = 'INBOX';
@@ -37,7 +39,11 @@ export function Threads() {
     const {success: draftSuccess, draft} = useSelector((state: StateType) => state.draft);
     const {selectedAccount, account} = useSelector((state: StateType) => state.accounts);
     const {newMessage} = useSelector((state: StateType) => state.socket);
+    const {userDetails} = useSelector((state: StateType) => state.users);
+    const {sendMessage} = useSocket();
     const dispatch = useDispatch();
+    const router = useRouter();
+
 
     const getAllThread = useCallback((resetState: boolean = true, force: boolean = false) => {
         if (selectedAccount) {
@@ -54,6 +60,14 @@ export function Threads() {
             }
         }
     }, [dispatch, selectedAccount, tab]);
+
+
+    // PM-173
+    useEffect(() => {
+        if(router.pathname.includes('inbox')) {
+           getAllThread(true, true);
+        }
+    }, [dispatch, getAllThread, router.pathname]);
 
     useEffect(() => {
         if (newMessage && newMessage.name === 'new_message') {
@@ -134,13 +148,19 @@ export function Threads() {
     }, [threads, getAllThread]);
 
     const changeEmailTabs = (value: string) => {
+        if (currentCacheTab !== value) {
+            sendMessage(JSON.stringify({
+                "userId": userDetails?.id,
+                "name": "SearchCancel",
+            }));
+        }
         setTab(value);
     }
 
     const openComposeBox = () => {
-        dispatch(updateMessageState({isCompose: true}))
+        dispatch(updateDraftState({draft: null}));
+        dispatch(updateMessageState({isCompose: true}));
     }
-
 
     return (
         <>
@@ -171,15 +191,15 @@ export function Threads() {
                             </Tab>
 
                             {!['TRASH', 'STARRED', 'ARCHIVE'].includes(tab) &&
-                                <Tab className={styles.emailTabs}>
-                                    <Tooltip label='Sent' placement='bottom' bg='gray.300' color='black'>
-                                        <div className={`${tab === 'SENT' ? styles.active : ''}`}
-                                             onClick={() => changeEmailTabs('SENT')}>
-                                            <SendIcon/>
-                                            <span>Sent</span>
-                                        </div>
-                                    </Tooltip>
-                                </Tab>
+                            <Tab className={styles.emailTabs}>
+                                <Tooltip label='Sent' placement='bottom' bg='gray.300' color='black'>
+                                    <div className={`${tab === 'SENT' ? styles.active : ''}`}
+                                         onClick={() => changeEmailTabs('SENT')}>
+                                        <SendIcon/>
+                                        <span>Sent</span>
+                                    </div>
+                                </Tooltip>
+                            </Tab>
                             }
 
                             {tab === 'STARRED' &&
@@ -228,17 +248,18 @@ export function Threads() {
                                 </MenuButton>
                                 <MenuList className={`${styles.tabListDropDown} drop-down-list`}>
                                     {['TRASH', 'STARRED', 'ARCHIVE'].includes(tab) &&
-                                    <MenuItem onClick={() => changeEmailTabs('SENT')}><SendIcon /> sent</MenuItem>
+                                    <MenuItem onClick={() => changeEmailTabs('SENT')}><SendIcon/> sent</MenuItem>
                                     }
 
                                     {tab !== 'TRASH' &&
-                                    <MenuItem onClick={() => changeEmailTabs('TRASH')}><TrashIcon /> Trash</MenuItem>
+                                    <MenuItem onClick={() => changeEmailTabs('TRASH')}><TrashIcon/> Trash</MenuItem>
                                     }
                                     {tab !== 'STARRED' &&
-                                    <MenuItem onClick={() => changeEmailTabs('STARRED')}><StarIcon /> Starred</MenuItem>
+                                    <MenuItem onClick={() => changeEmailTabs('STARRED')}><StarIcon/> Starred</MenuItem>
                                     }
                                     {tab !== 'ARCHIVE' &&
-                                    <MenuItem onClick={() => changeEmailTabs('ARCHIVE')}><TimeSnoozeIcon /> Archive</MenuItem>
+                                    <MenuItem
+                                        onClick={() => changeEmailTabs('ARCHIVE')}><TimeSnoozeIcon/> Archive</MenuItem>
                                     }
                                 </MenuList>
                             </Menu>

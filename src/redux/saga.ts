@@ -7,6 +7,7 @@ import messageSagas from './messages/saga';
 import accountSagas from './accounts/saga';
 import userSagas from './users/saga';
 import draftSagas from './draft/saga';
+import membershipSagas from './memberships/saga';
 
 export default function* rootSaga() {
     yield all([
@@ -18,5 +19,6 @@ export default function* rootSaga() {
         accountSagas(),
         draftSagas(),
         userSagas(),
+        membershipSagas(),
     ]);
 }

@@ -31,6 +31,9 @@ import {getAllThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {useSocket} from "@/hooks/use-socket.hook";
 import {getProfilePicture, updateUsersDetailsSuccess} from "@/redux/users/action-reducer";
 import {googleAuthLink} from "@/redux/auth/action-reducer";
+import {updateLastMessage} from "@/redux/socket/action-reducer";
+
+let iSNewSearch = true;
 
 export function Header() {
     const dispatch = useDispatch();
@@ -53,6 +56,17 @@ export function Header() {
     let currentRoute = router.pathname.split('/');
     const {toast} = createStandaloneToast();
 
+    const connectGoogleAccount = useCallback(() => {
+        let body = {
+            mode: 'create',
+            redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}/inbox`,
+            accountType: "google",
+            platform: "web",
+            withToken: true
+        }
+        dispatch(googleAuthLink(body));
+    }, [dispatch])
+
     useEffect(() => {
         if (user) {
             setUserData(user);
@@ -61,13 +75,17 @@ export function Header() {
 
     useEffect(() => {
         if (newMessage) {
-
+            dispatch(updateLastMessage(null));
             if (newMessage.name === 'SearchResult' && newMessage?.data) {
                 Object.keys(newMessage?.data).map((id: string) => {
-                    dispatch(updateThreadState({threads: [newMessage.data[id]]}));
+                    if (iSNewSearch) {
+                        iSNewSearch = false;
+                        dispatch(updateThreadState({threads: [newMessage.data[id]]}));
+                    } else {
+                        dispatch(updateThreadState({threads: [...[threads || []], newMessage.data[id]]}));
+                    }
                 })
             }
-
             if (newMessage.name === 'authenticate' && newMessage?.data && accounts!.length > 0) {
                 if (toast.isActive('re-auth-account')) {
                     return;
@@ -97,11 +115,9 @@ export function Header() {
                         position: 'top-right'
                     } as any);
                 }
-
-
             }
         }
-    }, [dispatch, newMessage, threads])
+    }, [accounts, connectGoogleAccount, dispatch, newMessage, threads, toast])
 
     useEffect(() => {
         if (googleAuthRedirectionLink) {
@@ -176,24 +192,9 @@ export function Header() {
         Router.push('/settings/profile');
     }
 
-    function connectGoogleAccount() {
-        let body = {
-            mode: 'create',
-            redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}/inbox`,
-            accountType: "google",
-            platform: "web",
-            withToken: true
-        }
-        dispatch(googleAuthLink(body));
-    }
-
     if (!userData) {
         return <></>;
     }
-
-    // const openComposeBox = () => {
-    //     dispatch(updateMessageState({isCompose: true}))
-    // }
 
     const handleKeyPress = (event: KeyboardEvent | any) => {
         if (event.key.toLowerCase() === 'enter') {
@@ -225,11 +226,13 @@ export function Header() {
                 <Image width="30" height="30" src="/image/logo.png" alt="" className={styles.logo}/>
             </div>
             <Flex className={styles.headerTabs} align={'center'}>
-                <Flex align={'center'} className={currentRoute[1] === 'inbox' ? styles.tabsActive : ''} onClick={() => inboxClick()}>
+                <Flex align={'center'} className={currentRoute[1] === 'inbox' ? styles.tabsActive : ''}
+                      onClick={() => inboxClick()}>
                     <MailIcon/>
                     Inbox
                 </Flex>
-                <Flex align={'center'} className={currentRoute[1] === 'projects' ? styles.tabsActive : ''} onClick={() => Router.push('/projects')}>
+                <Flex align={'center'} className={currentRoute[1] === 'projects' ? styles.tabsActive : ''}
+                      onClick={() => Router.push('/projects')}>
                     <FolderIcon/>
                     Projects
                 </Flex>
@@ -241,8 +244,14 @@ export function Header() {
                     </InputLeftElement>
                     <Input type='text'
                            placeholder='Search'
-                        // onChange={(e) => searchThreadsData(e)}
                            onChange={event => {
+                               if (!iSNewSearch) {
+                                   iSNewSearch = true;
+                                   sendMessage(JSON.stringify({
+                                       "userId": userDetails?.id,
+                                       "name": "SearchCancel",
+                                   }))
+                               }
                                setSearchString(event.target.value)
                            }}
                            onKeyPress={(e) => handleKeyPress(e)}

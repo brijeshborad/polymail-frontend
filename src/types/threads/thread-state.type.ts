@@ -9,3 +9,10 @@ export declare type InitialThreadStateType = {
     updateSuccess?: boolean
     success?: boolean
 }
+
+export declare type InitialMembershipStateType = {
+    membership: any;
+    isLoading?: boolean
+    error?: Error | any
+    success?: boolean
+}

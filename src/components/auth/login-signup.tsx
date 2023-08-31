@@ -106,7 +106,7 @@ export function LoginSignup({type = 'login'}: LoginProps) {
                        className={`${styles.loginInput}`} type={'password'}/>
 
                <div className={styles.forgotPasswordButton}>
-                   <Link href={'/auth/reset-password'}>
+                   <Link href={'/auth/forgot-password'}>
                        Forgot Password?
                    </Link>
                </div>
