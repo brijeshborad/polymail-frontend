@@ -40,7 +40,7 @@ function* addOrganizations({payload: {name, accountId}}: PayloadAction<{ name: s
     }
 }
 
-function* updateOrganizations({payload: {preferences, id}}: PayloadAction<{ body?: OrganizationRequestBody, id?: string }>) {
+function* updateOrganizations({payload: {preferences, id}}: PayloadAction<{ preferences?: OrganizationRequestBody, id?: string }>) {
     try {
         const response: AxiosResponse = yield ApiService.callPatch(`organizations/${id}`, {preferences});
         yield put(editOrganizationSuccess(response));

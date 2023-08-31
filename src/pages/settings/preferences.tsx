@@ -36,7 +36,7 @@ function Preferences() {
         isOrganizationAddOrRemoveSuccess
     } = useSelector((state: StateType) => state.organizations);
     const [organization, setOrganization] = useState<Organization | null>(null);
-    const [domains, setDomains] = useState<{ items: [], value: string }>({
+    const [domains, setDomains] = useState<{ items: string[], value: string }>({
         items: [],
         value: ""
     });
