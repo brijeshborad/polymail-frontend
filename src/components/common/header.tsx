@@ -33,8 +33,6 @@ import {getProfilePicture, updateUsersDetailsSuccess} from "@/redux/users/action
 import {googleAuthLink} from "@/redux/auth/action-reducer";
 import {updateLastMessage} from "@/redux/socket/action-reducer";
 
-let iSNewSearch = true;
-
 export function Header() {
     const dispatch = useDispatch();
     const {
@@ -78,14 +76,8 @@ export function Header() {
             dispatch(updateLastMessage(null));
             if (newMessage.name === 'SearchResult' && newMessage?.data) {
                 Object.keys(newMessage?.data).map((id: string) => {
-                    if (iSNewSearch) {
-                        console.log('---', newMessage.data[id]);
-                        iSNewSearch = false;
-                        dispatch(updateThreadState({threads: [newMessage.data[id]]}));
-                    } else {
-                        console.log('---', newMessage.data[id]);
-                        dispatch(updateThreadState({threads: [...(threads || []), newMessage.data[id]]}));
-                    }
+                    console.log('---', newMessage.data[id]);
+                    dispatch(updateThreadState({threads: [...(threads || []), newMessage.data[id]]}));
                 })
             }
             if (newMessage.name === 'authenticate' && newMessage?.data && accounts!.length > 0) {
@@ -204,11 +196,13 @@ export function Header() {
 
     const handleKeyPress = (event: KeyboardEvent | any) => {
         if (event.key.toLowerCase() === 'enter') {
+            sendMessage(JSON.stringify({
+                "userId": userDetails?.id,
+                "name": "SearchCancel",
+            }))
+
             if (searchString) {
-                sendMessage(JSON.stringify({
-                    "userId": userDetails?.id,
-                    "name": "SearchCancel",
-                }))
+                dispatch(updateThreadState({threads: []}));
 
                 sendMessage(JSON.stringify({
                     "userId": userDetails?.id,
@@ -220,11 +214,6 @@ export function Header() {
                 
                 return
             }
-
-            sendMessage(JSON.stringify({
-                "userId": userDetails?.id,
-                "name": "SearchCancel",
-            }))
 
             if (selectedAccount && selectedAccount.id) {
                 dispatch(getAllThreads({mailbox: 'INBOX', account: selectedAccount.id, enriched: true}));
