@@ -5,8 +5,8 @@ import {ArrowBackIcon, ViewIcon, ViewOffIcon} from "@chakra-ui/icons";
 import Link from "next/link";
 import {changePassword, magicCode, updateAuthState} from "@/redux/auth/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
-import React, {ChangeEvent, useEffect, useState} from "react";
-import {encryptData} from "@/utils/common.functions";
+import React, {useCallback, useEffect, useState} from "react";
+import {debounce, encryptData} from "@/utils/common.functions";
 import Router, {useRouter} from "next/router";
 import {StateType} from "@/types";
 import {Toaster} from "@/components/common";
@@ -18,15 +18,44 @@ export default function ForgotPassword() {
     const router = useRouter();
     const {magicCodeSuccess, magicCodeResponse, passwordChangeSuccess} = useSelector((state: StateType) => state.auth);
 
-    const [newPassword, setNewPassword] = useState<string>('');
+    const [newPassword, setNewPassword] = useState<{ newP: string, confirmP: string }>({
+        newP: '',
+        confirmP: ''
+    });
 
-    const [passwordShow, setPasswordShow] = useState<boolean>(false);
+    const [passwordShow, setPasswordShow] = useState<{ newP: boolean, confirmP: boolean }>({
+        newP: false,
+        confirmP: false
+    });
 
-    const handleChange = (event: ChangeEvent | any) => {
-        setNewPassword(event.target.value.trim());
+    const [passwordMatch, setPasswordMatch] = useState<boolean>(true);
+
+    const validatePassword = useCallback(() => {
+        debounce(() => {
+            setPasswordMatch(newPassword.newP.trim() === newPassword.confirmP.trim())
+        }, 300);
+    }, [newPassword])
+
+    useEffect(() => {
+        if (newPassword.newP && newPassword.confirmP) {
+            validatePassword();
+        } else {
+            setPasswordMatch(true);
+        }
+    }, [newPassword.newP, newPassword.confirmP, validatePassword])
+
+    function handlePasswordChange(e: KeyboardEvent | any, type: string) {
+        setNewPassword(prevState => ({
+            ...prevState,
+            [type]: e.target.value.trim()
+        }))
     }
-    function handlePasswordShow() {
-        setPasswordShow(prevState => (!prevState))
+
+    function handlePasswordShow(e: MouseEvent | any, type: string) {
+        setPasswordShow(prevState => ({
+            ...prevState,
+            [type]: !prevState[type as keyof object]
+        }))
     }
 
     useEffect(() => {
@@ -58,7 +87,7 @@ export default function ForgotPassword() {
 
     const updatePassword = () => {
         if (magicCodeSuccess) {
-            let newPHash = encryptData(newPassword);
+            let newPHash = encryptData(newPassword.newP);
             dispatch(changePassword({newPasswordTwo: newPHash, newPasswordOne: newPHash}));
 
         }
@@ -78,25 +107,77 @@ export default function ForgotPassword() {
                     to previously used passwords.</Text>
 
                 <div className={styles.forgotInput}>
-                    <Flex direction={'column'} mb={5}>
-                        <Text fontSize={'13px'} fontWeight={500} textAlign={'left'}>New Password</Text>
-                        {/*<Input placeholder={'Enter New Password'} size='md' onChange={handleChange}*/}
-                        {/*       className={`${styles.loginInput}`} type={'email'}/>*/}
-
+                    <Flex direction={'column'} mb={3}>
+                        <Text fontSize={'11px'} fontWeight={600}>New Password</Text>
                         <InputGroup size='sm'>
-                            <Input tabIndex={3} onChange={handleChange}
-                                   borderRadius={8} className={`${styles.loginInput}`}
-                                   border={'1px solid #E5E5E5'} fontSize={'13px'} placeholder='Confirm Password'
-                                   size='sm' type={passwordShow ? 'text' : 'password'}
-                                   isInvalid={!newPassword}/>
-                            <InputRightElement width='fit-content' h='40px'>
-                                <Button h='40px' background={"transparent"} size='sm'
-                                        onClick={() => handlePasswordShow()}>
-                                    {!passwordShow ? <ViewOffIcon/> : <ViewIcon/>}
+                            <Input tabIndex={2} onChange={(e) => handlePasswordChange(e, 'newP')} borderRadius={8}
+                                   border={'1px solid #E5E5E5'} fontSize={'13px'} placeholder='Enter New Password'
+                                   size='sm' type={passwordShow['newP'] ? 'text' : 'password'}/>
+                            <InputRightElement width='fit-content'>
+                                <Button h='1.75rem' background={"transparent"} size='sm'
+                                        onClick={(e) => handlePasswordShow(e, 'newP')}>
+                                    {!passwordShow['newP'] ? <ViewOffIcon/> : <ViewIcon/>}
                                 </Button>
                             </InputRightElement>
                         </InputGroup>
                     </Flex>
+                    <Flex direction={'column'} mb={3}>
+                        <Text fontSize={'11px'} fontWeight={600}>Confirm Password</Text>
+                        <InputGroup size='sm'>
+                            <Input tabIndex={3} onChange={(e) => handlePasswordChange(e, 'confirmP')}
+                                   borderRadius={8}
+                                   border={'1px solid #E5E5E5'} fontSize={'13px'} placeholder='Confirm Password'
+                                   size='sm' type={passwordShow['confirmP'] ? 'text' : 'password'}
+                                   isInvalid={!newPassword}
+                                   errorBorderColor={!passwordMatch ? 'crimson' : ''}/>
+                            <InputRightElement width='fit-content'>
+                                <Button h='1.75rem' background={"transparent"} size='sm'
+                                        onClick={(e) => handlePasswordShow(e, 'confirmP')}>
+                                    {!passwordShow['confirmP'] ? <ViewOffIcon/> : <ViewIcon/>}
+                                </Button>
+                            </InputRightElement>
+                        </InputGroup>
+                        {!passwordMatch &&
+                        <Text fontSize={'11px'} fontWeight={600} color={'crimson'}>Passwords do not match</Text>}
+                    </Flex>
+                    {/*<Flex direction={'column'} mb={5}>*/}
+                    {/*    <Text fontSize={'13px'} fontWeight={500} textAlign={'left'}>New Password</Text>*/}
+                    {/*    /!*<Input placeholder={'Enter New Password'} size='md' onChange={handleChange}*!/*/}
+                    {/*    /!*       className={`${styles.loginInput}`} type={'email'}/>*!/*/}
+
+                    {/*    <InputGroup size='sm'>*/}
+                    {/*        <Input tabIndex={3} onChange={handleChange}*/}
+                    {/*               borderRadius={8} className={`${styles.loginInput}`}*/}
+                    {/*               border={'1px solid #E5E5E5'} fontSize={'13px'} placeholder='Confirm Password'*/}
+                    {/*               size='sm' type={passwordShow ? 'text' : 'password'}*/}
+                    {/*               isInvalid={!newPassword}/>*/}
+                    {/*        <InputRightElement width='fit-content' h='40px'>*/}
+                    {/*            <Button h='40px' background={"transparent"} size='sm'*/}
+                    {/*                    onClick={() => handlePasswordShow()}>*/}
+                    {/*                {!passwordShow ? <ViewOffIcon/> : <ViewIcon/>}*/}
+                    {/*            </Button>*/}
+                    {/*        </InputRightElement>*/}
+                    {/*    </InputGroup>*/}
+                    {/*</Flex>*/}
+                    {/*<Flex direction={'column'} mb={3}>*/}
+                    {/*    <Text fontSize={'11px'} fontWeight={600}>Confirm Password</Text>*/}
+                    {/*    <InputGroup size='sm'>*/}
+                    {/*        <Input tabIndex={3} onChange={handleChange}*/}
+                    {/*               borderRadius={8}*/}
+                    {/*               border={'1px solid #E5E5E5'} fontSize={'13px'} placeholder='Confirm Password'*/}
+                    {/*               size='sm' type={passwordShow['confirmP'] ? 'text' : 'password'}*/}
+                    {/*               isInvalid={!newPassword}*/}
+                    {/*               errorBorderColor={!passwordMatch ? 'crimson' : ''}/>*/}
+                    {/*        <InputRightElement width='fit-content'>*/}
+                    {/*            <Button h='1.75rem' background={"transparent"} size='sm'*/}
+                    {/*                    onClick={() => handlePasswordShow()}>*/}
+                    {/*                {passwordShow['confirmP'] ? <ViewOffIcon/> : <ViewIcon/>}*/}
+                    {/*            </Button>*/}
+                    {/*        </InputRightElement>*/}
+                    {/*    </InputGroup>*/}
+                    {/*    {!passwordMatch &&*/}
+                    {/*    <Text fontSize={'11px'} fontWeight={600} color={'crimson'}>Passwords do not match</Text>}*/}
+                    {/*</Flex>*/}
                     {/*<Flex direction={'column'}>*/}
                     {/*    <Text fontSize={'13px'} fontWeight={500} textAlign={'left'}>Confirm Password</Text>*/}
                     {/*    <Input placeholder={'Confirm Password'} size='md'*/}

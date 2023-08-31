@@ -51,7 +51,7 @@ export default function App({Component, ...rest}: AppProps) {
                     <link rel="icon" href="/favicon.ico"/>
                 </Head>
                 <main className={`main ${inter.className}`}>
-                    {store.getState().auth?.user && <Header/> }
+                    {store.getState().auth?.user?.token && <Header/> }
                     <Component {...pageProps} />
                 </main>
             </ChakraBaseProvider>
