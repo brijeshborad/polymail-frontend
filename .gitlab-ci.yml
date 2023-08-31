@@ -1,3 +1,7 @@
+variables:
+  HEROKU_DEV_APP_NAME: polymail-development
+  HEROKU_PROD_APP_NAME: polymail-teams
+
 image: node:latest
 
 before_script:
@@ -7,15 +11,28 @@ before_script:
 
 stages:
   - deploy_dev
+  - deploy_prod
 
 deploy_dev:
   stage: deploy_dev
   image: ruby:latest
   script:
-    - dpl --provider=heroku --app=$HEROKU_APP_NAME --api-key=$HEROKU_API_KEY
+    - dpl --provider=heroku --app=$HEROKU_DEV_APP_NAME --api-key=$HEROKU_API_KEY
   environment:
     name: develop
     url: https://polymail-development.herokuapp.com/
+
+  only:
+    - develop
+
+deploy_prod:
+  stage: deploy_prod
+  image: ruby:latest
+  script:
+    - dpl --provider=heroku --app=$HEROKU_PROD_APP_NAME --api-key=$HEROKU_API_KEY
+  environment:
+    name: develop
+    url: https://teams.polymail.com
 
   only:
     - develop
