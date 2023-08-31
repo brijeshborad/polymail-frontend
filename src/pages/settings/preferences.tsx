@@ -12,23 +12,19 @@ import {
     Th,
     Tbody,
     Td,
-    Button,
-    useDisclosure,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    Textarea, ModalFooter, Modal
+    Button, Input
 } from "@chakra-ui/react";
-import React, {ChangeEvent, useEffect, useState} from "react";
+import React, {ChangeEvent, useCallback, useEffect, useState} from "react";
 import Index from "@/pages/settings/index";
 import withAuth from "@/components/withAuth";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {Organization} from "@/models";
-import {Chip} from "@/components/common";
 import {editOrganization} from "@/redux/organizations/action-reducer";
 import LocalStorageService from "@/utils/localstorage.service";
+import {CloseIcon, CheckIcon } from "@chakra-ui/icons";
+import {TrashIcon, EditIcon} from "@/icons";
+import {debounce} from "@/utils/common.functions";
 
 function Preferences() {
     const {
@@ -40,9 +36,9 @@ function Preferences() {
         items: [],
         value: ""
     });
-    const [domainValue, setDomainValue] = useState("");
+    const [visibleInputs, setVisibleInputs] = useState<boolean[]>([]);
+    const [isDomainValid, setIsDomainValid] = useState<boolean>(true);
 
-    const {isOpen, onOpen, onClose} = useDisclosure();
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -52,7 +48,8 @@ function Preferences() {
                 setDomains({
                     items: selectedOrganization?.preferences?.approvedDomains,
                     value: ''
-                })
+                });
+                setVisibleInputs(Array(selectedOrganization?.preferences?.approvedDomains.length).fill(false));
             }
         }
     }, [selectedOrganization])
@@ -61,52 +58,76 @@ function Preferences() {
         if (isOrganizationAddOrRemoveSuccess) {
             let orgs = LocalStorageService.updateOrg('get') || null;
             setOrganization(orgs)
+            setVisibleInputs(Array(orgs?.preferences?.approvedDomains.length).fill(false));
+
         }
     }, [isOrganizationAddOrRemoveSuccess, selectedOrganization])
 
-    const handleItemDelete = (item: string) => {
-        setDomains((prevState) => ({
-                items: prevState.items.filter(i => i !== item),
-                value: ''
-        }));
-    };
+    const isEmail = (email: string) => {
+        return /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$/.test(email);
+    }
+    const validateDomain = useCallback(() => {
+        debounce(() => {
+            if (domains && domains.value) {
+                setIsDomainValid(isEmail(domains.value))
+            }
+        }, 300);
+    }, [domains])
 
-    const handleChange = (event: ChangeEvent | any) => {
-        setDomains((prevState) => ({
-            items: [...(prevState.items || [])],
-            value: event.target.value
-        }))
-        setDomainValue(event.target.value)
-    };
-
-    const handleKeyDown = (evt: KeyboardEvent | any) => {
-        if (["Enter", "Tab"].includes(evt.key)) {
-            evt.preventDefault();
-            let value = domains.value.trim();
-            let domainArray = value.split(',');
-            domainArray.map(item => {
-                setDomains((prevState) => ({
-                    items: [...prevState.items, item],
-                    value: ''
-                }));
-            })
-            setDomainValue('')
-
+    useEffect(() => {
+        if (domains.items && domains.items.length) {
+            validateDomain();
+        } else {
+            setIsDomainValid(true);
         }
-    };
+    }, [domains, validateDomain])
 
-    const submit = () => {
+    const handleInputChange = (index: number, event: ChangeEvent | any) => {
+        let orgValue = [...(organization?.preferences?.approvedDomains || [])];
+        orgValue[index] = event.target.value
+        setDomains({
+            items: orgValue,
+            value: event.target.value
+        })
+
+    }
+
+    const submit = (type: string, item: any) => {
         if (organization && organization.id) {
-             let body = {
-                 preferences: {
-                     approvedDomains: domains.items,
-                 },
-                 id: organization.id
-             }
-            dispatch(editOrganization(body));
-            onClose()
+            let domainArray = [...domains.items]
+                if (type === 'remove') {
+                    domainArray = (domainArray || []).filter((i: string) => i !== item)
+                }
+                let body = {
+                    preferences: {
+                        approvedDomains: domainArray,
+                    },
+                    id: organization.id
+                }
+
+                setDomains({
+                    items: domainArray,
+                    value: ''
+                })
+                dispatch(editOrganization(body));
         }
     }
+
+    const addNewLine = () =>  {
+        let sss = JSON.parse(JSON.stringify(organization));
+        sss?.preferences?.approvedDomains.push('');
+        setOrganization(sss);
+        setVisibleInputs([...visibleInputs, true]);
+    }
+
+    const editValue = (index: number) => {
+        const newVisibleInputs = [...visibleInputs];
+        // Toggle the visibility of the input at the specified index
+        newVisibleInputs[index] = !newVisibleInputs[index];
+        // Set the updated visibleInputs array as the new state
+        setVisibleInputs(newVisibleInputs);
+    }
+
     return (
         <div className={styles.setting}>
             <Grid templateColumns='232px auto' gap={6} h={'100%'} minHeight={'calc(100vh - 65px)'}>
@@ -129,9 +150,9 @@ function Preferences() {
                                     <Heading as='h4' fontSize={'18px'} fontWeight={600}
                                              color={'#101828'}>Preferences</Heading>
 
-                                    <Button className={styles.inviteMemberButton} fontSize={'14px'} onClick={onOpen}
+                                    <Button className={styles.inviteMemberButton} fontSize={'14px'} onClick={addNewLine}
                                             backgroundColor={'black'} color={'white'} height={'auto'}
-                                            padding={'10px 20px'}>Edit Domains</Button>
+                                            padding={'10px 20px'}>Add Domains</Button>
                                 </Flex>
 
                                 <TableContainer>
@@ -141,36 +162,46 @@ function Preferences() {
                                                 borderTop={'1px solid #EAECF0'}>
                                                 <Th color={'#475467'} textTransform={'none'} fontWeight={500}
                                                     lineHeight={'1.5'}>Approved Domains</Th>
-                                                {/*<Th color={'#475467'} textTransform={'none'} fontWeight={500}*/}
-                                                {/*    lineHeight={'1.5'} width={'64px'} padding={4}/>*/}
+                                                <Th color={'#475467'} textTransform={'none'} fontWeight={500}
+                                                    lineHeight={'1.5'} width={'120px'}>Actions</Th>
                                             </Tr>
                                         </Thead>
-                                        {(organization && organization.preferences && organization.preferences.approvedDomains?.length > 0) ?
+                                        {(organization && organization.preferences && organization.preferences.approvedDomains?.length > 0) &&
                                             <Tbody>
                                                 {organization && organization.preferences && organization.preferences.approvedDomains?.length > 0 && organization.preferences.approvedDomains.map((item: string, index: number) => (
                                                     <Tr key={index + 1}>
-                                                        <Td><p> {item} </p></Td>
-                                                        {/*<Td padding={4}>*/}
-                                                        {/*    <Menu>*/}
-                                                        {/*        <MenuButton className={styles.OptionButton}*/}
-                                                        {/*                    as={IconButton}*/}
-                                                        {/*                    aria-label='Options' icon={<MenuIcon/>}*/}
-                                                        {/*                    variant='outline' padding={0}*/}
-                                                        {/*                    height={'32px'}*/}
-                                                        {/*                    minWidth={'32px'} border={'0'}/>*/}
-                                                        {/*        <MenuList>*/}
-                                                        {/*            <MenuItem>Edit</MenuItem>*/}
-                                                        {/*            <MenuItem>Delete</MenuItem>*/}
-                                                        {/*        </MenuList>*/}
-                                                        {/*    </Menu>*/}
-                                                        {/*</Td>*/}
+                                                        <Td>{visibleInputs[index] ?
+                                                            <div>
+                                                                <Input
+                                                                    defaultValue={item}
+                                                                    onChange={(e) => handleInputChange(index, e)}
+                                                                />
+                                                                {!isDomainValid &&
+                                                                <Text fontSize={'11px'} fontWeight={600} color={'crimson'}>Please enter valid domain</Text>}
+                                                            </div>
+                                                            :
+                                                            <p> {item} </p>}
+                                                        </Td>
+                                                        <Td>
+                                                            {!visibleInputs[index] ?
+                                                            <Flex gap={3}>
+                                                                <Button height={'auto'} padding={'5px'}
+                                                                        minWidth={'auto'}
+                                                                        onClick={() => editValue(index)}><EditIcon/></Button>
+                                                                <Button height={'auto'} padding={'5px'}
+                                                                        minWidth={'auto'}
+                                                                        onClick={() => submit('remove' ,item!)}><TrashIcon/></Button>
+                                                            </Flex> :
+                                                                <Flex gap={3}>
+                                                                    <Button height={'auto'} padding={'6.5px'} color={'#374151'}
+                                                                            minWidth={'auto'} fontSize={'13px'} onClick={() => submit('add-edit', item!)}><CheckIcon/></Button>
+                                                                    <Button height={'auto'} padding={'6.5px'} color={'#374151'}
+                                                                                  minWidth={'auto'} fontSize={'13px'} onClick={() => submit('remove' ,item!)}><CloseIcon/></Button>
+                                                                </Flex>
+                                                            }
+                                                            </Td>
                                                     </Tr>
                                                 ))}
-                                            </Tbody> : <Tbody>
-
-                                                <Tr>
-                                                    <Td>No Data Found</Td>
-                                                </Tr>
                                             </Tbody>
                                         }
                                     </Table>
@@ -183,38 +214,38 @@ function Preferences() {
                 </GridItem>
             </Grid>
 
-            <Modal isOpen={isOpen} onClose={() => onClose} isCentered>
-                <ModalOverlay/>
-                <ModalContent maxWidth={'490px'}>
-                    <ModalHeader padding={'40px 40px 24px 40px'}>
-                        <Heading as='h3' size='md' pb={1} color={'#101828'}>Change Preferences Domains</Heading>
-                        <Text fontSize='md' color={'#475467'} fontWeight={'400'}>Add, Edit and Remove Preferences</Text>
-                    </ModalHeader>
-                    <ModalBody padding={'8px 40px 16px'}>
-                        <div className={styles.newPaymentInput}>
-                            <Text mb='8px' fontSize={'13px'} fontWeight={500} color={'#000000'}>Domains</Text>
+            {/*<Modal isOpen={isOpen} onClose={() => onClose} isCentered>*/}
+            {/*    <ModalOverlay/>*/}
+            {/*    <ModalContent maxWidth={'490px'}>*/}
+            {/*        <ModalHeader padding={'40px 40px 24px 40px'}>*/}
+            {/*            <Heading as='h3' size='md' pb={1} color={'#101828'}>Change Preferences Domains</Heading>*/}
+            {/*            <Text fontSize='md' color={'#475467'} fontWeight={'400'}>Add, Edit and Remove Preferences</Text>*/}
+            {/*        </ModalHeader>*/}
+            {/*        <ModalBody padding={'8px 40px 16px'}>*/}
+            {/*            <div className={styles.newPaymentInput}>*/}
+            {/*                <Text mb='8px' fontSize={'13px'} fontWeight={500} color={'#000000'}>Domains</Text>*/}
 
 
-                            <Flex alignItems={'center'} gap={1} wrap={'wrap'} width={'100%'}>
-                                {(domains.items || []).map((item: string | undefined, i: number) => (
-                                    <Chip text={item} key={i} click={() => handleItemDelete(item!)}/>
-                                ))}
+            {/*                <Flex alignItems={'center'} gap={1} wrap={'wrap'} width={'100%'}>*/}
+            {/*                    {(domains.items || []).map((item: string | undefined, i: number) => (*/}
+            {/*                        <Chip text={item} key={i} click={() => handleItemDelete(item!)}/>*/}
+            {/*                    ))}*/}
 
-                                <Textarea placeholder='Here is a sample placeholder'
-                                          value={domainValue}
-                                          onKeyDown={handleKeyDown}
-                                          onChange={handleChange}/>
-                            </Flex>
-                        </div>
-                    </ModalBody>
+            {/*                    <Textarea placeholder='Here is a sample placeholder'*/}
+            {/*                              value={domainValue}*/}
+            {/*                              onKeyDown={handleKeyDown}*/}
+            {/*                              onChange={handleChange}/>*/}
+            {/*                </Flex>*/}
+            {/*            </div>*/}
+            {/*        </ModalBody>*/}
 
-                    <ModalFooter className={styles.settingButton} paddingBottom={'40px'}>
-                        <Button className={styles.settingCancel} colorScheme='blue' mr={3}
-                                onClick={onClose}> Cancel </Button>
-                        <Button className={styles.settingSave} variant='ghost' onClick={() => submit()}>Submit</Button>
-                    </ModalFooter>
-                </ModalContent>
-            </Modal>
+            {/*        <ModalFooter className={styles.settingButton} paddingBottom={'40px'}>*/}
+            {/*            <Button className={styles.settingCancel} colorScheme='blue' mr={3}*/}
+            {/*                    onClick={onClose}> Cancel </Button>*/}
+            {/*            <Button className={styles.settingSave} variant='ghost' onClick={() => submit()}>Submit</Button>*/}
+            {/*        </ModalFooter>*/}
+            {/*    </ModalContent>*/}
+            {/*</Modal>*/}
         </div>
 
     )

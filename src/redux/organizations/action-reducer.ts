@@ -70,7 +70,6 @@ const organizationSlice = createSlice({
         },
         editOrganizationSuccess: (state: InitialOrganizationStateType, {payload: organization}: PayloadAction<{}>) => {
             LocalStorageService.updateOrg('store', organization);
-
             return {
                 ...state,
                 organization,
