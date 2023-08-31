@@ -94,7 +94,9 @@ function Preferences() {
 
     const submit = (type: string, item: any) => {
         if (organization && organization.id) {
+            console.log('type' , type)
             let domainArray = [...domains.items]
+            if (type !== 'cancel') {
                 if (type === 'remove') {
                     domainArray = (domainArray || []).filter((i: string) => i !== item)
                 }
@@ -110,6 +112,18 @@ function Preferences() {
                     value: ''
                 })
                 dispatch(editOrganization(body));
+            } else {
+                let sss = JSON.parse(JSON.stringify(organization));
+                sss = sss?.preferences?.approvedDomains.filter(i => i !== '')
+                console.log('sss' ,sss)
+                setOrganization({
+                    ...organization,
+                    preferences: {
+                        approvedDomains: sss,
+                    },
+                });
+                setVisibleInputs([...Array(domainArray.length).fill(false)]);
+            }
         }
     }
 
@@ -196,7 +210,7 @@ function Preferences() {
                                                                     <Button height={'auto'} padding={'6.5px'} color={'#374151'}
                                                                             minWidth={'auto'} fontSize={'13px'} onClick={() => submit('add-edit', item!)}><CheckIcon/></Button>
                                                                     <Button height={'auto'} padding={'6.5px'} color={'#374151'}
-                                                                                  minWidth={'auto'} fontSize={'13px'} onClick={() => submit('remove' ,item!)}><CloseIcon/></Button>
+                                                                                  minWidth={'auto'} fontSize={'13px'} onClick={() => submit('cancel' ,item!)}><CloseIcon/></Button>
                                                                 </Flex>
                                                             }
                                                             </Td>
