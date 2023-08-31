@@ -15,7 +15,6 @@ import {
     loginUser,
     logoutUser, magicCode, magicCodeError, magicCodeSuccess,
     registerError,
-    registerSuccess,
     registerUser, resetPassword, resetPasswordError, resetPasswordSuccess
 } from "@/redux/auth/action-reducer";
 import ApiService from "@/utils/api.service";
