@@ -8,6 +8,7 @@ export declare type InitialThreadStateType = {
     selectedThread?: Thread | null
     updateSuccess?: boolean
     success?: boolean
+    isThreadSearched?: boolean
 }
 
 export declare type InitialMembershipStateType = {

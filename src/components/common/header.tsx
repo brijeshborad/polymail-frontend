@@ -82,7 +82,7 @@ export function Header() {
                         iSNewSearch = false;
                         dispatch(updateThreadState({threads: [newMessage.data[id]]}));
                     } else {
-                        dispatch(updateThreadState({threads: [...[threads || []], newMessage.data[id]]}));
+                        dispatch(updateThreadState({threads: [...(threads || []), newMessage.data[id]]}));
                     }
                 })
             }
@@ -203,6 +203,7 @@ export function Header() {
     const handleKeyPress = (event: KeyboardEvent | any) => {
         if (event.key.toLowerCase() === 'enter') {
             if (searchString) {
+                dispatch(updateThreadState({isThreadSearched: true}));
                 sendMessage(JSON.stringify({
                     "userId": userDetails?.id,
                     "name": "SearchRequest",
@@ -251,6 +252,7 @@ export function Header() {
                            onChange={event => {
                                if (!iSNewSearch) {
                                    iSNewSearch = true;
+                                   dispatch(updateThreadState({isThreadSearched: false}));
                                    sendMessage(JSON.stringify({
                                        "userId": userDetails?.id,
                                        "name": "SearchCancel",

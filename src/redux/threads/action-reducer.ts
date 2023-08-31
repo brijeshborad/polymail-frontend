@@ -10,7 +10,8 @@ const initialState: any = {
     error: null,
     selectedThread: null,
     updateSuccess: false,
-    success: false
+    success: false,
+    isThreadSearched: false
 } as InitialThreadStateType
 
 const threadsSlice = createSlice({

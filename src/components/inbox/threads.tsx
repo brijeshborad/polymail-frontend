@@ -20,7 +20,7 @@ import {updateDraftState} from "@/redux/draft/action-reducer";
 import {updateLastMessage} from "@/redux/socket/action-reducer";
 import {TriangleDownIcon} from "@chakra-ui/icons";
 import {useSocket} from "@/hooks/use-socket.hook";
-import {useRouter} from "next/router";
+// import {useRouter} from "next/router";
 
 let cacheThreads: { [key: string]: Thread[] } = {};
 let currentCacheTab = 'INBOX';
@@ -34,7 +34,8 @@ export function Threads() {
         isLoading,
         selectedThread,
         updateSuccess,
-        success: threadListSuccess
+        success: threadListSuccess,
+        isThreadSearched
     } = useSelector((state: StateType) => state.threads);
     const {success: draftSuccess, draft} = useSelector((state: StateType) => state.draft);
     const {selectedAccount, account} = useSelector((state: StateType) => state.accounts);
@@ -42,7 +43,7 @@ export function Threads() {
     const {userDetails} = useSelector((state: StateType) => state.users);
     const {sendMessage} = useSocket();
     const dispatch = useDispatch();
-    const router = useRouter();
+    // const router = useRouter();
 
 
     const getAllThread = useCallback((resetState: boolean = true, force: boolean = false) => {
@@ -63,11 +64,11 @@ export function Threads() {
 
 
     // PM-173
-    useEffect(() => {
-        if(router.pathname.includes('inbox')) {
-           getAllThread(true, true);
-        }
-    }, [dispatch, getAllThread, router.pathname]);
+    // useEffect(() => {
+    //     if(router.pathname.includes('inbox')) {
+    //        getAllThread(true, true);
+    //     }
+    // }, [dispatch, getAllThread, router.pathname]);
 
     useEffect(() => {
         if (newMessage && newMessage.name === 'new_message') {
@@ -140,15 +141,18 @@ export function Threads() {
 
         //Implementing the setInterval method
         const interval = setInterval(() => {
-            getAllThread(false, true);
+            if (!isThreadSearched) {
+                getAllThread(false, true);
+            }
         }, Number(process.env.NEXT_PUBLIC_THREAD_LIST_REFRESH_INTERVAL || 10000));
 
         //Clearing the interval
         return () => clearInterval(interval);
-    }, [threads, getAllThread]);
+    }, [threads, getAllThread, isThreadSearched]);
 
     const changeEmailTabs = (value: string) => {
         if (currentCacheTab !== value) {
+            dispatch(updateThreadState({isThreadSearched: false}));
             sendMessage(JSON.stringify({
                 "userId": userDetails?.id,
                 "name": "SearchCancel",
