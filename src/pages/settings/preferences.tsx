@@ -114,8 +114,7 @@ function Preferences() {
                 dispatch(editOrganization(body));
             } else {
                 let sss = JSON.parse(JSON.stringify(organization));
-                sss = sss?.preferences?.approvedDomains.filter(i => i !== '')
-                console.log('sss' ,sss)
+                sss = sss?.preferences?.approvedDomains.filter((i: string) => i !== '')
                 setOrganization({
                     ...organization,
                     preferences: {
@@ -180,9 +179,9 @@ function Preferences() {
                                                     lineHeight={'1.5'} width={'120px'}>Actions</Th>
                                             </Tr>
                                         </Thead>
-                                        {(organization && organization.preferences && organization.preferences.approvedDomains?.length > 0) &&
+                                        {(organization && organization.preferences && organization.preferences.approvedDomains && organization.preferences.approvedDomains?.length > 0) &&
                                             <Tbody>
-                                                {organization && organization.preferences && organization.preferences.approvedDomains?.length > 0 && organization.preferences.approvedDomains.map((item: string, index: number) => (
+                                                {organization && organization.preferences && organization.preferences.approvedDomains?.length > 0 && (organization.preferences.approvedDomains || []).map((item: string, index: number) => (
                                                     <Tr key={index + 1}>
                                                         <Td>{visibleInputs[index] ?
                                                             <div>
