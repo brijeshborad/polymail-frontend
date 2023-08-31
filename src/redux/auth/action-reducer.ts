@@ -26,7 +26,7 @@ const authSlice = createSlice({
         loginError: (state: InitialAuthState, {payload: error}: PayloadAction<any>) => {
             return {...state, user: undefined, error, isLoading: false}
         },
-        registerUser: (state: InitialAuthState, _action: PayloadAction<{ email: string, password: string }>) => {
+        registerUser: (state: InitialAuthState, _action: PayloadAction<{ email: string, password: string, redirectUrl: string }>) => {
             return {...state, user: undefined, error: null, isLoading: true}
         },
         registerSuccess: (state: InitialAuthState, {payload: user}: PayloadAction<{}>) => {

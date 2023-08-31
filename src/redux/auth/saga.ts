@@ -35,16 +35,23 @@ function* login({payload: {email, password}}: PayloadAction<{ email: string, pas
     }
 }
 
-function* register({payload: {email, password}}: PayloadAction<{ email: string, password: string }>) {
+function* register({
+                       payload: {
+                           email,
+                           password,
+                           redirectUrl
+                       }
+                   }: PayloadAction<{ email: string, password: string, redirectUrl: string }>) {
     try {
-        const response: AxiosResponse = yield ApiService.callPost(`users`, {
+        const response: AxiosResponse = yield ApiService.callPost(`auth/register`, {
             email,
-            password
+            password,
+            redirectUrl
         }, {
             'Skip-Headers': true
         });
         LocalStorageService.updateUser('store', response)
-        yield put(registerSuccess(response));
+        window.location.href = redirectUrl;
     } catch (error: any) {
         error = error as AxiosError;
         yield put(registerError(error.response.data));
@@ -105,11 +112,11 @@ function* passwordChange({
 }
 
 function* forgotOldPassword({
-                             payload: {
-                                 email,
-                                 url
-                             }
-                         }: PayloadAction<{ email: string, url: string }>) {
+                                payload: {
+                                    email,
+                                    url
+                                }
+                            }: PayloadAction<{ email: string, url: string }>) {
     try {
         yield ApiService.callPost(`auth/forgot`, {
             email, url
@@ -142,9 +149,9 @@ function* updateNewPassword({
     }
 }
 
-function* compareCode({ payload: {code}}: PayloadAction<{ code?: string }>) {
+function* compareCode({payload: {code}}: PayloadAction<{ code?: string }>) {
     try {
-        const response: AxiosResponse =  yield ApiService.callGet(`auth/magic?code=${code}`, {}, {
+        const response: AxiosResponse = yield ApiService.callGet(`auth/magic?code=${code}`, {}, {
             'Skip-Headers': true
         });
         yield put(magicCodeSuccess(response));

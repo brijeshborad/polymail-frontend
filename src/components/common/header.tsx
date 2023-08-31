@@ -138,6 +138,10 @@ export function Header() {
     useEffect(() => {
         let timer1 = setTimeout(() => {
             if (!isOrganizationLoading) {
+                if (!organizations) {
+                    Router.push('/organization/add')
+                    return;
+                }
                 if (organizations && organizations.length <= 0) {
                     Router.push('/organization/add')
                 }

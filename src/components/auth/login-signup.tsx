@@ -61,7 +61,11 @@ export function LoginSignup({type = 'login'}: LoginProps) {
         if (type === 'login') {
             dispatch(loginUser({email: formValues.email, password: formValues.password}));
         } else {
-            dispatch(registerUser({email: formValues.email, password: encryptData(formValues.password)}))
+            dispatch(registerUser({
+                email: formValues.email,
+                password: encryptData(formValues.password),
+                redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}/inbox`,
+            }))
         }
     }
 
