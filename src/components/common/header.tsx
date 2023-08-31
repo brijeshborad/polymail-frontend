@@ -205,19 +205,29 @@ export function Header() {
     const handleKeyPress = (event: KeyboardEvent | any) => {
         if (event.key.toLowerCase() === 'enter') {
             if (searchString) {
-                dispatch(updateThreadState({isThreadSearched: true}));
+                sendMessage(JSON.stringify({
+                    "userId": userDetails?.id,
+                    "name": "SearchCancel",
+                }))
+
                 sendMessage(JSON.stringify({
                     "userId": userDetails?.id,
                     "name": "SearchRequest",
                     "data": {
-                        // [searchString]: `label:inbox`
                         "query": searchString
                     }
                 }))
-            } else {
-                if (selectedAccount && selectedAccount.id) {
-                    dispatch(getAllThreads({mailbox: 'INBOX', account: selectedAccount.id, enriched: true}));
-                }
+                
+                return
+            }
+
+            sendMessage(JSON.stringify({
+                "userId": userDetails?.id,
+                "name": "SearchCancel",
+            }))
+
+            if (selectedAccount && selectedAccount.id) {
+                dispatch(getAllThreads({mailbox: 'INBOX', account: selectedAccount.id, enriched: true}));
             }
         }
     }
@@ -252,14 +262,6 @@ export function Header() {
                     <Input type='text'
                            placeholder='Search'
                            onChange={event => {
-                               if (!iSNewSearch) {
-                                   iSNewSearch = true;
-                                   dispatch(updateThreadState({isThreadSearched: false}));
-                                   sendMessage(JSON.stringify({
-                                       "userId": userDetails?.id,
-                                       "name": "SearchCancel",
-                                   }))
-                               }
                                setSearchString(event.target.value)
                            }}
                            onKeyPress={(e) => handleKeyPress(e)}
