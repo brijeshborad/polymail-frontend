@@ -13,13 +13,12 @@ import styles from "@/styles/project.module.css";
 import {ChevronDownIcon} from "@chakra-ui/icons";
 import {DisneyIcon} from "@/icons";
 import styles2 from "@/styles/common.module.css";
-import React, {useCallback, useEffect} from "react";
+import React, {useCallback} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {getAllThreads, updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
+import { updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {Thread} from "@/models";
 import {SpinnerUI, Time} from "@/components/common";
-import {useRouter} from "next/router";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 import {updateDraftState} from "@/redux/draft/action-reducer";
 
