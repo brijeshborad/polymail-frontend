@@ -1,8 +1,8 @@
 class LocalStorageService {
 
-    private static orgKey: string = 'poly-selected-org';
-    private static accountKey: string = 'poly-selected-account';
-    private static userKey: string = 'poly-user';
+    private static orgKey: string = `poly-selected-org-${process.env.NEXT_PUBLIC_LOCALSTORAGE_POST_FIX}`;
+    private static accountKey: string = `poly-selected-account-${process.env.NEXT_PUBLIC_LOCALSTORAGE_POST_FIX}`;
+    private static userKey: string = `poly-user-${process.env.NEXT_PUBLIC_LOCALSTORAGE_POST_FIX}`;
 
     private static updateLocalStorage(key: string, type: string, data: any = null, isJson = false) {
         if (typeof localStorage !== 'undefined') {
