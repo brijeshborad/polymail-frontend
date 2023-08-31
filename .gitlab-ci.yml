@@ -33,6 +33,6 @@ deploy_prod:
   environment:
     name: develop
     url: https://teams.polymail.com
-
+  needs: []
   only:
     - develop
