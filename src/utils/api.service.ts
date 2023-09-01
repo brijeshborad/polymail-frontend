@@ -36,7 +36,8 @@ axiosInstance.interceptors.request.use((config) => {
 axiosInstance.interceptors.response.use((response) => {
     return response.data;
 }, error => {
-    if (error.response && (error.response.status === 401 || error.response.status === 403) && error.response.data) {
+    let errorStatus = [401, 403, 500]
+    if (error.response && (errorStatus.includes(error.response.status)) && error.response.data) {
         let err = {
             desc: error.response.data.description,
             title: error.response.data.description,

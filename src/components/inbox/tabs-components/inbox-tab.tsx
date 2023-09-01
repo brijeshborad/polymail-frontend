@@ -100,10 +100,8 @@ export function InboxTab(props: InboxTabProps) {
                             <div
                                 className={`${styles.mailDetails} ${(item.mailboxes || []).includes('UNREAD') ? '' : styles.readThread}`}>
                                 <Flex align={"center"} justify={'space-between'}>
-                                    <Flex align={"center"} gap={1}>
-                                        <Flex align={"center"} className={styles.senderDetails} gap={1}>
-                                            <DisneyIcon/> {item.from || 'Anonymous'}
-                                        </Flex>
+                                    <Flex align={"center"} className={styles.senderDetails} gap={1}>
+                                        <DisneyIcon/> {item.from || 'Anonymous'}
                                     </Flex>
                                     <div className={styles2.receiveTime}>
                                         <Time time={item.latestMessage} isShowFullTime={false}/>
