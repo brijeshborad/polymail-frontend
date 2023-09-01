@@ -110,12 +110,16 @@ export function MessagesHeader({
 
     }
 
-    const addToProject = useCallback((item: Project) => {
+    const addThreadToProject = useCallback((item: Project) => {
 
         if (selectedThread && selectedThread.id) {
             let reqBody = {
-                threadId: selectedThread.id,
-                role: 'n/a',
+                threadId: [
+                    selectedThread.id,
+                ],
+                roles: [
+                    'n/a',
+                ],
                 groupType: 'project',
                 groupId: item.id
             }
@@ -170,7 +174,7 @@ export function MessagesHeader({
                                 </div>
 
                                 {projects && !!projects.length && (projects || []).map((item: Project, index: number) => (
-                                    <MenuItem gap={2} key={index} onClick={() => addToProject(item)}>
+                                    <MenuItem gap={2} key={index} onClick={() => addThreadToProject(item)}>
                                         <DisneyIcon/> {item.name}
                                     </MenuItem>
 
