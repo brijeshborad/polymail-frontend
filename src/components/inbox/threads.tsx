@@ -126,7 +126,7 @@ export function Threads() {
 
     const changeEmailTabs = (value: string) => {
         if (currentCacheTab !== value) {
-            dispatch(updateThreadState({isThreadSearched: false, tab: value || 'INBOX'}));
+            dispatch(updateThreadState({isThreadSearched: false}));
             sendJsonMessage({
                 "userId": userDetails?.id,
                 "name": "SearchCancel",
