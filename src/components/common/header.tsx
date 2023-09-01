@@ -24,7 +24,7 @@ import Router, {useRouter} from "next/router";
 import {StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
 import {getAllOrganizations, updateOrganizationState} from "@/redux/organizations/action-reducer";
-import {Account, Organization, User} from "@/models";
+import {Account, Message, Organization, User} from "@/models";
 import {getAllAccount, updateAccountState} from "@/redux/accounts/action-reducer";
 import LocalStorageService from "@/utils/localstorage.service";
 import {getAllThreads, updateThreadState} from "@/redux/threads/action-reducer";
@@ -48,7 +48,7 @@ export function Header() {
 
     const {user} = useSelector((state: StateType) => state.auth);
     const [searchString, setSearchString] = useState<string>('');
-    const {sendMessage} = useSocket();
+    const {sendJsonMessage} = useSocket();
     const router = useRouter()
 
     let currentRoute = router.pathname.split('/');
@@ -76,8 +76,14 @@ export function Header() {
             dispatch(updateLastMessage(null));
             if (newMessage.name === 'SearchResult' && newMessage?.data) {
                 Object.keys(newMessage?.data).map((id: string) => {
-                    console.log('---', newMessage.data[id]);
-                    dispatch(updateThreadState({threads: [...(threads || []), newMessage.data[id]]}));
+                    let newThread = {
+                        ...newMessage.data[id],
+                        id: newMessage.data[id]._id
+                    }
+                    if (newThread.messages && newThread.messages.length > 0) {
+                        newThread.messages = newThread.messages.map((t: Message) => ({...t, id: t._id}))
+                    }
+                    dispatch(updateThreadState({threads: [...(threads || []), newThread]}));
                 })
             }
             if (newMessage.name === 'authenticate' && newMessage?.data && accounts!.length > 0) {
@@ -196,25 +202,22 @@ export function Header() {
 
     const handleKeyPress = (event: KeyboardEvent | any) => {
         if (event.key.toLowerCase() === 'enter') {
-            sendMessage(JSON.stringify({
+            dispatch(updateThreadState({isThreadSearched: false}));
+            sendJsonMessage({
                 "userId": userDetails?.id,
                 "name": "SearchCancel",
-            }))
-
+            })
             if (searchString) {
-                dispatch(updateThreadState({threads: []}));
-
-                sendMessage(JSON.stringify({
+                dispatch(updateThreadState({threads: [], isThreadSearched: true}));
+                sendJsonMessage({
                     "userId": userDetails?.id,
                     "name": "SearchRequest",
                     "data": {
                         "query": searchString
                     }
-                }))
-                
+                })
                 return
             }
-
             if (selectedAccount && selectedAccount.id) {
                 dispatch(getAllThreads({mailbox: 'INBOX', account: selectedAccount.id, enriched: true}));
             }

@@ -33,14 +33,13 @@ export function Threads() {
         isLoading,
         selectedThread,
         updateSuccess,
-        success: threadListSuccess,
-        isThreadSearched
+        success: threadListSuccess
     } = useSelector((state: StateType) => state.threads);
     const {success: draftSuccess, draft} = useSelector((state: StateType) => state.draft);
     const {selectedAccount, account} = useSelector((state: StateType) => state.accounts);
     const {newMessage} = useSelector((state: StateType) => state.socket);
     const {userDetails} = useSelector((state: StateType) => state.users);
-    const {sendMessage} = useSocket();
+    const {sendJsonMessage} = useSocket();
     const dispatch = useDispatch();
 
     const getAllThread = useCallback((resetState: boolean = true, force: boolean = false) => {
@@ -125,27 +124,13 @@ export function Threads() {
         }
     }, [getAllThread, tab])
 
-    // Refresh threads every 10 seconds
-    useEffect(() => {
-
-        //Implementing the setInterval method
-        const interval = setInterval(() => {
-            if (!isThreadSearched) {
-                getAllThread(false, true);
-            }
-        }, Number(process.env.NEXT_PUBLIC_THREAD_LIST_REFRESH_INTERVAL || 10000));
-
-        //Clearing the interval
-        return () => clearInterval(interval);
-    }, [threads, getAllThread, isThreadSearched]);
-
     const changeEmailTabs = (value: string) => {
         if (currentCacheTab !== value) {
             dispatch(updateThreadState({isThreadSearched: false}));
-            sendMessage(JSON.stringify({
+            sendJsonMessage({
                 "userId": userDetails?.id,
                 "name": "SearchCancel",
-            }));
+            });
         }
         setTab(value);
     }

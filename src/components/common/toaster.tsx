@@ -24,10 +24,10 @@ export function Toaster(props: ToasterProps) {
                          className={styles.mailToaster} padding={'16px'} gap={2}>
                         {props.type === 'error' ?
                             <div className={`${styles.toastIcon} ${styles.toastCloseIcon}`}>
-                                <SmallCloseIcon/>
+                                <SmallCloseIcon onClick={() => toast.close('poly-toast')}/>
                             </div> :
                             <div className={`${styles.toastIcon} ${styles.toastSuccessIcon}`}>
-                                <CheckIcon/>
+                                <CheckIcon onClick={() => toast.close('poly-toast')}/>
                             </div>
                         }
                         <Flex direction={'column'} gap={'2px'}>
@@ -39,7 +39,7 @@ export function Toaster(props: ToasterProps) {
                             className={styles.toasterCloseIcon}
                             ml={'auto'} height={"auto"}
                             backgroundColor={'transparent'} padding={'0'}
-                            minWidth={'auto'}><SmallCloseIcon/></Button>
+                            minWidth={'auto'}><SmallCloseIcon onClick={() => toast.close('poly-toast')}/></Button>
                     </Box>
                 )
             },

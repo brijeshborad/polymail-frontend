@@ -3,6 +3,7 @@ import {MessageAttachments} from "@/models/messageAttachments";
 
 export interface Message {
     id: string,
+    _id: string,
     created?: string,
     updated?: string,
     accountId?: string,
