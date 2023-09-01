@@ -33,7 +33,8 @@ export function Threads() {
         isLoading,
         selectedThread,
         updateSuccess,
-        success: threadListSuccess
+        success: threadListSuccess,
+        tabValue
     } = useSelector((state: StateType) => state.threads);
     const {success: draftSuccess, draft} = useSelector((state: StateType) => state.draft);
     const {selectedAccount, account} = useSelector((state: StateType) => state.accounts);
@@ -121,8 +122,9 @@ export function Threads() {
     useEffect(() => {
         if (tab !== '') {
             getAllThread();
+            dispatch(updateThreadState({tabValue: tab}));
         }
-    }, [getAllThread, tab])
+    }, [dispatch, getAllThread, tab])
 
     const changeEmailTabs = (value: string) => {
         if (currentCacheTab !== value) {
@@ -136,10 +138,11 @@ export function Threads() {
     }
 
     useEffect(() => {
-        if (tab) {
-            dispatch(updateThreadState({tabValue: tab}));
+        if (tabValue && tabValue === 'reset') {
+            currentCacheTab = '';
+            getAllThread();
         }
-    }, [tab])
+    }, [getAllThread, tabValue])
 
     const openComposeBox = () => {
         dispatch(updateDraftState({draft: null}));
@@ -224,7 +227,8 @@ export function Threads() {
                             }
 
                             <Menu>
-                                <MenuButton className={styles.tabListMoreButton} minWidth={'80px'} borderLeft={'1px solid #D1D5DB'}
+                                <MenuButton className={styles.tabListMoreButton} minWidth={'80px'}
+                                            borderLeft={'1px solid #D1D5DB'}
                                             borderRadius={0} backgroundColor={'transparent'} height={'auto'}
                                             fontSize={'13px'} color={'#6B7280'} as={Button} marginLeft={1}
                                             rightIcon={<TriangleDownIcon/>}>

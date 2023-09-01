@@ -224,9 +224,9 @@ export function Header() {
         }
     }
 
-    const inboxClick = () => {
-        dispatch(updateThreadState({success: false}));
-        Router.push('/inbox')
+    const changePage = (page: string) => {
+        dispatch(updateThreadState({threads: [], success: false, updateSuccess: true, tabValue: 'reset'}));
+        Router.push(`/${page}`)
     }
 
     return (
@@ -236,12 +236,12 @@ export function Header() {
             </div>
             <Flex className={styles.headerTabs} align={'center'}>
                 <Flex align={'center'} className={currentRoute[1] === 'inbox' ? styles.tabsActive : ''}
-                      onClick={() => inboxClick()}>
+                      onClick={() => changePage('inbox')}>
                     <MailIcon/>
                     Inbox
                 </Flex>
                 <Flex align={'center'} className={currentRoute[1] === 'projects' ? styles.tabsActive : ''}
-                      onClick={() => Router.push('/projects')}>
+                      onClick={() => changePage('projects')}>
                     <FolderIcon/>
                     Projects
                 </Flex>
