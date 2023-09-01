@@ -145,7 +145,7 @@ export function ReplyBox(props: ReplyBoxType) {
             setSubject(emailSubject || '');
 
         }
-    }, [isCompose, draft, selectedMessage, props.replyType, props.emailPart])
+    }, [isCompose, selectedMessage, props.replyType, props.emailPart])
 
     function getForwardContent() {
         const forwardContent: string = `
@@ -185,19 +185,19 @@ ${selectedMessage?.cc ? 'Cc: ' + (selectedMessage?.cc || []).join(',') : ''}</p>
     };
 
     useEffect(() => {
-        // add message to draft when user add cc, bcc, recipients and subject
-        const checkAndSend = (property: keyof RecipientsType) => {
-            if (property) {
-                if ((emailRecipients && emailRecipients[property] && emailRecipients[property].items && emailRecipients[property].items.length) || subject) {
-                    sendToDraft('', false);
-                }
-            }
-        };
         const propertiesToCheck: (keyof RecipientsType)[] = ['recipients', 'bcc', 'cc'];
+        let allValues: string[] = [];
+        // add message to draft when user add cc, bcc, recipients and subject
         for (const property of propertiesToCheck) {
-            checkAndSend(property);
+            if (emailRecipients && emailRecipients[property] && emailRecipients[property].items) {
+                allValues = [...allValues, ...emailRecipients[property].items];
+            }
         }
-    }, [emailRecipients, subject]);
+
+        if ((allValues.length > 0 && emailRecipients && emailRecipients['recipients'] && emailRecipients['recipients'].items.length > 0) || subject) {
+            sendToDraft('', false);
+        }
+    }, [emailRecipients.recipients.items, emailRecipients.cc.items, emailRecipients.bcc.items, subject]);
 
     const handlePaste = (evt: ClipboardEvent | any, type: string) => {
         evt.preventDefault();
@@ -265,9 +265,9 @@ ${selectedMessage?.cc ? 'Cc: ' + (selectedMessage?.cc || []).join(',') : ''}</p>
         let body = {
             subject: subject || selectedMessage?.subject,
             to: emailRecipients.recipients?.items,
+            cc: emailRecipients.cc?.items && emailRecipients.cc?.items.length > 0 ? emailRecipients.cc?.items : [],
             ...((selectedThread && props.replyType !== 'forward') ? {threadId: selectedThread.id} : {}),
-            ...(emailRecipients.cc?.items && emailRecipients.cc?.items.length > 0 ? {cc: emailRecipients.cc?.items} : {}),
-            ...(emailRecipients.bcc?.items && emailRecipients.bcc?.items.length > 0 ? {bcc: emailRecipients.bcc?.items} : {}),
+            bcc: emailRecipients.bcc?.items && emailRecipients.bcc?.items.length > 0 ? emailRecipients.bcc?.items : [],
             draftInfo: {
                 body: isValueUpdate ? value : emailBody
             }
