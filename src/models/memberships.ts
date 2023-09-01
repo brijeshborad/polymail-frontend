@@ -5,5 +5,4 @@ export interface MembershipsRequestBody {
     role?: string,
     groupType?: string,
     groupId?: string
-
 }
