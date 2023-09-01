@@ -11,12 +11,9 @@ const socketSlice = createSlice({
     reducers: {
         updateLastMessage: (state: InitialSocketType, {payload: newMessage}: PayloadAction<any | null>) => {
             return {newMessage};
-        },
-        sendNewMessage: (_state: InitialSocketType, _action: PayloadAction<string>) => {
-            return {newMessage: null};
         }
     }
 })
 
-export const {updateLastMessage, sendNewMessage} = socketSlice.actions
+export const {updateLastMessage} = socketSlice.actions
 export default socketSlice.reducer

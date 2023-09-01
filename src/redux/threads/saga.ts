@@ -30,7 +30,7 @@ function* getThreads({
         yield put(getAllThreadsSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(getAllThreadsError(error.response.data));
+        yield put(getAllThreadsError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -56,7 +56,7 @@ function* searchAndGetThreads({
         yield put(searchThreadsSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(searchThreadsError(error.response.data));
+        yield put(searchThreadsError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 

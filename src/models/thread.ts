@@ -2,6 +2,7 @@ import {Message} from "@/models/message";
 
 export interface Thread {
     id?: string | undefined,
+    _id?: string | undefined,
     from?: string,
     firstMessage?: string,
     latestMessage?: string,

@@ -12,6 +12,10 @@ import {useSocket} from "@/hooks/use-socket.hook";
 // preventing other instances to send unnecessary heartbeats.
 const previousHeartbeats: Record<string, number> = {};
 
+// Multiple instances of the hook can exist simultaneously.
+// preventing other instances to update the same event twice.
+let toRemoveDuplicateSocketEvents: string = '';
+
 export default function withAuth(ProtectedComponent: any) {
     return function ProtectedRoute({...props}) {
         const router = useRouter();
@@ -26,18 +30,23 @@ export default function withAuth(ProtectedComponent: any) {
             }
         }, [userIsAuthenticated, router]);
 
-        const {lastMessage, sendMessage, readyState, socketUrl} = useSocket();
+        const {socketMessage: lastMessage, sendJsonMessage, readyState, socketUrl} = useSocket();
         const dispatch = useDispatch();
 
-        if (lastMessage) {
-            const reader = new FileReader();
-            reader.onload = function () {
-                if (reader.result) {
-                    dispatch(updateLastMessage(JSON.parse(reader.result.toString())));
+        useEffect(() => {
+            if (lastMessage) {
+                const reader = new FileReader();
+                reader.onload = function () {
+                    if (reader.result) {
+                        if (toRemoveDuplicateSocketEvents !== reader.result.toString()) {
+                            toRemoveDuplicateSocketEvents = reader.result.toString();
+                            dispatch(updateLastMessage(JSON.parse(reader.result.toString())));
+                        }
+                    }
                 }
+                reader.readAsText(lastMessage.data);
             }
-            reader.readAsText(lastMessage.data);
-        }
+        }, [dispatch, lastMessage])
 
         // Sends a periodical heartbeat message through the websocket connection.
         useEffect(() => {
@@ -50,7 +59,7 @@ export default function withAuth(ProtectedComponent: any) {
                         // Send a heartbeat message if it hasn't already been sent within the last 10 seconds.
                         if (!lastHeartbeat || deltaFromNow > 10) {
                             // Send the heartbeat message and update the heartbeat history.
-                            sendMessage('');
+                            sendJsonMessage({});
                             previousHeartbeats[socketUrl] = Date.now();
                         }
                     }
@@ -60,7 +69,7 @@ export default function withAuth(ProtectedComponent: any) {
             return () => {
                 clearInterval(heartbeatIntervalRef.current);
             };
-        }, [socketUrl, readyState, sendMessage]);
+        }, [socketUrl, readyState, sendJsonMessage]);
 
         return (
             <>

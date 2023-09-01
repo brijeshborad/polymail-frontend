@@ -7,20 +7,10 @@ import React from "react";
 const {toast} = createStandaloneToast()
 
 export function Toaster(props: ToasterProps) {
-    // const toastRefs = useRef([]);
-
     if (toast.isActive('poly-toast')) {
         return null;
     }
     return (
-        // toast({
-        //     id: 'poly-toast',
-        //     title: props.desc,
-        //     status: props.type === 'error' ? 'error' : 'success',
-        //     duration: 4000,
-        //     isClosable: true,
-        //     position: 'top-right'
-        // })
         toast({
             id: 'poly-toast',
             duration: 2500,
@@ -33,10 +23,10 @@ export function Toaster(props: ToasterProps) {
                          className={styles.mailToaster} padding={'16px'} gap={2}>
                         {props.type === 'error' ?
                             <div className={`${styles.toastIcon} ${styles.toastCloseIcon}`}>
-                                <SmallCloseIcon/>
+                                <SmallCloseIcon onClick={() => toast.close('poly-toast')}/>
                             </div> :
                             <div className={`${styles.toastIcon} ${styles.toastSuccessIcon}`}>
-                                <CheckIcon/>
+                                <CheckIcon onClick={() => toast.close('poly-toast')}/>
                             </div>
                         }
 
@@ -50,7 +40,7 @@ export function Toaster(props: ToasterProps) {
                             className={styles.toasterCloseIcon}
                             ml={'auto'} height={"auto"}
                             backgroundColor={'transparent'} padding={'0'}
-                            minWidth={'auto'}><SmallCloseIcon/></Button>
+                            minWidth={'auto'}><SmallCloseIcon onClick={() => toast.close('poly-toast')}/></Button>
                         {/*<Button className={styles.toasterUndoButton} ml={'auto'} fontWeight={500} fontSize={'12px'}*/}
                         {/*        borderRadius={'50px'} height={"auto"} color={'#FFFFFF'} backgroundColor={'#1F2937'}*/}
                         {/*        padding={'4px 8px'} minWidth={'auto'}>Undo</Button>*/}
