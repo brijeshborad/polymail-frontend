@@ -106,6 +106,37 @@
     border-color: #E5E5E5;
 }
 
+.onBoardingPolicy a {
+    color: #2A6FFF;
+    text-decoration: underline;
+}
+
+.onBoardingPage .continueButton:hover {
+    background-color: #2A6FFF;
+}
+
+.onBoardingPage .connectGoogleAccount:hover {
+    background-color: #FFFFFF;
+}
+
+.onBoardingPage .onboardingInput:focus-visible {
+    border-color: #2A6FFF;
+    box-shadow: none;
+}
+
+.onBoardingPage .continueButton:hover {
+    background-color: #1F2937;
+}
+
+.onBoardingPage .backButton:hover {
+    background-color: #FFFFFF;
+}
+
+.onBoardingPage .uploadProfileImage svg {
+    width: 24px;
+    height: 24px;
+}
+
 @media (max-width: 576px) {
 
     .loginGoogleButton button {

@@ -30,3 +30,5 @@ export * from './drag.icon';
 export * from './lock.icon';
 export * from './edit.icon';
 export * from './inbox.icon';
+export * from './onboarding-logo.icon';
+export * from './upload.icon';
