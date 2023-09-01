@@ -17,8 +17,9 @@ import {
     getAttachmentDownloadUrlSuccess,
     uploadAttachmentError,
     uploadAttachmentSuccess,
-    uploadAttachment
+    uploadAttachment, updateMessageSuccess, updateMessageError, updateMessage
 } from "@/redux/messages/action-reducer";
+import {MessageRequestBody} from "@/models";
 
 function* getMessages({payload: {thread}}: PayloadAction<{ thread?: string }>) {
     try {
@@ -84,6 +85,16 @@ function* generateAttachmentUploadUrl({payload: {id, file}}: PayloadAction<{
     }
 }
 
+function* updateMessageData({payload: {id, body}}: PayloadAction<{ id: string, body: MessageRequestBody }>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callPatch(`messages/${id}`, body);
+        yield put(updateMessageSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        yield put(updateMessageError(error.response.data));
+    }
+}
+
 export function* watchGetMessages() {
     yield takeLatest(getAllMessages.type, getMessages);
 }
@@ -104,6 +115,10 @@ export function* watchAddAttachmentUrlToS3() {
     yield takeLatest(uploadAttachment.type, generateAttachmentUploadUrl);
 }
 
+export function* watchUpdateMessageData() {
+    yield takeLatest(updateMessage.type, updateMessageData);
+}
+
 
 export default function* rootSaga() {
     yield all([
@@ -112,6 +127,7 @@ export default function* rootSaga() {
         fork(watchGetMessagesAttachments),
         fork(watchGetAttachmentUrl),
         fork(watchAddAttachmentUrlToS3),
+        fork(watchUpdateMessageData),
     ]);
 }
 

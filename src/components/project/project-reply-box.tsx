@@ -121,7 +121,7 @@ export function ProjectReplyBox(props: ReplyBoxType) {
                 setEmailRecipients((prevState) => ({
                     ...prevState,
                     recipients: {
-                        items: !isCompose ? (draft ? draft.to : [selectedMessage.from]) : [],
+                        items: !isCompose ? (draft ? draft.to : [selectedMessage.from!]) : [],
                         value: prevState.recipients.value
                     }
                 }));
@@ -350,7 +350,7 @@ ${selectedMessage?.cc ? 'Cc: ' + (selectedMessage?.cc || []).join(',') : ''}</p>
             setEmailRecipients({
                 cc: {items: [], value: ""},
                 bcc: {items: [], value: ""},
-                recipients: {items: !isCompose && selectedMessage ? [selectedMessage.from] : [], value: ''}
+                recipients: {items: !isCompose && selectedMessage ? [selectedMessage.from!] : [], value: ''}
             });
             setEmailBody('');
             dispatch(updateDraftState({

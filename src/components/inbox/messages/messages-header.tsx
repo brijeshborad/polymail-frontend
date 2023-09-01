@@ -12,7 +12,14 @@ import {
     InputGroup,
     InputLeftElement, useDisclosure
 } from "@chakra-ui/react";
-import {ChevronDownIcon, ChevronUpIcon, CloseIcon, WarningIcon, SearchIcon, SmallAddIcon} from "@chakra-ui/icons";
+import {
+    ChevronDownIcon,
+    ChevronUpIcon,
+    CloseIcon,
+    WarningIcon,
+    SearchIcon,
+    SmallAddIcon,
+} from "@chakra-ui/icons";
 import {
     ArchiveIcon,
     BlueStarIcon,
@@ -21,7 +28,8 @@ import {
     TimeSnoozeIcon,
     TrashIcon,
     EnvelopeIcon,
-    DisneyIcon
+    DisneyIcon,
+    MenuIcon
 } from "@/icons";
 import React, {useCallback, useEffect} from "react";
 import {Project, Thread} from "@/models";
@@ -31,10 +39,17 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType, MessageHeaderTypes} from "@/types";
 import {getAllProjects} from "@/redux/projects/action-reducer";
 import CreateNewProject from "@/components/project/create-new-project";
+import {updateMessage} from "@/redux/messages/action-reducer";
 
-export function MessagesHeader({closeCompose, inboxMessages, index, showPreNextMessage, herderType}: MessageHeaderTypes) {
+export function MessagesHeader({
+                                   closeCompose,
+                                   inboxMessages,
+                                   index,
+                                   showPreNextMessage,
+                                   herderType
+                               }: MessageHeaderTypes) {
     const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
-    const {isLoading} = useSelector((state: StateType) => state.messages);
+    const {isLoading, selectedMessage} = useSelector((state: StateType) => state.messages);
     let {projects} = useSelector((state: StateType) => state.projects);
 
     const dispatch = useDispatch();
@@ -61,33 +76,47 @@ export function MessagesHeader({closeCompose, inboxMessages, index, showPreNextM
 
                     let newData = data.filter((item: string) => item !== messageBox)
                     body.mailboxes = [
-                            ...newData
-                        ]
+                        ...newData
+                    ]
 
                 } else {
                     body.mailboxes = [
-                            ...data,
-                            messageBox
-                        ]
+                        ...data,
+                        messageBox
+                    ]
 
                 }
                 currentThreads[index1] = {
                     ...currentThreads[index1],
                     mailboxes: body?.mailboxes || []
                 };
-                dispatch(updateThreadState({threads: currentThreads, selectedThread: currentThreads[index1], success: true}));
+                dispatch(updateThreadState({
+                    threads: currentThreads,
+                    selectedThread: currentThreads[index1],
+                    success: true
+                }));
                 dispatch(updateThreads({id: selectedThread.id, body}));
             }
         }
     }
 
-    const addToProject = useCallback( (item: Project) => {
+    const setScope = (type: string) => {
+        if (selectedMessage && selectedMessage.id) {
+            let body = {
+                scope: type
+            }
+            dispatch(updateMessage({id: selectedMessage.id, body}))
+        }
+
+    }
+
+    const addToProject = useCallback((item: Project) => {
 
         if (selectedThread && selectedThread.id) {
             let reqBody = {
                 threadId: selectedThread.id,
                 role: 'n/a',
-                groupType:'project',
+                groupType: 'project',
                 groupId: item.id
             }
             dispatch(addItemToGroup(reqBody));
@@ -148,7 +177,8 @@ export function MessagesHeader({closeCompose, inboxMessages, index, showPreNextM
                                 ))}
 
                                 <div className={styles.addNewProject}>
-                                    <Button backgroundColor={'transparent'} w={'100%'} borderRadius={0} justifyContent={'flex-start'} onClick={onOpen}>
+                                    <Button backgroundColor={'transparent'} w={'100%'} borderRadius={0}
+                                            justifyContent={'flex-start'} onClick={onOpen}>
                                         <div className={styles.plusIcon}>
                                             <SmallAddIcon/>
                                         </div>
@@ -196,6 +226,22 @@ export function MessagesHeader({closeCompose, inboxMessages, index, showPreNextM
                                 <WarningIcon className={styles.colorGray}/>
                             </div>
                         </Tooltip>
+
+                            <div>
+                                <Menu>
+                                    <MenuButton className={styles.menuIcon} backgroundColor={'transparent'} h={'auto'} minWidth={'auto'} padding={'0'} as={Button} rightIcon={<MenuIcon />}>
+                                    </MenuButton>
+                                    <MenuList className={'drop-down-list'}>
+                                        {selectedMessage && (
+                                            <MenuItem onClick={() => setScope(selectedMessage.scope === 'visible' ? 'hidden' : 'visible')}>
+                                                {selectedMessage.scope === 'visible' ? 'Hide from project members' : 'Show to project members'}
+                                            </MenuItem>
+                                        )}
+                                    </MenuList>
+                                </Menu>
+                            </div>
+
+
                     </Flex>
                 </Flex>
             </div>

@@ -1,7 +1,7 @@
 import styles from "@/styles/Inbox.module.css";
 import styles2 from "@/styles/common.module.css";
-import {Box, Button, Flex, Heading, Text} from "@chakra-ui/react";
-import {CloseIcon} from "@chakra-ui/icons";
+import {Box, Button, Flex, Heading, Text, Tooltip} from "@chakra-ui/react";
+import {CloseIcon, ViewIcon, ViewOffIcon} from "@chakra-ui/icons";
 import {Time} from "@/components/common";
 import {
     DownloadIcon,
@@ -72,8 +72,8 @@ export function Message() {
         if (index !== null && inboxMessages && inboxMessages[index]) {
             setCacheMessages(prev => ({
                 ...prev,
-                [inboxMessages[index].id]: {
-                    ...prev[inboxMessages[index].id],
+                [inboxMessages[index].id!]: {
+                    ...prev[inboxMessages[index].id!],
                     ...body
                 }
             }))
@@ -107,18 +107,18 @@ export function Message() {
         if (index !== null && inboxMessages && inboxMessages.length > 0) {
             if (inboxMessages[index]) {
                 setMessageContent(inboxMessages[index]);
-                setMessageSenders([inboxMessages[index].from, ...(inboxMessages[index].cc || [])].filter(t => t))
+                setMessageSenders([inboxMessages[index].from || '', ...(inboxMessages[index].cc || [])].filter(t => t))
                 dispatch(updateMessageState({selectedMessage: inboxMessages[index]}));
                 // We already set index to last inbox message
-                if (cacheMessages[inboxMessages[index].id] && cacheMessages[inboxMessages[index].id].body) {
-                    dispatch(updateMessageState({messagePart: cacheMessages[inboxMessages[index].id].body}));
+                if (cacheMessages[inboxMessages[index].id!] && cacheMessages[inboxMessages[index].id!].body) {
+                    dispatch(updateMessageState({messagePart: cacheMessages[inboxMessages[index].id!].body}));
                 } else {
-                    dispatch(getMessageParts({id: inboxMessages[index].id}));
+                    dispatch(getMessageParts({id: inboxMessages[index].id!}));
                 }
-                if (cacheMessages[inboxMessages[index].id] && cacheMessages[inboxMessages[index].id].attachments) {
-                    dispatch(updateMessageState({messageAttachments: cacheMessages[inboxMessages[index].id].attachments}));
+                if (cacheMessages[inboxMessages[index].id!] && cacheMessages[inboxMessages[index].id!].attachments) {
+                    dispatch(updateMessageState({messageAttachments: cacheMessages[inboxMessages[index].id!].attachments}));
                 } else {
-                    dispatch(getMessageAttachments({id: inboxMessages[index].id}));
+                    dispatch(getMessageAttachments({id: inboxMessages[index].id!}));
                 }
 
             }
@@ -202,9 +202,19 @@ export function Message() {
                                     {messageSenders[0]} {messageSenders.length - 1 > 0 && `and ${messageSenders.length - 1} others`}
                                 </Text>
                                 }
-                                <div className={styles2.receiveTime}>
-                                    <Time time={messageContent?.created || ''} isShowFullTime={true}/>
-                                </div>
+                                <Flex gap={3} align={'center'}>
+                                    <Tooltip
+                                        label={selectedMessage && selectedMessage.scope === 'hidden' ? 'Hidden' : 'Visible'}
+                                        placement='bottom' bg='gray.300' color='black'>
+                                        <Flex align={'center'} justify={'center'} backgroundColor={'#F3F4F6'} borderRadius={'4px'} w={'20px'} h={'20px'} className={styles.hideShowIcon}>
+                                            {selectedMessage && selectedMessage.scope === 'hidden' ? <ViewOffIcon className={styles.colorGray}  /> : <ViewIcon className={styles.colorGray} />}
+                                        </Flex>
+                                    </Tooltip>
+                                    <div className={styles2.receiveTime}>
+                                        <Time time={messageContent?.created || ''} isShowFullTime={true}/>
+                                    </div>
+                                </Flex>
+
                             </Flex>
                         </Flex>
                     </Flex>

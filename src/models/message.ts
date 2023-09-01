@@ -2,8 +2,8 @@ import {MessagePart} from "@/models/messagesPart";
 import {MessageAttachments} from "@/models/messageAttachments";
 
 export interface Message {
-    id: string,
-    _id: string,
+    id?: string,
+    _id?: string,
     created?: string,
     updated?: string,
     accountId?: string,
@@ -12,14 +12,15 @@ export interface Message {
     mailboxes?: string[],
     subject?: string,
     snippet?: string,
-    from: string,
-    to: string[],
+    from?: string,
+    to?: string[],
     cc?: string[],
     headers?: MessageHeaders[],
     contentRoot?: string,
     draftInfo?: MessageDraftInfo,
-    cachedBody: MessagePart | null,
-    cachedAttachments: MessageAttachments[] | [],
+    cachedBody?: MessagePart | null,
+    cachedAttachments?: MessageAttachments[] | [],
+    scope?: string,
 }
 
 export interface MessageDraft {
@@ -56,5 +57,5 @@ export interface MessageRequestBody {
     body?: string,
     draftInfo?: MessageDraftInfo,
     mailboxes?: string[] | undefined,
-
+    scope?: string
 }

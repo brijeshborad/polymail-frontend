@@ -1,5 +1,6 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {createSlice, current, PayloadAction} from "@reduxjs/toolkit";
 import {InitialMessageStateType} from "@/types";
+import {Message} from "@/models";
 
 const initialState: any = {
     messages: [],
@@ -68,6 +69,23 @@ const messagesSlice = createSlice({
             return {...state, error, isLoading: false, success: false}
         },
 
+        updateMessage: (state: InitialMessageStateType, _action: PayloadAction<{ id?: string, body?: { scope: string } }>) => {
+            return {...state, error: null, isLoading: false, success: false}
+        },
+        updateMessageSuccess: (state: InitialMessageStateType, {payload: message}: PayloadAction<{}>) => {
+            let currentMessages = [...(current(state).messages || [])] as Message[];
+            let messageData = {...(message) || {}} as Message;
+            let index1 = currentMessages.findIndex((item: Message) => item.id === messageData?.id);
+            currentMessages[index1] = {
+                ...currentMessages[index1],
+                scope: messageData.scope || 'visible'
+            };
+            return {...state,messages: [...currentMessages],  error: null, isLoading: false, success: true}
+        },
+        updateMessageError: (state: InitialMessageStateType, {payload: error}: PayloadAction<any>) => {
+            return {...state, error, isLoading: false, success: false}
+        },
+
         updateMessageState: (state: InitialMessageStateType, action: PayloadAction<InitialMessageStateType>) => {
             return {...state, ...action.payload}
         },
@@ -90,6 +108,9 @@ export const {
     getAttachmentDownloadUrlError,
     uploadAttachment,
     uploadAttachmentSuccess,
-    uploadAttachmentError
+    uploadAttachmentError,
+    updateMessage,
+    updateMessageSuccess,
+    updateMessageError
 } = messagesSlice.actions
 export default messagesSlice.reducer

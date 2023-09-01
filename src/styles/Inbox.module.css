@@ -800,3 +800,24 @@ div:has(> .mailSendToaster) {
     fill: #5D5F62;
     width: 18px;
 }
+
+.headerRightIcon .menuIcon[data-active],
+.headerRightIcon .menuIcon:hover {
+    background-color: transparent;
+}
+
+.headerRightIcon .menuIcon span {
+    margin: 0;
+}
+
+.headerRightIcon .menuIcon svg {
+    margin: 0;
+    fill: #5D5F62;
+}
+
+.mailBox .hideShowIcon svg {
+    color: #6B7280;
+    width: 16px;
+    height: 16px;
+    margin: 0;
+}
