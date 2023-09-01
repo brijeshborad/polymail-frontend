@@ -244,7 +244,7 @@ export function Threads() {
                             }
 
                             <Menu>
-                                <MenuButton className={styles.tabListMoreButton} borderLeft={'1px solid #D1D5DB'}
+                                <MenuButton className={styles.tabListMoreButton} minWidth={'80px'} borderLeft={'1px solid #D1D5DB'}
                                             borderRadius={0} backgroundColor={'transparent'} height={'auto'}
                                             fontSize={'13px'} color={'#6B7280'} as={Button} marginLeft={1}
                                             rightIcon={<TriangleDownIcon/>}>
