@@ -7,20 +7,11 @@ import React from "react";
 const {toast} = createStandaloneToast()
 
 export function Toaster(props: ToasterProps) {
-    // const toastRefs = useRef([]);
 
     if (toast.isActive('poly-toast')) {
         return null;
     }
     return (
-        // toast({
-        //     id: 'poly-toast',
-        //     title: props.desc,
-        //     status: props.type === 'error' ? 'error' : 'success',
-        //     duration: 4000,
-        //     isClosable: true,
-        //     position: 'top-right'
-        // })
         toast({
             id: 'poly-toast',
             duration: 2500,
@@ -39,8 +30,6 @@ export function Toaster(props: ToasterProps) {
                                 <CheckIcon/>
                             </div>
                         }
-
-
                         <Flex direction={'column'} gap={'2px'}>
                             <Heading as='h6' fontSize={'15px'} lineHeight={'1.21'}>{props.title}</Heading>
                             <Text fontSize='13px' color={'#6B7280'} lineHeight={'1.21'}>{props.desc}</Text>
@@ -51,9 +40,6 @@ export function Toaster(props: ToasterProps) {
                             ml={'auto'} height={"auto"}
                             backgroundColor={'transparent'} padding={'0'}
                             minWidth={'auto'}><SmallCloseIcon/></Button>
-                        {/*<Button className={styles.toasterUndoButton} ml={'auto'} fontWeight={500} fontSize={'12px'}*/}
-                        {/*        borderRadius={'50px'} height={"auto"} color={'#FFFFFF'} backgroundColor={'#1F2937'}*/}
-                        {/*        padding={'4px 8px'} minWidth={'auto'}>Undo</Button>*/}
                     </Box>
                 )
             },

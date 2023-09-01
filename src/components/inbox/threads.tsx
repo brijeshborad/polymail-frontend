@@ -20,7 +20,6 @@ import {updateDraftState} from "@/redux/draft/action-reducer";
 import {updateLastMessage} from "@/redux/socket/action-reducer";
 import {TriangleDownIcon} from "@chakra-ui/icons";
 import {useSocket} from "@/hooks/use-socket.hook";
-// import {useRouter} from "next/router";
 
 let cacheThreads: { [key: string]: Thread[] } = {};
 let currentCacheTab = 'INBOX';
@@ -43,8 +42,6 @@ export function Threads() {
     const {userDetails} = useSelector((state: StateType) => state.users);
     const {sendMessage} = useSocket();
     const dispatch = useDispatch();
-    // const router = useRouter();
-
 
     const getAllThread = useCallback((resetState: boolean = true, force: boolean = false) => {
         if (selectedAccount) {
@@ -61,14 +58,6 @@ export function Threads() {
             }
         }
     }, [dispatch, selectedAccount, tab]);
-
-
-    // PM-173
-    // useEffect(() => {
-    //     if(router.pathname.includes('inbox')) {
-    //        getAllThread(true, true);
-    //     }
-    // }, [dispatch, getAllThread, router.pathname]);
 
     useEffect(() => {
         if (newMessage && newMessage.name === 'new_message') {

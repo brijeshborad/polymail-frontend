@@ -72,7 +72,7 @@ function* generateAttachmentUploadUrl({payload: {id, file}}: PayloadAction<{
             filename: name,
             mimeType: type
         });
-        // TODO: uncomment below code
+
         if (response && (response as any)?.url) {
             yield ApiService.callPut((response as any)?.url, file, {"Content-Type": type, 'Skip-Headers': true});
         }

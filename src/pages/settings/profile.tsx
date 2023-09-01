@@ -125,13 +125,6 @@ function Profile() {
     }
     const [accountData] = useState<Account>();
 
-    // const removeAccount = () => {
-    //     if (selectedAccount && selectedAccount.id) {
-    //         setAccountData(selectedAccount)
-    //         dispatch(removeAccountDetails({id: selectedAccount.id}));
-    //     }
-    // }
-
     useEffect(() => {
         if (success && accountData && accountData.id) {
             let data = (accounts || []).filter((item: Account) => item.id !== accountData.id)

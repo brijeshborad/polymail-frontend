@@ -15,11 +15,9 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {getAllProjects} from "@/redux/projects/action-reducer";
 import {useRouter} from "next/router";
-// import {isUndefined} from "util";
 import {Project} from "@/models";
 import {SpinnerUI} from "@/components/common";
 import CreateNewProject from "@/components/project/create-new-project";
-// import {POSITION_GAP} from "@/utils/common.functions";
 
 
 function Index() {
@@ -80,37 +78,6 @@ function Index() {
 
         setItemList(newItems);
     };
-
-    // const handleChange = (event: ChangeEvent | any) => {
-    //     setProjectName(event.target.value);
-    // }
-    //
-    // const addNewProject = () => {
-    //     if (projectName.length === 0) {
-    //         Toaster({desc: 'Please enter the project\'s name',title: 'Add Project Name', type: 'error'})
-    //         return;
-    //     }
-    //     if (!selectedAccount) {
-    //         Toaster({desc: 'Your account is not created',title: 'Add Account', type: 'error'})
-    //         return;
-    //     }
-    //
-    //     if (!selectedOrganization) {
-    //         Toaster({desc: 'Your organization is not created',title: 'Add Organization', type: 'error'})
-    //         return;
-    //     }
-    //
-    //     if (selectedAccount && selectedOrganization) {
-    //         let body = {
-    //             name: projectName,
-    //             accountId: selectedAccount.id,
-    //             organizationId: selectedOrganization.id
-    //         }
-    //         dispatch(createProjects(body));
-    //     }
-    //     setProjectName('')
-    //     onClose()
-    // }
 
     return (
         <>

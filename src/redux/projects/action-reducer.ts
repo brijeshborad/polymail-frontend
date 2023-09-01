@@ -19,7 +19,6 @@ const projectsSlice = createSlice({
             return {...state, projects: [], isLoading: true, error: null}
         },
         getAllProjectsSuccess: (state: InitialProjectState, {payload: projects}: PayloadAction<{ }>) => {
-            // projects = (projects || []).sort((a: Project, b: Project) => (new Date(b.created as string).valueOf() - new Date(a.created as string).valueOf()));
             return {...state, projects, isLoading: false, error: null}
         },
         getAllProjectsError: (state: InitialProjectState, {payload: error}: PayloadAction<{ error: any }>) => {

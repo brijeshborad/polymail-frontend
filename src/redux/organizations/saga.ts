@@ -14,8 +14,6 @@ import {
     getOrganizationMembersError,
 } from "@/redux/organizations/action-reducer";
 
-// import {Organization} from "@/models";
-
 function* getOrganizations() {
     try {
         const response: AxiosResponse = yield ApiService.callGet(`organizations`, {});

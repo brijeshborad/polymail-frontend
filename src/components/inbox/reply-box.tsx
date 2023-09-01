@@ -144,7 +144,6 @@ export function ReplyBox(props: ReplyBoxType) {
             // set subject when email is replied or forwarded.
             setSubject(emailSubject || '');
 
-            // setEmailBody('');
         }
     }, [isCompose, draft, selectedMessage, props.replyType, props.emailPart])
 
@@ -381,19 +380,6 @@ ${selectedMessage?.cc ? 'Cc: ' + (selectedMessage?.cc || []).join(',') : ''}</p>
             }));
         }
     }
-    //
-    // useEffect(() => {
-    //     if (sendDraftSuccess) {
-    //         let successObject = {
-    //             desc: isOpen ? 'Message is scheduled successfully!' : 'Successful',
-    //             type: 'success'
-    //         }
-    //         if (isOpen) {
-    //             onClose();
-    //         }
-    //         Toaster(successObject)
-    //     }
-    // }, [isOpen, onClose, sendDraftSuccess])
 
     const showCCFields = (type: string) => {
         setHideShowCCBccFields(prev => ({...prev, [type]: true}));
