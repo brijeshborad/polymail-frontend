@@ -117,7 +117,7 @@ export function Header() {
                 }
             }
         }
-    }, [accounts, connectGoogleAccount, dispatch, newMessage, toast])
+    }, [accounts, connectGoogleAccount, dispatch, newMessage, threads, toast])
 
     useEffect(() => {
         if (googleAuthRedirectionLink) {
