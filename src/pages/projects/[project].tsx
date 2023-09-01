@@ -127,11 +127,7 @@ function ProjectInbox() {
                                                     color={'rgba(0,0,0, 0.5)'} as={Button}
                                                     rightIcon={<ChevronDownIcon/>}> Member </MenuButton>
                                         <MenuList>
-                                            <MenuItem>Download</MenuItem>
-                                            <MenuItem>Create a Copy</MenuItem>
-                                            <MenuItem>Mark as Draft</MenuItem>
-                                            <MenuItem>Delete</MenuItem>
-                                            <MenuItem>Attend a Workshop</MenuItem>
+                                            <MenuItem>Admin</MenuItem>
                                         </MenuList>
                                     </Menu>
                                 </Flex>
