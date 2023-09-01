@@ -22,7 +22,7 @@ import {ReplyBox} from "@/components/inbox/reply-box";
 import {Message as MessageModel, MessageDraft, MessagePart, MessageAttachments} from "@/models";
 import {MessagesHeader} from "@/components/inbox/messages/messages-header";
 import {updateDraftState} from "@/redux/draft/action-reducer";
-import {ProjectReplyBox} from "@/components/project/peoject-reply-box";
+import {ProjectReplyBox} from "@/components/project/project-reply-box";
 
 export function ProjectMessage() {
     const [messageContent, setMessageContent] = useState<MessageModel>();
