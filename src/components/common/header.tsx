@@ -82,6 +82,7 @@ export function Header() {
                     }
                     if (newThread.messages && newThread.messages.length > 0) {
                         newThread.messages = newThread.messages.map((t: Message) => ({...t, id: t._id}))
+                        newThread.messages = newThread.messages.sort((a: Message, b: Message) => (new Date(b.created as string).valueOf() - new Date(a.created as string).valueOf()));
                     }
                     dispatch(updateThreadState({threads: [...(threads || []), newThread]}));
                 })
