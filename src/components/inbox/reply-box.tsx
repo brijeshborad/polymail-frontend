@@ -185,6 +185,20 @@ ${selectedMessage?.cc ? 'Cc: ' + (selectedMessage?.cc || []).join(',') : ''}</p>
         }));
     };
 
+    useEffect(() => {
+        // add message to draft when user add cc, bcc, recipients and subject
+        const checkAndSend = (property: keyof RecipientsType) => {
+            if (property) {
+                if ((emailRecipients && emailRecipients[property] && emailRecipients[property].items && emailRecipients[property].items.length) || subject) {
+                    sendToDraft('', false);
+                }
+            }
+        };
+        const propertiesToCheck: (keyof RecipientsType)[] = ['recipients', 'bcc', 'cc'];
+        for (const property of propertiesToCheck) {
+            checkAndSend(property);
+        }
+    }, [emailRecipients, subject]);
 
     const handlePaste = (evt: ClipboardEvent | any, type: string) => {
         evt.preventDefault();
@@ -326,23 +340,27 @@ ${selectedMessage?.cc ? 'Cc: ' + (selectedMessage?.cc || []).join(',') : ''}</p>
                     delay: secondsDifference
                 }
             } else {
-                let undoToaster: any = {
-                    id: 'send-now',
-                    duration: 1500,
-                    render: () => (
-                        <Box display={'flex'} alignItems={'center'} color='white' p={3} bg='#000000'
-                             borderRadius={'5px'}
-                             className={styles.mailSendToaster} fontSize={'14px'} padding={'13px 25px'}>
-                            {`Your message has been sent to ${draft.to[0]} ${draft.to.length > 0 ? `and ${draft.to.length === 2 ? draft.to[1] : (draft.to.length - 1 + ' others')}` : ''}`}
-                            <Button onClick={() => undoClick('undo')} ml={3} height={"auto"}
-                                    padding={'7px 15px'}>Undo</Button>
-                            <Button onClick={() => undoClick('send-now')} height={"auto"} padding={'7px 15px'}>Send
-                                Now</Button>
-                        </Box>
-                    ),
-                    position: 'bottom'
+                if (draft && draft.to && draft.to.length) {
+                    let undoToaster: any = {
+                        id: 'send-now',
+                        duration: 1500,
+                        render: () => (
+                            <Box display={'flex'} alignItems={'center'} color='white' p={3} bg='#000000'
+                                 borderRadius={'5px'}
+                                 className={styles.mailSendToaster} fontSize={'14px'} padding={'13px 25px'}>
+                                {/*{`Your message has been sent to ${draft.to[0]} and ${draft.to.length - 1} other${draft.to.length === 2 ? '' : 's'}`}*/}
+
+                                {`Your message has been sent to ${draft.to[0]}${draft.to.length > 1 ? ` and ${draft.to.length - 1} other${draft.to.length === 2 ? '' : 's'}` : ''}`}
+                                <Button onClick={() => undoClick('undo')} ml={3} height={"auto"}
+                                        padding={'7px 15px'}>Undo</Button>
+                                <Button onClick={() => undoClick('send-now')} height={"auto"} padding={'7px 15px'}>Send
+                                    Now</Button>
+                            </Box>
+                        ),
+                        position: 'bottom'
+                    }
+                    toast(undoToaster)
                 }
-                toast(undoToaster)
             }
             dispatch(sendMessage({id: draft.id, ...params}));
             if (props.onClose) {
@@ -551,7 +569,8 @@ ${selectedMessage?.cc ? 'Cc: ' + (selectedMessage?.cc || []).join(',') : ''}</p>
                                 Send
                             </Button>
                             <Menu>
-                                <MenuButton className={styles.replayArrowIcon} as={Button} aria-label='Options' isDisabled={!(emailRecipients.recipients.items && emailRecipients.recipients.items.length && emailBody)}
+                                <MenuButton className={styles.replayArrowIcon} as={Button} aria-label='Options'
+                                            isDisabled={!(emailRecipients.recipients.items && emailRecipients.recipients.items.length && emailBody)}
                                             variant='outline'><ChevronDownIcon/></MenuButton>
 
                                 <MenuList>
