@@ -4,7 +4,7 @@ import {EmojiIcon, FileIcon, LinkIcon, TextIcon} from "@/icons";
 import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {RichTextEditor} from "@/components/common";
+import {RichTextEditor, Toaster} from "@/components/common";
 import {updateAccountDetails} from "@/redux/accounts/action-reducer";
 import Index from "@/pages/settings/index";
 import withAuth from "@/components/withAuth";
@@ -31,6 +31,8 @@ function Signature() {
         if (signature) {
             if (selectedAccount && selectedAccount.id) {
                 dispatch(updateAccountDetails({signature: signature, id: selectedAccount.id}));
+                Toaster({desc: 'Signature updated successfully',title: 'Signature updated', type: 'success'})
+
             }
         }
     }
