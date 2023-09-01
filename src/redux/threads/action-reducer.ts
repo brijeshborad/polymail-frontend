@@ -11,7 +11,8 @@ const initialState: any = {
     selectedThread: null,
     updateSuccess: false,
     success: false,
-    isThreadSearched: false
+    isThreadSearched: false,
+    tabValue: null
 } as InitialThreadStateType
 
 const threadsSlice = createSlice({

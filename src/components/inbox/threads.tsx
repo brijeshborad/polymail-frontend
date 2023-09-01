@@ -126,7 +126,7 @@ export function Threads() {
 
     const changeEmailTabs = (value: string) => {
         if (currentCacheTab !== value) {
-            dispatch(updateThreadState({isThreadSearched: false}));
+            dispatch(updateThreadState({isThreadSearched: false, tab: value || 'INBOX'}));
             sendJsonMessage({
                 "userId": userDetails?.id,
                 "name": "SearchCancel",
@@ -134,6 +134,12 @@ export function Threads() {
         }
         setTab(value);
     }
+
+    useEffect(() => {
+        if (tab) {
+            dispatch(updateThreadState({tabValue: tab}));
+        }
+    }, [tab])
 
     const openComposeBox = () => {
         dispatch(updateDraftState({draft: null}));

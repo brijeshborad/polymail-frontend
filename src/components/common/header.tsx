@@ -40,7 +40,7 @@ export function Header() {
         isLoading: isOrganizationLoading
     } = useSelector((state: StateType) => state.organizations);
     const {accounts, selectedAccount} = useSelector((state: StateType) => state.accounts);
-    const {threads} = useSelector((state: StateType) => state.threads);
+    const {threads, tabValue} = useSelector((state: StateType) => state.threads);
     const {googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
     const {userDetails, profilePicture} = useSelector((state: StateType) => state.users);
     const [userData, setUserData] = useState<User>();
@@ -219,7 +219,7 @@ export function Header() {
                 return
             }
             if (selectedAccount && selectedAccount.id) {
-                dispatch(getAllThreads({mailbox: 'INBOX', account: selectedAccount.id, enriched: true}));
+                dispatch(getAllThreads({mailbox: tabValue, account: selectedAccount.id, enriched: true}));
             }
         }
     }

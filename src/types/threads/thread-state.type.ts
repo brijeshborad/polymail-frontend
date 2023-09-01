@@ -9,6 +9,7 @@ export declare type InitialThreadStateType = {
     updateSuccess?: boolean
     success?: boolean
     isThreadSearched?: boolean
+    tabValue?: string
 }
 
 export declare type InitialMembershipStateType = {
