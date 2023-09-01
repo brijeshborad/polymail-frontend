@@ -436,7 +436,7 @@ ${selectedMessage?.cc ? 'Cc: ' + (selectedMessage?.cc || []).join(',') : ''}</p>
                     <Flex justifyContent={'space-between'} padding={'8px 10px'}
                           borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>
                         <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>
-                            <Heading as={'h1'} size={'sm'} paddingTop={1} marginRight={1}>TO:</Heading>
+                            <Heading as={'h1'} size={'sm'} paddingTop={1} marginRight={1}>To:</Heading>
                             <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
                                 {(emailRecipients.recipients.items || []).map((item: string | undefined, i: number) => (
                                     <Chip text={item} key={i} click={() => handleItemDelete(item!, 'recipients')}/>
