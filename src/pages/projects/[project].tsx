@@ -18,7 +18,7 @@ import {
     Text,
     useDisclosure
 } from "@chakra-ui/react";
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import Image from "next/image";
 import {useDispatch, useSelector} from "react-redux";
 import {useRouter} from "next/router";
@@ -29,12 +29,16 @@ import {ProjectThreads} from "@/components/project";
 import {getProjectById, getProjectMembers} from "@/redux/projects/action-reducer";
 import {getAllThreads} from "@/redux/threads/action-reducer";;
 import {ProjectMessage} from "@/components/project/project-message";
+import {addItemToGroup} from "@/redux/memberships/action-reducer";
+import {Project} from "@/models";
 
 
 function ProjectInbox() {
     const {isOpen, onOpen, onClose} = useDisclosure();
     const {members, project} = useSelector((state: StateType) => state.projects);
     const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
+    const {selectedAccount} = useSelector((state: StateType) => state.accounts);
+
     const [size, setSize] = useState<number>(0);
 
     const router = useRouter();
@@ -65,6 +69,19 @@ function ProjectInbox() {
             }
         };
     }, []);
+
+    const inviteAccountToProject = useCallback( (item: Project | null) => {
+        if (selectedAccount && selectedAccount.email) {
+            let reqBody = {
+                fromEmail: selectedAccount.email,
+                toEmail: "",
+                role: "member",
+                groupType: 'project',
+                groupId: item?.id
+            }
+            dispatch(addItemToGroup(reqBody))
+        }
+    }, [dispatch, selectedAccount]);
 
     return (
         <>
@@ -132,7 +149,9 @@ function ProjectInbox() {
                                     </Menu>
                                 </Flex>
                                 <Button className={styles.addMemberButton} backgroundColor={'#000000'} borderRadius={8}
-                                        color={'#ffffff'} minWidth={'120px'} size='sm'> Add </Button>
+                                        color={'#ffffff'} minWidth={'120px'} size='sm' onClick={() => inviteAccountToProject(project)}> 
+                                        Add 
+                                </Button>
                             </Flex>
                         </div>
                         <Flex direction={'column'} gap={4} pt={4}>
@@ -152,7 +171,6 @@ function ProjectInbox() {
                                                     rightIcon={<ChevronDownIcon/>}> Member </MenuButton>
                                         <MenuList>
                                             <MenuItem>Remove</MenuItem>
-
                                         </MenuList>
                                     </Menu>
                                 </Flex>
