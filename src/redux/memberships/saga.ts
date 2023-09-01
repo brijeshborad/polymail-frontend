@@ -45,7 +45,7 @@ export function* watchAddThreadToProject() {
 
 export default function* rootSaga() {
     yield all([
-        fork(watchAddThreadToProject),
         fork(watchAddAccountToProject),
+        fork(watchAddThreadToProject),
     ]);
 }
