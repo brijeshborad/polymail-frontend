@@ -36,14 +36,22 @@ axiosInstance.interceptors.request.use((config) => {
 axiosInstance.interceptors.response.use((response) => {
     return response.data;
 }, error => {
-    let errorStatus = [401, 403, 500]
+    let errorStatus = [401, 403, 500, 400, 404]
     if (error.response && (errorStatus.includes(error.response.status)) && error.response.data) {
         let err = {
             desc: error.response.data.description,
             title: error.response.data.description,
             type: 'error'
         }
-        Toaster(err);
+        let apiUrl, apiMethod;
+        if (error && error.config && error.config.url && error.config.method) {
+            apiUrl = error.config.url.split('/');
+            apiMethod = error.config.method
+        }
+        if (!apiUrl.includes('avatar') || apiMethod !== 'get') {
+            Toaster(err);
+        }
+
         if (error.response.status === 401) {
             Router.push(`/auth/logout`);
             return false;
