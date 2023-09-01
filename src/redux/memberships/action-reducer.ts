@@ -12,13 +12,15 @@ const membershipSlice = createSlice({
     name: 'memberships',
     initialState,
     reducers: {
-        addThreadToProject: (state: InitialMembershipStateType, _action: PayloadAction<any>) => {
+
+        // Adding threads to projects
+        addItemToGroup: (state: InitialMembershipStateType, _action: PayloadAction<any>) => {
             return {...state, error: null, isLoading: false, success: false}
         },
-        addThreadToProjectSuccess: (state: InitialMembershipStateType, {payload: membership}: PayloadAction<{}>) => {
+        addItemToGroupSuccess: (state: InitialMembershipStateType, {payload: membership}: PayloadAction<{}>) => {
             return {...state, membership, error: null, isLoading: false, success: true}
         },
-        addThreadToProjectError: (state: InitialMembershipStateType, {payload: error}: PayloadAction<any>) => {
+        addItemToGroupError: (state: InitialMembershipStateType, {payload: error}: PayloadAction<any>) => {
             return {...state, error, isLoading: false}
         }
     }
@@ -26,8 +28,8 @@ const membershipSlice = createSlice({
 
 
 export const {
-    addThreadToProject,
-    addThreadToProjectSuccess,
-    addThreadToProjectError
+    addItemToGroup,
+    addItemToGroupSuccess,
+    addItemToGroupError,
 } = membershipSlice.actions
 export default membershipSlice.reducer

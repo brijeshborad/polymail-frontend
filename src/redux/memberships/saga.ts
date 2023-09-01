@@ -3,29 +3,29 @@ import {AxiosError, AxiosResponse} from "axios";
 import ApiService from "@/utils/api.service";
 import {all, fork, put, takeLatest} from "@redux-saga/core/effects";
 import {
-    addThreadToProject,
-    addThreadToProjectSuccess,
-    addThreadToProjectError
+    addItemToGroup,
+    addItemToGroupError,
+    addItemToGroupSuccess,
 } from "@/redux/memberships/action-reducer";
 import {MembershipsRequestBody} from "@/models/memberships";
 
-
-function* addThreadToProjectService({payload}: PayloadAction<MembershipsRequestBody>) {
+// Add Threads to Projects
+function* addItemToGroupService({payload}: PayloadAction<MembershipsRequestBody>) {
     try {
         const response: AxiosResponse = yield ApiService.callPost(`memberships`, payload);
-        yield put(addThreadToProjectSuccess(response));
+        yield put(addItemToGroupSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(addThreadToProjectError(error.response.data));
+        yield put(addItemToGroupError(error.response.data));
     }
 }
 
-export function* watchAddThreadToProject() {
-    yield takeLatest(addThreadToProject.type, addThreadToProjectService);
+export function* watchAddItemToGroup() {
+    yield takeLatest(addItemToGroup.type, addItemToGroupService);
 }
 
 export default function* rootSaga() {
     yield all([
-        fork(watchAddThreadToProject)
+        fork(watchAddItemToGroup),
     ]);
 }
