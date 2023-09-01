@@ -26,7 +26,7 @@ import {
 import React, {useCallback, useEffect} from "react";
 import {Project, Thread} from "@/models";
 import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
-import {addThreadToProject} from "@/redux/memberships/action-reducer";
+import {addItemToGroup} from "@/redux/memberships/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType, MessageHeaderTypes} from "@/types";
 import {getAllProjects} from "@/redux/projects/action-reducer";
@@ -90,7 +90,7 @@ export function MessagesHeader({closeCompose, inboxMessages, index, showPreNextM
                 groupType:'project',
                 groupId: item.id
             }
-            dispatch(addThreadToProject(reqBody));
+            dispatch(addItemToGroup(reqBody));
         }
     }, [dispatch, selectedThread]);
 
