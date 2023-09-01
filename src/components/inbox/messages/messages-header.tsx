@@ -114,7 +114,7 @@ export function MessagesHeader({
 
         if (selectedThread && selectedThread.id) {
             let reqBody = {
-                threadId: [
+                threadIds: [
                     selectedThread.id,
                 ],
                 roles: [
