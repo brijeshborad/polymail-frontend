@@ -85,7 +85,8 @@ export function ProjectMessage() {
         if (messagePart && messagePart.data) {
             cacheMessage({body: messagePart});
             let decoded = Buffer.from(messagePart.data || '', 'base64').toString('ascii');
-            const blob = new Blob([decoded], {type: "text/html"});
+            let addTargetBlank = decoded.replace(/<a/g, '<a target="_blank"');
+            const blob = new Blob([addTargetBlank], {type: "text/html"});
             const blobUrl = window.URL.createObjectURL(blob);
             setEmailPart(blobUrl);
         } else {
