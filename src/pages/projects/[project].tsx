@@ -47,11 +47,11 @@ function ProjectInbox() {
     const {success: membershipSuccess} = useSelector((state: StateType) => state.memberships);
 
     const [size, setSize] = useState<number>(0);
-    const [saveButtonStatus, setSaveButtonStatus] = useState<boolean>(false);
-    const [membersInputs, setMembersInput] = useState<{ input: string, role: string }[]>([{
+    const [allowAdd, setAllowAdd] = useState<boolean>(false);
+    const [membersInputs, setMembersInput] = useState<{ input: string, role: string }>({
         input: '',
         role: 'member'
-    }]);
+    });
 
     const router = useRouter();
 
@@ -72,11 +72,9 @@ function ProjectInbox() {
             dispatch(updateMembershipState({success: false}));
             let projectId = router.query.project as string;
             dispatch(getProjectMembersInvites({projectId: projectId}));
-            if (isOpen) {
-                onClose()
-            }
+            setMembersInput({input: '', role: 'member'});
         }
-    }, [dispatch, isOpen, membershipSuccess, onClose, router.query.project])
+    }, [dispatch, membershipSuccess, router.query.project])
 
     function updateSize() {
         setSize(window.innerWidth);
@@ -95,33 +93,24 @@ function ProjectInbox() {
     }, []);
 
     useEffect(() => {
-        if (membersInputs.length > 0) {
+        if (membersInputs) {
             let alreadyInvitedMembers = (invitees || []).map(t => t?.invite?.toEmail);
-            setSaveButtonStatus(membersInputs.filter(t => t && t.input.trim() && isEmail(t.input.trim()) && !alreadyInvitedMembers.includes(t.input)).length > 0);
+            setAllowAdd(!!(membersInputs.input.trim() && isEmail(membersInputs.input.trim()) && !alreadyInvitedMembers.includes(membersInputs.input)));
         }
     }, [invitees, membersInputs])
 
     const inviteAccountToProject = useCallback((item: Project | null) => {
-        let toEmails: string[] = [];
-        let roles: string[] = [];
-        let alreadyInvitedMembers = (invitees || []).map(t => t?.invite?.toEmail);
-        membersInputs.filter(t => {
-            if (t && t.input.trim() && isEmail(t.input.trim()) && !alreadyInvitedMembers.includes(t.input)) {
-                toEmails.push(t.input.trim());
-                roles.push(t.role);
-            }
-        })
-        if (selectedAccount && selectedAccount.email && toEmails.length > 0) {
+        if (selectedAccount && selectedAccount.email && membersInputs.input.length > 0) {
             let reqBody = {
                 fromEmail: selectedAccount.email,
-                toEmails,
-                roles,
+                toEmails: [membersInputs.input],
+                roles: [membersInputs.role],
                 groupType: 'project',
                 groupId: item?.id
             }
             dispatch(addItemToGroup(reqBody))
         }
-    }, [dispatch, invitees, membersInputs, selectedAccount]);
+    }, [dispatch, membersInputs, selectedAccount]);
 
     const removeMemberFromProject = useCallback((item: TeamMember) => {
         dispatch(deleteMemberFromProject(item.id!))
@@ -178,70 +167,44 @@ function ProjectInbox() {
                     <ModalBody padding={'12px 16px 16px'}>
 
                         <div className={styles.addProjectMember}>
-                            <Flex align={'center'} gap={1} justifyContent={'space-between'} marginBottom={'10px'}>
-                                <Heading as='h6' size='xs' mb={2}>Add Members</Heading>
-                                <Button isDisabled={!saveButtonStatus} className={styles.saveMemberButton}
-                                        backgroundColor={'#5cb85c'}
+                            <Heading as='h6' size='xs' mb={2}>Add Members</Heading>
+                            <Flex align={'center'} gap={1}>
+                                <Flex align={'center'} position={"relative"} className={styles.emailAddress}
+                                      padding={'6px 8px 6px 16px'} width={'100%'}>
+                                    <Input p={0} h={'auto'} onChange={(e) => {
+                                        membersInputs.input = e.target.value;
+                                        setMembersInput({...membersInputs})
+                                    }} border={0} value={membersInputs.input}
+                                           placeholder='Name or Email Address' size='xs'/>
+                                    <Menu>
+                                        <MenuButton className={styles.memberButton} backgroundColor={'transparent'}
+                                                    textTransform={'capitalize'}
+                                                    minWidth={'70px'} padding={0} height={'auto'} fontSize={'13px'}
+                                                    color={'rgba(0,0,0, 0.5)'} as={Button}
+                                                    rightIcon={<ChevronDownIcon/>}> {membersInputs.role} </MenuButton>
+                                        <MenuList>
+                                            {PROJECT_ROLES.map((role, roleIndex) => {
+                                                if (membersInputs.role !== role) {
+                                                    return <MenuItem onClick={() => {
+                                                        membersInputs.role = role;
+                                                        setMembersInput({...membersInputs})
+                                                    }} textTransform={'capitalize'} key={roleIndex}>
+                                                        {role}
+                                                    </MenuItem>
+                                                }
+                                                return null
+                                            })}
+                                        </MenuList>
+                                    </Menu>
+                                </Flex>
+                                <Button isDisabled={!allowAdd}
+                                        className={styles.addMemberButton} backgroundColor={'#000000'}
                                         borderRadius={8}
                                         color={'#ffffff'} minWidth={'120px'} size='sm'
                                         onClick={() => inviteAccountToProject(project)}>
-                                    Save
+                                    Add
                                 </Button>
                             </Flex>
-                            {membersInputs.map((item, index: number) => (
-                                <Flex align={'center'} gap={1} key={index} marginTop={index !== 0 ? '10px' : ''}>
-                                    <Flex align={'center'} position={"relative"} className={styles.emailAddress}
-                                          padding={'6px 8px 6px 16px'} width={'100%'}>
-                                        <Input p={0} h={'auto'} onChange={(e) => {
-                                            membersInputs[index].input = e.target.value;
-                                            setMembersInput([...membersInputs])
-                                        }} border={0} value={membersInputs[index].input}
-                                               placeholder='Name or Email Address' size='xs'/>
-                                        <Menu>
-                                            <MenuButton className={styles.memberButton} backgroundColor={'transparent'}
-                                                        textTransform={'capitalize'}
-                                                        minWidth={'70px'} padding={0} height={'auto'} fontSize={'13px'}
-                                                        color={'rgba(0,0,0, 0.5)'} as={Button}
-                                                        rightIcon={<ChevronDownIcon/>}> {item.role} </MenuButton>
-                                            <MenuList>
-                                                {PROJECT_ROLES.map((role, roleIndex) => {
-                                                    if (item.role !== role) {
-                                                        return <MenuItem onClick={() => {
-                                                            membersInputs[index].role = role;
-                                                            setMembersInput([...membersInputs])
-                                                        }} textTransform={'capitalize'} key={roleIndex}>
-                                                            {role}
-                                                        </MenuItem>
-                                                    }
-                                                    return null
-                                                })}
-                                            </MenuList>
-                                        </Menu>
-                                    </Flex>
-                                    {index === 0 ?
-                                        <Button isDisabled={membersInputs[index].input?.trim() === ''}
-                                                className={styles.addMemberButton} backgroundColor={'#000000'}
-                                                borderRadius={8}
-                                                color={'#ffffff'} minWidth={'120px'} size='sm'
-                                                onClick={() => {
-                                                    membersInputs.push({
-                                                        input: '',
-                                                        role: 'member'
-                                                    })
-                                                    setMembersInput([...membersInputs])
-                                                }}>
-                                            Add
-                                        </Button> :
-                                        <Button colorScheme='red'
-                                                borderRadius={8} minWidth={'120px'} size='sm'
-                                                onClick={() => {
-                                                    membersInputs.splice(index, 1);
-                                                    setMembersInput([...membersInputs])
-                                                }}>
-                                            Remove
-                                        </Button>}
-                                </Flex>
-                            ))}
                         </div>
                         <Flex direction={'column'} gap={4} pt={4}>
                             {members && !!members.length && members.map((member, index) => (
@@ -259,8 +222,16 @@ function ProjectInbox() {
                                                     fontSize={'12px'}
                                                     color={'#000000'} as={Button}
                                                     rightIcon={
-                                                        <ChevronDownIcon/>}> {member.role || 'Member'} </MenuButton>
+                                                        <ChevronDownIcon/>}> {member.role} </MenuButton>
                                         <MenuList>
+                                            {PROJECT_ROLES.map((role, roleIndex) => {
+                                                if (member.role !== role) {
+                                                    return <MenuItem textTransform={'capitalize'} key={roleIndex}>
+                                                        {role}
+                                                    </MenuItem>
+                                                }
+                                                return null
+                                            })}
                                             <MenuItem
                                                 onClick={() => removeMemberFromProject(member)}>{member.userId === userDetails?.id ? 'Leave' : 'Remove'}</MenuItem>
                                         </MenuList>
@@ -275,8 +246,26 @@ function ProjectInbox() {
                                         </div>
                                         <Text fontSize='sm' color={'#000000'}>{invite?.invite?.toEmail}</Text>
                                     </Flex>
-                                    <Text textTransform={'capitalize'}
-                                          color={'#000000'}>{invite.role || 'Member'}</Text>
+                                    <Menu>
+                                        <MenuButton className={styles.memberButton} backgroundColor={'#E9E9E9'}
+                                                    borderRadius={4} padding={'2px 4px '} height={'auto'}
+                                                    textTransform={'capitalize'}
+                                                    fontSize={'12px'}
+                                                    color={'#000000'} as={Button}
+                                                    rightIcon={
+                                                        <ChevronDownIcon/>}> {invite.role} </MenuButton>
+                                        <MenuList>
+                                            {PROJECT_ROLES.map((role, roleIndex) => {
+                                                if (invite.role !== role) {
+                                                    return <MenuItem textTransform={'capitalize'} key={roleIndex}>
+                                                        {role}
+                                                    </MenuItem>
+                                                }
+                                                return null
+                                            })}
+                                            <MenuItem>Delete</MenuItem>
+                                        </MenuList>
+                                    </Menu>
                                 </Flex>
                             ))}
                         </Flex>
