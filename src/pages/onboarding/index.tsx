@@ -1,7 +1,6 @@
 import OnboardingLayout from "@/pages/onboarding/onboarding-layout";
 import styles from "@/styles/Login.module.css";
-import {Button, Flex, Heading, Image, Text} from "@chakra-ui/react";
-import Router from "next/router";
+import {Button, Flex, Heading, Image} from "@chakra-ui/react";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {googleAuthLink} from "@/redux/auth/action-reducer";

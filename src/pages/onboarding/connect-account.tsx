@@ -80,7 +80,7 @@ function ConnectAccount() {
                         accounts</Heading>
                     <Flex direction={"column"} mb={10} gap={3}>
                     {accounts && !!accounts.length && (accounts || []).map((item: Account, index: number) => (
-                            <InputGroup>
+                            <InputGroup key={index}>
                                 <InputLeftElement h={'28px'} w={'28px'} top={'4px'} left={'4px'} backgroundColor={'#EBF2FF'}
                                                 borderRadius={'6px'}><CheckIcon color='#2A6FFF'/></InputLeftElement>
                                 <Input fontSize={'14px'} h={'auto'} p={'7px 40px'} className={styles.onboardingInput}
