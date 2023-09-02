@@ -26,7 +26,7 @@ import {StateType} from "@/types";
 import {ChevronDownIcon} from "@chakra-ui/icons";
 import styles from "@/styles/project.module.css";
 import {ProjectThreads} from "@/components/project";
-import {getProjectById, getProjectMembers} from "@/redux/projects/action-reducer";
+import {getProjectById, getProjectMembers, getProjectMembersInvites} from "@/redux/projects/action-reducer";
 import {getAllThreads} from "@/redux/threads/action-reducer";
 import {ProjectMessage} from "@/components/project/project-message";
 import {
@@ -40,7 +40,7 @@ import {isEmail} from "@/utils/common.functions";
 
 function ProjectInbox() {
     const {isOpen, onOpen, onClose} = useDisclosure();
-    const {members, project} = useSelector((state: StateType) => state.projects);
+    const {members, project, invitees} = useSelector((state: StateType) => state.projects);
     const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {userDetails} = useSelector((state: StateType) => state.users);
@@ -62,6 +62,7 @@ function ProjectInbox() {
             let projectId = router.query.project as string;
             dispatch(getProjectById({id: projectId}));
             dispatch(getProjectMembers({projectId: projectId}));
+            dispatch(getProjectMembersInvites({projectId: projectId}));
             dispatch(getAllThreads({project: projectId, enriched: true, resetState: true}));
         }
     }, [dispatch, router.query.project])
@@ -69,11 +70,13 @@ function ProjectInbox() {
     useEffect(() => {
         if (membershipSuccess) {
             dispatch(updateMembershipState({success: false}));
+            let projectId = router.query.project as string;
+            dispatch(getProjectMembersInvites({projectId: projectId}));
             if (isOpen) {
                 onClose()
             }
         }
-    }, [dispatch, isOpen, membershipSuccess, onClose])
+    }, [dispatch, isOpen, membershipSuccess, onClose, router.query.project])
 
     function updateSize() {
         setSize(window.innerWidth);
@@ -93,15 +96,17 @@ function ProjectInbox() {
 
     useEffect(() => {
         if (membersInputs.length > 0) {
-            setSaveButtonStatus(membersInputs.filter(t => t && t.input.trim() && isEmail(t.input.trim())).length > 0);
+            let alreadyInvitedMembers = (invitees || []).map(t => t?.invite?.toEmail);
+            setSaveButtonStatus(membersInputs.filter(t => t && t.input.trim() && isEmail(t.input.trim()) && !alreadyInvitedMembers.includes(t.input)).length > 0);
         }
-    }, [membersInputs])
+    }, [invitees, membersInputs])
 
     const inviteAccountToProject = useCallback((item: Project | null) => {
         let toEmails: string[] = [];
         let roles: string[] = [];
+        let alreadyInvitedMembers = (invitees || []).map(t => t?.invite?.toEmail);
         membersInputs.filter(t => {
-            if (t && t.input.trim() && isEmail(t.input.trim())) {
+            if (t && t.input.trim() && isEmail(t.input.trim()) && !alreadyInvitedMembers.includes(t.input)) {
                 toEmails.push(t.input.trim());
                 roles.push(t.role);
             }
@@ -116,7 +121,7 @@ function ProjectInbox() {
             }
             dispatch(addItemToGroup(reqBody))
         }
-    }, [dispatch, membersInputs, selectedAccount]);
+    }, [dispatch, invitees, membersInputs, selectedAccount]);
 
     const removeMemberFromProject = useCallback((item: TeamMember) => {
         dispatch(deleteMemberFromProject(item.id!))
@@ -260,6 +265,18 @@ function ProjectInbox() {
                                                 onClick={() => removeMemberFromProject(member)}>{member.userId === userDetails?.id ? 'Leave' : 'Remove'}</MenuItem>
                                         </MenuList>
                                     </Menu>
+                                </Flex>
+                            ))}
+                            {invitees && !!invitees.length && invitees.map((invite, index) => (
+                                <Flex key={index + 1} align={'center'} justify={'space-between'} gap={4}>
+                                    <Flex align={'center'} gap={2}>
+                                        <div className={styles.addMemberImage}>
+                                            <Image src="/image/user.png" width="36" height="36" alt=""/>
+                                        </div>
+                                        <Text fontSize='sm' color={'#000000'}>{invite?.invite?.toEmail}</Text>
+                                    </Flex>
+                                    <Text textTransform={'capitalize'}
+                                          color={'#000000'}>{invite.role || 'Member'}</Text>
                                 </Flex>
                             ))}
                         </Flex>

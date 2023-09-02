@@ -1,5 +1,5 @@
 import {createSlice, current, PayloadAction} from "@reduxjs/toolkit";
-import {InitialProjectState, InitialOrganizationStateType} from "@/types";
+import {InitialProjectState} from "@/types";
 import {Project} from "@/models";
 
 const initialState: any = {
@@ -8,7 +8,8 @@ const initialState: any = {
     isLoading: false,
     error: null,
     selectedProject: null,
-    members: []
+    members: [],
+    invitees: []
 } as InitialProjectState
 
 const projectsSlice = createSlice({
@@ -46,14 +47,24 @@ const projectsSlice = createSlice({
             return {...state, project: null, isLoading: false, error}
         },
 
-        getProjectMembers: (state: InitialOrganizationStateType,  _action: PayloadAction<{ projectId: string }>) => {
+        getProjectMembers: (state: InitialProjectState,  _action: PayloadAction<{ projectId: string }>) => {
             return {...state, members: [], isLoading: true, error: null}
         },
-        getProjectMembersSuccess: (state: InitialOrganizationStateType, {payload: members}: PayloadAction<{}>) => {
+        getProjectMembersSuccess: (state: InitialProjectState, {payload: members}: PayloadAction<{}>) => {
             return {...state, members, isLoading: false, error: null}
         },
-        getProjectMembersError: (state: InitialOrganizationStateType, {payload: error}: PayloadAction<{ error: any }>) => {
+        getProjectMembersError: (state: InitialProjectState, {payload: error}: PayloadAction<{ error: any }>) => {
             return {...state, members: [], isLoading: false, error}
+        },
+
+        getProjectMembersInvites: (state: InitialProjectState,  _action: PayloadAction<{ projectId: string }>) => {
+            return {...state, invitees: [], isLoading: true, error: null}
+        },
+        getProjectMembersInvitesSuccess: (state: InitialProjectState, {payload: invitees}: PayloadAction<{}>) => {
+            return {...state, invitees, isLoading: false, error: null}
+        },
+        getProjectMembersInvitesError: (state: InitialProjectState, {payload: error}: PayloadAction<{ error: any }>) => {
+            return {...state, invitees: [], isLoading: false, error}
         },
 
         updateProjectState: (state: InitialProjectState, action: PayloadAction<InitialProjectState>) => {
@@ -75,6 +86,9 @@ export const {
     getProjectMembersError,
     getProjectById,
     getProjectByIdSuccess,
-    getProjectByIdError
+    getProjectByIdError,
+    getProjectMembersInvites,
+    getProjectMembersInvitesSuccess,
+    getProjectMembersInvitesError
 } = projectsSlice.actions
 export default projectsSlice.reducer

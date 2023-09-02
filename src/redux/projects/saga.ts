@@ -3,13 +3,19 @@ import ApiService from "@/utils/api.service";
 import {AxiosError, AxiosResponse} from "axios";
 import {
     createProjects,
-    createProjectsError, createProjectsSuccess,
+    createProjectsError,
+    createProjectsSuccess,
     getAllProjects,
     getAllProjectsError,
     getAllProjectsSuccess,
     getProjectMembers,
     getProjectMembersSuccess,
-    getProjectMembersError, getProjectById, getProjectByIdSuccess, getProjectByIdError,
+    getProjectMembersError,
+    getProjectById,
+    getProjectByIdSuccess,
+    getProjectByIdError,
+    getProjectMembersInvites,
+    getProjectMembersInvitesSuccess, getProjectMembersInvitesError,
 } from "@/redux/projects/action-reducer";
 import {PayloadAction} from "@reduxjs/toolkit";
 
@@ -56,6 +62,17 @@ function* getProjectMembersService({payload: {projectId}}: PayloadAction<{ proje
 }
 
 
+function* getProjectMembersInvitees({payload: {projectId}}: PayloadAction<{ projectId: string }>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callGet(`projects/${projectId}/invites`, {});
+        yield put(getProjectMembersInvitesSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        yield put(getProjectMembersInvitesError(error.response.data));
+    }
+}
+
+
 export function* watchGetProjects() {
     yield takeLatest(getAllProjects.type, getProjects);
 }
@@ -72,12 +89,17 @@ export function* watchGetProjectById() {
     yield takeLatest(getProjectById.type, getProject);
 }
 
+export function* watchGetProjectMembersInvitees() {
+    yield takeLatest(getProjectMembersInvites.type, getProjectMembersInvitees);
+}
+
 export default function* rootSaga() {
     yield all([
         fork(watchGetProjects),
         fork(watchAddProjects),
         fork(watchGetProjectMembers),
         fork(watchGetProjectById),
+        fork(watchGetProjectMembersInvitees),
     ]);
 }
 
