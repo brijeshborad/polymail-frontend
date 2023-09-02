@@ -61,7 +61,7 @@ export function ReplyBox(props: ReplyBoxType) {
     const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
 
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
-    const {selectedThread} = useSelector((state: StateType) => state.threads);
+    const {selectedThread, tabValue} = useSelector((state: StateType) => state.threads);
     const {
         selectedMessage,
         isCompose
@@ -101,6 +101,26 @@ export function ReplyBox(props: ReplyBoxType) {
         }
     }, [draft, isCompose, props.replyType, selectedAccount])
 
+    useEffect(() => {
+        if (isCompose && tabValue === 'DRAFT') {
+            let items: string[] = (draft ? (draft.cc || []) : [])!.filter(t => t);
+            setEmailRecipients((prevState) => ({
+                ...prevState,
+                recipients: {
+                    items: draft ? (draft.to || []) : [],
+                    value: ''
+                },
+                cc: {
+                    items: items,
+                    value: ''
+                }
+            }));
+            if (items.length > 0) {
+                setHideShowCCBccFields(prev => ({...prev, cc: true}));
+            }
+            setSubject(draft?.subject || '');
+        }
+    }, [draft, isCompose, tabValue])
 
     useEffect(() => {
         if (selectedMessage && !isCompose) {

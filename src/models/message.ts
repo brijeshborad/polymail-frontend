@@ -34,6 +34,7 @@ export interface MessageDraft {
     draftInfo?: MessageDraftInfo,
     contentRoot?: string,
     created?: string,
+    subject?: string,
 }
 
 export interface MessageHeaders {

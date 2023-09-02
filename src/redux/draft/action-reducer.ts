@@ -7,7 +7,8 @@ const initialState: any = {
     sendMessage: null,
     isLoading: false,
     error: null,
-    success: false
+    success: false,
+    updatedDraft: null
 } as InitialDraftStateType
 
 const draftSlice = createSlice({
@@ -18,7 +19,7 @@ const draftSlice = createSlice({
             return {...state, draft: null, error: null, isLoading: false, success: false}
         },
         createDraftSuccess: (state: InitialDraftStateType, {payload: draft}: PayloadAction<{}>) => {
-            return {...state, draft, error: null, isLoading: false, success: true}
+            return {...state, draft, updatedDraft: draft, error: null, isLoading: false, success: true}
         },
         createDraftError: (state: InitialDraftStateType, {payload: error}: PayloadAction<any>) => {
             return {...state, draft: null, error, isLoading: false, success: false}
@@ -37,8 +38,8 @@ const draftSlice = createSlice({
         updatePartialMessage: (state: InitialDraftStateType, _action: PayloadAction<{ id: string, body: MessageDraft }>) => {
             return {...state, error: null, isLoading: false, success: false}
         },
-        updatePartialMessageSuccess: (state: InitialDraftStateType, {payload: draft}: PayloadAction<{}>) => {
-            return {...state, draft, error: null, isLoading: false, success: true}
+        updatePartialMessageSuccess: (state: InitialDraftStateType, {payload: updatedDraft}: PayloadAction<{}>) => {
+            return {...state, updatedDraft, error: null, isLoading: false, success: true}
         },
         updatePartialMessageError: (state: InitialDraftStateType, {payload: error}: PayloadAction<any>) => {
             return {...state, error, isLoading: false, success: false}
