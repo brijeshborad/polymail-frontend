@@ -13,7 +13,7 @@ export declare type InitialThreadStateType = {
 }
 
 export declare type InitialMembershipStateType = {
-    membership: any;
+    membership?: any;
     isLoading?: boolean
     error?: Error | any
     success?: boolean

@@ -161,8 +161,12 @@
     background-color: transparent;
 }
 
-.addProjectMember .addMemberButton:hover {
-    background-color: #000000;
+.addProjectMember .addMemberButton:hover, .addMemberButton:hover:disabled, .addMemberButton:hover[disabled] {
+    background-color: #000000 !important;
+}
+
+.saveMemberButton:hover, .saveMemberButton:hover:disabled, .saveMemberButton:hover[disabled] {
+    background-color: #2F855A !important;
 }
 
 .projectMemberModal .addMemberImage {

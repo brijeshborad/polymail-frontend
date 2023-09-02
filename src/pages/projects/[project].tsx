@@ -27,19 +27,31 @@ import {ChevronDownIcon} from "@chakra-ui/icons";
 import styles from "@/styles/project.module.css";
 import {ProjectThreads} from "@/components/project";
 import {getProjectById, getProjectMembers} from "@/redux/projects/action-reducer";
-import {getAllThreads} from "@/redux/threads/action-reducer";;
+import {getAllThreads} from "@/redux/threads/action-reducer";
 import {ProjectMessage} from "@/components/project/project-message";
-import {addItemToGroup} from "@/redux/memberships/action-reducer";
-import {Project} from "@/models";
-
+import memberships, {
+    addItemToGroup,
+    deleteMemberFromProject,
+    updateMembershipState
+} from "@/redux/memberships/action-reducer";
+import {Project, TeamMember} from "@/models";
+import {PROJECT_ROLES} from "@/utils/constants";
+import {isEmail} from "@/utils/common.functions";
 
 function ProjectInbox() {
     const {isOpen, onOpen, onClose} = useDisclosure();
     const {members, project} = useSelector((state: StateType) => state.projects);
     const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
+    const {userDetails} = useSelector((state: StateType) => state.users);
+    const {success: membershipSuccess} = useSelector((state: StateType) => state.memberships);
 
     const [size, setSize] = useState<number>(0);
+    const [saveButtonStatus, setSaveButtonStatus] = useState<boolean>(false);
+    const [membersInputs, setMembersInput] = useState<{ input: string, role: string }[]>([{
+        input: '',
+        role: 'member'
+    }]);
 
     const router = useRouter();
 
@@ -48,11 +60,20 @@ function ProjectInbox() {
     useEffect(() => {
         if (router.query.project) {
             let projectId = router.query.project as string;
-            dispatch(getProjectById({ id: projectId}));
+            dispatch(getProjectById({id: projectId}));
             dispatch(getProjectMembers({projectId: projectId}));
-            dispatch(getAllThreads({ project: projectId, enriched: true, resetState: true}));
+            dispatch(getAllThreads({project: projectId, enriched: true, resetState: true}));
         }
     }, [dispatch, router.query.project])
+
+    useEffect(() => {
+        if (membershipSuccess) {
+            dispatch(updateMembershipState({success: false}));
+            if (isOpen) {
+                onClose()
+            }
+        }
+    }, [dispatch, isOpen, membershipSuccess, onClose])
 
     function updateSize() {
         setSize(window.innerWidth);
@@ -70,18 +91,36 @@ function ProjectInbox() {
         };
     }, []);
 
-    const inviteAccountToProject = useCallback( (item: Project | null) => {
-        if (selectedAccount && selectedAccount.email) {
+    useEffect(() => {
+        if (membersInputs.length > 0) {
+            setSaveButtonStatus(membersInputs.filter(t => t && t.input.trim() && isEmail(t.input.trim())).length > 0);
+        }
+    }, [membersInputs])
+
+    const inviteAccountToProject = useCallback((item: Project | null) => {
+        let toEmails: string[] = [];
+        let roles: string[] = [];
+        membersInputs.filter(t => {
+            if (t && t.input.trim() && isEmail(t.input.trim())) {
+                toEmails.push(t.input.trim());
+                roles.push(t.role);
+            }
+        })
+        if (selectedAccount && selectedAccount.email && toEmails.length > 0) {
             let reqBody = {
                 fromEmail: selectedAccount.email,
-                toEmail: "",
-                role: "member",
+                toEmails,
+                roles,
                 groupType: 'project',
                 groupId: item?.id
             }
             dispatch(addItemToGroup(reqBody))
         }
-    }, [dispatch, selectedAccount]);
+    }, [dispatch, membersInputs, selectedAccount]);
+
+    const removeMemberFromProject = useCallback((item: TeamMember) => {
+        dispatch(deleteMemberFromProject(item.id!))
+    }, [dispatch]);
 
     return (
         <>
@@ -96,7 +135,8 @@ function ProjectInbox() {
                         </div>
                         <Heading as='h4' fontSize={'24px'} color={'#08162F'}>{project && project.name}</Heading>
                         <Badge color={'#000000'} fontSize={'14px'} fontWeight={'600'} backgroundColor={'#E9E9E9'}
-                               padding={'3px 6px'} borderRadius={'4px'} lineHeight={'1.19'}>{threads && threads.length} threads</Badge>
+                               padding={'3px 6px'} borderRadius={'4px'}
+                               lineHeight={'1.19'}>{threads && threads.length} threads</Badge>
                     </Flex>
                     <Flex align={'center'} gap={1}>
                         <div className={styles.userImage}>
@@ -133,30 +173,74 @@ function ProjectInbox() {
                     <ModalBody padding={'12px 16px 16px'}>
 
                         <div className={styles.addProjectMember}>
-                            <Heading as='h6' size='xs' mb={2}>Add Members</Heading>
-                            <Flex align={'center'} gap={1}>
-                                <Flex align={'center'} position={"relative"} className={styles.emailAddress}
-                                      padding={'6px 8px 6px 16px'} width={'100%'}>
-                                    <Input p={0} h={'auto'} border={0} placeholder='Name or Email Address' size='xs'/>
-                                    <Menu>
-                                        <MenuButton className={styles.memberButton} backgroundColor={'transparent'}
-                                                    minWidth={'70px'} padding={0} height={'auto'} fontSize={'13px'}
-                                                    color={'rgba(0,0,0, 0.5)'} as={Button}
-                                                    rightIcon={<ChevronDownIcon/>}> Member </MenuButton>
-                                        <MenuList>
-                                            <MenuItem>Admin</MenuItem>
-                                        </MenuList>
-                                    </Menu>
-                                </Flex>
-                                <Button className={styles.addMemberButton} backgroundColor={'#000000'} borderRadius={8}
-                                        color={'#ffffff'} minWidth={'120px'} size='sm' onClick={() => inviteAccountToProject(project)}> 
-                                        Add 
+                            <Flex align={'center'} gap={1} justifyContent={'space-between'} marginBottom={'10px'}>
+                                <Heading as='h6' size='xs' mb={2}>Add Members</Heading>
+                                <Button isDisabled={!saveButtonStatus} className={styles.saveMemberButton}
+                                        backgroundColor={'#5cb85c'}
+                                        borderRadius={8}
+                                        color={'#ffffff'} minWidth={'120px'} size='sm'
+                                        onClick={() => inviteAccountToProject(project)}>
+                                    Save
                                 </Button>
                             </Flex>
+                            {membersInputs.map((item, index: number) => (
+                                <Flex align={'center'} gap={1} key={index} marginTop={index !== 0 ? '10px' : ''}>
+                                    <Flex align={'center'} position={"relative"} className={styles.emailAddress}
+                                          padding={'6px 8px 6px 16px'} width={'100%'}>
+                                        <Input p={0} h={'auto'} onChange={(e) => {
+                                            membersInputs[index].input = e.target.value;
+                                            setMembersInput([...membersInputs])
+                                        }} border={0} value={membersInputs[index].input}
+                                               placeholder='Name or Email Address' size='xs'/>
+                                        <Menu>
+                                            <MenuButton className={styles.memberButton} backgroundColor={'transparent'}
+                                                        textTransform={'capitalize'}
+                                                        minWidth={'70px'} padding={0} height={'auto'} fontSize={'13px'}
+                                                        color={'rgba(0,0,0, 0.5)'} as={Button}
+                                                        rightIcon={<ChevronDownIcon/>}> {item.role} </MenuButton>
+                                            <MenuList>
+                                                {PROJECT_ROLES.map((role, roleIndex) => {
+                                                    if (item.role !== role) {
+                                                        return <MenuItem onClick={() => {
+                                                            membersInputs[index].role = role;
+                                                            setMembersInput([...membersInputs])
+                                                        }} textTransform={'capitalize'} key={roleIndex}>
+                                                            {role}
+                                                        </MenuItem>
+                                                    }
+                                                    return null
+                                                })}
+                                            </MenuList>
+                                        </Menu>
+                                    </Flex>
+                                    {index === 0 ?
+                                        <Button isDisabled={membersInputs[index].input?.trim() === ''}
+                                                className={styles.addMemberButton} backgroundColor={'#000000'}
+                                                borderRadius={8}
+                                                color={'#ffffff'} minWidth={'120px'} size='sm'
+                                                onClick={() => {
+                                                    membersInputs.push({
+                                                        input: '',
+                                                        role: 'member'
+                                                    })
+                                                    setMembersInput([...membersInputs])
+                                                }}>
+                                            Add
+                                        </Button> :
+                                        <Button colorScheme='red'
+                                                borderRadius={8} minWidth={'120px'} size='sm'
+                                                onClick={() => {
+                                                    membersInputs.splice(index, 1);
+                                                    setMembersInput([...membersInputs])
+                                                }}>
+                                            Remove
+                                        </Button>}
+                                </Flex>
+                            ))}
                         </div>
                         <Flex direction={'column'} gap={4} pt={4}>
                             {members && !!members.length && members.map((member, index) => (
-                                <Flex key={index+1} align={'center'} justify={'space-between'} gap={4}>
+                                <Flex key={index + 1} align={'center'} justify={'space-between'} gap={4}>
                                     <Flex align={'center'} gap={2}>
                                         <div className={styles.addMemberImage}>
                                             <Image src="/image/user.png" width="36" height="36" alt=""/>
@@ -166,11 +250,14 @@ function ProjectInbox() {
                                     <Menu>
                                         <MenuButton className={styles.memberButton} backgroundColor={'#E9E9E9'}
                                                     borderRadius={4} padding={'2px 4px '} height={'auto'}
+                                                    textTransform={'capitalize'}
                                                     fontSize={'12px'}
                                                     color={'#000000'} as={Button}
-                                                    rightIcon={<ChevronDownIcon/>}> Member </MenuButton>
+                                                    rightIcon={
+                                                        <ChevronDownIcon/>}> {member.role || 'Member'} </MenuButton>
                                         <MenuList>
-                                            <MenuItem>Remove</MenuItem>
+                                            <MenuItem
+                                                onClick={() => removeMemberFromProject(member)}>{member.userId === userDetails?.id ? 'Leave' : 'Remove'}</MenuItem>
                                         </MenuList>
                                     </Menu>
                                 </Flex>
