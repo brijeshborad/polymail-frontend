@@ -236,7 +236,7 @@ export function Threads() {
                                 </MenuButton>
                                 <MenuList className={`${styles.tabListDropDown} drop-down-list`}>
                                     {['TRASH', 'STARRED', 'ARCHIVE'].includes(tab) &&
-                                    <MenuItem onClick={() => changeEmailTabs('SENT')}><SendIcon/> sent</MenuItem>
+                                    <MenuItem onClick={() => changeEmailTabs('SENT')}><SendIcon/> Sent</MenuItem>
                                     }
 
                                     {tab !== 'TRASH' &&
