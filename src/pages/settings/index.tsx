@@ -35,7 +35,7 @@ const tabMenu = [
                 route: '/settings/members'
             },
             {
-                title: 'Preferences',
+                title: 'Approved Domains',
                 route: '/settings/preferences'
             }
 
