@@ -130,7 +130,7 @@ function ProjectInbox() {
                         <Heading as='h4' fontSize={'24px'} color={'#08162F'}>{project && project.name}</Heading>
                         <Badge color={'#000000'} fontSize={'14px'} fontWeight={'600'} backgroundColor={'#E9E9E9'}
                                padding={'3px 6px'} borderRadius={'4px'}
-                               lineHeight={'1.19'}>{threads && threads.length} threads</Badge>
+                               lineHeight={'1.19'}>{threads && threads?.length || 0} threads</Badge>
                     </Flex>
                     <Flex align={'center'} gap={1}>
                         <div className={styles.userImage}>

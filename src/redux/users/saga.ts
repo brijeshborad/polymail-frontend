@@ -27,7 +27,7 @@ function* updateUserPersonalDetails({payload: {firstName, lastName, middleName}}
         yield put(updateUsersDetailsSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(updateUsersDetailsError(error.response.data));
+        yield put(updateUsersDetailsError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -37,7 +37,7 @@ function* getUsePersonalDetails() {
         yield put(getUsersDetailsSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(getUsersDetailsError(error.response.data));
+        yield put(getUsersDetailsError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -59,7 +59,7 @@ function* generateProfilePictureUploadUrl({payload: { file}}: PayloadAction<{
         yield put(uploadProfilePictureSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(uploadProfilePictureError(error.response.data));
+        yield put(uploadProfilePictureError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -69,7 +69,7 @@ function* getProfilePictureUrl({payload: { }}: PayloadAction<{}>) {
         yield put(getProfilePictureSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(getProfilePictureError(error.response.data));
+        yield put(getProfilePictureError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 

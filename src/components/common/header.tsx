@@ -226,7 +226,7 @@ export function Header() {
     }
 
     const changePage = (page: string) => {
-        dispatch(updateThreadState({threads: [], success: false, updateSuccess: true, tabValue: 'reset'}));
+        dispatch(updateThreadState({threads: [], success: false, updateSuccess: false, tabValue: 'reset'}));
         Router.push(`/${page}`)
     }
 
@@ -306,10 +306,13 @@ export function Header() {
 
                     </MenuButton>
                     <MenuList className={'drop-down-list'}>
-                        {selectedAccount && <MenuItem justifyContent={'space-between'} gap={1} w='100%'>
-                            {selectedAccount?.email}
-                            <CheckIcon ml={8} bg={"green"} p={1} borderRadius={50} w={4} h={4} color={"white"}/>
-                        </MenuItem>}
+                        {accounts && !!accounts.length && accounts?.map((acc, i) => (
+                            <MenuItem justifyContent={'space-between'} gap={1} w='100%' key={i + 1} onClick={() => setAccounts(acc)}>
+                                {acc.email} {selectedAccount?.email === acc.email && (
+                                <CheckIcon ml={8} bg={"green"} p={1} borderRadius={50} w={4} h={4} color={"white"}/>
+                            )}
+                            </MenuItem>
+                        ))}
                         <MenuItem onClick={() => openSetting()}>Settings</MenuItem>
                         <MenuItem onClick={() => logout()}>Logout</MenuItem>
                     </MenuList>

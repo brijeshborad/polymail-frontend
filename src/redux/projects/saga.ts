@@ -26,7 +26,7 @@ function* getProjects() {
         yield put(getAllProjectsSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(getAllProjectsError(error.response.data));
+        yield put(getAllProjectsError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -36,7 +36,7 @@ function* getProject({payload: {id}}: PayloadAction<{id: string}>) {
         yield put(getProjectByIdSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(getProjectByIdError(error.response.data));
+        yield put(getProjectByIdError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -46,7 +46,7 @@ function* addProjects({payload: {name, accountId, organizationId}}: PayloadActio
         yield put(createProjectsSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(createProjectsError(error.response.data));
+        yield put(createProjectsError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -57,7 +57,7 @@ function* getProjectMembersService({payload: {projectId}}: PayloadAction<{ proje
         yield put(getProjectMembersSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(getProjectMembersError(error.response.data));
+        yield put(getProjectMembersError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -68,7 +68,7 @@ function* getProjectMembersInvitees({payload: {projectId}}: PayloadAction<{ proj
         yield put(getProjectMembersInvitesSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(getProjectMembersInvitesError(error.response.data));
+        yield put(getProjectMembersInvitesError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 

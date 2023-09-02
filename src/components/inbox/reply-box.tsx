@@ -121,7 +121,7 @@ export function ReplyBox(props: ReplyBoxType) {
                 setEmailRecipients((prevState) => ({
                     ...prevState,
                     recipients: {
-                        items: !isCompose ? (draft ? draft.to : [selectedMessage.from!]) : [],
+                        items: !isCompose ? (draft ? (draft.to || []) : [selectedMessage.from!]) : [],
                         value: prevState.recipients.value
                     }
                 }));

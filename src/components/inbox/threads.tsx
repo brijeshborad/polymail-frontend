@@ -121,8 +121,16 @@ export function Threads() {
         }
     }, [threads, dispatch, selectedThread])
 
+
     useEffect(() => {
-        if (tab !== '') {
+        if (tabValue && tabValue === 'reset') {
+            currentCacheTab = '';
+            getAllThread();
+        }
+    }, [getAllThread, tabValue])
+
+    useEffect(() => {
+        if (tab !== '' && currentCacheTab !== '') {
             getAllThread();
             dispatch(updateThreadState({tabValue: tab}));
         }
@@ -138,13 +146,6 @@ export function Threads() {
         }
         setTab(value);
     }
-
-    useEffect(() => {
-        if (tabValue && tabValue === 'reset') {
-            currentCacheTab = '';
-            getAllThread();
-        }
-    }, [getAllThread, tabValue])
 
     const openComposeBox = () => {
         dispatch(updateDraftState({draft: null}));

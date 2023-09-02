@@ -18,7 +18,7 @@ function* getAccountDetails() {
         yield put(getAllAccountSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(getAllAccountError(error.response.data));
+        yield put(getAllAccountError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -30,7 +30,7 @@ function* updateAccountDetail({payload: {signature, id}}: PayloadAction<{ signat
         yield put(updateAccountDetailsSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(updateAccountDetailsError(error.response.data));
+        yield put(updateAccountDetailsError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -40,7 +40,7 @@ function* removeAccount({payload: {id}}: PayloadAction<{ id: string }>) {
         yield put(removeAccountDetailsSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(removeAccountDetailsError(error.response.data));
+        yield put(removeAccountDetailsError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 

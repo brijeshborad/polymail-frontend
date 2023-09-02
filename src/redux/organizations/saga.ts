@@ -24,7 +24,7 @@ function* getOrganizations() {
         yield put(getAllOrganizationsSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(getAllOrganizationsError(error.response.data));
+        yield put(getAllOrganizationsError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -34,7 +34,7 @@ function* addOrganizations({payload: {name, accountId}}: PayloadAction<{ name: s
         yield put(addOrganizationSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(addOrganizationError(error.response.data));
+        yield put(addOrganizationError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -45,7 +45,7 @@ function* updateOrganizations({payload: {preferences, id}}: PayloadAction<{ pref
 
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(editOrganizationError(error.response.data));
+        yield put(editOrganizationError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -56,7 +56,7 @@ function* getOrganizationMembersService({payload: {orgId}}: PayloadAction<{ orgI
         yield put(getOrganizationMembersSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(getOrganizationMembersError(error.response.data));
+        yield put(getOrganizationMembersError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -66,7 +66,7 @@ function* deleteOrganization({payload: {id}}: PayloadAction<{ id: string }>) {
         yield put(removeOrganizationSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(removeOrganizationError(error.response.data));
+        yield put(removeOrganizationError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 

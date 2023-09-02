@@ -29,7 +29,7 @@ function* getMessages({payload: {thread}}: PayloadAction<{ thread?: string }>) {
         yield put(getAllMessagesSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(getAllMessagesError(error.response.data));
+        yield put(getAllMessagesError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -39,7 +39,7 @@ function* getMessagePart({payload: {id}}: PayloadAction<{ id: string }>) {
         yield put(getMessagePartsSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(getMessagePartsError(error.response.data));
+        yield put(getMessagePartsError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -49,7 +49,7 @@ function* getMessageAttachment({payload: {id}}: PayloadAction<{ id: string }>) {
         yield put(getMessageAttachmentsSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(getMessageAttachmentsError(error.response.data));
+        yield put(getMessageAttachmentsError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -59,7 +59,7 @@ function* getAttachmentUrl({payload: {id, attachment}}: PayloadAction<{ id: stri
         yield put(getAttachmentDownloadUrlSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(getAttachmentDownloadUrlError(error.response.data));
+        yield put(getAttachmentDownloadUrlError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -81,7 +81,7 @@ function* generateAttachmentUploadUrl({payload: {id, file}}: PayloadAction<{
         yield put(uploadAttachmentSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(uploadAttachmentError(error.response.data));
+        yield put(uploadAttachmentError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -91,7 +91,7 @@ function* updateMessageData({payload: {id, body}}: PayloadAction<{ id: string, b
         yield put(updateMessageSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(updateMessageError(error.response.data));
+        yield put(updateMessageError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 

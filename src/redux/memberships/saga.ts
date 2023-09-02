@@ -16,7 +16,7 @@ function* addItemToGroupService({payload}: PayloadAction<MembershipsRequestBody>
         yield put(addItemToGroupSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(addItemToGroupError(error.response.data));
+        yield put(addItemToGroupError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -27,7 +27,7 @@ function* removeMemberFromProject({payload}: PayloadAction<MembershipsRequestBod
         yield put(deleteMemberFromProjectSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(deleteMemberFromProjectError(error.response.data));
+        yield put(deleteMemberFromProjectError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
