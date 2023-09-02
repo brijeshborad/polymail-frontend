@@ -557,7 +557,7 @@
 .replyButton .replayTextButton {
     border-radius: 5px 0 0 5px;
     padding: 10px 0 10px 10px;
-    line-height: 1.1;
+    line-height: 18px;
 }
 
 .replyButton .replayArrowIcon {
@@ -565,6 +565,7 @@
     min-width: auto;
     border-radius: 0 5px 5px 0;
     padding: 9px;
+    height: 38px;
 }
 
 .replyButton .replayArrowIcon:hover,
@@ -799,4 +800,25 @@ div:has(> .mailSendToaster) {
 .envelopeIcon svg {
     fill: #5D5F62;
     width: 18px;
+}
+
+.headerRightIcon .menuIcon[data-active],
+.headerRightIcon .menuIcon:hover {
+    background-color: transparent;
+}
+
+.headerRightIcon .menuIcon span {
+    margin: 0;
+}
+
+.headerRightIcon .menuIcon svg {
+    margin: 0;
+    fill: #5D5F62;
+}
+
+.mailBox .hideShowIcon svg {
+    color: #6B7280;
+    width: 16px;
+    height: 16px;
+    margin: 0;
 }

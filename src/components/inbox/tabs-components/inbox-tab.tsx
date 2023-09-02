@@ -3,7 +3,7 @@ import styles from "@/styles/Inbox.module.css";
 import {DisneyIcon} from "@/icons";
 import styles2 from "@/styles/common.module.css";
 import {InboxTabProps, StateType} from "@/types";
-import {Thread} from "@/models";
+import {MessageDraft, Thread} from "@/models";
 import React, {useCallback, useRef} from "react";
 import {SpinnerUI, Time} from "@/components/common";
 import {useDispatch, useSelector} from "react-redux";
@@ -28,7 +28,7 @@ export function InboxTab(props: InboxTabProps) {
                             isCompose: true
                         }));
                         dispatch(updateDraftState({
-                            draft: {...item.messages[0]}
+                            draft: {...item.messages[0] as MessageDraft}
                         }));
                     }
                 }, 500)

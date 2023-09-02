@@ -221,3 +221,15 @@ a {
 .drop-down-list .dropdown-searchbar input::placeholder {
   color: #9CA3AF;
 }
+
+.delete-modal .cancel-button:hover {
+  background-color: #FFFFFF;
+}
+
+.delete-modal .remove-button:hover {
+  background-color: #FFC9B9;
+}
+
+.rdw-editor-wrapper .rdw-editor-main {
+  max-height: calc(100vh - 410px);
+}

@@ -61,7 +61,7 @@ export function ReplyBox(props: ReplyBoxType) {
     const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
 
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
-    const {selectedThread} = useSelector((state: StateType) => state.threads);
+    const {selectedThread, tabValue} = useSelector((state: StateType) => state.threads);
     const {
         selectedMessage,
         isCompose
@@ -85,7 +85,7 @@ export function ReplyBox(props: ReplyBoxType) {
                     setEmailBody(draft?.draftInfo?.body || '');
                 }
             }
-            if (draft.draftInfo.attachments) {
+            if (draft?.draftInfo?.attachments?.length) {
                 setAttachments([
                     ...draft.draftInfo.attachments.map(t => ({
                         filename: t.filename,
@@ -101,6 +101,26 @@ export function ReplyBox(props: ReplyBoxType) {
         }
     }, [draft, isCompose, props.replyType, selectedAccount])
 
+    useEffect(() => {
+        if (isCompose && tabValue === 'DRAFT') {
+            let items: string[] = (draft ? (draft.cc || []) : [])!.filter(t => t);
+            setEmailRecipients((prevState) => ({
+                ...prevState,
+                recipients: {
+                    items: draft ? (draft.to || []) : [],
+                    value: ''
+                },
+                cc: {
+                    items: items,
+                    value: ''
+                }
+            }));
+            if (items.length > 0) {
+                setHideShowCCBccFields(prev => ({...prev, cc: true}));
+            }
+            setSubject(draft?.subject || '');
+        }
+    }, [draft, isCompose, tabValue])
 
     useEffect(() => {
         if (selectedMessage && !isCompose) {
@@ -109,7 +129,7 @@ export function ReplyBox(props: ReplyBoxType) {
                 emailSubject = `Fwd: ${selectedMessage.subject}`;
                 let decoded = Buffer.from(props.emailPart || '', 'base64').toString('ascii');
                 setEmailBody(getForwardContent() + (decoded || '') + (selectedAccount?.signature || ''));
-                if (draft && draft.draftInfo && draft.draftInfo.attachments) {
+                if (draft && draft.draftInfo && draft?.draftInfo?.attachments?.length) {
                     setAttachments([
                         ...draft.draftInfo.attachments.map(t => ({
                             filename: t.filename,
@@ -121,7 +141,7 @@ export function ReplyBox(props: ReplyBoxType) {
                 setEmailRecipients((prevState) => ({
                     ...prevState,
                     recipients: {
-                        items: !isCompose ? (draft ? draft.to : [selectedMessage.from]) : [],
+                        items: !isCompose ? (draft ? (draft.to || []) : [selectedMessage.from!]) : [],
                         value: prevState.recipients.value
                     }
                 }));
@@ -223,7 +243,7 @@ ${selectedMessage?.cc ? 'Cc: ' + (selectedMessage?.cc || []).join(',') : ''}</p>
             evt.preventDefault();
             let value = emailRecipients[type as keyof RecipientsType].value.trim();
             let emailArray = value.split(',');
-            emailArray.map(item => {
+            !!emailArray.length && emailArray.map(item => {
                 if (item && isValid(item, type)) {
                     setEmailRecipients((prevState) => ({
                         ...prevState,
@@ -347,8 +367,6 @@ ${selectedMessage?.cc ? 'Cc: ' + (selectedMessage?.cc || []).join(',') : ''}</p>
                             <Box display={'flex'} alignItems={'center'} color='white' p={3} bg='#000000'
                                  borderRadius={'5px'}
                                  className={styles.mailSendToaster} fontSize={'14px'} padding={'13px 25px'}>
-                                {/*{`Your message has been sent to ${draft.to[0]} and ${draft.to.length - 1} other${draft.to.length === 2 ? '' : 's'}`}*/}
-
                                 {`Your message has been sent to ${draft.to[0]}${draft.to.length > 1 ? ` and ${draft.to.length - 1} other${draft.to.length === 2 ? '' : 's'}` : ''}`}
                                 <Button onClick={() => undoClick('undo')} ml={3} height={"auto"}
                                         padding={'7px 15px'}>Undo</Button>
@@ -369,7 +387,7 @@ ${selectedMessage?.cc ? 'Cc: ' + (selectedMessage?.cc || []).join(',') : ''}</p>
             setEmailRecipients({
                 cc: {items: [], value: ""},
                 bcc: {items: [], value: ""},
-                recipients: {items: !isCompose && selectedMessage ? [selectedMessage.from] : [], value: ''}
+                recipients: {items: !isCompose && selectedMessage ? [selectedMessage.from!] : [], value: ''}
             });
             setEmailBody('');
             dispatch(updateDraftState({
@@ -442,7 +460,7 @@ ${selectedMessage?.cc ? 'Cc: ' + (selectedMessage?.cc || []).join(',') : ''}</p>
                         <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>
                             <Heading as={'h1'} size={'sm'} paddingTop={1} marginRight={1}>To:</Heading>
                             <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
-                                {(emailRecipients.recipients.items || []).map((item: string | undefined, i: number) => (
+                                {!!emailRecipients?.recipients?.items?.length && emailRecipients.recipients.items.map((item: string | undefined, i: number) => (
                                     <Chip text={item} key={i} click={() => handleItemDelete(item!, 'recipients')}/>
                                 ))}
 
@@ -469,7 +487,7 @@ ${selectedMessage?.cc ? 'Cc: ' + (selectedMessage?.cc || []).join(',') : ''}</p>
                         <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>
                             <Heading as={'h1'} size={'sm'} paddingTop={1} marginRight={1}>CC:</Heading>
                             <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
-                                {emailRecipients.cc.items.map((item: string | undefined, i: number) => (
+                                {!!emailRecipients?.cc?.items?.length && emailRecipients.cc.items.map((item: string | undefined, i: number) => (
                                     <Chip text={item} key={i} click={() => handleItemDelete(item!, 'cc')}/>
                                 ))}
 
@@ -492,7 +510,7 @@ ${selectedMessage?.cc ? 'Cc: ' + (selectedMessage?.cc || []).join(',') : ''}</p>
                         <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>
                             <Heading as={'h1'} size={'sm'} paddingTop={1} marginRight={1}>BCC:</Heading>
                             <Flex alignItems={'center'} gap={1} wrap={'wrap'} width={'100%'}>
-                                {emailRecipients.bcc.items.map((item: string | undefined, i: number) => (
+                                {!!emailRecipients?.bcc?.items?.length && emailRecipients.bcc.items.map((item: string | undefined, i: number) => (
                                     <Chip text={item} key={i} click={() => handleItemDelete(item!, 'bcc')}/>
                                 ))}
 

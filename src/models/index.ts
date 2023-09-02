@@ -8,3 +8,4 @@ export * from "./messagesPart";
 export * from "./messageAttachments";
 export * from "./teamMember";
 export * from "./magicCode";
+export * from "./inviteMember";

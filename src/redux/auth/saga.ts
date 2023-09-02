@@ -30,7 +30,7 @@ function* login({payload: {email, password}}: PayloadAction<{ email: string, pas
         LocalStorageService.updateUser('store', response)
         yield put(loginSuccess(response));
     } catch (error: AxiosError | any) {
-        yield put(loginError(error.response.data));
+        yield put(loginError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -53,7 +53,7 @@ function* register({
         window.location.href = redirectUrl;
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(registerError(error.response.data));
+        yield put(registerError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -77,7 +77,7 @@ function* getGoogleAuthLink({payload}: PayloadAction<{
         yield put(googleAuthLinkSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(googleAuthLinkError(error.response.data));
+        yield put(googleAuthLinkError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -106,7 +106,7 @@ function* passwordChange({
         yield put(changePasswordSuccess());
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(changePasswordError(error.response.data));
+        yield put(changePasswordError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -125,7 +125,7 @@ function* forgotOldPassword({
         yield put(forgotPasswordSuccess());
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(forgotPasswordError(error.response.data));
+        yield put(forgotPasswordError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -144,7 +144,7 @@ function* updateNewPassword({
         yield put(resetPasswordSuccess());
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(resetPasswordError(error.response.data));
+        yield put(resetPasswordError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -156,7 +156,7 @@ function* compareCode({payload: {code}}: PayloadAction<{ code?: string }>) {
         yield put(magicCodeSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(magicCodeError(error.response.data));
+        yield put(magicCodeError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 

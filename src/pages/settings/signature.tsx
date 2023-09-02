@@ -5,14 +5,14 @@ import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {RichTextEditor, Toaster} from "@/components/common";
-import {updateAccountDetails} from "@/redux/accounts/action-reducer";
+import {updateAccountDetails, updateAccountState} from "@/redux/accounts/action-reducer";
 import Index from "@/pages/settings/index";
 import withAuth from "@/components/withAuth";
 
 function Signature() {
 
     const [signature, setSignature] = useState<string>('');
-    const {selectedAccount} = useSelector((state: StateType) => state.accounts);
+    const {selectedAccount, account, success} = useSelector((state: StateType) => state.accounts);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -21,6 +21,13 @@ function Signature() {
             setSignature(selectedAccount.signature);
         }
     }, [selectedAccount])
+
+    useEffect(() => {
+        if (account && success) {
+            dispatch(updateAccountState({selectedAccount: {...account}}));
+            Toaster({desc: 'Signature updated successfully',title: 'Signature updated', type: 'success'})
+        }
+    }, [dispatch, account, success])
 
 
     const addSignature = (value: string) => {
@@ -31,8 +38,6 @@ function Signature() {
         if (signature) {
             if (selectedAccount && selectedAccount.id) {
                 dispatch(updateAccountDetails({signature: signature, id: selectedAccount.id}));
-                Toaster({desc: 'Signature updated successfully',title: 'Signature updated', type: 'success'})
-
             }
         }
     }

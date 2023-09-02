@@ -21,7 +21,7 @@ function* createNewDraft({payload: {accountId, body}}: PayloadAction<{ accountId
         yield put(createDraftSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(createDraftError(error.response.data));
+        yield put(createDraftError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -43,7 +43,7 @@ function* sendDraftMessage({
         yield put(sendMessageSuccess(response || {}));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(sendMessageError(error.response.data));
+        yield put(sendMessageError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -53,7 +53,7 @@ function* patchPartialMessage({payload: {id, body}}: PayloadAction<{ id: string,
         yield put(updatePartialMessageSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(updatePartialMessageError(error.response.data));
+        yield put(updatePartialMessageError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 

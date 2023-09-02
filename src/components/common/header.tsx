@@ -82,6 +82,7 @@ export function Header() {
                     }
                     if (newThread.messages && newThread.messages.length > 0) {
                         newThread.messages = newThread.messages.map((t: Message) => ({...t, id: t._id}))
+                        newThread.messages = newThread.messages.sort((a: Message, b: Message) => (new Date(b.created as string).valueOf() - new Date(a.created as string).valueOf()));
                     }
                     dispatch(updateThreadState({threads: [...(threads || []), newThread]}));
                 })
@@ -224,9 +225,9 @@ export function Header() {
         }
     }
 
-    const inboxClick = () => {
-        dispatch(updateThreadState({success: false}));
-        Router.push('/inbox')
+    const changePage = (page: string) => {
+        dispatch(updateThreadState({threads: [], success: false, updateSuccess: false, tabValue: 'reset'}));
+        Router.push(`/${page}`)
     }
 
     return (
@@ -236,12 +237,12 @@ export function Header() {
             </div>
             <Flex className={styles.headerTabs} align={'center'}>
                 <Flex align={'center'} className={currentRoute[1] === 'inbox' ? styles.tabsActive : ''}
-                      onClick={() => inboxClick()}>
+                      onClick={() => changePage('inbox')}>
                     <MailIcon/>
                     Inbox
                 </Flex>
                 <Flex align={'center'} className={currentRoute[1] === 'projects' ? styles.tabsActive : ''}
-                      onClick={() => Router.push('/projects')}>
+                      onClick={() => changePage('projects')}>
                     <FolderIcon/>
                     Projects
                 </Flex>
@@ -305,10 +306,13 @@ export function Header() {
 
                     </MenuButton>
                     <MenuList className={'drop-down-list'}>
-                        {selectedAccount && <MenuItem justifyContent={'space-between'} gap={1} w='100%'>
-                            {selectedAccount?.email}
-                            <CheckIcon ml={8} bg={"green"} p={1} borderRadius={50} w={4} h={4} color={"white"}/>
-                        </MenuItem>}
+                        {accounts && !!accounts.length && accounts?.map((acc, i) => (
+                            <MenuItem justifyContent={'space-between'} gap={1} w='100%' key={i + 1} onClick={() => setAccounts(acc)}>
+                                {acc.email} {selectedAccount?.email === acc.email && (
+                                <CheckIcon ml={8} bg={"green"} p={1} borderRadius={50} w={4} h={4} color={"white"}/>
+                            )}
+                            </MenuItem>
+                        ))}
                         <MenuItem onClick={() => openSetting()}>Settings</MenuItem>
                         <MenuItem onClick={() => logout()}>Logout</MenuItem>
                     </MenuList>

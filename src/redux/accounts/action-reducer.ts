@@ -34,14 +34,14 @@ const accountSlice = createSlice({
         },
 
         updateAccountDetails: (state: InitialAccountStateType, _action: PayloadAction<{ signature: string, id: string }>) => {
-            return {...state, error: null, isLoading: false}
+            return {...state, error: null, isLoading: false, success: false}
         },
         updateAccountDetailsSuccess: (state: InitialAccountStateType, {payload: account}: PayloadAction<{}>) => {
             LocalStorageService.updateAccount('store', account);
-            return {...state, account, error: null, isLoading: false}
+            return {...state, account, error: null, isLoading: false, success: true}
         },
         updateAccountDetailsError: (state: InitialAccountStateType, {payload: error}: PayloadAction<any>) => {
-            return {...state, error, isLoading: false}
+            return {...state, error, isLoading: false, success: false}
         },
 
         removeAccountDetails: (state: InitialAccountStateType, _action: PayloadAction<{ id: string }>) => {

@@ -1,4 +1,4 @@
-import {Project, TeamMember} from "@/models";
+import {InviteMember, Project, TeamMember} from "@/models";
 
 export declare type InitialProjectState = {
     projects: Project[],
@@ -7,5 +7,5 @@ export declare type InitialProjectState = {
     isLoading: boolean,
     error: Error | any,
     members?: TeamMember[]
-
+    invitees?: InviteMember[]
 }

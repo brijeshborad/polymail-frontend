@@ -1,12 +1,19 @@
 export interface Organization {
-    id: string,
-    name: string,
-    status: string,
+    id?: string,
+    name?: string,
+    status?: string,
     preferences: {
-        blacklistEmails: Array<string>,
-        disableSyncBlacklistEmailsToCRM: boolean,
-        disableBlockTrackingPixels: boolean
+        blacklistEmails?: Array<string>,
+        disableSyncBlacklistEmailsToCRM?: boolean,
+        disableBlockTrackingPixels?: boolean,
+        approvedDomains?: Array<string>
     }
     created?: string,
     updated?: string,
+}
+
+export interface OrganizationRequestBody {
+    preferences: {
+        approvedDomains?: string[] | undefined,
+    }
 }

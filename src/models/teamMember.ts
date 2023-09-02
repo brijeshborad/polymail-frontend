@@ -11,4 +11,5 @@ export interface TeamMember {
     }
     created?: string,
     updated?: string,
+    role?: string,
 }

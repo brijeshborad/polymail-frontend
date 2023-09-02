@@ -17,8 +17,9 @@ import {
     getAttachmentDownloadUrlSuccess,
     uploadAttachmentError,
     uploadAttachmentSuccess,
-    uploadAttachment
+    uploadAttachment, updateMessageSuccess, updateMessageError, updateMessage
 } from "@/redux/messages/action-reducer";
+import {MessageRequestBody} from "@/models";
 
 function* getMessages({payload: {thread}}: PayloadAction<{ thread?: string }>) {
     try {
@@ -28,7 +29,7 @@ function* getMessages({payload: {thread}}: PayloadAction<{ thread?: string }>) {
         yield put(getAllMessagesSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(getAllMessagesError(error.response.data));
+        yield put(getAllMessagesError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -38,7 +39,7 @@ function* getMessagePart({payload: {id}}: PayloadAction<{ id: string }>) {
         yield put(getMessagePartsSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(getMessagePartsError(error.response.data));
+        yield put(getMessagePartsError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -48,7 +49,7 @@ function* getMessageAttachment({payload: {id}}: PayloadAction<{ id: string }>) {
         yield put(getMessageAttachmentsSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(getMessageAttachmentsError(error.response.data));
+        yield put(getMessageAttachmentsError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -58,7 +59,7 @@ function* getAttachmentUrl({payload: {id, attachment}}: PayloadAction<{ id: stri
         yield put(getAttachmentDownloadUrlSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(getAttachmentDownloadUrlError(error.response.data));
+        yield put(getAttachmentDownloadUrlError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -80,7 +81,17 @@ function* generateAttachmentUploadUrl({payload: {id, file}}: PayloadAction<{
         yield put(uploadAttachmentSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(uploadAttachmentError(error.response.data));
+        yield put(uploadAttachmentError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
+    }
+}
+
+function* updateMessageData({payload: {id, body}}: PayloadAction<{ id: string, body: MessageRequestBody }>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callPatch(`messages/${id}`, body);
+        yield put(updateMessageSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        yield put(updateMessageError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -104,6 +115,10 @@ export function* watchAddAttachmentUrlToS3() {
     yield takeLatest(uploadAttachment.type, generateAttachmentUploadUrl);
 }
 
+export function* watchUpdateMessageData() {
+    yield takeLatest(updateMessage.type, updateMessageData);
+}
+
 
 export default function* rootSaga() {
     yield all([
@@ -112,6 +127,7 @@ export default function* rootSaga() {
         fork(watchGetMessagesAttachments),
         fork(watchGetAttachmentUrl),
         fork(watchAddAttachmentUrlToS3),
+        fork(watchUpdateMessageData),
     ]);
 }
 

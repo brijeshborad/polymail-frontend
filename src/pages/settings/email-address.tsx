@@ -10,9 +10,10 @@ import Index from "@/pages/settings/index";
 import withAuth from "@/components/withAuth";
 import {CloseIcon} from "@chakra-ui/icons";
 import {removeAccountDetails, updateAccountState} from "@/redux/accounts/action-reducer";
+import LocalStorageService from "@/utils/localstorage.service";
 
 function EmailAddress() {
-    let {accounts, success} = useSelector((state: StateType) => state.accounts);
+    let {accounts, success, selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
 
     const dispatch = useDispatch();
@@ -45,6 +46,11 @@ function EmailAddress() {
     useEffect(() => {
         if (success && accountData && accountData.id) {
             let data = (accounts || []).filter((item: Account) => item.id !== accountData.id)
+
+            if (accountData.id === selectedAccount?.id) {
+                LocalStorageService.updateAccount('store', data[0]);
+                dispatch(updateAccountState({selectedAccount: data[0]}));
+            }
             dispatch(updateAccountState({accounts: data}));
         }
     }, [success, accountData, dispatch])
@@ -54,7 +60,7 @@ function EmailAddress() {
             <Grid templateColumns='232px auto' gap={6} h={'100%'} minHeight={'calc(100vh - 65px)'}>
                 <GridItem w='100%' className={styles.settingSideBar} padding={'40px 30px 40px 40px'}
                           borderRight={'1px solid #E1E3E6'}>
-                    <Index />
+                    <Index/>
                 </GridItem>
                 <GridItem w='100%'>
                     <Flex direction={'column'} h={'100%'} padding={'50px 40px 40px'}>
@@ -67,7 +73,8 @@ function EmailAddress() {
                         <Flex direction={"column"} className={styles.SettingDetails}>
                             <Flex direction={"column"} gap={10} className={styles.settingEmailAddress}>
                                 <Flex direction={"column"} gap={2} className={styles.settingSocialLink}>
-                                    <Button colorScheme='blue' onClick={() => addNewGoogleAccount()}><GoogleIcon/> Add email
+                                    <Button colorScheme='blue' onClick={() => addNewGoogleAccount()}><GoogleIcon/> Add
+                                        email
                                         address via Google</Button>
                                     {/*<Button colorScheme='blue'><AppleIcon/> Add email address via Apple</Button>*/}
                                 </Flex>
@@ -86,7 +93,8 @@ function EmailAddress() {
                                                     <Link fontSize={'13px'} fontWeight={'500'}
                                                           isExternal>{item.email} </Link>
                                                 </Flex>
-                                                <CloseIcon className={styles.closeIcon} cursor={"pointer"} onClick={() => removeAccount(item)}/>
+                                                <CloseIcon className={styles.closeIcon} cursor={"pointer"}
+                                                           onClick={() => removeAccount(item)}/>
                                             </Flex>
                                         </Flex>
 

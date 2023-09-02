@@ -42,7 +42,7 @@ export default function ForgotPassword() {
             dispatch(updateAuthState({passwordResetSuccess: false}))
             Router.push(`/auth/login`);
         }
-    }, [passwordResetSuccess]);
+    }, [passwordResetSuccess, dispatch]);
 
     return (
         <div className={`${styles.login} ${styles.forgotPassword}`}>

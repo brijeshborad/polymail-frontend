@@ -3,13 +3,19 @@ import ApiService from "@/utils/api.service";
 import {AxiosError, AxiosResponse} from "axios";
 import {
     createProjects,
-    createProjectsError, createProjectsSuccess,
+    createProjectsError,
+    createProjectsSuccess,
     getAllProjects,
     getAllProjectsError,
     getAllProjectsSuccess,
     getProjectMembers,
     getProjectMembersSuccess,
-    getProjectMembersError, getProjectById, getProjectByIdSuccess, getProjectByIdError,
+    getProjectMembersError,
+    getProjectById,
+    getProjectByIdSuccess,
+    getProjectByIdError,
+    getProjectMembersInvites,
+    getProjectMembersInvitesSuccess, getProjectMembersInvitesError,
 } from "@/redux/projects/action-reducer";
 import {PayloadAction} from "@reduxjs/toolkit";
 
@@ -20,7 +26,7 @@ function* getProjects() {
         yield put(getAllProjectsSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(getAllProjectsError(error.response.data));
+        yield put(getAllProjectsError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -30,7 +36,7 @@ function* getProject({payload: {id}}: PayloadAction<{id: string}>) {
         yield put(getProjectByIdSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(getProjectByIdError(error.response.data));
+        yield put(getProjectByIdError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -40,7 +46,7 @@ function* addProjects({payload: {name, accountId, organizationId}}: PayloadActio
         yield put(createProjectsSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(createProjectsError(error.response.data));
+        yield put(createProjectsError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -51,7 +57,18 @@ function* getProjectMembersService({payload: {projectId}}: PayloadAction<{ proje
         yield put(getProjectMembersSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(getProjectMembersError(error.response.data));
+        yield put(getProjectMembersError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
+    }
+}
+
+
+function* getProjectMembersInvitees({payload: {projectId}}: PayloadAction<{ projectId: string }>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callGet(`projects/${projectId}/invites`, {});
+        yield put(getProjectMembersInvitesSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        yield put(getProjectMembersInvitesError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -72,12 +89,17 @@ export function* watchGetProjectById() {
     yield takeLatest(getProjectById.type, getProject);
 }
 
+export function* watchGetProjectMembersInvitees() {
+    yield takeLatest(getProjectMembersInvites.type, getProjectMembersInvitees);
+}
+
 export default function* rootSaga() {
     yield all([
         fork(watchGetProjects),
         fork(watchAddProjects),
         fork(watchGetProjectMembers),
         fork(watchGetProjectById),
+        fork(watchGetProjectMembersInvitees),
     ]);
 }
 

@@ -1,14 +1,19 @@
 import styles from "@/styles/Inbox.module.css";
 import {
-    Badge, Button,
-    Flex, Menu, MenuButton, MenuItem, MenuList,
+    Badge,
+    Button,
+    Flex,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList,
     Tab,
     TabList,
     TabPanels,
     Tabs,
     Tooltip
 } from "@chakra-ui/react";
-import {TimeSnoozeIcon, EditIcon, SendIcon, InboxIcon, DraftIcon, StarIcon, TrashIcon} from "@/icons";
+import {DraftIcon, EditIcon, InboxIcon, SendIcon, StarIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
 import {StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
@@ -33,9 +38,10 @@ export function Threads() {
         isLoading,
         selectedThread,
         updateSuccess,
-        success: threadListSuccess
+        success: threadListSuccess,
+        tabValue
     } = useSelector((state: StateType) => state.threads);
-    const {success: draftSuccess, draft} = useSelector((state: StateType) => state.draft);
+    const {success: draftSuccess, updatedDraft} = useSelector((state: StateType) => state.draft);
     const {selectedAccount, account} = useSelector((state: StateType) => state.accounts);
     const {newMessage} = useSelector((state: StateType) => state.socket);
     const {userDetails} = useSelector((state: StateType) => state.users);
@@ -85,22 +91,30 @@ export function Threads() {
 
     useEffect(() => {
         if (draftSuccess) {
-            if (draft && selectedThread && selectedThread.id && threads && threads.length > 0) {
-                let currentThreads = [...(threads || [])];
-                let currentThreadIndex = currentThreads.findIndex((thread: Thread) => thread.id === selectedThread.id);
-                let currentMessages = [...(selectedThread.messages || [])];
-                let draftIndex = currentMessages.findIndex((message: Message) => message.id === draft.id);
-                let messages = [...currentThreads[currentThreadIndex].messages!];
-                messages[draftIndex] = draft as Message;
-                currentThreads[currentThreadIndex] = {
-                    ...currentThreads[currentThreadIndex],
-                    messages: [...messages]
-                };
-                dispatch(updateDraftState({success: false}));
-                dispatch(updateThreadState({threads: currentThreads}));
+            let usedThread = selectedThread;
+            if (updatedDraft) {
+                if (tab === 'DRAFT' && !usedThread) {
+                    usedThread = (threads || []).find(t => (t?.messages || []).find(d => d.id === updatedDraft.id));
+                }
+                if (usedThread && usedThread.id && threads && threads.length > 0) {
+                    let currentThreads = [...(threads || [])];
+                    let currentThreadIndex = currentThreads.findIndex((thread: Thread) => thread.id === usedThread?.id);
+                    let currentMessages = [...(usedThread.messages || [])];
+                    let draftIndex = currentMessages.findIndex((message: Message) => message.id === updatedDraft.id);
+                    let messages = currentThreads[currentThreadIndex]?.messages || [];
+                    const messagesCopy = [...messages];
+                    messagesCopy[draftIndex] = updatedDraft as Message;
+                    messages = messagesCopy;
+                    currentThreads[currentThreadIndex] = {
+                        ...currentThreads[currentThreadIndex],
+                        messages: [...messages]
+                    };
+                    dispatch(updateDraftState({success: false, updatedDraft: null}));
+                    dispatch(updateThreadState({threads: currentThreads, success: true}));
+                }
             }
         }
-    }, [draft, draftSuccess, selectedThread, threads, dispatch])
+    }, [updatedDraft, draftSuccess, selectedThread, threads, dispatch, tab])
 
     useEffect(() => {
         setCountUnreadMessages((threads || []).filter(item => (item.mailboxes || [])?.includes('UNREAD')).length);
@@ -118,11 +132,20 @@ export function Threads() {
         }
     }, [threads, dispatch, selectedThread])
 
+
     useEffect(() => {
-        if (tab !== '') {
+        if (tabValue && tabValue === 'reset') {
+            currentCacheTab = '';
             getAllThread();
         }
-    }, [getAllThread, tab])
+    }, [getAllThread, tabValue])
+
+    useEffect(() => {
+        if (tab !== '' && currentCacheTab !== '') {
+            getAllThread();
+            dispatch(updateThreadState({tabValue: tab}));
+        }
+    }, [dispatch, getAllThread, tab])
 
     const changeEmailTabs = (value: string) => {
         if (currentCacheTab !== value) {
@@ -135,15 +158,9 @@ export function Threads() {
         setTab(value);
     }
 
-    useEffect(() => {
-        if (tab) {
-            dispatch(updateThreadState({tabValue: tab}));
-        }
-    }, [tab])
-
     const openComposeBox = () => {
         dispatch(updateDraftState({draft: null}));
-        dispatch(updateMessageState({isCompose: true}));
+        dispatch(updateMessageState({isCompose: true, selectedMessage: null}));
     }
 
     return (
@@ -224,7 +241,8 @@ export function Threads() {
                             }
 
                             <Menu>
-                                <MenuButton className={styles.tabListMoreButton} minWidth={'80px'} borderLeft={'1px solid #D1D5DB'}
+                                <MenuButton className={styles.tabListMoreButton} minWidth={'80px'}
+                                            borderLeft={'1px solid #D1D5DB'}
                                             borderRadius={0} backgroundColor={'transparent'} height={'auto'}
                                             fontSize={'13px'} color={'#6B7280'} as={Button} marginLeft={1}
                                             rightIcon={<TriangleDownIcon/>}>
@@ -232,7 +250,7 @@ export function Threads() {
                                 </MenuButton>
                                 <MenuList className={`${styles.tabListDropDown} drop-down-list`}>
                                     {['TRASH', 'STARRED', 'ARCHIVE'].includes(tab) &&
-                                    <MenuItem onClick={() => changeEmailTabs('SENT')}><SendIcon/> sent</MenuItem>
+                                    <MenuItem onClick={() => changeEmailTabs('SENT')}><SendIcon/> Sent</MenuItem>
                                     }
 
                                     {tab !== 'TRASH' &&

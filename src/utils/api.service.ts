@@ -63,7 +63,7 @@ axiosInstance.interceptors.response.use((response) => {
         }
         Toaster(err);
     }
-    return error
+    return Promise.reject(error);
 });
 
 class ApiService {

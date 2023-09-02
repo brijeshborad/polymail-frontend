@@ -72,8 +72,8 @@ export function ProjectMessage() {
         if (index !== null && inboxMessages && inboxMessages[index]) {
             setCacheMessages(prev => ({
                 ...prev,
-                [inboxMessages[index].id]: {
-                    ...prev[inboxMessages[index].id],
+                [inboxMessages[index].id!]: {
+                    ...prev[inboxMessages[index].id!],
                     ...body
                 }
             }))
@@ -85,7 +85,8 @@ export function ProjectMessage() {
         if (messagePart && messagePart.data) {
             cacheMessage({body: messagePart});
             let decoded = Buffer.from(messagePart.data || '', 'base64').toString('ascii');
-            const blob = new Blob([decoded], {type: "text/html"});
+            let addTargetBlank = decoded.replace(/<a/g, '<a target="_blank"');
+            const blob = new Blob([addTargetBlank], {type: "text/html"});
             const blobUrl = window.URL.createObjectURL(blob);
             setEmailPart(blobUrl);
         } else {
@@ -107,18 +108,18 @@ export function ProjectMessage() {
         if (index !== null && inboxMessages && inboxMessages.length > 0) {
             if (inboxMessages[index]) {
                 setMessageContent(inboxMessages[index]);
-                setMessageSenders([inboxMessages[index].from, ...(inboxMessages[index].cc || [])].filter(t => t))
+                setMessageSenders([inboxMessages[index].from || '', ...(inboxMessages[index].cc || [])].filter(t => t))
                 dispatch(updateMessageState({selectedMessage: inboxMessages[index]}));
                 // We already set index to last inbox message
-                if (cacheMessages[inboxMessages[index].id] && cacheMessages[inboxMessages[index].id].body) {
-                    dispatch(updateMessageState({messagePart: cacheMessages[inboxMessages[index].id].body}));
+                if (cacheMessages[inboxMessages[index].id!] && cacheMessages[inboxMessages[index].id!].body) {
+                    dispatch(updateMessageState({messagePart: cacheMessages[inboxMessages[index].id!].body}));
                 } else {
-                    dispatch(getMessageParts({id: inboxMessages[index].id}));
+                    dispatch(getMessageParts({id: inboxMessages[index].id!}));
                 }
-                if (cacheMessages[inboxMessages[index].id] && cacheMessages[inboxMessages[index].id].attachments) {
-                    dispatch(updateMessageState({messageAttachments: cacheMessages[inboxMessages[index].id].attachments}));
+                if (cacheMessages[inboxMessages[index].id!] && cacheMessages[inboxMessages[index].id!].attachments) {
+                    dispatch(updateMessageState({messageAttachments: cacheMessages[inboxMessages[index].id!].attachments}));
                 } else {
-                    dispatch(getMessageAttachments({id: inboxMessages[index].id}));
+                    dispatch(getMessageAttachments({id: inboxMessages[index].id!}));
                 }
 
             }
