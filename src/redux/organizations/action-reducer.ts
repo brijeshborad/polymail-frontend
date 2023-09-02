@@ -11,14 +11,8 @@ const initialState: any = {
     selectedOrganization: LocalStorageService.updateOrg('get') || null,
     members: [],
     isRemoveOrganization: false,
-    isOrganizationAddOrRemoveSuccess: false,
-    success: false
+    isOrganizationAddOrRemoveSuccess: false
 } as InitialOrganizationStateType
-
-interface SuccessData {
-    success: boolean;
-    // Add other properties if there are any
-}
 
 const organizationSlice = createSlice({
     name: 'organizations',
@@ -85,8 +79,8 @@ const organizationSlice = createSlice({
         removeOrganization: (state: InitialOrganizationStateType, _action: PayloadAction<{ id?: string }>) => {
             return {...state, organization: null, error: null, isLoading: true, isRemoveOrganization: false}
         },
-        removeOrganizationSuccess: (state: InitialOrganizationStateType, {payload: success}: PayloadAction<{}>) => {
-            return {...state, isLoading: false, error: null, isRemoveOrganization: true, success: success && 'success' in success ? (success as SuccessData).success : false,}
+        removeOrganizationSuccess: (state: InitialOrganizationStateType, _action: PayloadAction<{}>) => {
+            return {...state, isLoading: false, error: null, isRemoveOrganization: true}
         },
         removeOrganizationError: (state: InitialOrganizationStateType, {payload: error}: PayloadAction<{ error: any }>) => {
             return {...state, organization: null, error, isLoading: false, isRemoveOrganization: false}
