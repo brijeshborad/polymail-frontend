@@ -31,7 +31,7 @@ function Members() {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if(organizations && organizations.length > 0) {
+        if(organizations && organizations.length > 0 && organizations[0].id) {
             dispatch(getOrganizationMembers({orgId:organizations[0].id}));
         }
     },[dispatch, organizations])

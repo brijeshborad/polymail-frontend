@@ -33,10 +33,14 @@ const tabMenu = [
             {
                 title: 'Members',
                 route: '/settings/members'
+            },
+            {
+                title: 'Preferences',
+                route: '/settings/preferences'
             }
 
         ]
-    }
+    },
 ];
 let currentRoute: string = '';
 function Index() {

@@ -12,7 +12,11 @@ import {
     getOrganizationMembers,
     getOrganizationMembersSuccess,
     getOrganizationMembersError,
+    removeOrganization,
+    removeOrganizationSuccess,
+    removeOrganizationError, editOrganizationSuccess, editOrganizationError, editOrganization
 } from "@/redux/organizations/action-reducer";
+import {OrganizationRequestBody} from "@/models";
 
 function* getOrganizations() {
     try {
@@ -34,6 +38,17 @@ function* addOrganizations({payload: {name, accountId}}: PayloadAction<{ name: s
     }
 }
 
+function* updateOrganizations({payload: {preferences, id}}: PayloadAction<{ preferences?: OrganizationRequestBody, id?: string }>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callPatch(`organizations/${id}`, {preferences});
+        yield put(editOrganizationSuccess(response));
+
+    } catch (error: any) {
+        error = error as AxiosError;
+        yield put(editOrganizationError(error.response.data));
+    }
+}
+
 
 function* getOrganizationMembersService({payload: {orgId}}: PayloadAction<{ orgId: string }>) {
     try {
@@ -42,6 +57,16 @@ function* getOrganizationMembersService({payload: {orgId}}: PayloadAction<{ orgI
     } catch (error: any) {
         error = error as AxiosError;
         yield put(getOrganizationMembersError(error.response.data));
+    }
+}
+
+function* deleteOrganization({payload: {id}}: PayloadAction<{ id: string }>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callDelete(`organizations/${id}`, {});
+        yield put(removeOrganizationSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        yield put(removeOrganizationError(error.response.data));
     }
 }
 
@@ -60,12 +85,22 @@ export function* watchGetOrganizationMembers() {
     yield takeLatest(getOrganizationMembers.type, getOrganizationMembersService);
 }
 
+export function* watchRemoveOrganization() {
+    yield takeLatest(removeOrganization.type, deleteOrganization);
+}
+
+export function* watchUpdateOrganization() {
+    yield takeLatest(editOrganization.type, updateOrganizations);
+}
+
 
 export default function* rootSaga() {
     yield all([
         fork(watchGetOrganizations),
         fork(watchPostOrganizations),
         fork(watchGetOrganizationMembers),
+        fork(watchRemoveOrganization),
+        fork(watchUpdateOrganization),
     ]);
 }
 
