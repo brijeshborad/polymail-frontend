@@ -8,8 +8,26 @@ import {Inter} from "next/font/google";
 import Head from 'next/head'
 import {Header} from "@/components/common";
 import React from "react";
+import {useRouter} from "next/router";
+import {HEADER_NOT_ALLOWED_PATHS} from "@/utils/constants";
 
-const {Button, Input, Menu, Checkbox, Heading, Divider, Alert, Modal, Popover, Tooltip, Textarea, Spinner, List, Select, Table} = chakraTheme.components
+const {
+    Button,
+    Input,
+    Menu,
+    Checkbox,
+    Heading,
+    Divider,
+    Alert,
+    Modal,
+    Popover,
+    Tooltip,
+    Textarea,
+    Spinner,
+    List,
+    Select,
+    Table
+} = chakraTheme.components
 const config: ThemeConfig = {
     initialColorMode: 'light',
     useSystemColorMode: false,
@@ -41,6 +59,7 @@ const inter = Inter({subsets: ['latin']})
 export default function App({Component, ...rest}: AppProps) {
     const {store, props} = wrapper.useWrappedStore(rest);
     const {pageProps} = props;
+    const router = useRouter();
     return (
         <Provider store={store}>
             <ChakraBaseProvider theme={theme}>
@@ -51,7 +70,10 @@ export default function App({Component, ...rest}: AppProps) {
                     <link rel="icon" href="/favicon.ico"/>
                 </Head>
                 <main className={`main ${inter.className}`}>
-                    {store.getState().auth?.user?.token && <Header/> }
+                    {(
+                        store.getState().auth?.user?.token && !HEADER_NOT_ALLOWED_PATHS.includes(router.pathname)
+                    ) &&
+                    <Header/>}
                     <Component {...pageProps} />
                 </main>
             </ChakraBaseProvider>
