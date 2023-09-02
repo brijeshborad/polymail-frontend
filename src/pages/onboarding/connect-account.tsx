@@ -100,7 +100,7 @@ function ConnectAccount() {
                             Connect another Google account
                         </Button>
                     </Flex>
-                    <Button onClick={() => Router.push('/onboarding/complete-profile')}
+                    <Button onClick={() => Router.push('/inbox')}
                             className={styles.continueButton} height={'auto'} padding={'10px 12px'}
                             backgroundColor={'#1F2937'} borderRadius={'8px'} fontSize={'14px'} width={'fit-content'}
                             color={'#ffffff'} lineHeight={'16px'} fontWeight={'500'}>Continue</Button>
