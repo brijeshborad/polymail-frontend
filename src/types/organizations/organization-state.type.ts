@@ -8,6 +8,5 @@ export declare type InitialOrganizationStateType = {
     selectedOrganization?: Organization | null
     members?: TeamMember[],
     isRemoveOrganization?: boolean,
-    isOrganizationAddOrRemoveSuccess?: boolean,
-    success?: boolean
+    isOrganizationAddOrRemoveSuccess?: boolean
 }
