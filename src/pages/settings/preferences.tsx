@@ -14,17 +14,16 @@ import {
     Td,
     Button, Input
 } from "@chakra-ui/react";
-import React, {ChangeEvent, useCallback, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import Index from "@/pages/settings/index";
 import withAuth from "@/components/withAuth";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {Organization} from "@/models";
-import {editOrganization} from "@/redux/organizations/action-reducer";
-import LocalStorageService from "@/utils/localstorage.service";
-import {CloseIcon, CheckIcon } from "@chakra-ui/icons";
+import {editOrganization, updateOrganizationState} from "@/redux/organizations/action-reducer";
+import {CloseIcon, CheckIcon} from "@chakra-ui/icons";
 import {TrashIcon, EditIcon} from "@/icons";
-import {debounce} from "@/utils/common.functions";
+import {isDomain} from "@/utils/common.functions";
 
 function Preferences() {
     const {
@@ -32,12 +31,11 @@ function Preferences() {
         isOrganizationAddOrRemoveSuccess
     } = useSelector((state: StateType) => state.organizations);
     const [organization, setOrganization] = useState<Organization | null>(null);
-    const [domains, setDomains] = useState<{ items: string[], value: string }>({
-        items: [],
-        value: ""
-    });
-    const [visibleInputs, setVisibleInputs] = useState<boolean[]>([]);
+    const [isAddingDomain, setIsAddingDomain] = useState<boolean>(false);
+    const [domains, setDomains] = useState<string[]>([]);
+    const [inputValue, setInputValue] = useState<string>('');
     const [isDomainValid, setIsDomainValid] = useState<boolean>(true);
+    const [currentEditIndex, setCurrentEditIndex] = useState<number | null>(null);
 
     const dispatch = useDispatch();
 
@@ -45,100 +43,52 @@ function Preferences() {
         if (selectedOrganization) {
             setOrganization(selectedOrganization)
             if (selectedOrganization?.preferences && selectedOrganization?.preferences?.approvedDomains) {
-                setDomains({
-                    items: selectedOrganization?.preferences?.approvedDomains,
-                    value: ''
-                });
-                setVisibleInputs(Array(selectedOrganization?.preferences?.approvedDomains.length).fill(false));
+                setDomains(selectedOrganization?.preferences?.approvedDomains || []);
             }
         }
     }, [selectedOrganization])
 
     useEffect(() => {
         if (isOrganizationAddOrRemoveSuccess) {
-            let orgs = LocalStorageService.updateOrg('get') || null;
-            setOrganization(orgs)
-            setVisibleInputs(Array(orgs?.preferences?.approvedDomains.length).fill(false));
-
+            dispatch(updateOrganizationState({isOrganizationAddOrRemoveSuccess: false}));
+            setInputValue('');
+            setIsDomainValid(true)
+            setIsAddingDomain(false);
+            setCurrentEditIndex(null)
         }
-    }, [isOrganizationAddOrRemoveSuccess, selectedOrganization])
+    }, [dispatch, isOrganizationAddOrRemoveSuccess])
 
-    const isEmail = (email: string) => {
-        return /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$/.test(email);
-    }
-    const validateDomain = useCallback(() => {
-        debounce(() => {
-            if (domains && domains.value) {
-                setIsDomainValid(isEmail(domains.value))
-            }
-        }, 300);
-    }, [domains])
-
-    useEffect(() => {
-        if (domains.items && domains.items.length) {
-            validateDomain();
-        } else {
-            setIsDomainValid(true);
-        }
-    }, [domains, validateDomain])
-
-    const handleInputChange = (index: number, event: ChangeEvent | any) => {
-        let orgValue = [...(organization?.preferences?.approvedDomains || [])];
-        orgValue[index] = event.target.value
-        setDomains({
-            items: orgValue,
-            value: event.target.value
-        })
-
-    }
-
-    const submit = (type: string, item: any) => {
+    const submit = (type: string, index: number = 0) => {
         if (organization && organization.id) {
-            console.log('type' , type)
-            let domainArray = [...domains.items]
-            if (type !== 'cancel') {
-                if (type === 'remove') {
-                    domainArray = (domainArray || []).filter((i: string) => i !== item)
+            let domainArray = [...domains];
+            if (type === 'add' || type === 'edit') {
+                if (!isDomain(inputValue)) {
+                    setIsDomainValid(false);
+                    return;
                 }
-                let body = {
-                    preferences: {
-                        approvedDomains: domainArray,
-                    },
-                    id: organization.id
-                }
-
-                setDomains({
-                    items: domainArray,
-                    value: ''
-                })
-                dispatch(editOrganization(body));
-            } else {
-                let sss = JSON.parse(JSON.stringify(organization));
-                sss = sss?.preferences?.approvedDomains.filter((i: string) => i !== '')
-                setOrganization({
-                    ...organization,
-                    preferences: {
-                        approvedDomains: sss,
-                    },
-                });
-                setVisibleInputs([...Array(domainArray.length).fill(false)]);
             }
+            setIsDomainValid(true);
+            if (type === 'add') {
+                domainArray.push(inputValue);
+            } else if (type === 'edit') {
+                domainArray[currentEditIndex!] = inputValue;
+            } else {
+                domainArray.splice(index, 1);
+            }
+            let body = {
+                preferences: {
+                    approvedDomains: domainArray,
+                },
+                id: organization.id
+            }
+            dispatch(editOrganization(body));
         }
     }
 
-    const addNewLine = () =>  {
-        let sss = JSON.parse(JSON.stringify(organization));
-        sss?.preferences?.approvedDomains.push('');
-        setOrganization(sss);
-        setVisibleInputs([...visibleInputs, true]);
-    }
-
-    const editValue = (index: number) => {
-        const newVisibleInputs = [...visibleInputs];
-        // Toggle the visibility of the input at the specified index
-        newVisibleInputs[index] = !newVisibleInputs[index];
-        // Set the updated visibleInputs array as the new state
-        setVisibleInputs(newVisibleInputs);
+    function editValue(index: number) {
+        setInputValue(domains[index]);
+        setIsAddingDomain(true);
+        setCurrentEditIndex(index);
     }
 
     return (
@@ -163,9 +113,11 @@ function Preferences() {
                                     <Heading as='h4' fontSize={'18px'} fontWeight={600}
                                              color={'#101828'}>Preferences</Heading>
 
-                                    <Button className={styles.inviteMemberButton} fontSize={'14px'} onClick={addNewLine}
+                                    {!isAddingDomain &&
+                                    <Button className={styles.inviteMemberButton} fontSize={'14px'}
+                                            onClick={() => setIsAddingDomain(true)}
                                             backgroundColor={'black'} color={'white'} height={'auto'}
-                                            padding={'10px 20px'}>Add Domains</Button>
+                                            padding={'10px 20px'}>Add Domains</Button>}
                                 </Flex>
 
                                 <TableContainer>
@@ -179,44 +131,79 @@ function Preferences() {
                                                     lineHeight={'1.5'} width={'120px'}>Actions</Th>
                                             </Tr>
                                         </Thead>
-                                        {(organization && organization.preferences && organization.preferences.approvedDomains && organization.preferences.approvedDomains?.length > 0) &&
-                                            <Tbody>
-                                                {organization && organization.preferences && organization.preferences.approvedDomains?.length > 0 && (organization.preferences.approvedDomains || []).map((item: string, index: number) => (
-                                                    <Tr key={index + 1}>
-                                                        <Td>{visibleInputs[index] ?
-                                                            <div>
-                                                                <Input
-                                                                    defaultValue={item}
-                                                                    onChange={(e) => handleInputChange(index, e)}
-                                                                />
-                                                                {!isDomainValid &&
-                                                                <Text fontSize={'11px'} fontWeight={600} color={'crimson'}>Please enter valid domain</Text>}
-                                                            </div>
-                                                            :
-                                                            <p> {item} </p>}
-                                                        </Td>
-                                                        <Td>
-                                                            {!visibleInputs[index] ?
+                                        <Tbody>
+                                            {domains.length > 0 && domains.map((item: string, index: number) => (
+                                                <Tr key={index + 1}>
+                                                    <Td>{currentEditIndex === index ?
+                                                        <div>
+                                                            <Input value={inputValue}
+                                                                   onChange={(e) => setInputValue(e.target.value)}/>
+                                                            {!isDomainValid &&
+                                                            <Text fontSize={'11px'} fontWeight={600} color={'crimson'}>Please
+                                                                enter valid domain</Text>}
+                                                        </div>
+                                                        :
+                                                        <p> {item} </p>
+                                                    }
+                                                    </Td>
+                                                    <Td>
+                                                        {currentEditIndex === index ?
+                                                            <Flex gap={3}>
+                                                                <Button height={'auto'} padding={'6.5px'}
+                                                                        color={'#374151'}
+                                                                        minWidth={'auto'} fontSize={'13px'}
+                                                                        onClick={() => submit('edit')}><CheckIcon/></Button>
+                                                                <Button height={'auto'} padding={'6.5px'}
+                                                                        color={'#374151'}
+                                                                        minWidth={'auto'} fontSize={'13px'}
+                                                                        onClick={() => {
+                                                                            setInputValue('');
+                                                                            setIsDomainValid(true)
+                                                                            setIsAddingDomain(false);
+                                                                            setCurrentEditIndex(null)
+                                                                        }}><CloseIcon/></Button>
+                                                            </Flex> :
                                                             <Flex gap={3}>
                                                                 <Button height={'auto'} padding={'5px'}
                                                                         minWidth={'auto'}
                                                                         onClick={() => editValue(index)}><EditIcon/></Button>
                                                                 <Button height={'auto'} padding={'5px'}
                                                                         minWidth={'auto'}
-                                                                        onClick={() => submit('remove' ,item!)}><TrashIcon/></Button>
-                                                            </Flex> :
-                                                                <Flex gap={3}>
-                                                                    <Button height={'auto'} padding={'6.5px'} color={'#374151'}
-                                                                            minWidth={'auto'} fontSize={'13px'} onClick={() => submit('add-edit', item!)}><CheckIcon/></Button>
-                                                                    <Button height={'auto'} padding={'6.5px'} color={'#374151'}
-                                                                                  minWidth={'auto'} fontSize={'13px'} onClick={() => submit('cancel' ,item!)}><CloseIcon/></Button>
-                                                                </Flex>
-                                                            }
-                                                            </Td>
-                                                    </Tr>
-                                                ))}
-                                            </Tbody>
-                                        }
+                                                                        onClick={() => submit('remove', index)}><TrashIcon/></Button>
+                                                            </Flex>}
+                                                    </Td>
+                                                </Tr>
+                                            ))}
+                                            {(isAddingDomain && currentEditIndex === null) && (
+                                                <Tr>
+                                                    <Td>
+                                                        <div>
+                                                            <Input value={inputValue}
+                                                                   onChange={(e) => setInputValue(e.target.value)}/>
+                                                            {!isDomainValid &&
+                                                            <Text fontSize={'11px'} fontWeight={600} color={'crimson'}>Please
+                                                                enter valid domain</Text>}
+                                                        </div>
+                                                    </Td>
+                                                    <Td>
+                                                        <Flex gap={3}>
+                                                            <Button height={'auto'} padding={'6.5px'}
+                                                                    color={'#374151'}
+                                                                    minWidth={'auto'} fontSize={'13px'}
+                                                                    onClick={() => submit('add')}><CheckIcon/></Button>
+                                                            <Button height={'auto'} padding={'6.5px'}
+                                                                    color={'#374151'}
+                                                                    minWidth={'auto'} fontSize={'13px'}
+                                                                    onClick={() => {
+                                                                        setInputValue('');
+                                                                        setIsDomainValid(true)
+                                                                        setIsAddingDomain(false);
+                                                                    }}><CloseIcon/></Button>
+                                                        </Flex>
+                                                    </Td>
+                                                </Tr>
+                                            )}
+                                        </Tbody>
                                     </Table>
                                 </TableContainer>
 
@@ -226,39 +213,6 @@ function Preferences() {
                     </Flex>
                 </GridItem>
             </Grid>
-
-            {/*<Modal isOpen={isOpen} onClose={() => onClose} isCentered>*/}
-            {/*    <ModalOverlay/>*/}
-            {/*    <ModalContent maxWidth={'490px'}>*/}
-            {/*        <ModalHeader padding={'40px 40px 24px 40px'}>*/}
-            {/*            <Heading as='h3' size='md' pb={1} color={'#101828'}>Change Preferences Domains</Heading>*/}
-            {/*            <Text fontSize='md' color={'#475467'} fontWeight={'400'}>Add, Edit and Remove Preferences</Text>*/}
-            {/*        </ModalHeader>*/}
-            {/*        <ModalBody padding={'8px 40px 16px'}>*/}
-            {/*            <div className={styles.newPaymentInput}>*/}
-            {/*                <Text mb='8px' fontSize={'13px'} fontWeight={500} color={'#000000'}>Domains</Text>*/}
-
-
-            {/*                <Flex alignItems={'center'} gap={1} wrap={'wrap'} width={'100%'}>*/}
-            {/*                    {(domains.items || []).map((item: string | undefined, i: number) => (*/}
-            {/*                        <Chip text={item} key={i} click={() => handleItemDelete(item!)}/>*/}
-            {/*                    ))}*/}
-
-            {/*                    <Textarea placeholder='Here is a sample placeholder'*/}
-            {/*                              value={domainValue}*/}
-            {/*                              onKeyDown={handleKeyDown}*/}
-            {/*                              onChange={handleChange}/>*/}
-            {/*                </Flex>*/}
-            {/*            </div>*/}
-            {/*        </ModalBody>*/}
-
-            {/*        <ModalFooter className={styles.settingButton} paddingBottom={'40px'}>*/}
-            {/*            <Button className={styles.settingCancel} colorScheme='blue' mr={3}*/}
-            {/*                    onClick={onClose}> Cancel </Button>*/}
-            {/*            <Button className={styles.settingSave} variant='ghost' onClick={() => submit()}>Submit</Button>*/}
-            {/*        </ModalFooter>*/}
-            {/*    </ModalContent>*/}
-            {/*</Modal>*/}
         </div>
 
     )

@@ -66,20 +66,20 @@ const organizationSlice = createSlice({
         },
 
         editOrganization: (state: InitialOrganizationStateType, _action: PayloadAction<{ id?: string, body?: Organization }>) => {
-            return {...state, organization: null, error: null, isLoading: true, isOrganizationAddOrRemoveSuccess: false}
+            return {...state, error: null, isLoading: true, isOrganizationAddOrRemoveSuccess: false}
         },
         editOrganizationSuccess: (state: InitialOrganizationStateType, {payload: organization}: PayloadAction<{}>) => {
             LocalStorageService.updateOrg('store', organization);
             return {
                 ...state,
-                organization,
+                selectedOrganization: organization,
                 isLoading: false,
                 error: null,
                 isOrganizationAddOrRemoveSuccess: true
             }
         },
         editOrganizationError: (state: InitialOrganizationStateType, {payload: error}: PayloadAction<{ error: any }>) => {
-            return {...state, organization: null, error, isLoading: false, isOrganizationAddOrRemoveSuccess: false}
+            return {...state, error, isLoading: false, isOrganizationAddOrRemoveSuccess: false}
         },
 
         removeOrganization: (state: InitialOrganizationStateType, _action: PayloadAction<{ id?: string }>) => {
