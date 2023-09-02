@@ -91,8 +91,10 @@ export function Threads() {
                 let currentThreadIndex = currentThreads.findIndex((thread: Thread) => thread.id === selectedThread.id);
                 let currentMessages = [...(selectedThread.messages || [])];
                 let draftIndex = currentMessages.findIndex((message: Message) => message.id === draft.id);
-                let messages = [...currentThreads[currentThreadIndex].messages!];
-                messages[draftIndex] = draft as Message;
+                let messages = currentThreads[currentThreadIndex]?.messages || [];
+                const messagesCopy = [...messages];
+                messagesCopy[draftIndex] = draft as Message;
+                messages = messagesCopy;
                 currentThreads[currentThreadIndex] = {
                     ...currentThreads[currentThreadIndex],
                     messages: [...messages]

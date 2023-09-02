@@ -155,7 +155,7 @@ function ProjectInbox() {
                             </Flex>
                         </div>
                         <Flex direction={'column'} gap={4} pt={4}>
-                            {members && members.length > 0 && members.map((member, index) => (
+                            {members && !!members.length && members.map((member, index) => (
                                 <Flex key={index+1} align={'center'} justify={'space-between'} gap={4}>
                                     <Flex align={'center'} gap={2}>
                                         <div className={styles.addMemberImage}>

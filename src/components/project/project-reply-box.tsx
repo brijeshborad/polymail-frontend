@@ -85,7 +85,7 @@ export function ProjectReplyBox(props: ReplyBoxType) {
                     setEmailBody(draft?.draftInfo?.body || '');
                 }
             }
-            if (draft.draftInfo.attachments) {
+            if (draft?.draftInfo?.attachments?.length) {
                 setAttachments([
                     ...draft.draftInfo.attachments.map(t => ({
                         filename: t.filename,
@@ -109,7 +109,7 @@ export function ProjectReplyBox(props: ReplyBoxType) {
                 emailSubject = `Fwd: ${selectedMessage.subject}`;
                 let decoded = Buffer.from(props.emailPart || '', 'base64').toString('ascii');
                 setEmailBody(getForwardContent() + (decoded || '') + (selectedAccount?.signature || ''));
-                if (draft && draft.draftInfo && draft.draftInfo.attachments) {
+                if (draft && draft.draftInfo && draft?.draftInfo?.attachments?.length) {
                     setAttachments([
                         ...draft.draftInfo.attachments.map(t => ({
                             filename: t.filename,
@@ -208,7 +208,7 @@ ${selectedMessage?.cc ? 'Cc: ' + (selectedMessage?.cc || []).join(',') : ''}</p>
             evt.preventDefault();
             let value = emailRecipients[type as keyof RecipientsType].value.trim();
             let emailArray = value.split(',');
-            emailArray.map(item => {
+            !!emailArray.length && emailArray.map(item => {
                 if (item && isValid(item, type)) {
                     setEmailRecipients((prevState) => ({
                         ...prevState,
@@ -423,7 +423,7 @@ ${selectedMessage?.cc ? 'Cc: ' + (selectedMessage?.cc || []).join(',') : ''}</p>
                         <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>
                             <Heading as={'h1'} size={'sm'} paddingTop={1} marginRight={1}>To:</Heading>
                             <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
-                                {emailRecipients.recipients.items.map((item: string | undefined, i: number) => (
+                                {!!emailRecipients?.recipients?.items?.length && emailRecipients.recipients.items.map((item: string | undefined, i: number) => (
                                     <Chip text={item} key={i} click={() => handleItemDelete(item!, 'recipients')}/>
                                 ))}
 
@@ -450,7 +450,7 @@ ${selectedMessage?.cc ? 'Cc: ' + (selectedMessage?.cc || []).join(',') : ''}</p>
                         <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>
                             <Heading as={'h1'} size={'sm'} paddingTop={1} marginRight={1}>CC:</Heading>
                             <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
-                                {emailRecipients.cc.items.map((item: string | undefined, i: number) => (
+                                {!!emailRecipients?.cc?.items?.length && emailRecipients.cc.items.map((item: string | undefined, i: number) => (
                                     <Chip text={item} key={i} click={() => handleItemDelete(item!, 'cc')}/>
                                 ))}
 
@@ -473,7 +473,7 @@ ${selectedMessage?.cc ? 'Cc: ' + (selectedMessage?.cc || []).join(',') : ''}</p>
                         <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>
                             <Heading as={'h1'} size={'sm'} paddingTop={1} marginRight={1}>BCC:</Heading>
                             <Flex alignItems={'center'} gap={1} wrap={'wrap'} width={'100%'}>
-                                {emailRecipients.bcc.items.map((item: string | undefined, i: number) => (
+                                {!!emailRecipients?.bcc?.items?.length && emailRecipients.bcc.items.map((item: string | undefined, i: number) => (
                                     <Chip text={item} key={i} click={() => handleItemDelete(item!, 'bcc')}/>
                                 ))}
 
@@ -509,7 +509,7 @@ ${selectedMessage?.cc ? 'Cc: ' + (selectedMessage?.cc || []).join(',') : ''}</p>
                                     value={emailBody} onChange={(e) => sendToDraft(e)}/>
 
                     {attachments && attachments.length > 0 ? <div style={{marginTop: '20px'}}>
-                        {attachments.map((item, index: number) => (
+                        {!!attachments?.length && attachments.map((item, index: number) => (
                             <Flex align={'center'} key={index} className={styles.attachmentsFile}>
                                 {item.filename}
                                 <div className={styles.closeIcon} onClick={() => removeAttachment(index)}><CloseIcon/>

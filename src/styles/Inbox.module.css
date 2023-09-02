@@ -557,7 +557,7 @@
 .replyButton .replayTextButton {
     border-radius: 5px 0 0 5px;
     padding: 10px 0 10px 10px;
-    line-height: 1.1;
+    line-height: 18px;
 }
 
 .replyButton .replayArrowIcon {
@@ -565,6 +565,7 @@
     min-width: auto;
     border-radius: 0 5px 5px 0;
     padding: 9px;
+    height: 38px;
 }
 
 .replyButton .replayArrowIcon:hover,
