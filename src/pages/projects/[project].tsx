@@ -29,7 +29,7 @@ import {ProjectThreads} from "@/components/project";
 import {getProjectById, getProjectMembers} from "@/redux/projects/action-reducer";
 import {getAllThreads} from "@/redux/threads/action-reducer";
 import {ProjectMessage} from "@/components/project/project-message";
-import memberships, {
+import {
     addItemToGroup,
     deleteMemberFromProject,
     updateMembershipState

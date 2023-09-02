@@ -27,7 +27,7 @@ function Signature() {
             dispatch(updateAccountState({selectedAccount: {...account}}));
             Toaster({desc: 'Signature updated successfully',title: 'Signature updated', type: 'success'})
         }
-    }, [account, success])
+    }, [dispatch, account, success])
 
 
     const addSignature = (value: string) => {
