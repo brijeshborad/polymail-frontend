@@ -126,10 +126,12 @@ function Index() {
                                         6
                                     </div>
                                 </Flex>
+                                {project.scope === "private" && (
                                 <Flex align={'center'} justify={'center'} h={'24px'} w={'24px'} borderRadius={50}
                                       backgroundColor={'rgba(33, 68, 120, 0.1)'}>
                                     <LockIcon/>
                                 </Flex>
+                                )}
                                 <Flex align={'center'} justify={'center'} h={'24px'} w={'24px'} borderRadius={50}
                                       backgroundColor={'rgba(8, 22, 47, 0.05)'}>
                                     <BlueStarIcon/>
