@@ -5,4 +5,5 @@ export interface Project {
     accountId?: string,
     created?: string,
     updated?: string,
+    numThreads?: number,
 }
