@@ -46,9 +46,10 @@ function CompleteProfile() {
                                 border={'1px solid #374151'} borderRadius={'8px'} fontSize={'14px'}
                                 width={'fit-content'} color={'#374151'} lineHeight={'16px'}
                                 fontWeight={'500'}>Back</Button>
-                        <Button className={styles.continueButton} height={'auto'} padding={'9px 12px'}
+                        <Button onClick={() => Router.push('/inbox')}
+                                className={styles.continueButton} height={'auto'} padding={'9px 12px'}
                                 backgroundColor={'#1F2937'} borderRadius={'8px'} fontSize={'14px'} width={'fit-content'}
-                                color={'#ffffff'} lineHeight={'16px'} fontWeight={'500'}>Continue</Button>
+                                color={'#ffffff'} lineHeight={'16px'} fontWeight={'500'}>Finish</Button>
                     </Flex>
 
                 </Flex>
