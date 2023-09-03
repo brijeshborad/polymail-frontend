@@ -110,8 +110,8 @@ function Index() {
                                 <Badge backgroundColor={'rgba(8, 22, 47, 0.05)'} fontSize={'12px'}
                                        color={'rgba(8, 22, 47, 0.7)'} lineHeight={'1'} borderRadius={50}
                                        padding={'4px 6px'}>{project.numThreads} thread(s)</Badge>
-                                <Badge backgroundColor={'rgba(0, 0, 0, 0.03)'} fontSize={'12px'} color={'#000000'}
-                                       lineHeight={'1'} borderRadius={50} padding={'4px 6px'}>2 updates</Badge>
+                                {/*<Badge backgroundColor={'rgba(0, 0, 0, 0.03)'} fontSize={'12px'} color={'#000000'}
+                                       lineHeight={'1'} borderRadius={50} padding={'4px 6px'}>2 updates</Badge>*/}
                             </Flex>
 
                             <Flex align={'center'} gap={2}>
