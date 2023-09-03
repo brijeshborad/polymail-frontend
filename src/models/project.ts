@@ -6,4 +6,5 @@ export interface Project {
     created?: string,
     updated?: string,
     numThreads?: number,
+    scope?: string,
 }
