@@ -13,7 +13,9 @@ import Image from "next/image";
 import {BlueStarIcon, DragIcon, LockIcon} from "@/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {getAllProjects} from "@/redux/projects/action-reducer";
+import {
+    getAllProjects
+} from "@/redux/projects/action-reducer";
 import {useRouter} from "next/router";
 import {Project} from "@/models";
 import {SpinnerUI} from "@/components/common";
@@ -38,9 +40,15 @@ function Index() {
 
     useEffect(() => {
         if (projects && projects.length > 0) {
-            setItemList(projects)
+            if (router.query.favorite === 'true') {
+                let favoriteData = projects.filter((item: Project) => !item.projectMeta?.favorite);
+                setItemList(favoriteData)
+            } else {
+                setItemList(projects)
+            }
         }
-    }, [projects])
+    }, [router.query.favorite, projects])
+
 
     const handleDragStart = (index: number, e: ChangeEvent | any) => {
         e.dataTransfer.setData('index', index);
@@ -86,14 +94,14 @@ function Index() {
                 <Flex align={'center'} justify={'space-between'}>
                     <Heading as='h4' fontSize={'24px'} fontWeight={600} color={'#08162F'}>Projects <Badge
                         backgroundColor={'rgba(8, 22, 47, 0.04)'} fontSize={'14px'} color={'#08162F'}
-                        padding={'3px 6px'}>{projects && projects.length}</Badge></Heading>
+                        padding={'3px 6px'}>{itemList && itemList.length}</Badge></Heading>
                     <Button className={styles.createProjectButton} color={'#ffffff'} backgroundColor={'#000000'} onClick={onOpen}
                             h={'auto'} borderRadius={'8px'} fontSize={'14px'} fontWeight={'500'} padding={'10px 20px'}>Create
                         Project</Button>
                 </Flex>
                 {isLoading && <SpinnerUI/>}
                 <Flex align={'center'} direction={'column'} gap={3}>
-                    {projects && projects.length > 0 && projects.map((project: Project, index: number) => (
+                    {itemList && itemList.length > 0 && itemList.map((project: Project, index: number) => (
                         <Flex key={index+1} width={'100%'} className={styles.projects} cursor={'pointer'} align={'center'}
                               justify={'space-between'} gap={3} padding={5} backgroundColor={'#ffffff'} borderRadius={8}
                               draggable

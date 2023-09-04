@@ -233,3 +233,40 @@ a {
 .rdw-editor-wrapper .rdw-editor-main {
   max-height: calc(100vh - 410px);
 }
+
+
+.disney-icon:before {
+  position: absolute;
+  content: '';
+  width: 6px;
+  height: 6px;
+  background-color: #FF87DB;
+  border-radius: 50%;
+  border: 1px solid #FFFFFF;
+  top: -2px;
+  right: -2px;
+}
+
+.member-images .member-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.member-images .member-photo {
+  min-width: 24px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #EBF2FF;
+  border: 1px solid #FFFFFF;
+}
+
+.member-images .member-photo + .member-photo {
+  margin-left: -12px;
+}
+
+.folder-icon svg {
+  stroke: #374151;
+}
