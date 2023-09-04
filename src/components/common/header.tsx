@@ -203,7 +203,7 @@ export function Header() {
     }
 
     useEffect(() => {
-        if (selectedAccount && selectedAccount.id && selectedAccount.status && selectedAccount.status.toLowerCase() === 'disabled') {
+        if (selectedAccount && selectedAccount.id && selectedAccount.status && selectedAccount.status.toLowerCase() === 'invalid') {
             reAuthToast(selectedAccount.email!);
         }
     }, [reAuthToast, selectedAccount])
