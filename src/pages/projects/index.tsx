@@ -41,7 +41,7 @@ function Index() {
     useEffect(() => {
         if (projects && projects.length > 0) {
             if (router.query.favorite === 'true') {
-                let favoriteData = projects.filter((item: Project) => !item.projectMeta?.favorite);
+                let favoriteData = projects.filter((item: Project) => item.projectMeta?.favorite);
                 setItemList(favoriteData)
             } else {
                 setItemList(projects)

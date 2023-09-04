@@ -6,7 +6,7 @@ import withAuth from "@/components/withAuth";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {Project, User} from "@/models";
-import {FavoriteProject} from "@/components/project/favorite-project";
+import {InboxHeaderProjectsList} from "@/components/project/inbox-header-projects-list";
 import {getAllProjects} from "@/redux/projects/action-reducer";
 
 function Inbox() {
@@ -28,7 +28,7 @@ function Inbox() {
 
     useEffect(() => {
         if (projects && projects.length > 0) {
-            let favoriteData = projects.filter((item: Project) => !item.projectMeta?.favorite);
+            let favoriteData = projects.filter((item: Project) => item.projectMeta?.favorite);
             setProjectData(favoriteData)
         }
     }, [projects])
@@ -55,7 +55,7 @@ function Inbox() {
 
     return (
         <div>
-            {!!projectData.length && <FavoriteProject/>}
+            {!!projectData.length && <InboxHeaderProjectsList/>}
             <div className={styles.mailBg}>
                 <Grid className={styles.mailGrid} templateColumns='30% auto' gap={6} height={'100%'}>
                     <GridItem w='100%'>

@@ -7,7 +7,7 @@ import {getAllProjects} from "@/redux/projects/action-reducer";
 import {Project} from "@/models";
 import Router from "next/router";
 
-export function FavoriteProject() {
+export function InboxHeaderProjectsList() {
     const {projects} = useSelector((state: StateType) => state.projects);
     const dispatch = useDispatch();
     const [projectData, setProjectData] = useState<Project[]>([]);
@@ -19,7 +19,7 @@ export function FavoriteProject() {
 
     useEffect(() => {
         if (projects && projects.length > 0) {
-            let favoriteData = projects.filter((item: Project) => !item.projectMeta?.favorite);
+            let favoriteData = projects.filter((item: Project) => item.projectMeta?.favorite);
             setProjectData(favoriteData.slice(0, 5))
             setProjectDataLength(favoriteData)
         }
