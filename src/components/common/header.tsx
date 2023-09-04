@@ -32,6 +32,7 @@ import {useSocket} from "@/hooks/use-socket.hook";
 import {getProfilePicture, updateUsersDetailsSuccess} from "@/redux/users/action-reducer";
 import {googleAuthLink} from "@/redux/auth/action-reducer";
 import {updateLastMessage} from "@/redux/socket/action-reducer";
+import {updateMessageState} from "@/redux/messages/action-reducer";
 
 export function Header() {
     const dispatch = useDispatch();
@@ -236,7 +237,8 @@ export function Header() {
     }
 
     const changePage = (page: string) => {
-        dispatch(updateThreadState({threads: [], success: false, updateSuccess: false, tabValue: 'reset'}));
+        dispatch(updateThreadState({threads: [], success: false, updateSuccess: false, tabValue: 'reset', selectedThread: null}));
+        dispatch(updateMessageState({selectedMessage: null}));
         Router.push(`/${page}`)
     }
 
