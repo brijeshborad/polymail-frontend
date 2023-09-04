@@ -82,14 +82,7 @@ function* getGoogleAuthLink({payload}: PayloadAction<{
 }
 
 function* logout() {
-    try {
-        yield ApiService.callGet(`auth/logout`, null);
-        LocalStorageService.clearStorage();
-        Router.push('/auth/login');
-    } catch (error: any) {
-        LocalStorageService.clearStorage();
-        Router.push('/auth/login');
-    }
+    yield ApiService.callGet(`auth/logout`, null);
 }
 
 function* passwordChange({
