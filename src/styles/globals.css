@@ -231,7 +231,7 @@ a {
 }
 
 .rdw-editor-wrapper .rdw-editor-main {
-    max-height: calc(100vh - 410px);
+    max-height: calc(100vh - 319px);
 }
 
 .mailSendToaster button {
