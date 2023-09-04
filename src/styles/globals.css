@@ -233,3 +233,11 @@ a {
 .rdw-editor-wrapper .rdw-editor-main {
   max-height: calc(100vh - 410px);
 }
+
+.dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 4px;
+  background-color: #0A101D;
+  display: inline-block;
+}

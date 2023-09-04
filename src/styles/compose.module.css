@@ -1,0 +1,426 @@
+.composeModal .subjectInput:focus-visible {
+    box-shadow: none;
+    border: 0;
+}
+
+.composeModal .subjectInput::placeholder {
+    color: rgba(10, 16, 29, 0.34);
+}
+
+.addToProject:hover,
+.addToProject[data-active] {
+    background: #2A6FFF !important;
+}
+
+.addToProject .RightContent {
+    display: inline-block;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    padding: 2px 4px;
+    margin-left: 5px;
+}
+
+.addToProject svg {
+    stroke: #FFFFFF;
+    width: 20px;
+    height: 20px;
+}
+
+.composeModal .replyBoxCC + .replyBoxCC {
+    border-top: 1px solid #E5E7EB;
+}
+
+.replyBoxCC .replyBoxCCTag {
+    color: #374151;
+    font-size: 12px;
+    font-weight: 500;
+    height: auto;
+    background-color: #F3F4F6;
+    border-radius: 50px;
+    padding: 2px 5px 2px 8px;
+}
+
+.replyBoxCC .replyBoxCCTag span {
+    margin-left: 2px;
+}
+
+.replyBoxCC .replyBoxCCTag:hover {
+    background-color: #F3F4F6;
+}
+
+.replyBoxCC .ccInput:hover,
+.replyBoxCC .ccInput:focus-visible,
+.subject .subjectInput:hover,
+.subject .subjectInput:focus-visible {
+    border: 0;
+    box-shadow: none;
+}
+
+.composeModal .replyBoxIcon svg {
+    stroke: #6B7280;
+}
+
+.composeModal .replyBoxTextArea:focus-visible {
+    box-shadow: none;
+    border: 0;
+}
+
+.composeModal .replyBoxTextArea::placeholder {
+    color: rgba(10, 16, 29, 0.34);
+
+}
+
+.composeModal .replyButton svg {
+    color: #ffffff;
+}
+
+.composeModal .replyButton .replyTextButton,
+.composeModal .replyButton .replyArrowIcon {
+    height: auto;
+    background-color: #1F2937;
+}
+
+.composeModal .replyButton .replyTextButton {
+    border-radius: 5px 0 0 5px;
+    padding: 10px 0 10px 10px;
+    line-height: 18px;
+}
+
+.composeModal .replyButton .replyArrowIcon {
+    border: 0;
+    min-width: auto;
+    border-radius: 0 5px 5px 0;
+    padding: 9px;
+}
+
+.composeModal .replyButton .replyArrowIcon:hover,
+.composeModal .replyButton .replyArrowIcon:active,
+.composeModal .replyButton .replyArrowIcon:focus-visible,
+.composeModal .replyButton .replyArrowIcon:hover:disabled,
+.composeModal .replyButton .replyArrowIcon:hover[disabled] {
+    background-color: #1F2937;
+}
+
+.composeModal .replyButton .replyTextButton:hover,
+.composeModal .replyButton .replyTextButton:active,
+.composeModal .replyButton .replyTextButton:hover[disabled],
+.composeModal .replyButton .replyTextButton:hover:disabled,
+.composeModal .replyButton .replyTextButton:focus-visible {
+    background-color: #1F2937;
+    box-shadow: none;
+}
+
+.composeModal .replyUserName {
+    color: #0A101D;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+
+.memberImages .memberPhoto img,
+.mailBox .mailBoxUserImage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.memberImages .memberPhoto {
+    min-width: 24px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: #EBF2FF;
+    border: 1px solid #FFFFFF;
+}
+
+.memberImages .memberPhoto.smallMemberImage {
+    min-width: 20px;
+    width: 20px;
+    height: 20px;
+}
+
+.memberImages .memberPhoto + .memberPhoto {
+    margin-left: -12px;
+}
+
+.disneyIcon:before {
+    position: absolute;
+    content: '';
+    width: 6px;
+    height: 6px;
+    background-color: #FF87DB;
+    border-radius: 50%;
+    border: 1px solid #FFFFFF;
+    top: -2px;
+    right: -2px;
+}
+
+
+.mailListTabs .composeButton {
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.5s;
+    letter-spacing: -0.13px;
+}
+
+.mailListTabs .composeButton:hover {
+    background-color: #FFFFFF;
+}
+
+.mailListTabs .composeButton svg {
+    width: 20px;
+    height: 20px;
+}
+
+.mailListTabs .composeButton span {
+    margin-right: 5px;
+}
+
+.mailTabList {
+    background-color: #F3F4F6;
+    border-radius: 8px;
+    padding: 2px 0 2px 2px;
+}
+
+.mailTabList .tabListMoreButton:hover,
+.mailTabList .tabListMoreButton[data-active],
+.mailTabList .tabListMoreButton:active {
+    background-color: transparent;
+}
+
+.mailTabList .tabListMoreButton svg {
+    width: 9px;
+}
+
+.mailTabList .tabListDropDown button {
+    gap: 8px;
+    padding: 10px 12px;
+}
+
+.mailTabList .tabListDropDown svg {
+    width: 20px;
+    height: 20px;
+    stroke: #6B7280;
+}
+
+
+.emailTabs > div {
+    padding: 9px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.emailTabs > div:hover {
+    color: #0A101D;
+}
+
+.emailTabs > div:hover svg {
+    stroke: #0A101D;
+}
+
+.emailTabs > div span span {
+    background-color: #F3F4F6;
+    border-radius: 4px;
+    margin-left: 4px;
+    padding: 1px 4px;
+    line-height: 1.23;
+}
+
+.emailTabs > div svg {
+    width: 20px;
+    height: 20px;
+    stroke: #6B7280;
+}
+
+.emailTabs > div span {
+    margin-left: 8px;
+    display: none;
+}
+
+.emailTabs > div.active {
+    background-color: #ffffff;
+    color: #0A101D;
+}
+
+.emailTabs > div.active span {
+    display: flex;
+}
+
+.emailTabs > div.active svg {
+    stroke: #0A101D;
+}
+
+.checkBoxLabel span {
+    color: #5D5F62;
+    background-color: #FFFFFF;
+    border-color: rgba(8, 22, 47, 0.1);
+    font-size: 13px;
+    font-weight: 400;
+    white-space: nowrap;
+    border-radius: 2px;
+}
+
+.checkBoxLabel input:checked + span,
+.checkBoxLabel input[data-checked] + span {
+    background: #08162F;
+    border-color: #08162F;
+}
+
+
+.mailOtherOption {
+    margin-left: 20px;
+}
+
+.mailOtherOption button {
+    border: 1px solid #E5E7EB;
+    background-color: #FFFFFF;
+    border-radius: 50px;
+    color: #374151;
+    font-size: 13px;
+    line-height: 1;
+    padding: 5px 12px;
+    height: auto;
+}
+
+.mailOtherOption .active button {
+    border: 1px solid #6B7280;
+    color: #0A101D;
+    background-color: #F3F4F6;
+}
+
+.mailDetails .mailMessage {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: #0A101D;
+    letter-spacing: -0.13px;
+    cursor: pointer;
+}
+
+.mailList .mailDetails.activeMailDetails {
+    border-color: #6B7280;
+    box-shadow: 0 0 0 3px #E5E7EB;
+}
+
+.mailList .mailDetails .receiveTime {
+    position: relative;
+}
+
+.mailList .mailDetails.activeMailDetails .receiveTime:before {
+    position: absolute;
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #9CA3AF;
+    left: -11px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.mailDetails .senderDetails p{
+    max-width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    display: inline-block;
+    text-overflow: ellipsis;
+}
+
+.mailList {
+    max-height: calc(100vh - 278px);
+    overflow: auto;
+}
+
+.mailBox .mailBoxHeaderIcon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.mailBox .mailBoxUserImage {
+    min-width: 32px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #000000;
+    overflow: hidden;
+}
+
+
+.mailBox .menuIcon[data-active],
+.mailBox .menuIcon:hover {
+    background-color: transparent;
+}
+
+.mailBox .menuIcon span {
+    margin: 0;
+    display: none;
+}
+
+.mailBox .menuIcon span + span {
+    display: inline-block;
+}
+
+.mailBox .menuIcon svg {
+    margin: 0;
+    fill: #5D5F62;
+}
+
+.mailBox .oldMail:hover .menuIcon,
+.mailBox .oldMail.lastOenMail .menuIcon {
+    opacity: 1;
+}
+
+.mailBox .oldMail.lastOenMail {
+    background-color: #F9FAFB;
+    border-color: #F9FAFB;
+}
+
+.mailBox .createNewDraft:hover {
+    background-color: #F3F4F6;
+}
+
+.mailBox .mailUserImage {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    background-color: #000000;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.mailBox .editButton:hover {
+    background-color: #F3F4F6;
+}
+
+.mailBox .replyBoxTextArea {
+    caret-color: #0C4F44;
+}
+
+.mailBox .replyBoxTextArea::placeholder {
+    color: #6B7280;
+}
+
+.mailBox .replyBoxTextArea:focus-visible {
+    box-shadow: none;
+    border: 0;
+}
+
+.mailBox .replyBoxTextAreaShadow {
+    position: relative;
+}
+
+.mailBox .replyBoxTextAreaShadow:before {
+    position: absolute;
+    content: '';
+    height: 72px;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background: linear-gradient(180deg, #FFF 0%, rgba(255, 255, 255, 0.00) 100%);
+    z-index: 1;
+}
