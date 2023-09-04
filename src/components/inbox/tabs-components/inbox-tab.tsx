@@ -73,13 +73,13 @@ export function InboxTab(props: InboxTabProps) {
                         <div className={styles.mailOtherOption}>
                             <Flex align={'center'} gap={2}>
                                 <div className={styles.active}>
-                                    <Button colorScheme='white'>All Inboxes</Button>
+                                    <Button colorScheme='white'>Everything</Button>
                                 </div>
                                 <div>
-                                    <Button colorScheme='white'>Inbox</Button>
+                                    <Button colorScheme='white'>Just mine</Button>
                                 </div>
                                 <div>
-                                    <Button colorScheme='white'>Projects Inbox</Button>
+                                    <Button colorScheme='white'>Projects</Button>
                                 </div>
                             </Flex>
                         </div>
