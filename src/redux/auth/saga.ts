@@ -20,7 +20,6 @@ import {
 import ApiService from "@/utils/api.service";
 import {AxiosError, AxiosResponse} from "axios";
 import LocalStorageService from "@/utils/localstorage.service";
-import Router from "next/router";
 
 function* login({payload: {email, password}}: PayloadAction<{ email: string, password: string }>) {
     try {
