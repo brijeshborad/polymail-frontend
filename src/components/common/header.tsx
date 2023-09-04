@@ -55,7 +55,7 @@ export function Header() {
     let currentRoute = router.pathname.split('/');
     const {toast} = createStandaloneToast();
 
-    const connectGoogleAccount = useCallback((mode: string = 'create') => {
+    const connectGoogleAccount = useCallback((mode: string) => {
         let body = {
             mode,
             redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}/inbox`,
@@ -87,7 +87,7 @@ export function Header() {
                         Seems like your session has been expired for <Text as={"span"}
                                                                            color={"blue.400"}>{email}</Text>!
                     </div>
-                    <Button onClick={() => connectGoogleAccount()} ml={1} mr={2} variant="link"
+                    <Button onClick={() => connectGoogleAccount('authenticate')} ml={1} mr={2} variant="link"
                             color={"blue.300"} padding={'7px 15px'}>Re-Authenticate</Button>
 
                     <Divider height={"20px"} orientation='vertical'/>
