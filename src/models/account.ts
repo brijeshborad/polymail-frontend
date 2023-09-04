@@ -7,4 +7,5 @@ export interface Account {
     success?: boolean,
     signature?: string
     userId?: string
+    status?: string
 }

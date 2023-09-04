@@ -780,23 +780,6 @@
     }
 }
 
-
-.mailSendToaster button {
-    background-color: transparent;
-    color: #FFFFFF;
-    font-size: 14px;
-}
-
-.mailSendToaster button:hover {
-    background-color: rgba(255,255,255, 0.3);
-    color: #FFFFFF;
-}
-
-
-div:has(> .mailSendToaster) {
-    max-width: 700px;
-}
-
 .envelopeIcon svg {
     fill: #5D5F62;
     width: 18px;

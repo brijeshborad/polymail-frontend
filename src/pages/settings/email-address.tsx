@@ -18,9 +18,9 @@ function EmailAddress() {
 
     const dispatch = useDispatch();
 
-    function addNewGoogleAccount() {
+    function addNewGoogleAccount(mode: string = 'create') {
         let body = {
-            mode: 'create',
+            mode,
             redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}/inbox`,
             accountType: "google",
             platform: "web",
@@ -82,22 +82,32 @@ function EmailAddress() {
                                 <Flex direction={"column"} gap={1} className={styles.addedEmailAddress}>
                                     <Text fontSize={'13px'} mb={2} color={'#08162F'}>Added Email Addresses:</Text>
                                     {accounts && !!accounts.length && (accounts || []).map((item: Account, index: number) => (
-                                        <Flex direction={'column'} gap={1} key={index}>
-                                            <Flex alignItems={'center'} justify={'space-between'} p={1} gap={2}
-                                                  width={'100%'} className={styles.settingAddedEmailAddress}>
-                                                <Flex alignItems={'center'} gap={3}>
-                                                    <Flex alignItems={'center'} justify={'center'}
-                                                          className={styles.settingAddressSocialIcon}>
-                                                        <GoogleIcon/>
+                                        <Flex direction={'row'} key={index} alignItems={'center'}>
+                                            <Flex direction={'column'} gap={1}>
+                                                <div className={styles.settingAddedEmailAddress}>
+                                                    <Flex alignItems={'center'} justify={'space-between'} p={1} gap={2}
+                                                          width={'100%'}>
+                                                        <Flex alignItems={'center'} gap={3}>
+                                                            <Flex alignItems={'center'} justify={'center'}
+                                                                  className={styles.settingAddressSocialIcon}>
+                                                                <GoogleIcon/>
+                                                            </Flex>
+                                                            <Link fontSize={'13px'} fontWeight={'500'}
+                                                                  isExternal>{item.email} </Link>
+                                                        </Flex>
+                                                        <CloseIcon className={styles.closeIcon} cursor={"pointer"}
+                                                                   onClick={() => removeAccount(item)}/>
                                                     </Flex>
-                                                    <Link fontSize={'13px'} fontWeight={'500'}
-                                                          isExternal>{item.email} </Link>
-                                                </Flex>
-                                                <CloseIcon className={styles.closeIcon} cursor={"pointer"}
-                                                           onClick={() => removeAccount(item)}/>
+                                                    {item.status?.toLowerCase() !== 'disabled' &&
+                                                    <Button onClick={() => addNewGoogleAccount('login')}
+                                                            colorScheme={'whatsapp'} width={'100%'} marginTop={2}>
+                                                        Re-Authenticate
+                                                    </Button>}
+                                                </div>
                                             </Flex>
+                                            {item.status?.toLowerCase() !== 'disabled' &&
+                                            <Text fontSize={'xs'} marginLeft={'10px'} color={'red'}>Signed out</Text>}
                                         </Flex>
-
                                     ))}
 
                                 </Flex>
