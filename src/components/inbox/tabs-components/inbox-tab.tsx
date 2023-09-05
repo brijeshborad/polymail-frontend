@@ -104,7 +104,7 @@ export function InboxTab(props: InboxTabProps) {
                                         <DisneyIcon/> {item.from || 'Anonymous'}
                                     </Flex>
                                     <Flex alignItems={'center'} className={styles2.receiveTime}>
-                                        {!(item.mailboxes || []).includes('UNREAD') &&
+                                        {(item.mailboxes || []).includes('UNREAD') &&
                                         <DotIcon marginRight={'5px'} className={`readThreadIcon`} color={'#9ca3af'}/>}
                                         <Time time={item.latestMessage} isShowFullTime={false}/>
                                     </Flex>
