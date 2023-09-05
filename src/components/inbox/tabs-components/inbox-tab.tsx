@@ -35,7 +35,7 @@ export function InboxTab(props: InboxTabProps) {
             }
             return;
         }
-        if ((item.mailboxes || []).includes('UNREAD')) {
+        {/*if ((item.mailboxes || []).includes('UNREAD')) {
             let currentThreads = [...threads || []] as Thread[];
             let threadData = {...(item) || {}} as Thread;
             let index1 = currentThreads.findIndex((item: Thread) => item.id === threadData?.id);
@@ -55,7 +55,7 @@ export function InboxTab(props: InboxTabProps) {
             if (item && item.id) {
                 dispatch(updateThreads({id: item.id, body}));
             }
-        }
+        }*/}
         dispatch(updateThreadState({selectedThread: item}));
         dispatch(updateMessageState({selectedMessage: null}));
         dispatch(updateDraftState({draft: null}));
