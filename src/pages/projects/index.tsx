@@ -162,11 +162,11 @@ function Index() {
                                 )}
                                 {project.projectMeta?.favorite ?
                                     <Flex align={'center'} justify={'center'} h={'24px'} w={'24px'} borderRadius={50}
-                                          backgroundColor={'rgba(8, 22, 47, 0.05)'} onClick={() => makeProjectFavorite(project, false)}>
+                                          backgroundColor={'rgba(8, 22, 47, 0.05)'} onClick={(e) => {e.stopPropagation(); makeProjectFavorite(project, false)}}>
                                         <BlueStarIcon/>
                                     </Flex> :
                                     <Flex align={'center'} justify={'center'} h={'24px'} w={'24px'} borderRadius={50}
-                                          backgroundColor={'rgba(33, 68, 120, 0.1)'} onClick={() => makeProjectFavorite(project, true)}>
+                                          backgroundColor={'rgba(33, 68, 120, 0.1)'} onClick={(e) => {e.stopPropagation(); makeProjectFavorite(project, true)}}>
                                         <StarIcon/>
                                     </Flex>
                                 }
