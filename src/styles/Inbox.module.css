@@ -182,10 +182,6 @@
     cursor: pointer;
 }
 
-.mailDetails.readThread {
-    background-color: #eeeeee;
-}
-
 .mailDetails .SenderIcon svg {
     width: 20px;
     height: 20px;
@@ -335,6 +331,7 @@
     padding: 0;
     gap: 8px;
 }
+
 .mailBox .addToProjectList .addNewProject button:hover {
     background-color: transparent;
 }

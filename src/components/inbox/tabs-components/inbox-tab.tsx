@@ -1,6 +1,6 @@
 import {Button, Checkbox, Flex, Input} from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
-import {DisneyIcon} from "@/icons";
+import {DisneyIcon, DotIcon} from "@/icons";
 import styles2 from "@/styles/common.module.css";
 import {InboxTabProps, StateType} from "@/types";
 import {MessageDraft, Thread} from "@/models";
@@ -98,14 +98,16 @@ export function InboxTab(props: InboxTabProps) {
                         <div onClick={() => handleClick(item)} key={index}
                              className={`${selectedThread && selectedThread.id === item.id ? styles.selectedThread : ''}`}>
                             <div
-                                className={`${styles.mailDetails} ${(item.mailboxes || []).includes('UNREAD') ? '' : styles.readThread}`}>
+                                className={`${styles.mailDetails}`}>
                                 <Flex align={"center"} justify={'space-between'}>
                                     <Flex align={"center"} className={styles.senderDetails} gap={1}>
                                         <DisneyIcon/> {item.from || 'Anonymous'}
                                     </Flex>
-                                    <div className={styles2.receiveTime}>
+                                    <Flex alignItems={'center'} className={styles2.receiveTime}>
+                                        {!(item.mailboxes || []).includes('UNREAD') &&
+                                        <DotIcon marginRight={'5px'} className={`readThreadIcon ${selectedThread && selectedThread.id === item.id ? 'selected' : ''}`}/>}
                                         <Time time={item.latestMessage} isShowFullTime={false}/>
-                                    </div>
+                                    </Flex>
                                 </Flex>
                                 <div className={styles.mailMessage}>
                                     {item.subject || "(no subject)"}
