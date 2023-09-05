@@ -50,10 +50,13 @@ export function Threads() {
 
     const getAllThread = useCallback((resetState: boolean = true, force: boolean = false) => {
         if (selectedAccount) {
+            console.log('---Step 1 Check for cache', resetState, force);
             if (!cacheThreads[`${tab}-${selectedAccount.id}`] && !force) {
                 force = true;
             }
+            console.log('---Step 2 Check for force', force);
             if (force) {
+                console.log('---Step 3 API CALLED and returned');
                 dispatch(getAllThreads({mailbox: tab, account: selectedAccount.id, enriched: true, resetState}));
                 return;
             }
@@ -66,6 +69,7 @@ export function Threads() {
 
     useEffect(() => {
         if (newMessage && newMessage.name === 'new_message') {
+            console.log('---NEW MESSAGE---', newMessage);
             dispatch(updateLastMessage(null));
             getAllThread(false, true);
         }
