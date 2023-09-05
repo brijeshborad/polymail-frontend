@@ -127,9 +127,10 @@ function Index() {
                               onDragOver={handleDragOver}
                               onDrop={(e) => handleDrop(e, index)}
                               border={'1px solid rgba(8, 22, 47, 0.14)'}
+                              onClick={() => router.push(`/projects/${project.id}`)}
                               >
 
-                            <Flex align={'center'} gap={2} onClick={() => router.push(`/projects/${project.id}`)}>
+                            <Flex align={'center'} gap={2}>
                                 <div className={styles.projectIcon}>
                                     <Image src="/image/handcraft.png" width="24" height="24" alt=""/>
                                 </div>
