@@ -69,48 +69,43 @@ export function MessagesHeader({
                 let index1 = currentThreads.findIndex((item: Thread) => item.id === threadData?.id);
 
                 let body = {
-                    mailboxes: ['']
+                    mailboxes: selectedThread.mailboxes || []
                 };
-                let data = selectedThread.mailboxes || [];
 
                 switch (messageBox) {
                     case "INBOX":
                         if (selectedThread.mailboxes?.includes(messageBox)) {
                             return
                         }
-                        data = data.filter((item: string) => item !== "ARCHIVE")
-                        data = data.filter((item: string) => item !== "TRASH")
-                        data = [...data, messageBox]
+                        body.mailboxes = body.mailboxes.filter((item: string) => item !== "ARCHIVE")
+                        body.mailboxes = body.mailboxes.filter((item: string) => item !== "TRASH")
+                        body.mailboxes = [...body.mailboxes, messageBox]
                         break;
                     case "TRASH":
                         if (selectedThread.mailboxes?.includes(messageBox)) {
                             return
                         }
-                        data = data.filter((item: string) => item !== "INBOX")
-                        data = data.filter((item: string) => item !== "ARCHIVE")
-                        data = [...data, messageBox]
+                        body.mailboxes = body.mailboxes.filter((item: string) => item !== "INBOX")
+                        body.mailboxes = body.mailboxes.filter((item: string) => item !== "ARCHIVE")
+                        body.mailboxes = [...body.mailboxes, messageBox]
                         break;
                     case "ARCHIVE":
                         if (selectedThread.mailboxes?.includes(messageBox)) {
                             return
                         }
-                        data = data.filter((item: string) => item !== "TRASH")
-                        data = data.filter((item: string) => item !== "INBOX")
-                        data = [...data, messageBox]
+                        body.mailboxes = body.mailboxes.filter((item: string) => item !== "TRASH")
+                        body.mailboxes = body.mailboxes.filter((item: string) => item !== "INBOX")
+                        body.mailboxes = [...body.mailboxes, messageBox]
                         break;
                     case "STARRED":
                     case "UNREAD":
                         if (selectedThread.mailboxes?.includes(messageBox)) {
-                            data = data.filter((item: string) => item !== messageBox)
+                            body.mailboxes = body.mailboxes.filter((item: string) => item !== messageBox)
                         } else {
-                            data = [...data, messageBox]
+                            body.mailboxes = [...body.mailboxes, messageBox]
                         }
                         break;
                 }
-                
-                body.mailboxes = [
-                    ...data
-                ]
 
                 currentThreads[index1] = {
                     ...currentThreads[index1],
