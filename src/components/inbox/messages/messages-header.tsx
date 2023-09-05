@@ -29,7 +29,8 @@ import {
     TrashIcon,
     EnvelopeIcon,
     DisneyIcon,
-    MenuIcon
+    MenuIcon,
+    InboxIcon
 } from "@/icons";
 import React, {useCallback, useEffect, useState} from "react";
 import {Project, Thread} from "@/models";
@@ -240,17 +241,27 @@ export function MessagesHeader({
                                 </div>
                             </MenuList>
                         </Menu>}
-
-                        <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
-                            <div onClick={() => updateMailBox('ARCHIVE')}>
-                                <ArchiveIcon/>
-                            </div>
-                        </Tooltip>
-                        <Tooltip label='Trash' placement='bottom' bg='gray.300' color='black'>
-                            <div onClick={() => updateMailBox('TRASH')}>
-                                <TrashIcon/>
-                            </div>
-                        </Tooltip>
+                        {!(selectedThread?.mailboxes || []).includes("INBOX") && (
+                            <Tooltip label='Inbox' placement='bottom' bg='gray.300' color='black'>
+                                <div onClick={() => updateMailBox('INBOX')}>
+                                    <InboxIcon/>
+                                </div>
+                            </Tooltip>
+                        )}
+                        {!(selectedThread?.mailboxes || []).includes("ARCHIVE") && (
+                            <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
+                                <div onClick={() => updateMailBox('ARCHIVE')}>
+                                    <ArchiveIcon/>
+                                </div>
+                            </Tooltip>
+                        )}
+                        {!(selectedThread?.mailboxes || []).includes("TRASH") && (
+                            <Tooltip label='Trash' placement='bottom' bg='gray.300' color='black'>
+                                <div onClick={() => updateMailBox('TRASH')}>
+                                    <TrashIcon/>
+                                </div>
+                            </Tooltip>
+                        )}
                         <Tooltip label='Snooze' placement='bottom' bg='gray.300' color='black'>
                             <div onClick={() => updateMailBox('SNOOZE')}>
                                 <TimeSnoozeIcon/>
