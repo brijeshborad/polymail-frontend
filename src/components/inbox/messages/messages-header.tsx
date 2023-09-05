@@ -73,12 +73,7 @@ export function MessagesHeader({
                 };
                 let data = selectedThread.mailboxes || [];
                 if (selectedThread.mailboxes?.includes(messageBox)) {
-
-                    let newData = data.filter((item: string) => item !== messageBox)
-                    body.mailboxes = [
-                        ...newData
-                    ]
-
+                    return
                 } else {
                     body.mailboxes = [
                         ...data,
