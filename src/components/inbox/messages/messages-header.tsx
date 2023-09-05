@@ -40,6 +40,7 @@ import {StateType, MessageHeaderTypes} from "@/types";
 import {getAllProjects} from "@/redux/projects/action-reducer";
 import CreateNewProject from "@/components/project/create-new-project";
 import {updateMessage, updateMessageState} from "@/redux/messages/action-reducer";
+import {Toaster} from "@/components/common";
 
 export function MessagesHeader({
                                    closeCompose,
@@ -117,6 +118,7 @@ export function MessagesHeader({
                     success: true
                 }));
                 dispatch(updateThreads({id: selectedThread.id, body}));
+                Toaster({desc: 'Thread was moved to ' + messageBox.toLowerCase() + '.', title: selectedThread?.subject || '', type: 'success'})
             }
         }
     }
