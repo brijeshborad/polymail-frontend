@@ -75,26 +75,41 @@ export function MessagesHeader({
 
                 switch (messageBox) {
                     case "INBOX":
+                        if (selectedThread.mailboxes?.includes(messageBox)) {
+                            return
+                        }
                         data = data.filter((item: string) => item !== "ARCHIVE")
                         data = data.filter((item: string) => item !== "TRASH")
+                        data = [...data, messageBox]
                         break;
                     case "TRASH":
+                        if (selectedThread.mailboxes?.includes(messageBox)) {
+                            return
+                        }
                         data = data.filter((item: string) => item !== "INBOX")
                         data = data.filter((item: string) => item !== "ARCHIVE")
+                        data = [...data, messageBox]
                         break;
                     case "ARCHIVE":
+                        if (selectedThread.mailboxes?.includes(messageBox)) {
+                            return
+                        }
                         data = data.filter((item: string) => item !== "TRASH")
                         data = data.filter((item: string) => item !== "INBOX")
+                        data = [...data, messageBox]
                         break;
                     case "STARRED":
                     case "UNREAD":
-                        data = data.filter((item: string) => item !== messageBox)
+                        if (selectedThread.mailboxes?.includes(messageBox)) {
+                            data = data.filter((item: string) => item !== messageBox)
+                        } else {
+                            data = [...data, messageBox]
+                        }
                         break;
                 }
                 
                 body.mailboxes = [
-                    ...data,
-                    messageBox
+                    ...data
                 ]
 
                 currentThreads[index1] = {
