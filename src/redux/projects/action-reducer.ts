@@ -9,7 +9,8 @@ const initialState: any = {
     error: null,
     selectedProject: null,
     members: [],
-    invitees: []
+    invitees: [],
+    isProjectUpdateSuccess: false
 } as InitialProjectState
 
 const projectsSlice = createSlice({
@@ -85,6 +86,28 @@ const projectsSlice = createSlice({
             return {...state, member: null, error, isLoading: false, updateSuccess: false, success: false}
         },
 
+        updateProject: (state: InitialProjectState,  _action: PayloadAction<{ id: string, body?: {  favorite?: boolean } }>) => {
+            return {...state,isProjectUpdateSuccess: false, error: null}
+        },
+
+        updateProjectSuccess: (state: InitialProjectState, {payload: project}: PayloadAction<{}>) => {
+            let currentProjects = [...(current(state).projects || [])] as Project[];
+            let projectData = {...(project) || {}} as Project;
+            let index1 = currentProjects.findIndex((item: Project) => item.id === projectData?.id);
+            currentProjects[index1] = {
+                ...currentProjects[index1],
+                projectMeta: {
+                    ...currentProjects[index1].projectMeta,
+                    order: projectData.projectMeta?.order,
+                    favorite: projectData.projectMeta?.favorite,
+                }
+            };
+            return {...state, projects: [...currentProjects],isProjectUpdateSuccess: true, error: null}
+        },
+        updateProjectError: (state: InitialProjectState, {payload: error}: PayloadAction<{ error: any }>) => {
+            return {...state,isProjectUpdateSuccess: false, error}
+        },
+
         updateProjectState: (state: InitialProjectState, action: PayloadAction<InitialProjectState>) => {
             return {...state, ...action.payload}
         },
@@ -110,6 +133,9 @@ export const {
     getProjectMembersInvitesError,
     updateProjectMemberRole,
     updateProjectMemberRoleSuccess,
-    updateProjectMemberRoleError
+    updateProjectMemberRoleError,
+    updateProject,
+    updateProjectSuccess,
+    updateProjectError
 } = projectsSlice.actions
 export default projectsSlice.reducer

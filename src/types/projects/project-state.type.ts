@@ -9,5 +9,6 @@ export declare type InitialProjectState = {
     members?: TeamMember[]
     member?: TeamMember | null
     invitees?: InviteMember[],
-    invitee?: InviteMember | null
+    invitee?: InviteMember | null,
+    isProjectUpdateSuccess?: boolean
 }

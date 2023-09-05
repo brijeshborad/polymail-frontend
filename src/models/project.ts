@@ -7,15 +7,15 @@ export interface Project {
     updated?: string,
     numThreads?: number,
     scope?: string,
-    projectMeta?: {
-        userId?: string,
-        projectId?: string,
-        order?: number,
-        favorite?: boolean
-    }
+    projectMeta?: ProjectMetaData
+
 }
 
-export interface ProjectMetaInfo {
+export interface ProjectRequestBody {
+    projectMeta?: ProjectMetaData
+}
+
+export interface ProjectMetaData {
     userId?: string,
     projectId?: string,
     order?: number,

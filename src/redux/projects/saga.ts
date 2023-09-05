@@ -20,8 +20,12 @@ import {
     updateProjectMemberRoleError,
     updateProjectMemberRoleSuccess,
     updateProjectMemberRole,
+    updateProjectSuccess,
+    updateProjectError,
+    updateProject,
 } from "@/redux/projects/action-reducer";
 import {PayloadAction} from "@reduxjs/toolkit";
+import {ProjectRequestBody} from "@/models";
 
 
 function* getProjects() {
@@ -86,6 +90,16 @@ function* updateProjectMembersData({payload: {projectId, accountId, body}}: Payl
     }
 }
 
+function* updateProjectData({payload: {id, body}}: PayloadAction<{ id: string, body: ProjectRequestBody }>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callPatch(`projects/${id}`, body);
+        yield put(updateProjectSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        yield put(updateProjectError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
+    }
+}
+
 
 export function* watchGetProjects() {
     yield takeLatest(getAllProjects.type, getProjects);
@@ -111,6 +125,10 @@ export function* watchUpdateProjectMembersData() {
     yield takeLatest(updateProjectMemberRole.type, updateProjectMembersData);
 }
 
+export function* watchUpdateProjectData() {
+    yield takeLatest(updateProject.type, updateProjectData);
+}
+
 export default function* rootSaga() {
     yield all([
         fork(watchGetProjects),
@@ -119,6 +137,8 @@ export default function* rootSaga() {
         fork(watchGetProjectById),
         fork(watchGetProjectMembersInvitees),
         fork(watchUpdateProjectMembersData),
+        fork(watchUpdateProjectData),
+
     ]);
 }
 

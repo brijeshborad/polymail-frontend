@@ -10,11 +10,11 @@ import {
 } from "@chakra-ui/react";
 import styles from "@/styles/project.module.css";
 import Image from "next/image";
-import {BlueStarIcon, DragIcon, LockIcon} from "@/icons";
+import {BlueStarIcon, DragIcon, LockIcon, StarIcon} from "@/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {
-    getAllProjects
+    getAllProjects, updateProject
 } from "@/redux/projects/action-reducer";
 import {useRouter} from "next/router";
 import {Project} from "@/models";
@@ -87,6 +87,15 @@ function Index() {
         setItemList(newItems);
     };
 
+    const makeProjectFavorite = (item: Project, isProjectFavorite: boolean) => {
+        if (item && item.id) {
+            let body = {
+                favorite: isProjectFavorite
+            }
+            dispatch(updateProject({id: item.id, body}))
+        }
+    }
+
     return (
         <>
             <Flex direction={'column'} gap={7} maxWidth={'935px'} padding={'27px 20px'} margin={'0 auto'} w={'100%'}
@@ -111,9 +120,9 @@ function Index() {
                               onDragOver={handleDragOver}
                               onDrop={(e) => handleDrop(e, index)}
                               border={'1px solid rgba(8, 22, 47, 0.14)'}
-                              onClick={() => router.push(`/projects/${project.id}`)}>
+                              >
 
-                            <Flex align={'center'} gap={2}>
+                            <Flex align={'center'} gap={2} onClick={() => router.push(`/projects/${project.id}`)}>
                                 <div className={styles.projectIcon}>
                                     <Image src="/image/handcraft.png" width="24" height="24" alt=""/>
                                 </div>
@@ -143,10 +152,16 @@ function Index() {
                                     <LockIcon/>
                                 </Flex>
                                 )}
-                                <Flex align={'center'} justify={'center'} h={'24px'} w={'24px'} borderRadius={50}
-                                      backgroundColor={'rgba(8, 22, 47, 0.05)'}>
-                                    <BlueStarIcon/>
-                                </Flex>
+                                {project.projectMeta?.favorite ?
+                                    <Flex align={'center'} justify={'center'} h={'24px'} w={'24px'} borderRadius={50}
+                                          backgroundColor={'rgba(8, 22, 47, 0.05)'} onClick={() => makeProjectFavorite(project, false)}>
+                                        <BlueStarIcon/>
+                                    </Flex> :
+                                    <Flex align={'center'} justify={'center'} h={'24px'} w={'24px'} borderRadius={50}
+                                          backgroundColor={'rgba(33, 68, 120, 0.1)'} onClick={() => makeProjectFavorite(project, true)}>
+                                        <StarIcon/>
+                                    </Flex>
+                                }
                                 <Flex className={styles.dragIcon}>
                                     <DragIcon/>
                                 </Flex>
