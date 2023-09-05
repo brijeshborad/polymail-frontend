@@ -1,7 +1,7 @@
 import {createSlice, current, PayloadAction} from "@reduxjs/toolkit";
 import {InitialOrganizationStateType} from "@/types";
 import LocalStorageService from "@/utils/localstorage.service";
-import {Organization} from "@/models";
+import {Organization, TeamMember} from "@/models";
 
 const initialState: any = {
     organizations: [],
@@ -11,7 +11,8 @@ const initialState: any = {
     selectedOrganization: LocalStorageService.updateOrg('get') || null,
     members: [],
     isRemoveOrganization: false,
-    isOrganizationAddOrRemoveSuccess: false
+    isOrganizationAddOrRemoveSuccess: false,
+    updateMemberRoleSuccess: false
 } as InitialOrganizationStateType
 
 const organizationSlice = createSlice({
@@ -86,6 +87,24 @@ const organizationSlice = createSlice({
             return {...state, organization: null, error, isLoading: false, isRemoveOrganization: false}
         },
 
+        // change role from project members
+        updateOrganizationMemberRole: (state: InitialOrganizationStateType, _action: PayloadAction<{ organizationId?: string,accountId?: string, body?: {role: string} }>) => {
+            return {...state, member: null, error: null, isLoading: false, updateMemberRoleSuccess: false, success: false}
+        },
+        updateOrganizationMemberRoleSuccess: (state: InitialOrganizationStateType, {payload: member}: PayloadAction<{}>) => {
+            let currentMembers = [...(current(state).members || [])] as TeamMember[];
+            let memberData = {...(member) || {}} as TeamMember;
+            let index1 = currentMembers.findIndex((item: TeamMember) => item.id === memberData?.itemId);
+            currentMembers[index1] = {
+                ...currentMembers[index1],
+                role: memberData.role
+            };
+            return {...state,members: [...currentMembers], error: null, isLoading: false, updateMemberRoleSuccess: true, success: true}
+        },
+        updateOrganizationMemberRoleError: (state: InitialOrganizationStateType, {payload: error}: PayloadAction<any>) => {
+            return {...state, member: null, error, isLoading: false, updateMemberRoleSuccess: false, success: false}
+        },
+
         updateOrganizationState: (state: InitialOrganizationStateType, action: PayloadAction<InitialOrganizationStateType>) => {
             return {...state, ...action.payload}
         },
@@ -108,6 +127,9 @@ export const {
     removeOrganizationError,
     editOrganization,
     editOrganizationSuccess,
-    editOrganizationError
+    editOrganizationError,
+    updateOrganizationMemberRole,
+    updateOrganizationMemberRoleSuccess,
+    updateOrganizationMemberRoleError
 } = organizationSlice.actions
 export default organizationSlice.reducer

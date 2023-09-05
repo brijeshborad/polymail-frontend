@@ -13,7 +13,7 @@ import {
     Tabs,
     Tooltip
 } from "@chakra-ui/react";
-import {DraftIcon, EditIcon, InboxIcon, SendIcon, StarIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
+import {ArchiveIcon, DraftIcon, EditIcon, InboxIcon, SendIcon, StarIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
 import {StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
@@ -50,10 +50,13 @@ export function Threads() {
 
     const getAllThread = useCallback((resetState: boolean = true, force: boolean = false) => {
         if (selectedAccount) {
+            console.log('---Step 1 Check for cache', resetState, force);
             if (!cacheThreads[`${tab}-${selectedAccount.id}`] && !force) {
                 force = true;
             }
+            console.log('---Step 2 Check for force', force);
             if (force) {
+                console.log('---Step 3 API CALLED and returned');
                 dispatch(getAllThreads({mailbox: tab, account: selectedAccount.id, enriched: true, resetState}));
                 return;
             }
@@ -66,6 +69,7 @@ export function Threads() {
 
     useEffect(() => {
         if (newMessage && newMessage.name === 'new_message') {
+            console.log('---NEW MESSAGE---', newMessage);
             dispatch(updateLastMessage(null));
             getAllThread(false, true);
         }
@@ -182,22 +186,22 @@ export function Threads() {
                                 </Tooltip>
                             </Tab>
                             <Tab className={styles.emailTabs}>
-                                <Tooltip label='Draft' placement='bottom' bg='gray.300' color='black'>
-                                    <div className={`${tab === 'DRAFT' ? styles.active : ''}`}
-                                         onClick={() => changeEmailTabs('DRAFT')}>
-                                        <DraftIcon/>
-                                        <span>Draft</span>
-                                    </div>
-                                </Tooltip>
-                            </Tab>
-
-                            {!['TRASH', 'STARRED', 'ARCHIVE'].includes(tab) &&
-                            <Tab className={styles.emailTabs}>
                                 <Tooltip label='Sent' placement='bottom' bg='gray.300' color='black'>
                                     <div className={`${tab === 'SENT' ? styles.active : ''}`}
                                          onClick={() => changeEmailTabs('SENT')}>
                                         <SendIcon/>
                                         <span>Sent</span>
+                                    </div>
+                                </Tooltip>
+                            </Tab>
+
+                            {!['TRASH', 'STARRED', 'ARCHIVE', 'DRAFT'].includes(tab) &&
+                            <Tab className={styles.emailTabs}>
+                                <Tooltip label='Snoozed' placement='bottom' bg='gray.300' color='black'>
+                                    <div className={`${tab === 'SNOOZED' ? styles.active : ''}`}
+                                         onClick={() => changeEmailTabs('SNOOZED')}>
+                                        <TimeSnoozeIcon/>
+                                        <span>Snoozed</span>
                                     </div>
                                 </Tooltip>
                             </Tab>
@@ -233,8 +237,21 @@ export function Threads() {
                                 <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
                                     <div className={`${tab === 'ARCHIVE' ? styles.active : ''}`}
                                          onClick={() => changeEmailTabs('ARCHIVE')}>
-                                        <TimeSnoozeIcon/>
+                                        <ArchiveIcon/>
                                         <span>Archive</span>
+                                    </div>
+                                </Tooltip>
+                            </Tab>
+                            }
+
+                            {tab === 'DRAFT' &&
+
+                            <Tab className={styles.emailTabs}>
+                                <Tooltip label='Draft' placement='bottom' bg='gray.300' color='black'>
+                                    <div className={`${tab === 'DRAFT' ? styles.active : ''}`}
+                                         onClick={() => changeEmailTabs('DRAFT')}>
+                                        <DraftIcon/>
+                                        <span>Draft</span>
                                     </div>
                                 </Tooltip>
                             </Tab>
@@ -249,8 +266,8 @@ export function Threads() {
                                     More
                                 </MenuButton>
                                 <MenuList className={`${styles.tabListDropDown} drop-down-list`}>
-                                    {['TRASH', 'STARRED', 'ARCHIVE'].includes(tab) &&
-                                    <MenuItem onClick={() => changeEmailTabs('SENT')}><SendIcon/> Sent</MenuItem>
+                                    {['TRASH', 'STARRED', 'ARCHIVE', 'DRAFT'].includes(tab) &&
+                                    <MenuItem onClick={() => changeEmailTabs('SNOOZED')}><TimeSnoozeIcon/> Snoozed</MenuItem>
                                     }
 
                                     {tab !== 'TRASH' &&
@@ -261,7 +278,11 @@ export function Threads() {
                                     }
                                     {tab !== 'ARCHIVE' &&
                                     <MenuItem
-                                        onClick={() => changeEmailTabs('ARCHIVE')}><TimeSnoozeIcon/> Archive</MenuItem>
+                                        onClick={() => changeEmailTabs('ARCHIVE')}><ArchiveIcon/> Archive</MenuItem>
+                                    }
+                                    {tab !== 'DRAFT' &&
+                                    <MenuItem
+                                        onClick={() => changeEmailTabs('DRAFT')}><DraftIcon/> Draft</MenuItem>
                                     }
                                 </MenuList>
                             </Menu>

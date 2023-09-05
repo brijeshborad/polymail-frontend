@@ -31,7 +31,7 @@ import {
     DisneyIcon,
     MenuIcon
 } from "@/icons";
-import React, {useCallback, useEffect} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {Project, Thread} from "@/models";
 import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {addItemToGroup} from "@/redux/memberships/action-reducer";
@@ -39,7 +39,8 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType, MessageHeaderTypes} from "@/types";
 import {getAllProjects} from "@/redux/projects/action-reducer";
 import CreateNewProject from "@/components/project/create-new-project";
-import {updateMessage} from "@/redux/messages/action-reducer";
+import {updateMessage, updateMessageState} from "@/redux/messages/action-reducer";
+import {Toaster} from "@/components/common";
 
 export function MessagesHeader({
                                    closeCompose,
@@ -48,17 +49,31 @@ export function MessagesHeader({
                                    showPreNextMessage,
                                    herderType
                                }: MessageHeaderTypes) {
-    const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
+    const {selectedThread, threads, updateSuccess} = useSelector((state: StateType) => state.threads);
     const {isLoading, selectedMessage} = useSelector((state: StateType) => state.messages);
     let {projects} = useSelector((state: StateType) => state.projects);
 
     const dispatch = useDispatch();
     const {isOpen, onOpen, onClose} = useDisclosure();
+    const [successMessage, setSuccessMessage] = useState<{ desc: string, title: string } | null>(null);
 
 
     useEffect(() => {
         dispatch(getAllProjects());
     }, [dispatch]);
+
+
+    useEffect(() => {
+        if (updateSuccess && successMessage) {
+            Toaster({
+                desc: successMessage.desc,
+                title: successMessage.title || '',
+                type: 'success'
+            })
+            setSuccessMessage(null)
+            dispatch(updateThreadState({updateSuccess: false}));
+        }
+    }, [updateSuccess, dispatch, successMessage]);
 
 
     const updateMailBox = (messageBox: string) => {
@@ -69,33 +84,57 @@ export function MessagesHeader({
                 let index1 = currentThreads.findIndex((item: Thread) => item.id === threadData?.id);
 
                 let body = {
-                    mailboxes: ['']
+                    mailboxes: selectedThread.mailboxes || []
                 };
-                let data = selectedThread.mailboxes || [];
-                if (selectedThread.mailboxes?.includes(messageBox)) {
 
-                    let newData = data.filter((item: string) => item !== messageBox)
-                    body.mailboxes = [
-                        ...newData
-                    ]
-
-                } else {
-                    body.mailboxes = [
-                        ...data,
-                        messageBox
-                    ]
-
+                switch (messageBox) {
+                    case "INBOX":
+                        if (selectedThread.mailboxes?.includes(messageBox)) {
+                            return
+                        }
+                        body.mailboxes = body.mailboxes.filter((item: string) => !["ARCHIVE", "TRASH"].includes(item))
+                        body.mailboxes = [...body.mailboxes, messageBox]
+                        currentThreads.splice(index1, 1)
+                        dispatch(updateMessageState({selectedMessage: null}));
+                        break;
+                    case "TRASH":
+                        if (selectedThread.mailboxes?.includes(messageBox)) {
+                            return
+                        }
+                        body.mailboxes = body.mailboxes.filter((item: string) => !["INBOX", "ARCHIVE"].includes(item))
+                        body.mailboxes = [...body.mailboxes, messageBox]
+                        currentThreads.splice(index1, 1)
+                        dispatch(updateMessageState({selectedMessage: null}));
+                        break;
+                    case "ARCHIVE":
+                        if (selectedThread.mailboxes?.includes(messageBox)) {
+                            return
+                        }
+                        body.mailboxes = body.mailboxes.filter((item: string) => !["INBOX", "TRASH"].includes(item))
+                        body.mailboxes = [...body.mailboxes, messageBox]
+                        currentThreads.splice(index1, 1)
+                        dispatch(updateMessageState({selectedMessage: null}));
+                        break;
+                    case "STARRED":
+                    case "UNREAD":
+                        if (selectedThread.mailboxes?.includes(messageBox)) {
+                            body.mailboxes = body.mailboxes.filter((item: string) => item !== messageBox)
+                        } else {
+                            body.mailboxes = [...body.mailboxes, messageBox]
+                        }
+                        break;
                 }
-                currentThreads[index1] = {
-                    ...currentThreads[index1],
-                    mailboxes: body?.mailboxes || []
-                };
+
                 dispatch(updateThreadState({
                     threads: currentThreads,
                     selectedThread: currentThreads[index1],
                     success: true
                 }));
                 dispatch(updateThreads({id: selectedThread.id, body}));
+                setSuccessMessage({
+                    desc: 'Thread was moved to ' + messageBox.toLowerCase() + '.',
+                    title: selectedThread?.subject || '',
+                })
             }
         }
     }
@@ -161,7 +200,8 @@ export function MessagesHeader({
                             {/*            fontSize={'14px'} lineHeight={'1'} height={'auto'} as={Button}*/}
                             {/*            rightIcon={<ChevronDownIcon/>}> All Inboxes </MenuButton>*/}
 
-                            <MenuButton className={styles.addToProject} as={Button} leftIcon={<FolderIcon/>}>Add to Project <span className={styles.RightContent}>⌘P</span></MenuButton>
+                            <MenuButton className={styles.addToProject} as={Button} leftIcon={<FolderIcon/>}>Add to
+                                Project <span className={styles.RightContent}>⌘P</span></MenuButton>
                             <MenuList className={`${styles.addToProjectList} drop-down-list`}>
 
                                 <div className={'dropdown-searchbar'}>
@@ -169,7 +209,7 @@ export function MessagesHeader({
                                         <InputLeftElement h={'27px'} pointerEvents='none'>
                                             <SearchIcon/>
                                         </InputLeftElement>
-                                        <Input placeholder='Search project' />
+                                        <Input placeholder='Search project'/>
                                     </InputGroup>
                                 </div>
 
@@ -231,19 +271,21 @@ export function MessagesHeader({
                             </div>
                         </Tooltip>
 
-                            <div>
-                                <Menu>
-                                    <MenuButton className={styles.menuIcon} backgroundColor={'transparent'} h={'auto'} minWidth={'auto'} padding={'0'} as={Button} rightIcon={<MenuIcon />}>
-                                    </MenuButton>
-                                    <MenuList className={'drop-down-list'}>
-                                        {selectedMessage && (
-                                            <MenuItem onClick={() => setScope(selectedMessage.scope === 'visible' ? 'hidden' : 'visible')}>
-                                                {selectedMessage.scope === 'visible' ? 'Hide from project members' : 'Show to project members'}
-                                            </MenuItem>
-                                        )}
-                                    </MenuList>
-                                </Menu>
-                            </div>
+                        <div>
+                            <Menu>
+                                <MenuButton className={styles.menuIcon} backgroundColor={'transparent'} h={'auto'}
+                                            minWidth={'auto'} padding={'0'} as={Button} rightIcon={<MenuIcon/>}>
+                                </MenuButton>
+                                <MenuList className={'drop-down-list'}>
+                                    {selectedMessage && (
+                                        <MenuItem
+                                            onClick={() => setScope(selectedMessage.scope === 'visible' ? 'hidden' : 'visible')}>
+                                            {selectedMessage.scope === 'visible' ? 'Hide from project members' : 'Show to project members'}
+                                        </MenuItem>
+                                    )}
+                                </MenuList>
+                            </Menu>
+                        </div>
 
 
                     </Flex>

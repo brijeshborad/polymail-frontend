@@ -32,6 +32,7 @@ import {useSocket} from "@/hooks/use-socket.hook";
 import {getProfilePicture, updateUsersDetailsSuccess} from "@/redux/users/action-reducer";
 import {googleAuthLink} from "@/redux/auth/action-reducer";
 import {updateLastMessage} from "@/redux/socket/action-reducer";
+import {updateMessageState} from "@/redux/messages/action-reducer";
 
 export function Header() {
     const dispatch = useDispatch();
@@ -54,9 +55,9 @@ export function Header() {
     let currentRoute = router.pathname.split('/');
     const {toast} = createStandaloneToast();
 
-    const connectGoogleAccount = useCallback(() => {
+    const connectGoogleAccount = useCallback((mode: string) => {
         let body = {
-            mode: 'create',
+            mode,
             redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}/inbox`,
             accountType: "google",
             platform: "web",
@@ -70,6 +71,34 @@ export function Header() {
             setUserData(user);
         }
     }, [user]);
+
+    const reAuthToast = useCallback((email: string) => {
+        if (toast.isActive('re-auth-account')) {
+            return;
+        }
+        toast({
+            id: 're-auth-account',
+            isClosable: true,
+            duration: null,
+            render: () => (
+                <Box display={'flex'} alignItems={'center'} color='white' p={3} bg='#000'
+                     borderRadius={'10px'} fontSize={'14px'} padding={'13px 25px'}>
+                    <div>
+                        Seems like your session has been expired for <Text as={"span"}
+                                                                           color={"blue.400"}>{email}</Text>!
+                    </div>
+                    <Button onClick={() => connectGoogleAccount('authenticate')} ml={1} mr={2} variant="link"
+                            color={"blue.300"} padding={'7px 15px'}>Re-Authenticate</Button>
+
+                    <Divider height={"20px"} orientation='vertical'/>
+
+                    <Button onClick={() => toast.close('re-auth-account')} ml={2} variant="link"
+                            color={"blue.100"} size={"sm"} padding={'7px 5px'}>Close</Button>
+                </Box>
+            ),
+            position: 'top-right'
+        } as any);
+    }, [connectGoogleAccount, toast])
 
     useEffect(() => {
         if (newMessage) {
@@ -88,37 +117,13 @@ export function Header() {
                 })
             }
             if (newMessage.name === 'authenticate' && newMessage?.data && accounts!.length > 0) {
-                if (toast.isActive('re-auth-account')) {
-                    return;
-                }
                 let accountForReAuth = accounts!.find(account => account.id === newMessage.data.account)!;
                 if (accountForReAuth) {
-                    toast({
-                        id: 're-auth-account',
-                        isClosable: true,
-                        duration: null,
-                        render: () => (
-                            <Box display={'flex'} alignItems={'center'} color='white' p={3} bg='#000'
-                                 borderRadius={'10px'} fontSize={'14px'} padding={'13px 25px'}>
-                                <div>
-                                    Seems like your session has been expired for <Text as={"span"}
-                                                                                       color={"blue.400"}>{accountForReAuth.email}</Text>!
-                                </div>
-                                <Button onClick={() => connectGoogleAccount()} ml={1} mr={2} variant="link"
-                                        color={"blue.300"} padding={'7px 15px'}>Re-Authenticate</Button>
-
-                                <Divider height={"20px"} orientation='vertical'/>
-
-                                <Button onClick={() => toast.close('re-auth-account')} ml={2} variant="link"
-                                        color={"blue.100"} size={"sm"} padding={'7px 5px'}>Close</Button>
-                            </Box>
-                        ),
-                        position: 'top-right'
-                    } as any);
+                    reAuthToast(accountForReAuth.email!);
                 }
             }
         }
-    }, [accounts, connectGoogleAccount, dispatch, newMessage, threads, toast])
+    }, [accounts, dispatch, newMessage, threads, reAuthToast])
 
     useEffect(() => {
         if (googleAuthRedirectionLink) {
@@ -197,6 +202,12 @@ export function Header() {
         Router.push('/settings/profile');
     }
 
+    useEffect(() => {
+        if (selectedAccount && selectedAccount.id && selectedAccount.status && selectedAccount.status.toLowerCase() === 'invalid') {
+            reAuthToast(selectedAccount.email!);
+        }
+    }, [reAuthToast, selectedAccount])
+
     if (!userData) {
         return <></>;
     }
@@ -226,7 +237,8 @@ export function Header() {
     }
 
     const changePage = (page: string) => {
-        dispatch(updateThreadState({threads: [], success: false, updateSuccess: false, tabValue: 'reset'}));
+        dispatch(updateThreadState({threads: [], success: false, updateSuccess: false, tabValue: 'reset', selectedThread: null}));
+        dispatch(updateMessageState({selectedMessage: null}));
         Router.push(`/${page}`)
     }
 

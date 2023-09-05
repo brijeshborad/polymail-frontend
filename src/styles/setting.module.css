@@ -297,6 +297,10 @@
     box-shadow: none;
 }
 
+.newPaymentInput {
+    width: 100%;
+}
+
 .newPaymentInput input,
 .newPaymentInput select,
 .newPaymentInput textarea {
@@ -463,4 +467,8 @@
 
 .modalFooterButton button.saveButton:hover {
     background-color: #000000;
+}
+
+.inviteMemberModal .memberButton:hover {
+    background-color: #E9E9E9;
 }

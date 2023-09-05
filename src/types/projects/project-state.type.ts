@@ -7,5 +7,8 @@ export declare type InitialProjectState = {
     isLoading: boolean,
     error: Error | any,
     members?: TeamMember[]
-    invitees?: InviteMember[]
+    member?: TeamMember | null
+    invitees?: InviteMember[],
+    invitee?: InviteMember | null,
+    isProjectUpdateSuccess?: boolean
 }

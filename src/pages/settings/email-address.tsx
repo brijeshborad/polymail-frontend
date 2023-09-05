@@ -18,10 +18,10 @@ function EmailAddress() {
 
     const dispatch = useDispatch();
 
-    function addNewGoogleAccount() {
+    function addNewGoogleAccount(mode: string) {
         let body = {
-            mode: 'create',
-            redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}/inbox`,
+            mode: mode,
+            redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}/settings/email-address`,
             accountType: "google",
             platform: "web",
             withToken: true
@@ -73,7 +73,7 @@ function EmailAddress() {
                         <Flex direction={"column"} className={styles.SettingDetails}>
                             <Flex direction={"column"} gap={10} className={styles.settingEmailAddress}>
                                 <Flex direction={"column"} gap={2} className={styles.settingSocialLink}>
-                                    <Button colorScheme='blue' onClick={() => addNewGoogleAccount()}><GoogleIcon/> Add
+                                    <Button colorScheme='blue' onClick={() => addNewGoogleAccount('create')}><GoogleIcon/> Add
                                         email
                                         address via Google</Button>
                                     {/*<Button colorScheme='blue'><AppleIcon/> Add email address via Apple</Button>*/}
@@ -97,7 +97,6 @@ function EmailAddress() {
                                                            onClick={() => removeAccount(item)}/>
                                             </Flex>
                                         </Flex>
-
                                     ))}
 
                                 </Flex>

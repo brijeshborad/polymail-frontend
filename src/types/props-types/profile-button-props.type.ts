@@ -15,5 +15,7 @@ export declare type IProfileButtonProps = {
 export declare type IconProps = {
     className?: string
     stroke?: string
-    click?: (_e: MouseEvent | any) => void
+    click?: (_e: MouseEvent | any) => void,
+    marginRight?: string
+    color?: string
 }

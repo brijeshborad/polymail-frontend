@@ -20,7 +20,6 @@ import {
 import ApiService from "@/utils/api.service";
 import {AxiosError, AxiosResponse} from "axios";
 import LocalStorageService from "@/utils/localstorage.service";
-import Router from "next/router";
 
 function* login({payload: {email, password}}: PayloadAction<{ email: string, password: string }>) {
     try {
@@ -82,14 +81,7 @@ function* getGoogleAuthLink({payload}: PayloadAction<{
 }
 
 function* logout() {
-    try {
-        yield ApiService.callGet(`auth/logout`, null);
-        LocalStorageService.clearStorage();
-        Router.push('/auth/login');
-    } catch (error: any) {
-        LocalStorageService.clearStorage();
-        Router.push('/auth/login');
-    }
+    yield ApiService.callGet(`auth/logout`, null);
 }
 
 function* passwordChange({

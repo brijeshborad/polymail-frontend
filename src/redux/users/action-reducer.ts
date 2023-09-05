@@ -7,7 +7,8 @@ const initialState: any = {
     isLoading: false,
     error: null,
     profilePicture: {},
-    profilePictureUpdated: false
+    profilePictureUpdated: false,
+    userDetailsUpdateSuccess: false
 } as InitialUserState;
 
 const userSlice = createSlice({
@@ -15,13 +16,13 @@ const userSlice = createSlice({
     initialState,
     reducers: {
         updateUsersDetails: (state: InitialUserState, _action: PayloadAction<UserDetails>) => {
-            return {...state, error: null, isLoading: false}
+            return {...state, error: null, isLoading: false, userDetailsUpdateSuccess: false}
         },
         updateUsersDetailsSuccess: (state: InitialUserState, {payload: userDetails}: PayloadAction<{}>) => {
-            return {...state, userDetails, error: null, isLoading: false}
+            return {...state, userDetails, error: null, isLoading: false, userDetailsUpdateSuccess: true}
         },
         updateUsersDetailsError: (state: InitialUserState, {payload: error}: PayloadAction<any>) => {
-            return {...state, error, isLoading: false}
+            return {...state, error, isLoading: false, userDetailsUpdateSuccess: false}
         },
 
         getUsersDetails: (state: InitialUserState, _action: PayloadAction<UserDetails>) => {

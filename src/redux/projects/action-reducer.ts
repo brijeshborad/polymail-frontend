@@ -1,6 +1,6 @@
 import {createSlice, current, PayloadAction} from "@reduxjs/toolkit";
 import {InitialProjectState} from "@/types";
-import {Project} from "@/models";
+import { Project, TeamMember} from "@/models";
 
 const initialState: any = {
     projects: [],
@@ -9,7 +9,8 @@ const initialState: any = {
     error: null,
     selectedProject: null,
     members: [],
-    invitees: []
+    invitees: [],
+    isProjectUpdateSuccess: false
 } as InitialProjectState
 
 const projectsSlice = createSlice({
@@ -67,6 +68,46 @@ const projectsSlice = createSlice({
             return {...state, invitees: [], isLoading: false, error}
         },
 
+        // change role from project members
+        updateProjectMemberRole: (state: InitialProjectState, _action: PayloadAction<{ projectId?: string,accountId?: string, body?: {role: string} }>) => {
+            return {...state, member: null, error: null, isLoading: false, updateSuccess: false, success: false}
+        },
+        updateProjectMemberRoleSuccess: (state: InitialProjectState, {payload: member}: PayloadAction<{}>) => {
+            let currentMembers = [...(current(state).members || [])] as TeamMember[];
+            let memberData = {...(member) || {}} as TeamMember;
+            let index1 = currentMembers.findIndex((item: TeamMember) => item.id === memberData?.itemId);
+            currentMembers[index1] = {
+                ...currentMembers[index1],
+                role: memberData.role
+            };
+            return {...state, members: [...currentMembers], error: null, isLoading: false, updateSuccess: true, success: true}
+        },
+        updateProjectMemberRoleError: (state: InitialProjectState, {payload: error}: PayloadAction<any>) => {
+            return {...state, member: null, error, isLoading: false, updateSuccess: false, success: false}
+        },
+
+        updateProject: (state: InitialProjectState,  _action: PayloadAction<{ id: string, body?: {  favorite?: boolean } }>) => {
+            return {...state,isProjectUpdateSuccess: false, error: null}
+        },
+
+        updateProjectSuccess: (state: InitialProjectState, {payload: project}: PayloadAction<{}>) => {
+            let currentProjects = [...(current(state).projects || [])] as Project[];
+            let projectData = {...(project) || {}} as Project;
+            let index1 = currentProjects.findIndex((item: Project) => item.id === projectData?.id);
+            currentProjects[index1] = {
+                ...currentProjects[index1],
+                projectMeta: {
+                    ...currentProjects[index1].projectMeta,
+                    order: projectData.projectMeta?.order,
+                    favorite: projectData.projectMeta?.favorite,
+                }
+            };
+            return {...state, projects: [...currentProjects],isProjectUpdateSuccess: true, error: null}
+        },
+        updateProjectError: (state: InitialProjectState, {payload: error}: PayloadAction<{ error: any }>) => {
+            return {...state,isProjectUpdateSuccess: false, error}
+        },
+
         updateProjectState: (state: InitialProjectState, action: PayloadAction<InitialProjectState>) => {
             return {...state, ...action.payload}
         },
@@ -89,6 +130,12 @@ export const {
     getProjectByIdError,
     getProjectMembersInvites,
     getProjectMembersInvitesSuccess,
-    getProjectMembersInvitesError
+    getProjectMembersInvitesError,
+    updateProjectMemberRole,
+    updateProjectMemberRoleSuccess,
+    updateProjectMemberRoleError,
+    updateProject,
+    updateProjectSuccess,
+    updateProjectError
 } = projectsSlice.actions
 export default projectsSlice.reducer

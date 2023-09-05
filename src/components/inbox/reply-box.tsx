@@ -366,7 +366,7 @@ ${selectedMessage?.cc ? 'Cc: ' + (selectedMessage?.cc || []).join(',') : ''}</p>
                         render: () => (
                             <Box display={'flex'} alignItems={'center'} color='white' p={3} bg='#000000'
                                  borderRadius={'5px'}
-                                 className={styles.mailSendToaster} fontSize={'14px'} padding={'13px 25px'}>
+                                 className='mailSendToaster' fontSize={'14px'} padding={'13px 25px'}>
                                 {`Your message has been sent to ${draft.to[0]}${draft.to.length > 1 ? ` and ${draft.to.length - 1} other${draft.to.length === 2 ? '' : 's'}` : ''}`}
                                 <Button onClick={() => undoClick('undo')} ml={3} height={"auto"}
                                         padding={'7px 15px'}>Undo</Button>
