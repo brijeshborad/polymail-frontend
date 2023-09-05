@@ -71,9 +71,6 @@ export function Header() {
     }, [user]);
 
     const reAuthToast = useCallback((email: string) => {
-        if (toast.isActive('reauth')) {
-            return;
-        }
         Toaster({
             title: "Please reauthenticate your account.",
             desc: `Your session has expired for ${email}.`,
