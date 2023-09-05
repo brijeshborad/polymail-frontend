@@ -19,3 +19,7 @@ export const encryptData = (value: string) => {
     return bcrypt.hashSync(value, 10);
 }
 
+export const getFileSize = (size: number) => {
+    return size / (1024 * 1024)
+}
+
