@@ -96,6 +96,13 @@ function Index() {
         }
     }
 
+    useEffect(() => {
+        const routePaths = router.pathname.split('/');
+        if (routePaths.includes('create-project')) {
+            onOpen()
+        }
+    }, [])
+
     return (
         <>
             <Flex direction={'column'} gap={7} maxWidth={'935px'} padding={'27px 20px'} margin={'0 auto'} w={'100%'}

@@ -53,7 +53,7 @@ function CompleteProfile() {
         if (file) {
             if (getFileSize(file.size) > 10) {
                 let validationError = {
-                    desc: 'Cannot upload file more than 40MB',
+                    desc: 'Cannot upload file more than 10MB',
                     title: 'Size limit',
                     type: 'error'
                 }
