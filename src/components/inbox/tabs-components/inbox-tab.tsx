@@ -8,7 +8,7 @@ import React, {useCallback, useRef} from "react";
 import {SpinnerUI, Time} from "@/components/common";
 import {useDispatch, useSelector} from "react-redux";
 import {updateMessageState} from "@/redux/messages/action-reducer";
-import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
+import {updateThreadState} from "@/redux/threads/action-reducer";
 import {updateDraftState} from "@/redux/draft/action-reducer";
 
 
