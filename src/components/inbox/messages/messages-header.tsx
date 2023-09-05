@@ -74,13 +74,25 @@ export function MessagesHeader({
                 let data = selectedThread.mailboxes || [];
                 if (selectedThread.mailboxes?.includes(messageBox)) {
                     return
-                } else {
-                    body.mailboxes = [
-                        ...data,
-                        messageBox
-                    ]
-
                 }
+
+                switch (messageBox) {
+                    case "INBOX":
+                        data = data.filter((item: string) => item !== "ARCHIVE")
+                        data = data.filter((item: string) => item !== "TRASH")
+                    case "TRASH":
+                        data = data.filter((item: string) => item !== "INBOX")
+                        data = data.filter((item: string) => item !== "ARCHIVE")
+                    case "ARCHIVE":
+                        data = data.filter((item: string) => item !== "TRASH")
+                        data = data.filter((item: string) => item !== "INBOX")
+                }
+                
+                body.mailboxes = [
+                    ...data,
+                    messageBox
+                ]
+                
                 currentThreads[index1] = {
                     ...currentThreads[index1],
                     mailboxes: body?.mailboxes || []
