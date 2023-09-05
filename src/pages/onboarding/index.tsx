@@ -15,7 +15,7 @@ function OnBoarding() {
     function oauthWithGoogle() {
         let body = {
             mode: 'register',
-            redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}/onboarding/connect-account`,
+            redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}/onboarding/complete-profile`,
             accountType: "google",
             platform: "web"
         }
