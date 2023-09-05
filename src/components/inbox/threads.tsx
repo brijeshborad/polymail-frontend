@@ -243,7 +243,7 @@ export function Threads() {
                             {tab === 'SNOOZED' &&
 
                             <Tab className={styles.emailTabs}>
-                                <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
+                                <Tooltip label='Snoozed' placement='bottom' bg='gray.300' color='black'>
                                     <div className={`${tab === 'SNOOZED' ? styles.active : ''}`}
                                          onClick={() => changeEmailTabs('SNOOZED')}>
                                         <TimeSnoozeIcon/>
