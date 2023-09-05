@@ -240,6 +240,19 @@ export function Threads() {
                             </Tab>
                             }
 
+                            {tab === 'SNOOZED' &&
+
+                            <Tab className={styles.emailTabs}>
+                                <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
+                                    <div className={`${tab === 'SNOOZED' ? styles.active : ''}`}
+                                         onClick={() => changeEmailTabs('SNOOZED')}>
+                                        <TimeSnoozeIcon/>
+                                        <span>Snoozed</span>
+                                    </div>
+                                </Tooltip>
+                            </Tab>
+                            }
+
                             <Menu>
                                 <MenuButton className={styles.tabListMoreButton} minWidth={'80px'}
                                             borderLeft={'1px solid #D1D5DB'}
@@ -261,7 +274,11 @@ export function Threads() {
                                     }
                                     {tab !== 'ARCHIVE' &&
                                     <MenuItem
-                                        onClick={() => changeEmailTabs('ARCHIVE')}><TimeSnoozeIcon/> Archive</MenuItem>
+                                        onClick={() => changeEmailTabs('ARCHIVE')}><ArchiveIcon/> Archive</MenuItem>
+                                    }
+                                    {tab !== 'SNOOZED' &&
+                                    <MenuItem
+                                        onClick={() => changeEmailTabs('SNOOZED')}><TimeSnoozeIcon/> Snoozed</MenuItem>
                                     }
                                 </MenuList>
                             </Menu>
