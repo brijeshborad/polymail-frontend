@@ -16,7 +16,7 @@ import {StateType} from "@/types";
 import {
     getAllProjects, updateProject
 } from "@/redux/projects/action-reducer";
-import {useRouter} from "next/router";
+import Router, {useRouter} from "next/router";
 import {Project} from "@/models";
 import {SpinnerUI} from "@/components/common";
 import CreateNewProject from "@/components/project/create-new-project";
@@ -27,6 +27,7 @@ function Index() {
     const {isOpen, onOpen, onClose} = useDisclosure();
     const router = useRouter();
     const dispatch = useDispatch();
+    const [isOpenByRoute, setIsOpenByRoute] = useState<boolean>(false);
     // const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     // const {selectedOrganization} = useSelector((state: StateType) => state.organizations);
     // const [projectName, setProjectName] = useState<string>('');
@@ -99,9 +100,17 @@ function Index() {
     useEffect(() => {
         const routePaths = router.pathname.split('/');
         if (routePaths.includes('create-project')) {
+            setIsOpenByRoute(true);
             onOpen()
         }
-    }, [])
+    }, [onOpen, router.pathname])
+
+    useEffect(() => {
+        if (!isOpen && isOpenByRoute) {
+            setIsOpenByRoute(false);
+            Router.replace('/projects', undefined, {shallow: true});
+        }
+    }, [isOpen, isOpenByRoute])
 
     return (
         <>
@@ -128,7 +137,7 @@ function Index() {
                               onDrop={(e) => handleDrop(e, index)}
                               border={'1px solid rgba(8, 22, 47, 0.14)'}
                               onClick={() => router.push(`/projects/${project.id}`)}
-                              >
+                        >
 
                             <Flex align={'center'} gap={2}>
                                 <div className={styles.projectIcon}>
@@ -155,18 +164,24 @@ function Index() {
                                     </div>
                                 </Flex>
                                 {project.scope === "private" && (
-                                <Flex align={'center'} justify={'center'} h={'24px'} w={'24px'} borderRadius={50}
-                                      backgroundColor={'rgba(33, 68, 120, 0.1)'}>
-                                    <LockIcon/>
-                                </Flex>
+                                    <Flex align={'center'} justify={'center'} h={'24px'} w={'24px'} borderRadius={50}
+                                          backgroundColor={'rgba(33, 68, 120, 0.1)'}>
+                                        <LockIcon/>
+                                    </Flex>
                                 )}
                                 {project.projectMeta?.favorite ?
                                     <Flex align={'center'} justify={'center'} h={'24px'} w={'24px'} borderRadius={50}
-                                          backgroundColor={'rgba(8, 22, 47, 0.05)'} onClick={(e) => {e.stopPropagation(); makeProjectFavorite(project, false)}}>
+                                          backgroundColor={'rgba(8, 22, 47, 0.05)'} onClick={(e) => {
+                                        e.stopPropagation();
+                                        makeProjectFavorite(project, false)
+                                    }}>
                                         <BlueStarIcon/>
                                     </Flex> :
                                     <Flex align={'center'} justify={'center'} h={'24px'} w={'24px'} borderRadius={50}
-                                          backgroundColor={'rgba(33, 68, 120, 0.1)'} onClick={(e) => {e.stopPropagation(); makeProjectFavorite(project, true)}}>
+                                          backgroundColor={'rgba(33, 68, 120, 0.1)'} onClick={(e) => {
+                                        e.stopPropagation();
+                                        makeProjectFavorite(project, true)
+                                    }}>
                                         <StarIcon/>
                                     </Flex>
                                 }
