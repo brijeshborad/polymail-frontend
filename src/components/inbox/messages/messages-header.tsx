@@ -72,27 +72,31 @@ export function MessagesHeader({
                     mailboxes: ['']
                 };
                 let data = selectedThread.mailboxes || [];
-                if (selectedThread.mailboxes?.includes(messageBox)) {
-                    return
-                }
 
                 switch (messageBox) {
                     case "INBOX":
                         data = data.filter((item: string) => item !== "ARCHIVE")
                         data = data.filter((item: string) => item !== "TRASH")
+                        break;
                     case "TRASH":
                         data = data.filter((item: string) => item !== "INBOX")
                         data = data.filter((item: string) => item !== "ARCHIVE")
+                        break;
                     case "ARCHIVE":
                         data = data.filter((item: string) => item !== "TRASH")
                         data = data.filter((item: string) => item !== "INBOX")
+                        break;
+                    case "STARRED":
+                    case "UNREAD":
+                        data = data.filter((item: string) => item !== messageBox)
+                        break;
                 }
                 
                 body.mailboxes = [
                     ...data,
                     messageBox
                 ]
-                
+
                 currentThreads[index1] = {
                     ...currentThreads[index1],
                     mailboxes: body?.mailboxes || []
