@@ -71,7 +71,7 @@ export function Header() {
     }, [user]);
 
     const reAuthToast = useCallback((email: string) => {
-        if (toast.isActive('re-auth-account')) {
+        if (toast.isActive('reauth')) {
             return;
         }
         Toaster({
