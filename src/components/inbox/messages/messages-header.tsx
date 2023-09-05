@@ -77,24 +77,21 @@ export function MessagesHeader({
                         if (selectedThread.mailboxes?.includes(messageBox)) {
                             return
                         }
-                        body.mailboxes = body.mailboxes.filter((item: string) => item !== "ARCHIVE")
-                        body.mailboxes = body.mailboxes.filter((item: string) => item !== "TRASH")
+                        body.mailboxes = body.mailboxes.filter((item: string) => !["ARCHIVE", "TRASH"].includes(item))
                         body.mailboxes = [...body.mailboxes, messageBox]
                         break;
                     case "TRASH":
                         if (selectedThread.mailboxes?.includes(messageBox)) {
                             return
                         }
-                        body.mailboxes = body.mailboxes.filter((item: string) => item !== "INBOX")
-                        body.mailboxes = body.mailboxes.filter((item: string) => item !== "ARCHIVE")
+                        body.mailboxes = body.mailboxes.filter((item: string) => !["INBOX", "ARCHIVE"].includes(item))
                         body.mailboxes = [...body.mailboxes, messageBox]
                         break;
                     case "ARCHIVE":
                         if (selectedThread.mailboxes?.includes(messageBox)) {
                             return
                         }
-                        body.mailboxes = body.mailboxes.filter((item: string) => item !== "TRASH")
-                        body.mailboxes = body.mailboxes.filter((item: string) => item !== "INBOX")
+                        body.mailboxes = body.mailboxes.filter((item: string) => !["INBOX", "TRASH"].includes(item))
                         body.mailboxes = [...body.mailboxes, messageBox]
                         break;
                     case "STARRED":
