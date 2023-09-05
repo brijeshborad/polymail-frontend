@@ -1,6 +1,6 @@
 import {createSlice, current, PayloadAction} from "@reduxjs/toolkit";
 import {InitialProjectState} from "@/types";
-import {Project} from "@/models";
+import { Project, TeamMember} from "@/models";
 
 const initialState: any = {
     projects: [],
@@ -67,6 +67,24 @@ const projectsSlice = createSlice({
             return {...state, invitees: [], isLoading: false, error}
         },
 
+        // change role from project members
+        updateProjectMemberRole: (state: InitialProjectState, _action: PayloadAction<{ projectId?: string,accountId?: string, body?: {role: string} }>) => {
+            return {...state, member: null, error: null, isLoading: false, updateSuccess: false, success: false}
+        },
+        updateProjectMemberRoleSuccess: (state: InitialProjectState, {payload: member}: PayloadAction<{}>) => {
+            let currentMembers = [...(current(state).members || [])] as TeamMember[];
+            let memberData = {...(member) || {}} as TeamMember;
+            let index1 = currentMembers.findIndex((item: TeamMember) => item.id === memberData?.itemId);
+            currentMembers[index1] = {
+                ...currentMembers[index1],
+                role: memberData.role
+            };
+            return {...state, members: [...currentMembers], error: null, isLoading: false, updateSuccess: true, success: true}
+        },
+        updateProjectMemberRoleError: (state: InitialProjectState, {payload: error}: PayloadAction<any>) => {
+            return {...state, member: null, error, isLoading: false, updateSuccess: false, success: false}
+        },
+
         updateProjectState: (state: InitialProjectState, action: PayloadAction<InitialProjectState>) => {
             return {...state, ...action.payload}
         },
@@ -89,6 +107,9 @@ export const {
     getProjectByIdError,
     getProjectMembersInvites,
     getProjectMembersInvitesSuccess,
-    getProjectMembersInvitesError
+    getProjectMembersInvitesError,
+    updateProjectMemberRole,
+    updateProjectMemberRoleSuccess,
+    updateProjectMemberRoleError
 } = projectsSlice.actions
 export default projectsSlice.reducer

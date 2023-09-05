@@ -15,7 +15,11 @@ import {
     getProjectByIdSuccess,
     getProjectByIdError,
     getProjectMembersInvites,
-    getProjectMembersInvitesSuccess, getProjectMembersInvitesError,
+    getProjectMembersInvitesSuccess,
+    getProjectMembersInvitesError,
+    updateProjectMemberRoleError,
+    updateProjectMemberRoleSuccess,
+    updateProjectMemberRole,
 } from "@/redux/projects/action-reducer";
 import {PayloadAction} from "@reduxjs/toolkit";
 
@@ -72,6 +76,16 @@ function* getProjectMembersInvitees({payload: {projectId}}: PayloadAction<{ proj
     }
 }
 
+function* updateProjectMembersData({payload: {projectId, accountId, body}}: PayloadAction<{projectId: string, accountId: string, body: {role: string}}>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callPatch(`projects/${projectId}/accounts/${accountId}`, body);
+        yield put(updateProjectMemberRoleSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        yield put(updateProjectMemberRoleError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
+    }
+}
+
 
 export function* watchGetProjects() {
     yield takeLatest(getAllProjects.type, getProjects);
@@ -93,6 +107,10 @@ export function* watchGetProjectMembersInvitees() {
     yield takeLatest(getProjectMembersInvites.type, getProjectMembersInvitees);
 }
 
+export function* watchUpdateProjectMembersData() {
+    yield takeLatest(updateProjectMemberRole.type, updateProjectMembersData);
+}
+
 export default function* rootSaga() {
     yield all([
         fork(watchGetProjects),
@@ -100,6 +118,7 @@ export default function* rootSaga() {
         fork(watchGetProjectMembers),
         fork(watchGetProjectById),
         fork(watchGetProjectMembersInvitees),
+        fork(watchUpdateProjectMembersData),
     ]);
 }
 

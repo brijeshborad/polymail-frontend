@@ -14,7 +14,11 @@ import {
     getOrganizationMembersError,
     removeOrganization,
     removeOrganizationSuccess,
-    removeOrganizationError, editOrganizationSuccess, editOrganizationError, editOrganization
+    removeOrganizationError,
+    editOrganizationSuccess,
+    editOrganizationError,
+    editOrganization,
+    updateOrganizationMemberRoleError, updateOrganizationMemberRoleSuccess, updateOrganizationMemberRole
 } from "@/redux/organizations/action-reducer";
 import {OrganizationRequestBody} from "@/models";
 
@@ -70,6 +74,15 @@ function* deleteOrganization({payload: {id}}: PayloadAction<{ id: string }>) {
     }
 }
 
+function* updateOrganizationMembersData({payload: {organizationId, accountId, body}}: PayloadAction<{organizationId: string, accountId: string, body: {role: string}}>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callPatch(`organizations/${organizationId}/accounts/${accountId}`, body);
+        yield put(updateOrganizationMemberRoleSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        yield put(updateOrganizationMemberRoleError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
+    }
+}
 
 export function* watchGetOrganizations() {
     yield takeLatest(getAllOrganizations.type, getOrganizations);
@@ -94,6 +107,11 @@ export function* watchUpdateOrganization() {
 }
 
 
+export function* watchUpdateProjectMembersData() {
+    yield takeLatest(updateOrganizationMemberRole.type, updateOrganizationMembersData);
+}
+
+
 export default function* rootSaga() {
     yield all([
         fork(watchGetOrganizations),
@@ -101,6 +119,7 @@ export default function* rootSaga() {
         fork(watchGetOrganizationMembers),
         fork(watchRemoveOrganization),
         fork(watchUpdateOrganization),
+        fork(watchUpdateProjectMembersData),
     ]);
 }
 

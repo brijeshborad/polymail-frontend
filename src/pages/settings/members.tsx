@@ -12,21 +12,31 @@ import {
     Text, Textarea,
     Th,
     Thead,
-    Tr, useDisclosure, Image, Grid
+    Tr, useDisclosure, Image, Grid, Input
 } from "@chakra-ui/react";
-import React, {useEffect} from "react";
+import React, {ChangeEvent, useEffect, useState} from "react";
 import Index from "@/pages/settings/index";
 import {MenuIcon, TextIcon} from "@/icons";
 import withAuth from "@/components/withAuth";
-import {getOrganizationMembers} from "@/redux/organizations/action-reducer";
+import {getOrganizationMembers, updateOrganizationMemberRole} from "@/redux/organizations/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import dayjs from "dayjs";
+import { TeamMember} from "@/models";
+import {ChevronDownIcon} from "@chakra-ui/icons";
+import {PROJECT_ROLES} from "@/utils/constants";
 
 function Members() {
-    const {isOpen, onOpen, onClose} = useDisclosure();
-   const {members, organizations} = useSelector((state: StateType) => state.organizations);
-
+    const {isOpen: InviteModelIsOpen, onOpen:InviteModelOnOpen, onClose: InviteModelOnClose} = useDisclosure();
+    const { isOpen: isEditOpen , onOpen: onEditOpen, onClose: onEditClose } = useDisclosure()
+   const {members, organizations, updateMemberRoleSuccess} = useSelector((state: StateType) => state.organizations);
+    const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
+    const {userDetails} = useSelector((state: StateType) => state.users);
+    const {selectedAccount} = useSelector((state: StateType) => state.accounts);
+    const [organizationName, setOrganizationName] = useState<{ name: string, role: string }>({
+        name: '',
+        role: 'member'
+    });
 
     const dispatch = useDispatch();
 
@@ -36,6 +46,47 @@ function Members() {
         }
     },[dispatch, organizations])
 
+    useEffect(() => {
+        if (updateMemberRoleSuccess && members && members.length) {
+            let index1 = (members || []).findIndex((item: TeamMember) => item.id === selectedMember?.id);
+            setSelectedMember(members[index1])
+        }
+    }, [updateMemberRoleSuccess, members])
+
+    const handleChange = (event: ChangeEvent | any) => {
+        setOrganizationName(prevState => ({
+            ...prevState,
+            name: event.target.value,
+        }))
+    }
+    const openEditModel = (item: any) => {
+        setSelectedMember({...item});
+        onEditOpen()
+    }
+
+    const updateOrganizationMemberRoleData = (role: string, item: any) => {
+       setOrganizationName(prevState => ({
+            ...prevState,
+            role: role
+        }));
+        setSelectedMember({
+            ...item,
+            role: role
+        });
+
+    };
+
+    const onSubmit = () => {
+        if (organizations && organizations[0] && organizations[0].id && selectedAccount && selectedAccount.id) {
+            let body = {
+                role: organizationName.role,
+                name: organizationName.name || selectedMember?.name
+            }
+            dispatch(updateOrganizationMemberRole({organizationId: organizations[0].id, accountId: selectedAccount.id, body}));
+        }
+
+        onEditClose();
+    }
 
     return (
         <div className={styles.setting}>
@@ -56,7 +107,7 @@ function Members() {
                             <div className={styles.memberTable}>
                                 <Flex alignItems={'center'} justify={'space-between'} gap={4} padding={'20px 24px'}>
                                     <Heading as='h4' fontSize={'18px'} fontWeight={600} color={'#101828'}>Team members</Heading>
-                                    <Button className={styles.inviteMemberButton} fontSize={'14px'} onClick={onOpen} backgroundColor={'black'} color={'white'} height={'auto'} padding={'10px 20px'}>Invite</Button>
+                                    <Button className={styles.inviteMemberButton} fontSize={'14px'} onClick={InviteModelOnOpen} backgroundColor={'black'} color={'white'} height={'auto'} padding={'10px 20px'}>Invite</Button>
                                 </Flex>
                                 <TableContainer>
                                     <Table variant='simple'>
@@ -83,14 +134,14 @@ function Members() {
                                                         </Flex>
                                                     </Td>
                                                     <Td><div className={styles.statusButton}> {member.status} </div></Td>
-                                                    <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>Admin</Text></Td>
+                                                    <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>{member.role}</Text></Td>
                                                     <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>{member.email}</Text></Td>
                                                     <Td><Text fontSize='sm' fontWeight={400} color={'#475467'}>{member.created ? dayjs(member.created).format('MM/DD/YYYY') : ''}</Text></Td>
                                                     <Td padding={4}>
                                                         <Menu>
                                                             <MenuButton className={styles.OptionButton} as={IconButton} aria-label='Options' icon={<MenuIcon />} variant='outline' padding={0} height={'32px'} minWidth={'32px'} border={'0'}/>
                                                             <MenuList>
-                                                                <MenuItem>Edit</MenuItem>
+                                                                <MenuItem onClick={() => openEditModel(member)}>Edit</MenuItem>
                                                                 <MenuItem>Delete</MenuItem>
                                                             </MenuList>
                                                         </Menu>
@@ -103,7 +154,7 @@ function Members() {
                                 </TableContainer>
                             </div>
 
-                            <Modal isOpen={isOpen} onClose={() => onClose} closeOnOverlayClick={false} isCentered>
+                            <Modal isOpen={InviteModelIsOpen} onClose={() => InviteModelOnClose} closeOnOverlayClick={false} isCentered>
                                 <ModalOverlay />
                                 <ModalContent maxWidth={'490px'}>
                                     <ModalHeader padding={'40px 40px 24px 40px'}>
@@ -122,8 +173,51 @@ function Members() {
                                     </ModalBody>
 
                                     <ModalFooter className={styles.settingButton} paddingBottom={'40px'}>
-                                        <Button className={styles.settingCancel} colorScheme='blue' mr={3} onClick={onClose}> Cancel </Button>
+                                        <Button className={styles.settingCancel} colorScheme='blue' mr={3} onClick={InviteModelOnClose}> Cancel </Button>
                                         <Button className={styles.settingSave} variant='ghost'>Send Invite</Button>
+                                    </ModalFooter>
+                                </ModalContent>
+                            </Modal>
+
+                            <Modal isOpen={isEditOpen} onClose={onEditClose}  isCentered>
+                                <ModalOverlay />
+                                <ModalContent maxWidth={'490px'} className={styles.inviteMemberModal}>
+                                    <ModalHeader padding={'40px 40px 24px 40px'}>
+                                        <Heading as='h3' size='lg' pb={1} color={'#101828'}>Edit members</Heading>
+                                        <Text fontSize='md' color={'#475467'} fontWeight={'400'}>Edit polyMail member</Text>
+                                    </ModalHeader>
+                                    <ModalBody padding={'8px 40px 16px'}>
+                                        <Flex gap={2} align={'flex-end'}>
+                                            <div className={styles.newPaymentInput}>
+                                                <Text mb='8px' fontSize={'13px'} fontWeight={500} color={'#000000'}>Name</Text>
+                                                <Input placeholder='Here is a sample placeholder' defaultValue={selectedMember?.name} onChange={handleChange}/>
+                                            </div>
+                                            <Menu>
+                                                <MenuButton className={styles.memberButton} backgroundColor={'#E9E9E9'}
+                                                            borderRadius={4} minWidth={'90px'}
+                                                            textTransform={'capitalize'}
+                                                            fontSize={'12px'}
+                                                            color={'#000000'} as={Button}
+                                                            rightIcon={
+                                                                <ChevronDownIcon/>}> {selectedMember?.role} </MenuButton>
+                                                <MenuList>
+                                                    {PROJECT_ROLES.map((role, roleIndex) => {
+                                                        if (selectedMember?.role !== role) {
+                                                            return <MenuItem textTransform={'capitalize'} onClick={() => updateOrganizationMemberRoleData(role, selectedMember)} key={roleIndex}>
+                                                                {role}
+                                                            </MenuItem>
+                                                        }
+                                                        return null
+                                                    })}
+                                                    <MenuItem onClick={() => updateOrganizationMemberRoleData('deactivated', selectedMember)}>{selectedMember?.userId === userDetails?.id ? 'Leave' : 'Remove'}</MenuItem>
+                                                </MenuList>
+                                            </Menu>
+                                        </Flex>
+                                    </ModalBody>
+
+                                    <ModalFooter className={styles.settingButton} paddingBottom={'40px'}>
+                                        <Button className={styles.settingCancel} colorScheme='blue' mr={3} onClick={onEditClose}> Cancel </Button>
+                                        <Button className={styles.settingSave} variant='ghost' onClick={() => onSubmit()}>Save</Button>
                                     </ModalFooter>
                                 </ModalContent>
                             </Modal>

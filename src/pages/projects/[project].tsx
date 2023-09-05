@@ -26,15 +26,19 @@ import {StateType} from "@/types";
 import {ChevronDownIcon} from "@chakra-ui/icons";
 import styles from "@/styles/project.module.css";
 import {ProjectThreads} from "@/components/project";
-import {getProjectById, getProjectMembers, getProjectMembersInvites} from "@/redux/projects/action-reducer";
+import {
+    getProjectById,
+    getProjectMembers,
+    getProjectMembersInvites,
+    updateProjectMemberRole
+} from "@/redux/projects/action-reducer";
 import {getAllThreads} from "@/redux/threads/action-reducer";
 import {ProjectMessage} from "@/components/project/project-message";
 import {
     addItemToGroup,
-    deleteMemberFromProject,
     updateMembershipState
 } from "@/redux/memberships/action-reducer";
-import {Project, TeamMember} from "@/models";
+import {Project} from "@/models";
 import {PROJECT_ROLES} from "@/utils/constants";
 import {isEmail} from "@/utils/common.functions";
 
@@ -112,9 +116,15 @@ function ProjectInbox() {
         }
     }, [dispatch, membersInputs, selectedAccount]);
 
-    const removeMemberFromProject = useCallback((item: TeamMember) => {
-        dispatch(deleteMemberFromProject(item.id!))
-    }, [dispatch]);
+    const updateProjectMemberRoleData = (role: string) => {
+        if (project && project.id && selectedAccount && selectedAccount.id) {
+            let body = {
+                role: role
+            }
+            dispatch(updateProjectMemberRole({projectId: project.id, accountId: selectedAccount.id, body}))
+        }
+
+    };
 
     return (
         <>
@@ -226,14 +236,14 @@ function ProjectInbox() {
                                         <MenuList>
                                             {PROJECT_ROLES.map((role, roleIndex) => {
                                                 if (member.role !== role) {
-                                                    return <MenuItem textTransform={'capitalize'} key={roleIndex}>
+                                                    return <MenuItem textTransform={'capitalize'}  onClick={() => updateProjectMemberRoleData(role)} key={roleIndex}>
                                                         {role}
                                                     </MenuItem>
                                                 }
                                                 return null
                                             })}
                                             <MenuItem
-                                                onClick={() => removeMemberFromProject(member)}>{member.userId === userDetails?.id ? 'Leave' : 'Remove'}</MenuItem>
+                                                onClick={() => updateProjectMemberRoleData('deactivated')}>{member.userId === userDetails?.id ? 'Leave' : 'Remove'}</MenuItem>
                                         </MenuList>
                                     </Menu>
                                 </Flex>
