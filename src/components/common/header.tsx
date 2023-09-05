@@ -1,10 +1,8 @@
 import Image from "next/image";
 import {
     Badge,
-    Box,
     Button,
     createStandaloneToast,
-    Divider,
     Flex,
     Input,
     InputGroup,
@@ -14,7 +12,6 @@ import {
     MenuButton,
     MenuItem,
     MenuList,
-    Text,
 } from "@chakra-ui/react";
 import {CheckIcon, ChevronDownIcon, SearchIcon} from "@chakra-ui/icons";
 import {EnergyIcon, FolderIcon, MailIcon} from "@/icons";
