@@ -182,22 +182,22 @@ export function Threads() {
                                 </Tooltip>
                             </Tab>
                             <Tab className={styles.emailTabs}>
-                                <Tooltip label='Draft' placement='bottom' bg='gray.300' color='black'>
-                                    <div className={`${tab === 'DRAFT' ? styles.active : ''}`}
-                                         onClick={() => changeEmailTabs('DRAFT')}>
-                                        <DraftIcon/>
-                                        <span>Draft</span>
-                                    </div>
-                                </Tooltip>
-                            </Tab>
-
-                            {!['TRASH', 'STARRED', 'ARCHIVE'].includes(tab) &&
-                            <Tab className={styles.emailTabs}>
                                 <Tooltip label='Sent' placement='bottom' bg='gray.300' color='black'>
                                     <div className={`${tab === 'SENT' ? styles.active : ''}`}
                                          onClick={() => changeEmailTabs('SENT')}>
                                         <SendIcon/>
                                         <span>Sent</span>
+                                    </div>
+                                </Tooltip>
+                            </Tab>
+
+                            {!['TRASH', 'STARRED', 'ARCHIVE', 'DRAFT'].includes(tab) &&
+                            <Tab className={styles.emailTabs}>
+                                <Tooltip label='Snoozed' placement='bottom' bg='gray.300' color='black'>
+                                    <div className={`${tab === 'SNOOZED' ? styles.active : ''}`}
+                                         onClick={() => changeEmailTabs('SNOOZED')}>
+                                        <TimeSnoozeIcon/>
+                                        <span>Snoozed</span>
                                     </div>
                                 </Tooltip>
                             </Tab>
@@ -240,14 +240,14 @@ export function Threads() {
                             </Tab>
                             }
 
-                            {tab === 'SNOOZED' &&
+                            {tab === 'DRAFT' &&
 
                             <Tab className={styles.emailTabs}>
-                                <Tooltip label='Snoozed' placement='bottom' bg='gray.300' color='black'>
-                                    <div className={`${tab === 'SNOOZED' ? styles.active : ''}`}
-                                         onClick={() => changeEmailTabs('SNOOZED')}>
-                                        <TimeSnoozeIcon/>
-                                        <span>Snoozed</span>
+                                <Tooltip label='Draft' placement='bottom' bg='gray.300' color='black'>
+                                    <div className={`${tab === 'DRAFT' ? styles.active : ''}`}
+                                         onClick={() => changeEmailTabs('DRAFT')}>
+                                        <DraftIcon/>
+                                        <span>Draft</span>
                                     </div>
                                 </Tooltip>
                             </Tab>
@@ -262,8 +262,8 @@ export function Threads() {
                                     More
                                 </MenuButton>
                                 <MenuList className={`${styles.tabListDropDown} drop-down-list`}>
-                                    {['TRASH', 'STARRED', 'ARCHIVE'].includes(tab) &&
-                                    <MenuItem onClick={() => changeEmailTabs('SENT')}><SendIcon/> Sent</MenuItem>
+                                    {['TRASH', 'STARRED', 'ARCHIVE', 'DRAFT'].includes(tab) &&
+                                    <MenuItem onClick={() => changeEmailTabs('SNOOZED')}><TimeSnoozeIcon/> Snoozed</MenuItem>
                                     }
 
                                     {tab !== 'TRASH' &&
@@ -276,9 +276,9 @@ export function Threads() {
                                     <MenuItem
                                         onClick={() => changeEmailTabs('ARCHIVE')}><ArchiveIcon/> Archive</MenuItem>
                                     }
-                                    {tab !== 'SNOOZED' &&
+                                    {tab !== 'DRAFT' &&
                                     <MenuItem
-                                        onClick={() => changeEmailTabs('SNOOZED')}><TimeSnoozeIcon/> Snoozed</MenuItem>
+                                        onClick={() => changeEmailTabs('DRAFT')}><DraftIcon/> Draft</MenuItem>
                                     }
                                 </MenuList>
                             </Menu>
