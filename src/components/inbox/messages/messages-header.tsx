@@ -80,6 +80,7 @@ export function MessagesHeader({
                         }
                         body.mailboxes = body.mailboxes.filter((item: string) => !["ARCHIVE", "TRASH"].includes(item))
                         body.mailboxes = [...body.mailboxes, messageBox]
+                        currentThreads.splice(index1, 1)
                         dispatch(updateMessageState({selectedMessage: null}));
                         break;
                     case "TRASH":
@@ -88,6 +89,7 @@ export function MessagesHeader({
                         }
                         body.mailboxes = body.mailboxes.filter((item: string) => !["INBOX", "ARCHIVE"].includes(item))
                         body.mailboxes = [...body.mailboxes, messageBox]
+                        currentThreads.splice(index1, 1)
                         dispatch(updateMessageState({selectedMessage: null}));
                         break;
                     case "ARCHIVE":
@@ -96,6 +98,7 @@ export function MessagesHeader({
                         }
                         body.mailboxes = body.mailboxes.filter((item: string) => !["INBOX", "TRASH"].includes(item))
                         body.mailboxes = [...body.mailboxes, messageBox]
+                        currentThreads.splice(index1, 1)
                         dispatch(updateMessageState({selectedMessage: null}));
                         break;
                     case "STARRED":
@@ -108,10 +111,6 @@ export function MessagesHeader({
                         break;
                 }
 
-                currentThreads[index1] = {
-                    ...currentThreads[index1],
-                    mailboxes: body?.mailboxes || []
-                };
                 dispatch(updateThreadState({
                     threads: currentThreads,
                     selectedThread: currentThreads[index1],
