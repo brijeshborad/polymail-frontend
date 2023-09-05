@@ -13,7 +13,7 @@ import {
     Tabs,
     Tooltip
 } from "@chakra-ui/react";
-import {DraftIcon, EditIcon, InboxIcon, SendIcon, StarIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
+import {ArchiveIcon, DraftIcon, EditIcon, InboxIcon, SendIcon, StarIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
 import {StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
@@ -233,7 +233,7 @@ export function Threads() {
                                 <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
                                     <div className={`${tab === 'ARCHIVE' ? styles.active : ''}`}
                                          onClick={() => changeEmailTabs('ARCHIVE')}>
-                                        <TimeSnoozeIcon/>
+                                        <ArchiveIcon/>
                                         <span>Archive</span>
                                     </div>
                                 </Tooltip>
