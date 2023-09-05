@@ -121,7 +121,7 @@ function Index() {
                         backgroundColor={'rgba(8, 22, 47, 0.04)'} fontSize={'14px'} color={'#08162F'}
                         padding={'3px 6px'}>{itemList && itemList.length}</Badge></Heading>
                     <Button className={styles.createProjectButton} color={'#ffffff'} backgroundColor={'#000000'}
-                            onClick={onOpen}
+                            onClick={() => { Router.replace('/projects/create-project'); onOpen() }}
                             h={'auto'} borderRadius={'8px'} fontSize={'14px'} fontWeight={'500'} padding={'10px 20px'}>Create
                         Project</Button>
                 </Flex>
