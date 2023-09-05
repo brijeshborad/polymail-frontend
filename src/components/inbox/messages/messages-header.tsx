@@ -39,7 +39,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType, MessageHeaderTypes} from "@/types";
 import {getAllProjects} from "@/redux/projects/action-reducer";
 import CreateNewProject from "@/components/project/create-new-project";
-import {updateMessage} from "@/redux/messages/action-reducer";
+import {updateMessage, updateMessageState} from "@/redux/messages/action-reducer";
 
 export function MessagesHeader({
                                    closeCompose,
@@ -79,6 +79,7 @@ export function MessagesHeader({
                         }
                         body.mailboxes = body.mailboxes.filter((item: string) => !["ARCHIVE", "TRASH"].includes(item))
                         body.mailboxes = [...body.mailboxes, messageBox]
+                        dispatch(updateMessageState({selectedMessage: null}));
                         break;
                     case "TRASH":
                         if (selectedThread.mailboxes?.includes(messageBox)) {
@@ -86,6 +87,7 @@ export function MessagesHeader({
                         }
                         body.mailboxes = body.mailboxes.filter((item: string) => !["INBOX", "ARCHIVE"].includes(item))
                         body.mailboxes = [...body.mailboxes, messageBox]
+                        dispatch(updateMessageState({selectedMessage: null}));
                         break;
                     case "ARCHIVE":
                         if (selectedThread.mailboxes?.includes(messageBox)) {
@@ -93,6 +95,7 @@ export function MessagesHeader({
                         }
                         body.mailboxes = body.mailboxes.filter((item: string) => !["INBOX", "TRASH"].includes(item))
                         body.mailboxes = [...body.mailboxes, messageBox]
+                        dispatch(updateMessageState({selectedMessage: null}));
                         break;
                     case "STARRED":
                     case "UNREAD":
