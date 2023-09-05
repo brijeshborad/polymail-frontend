@@ -17,4 +17,5 @@ export declare type IconProps = {
     stroke?: string
     click?: (_e: MouseEvent | any) => void,
     marginRight?: string
+    color?: string
 }

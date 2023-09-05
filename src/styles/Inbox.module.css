@@ -706,8 +706,8 @@
 }
 
 .selectedThread .mailDetails {
-    border: 1px solid #373737;
-    background-color: rgba(8, 22, 47, 0.03);
+    border: 1px solid #6b7280;
+    box-shadow: 0 0 0 3px #e5e7eb;
 }
 
 .mailMessageOption button {

@@ -105,7 +105,7 @@ export function InboxTab(props: InboxTabProps) {
                                     </Flex>
                                     <Flex alignItems={'center'} className={styles2.receiveTime}>
                                         {!(item.mailboxes || []).includes('UNREAD') &&
-                                        <DotIcon marginRight={'5px'} className={`readThreadIcon ${selectedThread && selectedThread.id === item.id ? 'selected' : ''}`}/>}
+                                        <DotIcon marginRight={'5px'} className={`readThreadIcon`} color={'#9ca3af'}/>}
                                         <Time time={item.latestMessage} isShowFullTime={false}/>
                                     </Flex>
                                 </Flex>
