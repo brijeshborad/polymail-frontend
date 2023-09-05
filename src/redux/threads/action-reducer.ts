@@ -4,7 +4,6 @@ import {Thread} from "@/models";
 
 const initialState: any = {
     threads: [],
-    thread: null,
     searchThreads: [],
     isLoading: false,
     error: null,
@@ -38,7 +37,7 @@ const threadsSlice = createSlice({
         },
 
         updateThreads: (state: InitialThreadStateType, _action: PayloadAction<{ id?: string, body?: Thread }>) => {
-            return {...state, thread: null, error: null, isLoading: false, updateSuccess: false, success: false}
+            return {...state, error: null, isLoading: false, updateSuccess: false, success: false}
         },
         updateThreadsSuccess: (state: InitialThreadStateType, {payload: thread}: PayloadAction<{}>) => {
             let currentThreads = [...(current(state).threads || [])] as Thread[];
@@ -51,7 +50,7 @@ const threadsSlice = createSlice({
             return {...state, threads: [...currentThreads], error: null, isLoading: false, updateSuccess: true, success: true}
         },
         updateThreadsError: (state: InitialThreadStateType, {payload: error}: PayloadAction<any>) => {
-            return {...state, thread: null, error, isLoading: false, updateSuccess: false, success: false}
+            return {...state, error, isLoading: false, updateSuccess: false, success: false}
         },
 
         searchThreads: (state: InitialThreadStateType, _action: PayloadAction<{ query?: string }>) => {
