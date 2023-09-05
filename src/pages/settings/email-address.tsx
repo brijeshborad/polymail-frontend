@@ -21,7 +21,7 @@ function EmailAddress() {
     function addNewGoogleAccount(mode: string) {
         let body = {
             mode: mode,
-            redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}/inbox`,
+            redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}/settings/email-address`,
             accountType: "google",
             platform: "web",
             withToken: true
