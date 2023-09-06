@@ -431,6 +431,7 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                     <Button className={styles.editButton} color={'#374151'} backgroundColor={'#F3F4F6'}
                             borderRadius={'20px'} lineHeight={1} size='xs'
                             onClick={(e) => {
+                                e.stopPropagation();
                                 e.preventDefault();
                                 showRecipientsBox()
                             }}> {!replyBoxHide ? 'Edit' : 'Close'} </Button>
