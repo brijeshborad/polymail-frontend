@@ -1,5 +1,4 @@
 import styles from "@/styles/Inbox.module.css";
-import styles2 from "@/styles/common.module.css";
 import {
     Box,
     Button,
@@ -9,20 +8,16 @@ import {
     MenuButton,
     MenuItem,
     MenuList,
-    Text,
-    Textarea,
-    Tooltip
+    Text
 } from "@chakra-ui/react";
-import {ChevronDownIcon, CloseIcon, ViewIcon, ViewOffIcon} from "@chakra-ui/icons";
+import {CloseIcon} from "@chakra-ui/icons";
 import {Time} from "@/components/common";
 import {
-    DownloadIcon, EmojiIcon, FileIcon,
-    ForwardIcon, LinkIcon, MenuIcon,
-    ReplyIcon, TextIcon,
+    DownloadIcon, MenuIcon
 } from "@/icons";
 import Image from "next/image";
 import {StateType} from "@/types";
-import React, {useCallback, useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {
     getAttachmentDownloadUrl,
@@ -38,13 +33,13 @@ import {MessageBox} from "@/components/inbox/messages/message-box";
 import {MessageReplyBox} from "@/components/inbox/messages/message-reply-box";
 
 export function Message() {
-    const [messageContent, setMessageContent] = useState<MessageModel>();
+    const [_messageContent, setMessageContent] = useState<MessageModel>();
     const [index, setIndex] = useState<number | null>(null);
     const [emailPart, setEmailPart] = useState<string>("");
     const [hideAndShowReplyBox, setHideAndShowReplyBox] = useState<boolean>(false);
     const [isReplyBoxShow, setIsReplayBoxShow] = useState<boolean>(false);
     const [replyType, setReplyType] = useState<string>('');
-    const [messageSenders, setMessageSenders] = useState<string[]>([]);
+    const [_messageSenders, setMessageSenders] = useState<string[]>([]);
     const [inboxMessages, setInboxMessages] = useState<MessageModel[]>([]);
     const {
         messages,

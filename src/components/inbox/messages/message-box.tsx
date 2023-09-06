@@ -2,7 +2,7 @@ import styles from "@/styles/Inbox.module.css";
 import {Button, Flex, Heading, Menu, MenuButton, MenuItem, MenuList, Text} from "@chakra-ui/react";
 import {Time} from "@/components/common";
 import {DownloadIcon, MenuIcon} from "@/icons";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useState} from "react";
 import {getAttachmentDownloadUrl, updateMessage} from "@/redux/messages/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import Image from "next/image";

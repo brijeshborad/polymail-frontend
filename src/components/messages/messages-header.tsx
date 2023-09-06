@@ -6,16 +6,12 @@ import {
     MenuButton,
     MenuItem,
     MenuList,
-    Text,
     Tooltip,
     Input,
     InputGroup,
     InputLeftElement, useDisclosure, Heading
 } from "@chakra-ui/react";
 import {
-    ChevronDownIcon,
-    ChevronUpIcon,
-    CloseIcon,
     SearchIcon,
     SmallAddIcon,
 } from "@chakra-ui/icons";
@@ -35,23 +31,20 @@ import {addItemToGroup} from "@/redux/memberships/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType, MessageHeaderTypes} from "@/types";
 import {getAllProjects} from "@/redux/projects/action-reducer";
-import CreateNewProject from "@/components/project/create-new-project";
 import {updateMessage, updateMessageState} from "@/redux/messages/action-reducer";
 import {Toaster} from "@/components/common";
 
 export function MessagesHeader({
-                                   closeCompose,
                                    inboxMessages,
                                    index,
-                                   showPreNextMessage,
                                    herderType
                                }: MessageHeaderTypes) {
     const {selectedThread, threads, updateSuccess} = useSelector((state: StateType) => state.threads);
-    const {isLoading, selectedMessage} = useSelector((state: StateType) => state.messages);
+    const {selectedMessage} = useSelector((state: StateType) => state.messages);
     let {projects} = useSelector((state: StateType) => state.projects);
 
     const dispatch = useDispatch();
-    const {isOpen, onOpen, onClose} = useDisclosure();
+    const {onOpen} = useDisclosure();
     const [successMessage, setSuccessMessage] = useState<{ desc: string, title: string } | null>(null);
 
 

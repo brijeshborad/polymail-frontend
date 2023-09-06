@@ -8,13 +8,12 @@ import {
     MenuItem,
     MenuList, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay,
     Text,
-    Textarea,
     useDisclosure
 } from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
 import Image from "next/image";
 import {ChevronDownIcon, CloseIcon} from "@chakra-ui/icons";
-import {EmojiIcon, FileIcon, LinkIcon, TextIcon} from "@/icons";
+import {FileIcon, LinkIcon, TextIcon} from "@/icons";
 import React, {ChangeEvent, ChangeEventHandler, useEffect, useRef, useState} from "react";
 import {debounce, isEmail} from "@/utils/common.functions";
 import {Chip, RichTextEditor, Toaster} from "@/components/common";
@@ -125,7 +124,7 @@ export function MessageReplyBox(props: MessageBoxType) {
         }));
     };
 
-    const addSubject = (event: ChangeEvent | any) => {
+    const _addSubject = (event: ChangeEvent | any) => {
         setSubject(event.target.value || '');
     }
 
