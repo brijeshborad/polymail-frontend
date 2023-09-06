@@ -1,7 +1,7 @@
 import {
     Box,
     Button, createStandaloneToast,
-    Flex, Heading, Input, Menu, MenuButton, MenuItem, MenuList,
+    Flex, Heading, Input, InputGroup, InputLeftElement, Menu, MenuButton, MenuItem, MenuList,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -11,8 +11,8 @@ import {
     Text, Textarea, useDisclosure
 } from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
-import {EmojiIcon, FileIcon, FolderIcon, LinkIcon, TextIcon} from "@/icons";
-import {ChevronDownIcon, CloseIcon} from "@chakra-ui/icons";
+import {DisneyIcon, EmojiIcon, FileIcon, FolderIcon, LinkIcon, TextIcon} from "@/icons";
+import {ChevronDownIcon, CloseIcon, SearchIcon, SmallAddIcon} from "@chakra-ui/icons";
 import React, {ChangeEvent, ChangeEventHandler, useEffect, useRef, useState} from "react";
 import {BillingTypes, StateType} from "@/types";
 import {debounce, isEmail} from "@/utils/common.functions";
@@ -22,7 +22,8 @@ import {useDispatch, useSelector} from "react-redux";
 import dayjs from "dayjs";
 import {updateMessageState, uploadAttachment} from "@/redux/messages/action-reducer";
 import {SingleDatepicker} from "chakra-dayzed-datepicker";
-import {MessageAttachments} from "@/models";
+import {MessageAttachments, Project} from "@/models";
+import CreateNewProject from "@/components/project/create-new-project";
 
 declare type RecipientsValue = { items: string[], value: string };
 declare type RecipientsType = { cc: RecipientsValue, bcc: RecipientsValue, recipients: RecipientsValue };
@@ -38,10 +39,12 @@ export function ComposeBox(props: BillingTypes) {
     const { draft } = useSelector((state: StateType) => state.draft);
     const dispatch = useDispatch();
     const {isOpen, onOpen, onClose} = useDisclosure();
+    const {isOpen: isOpenProject, onOpen: onOpenProject, onClose: onCloseProject} = useDisclosure();
     const [scheduledDate, setScheduledDate] = useState<Date>();
     const {toast} = createStandaloneToast()
     const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
     const inputFile = useRef<HTMLInputElement | null>(null)
+    let {projects} = useSelector((state: StateType) => state.projects);
 
 
 
@@ -208,6 +211,8 @@ export function ComposeBox(props: BillingTypes) {
                 }
             }
             dispatch(sendMessage({id: draft.id, ...params}));
+            onClose();
+
             if (props.onClose) {
                 props.onClose();
             }
@@ -218,6 +223,7 @@ export function ComposeBox(props: BillingTypes) {
                 recipients: {items: [], value: ''}
             });
             setEmailBody('');
+            setSubject('');
             dispatch(updateDraftState({
                 draft: null,
             }));
@@ -254,7 +260,6 @@ export function ComposeBox(props: BillingTypes) {
 
     function handleFileUpload(event: ChangeEventHandler | any) {
         const file = event.target.files[0];
-        console.log('draft', draft)
         if (draft && draft.id) {
             event.stopPropagation();
             event.preventDefault();
@@ -302,12 +307,46 @@ export function ComposeBox(props: BillingTypes) {
                                 <Input className={styles.subjectInput} placeholder='Enter subject title' size='lg'  onChange={(e) => addSubject(e)}
                                        flex={1} fontWeight={'700'} padding={'0'} border={'0'} h={'auto'}
                                        borderRadius={'0'} lineHeight={1} color={'#0A101D'}/>
-                                <Button className={styles.addToProject} leftIcon={<FolderIcon/>} borderRadius={'50px'}
-                                        backgroundColor={'#2A6FFF'} color={'#FFFFFF'}
-                                        boxShadow={'0 0 3px 0 rgba(38, 109, 240, 0.12)'} padding={'4px 4px 4px 8px'}
-                                        fontSize={'12px'} fontWeight={500} h={'fit-content'}>
-                                    Add to Project <span className={styles.RightContent}>⌘P</span>
-                                </Button>
+                                {/*<Button className={styles.addToProject} leftIcon={<FolderIcon/>} borderRadius={'50px'}*/}
+                                {/*        backgroundColor={'#2A6FFF'} color={'#FFFFFF'}*/}
+                                {/*        boxShadow={'0 0 3px 0 rgba(38, 109, 240, 0.12)'} padding={'4px 4px 4px 8px'}*/}
+                                {/*        fontSize={'12px'} fontWeight={500} h={'fit-content'}>*/}
+                                {/*    Add to Project <span className={styles.RightContent}>⌘P</span>*/}
+                                {/*</Button>*/}
+                                <Menu>
+                                    <MenuButton className={styles.addToProject} leftIcon={<FolderIcon/>} borderRadius={'50px'}
+                                                backgroundColor={'#2A6FFF'} color={'#FFFFFF'} as={Button}
+                                                boxShadow={'0 0 3px 0 rgba(38, 109, 240, 0.12)'} padding={'4px 4px 4px 8px'}
+                                                fontSize={'12px'} fontWeight={500} h={'fit-content'}>Add to Project <span className={styles.RightContent}>⌘P</span></MenuButton>
+                                    <MenuList className={`${styles.addToProjectList} drop-down-list`}>
+
+                                        <div className={'dropdown-searchbar'}>
+                                            <InputGroup>
+                                                <InputLeftElement h={'27px'} pointerEvents='none'>
+                                                    <SearchIcon/>
+                                                </InputLeftElement>
+                                                <Input placeholder='Search project' />
+                                            </InputGroup>
+                                        </div>
+
+                                        {projects && !!projects.length && (projects || []).map((item: Project, index: number) => (
+                                            <MenuItem gap={2} key={index}>
+                                                <DisneyIcon/> {item.name}
+                                            </MenuItem>
+
+                                        ))}
+
+                                        <div className={styles.addNewProject}>
+                                            <Button backgroundColor={'transparent'} w={'100%'} borderRadius={0}
+                                                    justifyContent={'flex-start'} onClick={onOpenProject}>
+                                                <div className={styles.plusIcon}>
+                                                    <SmallAddIcon/>
+                                                </div>
+                                                Create New Project
+                                            </Button>
+                                        </div>
+                                    </MenuList>
+                                </Menu>
                             </Flex>
                             <Box flex={'1'} p={5}>
                                 <Flex direction={"column"} border={'1px solid #F3F4F6'} borderRadius={8} h={'100%'} padding={'16px'} gap={4}>
@@ -404,22 +443,22 @@ export function ComposeBox(props: BillingTypes) {
                                                             <MenuItem onClick={() => openCalender()}> Send Later </MenuItem>
                                                         </MenuList>
                                                     </Menu>
-                                                    {/*<Modal isOpen={isOpen} onClose={onClose} isCentered={true} scrollBehavior={'outside'}>*/}
-                                                    {/*    <ModalOverlay/>*/}
-                                                    {/*    <ModalContent minHeight="440px">*/}
-                                                    {/*        <ModalHeader display="flex" justifyContent="space-between" alignItems="center">*/}
-                                                    {/*            Schedule send*/}
-                                                    {/*        </ModalHeader>*/}
-                                                    {/*        <ModalCloseButton size={'xs'}/>*/}
-                                                    {/*        <ModalBody>*/}
-                                                    {/*            <SingleDatepicker name="date-input" />*/}
-                                                    {/*        </ModalBody>*/}
-                                                    {/*        <ModalFooter>*/}
-                                                    {/*            <Button variant='ghost' onClick={onClose}>Cancel</Button>*/}
-                                                    {/*            <Button colorScheme='blue' mr={3}> Schedule </Button>*/}
-                                                    {/*        </ModalFooter>*/}
-                                                    {/*    </ModalContent>*/}
-                                                    {/*</Modal>*/}
+                                                    <Modal isOpen={isOpen} onClose={onClose} isCentered={true} scrollBehavior={'outside'}>
+                                                        <ModalOverlay/>
+                                                        <ModalContent minHeight="440px">
+                                                            <ModalHeader display="flex" justifyContent="space-between" alignItems="center">
+                                                                Schedule send
+                                                            </ModalHeader>
+                                                            <ModalCloseButton size={'xs'}/>
+                                                            <ModalBody>
+                                                                <SingleDatepicker name="date-input" />
+                                                            </ModalBody>
+                                                            <ModalFooter>
+                                                                <Button variant='ghost' onClick={onClose}>Cancel</Button>
+                                                                <Button colorScheme='blue' mr={3} onClick={() => sendMessages(true)}> Schedule </Button>
+                                                            </ModalFooter>
+                                                        </ModalContent>
+                                                    </Modal>
                                                 </Flex>
                                             </Flex>
                                         </Flex>
@@ -464,6 +503,8 @@ export function ComposeBox(props: BillingTypes) {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
+
+            <CreateNewProject onOpen={onOpenProject} isOpen={isOpenProject} onClose={onCloseProject}/>
 
         </>
     )

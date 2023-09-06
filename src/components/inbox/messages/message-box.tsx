@@ -2,7 +2,7 @@ import styles from "@/styles/Inbox.module.css";
 import {Button, Flex, Heading, Menu, MenuButton, MenuItem, MenuList, Text} from "@chakra-ui/react";
 import {Time} from "@/components/common";
 import {DownloadIcon, MenuIcon} from "@/icons";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {getAttachmentDownloadUrl, updateMessage} from "@/redux/messages/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import Image from "next/image";
@@ -17,7 +17,6 @@ export function MessageBox(props: any) {
     const {
         selectedMessage
     } = useSelector((state: StateType) => state.messages);
-    const [hideAndShowReplyBox, setHideAndShowReplyBox] = useState<boolean>(false);
     const [replyType, setReplyType] = useState<string>('');
     const [isReplyBoxShow, setIsReplayBoxShow] = useState<boolean>(false);
 
@@ -32,6 +31,7 @@ export function MessageBox(props: any) {
     }
     const setNewCass = () => {
         setIsShowClass(!isShowClass);
+        setIsReplayBoxShow(false);
     }
 
     const downloadImage = (item: MessageAttachments) => {
@@ -46,6 +46,7 @@ export function MessageBox(props: any) {
         // setHideAndShowReplyBox(!hideAndShowReplyBox);
         setIsReplayBoxShow(true);
     }
+
 
     return (
         <>
@@ -127,7 +128,10 @@ export function MessageBox(props: any) {
                     {/*<Text fontSize='md' color={'#0A101D'} lineHeight={'1.5'} letterSpacing={'-0.16px'}>Lee, we’re gearing up to launch the next Toy Story.  Can you spin up a team to start thinking about the entire launch execution, especially getting the launch to spread via organic social (TikTok)? </Text>*/}
                     {(!props.isLoading && props.emailPart) &&
                     <div className={styles.mailBodyContent}>
-                        <iframe src={props.emailPart} className={styles.mailBody}/>
+                        <iframe
+                            src={props.emailPart}
+                            className={styles.mailBody}
+                        />
                     </div>}
                     {props.messageAttachments && !!props.messageAttachments.length && props.messageAttachments?.map((item: MessageAttachments, i) => (
                         <div className={styles.mailBodyAttachments} key={i}>
@@ -144,7 +148,8 @@ export function MessageBox(props: any) {
                 }
             </Flex>
 
-            {isReplyBoxShow && <MessageReplyBox />}
+            {isReplyBoxShow && <MessageReplyBox emailPart={(props.emailPart || '')} messageData={props.threadDetails}
+                                                receipentEmail={props.threadDetails.to} replyType={replyType}/>}
         </>
     )
 }

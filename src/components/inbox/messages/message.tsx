@@ -68,7 +68,6 @@ export function Message() {
             let data = [...selectedThread.messages]
             data.length = data.length - 1
             setThreadData([...data])
-            console.log('selectedThread.messages[selectedThread.messages.length - 1]', selectedThread.messages[selectedThread.messages.length - 1])
             setThreadDetails(selectedThread.messages[selectedThread.messages.length - 1])
         }
         if (selectedThread && selectedThread?.id) {
@@ -77,10 +76,6 @@ export function Message() {
             dispatch(updateMessageState({messages: selectedThread.messages}));
         }
     }, [dispatch, selectedThread])
-
-    useEffect(() => {
-        console.log('threadDetails', threadDetails)
-    }, [threadDetails])
 
     useEffect(() => {
         if (messages && messages.length > 0) {
@@ -263,10 +258,13 @@ export function Message() {
                     <Flex padding={'20px'} gap={5} direction={'column'} flex={1} maxHeight={'calc(708px - 57px)'} overflow={'auto'}>
                         <Flex gap={2} direction={'column'}>
                             {threadData  && !!threadData.length && threadData.map((item: any, index: number) => (
-                                <MessageBox item={item} index={index} threadDetails={threadDetails}
-                                            isLoading={isLoading} emailPart={emailPart}
-                                            messageAttachments={messageAttachments}
-                                />
+                                <div key={index}>
+                                    <MessageBox item={item} index={index} threadDetails={item}
+                                                isLoading={isLoading} emailPart={emailPart}
+                                                messageAttachments={messageAttachments}
+                                    />
+                                </div>
+
                             ))}
 
                             {threadDetails && <Flex direction={'column'} className={`${styles.oldMail} ${styles.lastOenMail}`} gap={4} padding={4} border={'1px solid #E5E7EB'} borderRadius={12} align={'center'}>
@@ -345,7 +343,9 @@ export function Message() {
 
                             </Flex>}
 
-                            {isReplyBoxShow && <MessageReplyBox />}
+                            {isReplyBoxShow && <MessageReplyBox
+                                emailPart={(messagePart?.data || '')} messageData={threadDetails}
+                                receipentEmail={threadDetails.to} replyType={replyType}/>}
                         </Flex>
                     </Flex>
 
