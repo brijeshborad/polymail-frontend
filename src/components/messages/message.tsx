@@ -193,7 +193,7 @@ export function Message() {
     }
 
     return (
-        <Box className={styles.mailBox} height={'708px'}>
+        <Box className={styles.mailBox} height={'calc(100vh - 180px)'}>
             {!selectedThread && !isCompose &&
             <Flex justifyContent={'center'} alignItems={'center'} flexDir={'column'}
                   height={'100%'}>
@@ -206,7 +206,7 @@ export function Message() {
                     <MessagesHeader inboxMessages={inboxMessages} index={index} closeCompose={closeCompose}
                                     showPreNextMessage={showPreNextMessage} herderType={'inbox'}/>
 
-                    <Flex padding={'20px'} gap={5} direction={'column'} flex={1} maxHeight={'calc(708px - 57px)'} overflow={'auto'}>
+                    <Flex padding={'20px'} gap={5} direction={'column'} flex={1} overflow={'auto'}>
                         <Flex gap={2} direction={'column'} height={'100%'}>
                             {threadData  && !!threadData.length && threadData.map((item: any, index: number) => (
                                 <div key={index}>

@@ -161,7 +161,7 @@
 }
 
 .mailList {
-    max-height: calc(100vh - 278px);
+    max-height: calc(100vh - 290px);
     overflow-y: auto;
 }
 
