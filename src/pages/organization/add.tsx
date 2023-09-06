@@ -9,7 +9,7 @@ import styles from "@/styles/Organization.module.css";
 import {addOrganization} from "@/redux/organizations/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import Router from "next/router";
-import withAuth from "@/components/withAuth";
+import withAuth from "@/components/auth/withAuth";
 import {Toaster} from "@/components/common";
 
 

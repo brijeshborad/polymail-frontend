@@ -1,10 +1,8 @@
 import Image from "next/image";
 import {
     Badge,
-    Box,
     Button,
     createStandaloneToast,
-    Divider,
     Flex,
     Input,
     InputGroup,
@@ -14,7 +12,6 @@ import {
     MenuButton,
     MenuItem,
     MenuList,
-    Text,
 } from "@chakra-ui/react";
 import {CheckIcon, ChevronDownIcon, SearchIcon} from "@chakra-ui/icons";
 import {EnergyIcon, FolderIcon, MailIcon} from "@/icons";
@@ -33,6 +30,7 @@ import {getProfilePicture, updateUsersDetailsSuccess} from "@/redux/users/action
 import {googleAuthLink} from "@/redux/auth/action-reducer";
 import {updateLastMessage} from "@/redux/socket/action-reducer";
 import {updateMessageState} from "@/redux/messages/action-reducer";
+import {Toaster} from "@/components/common";
 
 export function Header() {
     const dispatch = useDispatch();
@@ -73,31 +71,14 @@ export function Header() {
     }, [user]);
 
     const reAuthToast = useCallback((email: string) => {
-        if (toast.isActive('re-auth-account')) {
-            return;
-        }
-        toast({
-            id: 're-auth-account',
-            isClosable: true,
-            duration: null,
-            render: () => (
-                <Box display={'flex'} alignItems={'center'} color='white' p={3} bg='#000'
-                     borderRadius={'10px'} fontSize={'14px'} padding={'13px 25px'}>
-                    <div>
-                        Seems like your session has been expired for <Text as={"span"}
-                                                                           color={"blue.400"}>{email}</Text>!
-                    </div>
-                    <Button onClick={() => connectGoogleAccount('authenticate')} ml={1} mr={2} variant="link"
-                            color={"blue.300"} padding={'7px 15px'}>Re-Authenticate</Button>
+        Toaster({
+            title: "Please reauthenticate your account.",
+            desc: `Your session has expired for ${email}.`,
+            type: "reauth",
+        });
 
-                    <Divider height={"20px"} orientation='vertical'/>
+        Router.push('/settings/email-address')
 
-                    <Button onClick={() => toast.close('re-auth-account')} ml={2} variant="link"
-                            color={"blue.100"} size={"sm"} padding={'7px 5px'}>Close</Button>
-                </Box>
-            ),
-            position: 'top-right'
-        } as any);
     }, [connectGoogleAccount, toast])
 
     useEffect(() => {

@@ -7,7 +7,7 @@ import {StateType} from "@/types";
 import {RichTextEditor, Toaster} from "@/components/common";
 import {updateAccountDetails, updateAccountState} from "@/redux/accounts/action-reducer";
 import Index from "@/pages/settings/index";
-import withAuth from "@/components/withAuth";
+import withAuth from "@/components/auth/withAuth";
 
 function Signature() {
 

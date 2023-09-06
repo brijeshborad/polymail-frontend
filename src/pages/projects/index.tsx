@@ -1,5 +1,5 @@
 import React, {ChangeEvent, useEffect, useState} from "react";
-import withAuth from "@/components/withAuth";
+import withAuth from "@/components/auth/withAuth";
 import {
     Badge,
     Button,
@@ -13,13 +13,11 @@ import Image from "next/image";
 import {BlueStarIcon, DragIcon, LockIcon, StarIcon} from "@/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {
-    getAllProjects, updateProject
-} from "@/redux/projects/action-reducer";
+import {updateProject} from "@/redux/projects/action-reducer";
 import Router, {useRouter} from "next/router";
 import {Project} from "@/models";
 import {SpinnerUI} from "@/components/common";
-import CreateNewProject from "@/components/project/create-new-project";
+import CreateNewProjectModal from "@/components/project/create-new-project";
 
 
 function Index() {
@@ -31,11 +29,6 @@ function Index() {
     // const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     // const {selectedOrganization} = useSelector((state: StateType) => state.organizations);
     // const [projectName, setProjectName] = useState<string>('');
-
-    useEffect(() => {
-        dispatch(getAllProjects());
-
-    }, [dispatch])
 
     const [itemList, setItemList] = useState<Project[]>([]);
 
@@ -121,7 +114,7 @@ function Index() {
                         backgroundColor={'rgba(8, 22, 47, 0.04)'} fontSize={'14px'} color={'#08162F'}
                         padding={'3px 6px'}>{itemList && itemList.length}</Badge></Heading>
                     <Button className={styles.createProjectButton} color={'#ffffff'} backgroundColor={'#000000'}
-                            onClick={onOpen}
+                            onClick={() => { Router.replace('/projects/create-project'); onOpen() }}
                             h={'auto'} borderRadius={'8px'} fontSize={'14px'} fontWeight={'500'} padding={'10px 20px'}>Create
                         Project</Button>
                 </Flex>
@@ -195,7 +188,7 @@ function Index() {
                 </Flex>
             </Flex>
 
-            <CreateNewProject onOpen={onOpen} isOpen={isOpen} onClose={onClose}/>
+            <CreateNewProjectModal onOpen={onOpen} isOpen={isOpen} onClose={onClose}/>
         </>
     )
 }

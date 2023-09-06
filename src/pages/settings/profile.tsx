@@ -20,7 +20,7 @@ import {
 } from "@/redux/users/action-reducer";
 import {Account, UserDetails} from "@/models";
 import Index from "@/pages/settings/index";
-import withAuth from "@/components/withAuth";
+import withAuth from "@/components/auth/withAuth";
 import {EditIcon, ViewIcon, ViewOffIcon} from "@chakra-ui/icons";
 import {updateAccountState} from "@/redux/accounts/action-reducer";
 import LocalStorageService from "@/utils/localstorage.service";

@@ -19,9 +19,9 @@ import {
     updateMessageState
 } from "@/redux/messages/action-reducer";
 import {Message as MessageModel, MessageDraft, MessagePart, MessageAttachments} from "@/models";
-import {MessagesHeader} from "@/components/inbox/messages/messages-header";
+import {MessagesHeader} from "@/components/messages/messages-header";
 import {updateDraftState} from "@/redux/draft/action-reducer";
-import {ProjectReplyBox} from "@/components/project/project-reply-box";
+import {ReplyBox} from "@/components/common/reply-box";
 
 export function ProjectMessage() {
     const [messageContent, setMessageContent] = useState<MessageModel>();
@@ -254,7 +254,7 @@ export function ProjectMessage() {
                             </Flex>
                         </div>
 
-                        <ProjectReplyBox replyType={replyType} emailPart={(messagePart?.data || '')} onClose={closeCompose}/>
+                        <ReplyBox replyType={replyType} emailPart={(messagePart?.data || '')} onClose={closeCompose}/>
                     </Flex>
                 </div>}
             </Flex>
@@ -274,7 +274,7 @@ export function ProjectMessage() {
                         </Flex>
                     </div>
 
-                    <ProjectReplyBox onClose={closeCompose}/>
+                    <ReplyBox onClose={closeCompose}/>
                 </Flex>
             </div>}
         </Box>

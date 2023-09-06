@@ -17,7 +17,7 @@ import {
 import React, {ChangeEvent, useEffect, useState} from "react";
 import Index from "@/pages/settings/index";
 import {MenuIcon, TextIcon} from "@/icons";
-import withAuth from "@/components/withAuth";
+import withAuth from "@/components/auth/withAuth";
 import {getOrganizationMembers, updateOrganizationMemberRole} from "@/redux/organizations/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";

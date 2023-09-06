@@ -20,7 +20,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {getAllThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 import {Message, Thread} from "@/models";
-import {InboxTab} from "@/components/inbox";
+import {ThreadsSideBarTab} from "@/components/threads";
 import {updateDraftState} from "@/redux/draft/action-reducer";
 import {updateLastMessage} from "@/redux/socket/action-reducer";
 import {TriangleDownIcon} from "@chakra-ui/icons";
@@ -30,7 +30,7 @@ import {ComposeBox} from "@/components/inbox/compose-box";
 let cacheThreads: { [key: string]: Thread[] } = {};
 let currentCacheTab = 'INBOX';
 
-export function Threads() {
+export function ThreadsSideBar() {
     const [tab, setTab] = useState<string>('INBOX');
     const [countUnreadMessages, setCountUnreadMessages] = useState<number>(0);
 
@@ -290,7 +290,7 @@ export function Threads() {
                     </Flex>
 
                     <TabPanels marginTop={5}>
-                        <InboxTab tab={tab} showLoader={isLoading}/>
+                        <ThreadsSideBarTab tab={tab} showLoader={isLoading}/>
                     </TabPanels>
                 </Tabs>
             </Flex>
