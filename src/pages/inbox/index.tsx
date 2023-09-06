@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import {Message} from "@/components/inbox";
 import {ThreadsSideBar} from "@/components/threads";
 import styles from "@/styles/Home.module.css";
 import {Grid, GridItem,} from "@chakra-ui/react";
@@ -8,6 +7,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {Project, User} from "@/models";
 import {InboxHeaderProjectsList} from "@/components/project/inbox-header-projects-list";
+import {Message} from "@/components/messages";
 import {getAllProjects} from "@/redux/projects/action-reducer";
 
 function InboxPage() {
