@@ -384,7 +384,7 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
 
     return (
         <Flex maxHeight={'450px'} direction={'column'} padding={4} mt={'auto'} gap={4} borderRadius={8}
-              border={'1px solid #F3F4F6'} backgroundColor={'#FFFFFF'} maxH={'450px'}
+              border={'1px solid #F3F4F6'} backgroundColor={'#FFFFFF'} maxH={'450px'} width={'100%'} position={'sticky'} bottom={0}
               onFocus={() => handleFocus()}
               onBlur={() => handleBlur()}>
             <Flex align={'center'} justify={'space-between'} gap={4} pb={4}

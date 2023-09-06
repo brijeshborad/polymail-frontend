@@ -207,7 +207,7 @@ export function Message() {
                                     showPreNextMessage={showPreNextMessage} herderType={'inbox'}/>
 
                     <Flex padding={'20px'} gap={5} direction={'column'} flex={1} maxHeight={'calc(708px - 57px)'} overflow={'auto'}>
-                        <Flex gap={2} direction={'column'}>
+                        <Flex gap={2} direction={'column'} height={'100%'}>
                             {threadData  && !!threadData.length && threadData.map((item: any, index: number) => (
                                 <div key={index}>
                                     <MessageBox item={item} index={index} threadDetails={item}
