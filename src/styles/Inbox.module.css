@@ -811,9 +811,8 @@
     margin: 0;
 }
 
-.mailBox .oldMail.lastOenMail {
-    background-color: #F9FAFB;
-    border-color: #F9FAFB;
+.mailBox .oldMail.lastOneMail {
+    border-color: #b4b4b4;
 }
 
 .memberImages .memberPhoto img,

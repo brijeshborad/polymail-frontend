@@ -371,13 +371,12 @@
 }
 
 .mailBox .oldMail:hover .menuIcon,
-.mailBox .oldMail.lastOenMail .menuIcon {
+.mailBox .oldMail.lastOneMail .menuIcon {
     opacity: 1;
 }
 
-.mailBox .oldMail.lastOenMail {
-    background-color: #F9FAFB;
-    border-color: #F9FAFB;
+.mailBox .oldMail.lastOneMail {
+    border-color: #b4b4b4;
 }
 
 .mailBox .createNewDraft:hover {

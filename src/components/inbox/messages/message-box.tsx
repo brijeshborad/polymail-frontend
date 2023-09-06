@@ -38,7 +38,7 @@ export function MessageBox(props: any) {
 
     return (
         <>
-            <Flex position={'relative'} direction={'column'} className={`${styles.oldMail} ${isShowClass ? styles.lastOenMail : ''}`} mb={3} gap={4} border={'1px solid #E5E7EB'} borderRadius={12} align={'center'} key={props.index}>
+            <Flex position={'relative'} direction={'column'} className={`${styles.oldMail} ${isShowClass ? styles.lastOneMail : ''}`} mb={3} gap={4} border={'1px solid #E5E7EB'} borderRadius={12} align={'center'} key={props.index}>
                 {!isShowClass &&  <Flex align={'center'} w={'100%'} gap={2} cursor={'pointer'} padding={4} onClick={() => setNewClass()}>
                     <div className={styles.mailBoxUserImage}>
 
