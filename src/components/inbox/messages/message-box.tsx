@@ -142,8 +142,8 @@ export function MessageBox(props: any) {
                 }
             </Flex>
 
-            {isShowClass && <MessageReplyBox emailPart={(props.emailPart || '')} messageData={props.threadDetails}
-                                                replyType={replyType}/>}
+            {/*{isShowClass && <MessageReplyBox emailPart={(props.emailPart || '')} messageData={props.threadDetails}*/}
+            {/*                                    replyType={replyType}/>}*/}
         </>
     )
 }
