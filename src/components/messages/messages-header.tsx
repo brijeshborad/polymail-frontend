@@ -236,21 +236,6 @@ export function MessagesHeader({
                             <TimeSnoozeIcon/>
                         </div>
                     </Tooltip>
-                    <div>
-                        <Menu>
-                            <MenuButton className={styles.menuIcon} backgroundColor={'transparent'} h={'auto'}
-                                        minWidth={'auto'} padding={'0'} as={Button} rightIcon={<MenuIcon/>}>
-                            </MenuButton>
-                            <MenuList className={'drop-down-list'}>
-                                {selectedMessage && (
-                                    <MenuItem
-                                        onClick={() => setScope(selectedMessage.scope === 'visible' ? 'hidden' : 'visible')}>
-                                        {selectedMessage.scope === 'visible' ? 'Hide from project members' : 'Show to project members'}
-                                    </MenuItem>
-                                )}
-                            </MenuList>
-                        </Menu>
-                    </div>
                 </Flex>
             </Flex>
         </>
