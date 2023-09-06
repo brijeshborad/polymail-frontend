@@ -1,4 +1,4 @@
-export declare type InboxTabProps = {
+export declare type TabProps = {
     tab: string,
     showLoader: boolean | undefined
 }

@@ -20,7 +20,7 @@ import {
 } from "@/redux/messages/action-reducer";
 import {ReplyBox} from "@/components/inbox/reply-box";
 import {Message as MessageModel, MessageDraft, MessagePart, MessageAttachments} from "@/models";
-import {MessagesHeader} from "@/components/inbox/messages/messages-header";
+import {MessagesHeader} from "@/components/messages/messages-header";
 import {updateDraftState} from "@/redux/draft/action-reducer";
 
 export function Message() {

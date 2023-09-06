@@ -25,14 +25,13 @@ import {useRouter} from "next/router";
 import {StateType} from "@/types";
 import {ChevronDownIcon} from "@chakra-ui/icons";
 import styles from "@/styles/project.module.css";
-import {ProjectThreads} from "@/components/project";
+import {ThreadsSideBar} from "@/components/threads";
 import {
     getProjectById,
     getProjectMembers,
     getProjectMembersInvites,
     updateProjectMemberRole
 } from "@/redux/projects/action-reducer";
-import {getAllThreads} from "@/redux/threads/action-reducer";
 import {ProjectMessage} from "@/components/project/project-message";
 import {
     addItemToGroup,
@@ -41,6 +40,7 @@ import {
 import {Project} from "@/models";
 import {PROJECT_ROLES} from "@/utils/constants";
 import {isEmail} from "@/utils/common.functions";
+import {getAllThreads} from "@/redux/threads/action-reducer";
 
 function ProjectInbox() {
     const {isOpen, onOpen, onClose} = useDisclosure();
@@ -69,7 +69,7 @@ function ProjectInbox() {
             dispatch(getProjectMembersInvites({projectId: projectId}));
             dispatch(getAllThreads({project: projectId, enriched: true, resetState: true}));
         }
-    }, [dispatch, router.query.project])
+    }, [router.query.project, dispatch])
 
     useEffect(() => {
         if (membershipSuccess) {
@@ -160,7 +160,7 @@ function ProjectInbox() {
 
                 <Grid className={styles.mailGrid} templateColumns='30% auto' paddingTop={8} gap={6} flex={1}>
                     {((size < 991 && !selectedThread) || size > 991) &&
-                    <ProjectThreads/>
+                    <ThreadsSideBar />
                     }
                     <GridItem w='100%' flex={1}>
                         {((size < 991 && selectedThread) || size > 991) && <ProjectMessage/>}

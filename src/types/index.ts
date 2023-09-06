@@ -29,9 +29,11 @@ export * from './draft/draft-state.type';
 export * from './props-types/profile-button-props.type';
 export * from './props-types/time.type';
 export * from './props-types/chip.type';
-export * from './props-types/inbox-page.type';
+export * from './props-types/tab.type';
 export * from './props-types/login.type';
 export * from './props-types/rich-text-editor-props.type';
 export * from './props-types/message-header.types';
 export * from './props-types/billing-type';
+export * from './props-types/ThreadListProps';
+export * from './props-types/ThreadListItemProps';
 

@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
-import {Message, Threads} from "@/components/inbox";
+import {Message} from "@/components/inbox";
+import {ThreadsSideBar} from "@/components/threads";
 import styles from "@/styles/Home.module.css";
 import {Grid, GridItem,} from "@chakra-ui/react";
 import withAuth from "@/components/withAuth";
@@ -16,11 +17,11 @@ function Inbox() {
     const {selectedThread} = useSelector((state: StateType) => state.threads);
     const {projects} = useSelector((state: StateType) => state.projects);
     const [projectData, setProjectData] = useState<Project[]>([]);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         setUserData(user);
     }, [user]);
-    const dispatch = useDispatch();
 
     useEffect(() => {
         dispatch(getAllProjects());
@@ -60,7 +61,7 @@ function Inbox() {
                 <Grid className={styles.mailGrid} templateColumns='30% auto' gap={6} height={'100%'}>
                     <GridItem w='100%'>
                         {((size < 991 && !selectedThread) || size > 991) &&
-                        <Threads/>}
+                        <ThreadsSideBar/>}
                     </GridItem>
                     <GridItem w='100%'>
                         {((size < 991 && selectedThread) || size > 991) && <Message/>}
