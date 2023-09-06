@@ -218,7 +218,13 @@ export function Header() {
     }
 
     const changePage = (page: string) => {
-        dispatch(updateThreadState({threads: [], success: false, updateSuccess: false, tabValue: 'reset', selectedThread: null}));
+        dispatch(updateThreadState({
+            threads: [],
+            success: false,
+            updateSuccess: false,
+            tabValue: 'reset',
+            selectedThread: null
+        }));
         dispatch(updateMessageState({selectedMessage: null}));
         Router.push(`/${page}`)
     }
@@ -300,7 +306,8 @@ export function Header() {
                     </MenuButton>
                     <MenuList className={'drop-down-list'}>
                         {accounts && !!accounts.length && accounts?.map((acc, i) => (
-                            <MenuItem justifyContent={'space-between'} gap={1} w='100%' key={i + 1} onClick={() => setAccounts(acc)}>
+                            <MenuItem justifyContent={'space-between'} gap={1} w='100%' key={i + 1}
+                                      onClick={() => setAccounts(acc)}>
                                 {acc.email} {selectedAccount?.email === acc.email && (
                                 <CheckIcon ml={8} bg={"green"} p={1} borderRadius={50} w={4} h={4} color={"white"}/>
                             )}
