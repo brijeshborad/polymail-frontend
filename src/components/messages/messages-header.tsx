@@ -30,7 +30,7 @@ import {addItemToGroup} from "@/redux/memberships/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType, MessageHeaderTypes} from "@/types";
 import {getAllProjects} from "@/redux/projects/action-reducer";
-import {updateMessage, updateMessageState} from "@/redux/messages/action-reducer";
+import {updateMessageState} from "@/redux/messages/action-reducer";
 import {Toaster} from "@/components/common";
 
 export function MessagesHeader({
@@ -39,7 +39,6 @@ export function MessagesHeader({
                                    herderType
                                }: MessageHeaderTypes) {
     const {selectedThread, threads, updateSuccess} = useSelector((state: StateType) => state.threads);
-    const {selectedMessage} = useSelector((state: StateType) => state.messages);
     let {projects} = useSelector((state: StateType) => state.projects);
 
     const dispatch = useDispatch();
