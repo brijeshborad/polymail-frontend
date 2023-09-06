@@ -21,7 +21,6 @@ import {
     TimeSnoozeIcon,
     TrashIcon,
     DisneyIcon,
-    MenuIcon,
     InboxIcon
 } from "@/icons";
 import React, {useCallback, useEffect, useState} from "react";
@@ -136,16 +135,6 @@ export function MessagesHeader({
                 })
             }
         }
-    }
-
-    const setScope = (type: string) => {
-        if (selectedMessage && selectedMessage.id) {
-            let body = {
-                scope: type
-            }
-            dispatch(updateMessage({id: selectedMessage.id, body}))
-        }
-
     }
 
     const addThreadToProject = useCallback((item: Project) => {
