@@ -8,13 +8,13 @@ import {
     ModalContent, ModalFooter,
     ModalHeader,
     ModalOverlay,
-    Text, Textarea, useDisclosure
+    Text, useDisclosure
 } from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
 import {DisneyIcon, FileIcon, FolderIcon, LinkIcon, TextIcon} from "@/icons";
 import {ChevronDownIcon, CloseIcon, SearchIcon, SmallAddIcon} from "@chakra-ui/icons";
 import React, {ChangeEvent, ChangeEventHandler, useEffect, useRef, useState} from "react";
-import {BillingTypes, StateType} from "@/types";
+import {StateType} from "@/types";
 import {debounce, isEmail} from "@/utils/common.functions";
 import {Chip, RichTextEditor, Toaster} from "@/components/common";
 import {createDraft, sendMessage, updateDraftState, updatePartialMessage} from "@/redux/draft/action-reducer";
