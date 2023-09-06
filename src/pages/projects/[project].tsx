@@ -32,7 +32,6 @@ import {
     getProjectMembersInvites,
     updateProjectMemberRole
 } from "@/redux/projects/action-reducer";
-import {ProjectMessage} from "@/components/project/project-message";
 import {
     addItemToGroup,
     updateMembershipState
