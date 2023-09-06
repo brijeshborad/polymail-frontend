@@ -51,7 +51,7 @@ export function MessageBox(props: any) {
                                 <Time time={props?.item.created || ''} isShowFullTime={true}/>
                             </div>
                         </Flex>
-                        <Text fontSize='13px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1} fontWeight={400}>{props?.item.snippet}</Text>
+                        <Text fontSize='13px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1} fontWeight={400}>{props?.item.snippet || '(no content)'}</Text>
                     </Flex>
                 </Flex> }
 
