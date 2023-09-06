@@ -16,18 +16,14 @@ import {
     ChevronDownIcon,
     ChevronUpIcon,
     CloseIcon,
-    WarningIcon,
     SearchIcon,
     SmallAddIcon,
 } from "@chakra-ui/icons";
 import {
     ArchiveIcon,
-    BlueStarIcon,
     FolderIcon,
-    StarIcon,
     TimeSnoozeIcon,
     TrashIcon,
-    EnvelopeIcon,
     DisneyIcon,
     MenuIcon,
     InboxIcon
@@ -268,6 +264,7 @@ export function MessagesHeader({
                             </div>
                         </Tooltip>
 
+                        {/*
                         <Tooltip label='Mark as unread' placement='bottom' bg='gray.300' color='black'>
                             <div className={styles.envelopeIcon} onClick={() => updateMailBox('UNREAD')}>
                                 <EnvelopeIcon/>
@@ -290,6 +287,7 @@ export function MessagesHeader({
                                 <WarningIcon className={styles.colorGray}/>
                             </div>
                         </Tooltip>
+                        */}
 
                         <div>
                             <Menu>

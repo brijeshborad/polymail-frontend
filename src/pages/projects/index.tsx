@@ -13,9 +13,7 @@ import Image from "next/image";
 import {BlueStarIcon, DragIcon, LockIcon, StarIcon} from "@/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {
-    getAllProjects, updateProject
-} from "@/redux/projects/action-reducer";
+import {updateProject} from "@/redux/projects/action-reducer";
 import Router, {useRouter} from "next/router";
 import {Project} from "@/models";
 import {SpinnerUI} from "@/components/common";
@@ -31,11 +29,6 @@ function Index() {
     // const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     // const {selectedOrganization} = useSelector((state: StateType) => state.organizations);
     // const [projectName, setProjectName] = useState<string>('');
-
-    useEffect(() => {
-        dispatch(getAllProjects());
-
-    }, [dispatch])
 
     const [itemList, setItemList] = useState<Project[]>([]);
 
