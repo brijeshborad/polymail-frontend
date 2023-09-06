@@ -485,7 +485,7 @@ ${selectedMessage?.cc ? 'Cc: ' + (selectedMessage?.cc || []).join(',') : ''}</p>
                     {hideShowCCBccFields.cc && <Flex justifyContent={'space-between'} gap={1} padding={'8px 10px'}
                                                      borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>
                         <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>
-                            <Heading as={'h1'} size={'sm'} paddingTop={1} marginRight={1}>CC:</Heading>
+                            <Heading as={'h1'} size={'sm'} paddingTop={1} marginRight={1}>Cc:</Heading>
                             <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
                                 {!!emailRecipients?.cc?.items?.length && emailRecipients.cc.items.map((item: string | undefined, i: number) => (
                                     <Chip text={item} key={i} click={() => handleItemDelete(item!, 'cc')}/>
@@ -508,7 +508,7 @@ ${selectedMessage?.cc ? 'Cc: ' + (selectedMessage?.cc || []).join(',') : ''}</p>
                     {hideShowCCBccFields.bcc && <Flex justifyContent={'space-between'} padding={'8px 10px'}
                                                       borderBottom={'1px solid rgba(0, 0, 0, 0.2)'}>
                         <Flex width={'100%'} gap={1} className={styles.replyBoxCC}>
-                            <Heading as={'h1'} size={'sm'} paddingTop={1} marginRight={1}>BCC:</Heading>
+                            <Heading as={'h1'} size={'sm'} paddingTop={1} marginRight={1}>Bcc:</Heading>
                             <Flex alignItems={'center'} gap={1} wrap={'wrap'} width={'100%'}>
                                 {!!emailRecipients?.bcc?.items?.length && emailRecipients.bcc.items.map((item: string | undefined, i: number) => (
                                     <Chip text={item} key={i} click={() => handleItemDelete(item!, 'bcc')}/>
