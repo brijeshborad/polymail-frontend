@@ -151,6 +151,8 @@ function Draft() {
                                 <Text fontSize='md' color={'#0A101D'} lineHeight={'1.5'} letterSpacing={'-0.16px'}>Lee, we’re gearing up to launch the next Toy Story.  Can you spin up a team to start thinking about the entire launch execution, especially getting the launch to spread via organic social (TikTok)? </Text>
                             </Flex>
                         </Flex>
+
+
                         <Flex maxHeight={'450px'} direction={'column'} padding={4} mt={'auto'} gap={4} borderRadius={8} border={'1px solid #F3F4F6'} backgroundColor={'#FFFFFF'}>
                             <Flex align={'center'} justify={'space-between'} gap={4} pb={4} borderBottom={'1px solid #F3F4F6'}>
                                 <Flex gap={1} align={'center'}>

@@ -298,3 +298,17 @@ div:has(> .mailSendToaster) {
   background-color: #0A101D;
   display: inline-block;
 }
+
+.reply-message-area.rdw-editor-wrapper {
+    flex: 1;
+}
+
+.reply-message-area.rdw-editor-wrapper .rdw-editor-main {
+    max-height: 100%;
+}
+
+.reply-message-area.rdw-editor-wrapper .rdw-editor-toolbar {
+    padding: 0;
+    bottom: -10px;
+    left: 77px;
+}

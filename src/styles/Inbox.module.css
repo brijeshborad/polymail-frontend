@@ -248,6 +248,7 @@
     border: 1px solid rgba(8, 22, 47, 0.16);
     border-radius: 16px;
     height: 100%;
+    background-color: white;
 }
 
 .mailBox svg {
@@ -264,9 +265,8 @@
 }
 
 .mailBox .mailBodyContent {
-    padding: 15px;
-    flex: 1;
-    background: rgba(0, 0, 0, 0.03);
+   width: 100%;
+    padding: 0 16px;
 }
 
 .mailBox .mailBodyContent.projectMailBodyContent {
@@ -274,6 +274,7 @@
 }
 
 .mailBox .mailBodyAttachments {
+    width: 100%;
     padding: 15px;
     background: rgba(0, 0, 0, 0.03);
 }
@@ -802,3 +803,188 @@
     height: 16px;
     margin: 0;
 }
+
+.mailBox .oldMail.lastOenMail {
+    background-color: #F9FAFB;
+    border-color: #F9FAFB;
+}
+
+.memberImages .memberPhoto img,
+.mailBox .mailUserImage img,
+.mailBox .mailBoxUserImage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.memberImages .memberPhoto {
+    min-width: 24px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: #EBF2FF;
+    border: 1px solid #FFFFFF;
+}
+
+.memberImages .memberPhoto.smallMemberImage {
+    min-width: 20px;
+    width: 20px;
+    height: 20px;
+}
+
+.memberImages .memberPhoto + .memberPhoto {
+    margin-left: -12px;
+}
+
+.mailBox .mailBoxUserImage {
+    min-width: 32px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #000000;
+    overflow: hidden;
+}
+
+.mailBox .menuIcon[data-active],
+.mailBox .menuIcon:hover {
+    background-color: transparent;
+}
+
+.mailBox .menuIcon span {
+    margin: 0;
+    display: none;
+}
+
+.mailBox .menuIcon span + span {
+    display: inline-block;
+}
+
+.mailBox .menuIcon svg {
+    margin: 0;
+    width: 1em;
+    height: 1em;
+    fill: #5D5F62;
+}
+
+.mailBox .mailBoxTime p {
+   font-weight: 400;
+    color: #6B7280;
+    font-size: 11px;
+    line-height: 1;
+}
+
+.mailBox .createNewDraft:hover {
+    background-color: #F3F4F6;
+}
+
+.mailBox .mailUserImage {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    background-color: #000000;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.mailBox .editButton:hover {
+    background-color: #F3F4F6;
+}
+
+.mailBox .replyBoxTextAreaShadow {
+    position: relative;
+}
+
+.mailBox .replyBoxTextAreaShadow:before {
+    position: absolute;
+    content: '';
+    height: 72px;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background: linear-gradient(180deg, #FFF 0%, rgba(255, 255, 255, 0.00) 100%);
+    z-index: 1;
+}
+
+.composeModal .replyUserName {
+    color: #0A101D;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+
+.composeModal .replyBoxIcon svg {
+    stroke: #6B7280;
+}
+
+.composeModal .replyButton .replyTextButton,
+.composeModal .replyButton .replyArrowIcon {
+    height: 38px;
+    background-color: #1F2937;
+}
+
+.composeModal .replyButton .replyTextButton {
+    border-radius: 5px 0 0 5px;
+    padding: 10px 0 10px 10px;
+    line-height: 18px;
+}
+
+.composeModal .replyButton .replyTextButton:hover,
+.composeModal .replyButton .replyTextButton:active,
+.composeModal .replyButton .replyTextButton:hover[disabled],
+.composeModal .replyButton .replyTextButton:hover:disabled,
+.composeModal .replyButton .replyTextButton:focus-visible {
+    background-color: #1F2937;
+    box-shadow: none;
+}
+
+.composeModal .replyButton .replyArrowIcon {
+    border: 0;
+    min-width: auto;
+    border-radius: 0 5px 5px 0;
+    padding: 9px;
+}
+
+.composeModal .replyButton .replyArrowIcon:hover,
+.composeModal .replyButton .replyArrowIcon:active,
+.composeModal .replyButton .replyArrowIcon:focus-visible,
+.composeModal .replyButton .replyArrowIcon:hover:disabled,
+.composeModal .replyButton .replyArrowIcon:hover[disabled] {
+    background-color: #1F2937;
+}
+
+
+.composeModal .subjectInput:focus-visible {
+    box-shadow: none;
+    border: 0;
+}
+
+.composeModal .subjectInput::placeholder {
+    color: rgba(10, 16, 29, 0.34);
+}
+
+.composeModal .addToProject .RightContent {
+    display: inline-block;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    padding: 2px 4px;
+    margin-left: 5px;
+}
+
+.composeModal .addToProject svg {
+    stroke: #FFFFFF;
+    width: 20px;
+    height: 20px;
+}
+
+.composeModal .addToProject:hover,
+.composeModal .addToProject[data-active] {
+    background: #2A6FFF ;
+}
+
+.composeModal .replyBoxEditor {
+    height: 100%;
+    max-height: 370px;
+    overflow: auto;
+}
+

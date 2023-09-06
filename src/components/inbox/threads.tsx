@@ -11,7 +11,7 @@ import {
     TabList,
     TabPanels,
     Tabs,
-    Tooltip
+    Tooltip, useDisclosure
 } from "@chakra-ui/react";
 import {ArchiveIcon, DraftIcon, EditIcon, InboxIcon, SendIcon, StarIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
 import {StateType} from "@/types";
@@ -25,6 +25,7 @@ import {updateDraftState} from "@/redux/draft/action-reducer";
 import {updateLastMessage} from "@/redux/socket/action-reducer";
 import {TriangleDownIcon} from "@chakra-ui/icons";
 import {useSocket} from "@/hooks/use-socket.hook";
+import {ComposeBox} from "@/components/inbox/compose-box";
 
 let cacheThreads: { [key: string]: Thread[] } = {};
 let currentCacheTab = 'INBOX';
@@ -47,6 +48,7 @@ export function Threads() {
     const {userDetails} = useSelector((state: StateType) => state.users);
     const {sendJsonMessage} = useSocket();
     const dispatch = useDispatch();
+    const {isOpen, onOpen, onClose} = useDisclosure();
 
     const getAllThread = useCallback((resetState: boolean = true, force: boolean = false) => {
         if (selectedAccount) {
@@ -160,11 +162,6 @@ export function Threads() {
             });
         }
         setTab(value);
-    }
-
-    const openComposeBox = () => {
-        dispatch(updateDraftState({draft: null}));
-        dispatch(updateMessageState({isCompose: true, selectedMessage: null}));
     }
 
     return (
@@ -287,11 +284,9 @@ export function Threads() {
                                 </MenuList>
                             </Menu>
                         </TabList>
-
                         <Button className={styles.composeButton} borderRadius={8} height={'auto'} padding={'10px'}
                                 minWidth={'101px'} backgroundColor={'#FFFFFF'} color={'#374151'} borderColor={'#E5E7EB'}
-                                leftIcon={<EditIcon/>} colorScheme='blue'
-                                variant='outline' onClick={() => openComposeBox()}>Compose</Button>
+                                leftIcon={<EditIcon/>} colorScheme='blue' variant='outline' onClick={onOpen}>Compose</Button>
                     </Flex>
 
                     <TabPanels marginTop={5}>
@@ -299,6 +294,8 @@ export function Threads() {
                     </TabPanels>
                 </Tabs>
             </Flex>
+
+            <ComposeBox onOpen={onOpen} isOpen={isOpen} onClose={onClose} />
         </>
     )
 }
