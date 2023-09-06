@@ -41,6 +41,7 @@ import {Project} from "@/models";
 import {PROJECT_ROLES} from "@/utils/constants";
 import {isEmail} from "@/utils/common.functions";
 import {getAllThreads} from "@/redux/threads/action-reducer";
+import {Message} from "@/components/messages";
 
 function ProjectInbox() {
     const {isOpen, onOpen, onClose} = useDisclosure();
@@ -159,11 +160,13 @@ function ProjectInbox() {
                 </Flex>
 
                 <Grid className={styles.mailGrid} templateColumns='30% auto' paddingTop={8} gap={6} flex={1}>
-                    {((size < 991 && !selectedThread) || size > 991) &&
-                    <ThreadsSideBar />
-                    }
                     <GridItem w='100%' flex={1}>
-                        {((size < 991 && selectedThread) || size > 991) && <ProjectMessage/>}
+                        {((size < 991 && !selectedThread) || size > 991) &&
+                        <ThreadsSideBar />
+                        }
+                    </GridItem>
+                    <GridItem w='100%' flex={1}>
+                        {((size < 991 && selectedThread) || size > 991) && <Message/>}
                     </GridItem>
                 </Grid>
             </Flex>
