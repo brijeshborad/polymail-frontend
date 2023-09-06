@@ -29,7 +29,7 @@ export function MessageBox(props: any) {
             dispatch(updateMessage({id: item.id, body}))
         }
     }
-    const setNewCass = () => {
+    const setNewClass = () => {
         setIsShowClass(!isShowClass);
         setIsReplayBoxShow(false);
     }
@@ -51,7 +51,7 @@ export function MessageBox(props: any) {
     return (
         <>
             <Flex position={'relative'} direction={'column'} className={`${styles.oldMail} ${isShowClass ? styles.lastOenMail : ''}`} gap={4} border={'1px solid #E5E7EB'} borderRadius={12} align={'center'} key={props.index}>
-                {!isShowClass &&  <Flex align={'center'} w={'100%'} gap={2} cursor={'pointer'} padding={4} onClick={() => setNewCass()}>
+                {!isShowClass &&  <Flex align={'center'} w={'100%'} gap={2} cursor={'pointer'} padding={4} onClick={() => setNewClass()}>
                     <div className={styles.mailBoxUserImage}>
 
                     </div>
@@ -70,7 +70,7 @@ export function MessageBox(props: any) {
                 {props.threadDetails && isShowClass &&
                 <Flex direction={'column'} w={'100%'} pb={4}>
                     <Flex align={'flex-start'}>
-                        <Flex align={'center'} w={'100%'} cursor={'pointer'} gap={2} padding={4} onClick={() => setNewCass()}>
+                        <Flex align={'center'} w={'100%'} cursor={'pointer'} gap={2} padding={4} onClick={() => setNewClass()}>
                             <div className={styles.mailBoxUserImage}>
 
                             </div>
@@ -149,7 +149,7 @@ export function MessageBox(props: any) {
             </Flex>
 
             {isReplyBoxShow && <MessageReplyBox emailPart={(props.emailPart || '')} messageData={props.threadDetails}
-                                                receipentEmail={props.threadDetails.to} replyType={replyType}/>}
+                                                replyType={replyType}/>}
         </>
     )
 }

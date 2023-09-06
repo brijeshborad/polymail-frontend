@@ -23,13 +23,14 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import dayjs from "dayjs";
 import {MessageAttachments} from "@/models";
-import {updateMessageState, uploadAttachment} from "@/redux/messages/action-reducer";
+import { uploadAttachment} from "@/redux/messages/action-reducer";
 import {SingleDatepicker} from "chakra-dayzed-datepicker";
+import {MessageBoxType} from "@/types/props-types/message-box.type";
 
 declare type RecipientsValue = { items: string[], value: string };
 declare type RecipientsType = { cc: RecipientsValue, bcc: RecipientsValue, recipients: RecipientsValue };
 
-export function MessageReplyBox(props: any) {
+export function MessageReplyBox(props: MessageBoxType) {
     const [emailRecipients, setEmailRecipients] = useState<RecipientsType>({
         cc: {items: [], value: ""},
         bcc: {items: [], value: ""},
@@ -195,7 +196,7 @@ export function MessageReplyBox(props: any) {
                 setEmailRecipients((prevState) => ({
                     ...prevState,
                     recipients: {
-                        items: [],
+                        items: draft ? (draft.to || []) : [props.messageData.from!],
                         value: prevState.recipients.value
                     }
                 }));
@@ -287,7 +288,6 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
         }
     }
 
-
     function removeAttachment(index: number) {
         const newArr = [...attachments];
         (newArr || []).splice(index, 1);
@@ -333,6 +333,8 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                     delay: secondsDifference
                 }
             } else {
+                console.log('emailRecipients', emailRecipients)
+                console.log('draft.to', draft.to)
                 if (draft && draft.to && draft.to.length) {
                     let undoToaster: any = {
                         id: 'send-now',
@@ -350,6 +352,7 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                         ),
                         position: 'bottom'
                     }
+
                     toast(undoToaster)
                 }
             }
@@ -370,9 +373,7 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
             }));
         }
     }
-    useEffect(() => {
-        console.log('props', props)
-    }, [props])
+
     return (
         <Flex maxHeight={'450px'} direction={'column'} padding={4} mt={'auto'} gap={4} borderRadius={8}
               border={'1px solid #F3F4F6'} backgroundColor={'#FFFFFF'}>

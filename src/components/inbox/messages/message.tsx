@@ -22,7 +22,7 @@ import {
 } from "@/icons";
 import Image from "next/image";
 import {StateType} from "@/types";
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {
     getAttachmentDownloadUrl,
@@ -326,7 +326,11 @@ export function Message() {
                                 {/*<Text fontSize='md' color={'#0A101D'} lineHeight={'1.5'} letterSpacing={'-0.16px'}>Lee, we’re gearing up to launch the next Toy Story.  Can you spin up a team to start thinking about the entire launch execution, especially getting the launch to spread via organic social (TikTok)? </Text>*/}
                                 {(!isLoading && emailPart) &&
                                 <div className={styles.mailBodyContent}>
-                                     <iframe src={emailPart} className={styles.mailBody}/>
+                                     <iframe
+                                         src={emailPart}
+                                         frameBorder="0"
+                                         id="frmid"
+                                         className={styles.mailBody}/>
                                 </div>}
                                 {messageAttachments && !!messageAttachments.length && messageAttachments?.map((item: MessageAttachments, i) => (
 
@@ -345,7 +349,7 @@ export function Message() {
 
                             {isReplyBoxShow && <MessageReplyBox
                                 emailPart={(messagePart?.data || '')} messageData={threadDetails}
-                                receipentEmail={threadDetails.to} replyType={replyType}/>}
+                                replyType={replyType}/>}
                         </Flex>
                     </Flex>
 

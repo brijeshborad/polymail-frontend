@@ -11,7 +11,7 @@ import {
     Text, Textarea, useDisclosure
 } from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
-import {DisneyIcon, EmojiIcon, FileIcon, FolderIcon, LinkIcon, TextIcon} from "@/icons";
+import {DisneyIcon, FileIcon, FolderIcon, LinkIcon, TextIcon} from "@/icons";
 import {ChevronDownIcon, CloseIcon, SearchIcon, SmallAddIcon} from "@chakra-ui/icons";
 import React, {ChangeEvent, ChangeEventHandler, useEffect, useRef, useState} from "react";
 import {BillingTypes, StateType} from "@/types";
@@ -20,7 +20,7 @@ import {Chip, RichTextEditor, Toaster} from "@/components/common";
 import {createDraft, sendMessage, updateDraftState, updatePartialMessage} from "@/redux/draft/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import dayjs from "dayjs";
-import {updateMessageState, uploadAttachment} from "@/redux/messages/action-reducer";
+import {uploadAttachment} from "@/redux/messages/action-reducer";
 import {SingleDatepicker} from "chakra-dayzed-datepicker";
 import {MessageAttachments, Project} from "@/models";
 import CreateNewProject from "@/components/project/create-new-project";
