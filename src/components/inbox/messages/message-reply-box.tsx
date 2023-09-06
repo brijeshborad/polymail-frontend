@@ -428,11 +428,11 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                         }
                     </Flex>
                     <Button className={styles.editButton} color={'#374151'} backgroundColor={'#F3F4F6'}
-                            borderRadius={'20px'} lineHeight={1} size='xs' onClick={() => showRecipientsBox()}> {replyBoxHide ? 'Edit' : 'Close'} </Button>
+                            borderRadius={'20px'} lineHeight={1} size='xs' onClick={() => showRecipientsBox()}> {!replyBoxHide ? 'Edit' : 'Close'} </Button>
                 </Flex>
                 <Text fontSize='11px' color={'#6B7280'}>Saved 2m ago</Text>
             </Flex>
-            {!replyBoxHide && <Flex className={styles.mailRecipientsBox} flex={'none'} backgroundColor={'#FFFFFF'} border={'1px solid #E5E7EB'} direction={'column'}
+            {replyBoxHide && <Flex className={styles.mailRecipientsBox} flex={'none'} backgroundColor={'#FFFFFF'} border={'1px solid #E5E7EB'} direction={'column'}
                                    borderRadius={8}>
                 <Flex width={'100%'} gap={2} padding={'4px 16px'} className={styles.replyBoxCC}>
                     <Heading as={'h6'} fontSize={'13px'} paddingTop={1} fontWeight={500} lineHeight={1}
