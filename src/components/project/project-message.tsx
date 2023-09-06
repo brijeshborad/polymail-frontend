@@ -149,18 +149,6 @@ export function ProjectMessage() {
     }, [dispatch, attachmentUrl])
 
 
-    const showPreNextMessage = (type: string) => {
-        if (type === 'up') {
-            if (index && index > 0) {
-                setIndex(prevState => prevState ? (prevState - 1) : null);
-            }
-        } else if (type === 'down') {
-            if (inboxMessages && inboxMessages.length - 1 !== index) {
-                setIndex(prevState => prevState || prevState === 0 ? (prevState + 1) : 0);
-            }
-        }
-    }
-
     const closeCompose = () => {
         setHideAndShowReplyBox(false)
         setReplyType('');

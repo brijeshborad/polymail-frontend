@@ -51,7 +51,7 @@ function Members() {
             let index1 = (members || []).findIndex((item: TeamMember) => item.id === selectedMember?.id);
             setSelectedMember(members[index1])
         }
-    }, [updateMemberRoleSuccess, members])
+    }, [updateMemberRoleSuccess, selectedMember, members])
 
     const handleChange = (event: ChangeEvent | any) => {
         setOrganizationName(prevState => ({
