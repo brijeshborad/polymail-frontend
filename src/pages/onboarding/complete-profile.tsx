@@ -51,6 +51,16 @@ function CompleteProfile() {
     function handleFileUpload(event: ChangeEventHandler | any) {
         const file = event.target.files[0];
         if (file) {
+            const contentType = file.name.split('.').pop();
+            if (!['jpg', 'gif', 'png', 'jpeg', 'svg'].includes(contentType)) {
+                let validationError = {
+                    desc: 'Only .jpg, .gif, .png, .jpeg and .svg files are allowed',
+                    title: 'Any file other than image is not valid',
+                    type: 'error'
+                }
+                Toaster(validationError)
+                return;
+            }
             if (getFileSize(file.size) > 10) {
                 let validationError = {
                     desc: 'Cannot upload file more than 10MB',

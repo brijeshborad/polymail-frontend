@@ -151,7 +151,16 @@ function Profile() {
 
     function handleFileUpload(event: ChangeEventHandler | any) {
         const file = event.target.files[0];
-
+        const contentType = file.name.split('.').pop();
+        if (!['jpg', 'gif', 'png', 'jpeg', 'svg'].includes(contentType)) {
+            let validationError = {
+                desc: 'Only .jpg, .gif, .png, .jpeg and .svg files are allowed',
+                title: 'Any file other than image is not valid',
+                type: 'error'
+            }
+            Toaster(validationError)
+            return;
+        }
         event.stopPropagation();
         event.preventDefault();
         const reader = new FileReader();
