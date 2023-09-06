@@ -10,7 +10,6 @@ import {
     MenuList,
     Text
 } from "@chakra-ui/react";
-import {CloseIcon} from "@chakra-ui/icons";
 import {Time} from "@/components/common";
 import {
     DownloadIcon, MenuIcon
@@ -25,7 +24,6 @@ import {
     getMessageParts, updateMessage,
     updateMessageState
 } from "@/redux/messages/action-reducer";
-import {ReplyBox} from "@/components/common/reply-box";
 import {Message as MessageModel, MessageDraft, MessagePart, MessageAttachments} from "@/models";
 import {MessagesHeader} from "@/components/messages/messages-header";
 import {updateDraftState} from "@/redux/draft/action-reducer";
@@ -33,19 +31,16 @@ import {MessageBox} from "@/components/inbox/messages/message-box";
 import {MessageReplyBox} from "@/components/inbox/messages/message-reply-box";
 
 export function Message() {
-    const [_messageContent, setMessageContent] = useState<MessageModel>();
     const [index, setIndex] = useState<number | null>(null);
     const [emailPart, setEmailPart] = useState<string>("");
     const [hideAndShowReplyBox, setHideAndShowReplyBox] = useState<boolean>(false);
     const [replyType, setReplyType] = useState<string>('');
-    const [_messageSenders, setMessageSenders] = useState<string[]>([]);
     const [inboxMessages, setInboxMessages] = useState<MessageModel[]>([]);
     const {
         messages,
         messagePart,
         isCompose,
         isLoading,
-        message,
         messageAttachments,
         selectedMessage,
         attachmentUrl
@@ -124,8 +119,6 @@ export function Message() {
     useEffect(() => {
         if (index !== null && inboxMessages && inboxMessages.length > 0) {
             if (inboxMessages[index]) {
-                setMessageContent(inboxMessages[index]);
-                setMessageSenders([inboxMessages[index].from || '', ...(inboxMessages[index].cc || [])].filter(t => t))
                 dispatch(updateMessageState({selectedMessage: inboxMessages[index]}));
                 // We already set index to last inbox message
                 if (cacheMessages[inboxMessages[index].id!] && cacheMessages[inboxMessages[index].id!].body) {
@@ -142,12 +135,6 @@ export function Message() {
             }
         }
     }, [dispatch, index, inboxMessages])
-
-    useEffect(() => {
-        if (message) {
-            setMessageContent(message);
-        }
-    }, [message])
 
     useEffect(() => {
         if (attachmentUrl) {
@@ -187,7 +174,6 @@ export function Message() {
 
     const hideAndShowReplayBox = (type: string = '') => {
         setReplyType(type);
-        // setHideAndShowReplyBox(!hideAndShowReplyBox);
     }
 
     const downloadImage = (item: MessageAttachments) => {
@@ -219,34 +205,6 @@ export function Message() {
                 <>
                     <MessagesHeader inboxMessages={inboxMessages} index={index} closeCompose={closeCompose}
                                     showPreNextMessage={showPreNextMessage} herderType={'inbox'}/>
-                    {/*{messageContent &&*/}
-                    {/*<Flex alignItems={'center'} padding={'10px 20px'}>*/}
-                    {/*    <Image src={'/image/user.png'} alt={''} width={50} height={50}/>*/}
-                    {/*    <Flex flexDir={'column'} marginLeft={'5'} width={'100%'}>*/}
-                    {/*        <Heading as='h4' size='md'>{messageContent?.subject || '(no subject)'}</Heading>*/}
-                    {/*        <Flex justifyContent={'space-between'} align={'center'}>*/}
-                    {/*            {messageSenders && messageSenders.length > 0 &&*/}
-                    {/*            <Text fontSize='sm'>*/}
-                    {/*                {messageSenders[0]} {messageSenders.length - 1 > 0 && `and ${messageSenders.length - 1} others`}*/}
-                    {/*            </Text>*/}
-                    {/*            }*/}
-                    {/*            <Flex gap={3} align={'center'}>*/}
-                    {/*                <Tooltip*/}
-                    {/*                    label={selectedMessage && selectedMessage.scope === 'hidden' ? 'Hidden' : 'Visible'}*/}
-                    {/*                    placement='bottom' bg='gray.300' color='black'>*/}
-                    {/*                    <Flex align={'center'} justify={'center'} backgroundColor={'#F3F4F6'} borderRadius={'4px'} w={'20px'} h={'20px'} className={styles.hideShowIcon}>*/}
-                    {/*                        {selectedMessage && selectedMessage.scope === 'hidden' ? <ViewOffIcon className={styles.colorGray}  /> : <ViewIcon className={styles.colorGray} />}*/}
-                    {/*                    </Flex>*/}
-                    {/*                </Tooltip>*/}
-                    {/*                <div className={styles2.receiveTime}>*/}
-                    {/*                    <Time time={messageContent?.created || ''} isShowFullTime={true}/>*/}
-                    {/*                </div>*/}
-                    {/*            </Flex>*/}
-
-                    {/*        </Flex>*/}
-                    {/*    </Flex>*/}
-                    {/*</Flex>*/}
-                    {/*}*/}
 
                     <Flex padding={'20px'} gap={5} direction={'column'} flex={1} maxHeight={'calc(708px - 57px)'} overflow={'auto'}>
                         <Flex gap={2} direction={'column'}>
@@ -316,7 +274,6 @@ export function Message() {
                                         </Flex>
                                     </Flex>
                                 </Flex>
-                                {/*<Text fontSize='md' color={'#0A101D'} lineHeight={'1.5'} letterSpacing={'-0.16px'}>Lee, we’re gearing up to launch the next Toy Story.  Can you spin up a team to start thinking about the entire launch execution, especially getting the launch to spread via organic social (TikTok)? </Text>*/}
                                 {(!isLoading && emailPart) &&
                                 <div className={styles.mailBodyContent}>
                                      <iframe
@@ -345,62 +302,10 @@ export function Message() {
                                 replyType={replyType}/>
                         </Flex>
                     </Flex>
-
-
-
-                    {/*<Flex align={'center'} padding={'10px 20px'}>*/}
-                    {/*    <Button className={styles.hideButton} variant='outline'*/}
-                    {/*            onClick={() => hideAndShowReplayBox('reply')}>*/}
-                    {/*        <ReplyIcon/> Reply*/}
-                    {/*    </Button>*/}
-                    {/*    <Button className={styles.hideButton} variant='outline'*/}
-                    {/*            onClick={() => hideAndShowReplayBox('reply-all')}>*/}
-                    {/*        <ReplyIcon/> Reply All*/}
-                    {/*    </Button>*/}
-                    {/*    <Button className={styles.forwardButton} variant='outline'*/}
-                    {/*            onClick={() => hideAndShowReplayBox('forward')}>*/}
-                    {/*        <ForwardIcon/> Forward*/}
-                    {/*    </Button>*/}
-                    {/*</Flex>*/}
                 </>
                 }
-
-                {hideAndShowReplyBox && <div className={styles.replayBox}>
-                    <Flex justifyContent={'space-between'} flexDir={'column'} height={'100%'}>
-                        <div className={styles.mailBoxFLex}>
-                            <Flex justifyContent={'space-between'} wrap={'wrap'} align={'center'}
-                                  borderBottom={'1px solid rgba(8, 22, 47, 0.1)'} padding={'12px 20px'}>
-                                <Flex alignItems={'center'} gap={2}>
-                                    <div className={styles.closeIcon} onClick={() => closeCompose()}>
-                                        <CloseIcon/>
-                                    </div>
-                                </Flex>
-                            </Flex>
-                        </div>
-
-                        <ReplyBox replyType={replyType} emailPart={(messagePart?.data || '')} onClose={closeCompose}/>
-                    </Flex>
-                </div>}
             </Flex>
             }
-
-            {isCompose &&
-            <div className={styles.composeReplyBox}>
-                <Flex justifyContent={'space-between'} flexDir={'column'} height={'100%'}>
-                    <div className={styles.mailBoxFLex}>
-                        <Flex justifyContent={'space-between'} wrap={'wrap'} align={'center'}
-                              borderBottom={'1px solid rgba(8, 22, 47, 0.1)'} padding={'12px 20px'}>
-                            <Flex alignItems={'center'} gap={2}>
-                                <div className={styles.closeIcon} onClick={() => closeCompose()}>
-                                    <CloseIcon/>
-                                </div>
-                            </Flex>
-                        </Flex>
-                    </div>
-
-                    <ReplyBox onClose={closeCompose}/>
-                </Flex>
-            </div>}
         </Box>
     )
 }

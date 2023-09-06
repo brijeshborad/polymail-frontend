@@ -8,7 +8,6 @@ import {useDispatch, useSelector} from "react-redux";
 import Image from "next/image";
 import {MessageAttachments} from "@/models";
 import {StateType} from "@/types";
-import {MessageReplyBox} from "@/components/inbox/messages/message-reply-box";
 
 
 export function MessageBox(props: any) {
@@ -17,7 +16,6 @@ export function MessageBox(props: any) {
     const {
         selectedMessage
     } = useSelector((state: StateType) => state.messages);
-    const [replyType, setReplyType] = useState<string>('');
 
 
     const setScope = (type: string, item: any) => {
@@ -37,13 +35,6 @@ export function MessageBox(props: any) {
             dispatch(getAttachmentDownloadUrl({id: selectedMessage.id, attachment: item.id}));
         }
     }
-
-
-    const hideAndShowReplayBox = (type: string = '') => {
-        setReplyType(type);
-        // setHideAndShowReplyBox(!hideAndShowReplyBox);
-    }
-
 
     return (
         <>
@@ -112,14 +103,13 @@ export function MessageBox(props: any) {
                                         {props.threadDetails.scope === 'visible' ? 'Hide from project members' : 'Show to project members'}
                                     </MenuItem>
                                 )}
-                                <MenuItem onClick={() => hideAndShowReplayBox('reply')}> Reply </MenuItem>
-                                <MenuItem onClick={() => hideAndShowReplayBox('reply-all')}> Reply All </MenuItem>
-                                <MenuItem onClick={() => hideAndShowReplayBox('forward')}> Forward </MenuItem>
+                                <MenuItem> Reply </MenuItem>
+                                <MenuItem> Reply All </MenuItem>
+                                <MenuItem> Forward </MenuItem>
                             </MenuList>
                         </Menu>
                     </Flex>
 
-                    {/*<Text fontSize='md' color={'#0A101D'} lineHeight={'1.5'} letterSpacing={'-0.16px'}>Lee, we’re gearing up to launch the next Toy Story.  Can you spin up a team to start thinking about the entire launch execution, especially getting the launch to spread via organic social (TikTok)? </Text>*/}
                     {(!props.isLoading && props.emailPart) &&
                     <div className={styles.mailBodyContent}>
                         <iframe
@@ -141,9 +131,6 @@ export function MessageBox(props: any) {
                 </Flex>
                 }
             </Flex>
-
-            {/*{isShowClass && <MessageReplyBox emailPart={(props.emailPart || '')} messageData={props.threadDetails}*/}
-            {/*                                    replyType={replyType}/>}*/}
         </>
     )
 }

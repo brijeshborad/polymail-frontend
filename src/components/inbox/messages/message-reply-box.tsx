@@ -126,10 +126,6 @@ export function MessageReplyBox(props: MessageBoxType) {
         }));
     };
 
-    const _addSubject = (event: ChangeEvent | any) => {
-        setSubject(event.target.value || '');
-    }
-
     const sendToDraft = (value: string, isValueUpdate: boolean = true) => {
         if (isValueUpdate) {
             setEmailBody(value);

@@ -307,12 +307,6 @@ export function ComposeBox(props: any) {
                                 <Input className={styles.subjectInput} placeholder='Enter subject title' size='lg'  onChange={(e) => addSubject(e)}
                                        flex={1} fontWeight={'700'} padding={'0'} border={'0'} h={'auto'}
                                        borderRadius={'0'} lineHeight={1} color={'#0A101D'}/>
-                                {/*<Button className={styles.addToProject} leftIcon={<FolderIcon/>} borderRadius={'50px'}*/}
-                                {/*        backgroundColor={'#2A6FFF'} color={'#FFFFFF'}*/}
-                                {/*        boxShadow={'0 0 3px 0 rgba(38, 109, 240, 0.12)'} padding={'4px 4px 4px 8px'}*/}
-                                {/*        fontSize={'12px'} fontWeight={500} h={'fit-content'}>*/}
-                                {/*    Add to Project <span className={styles.RightContent}>⌘P</span>*/}
-                                {/*</Button>*/}
                                 <Menu>
                                     <MenuButton className={styles.addToProject} leftIcon={<FolderIcon/>} borderRadius={'50px'}
                                                 backgroundColor={'#2A6FFF'} color={'#FFFFFF'} as={Button}
@@ -423,7 +417,6 @@ export function ComposeBox(props: any) {
                                             </div> : null}
                                         </Flex>
                                         <Flex direction={'column'}>
-                                            {/*<Text fontSize='xs' backgroundColor={'#F3F4F6'} borderRadius={4} padding={'4px 8px'} color={'#6B7280'} w={'fit-content'} lineHeight={1}>Ryan Mickle is sharing this email thread (and future replies) with 1 person at chiat.com on Polymail</Text>*/}
                                             <Flex align={'flex-end'} justify={'space-between'} gap={2}>
                                                 <Flex gap={2} className={styles.replyBoxIcon}>
                                                     <Flex align={'center'} gap={3}>
@@ -472,13 +465,6 @@ export function ComposeBox(props: any) {
                             </Box>
                         </Flex>
                     </ModalBody>
-
-                    {/*<ModalFooter>*/}
-                    {/*    <Button colorScheme='blue' mr={3} onClick={onClose}>*/}
-                    {/*        Close*/}
-                    {/*    </Button>*/}
-                    {/*    <Button variant='ghost'>Secondary Action</Button>*/}
-                    {/*</ModalFooter>*/}
                 </ModalContent>
             </Modal>
 
