@@ -371,11 +371,15 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
 
 
     const handleBlur = () => {
-        setHideEditorToolbar(false)
+        setTimeout(() => {
+            setHideEditorToolbar(false)
+        }, 500)
     }
 
     const handleFocus = () => {
-        setHideEditorToolbar(true)
+        setTimeout(() => {
+            setHideEditorToolbar(true)
+        }, 500)
     }
 
     const showRecipientsBox = () => {
@@ -384,9 +388,8 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
 
     return (
         <Flex maxHeight={'450px'} direction={'column'} padding={4} mt={'auto'} gap={4} borderRadius={8}
-              border={'1px solid #F3F4F6'} backgroundColor={'#FFFFFF'} maxH={'450px'} width={'100%'} position={'sticky'} bottom={0}
-              onFocus={() => handleFocus()}
-              onBlur={() => handleBlur()}>
+              border={'1px solid #F3F4F6'} backgroundColor={'#FFFFFF'} maxH={'450px'} width={'100%'} position={'sticky'}
+              bottom={0} onFocus={() => handleFocus()} onBlur={() => handleBlur()}>
             <Flex align={'center'} justify={'space-between'} gap={4} pb={4}
                   borderBottom={'1px solid #F3F4F6'}>
                 <Flex gap={1} align={'center'}>
@@ -418,17 +421,24 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                         </div>
 
                         {!!emailRecipients?.recipients?.items?.length &&
-                        <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1} fontWeight={400}>
-                            {emailRecipients?.recipients?.items[0]}&nbsp; <Text as='u'>{emailRecipients?.recipients?.items?.length - 1 > 0 && `and ${emailRecipients?.recipients?.items?.length - 1} others`} </Text>
+                        <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
+                              fontWeight={400}>
+                            {emailRecipients?.recipients?.items[0]}&nbsp; <Text
+                            as='u'>{emailRecipients?.recipients?.items?.length - 1 > 0 && `and ${emailRecipients?.recipients?.items?.length - 1} others`} </Text>
                         </Flex>
                         }
                     </Flex>
                     <Button className={styles.editButton} color={'#374151'} backgroundColor={'#F3F4F6'}
-                            borderRadius={'20px'} lineHeight={1} size='xs' onClick={() => showRecipientsBox()}> {!replyBoxHide ? 'Edit' : 'Close'} </Button>
+                            borderRadius={'20px'} lineHeight={1} size='xs'
+                            onClick={(e) => {
+                                e.preventDefault();
+                                showRecipientsBox()
+                            }}> {!replyBoxHide ? 'Edit' : 'Close'} </Button>
                 </Flex>
                 <Text fontSize='11px' color={'#6B7280'}>Saved 2m ago</Text>
             </Flex>
-            {replyBoxHide && <Flex className={styles.mailRecipientsBox} flex={'none'} backgroundColor={'#FFFFFF'} border={'1px solid #E5E7EB'} direction={'column'}
+            {replyBoxHide && <Flex className={styles.mailRecipientsBox} flex={'none'} backgroundColor={'#FFFFFF'}
+                                   border={'1px solid #E5E7EB'} direction={'column'}
                                    borderRadius={8}>
                 <Flex width={'100%'} gap={2} padding={'4px 16px'} className={styles.replyBoxCC}>
                     <Heading as={'h6'} fontSize={'13px'} paddingTop={1} fontWeight={500} lineHeight={1}
@@ -489,9 +499,11 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
 
             <Flex direction={'column'} position={"relative"} flex={1}>
                 <Flex direction={'column'} maxH={'285px'} overflow={'auto'} className={styles.replyBoxEditor}>
-                    <RichTextEditor className={`reply-message-area message-reply-box ${hideEditorToolbar ? 'hide-toolbar' : ''}`} initialUpdated={true}
-                                    placeholder='Reply with anything you like or @mention someone to share this thread'
-                                    value={emailBody} onChange={(e) => sendToDraft(e)}/>
+                    <RichTextEditor
+                        className={`reply-message-area message-reply-box ${hideEditorToolbar ? 'hide-toolbar' : ''}`}
+                        initialUpdated={true}
+                        placeholder='Reply with anything you like or @mention someone to share this thread'
+                        value={emailBody} onChange={(e) => sendToDraft(e)}/>
                     {attachments && attachments.length > 0 ? <div style={{marginTop: '20px'}}>
                         {attachments.map((item, index: number) => (
                             <Flex align={'center'} key={index} className={styles.attachmentsFile}>
