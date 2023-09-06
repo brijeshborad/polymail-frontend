@@ -30,7 +30,7 @@ import {ComposeBox} from "@/components/inbox/compose-box";
 let cacheThreads: { [key: string]: Thread[] } = {};
 let currentCacheTab = 'INBOX';
 
-export function ThreadsSideBar() {
+export function ThreadsSideBar(props: {cachePrefix: string}) {
     const [tab, setTab] = useState<string>('INBOX');
     const [countUnreadMessages, setCountUnreadMessages] = useState<number>(0);
 
@@ -53,7 +53,7 @@ export function ThreadsSideBar() {
     const getAllThread = useCallback((resetState: boolean = true, force: boolean = false) => {
         if (selectedAccount) {
             console.log('---Step 1 Check for cache', resetState, force);
-            if (!cacheThreads[`${tab}-${selectedAccount.id}`] && !force) {
+            if (!cacheThreads[`${props.cachePrefix}-${tab}-${selectedAccount.id}`] && !force) {
                 force = true;
             }
             console.log('---Step 2 Check for force', force);
@@ -64,10 +64,10 @@ export function ThreadsSideBar() {
             }
             if (currentCacheTab !== tab) {
                 currentCacheTab = tab;
-                dispatch(updateThreadState({threads: cacheThreads[`${tab}-${selectedAccount.id}`]}));
+                dispatch(updateThreadState({threads: cacheThreads[`${props.cachePrefix}-${tab}-${selectedAccount.id}`]}));
             }
         }
-    }, [dispatch, selectedAccount, tab]);
+    }, [dispatch, props.cachePrefix, selectedAccount, tab]);
 
     useEffect(() => {
         if (newMessage && newMessage.name === 'new_message') {
@@ -89,11 +89,11 @@ export function ThreadsSideBar() {
             currentCacheTab = tab;
             cacheThreads = {
                 ...cacheThreads,
-                [`${tab}-${selectedAccount?.id}`]: threads ? [...threads] : []
+                [`${props.cachePrefix}-${tab}-${selectedAccount?.id}`]: threads ? [...threads] : []
             }
             dispatch(updateThreadState({success: false}));
         }
-    }, [selectedAccount, tab, threadListSuccess, threads, dispatch])
+    }, [selectedAccount, tab, threadListSuccess, threads, dispatch, props.cachePrefix])
 
     useEffect(() => {
         if (draftSuccess) {

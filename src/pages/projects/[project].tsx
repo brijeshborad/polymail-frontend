@@ -161,7 +161,7 @@ function ProjectInbox() {
                 <Grid className={styles.mailGrid} templateColumns='30% auto' paddingTop={8} gap={6} flex={1}>
                     <GridItem w='100%' flex={1}>
                         {((size < 991 && !selectedThread) || size > 991) &&
-                        <ThreadsSideBar />
+                        <ThreadsSideBar cachePrefix={'projects-page'} />
                         }
                     </GridItem>
                     <GridItem w='100%' flex={1}>

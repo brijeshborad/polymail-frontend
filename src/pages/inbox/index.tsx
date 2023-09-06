@@ -61,7 +61,7 @@ function InboxPage() {
                 <Grid className={styles.mailGrid} templateColumns='30% auto' gap={6} height={'100%'}>
                     <GridItem w='100%'>
                         {((size < 991 && !selectedThread) || size > 991) &&
-                        <ThreadsSideBar/>}
+                        <ThreadsSideBar cachePrefix={'inbox-page'}/>}
                     </GridItem>
                     <GridItem w='100%'>
                         {((size < 991 && selectedThread) || size > 991) && <Message/>}
