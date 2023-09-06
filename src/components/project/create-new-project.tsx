@@ -15,10 +15,10 @@ import {Toaster} from "@/components/common";
 import {createProjects} from "@/redux/projects/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import withAuth from "@/components/withAuth";
+import withAuth from "@/components/auth/withAuth";
 
 
-function CreateNewProject(props: any) {
+function CreateNewProjectModal(props: any) {
     const dispatch = useDispatch();
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {selectedOrganization} = useSelector((state: StateType) => state.organizations);
@@ -87,9 +87,8 @@ function CreateNewProject(props: any) {
                     </ModalBody>
                 </ModalContent>
             </Modal>
-
         </>
     )
 }
 
-export default withAuth(CreateNewProject);
+export default withAuth(CreateNewProjectModal);

@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import React, {useEffect, useState} from "react";
 import Index from "@/pages/settings/index";
-import withAuth from "@/components/withAuth";
+import withAuth from "@/components/auth/withAuth";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {Organization} from "@/models";

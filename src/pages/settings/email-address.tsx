@@ -7,7 +7,7 @@ import {StateType} from "@/types";
 import {Account} from "@/models";
 import {googleAuthLink} from "@/redux/auth/action-reducer";
 import Index from "@/pages/settings/index";
-import withAuth from "@/components/withAuth";
+import withAuth from "@/components/auth/withAuth";
 import {CloseIcon} from "@chakra-ui/icons";
 import {removeAccountDetails, updateAccountState} from "@/redux/accounts/action-reducer";
 import LocalStorageService from "@/utils/localstorage.service";

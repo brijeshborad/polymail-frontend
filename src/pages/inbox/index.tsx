@@ -3,14 +3,14 @@ import {Message} from "@/components/inbox";
 import {ThreadsSideBar} from "@/components/threads";
 import styles from "@/styles/Home.module.css";
 import {Grid, GridItem,} from "@chakra-ui/react";
-import withAuth from "@/components/withAuth";
+import withAuth from "@/components/auth/withAuth";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {Project, User} from "@/models";
 import {InboxHeaderProjectsList} from "@/components/project/inbox-header-projects-list";
 import {getAllProjects} from "@/redux/projects/action-reducer";
 
-function Inbox() {
+function InboxPage() {
     const [size, setSize] = useState<number>(0);
     const [userData, setUserData] = useState<User | null | undefined>(null);
     const {user} = useSelector((state: StateType) => state.auth);
@@ -72,4 +72,4 @@ function Inbox() {
     )
 }
 
-export default withAuth(Inbox);
+export default withAuth(InboxPage);

@@ -1,5 +1,5 @@
 import React, {ChangeEvent, useEffect, useState} from "react";
-import withAuth from "@/components/withAuth";
+import withAuth from "@/components/auth/withAuth";
 import {
     Badge,
     Button,
@@ -19,7 +19,7 @@ import {
 import Router, {useRouter} from "next/router";
 import {Project} from "@/models";
 import {SpinnerUI} from "@/components/common";
-import CreateNewProject from "@/components/project/create-new-project";
+import CreateNewProjectModal from "@/components/project/create-new-project";
 
 
 function Index() {
@@ -195,7 +195,7 @@ function Index() {
                 </Flex>
             </Flex>
 
-            <CreateNewProject onOpen={onOpen} isOpen={isOpen} onClose={onClose}/>
+            <CreateNewProjectModal onOpen={onOpen} isOpen={isOpen} onClose={onClose}/>
         </>
     )
 }

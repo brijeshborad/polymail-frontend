@@ -1,14 +1,11 @@
 import {Button, Checkbox, Flex} from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
-import {TabProps, StateType} from "@/types";
+import {TabProps} from "@/types";
 import React from "react";
 import {ThreadsSideBarList} from "@/components/threads";
 import {SpinnerUI} from "@/components/common"
-import {useSelector} from "react-redux";
-
 
 export function ThreadsSideBarTab(props: TabProps) {
-    const {isLoading} = useSelector((state: StateType) => state.threads);
 
     return (
         <>
@@ -36,7 +33,7 @@ export function ThreadsSideBarTab(props: TabProps) {
                 </div>
             }
 
-            {isLoading && <SpinnerUI/>}
+            {props.showLoader && <SpinnerUI/>}
             
             <ThreadsSideBarList tab={props.tab} />
         </>

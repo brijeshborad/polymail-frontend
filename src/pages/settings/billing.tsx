@@ -15,7 +15,7 @@ import {CheckCircleIcon} from "@chakra-ui/icons";
 import React from "react";
 import {MasterCardIcon} from "@/icons";
 import Index from "@/pages/settings/index";
-import withAuth from "@/components/withAuth";
+import withAuth from "@/components/auth/withAuth";
 
 function Billing() {
     const {isOpen, onOpen, onClose} = useDisclosure();
