@@ -18,7 +18,6 @@ export function MessageBox(props: any) {
         selectedMessage
     } = useSelector((state: StateType) => state.messages);
     const [replyType, setReplyType] = useState<string>('');
-    const [isReplyBoxShow, setIsReplayBoxShow] = useState<boolean>(false);
 
 
     const setScope = (type: string, item: any) => {
@@ -31,7 +30,6 @@ export function MessageBox(props: any) {
     }
     const setNewClass = () => {
         setIsShowClass(!isShowClass);
-        setIsReplayBoxShow(false);
     }
 
     const downloadImage = (item: MessageAttachments) => {
@@ -44,7 +42,6 @@ export function MessageBox(props: any) {
     const hideAndShowReplayBox = (type: string = '') => {
         setReplyType(type);
         // setHideAndShowReplyBox(!hideAndShowReplyBox);
-        setIsReplayBoxShow(true);
     }
 
 
@@ -145,7 +142,7 @@ export function MessageBox(props: any) {
                 }
             </Flex>
 
-            {isReplyBoxShow && <MessageReplyBox emailPart={(props.emailPart || '')} messageData={props.threadDetails}
+            {isShowClass && <MessageReplyBox emailPart={(props.emailPart || '')} messageData={props.threadDetails}
                                                 replyType={replyType}/>}
         </>
     )

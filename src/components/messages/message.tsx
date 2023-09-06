@@ -37,7 +37,6 @@ export function Message() {
     const [index, setIndex] = useState<number | null>(null);
     const [emailPart, setEmailPart] = useState<string>("");
     const [hideAndShowReplyBox, setHideAndShowReplyBox] = useState<boolean>(false);
-    const [isReplyBoxShow, setIsReplayBoxShow] = useState<boolean>(false);
     const [replyType, setReplyType] = useState<string>('');
     const [_messageSenders, setMessageSenders] = useState<string[]>([]);
     const [inboxMessages, setInboxMessages] = useState<MessageModel[]>([]);
@@ -189,7 +188,6 @@ export function Message() {
     const hideAndShowReplayBox = (type: string = '') => {
         setReplyType(type);
         // setHideAndShowReplyBox(!hideAndShowReplyBox);
-        setIsReplayBoxShow(true);
     }
 
     const downloadImage = (item: MessageAttachments) => {
@@ -342,9 +340,9 @@ export function Message() {
 
                             </Flex>}
 
-                            {isReplyBoxShow && <MessageReplyBox
+                            <MessageReplyBox
                                 emailPart={(messagePart?.data || '')} messageData={threadDetails}
-                                replyType={replyType}/>}
+                                replyType={replyType}/>
                         </Flex>
                     </Flex>
 
