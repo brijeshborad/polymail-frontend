@@ -31,6 +31,9 @@ import {MessageBox} from "@/components/inbox/messages/message-box";
 import {MessageReplyBox} from "@/components/inbox/messages/message-reply-box";
 
 export function Message() {
+    const iframeRef = React.useRef<HTMLIFrameElement | null>(null);
+    const [iframeHeight, setIframeHeight] = React.useState("0px");
+
     const [index, setIndex] = useState<number | null>(null);
     const [emailPart, setEmailPart] = useState<string>("");
     const [hideAndShowReplyBox, setHideAndShowReplyBox] = useState<boolean>(false);
@@ -152,18 +155,13 @@ export function Message() {
         }
     }, [dispatch, attachmentUrl])
 
-
-    const showPreNextMessage = (type: string) => {
-        if (type === 'up') {
-            if (index && index > 0) {
-                setIndex(prevState => prevState ? (prevState - 1) : null);
-            }
-        } else if (type === 'down') {
-            if (inboxMessages && inboxMessages.length - 1 !== index) {
-                setIndex(prevState => prevState || prevState === 0 ? (prevState + 1) : 0);
-            }
+    // Set iframe height once content is loaded within iframe
+    const onIframeLoad = () => {
+        if(iframeRef.current && iframeRef.current.contentWindow) {
+            setIframeHeight(iframeRef.current.contentWindow.document.body.scrollHeight + "px");
         }
-    }
+    };
+
 
     const closeCompose = () => {
         setHideAndShowReplyBox(false)
@@ -204,7 +202,7 @@ export function Message() {
                 {!hideAndShowReplyBox &&
                 <>
                     <MessagesHeader inboxMessages={inboxMessages} index={index} closeCompose={closeCompose}
-                                    showPreNextMessage={showPreNextMessage} herderType={'inbox'}/>
+                                    herderType={'inbox'}/>
 
                     <Flex padding={'20px'} gap={5} direction={'column'} flex={1} overflow={'auto'}>
                         <Flex gap={2} direction={'column'} height={'100%'}>
@@ -277,7 +275,10 @@ export function Message() {
                                 {(!isLoading && emailPart) &&
                                 <div className={styles.mailBodyContent}>
                                      <iframe
+                                         ref={iframeRef}
                                          src={emailPart}
+                                         onLoad={onIframeLoad}
+                                         height={iframeHeight}
                                          frameBorder="0"
                                          id="frmid"
                                          className={styles.mailBody}/>

@@ -191,7 +191,7 @@ export function ProjectMessage() {
                 {!hideAndShowReplyBox &&
                 <>
                     <MessagesHeader inboxMessages={inboxMessages} index={index} closeCompose={closeCompose}
-                                    showPreNextMessage={showPreNextMessage} herderType={'projects'}/>
+                                    herderType={'projects'}/>
                     {messageContent &&
                     <Flex alignItems={'center'} padding={'10px 20px'}>
                         <Image src={'/image/user.png'} alt={''} width={50} height={50}/>
