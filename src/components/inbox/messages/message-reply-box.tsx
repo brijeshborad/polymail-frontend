@@ -1,7 +1,7 @@
 import {
     Box,
     Button, createStandaloneToast,
-    Flex,
+    Flex, Heading,
     Input,
     Menu,
     MenuButton,
@@ -22,7 +22,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import dayjs from "dayjs";
 import {MessageAttachments} from "@/models";
-import { uploadAttachment} from "@/redux/messages/action-reducer";
+import {uploadAttachment} from "@/redux/messages/action-reducer";
 import {SingleDatepicker} from "chakra-dayzed-datepicker";
 import {MessageBoxType} from "@/types/props-types/message-box.type";
 
@@ -38,12 +38,14 @@ export function MessageReplyBox(props: MessageBoxType) {
     const [subject, setSubject] = useState<string>('');
     const [emailBody, setEmailBody] = useState<string>('');
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
-    const { draft } = useSelector((state: StateType) => state.draft);
+    const {draft} = useSelector((state: StateType) => state.draft);
     const dispatch = useDispatch();
     const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
     const {isOpen, onOpen, onClose} = useDisclosure();
     const inputFile = useRef<HTMLInputElement | null>(null)
     const [scheduledDate, setScheduledDate] = useState<Date>();
+    const [hideEditorToolbar, setHideEditorToolbar] = useState<boolean>(false);
+    const [replyBoxHide, setReplyBoxHide] = useState<boolean>(false);
 
     const isValid = (email: string, type: string) => {
         let error = null;
@@ -158,7 +160,7 @@ export function MessageReplyBox(props: MessageBoxType) {
         // Add signature and draft to email body
         if (draft && draft.draftInfo) {
             if (draft.draftInfo.body) {
-              setEmailBody(prevState => (draft?.draftInfo?.body || '').concat(prevState));
+                setEmailBody(prevState => (draft?.draftInfo?.body || '').concat(prevState));
             }
             if (draft?.draftInfo?.attachments?.length) {
                 setAttachments([
@@ -332,8 +334,6 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                     delay: secondsDifference
                 }
             } else {
-                console.log('emailRecipients', emailRecipients)
-                console.log('draft.to', draft.to)
                 if (draft && draft.to && draft.to.length) {
                     let undoToaster: any = {
                         id: 'send-now',
@@ -373,9 +373,24 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
         }
     }
 
+
+    const handleBlur = () => {
+        setHideEditorToolbar(false)
+    }
+
+    const handleFocus = () => {
+        setHideEditorToolbar(true)
+    }
+
+    const showRecipientsBox = () => {
+        setReplyBoxHide((current) => !current)
+    }
+
     return (
         <Flex maxHeight={'450px'} direction={'column'} padding={4} mt={'auto'} gap={4} borderRadius={8}
-              border={'1px solid #F3F4F6'} backgroundColor={'#FFFFFF'} maxH={'450px'}>
+              border={'1px solid #F3F4F6'} backgroundColor={'#FFFFFF'} maxH={'450px'}
+              onFocus={() => handleFocus()}
+              onBlur={() => handleBlur()}>
             <Flex align={'center'} justify={'space-between'} gap={4} pb={4}
                   borderBottom={'1px solid #F3F4F6'}>
                 <Flex gap={1} align={'center'}>
@@ -405,7 +420,24 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                         <div className={styles.mailUserImage}>
 
                         </div>
-                        {/*<Text fontSize='xs' color={'#6B7280'}>leeclow@disney.com</Text>*/}
+
+                        {!!emailRecipients?.recipients?.items?.length &&
+                        <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1} fontWeight={400}>
+                            {emailRecipients?.recipients?.items[0]}&nbsp; <Text as='u'>{emailRecipients?.recipients?.items?.length - 1 > 0 && `and ${emailRecipients?.recipients?.items?.length - 1} others`} </Text>
+                        </Flex>
+                        }
+                    </Flex>
+                    <Button className={styles.editButton} color={'#374151'} backgroundColor={'#F3F4F6'}
+                            borderRadius={'20px'} lineHeight={1} size='xs' onClick={() => showRecipientsBox()}> {replyBoxHide ? 'Edit' : 'Close'} </Button>
+                </Flex>
+                <Text fontSize='11px' color={'#6B7280'}>Saved 2m ago</Text>
+            </Flex>
+            {!replyBoxHide && <Flex className={styles.mailRecipientsBox} flex={'none'} backgroundColor={'#FFFFFF'} border={'1px solid #E5E7EB'} direction={'column'}
+                                   borderRadius={8}>
+                <Flex width={'100%'} gap={2} padding={'4px 16px'} className={styles.replyBoxCC}>
+                    <Heading as={'h6'} fontSize={'13px'} paddingTop={1} fontWeight={500} lineHeight={1}
+                             color={'#374151'}>To:</Heading>
+                    <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
                         {!!emailRecipients?.recipients?.items?.length && emailRecipients.recipients.items.map((item: string | undefined, i: number) => (
                             <Chip text={item} key={i} click={() => handleItemDelete(item!, 'recipients')}/>
                         ))}
@@ -419,15 +451,49 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                                placeholder={'Recipient\'s Email'}
                         />
                     </Flex>
-                    {/*<Button className={styles.editButton} color={'#374151'} backgroundColor={'#F3F4F6'}*/}
-                    {/*        borderRadius={'20px'} lineHeight={1} size='xs'> Edit </Button>*/}
                 </Flex>
-                <Text fontSize='11px' color={'#6B7280'}>Saved 2m ago</Text>
-            </Flex>
+                <Flex width={'100%'} gap={2} padding={'4px 16px'} className={styles.replyBoxCC}>
+                    <Heading as={'h6'} fontSize={'13px'} paddingTop={1} fontWeight={500} lineHeight={1}
+                             color={'#374151'}>CC:</Heading>
+                    <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
+                        {!!emailRecipients?.cc?.items?.length && emailRecipients.cc.items.map((item: string | undefined, i: number) => (
+                            <Chip text={item} key={i} click={() => handleItemDelete(item!, 'cc')}/>
+                        ))}
+
+                        <Input width={'auto'} padding={0} height={'23px'}
+                               fontSize={'12px'}
+                               value={emailRecipients.cc.value}
+                               onKeyDown={(e) => handleKeyDown(e, 'cc')}
+                               onChange={(e) => handleChange(e, 'cc')}
+                               onPaste={(e) => handlePaste(e, 'cc')}
+                               border={0} className={styles.ccInput}
+                        />
+                    </Flex>
+                </Flex>
+                <Flex width={'100%'} gap={2} padding={'4px 16px'} className={styles.replyBoxCC}>
+                    <Heading as={'h6'} fontSize={'13px'} paddingTop={1} fontWeight={500} lineHeight={1}
+                             color={'#374151'}>BCC:</Heading>
+                    <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
+                        {!!emailRecipients?.bcc?.items?.length && emailRecipients.bcc.items.map((item: string | undefined, i: number) => (
+                            <Chip text={item} key={i} click={() => handleItemDelete(item!, 'bcc')}/>
+                        ))}
+
+                        <Input width={'auto'} padding={0} height={'23px'}
+                               fontSize={'12px'}
+                               value={emailRecipients.bcc.value}
+                               onKeyDown={(e) => handleKeyDown(e, 'bcc')}
+                               onChange={(e) => handleChange(e, 'bcc')}
+                               onPaste={(e) => handlePaste(e, 'bcc')}
+                               border={0} className={styles.ccInput}
+                        />
+                    </Flex>
+                </Flex>
+            </Flex>}
+
 
             <Flex direction={'column'} position={"relative"} flex={1}>
                 <Flex direction={'column'} maxH={'285px'} overflow={'auto'} className={styles.replyBoxEditor}>
-                    <RichTextEditor className={'reply-message-area message-reply-box'} initialUpdated={true}
+                    <RichTextEditor className={`reply-message-area message-reply-box ${hideEditorToolbar ? 'hide-toolbar' : ''}`} initialUpdated={true}
                                     placeholder='Reply with anything you like or @mention someone to share this thread'
                                     value={emailBody} onChange={(e) => sendToDraft(e)}/>
                     {attachments && attachments.length > 0 ? <div style={{marginTop: '20px'}}>
@@ -440,7 +506,7 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                         ))}
                     </div> : null}
                 </Flex>
-                <Flex direction={'column'} className={styles.composeModal}>
+                {hideEditorToolbar && <Flex direction={'column'} className={styles.composeModal}>
                     <Flex align={'flex-end'} justify={'space-between'} gap={2}>
                         <Flex gap={2} className={styles.replyBoxIcon}>
                             <FileIcon click={() => inputFile.current?.click()}/>
@@ -451,13 +517,14 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                             {/*<EmojiIcon/>*/}
                         </Flex>
                         <Flex align={'center'} className={styles.replyButton}>
-                            <Button className={styles.replyTextButton} colorScheme='blue' onClick={() => sendMessages()}> Send </Button>
+                            <Button className={styles.replyTextButton} colorScheme='blue'
+                                    onClick={() => sendMessages()}> Send </Button>
                             <Menu>
                                 <MenuButton className={styles.replyArrowIcon} as={Button}
                                             aria-label='Options'
                                             variant='outline'><ChevronDownIcon/></MenuButton>
                                 <MenuList>
-                                    <MenuItem  onClick={() => openCalender()}> Send Later </MenuItem>
+                                    <MenuItem onClick={() => openCalender()}> Send Later </MenuItem>
                                 </MenuList>
                             </Menu>
                             <Modal isOpen={isOpen} onClose={onClose} isCentered={true} scrollBehavior={'outside'}>
@@ -475,13 +542,15 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                                     </ModalBody>
                                     <ModalFooter>
                                         <Button variant='ghost' onClick={onClose}>Cancel</Button>
-                                        <Button colorScheme='blue' mr={3}  onClick={() => sendMessages(true)}> Schedule </Button>
+                                        <Button colorScheme='blue' mr={3}
+                                                onClick={() => sendMessages(true)}> Schedule </Button>
                                     </ModalFooter>
                                 </ModalContent>
                             </Modal>
                         </Flex>
                     </Flex>
                 </Flex>
+                }
             </Flex>
         </Flex>
     )

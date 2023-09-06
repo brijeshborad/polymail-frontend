@@ -317,4 +317,9 @@ div:has(> .mailSendToaster) {
 .message-reply-box.rdw-editor-wrapper .rdw-editor-toolbar {
     left: 87px;
     bottom: -8px;
+    opacity: 0;
+}
+
+.hide-toolbar.rdw-editor-wrapper .rdw-editor-toolbar {
+    opacity: 1;
 }
