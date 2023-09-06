@@ -170,7 +170,7 @@ export function MessagesHeader({
         <>
             <Flex gap={2} align={'center'} justify={'space-between'} padding={'16px 20px 12px'} borderBottom={'1px solid #E5E7EB'}>
                 <Flex gap={1}>
-                    <Heading as='h6' fontSize={'15px'} color={'#0A101D'} fontWeight={600}>{inboxMessages[index]?.subject || '(no subject)'}</Heading>
+                    <Heading as='h6' fontSize={'15px'} color={'#0A101D'} fontWeight={600}>{inboxMessages && inboxMessages.length && index && inboxMessages[index]?.subject || '(no subject)'}</Heading>
                 </Flex>
 
                 <Flex gap={3} align={'center'}>

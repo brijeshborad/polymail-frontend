@@ -27,7 +27,7 @@ import CreateNewProject from "@/components/project/create-new-project";
 
 declare type RecipientsValue = { items: string[], value: string };
 declare type RecipientsType = { cc: RecipientsValue, bcc: RecipientsValue, recipients: RecipientsValue };
-export function ComposeBox(props: BillingTypes) {
+export function ComposeBox(props: any) {
     const [emailRecipients, setEmailRecipients] = useState<RecipientsType>({
         cc: {items: [], value: ""},
         bcc: {items: [], value: ""},
@@ -293,7 +293,7 @@ export function ComposeBox(props: BillingTypes) {
     return (
         <>
             <Modal isOpen={props.isOpen} onClose={props.onClose} isCentered>
-                <ModalOverlay backgroundColor={'#F9FAFB'}/>
+                <ModalOverlay backgroundColor={'rgba(229, 231, 235, 0.50)'} backdropFilter={'blur(16px)'}/>
                 <ModalContent className={styles.composeModal} maxWidth={'893px'} height={'708px'} maxHeight={'708px'}
                               borderRadius={16} border={'1px solid #E5E7EB'}>
                     <ModalHeader display={'flex'} borderBottom={'1px solid #E5E7EB'} color={'#0A101D'}
@@ -451,7 +451,11 @@ export function ComposeBox(props: BillingTypes) {
                                                             </ModalHeader>
                                                             <ModalCloseButton size={'xs'}/>
                                                             <ModalBody>
-                                                                <SingleDatepicker name="date-input" />
+                                                                <SingleDatepicker
+                                                                    date={scheduledDate}
+                                                                    defaultIsOpen={true}
+                                                                    onDateChange={setScheduledDate}
+                                                                    name="date-input" />
                                                             </ModalBody>
                                                             <ModalFooter>
                                                                 <Button variant='ghost' onClick={onClose}>Cancel</Button>

@@ -196,7 +196,7 @@ export function MessageReplyBox(props: MessageBoxType) {
                 setEmailRecipients((prevState) => ({
                     ...prevState,
                     recipients: {
-                        items: draft ? (draft.to || []) : [props.messageData.from!],
+                        items: draft ? (draft.to || []) : [props.messageData?.from!],
                         value: prevState.recipients.value
                     }
                 }));
@@ -358,9 +358,9 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
             }
             dispatch(sendMessage({id: draft.id, ...params}));
             onClose();
-            if (props.onClose) {
-                props.onClose();
-            }
+            // if (props.onClose) {
+            //     props.onClose();
+            // }
 
             setEmailRecipients({
                 cc: {items: [], value: ""},
@@ -376,7 +376,7 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
 
     return (
         <Flex maxHeight={'450px'} direction={'column'} padding={4} mt={'auto'} gap={4} borderRadius={8}
-              border={'1px solid #F3F4F6'} backgroundColor={'#FFFFFF'}>
+              border={'1px solid #F3F4F6'} backgroundColor={'#FFFFFF'} maxH={'450px'}>
             <Flex align={'center'} justify={'space-between'} gap={4} pb={4}
                   borderBottom={'1px solid #F3F4F6'}>
                 <Flex gap={1} align={'center'}>
@@ -425,78 +425,65 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                 </Flex>
                 <Text fontSize='11px' color={'#6B7280'}>Saved 2m ago</Text>
             </Flex>
-            <div className={styles.replyBoxTextAreaShadow}>
-                {/*<Textarea className={styles.replyBoxTextArea} minHeight={'16px'} maxHeight={'194px'}*/}
-                {/*          h={'auto'} fontWeight={500} resize={'none'} lineHeight={'normal'} border={0}*/}
-                {/*          borderRadius={0} padding={0} fontSize={'13px'} letterSpacing={'-0.13px'}*/}
-                {/*          placeholder='Let’s go and check'/>*/}
 
-                <RichTextEditor className={'reply-message-area'} initialUpdated={true}
-                                placeholder='Reply with anything you like or @mention someone to share this thread'
-                                value={emailBody} onChange={(e) => sendToDraft(e)}/>
-                {attachments && attachments.length > 0 ? <div style={{marginTop: '20px'}}>
-                    {attachments.map((item, index: number) => (
-                        <Flex align={'center'} key={index} className={styles.attachmentsFile}>
-                            {item.filename}
-                            <div className={styles.closeIcon} onClick={() => removeAttachment(index)}><CloseIcon/>
-                            </div>
+            <Flex direction={'column'} position={"relative"} flex={1}>
+                <Flex direction={'column'} maxH={'285px'} overflow={'auto'} className={styles.replyBoxEditor}>
+                    <RichTextEditor className={'reply-message-area message-reply-box'} initialUpdated={true}
+                                    placeholder='Reply with anything you like or @mention someone to share this thread'
+                                    value={emailBody} onChange={(e) => sendToDraft(e)}/>
+                    {attachments && attachments.length > 0 ? <div style={{marginTop: '20px'}}>
+                        {attachments.map((item, index: number) => (
+                            <Flex align={'center'} key={index} className={styles.attachmentsFile}>
+                                {item.filename}
+                                <div className={styles.closeIcon} onClick={() => removeAttachment(index)}><CloseIcon/>
+                                </div>
+                            </Flex>
+                        ))}
+                    </div> : null}
+                </Flex>
+                <Flex direction={'column'} className={styles.composeModal}>
+                    <Flex align={'flex-end'} justify={'space-between'} gap={2}>
+                        <Flex gap={2} className={styles.replyBoxIcon}>
+                            <FileIcon click={() => inputFile.current?.click()}/>
+                            <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e)}
+                                   style={{display: 'none'}}/>
+                            <LinkIcon/>
+                            <TextIcon/>
+                            {/*<EmojiIcon/>*/}
                         </Flex>
-                    ))}
-                </div> : null}
-            </div>
-            <Flex direction={'column'} className={styles.composeModal}>
-                <div className={styles.replyUserName}>
-                    <div>
-                        ---
-                    </div>
-                    <div>
-                        Cheers
-                    </div>
-                </div>
-                <Text fontSize='xs' backgroundColor={'#F3F4F6'} borderRadius={4} padding={'4px 8px'}
-                      color={'#6B7280'} w={'fit-content'} lineHeight={1}>Ryan Mickle is sharing this
-                    email thread (and future replies) with 1 person at chiat.com on Polymail</Text>
-                <Flex align={'flex-end'} justify={'space-between'} gap={2}>
-                    <Flex gap={2} className={styles.replyBoxIcon}>
-                        <FileIcon click={() => inputFile.current?.click()}/>
-                        <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e)}
-                               style={{display: 'none'}}/>
-                        <LinkIcon/>
-                        <TextIcon/>
-                        <EmojiIcon/>
-                    </Flex>
-                    <Flex align={'center'} className={styles.replyButton}>
-                        <Button className={styles.replyTextButton} colorScheme='blue' onClick={() => sendMessages()}> Send </Button>
-                        <Menu>
-                            <MenuButton className={styles.replyArrowIcon} as={Button}
-                                        aria-label='Options'
-                                        variant='outline'><ChevronDownIcon/></MenuButton>
-                            <MenuList>
-                                <MenuItem  onClick={() => openCalender()}> Send Later </MenuItem>
-                            </MenuList>
-                        </Menu>
-                        <Modal isOpen={isOpen} onClose={onClose} isCentered={true} scrollBehavior={'outside'}>
-                            <ModalOverlay/>
-                            <ModalContent minHeight="440px">
-                                <ModalHeader display="flex" justifyContent="space-between" alignItems="center">
-                                    Schedule send
-                                </ModalHeader>
-                                <ModalCloseButton size={'xs'}/>
-                                <ModalBody>
-                                    <SingleDatepicker name="date-input"
-                                                      date={scheduledDate}
-                                                      defaultIsOpen={true}
-                                                      onDateChange={setScheduledDate}/>
-                                </ModalBody>
-                                <ModalFooter>
-                                    <Button variant='ghost' onClick={onClose}>Cancel</Button>
-                                    <Button colorScheme='blue' mr={3}  onClick={() => sendMessages(true)}> Schedule </Button>
-                                </ModalFooter>
-                            </ModalContent>
-                        </Modal>
+                        <Flex align={'center'} className={styles.replyButton}>
+                            <Button className={styles.replyTextButton} colorScheme='blue' onClick={() => sendMessages()}> Send </Button>
+                            <Menu>
+                                <MenuButton className={styles.replyArrowIcon} as={Button}
+                                            aria-label='Options'
+                                            variant='outline'><ChevronDownIcon/></MenuButton>
+                                <MenuList>
+                                    <MenuItem  onClick={() => openCalender()}> Send Later </MenuItem>
+                                </MenuList>
+                            </Menu>
+                            <Modal isOpen={isOpen} onClose={onClose} isCentered={true} scrollBehavior={'outside'}>
+                                <ModalOverlay/>
+                                <ModalContent minHeight="440px">
+                                    <ModalHeader display="flex" justifyContent="space-between" alignItems="center">
+                                        Schedule send
+                                    </ModalHeader>
+                                    <ModalCloseButton size={'xs'}/>
+                                    <ModalBody>
+                                        <SingleDatepicker name="date-input"
+                                                          date={scheduledDate}
+                                                          defaultIsOpen={true}
+                                                          onDateChange={setScheduledDate}/>
+                                    </ModalBody>
+                                    <ModalFooter>
+                                        <Button variant='ghost' onClick={onClose}>Cancel</Button>
+                                        <Button colorScheme='blue' mr={3}  onClick={() => sendMessages(true)}> Schedule </Button>
+                                    </ModalFooter>
+                                </ModalContent>
+                            </Modal>
+                        </Flex>
                     </Flex>
                 </Flex>
             </Flex>
         </Flex>
-)
+    )
 }

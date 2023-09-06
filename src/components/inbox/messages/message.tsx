@@ -34,7 +34,7 @@ import {ReplyBox} from "@/components/inbox/reply-box";
 import {Message as MessageModel, MessageDraft, MessagePart, MessageAttachments, Organization, Thread} from "@/models";
 import {MessagesHeader} from "@/components/inbox/messages/messages-header";
 import {updateDraftState} from "@/redux/draft/action-reducer";
-import {MessageBox, messageBox} from "@/components/inbox/messages/message-box";
+import {MessageBox} from "@/components/inbox/messages/message-box";
 import {MessageReplyBox} from "@/components/inbox/messages/message-reply-box";
 
 export function Message() {
@@ -64,7 +64,7 @@ export function Message() {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (selectedThread) {
+        if (selectedThread && selectedThread.messages && selectedThread.messages.length) {
             let data = [...selectedThread.messages]
             data.length = data.length - 1
             setThreadData([...data])

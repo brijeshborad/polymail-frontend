@@ -161,12 +161,12 @@
 }
 
 .mailList {
-    max-height: calc(100vh - 220px);
+    max-height: calc(100vh - 278px);
     overflow-y: auto;
 }
 
 .mailListForArchive {
-    max-height: calc(100vh - 170px);
+    max-height: calc(100vh - 233px);
 }
 
 .mailOpen .mailDetails {
@@ -322,12 +322,14 @@
     margin: 0;
 }
 
-.mailBox .addToProjectList .addNewProject {
+.mailBox .addToProjectList .addNewProject,
+.composeModal .addToProjectList .addNewProject {
     width: calc(100% - 24px);
     margin: 0 auto;
 }
 
-.mailBox .addToProjectList .addNewProject button {
+.mailBox .addToProjectList .addNewProject button,
+.composeModal .addToProjectList .addNewProject button {
     border-top: 1px solid #F3F4F6;
     padding: 0;
     gap: 8px;
@@ -337,7 +339,8 @@
     background-color: transparent;
 }
 
-.mailBox .addToProjectList .addNewProject button .plusIcon {
+.mailBox .addToProjectList .addNewProject button .plusIcon,
+.composeModal .addToProjectList .addNewProject button .plusIcon {
     width: 20px;
     height: 20px;
     border-radius: 3px;
@@ -759,12 +762,16 @@
 /* Mail Box End */
 
 @media (max-width: 991px) {
+    .mailBox {
+        height: 100% !important;
+    }
+
     .filterTabs {
         padding: 16px 25px;
     }
 
     .mailList {
-        max-height: calc(100vh - 210px);
+        max-height: calc(100vh - 266px);
     }
 
     .replayBox .mailFooter .replyMessageArea {
@@ -891,10 +898,6 @@
     background-color: #F3F4F6;
 }
 
-.mailBox .replyBoxTextAreaShadow {
-    position: relative;
-}
-
 .mailBox .replyBoxTextAreaShadow:before {
     position: absolute;
     content: '';
@@ -906,21 +909,24 @@
     z-index: 1;
 }
 
-.composeModal .replyUserName {
-    color: #0A101D;
-    font-size: 13px;
-    font-weight: 500;
-    margin-bottom: 12px;
-}
-
 .composeModal .replyBoxIcon svg {
     stroke: #6B7280;
+}
+
+.replyBoxIcon svg {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
 }
 
 .composeModal .replyButton .replyTextButton,
 .composeModal .replyButton .replyArrowIcon {
     height: 38px;
     background-color: #1F2937;
+}
+
+.composeModal .replyBoxCC + .replyBoxCC {
+    border-top: 1px solid #E5E7EB;
 }
 
 .composeModal .replyButton .replyTextButton {

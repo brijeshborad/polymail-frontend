@@ -297,6 +297,7 @@ div:has(> .mailSendToaster) {
   border-radius: 4px;
   background-color: #0A101D;
   display: inline-block;
+    margin-bottom: 3px;
 }
 
 .reply-message-area.rdw-editor-wrapper {
@@ -310,5 +311,10 @@ div:has(> .mailSendToaster) {
 .reply-message-area.rdw-editor-wrapper .rdw-editor-toolbar {
     padding: 0;
     bottom: -10px;
-    left: 77px;
+    left: 85px;
+}
+
+.message-reply-box.rdw-editor-wrapper .rdw-editor-toolbar {
+    left: 87px;
+    bottom: -8px;
 }

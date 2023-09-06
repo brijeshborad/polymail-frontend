@@ -50,7 +50,7 @@ export function MessageBox(props: any) {
 
     return (
         <>
-            <Flex position={'relative'} direction={'column'} className={`${styles.oldMail} ${isShowClass ? styles.lastOenMail : ''}`} gap={4} border={'1px solid #E5E7EB'} borderRadius={12} align={'center'} key={props.index}>
+            <Flex position={'relative'} direction={'column'} className={`${styles.oldMail} ${isShowClass ? styles.lastOenMail : ''}`} mb={3} gap={4} border={'1px solid #E5E7EB'} borderRadius={12} align={'center'} key={props.index}>
                 {!isShowClass &&  <Flex align={'center'} w={'100%'} gap={2} cursor={'pointer'} padding={4} onClick={() => setNewClass()}>
                     <div className={styles.mailBoxUserImage}>
 
@@ -76,7 +76,7 @@ export function MessageBox(props: any) {
                             </div>
                             <Flex w={'100%'} direction={'column'} pr={'20px'}>
                                 <Flex align={'center'} justify={'space-between'} mb={1}>
-                                    <Flex align={'center'} gap={1}>
+                                    <Flex align={'flex-end'} gap={1}>
                                         <Heading as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400} letterSpacing={'-0.13px'} lineHeight={1}>Michael Eisner</Heading>
                                         <span className={'dot'} />
                                         <Text fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1} fontWeight={400}>{props.threadDetails.from}</Text>
@@ -99,14 +99,11 @@ export function MessageBox(props: any) {
                                         </div>
                                     </Flex>
                                 </Flex>
-                                <Flex>
-
-                                    {props.threadDetails && props.threadDetails.to && props.threadDetails.to.length > 0 &&
-                                    <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1} fontWeight={400}>to:&nbsp;
-                                        {props.threadDetails.to[0]}&nbsp; <Text as='u'>{props.threadDetails.to.length - 1 > 0 && `and ${props.threadDetails.to.length - 1} others`} </Text>
-                                    </Flex>
-                                    }
+                                {props.threadDetails && props.threadDetails.to && props.threadDetails.to.length > 0 &&
+                                <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1} fontWeight={400}>to:&nbsp;
+                                    {props.threadDetails.to[0]}&nbsp; <Text as='u'>{props.threadDetails.to.length - 1 > 0 && `and ${props.threadDetails.to.length - 1} others`} </Text>
                                 </Flex>
+                                }
                             </Flex>
                         </Flex>
                         <Menu>
@@ -133,7 +130,7 @@ export function MessageBox(props: any) {
                             className={styles.mailBody}
                         />
                     </div>}
-                    {props.messageAttachments && !!props.messageAttachments.length && props.messageAttachments?.map((item: MessageAttachments, i) => (
+                    {props.messageAttachments && !!props.messageAttachments.length && props.messageAttachments?.map((item: MessageAttachments, i: number) => (
                         <div className={styles.mailBodyAttachments} key={i}>
                             <Flex align={'center'} className={styles.attachmentsFile}>
                                 {item.filename}
@@ -153,3 +150,4 @@ export function MessageBox(props: any) {
         </>
     )
 }
+
