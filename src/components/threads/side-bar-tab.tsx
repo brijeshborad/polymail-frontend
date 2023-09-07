@@ -27,8 +27,8 @@ export function ThreadsSideBarTab(props: TabProps) {
     }
     return (
         <>
-            {
-                props.tab === 'INBOX' && <div>
+
+                 <div>
                     <Flex overflowX={'auto'} align={'center'}>
                         <div className={styles.checkBoxLabel}>
                             <Checkbox defaultChecked>Select All</Checkbox>
@@ -49,10 +49,10 @@ export function ThreadsSideBarTab(props: TabProps) {
                         </div>
                     </Flex>
                 </div>
-            }
+
 
             {props.showLoader && <SpinnerUI/>}
-            
+
             <ThreadsSideBarList tab={props.tab} />
         </>
     )
