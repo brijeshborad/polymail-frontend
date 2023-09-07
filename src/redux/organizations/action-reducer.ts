@@ -88,8 +88,15 @@ const organizationSlice = createSlice({
         },
 
         // change role from project members
-        updateOrganizationMemberRole: (state: InitialOrganizationStateType, _action: PayloadAction<{ organizationId?: string,accountId?: string, body?: {role: string} }>) => {
-            return {...state, member: null, error: null, isLoading: false, updateMemberRoleSuccess: false, success: false}
+        updateOrganizationMemberRole: (state: InitialOrganizationStateType, _action: PayloadAction<{ organizationId?: string, accountId?: string, body?: { role?: string, name?: string } }>) => {
+            return {
+                ...state,
+                member: null,
+                error: null,
+                isLoading: false,
+                updateMemberRoleSuccess: false,
+                success: false
+            }
         },
         updateOrganizationMemberRoleSuccess: (state: InitialOrganizationStateType, {payload: member}: PayloadAction<{}>) => {
             let currentMembers = [...(current(state).members || [])] as TeamMember[];
@@ -99,7 +106,14 @@ const organizationSlice = createSlice({
                 ...currentMembers[index1],
                 role: memberData.role
             };
-            return {...state,members: [...currentMembers], error: null, isLoading: false, updateMemberRoleSuccess: true, success: true}
+            return {
+                ...state,
+                members: [...currentMembers],
+                error: null,
+                isLoading: false,
+                updateMemberRoleSuccess: true,
+                success: true
+            }
         },
         updateOrganizationMemberRoleError: (state: InitialOrganizationStateType, {payload: error}: PayloadAction<any>) => {
             return {...state, member: null, error, isLoading: false, updateMemberRoleSuccess: false, success: false}
