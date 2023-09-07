@@ -80,7 +80,7 @@ const messagesSlice = createSlice({
                 ...currentMessages[index1],
                 scope: messageData.scope || 'visible'
             };
-            return {...state,messages: [...currentMessages],  error: null, isLoading: false, success: true}
+            return {...state, messages: [...currentMessages], error: null, isLoading: false, success: true}
         },
         updateMessageError: (state: InitialMessageStateType, {payload: error}: PayloadAction<any>) => {
             return {...state, error, isLoading: false, success: false}

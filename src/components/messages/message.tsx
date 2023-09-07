@@ -50,18 +50,12 @@ export function Message() {
     } = useSelector((state: StateType) => state.messages);
     const {selectedThread} = useSelector((state: StateType) => state.threads);
     const [cacheMessages, setCacheMessages] = useState<{ [key: string]: { body: MessagePart, attachments: MessageAttachments[] } }>({});
-    const [threadData, setThreadData] = useState<any>([]);
-    const [threadDetails, setThreadDetails] = useState<any>(null);
+    const [messagesList, setMessagesList] = useState<any>([]);
+    const [messageDetails, setMessageDetails] = useState<any>(null);
 
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (selectedThread && selectedThread.messages && selectedThread.messages.length) {
-            let data = [...selectedThread.messages]
-            data.length = data.length - 1
-            setThreadData([...data])
-            setThreadDetails(selectedThread.messages[selectedThread.messages.length - 1])
-        }
         if (selectedThread && selectedThread?.id) {
             setIndex(null);
             setHideAndShowReplyBox(false);
@@ -71,6 +65,10 @@ export function Message() {
 
     useEffect(() => {
         if (messages && messages.length > 0) {
+            let data = [...messages]
+            data.length = data.length - 1
+            setMessagesList([...data])
+            setMessageDetails(messages[messages.length - 1])
             // remove draft messages and set index to last inbox message
             const inboxMessages: MessageModel[] = messages.filter((msg: MessageModel) => !(msg.mailboxes || []).includes('DRAFT'));
             setInboxMessages(inboxMessages);
@@ -157,7 +155,7 @@ export function Message() {
 
     // Set iframe height once content is loaded within iframe
     const onIframeLoad = () => {
-        if(iframeRef.current && iframeRef.current.contentWindow) {
+        if (iframeRef.current && iframeRef.current.contentWindow) {
             setIframeHeight(iframeRef.current.contentWindow.document.body.scrollHeight + "px");
         }
     };
@@ -206,7 +204,7 @@ export function Message() {
 
                     <Flex padding={'20px'} gap={5} direction={'column'} flex={1} overflow={'auto'}>
                         <Flex gap={2} direction={'column'} height={'100%'}>
-                            {threadData  && !!threadData.length && threadData.map((item: any, index: number) => (
+                            {messagesList && !!messagesList.length && messagesList.map((item: any, index: number) => (
                                 <div key={index}>
                                     <MessageBox item={item} index={index} threadDetails={item}
                                                 isLoading={isLoading} emailPart={emailPart}
@@ -216,7 +214,9 @@ export function Message() {
 
                             ))}
 
-                            {threadDetails && <Flex direction={'column'} className={`${styles.oldMail} ${styles.lastOneMail}`} gap={4} padding={4} border={'1px solid #E5E7EB'} borderRadius={12} align={'center'}>
+                            {messageDetails &&
+                            <Flex direction={'column'} className={`${styles.oldMail} ${styles.lastOneMail}`} gap={4}
+                                  padding={4} border={'1px solid #E5E7EB'} borderRadius={12} align={'center'}>
                                 <Flex align={'center'} w={'100%'} gap={2}>
                                     <div className={styles.mailBoxUserImage}>
 
@@ -225,9 +225,12 @@ export function Message() {
                                     <Flex w={'100%'} direction={'column'}>
                                         <Flex align={'center'} justify={'space-between'} mb={1}>
                                             <Flex align={'center'} gap={1}>
-                                                <Heading as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400} letterSpacing={'-0.13px'} lineHeight={1}>Michael Eisner</Heading>
-                                                <span className={'dot'} />
-                                                <Text fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1} fontWeight={400}>{threadDetails.from}</Text>
+                                                <Heading as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400}
+                                                         letterSpacing={'-0.13px'} lineHeight={1}>Michael
+                                                    Eisner</Heading>
+                                                <span className={'dot'}/>
+                                                <Text fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'}
+                                                      lineHeight={1} fontWeight={400}>{messageDetails.from}</Text>
                                             </Flex>
 
                                             <Flex align={'center'} gap={'6px'}>
@@ -238,35 +241,46 @@ export function Message() {
                                                     <div className={styles.memberPhoto}>
                                                         <Image src="/image/user.png" width="24" height="24" alt=""/>
                                                     </div>
-                                                    <Flex align={'center'} justify={'center'} fontSize={'9px'} color={'#082561'} className={styles.memberPhoto}>
+                                                    <Flex align={'center'} justify={'center'} fontSize={'9px'}
+                                                          color={'#082561'} className={styles.memberPhoto}>
                                                         +4
                                                     </Flex>
                                                 </Flex>
                                                 <div className={styles.mailBoxTime}>
-                                                    <Time time={threadDetails?.created || ''} isShowFullTime={true}/>
+                                                    <Time time={messageDetails?.created || ''} isShowFullTime={true}/>
                                                 </div>
                                                 <Menu>
-                                                    <MenuButton className={styles.menuIcon} transition={'all 0.5s'} backgroundColor={'transparent'} fontSize={'12px'} h={'auto'} minWidth={'24px'} padding={'0'} as={Button} rightIcon={<MenuIcon />}>
+                                                    <MenuButton className={styles.menuIcon} transition={'all 0.5s'}
+                                                                backgroundColor={'transparent'} fontSize={'12px'}
+                                                                h={'auto'} minWidth={'24px'} padding={'0'} as={Button}
+                                                                rightIcon={<MenuIcon/>}>
                                                     </MenuButton>
                                                     <MenuList className={'drop-down-list'}>
-                                                        {threadDetails && (
-                                                            <MenuItem onClick={() => setScope(threadDetails.scope === 'visible' ? 'hidden' : 'visible', threadDetails)}>
-                                                                {threadDetails.scope === 'visible' ? 'Hide from project members' : 'Show to project members'}
+                                                        {messageDetails && (
+                                                            <MenuItem
+                                                                onClick={() => setScope(messageDetails.scope === 'visible' ? 'hidden' : 'visible', messageDetails)}>
+                                                                {messageDetails.scope === 'visible' ? 'Hide from project members' : 'Show to project members'}
                                                             </MenuItem>
                                                         )}
 
-                                                        <MenuItem onClick={() => hideAndShowReplayBox('reply')}> Reply </MenuItem>
-                                                        <MenuItem onClick={() => hideAndShowReplayBox('reply-all')}> Reply All </MenuItem>
-                                                        <MenuItem onClick={() => hideAndShowReplayBox('forward')}> Forward </MenuItem>
+                                                        <MenuItem
+                                                            onClick={() => hideAndShowReplayBox('reply')}> Reply </MenuItem>
+                                                        <MenuItem
+                                                            onClick={() => hideAndShowReplayBox('reply-all')}> Reply
+                                                            All </MenuItem>
+                                                        <MenuItem
+                                                            onClick={() => hideAndShowReplayBox('forward')}> Forward </MenuItem>
                                                     </MenuList>
                                                 </Menu>
                                             </Flex>
                                         </Flex>
                                         <Flex>
 
-                                            {threadDetails && threadDetails.to && threadDetails.to.length > 0 &&
-                                            <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1} fontWeight={400}>to:&nbsp;
-                                                {threadDetails.to[0]}&nbsp; <Text as='u'>{threadDetails.to.length - 1 > 0 && `and ${threadDetails.to.length - 1} others`} </Text>
+                                            {messageDetails && messageDetails.to && messageDetails.to.length > 0 &&
+                                            <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'}
+                                                  lineHeight={1} fontWeight={400}>to:&nbsp;
+                                                {messageDetails.to[0]}&nbsp; <Text
+                                                    as='u'>{messageDetails.to.length - 1 > 0 && `and ${messageDetails.to.length - 1} others`} </Text>
                                             </Flex>
                                             }
                                         </Flex>
@@ -274,32 +288,32 @@ export function Message() {
                                 </Flex>
                                 {(!isLoading && emailPart) &&
                                 <div className={styles.mailBodyContent}>
-                                     <iframe
-                                         ref={iframeRef}
-                                         src={emailPart}
-                                         onLoad={onIframeLoad}
-                                         height={iframeHeight}
-                                         frameBorder="0"
-                                         id="frmid"
-                                         className={styles.mailBody}/>
+                                    <iframe
+                                        ref={iframeRef}
+                                        src={emailPart}
+                                        onLoad={onIframeLoad}
+                                        height={iframeHeight}
+                                        frameBorder="0"
+                                        id="frmid"
+                                        className={styles.mailBody}/>
                                 </div>}
                                 {messageAttachments && !!messageAttachments.length && messageAttachments?.map((item: MessageAttachments, i) => (
 
-                                <div className={styles.mailBodyAttachments} key={i}>
-                                            <Flex align={'center'} className={styles.attachmentsFile}>
-                                                {item.filename}
-                                                <div className={`${styles.closeIcon} ${styles.downloadIcon}`}
-                                                     onClick={() => downloadImage(item)}>
-                                                    <DownloadIcon/>
-                                                </div>
-                                            </Flex>
-                                </div>
+                                    <div className={styles.mailBodyAttachments} key={i}>
+                                        <Flex align={'center'} className={styles.attachmentsFile}>
+                                            {item.filename}
+                                            <div className={`${styles.closeIcon} ${styles.downloadIcon}`}
+                                                 onClick={() => downloadImage(item)}>
+                                                <DownloadIcon/>
+                                            </div>
+                                        </Flex>
+                                    </div>
                                 ))}
 
                             </Flex>}
 
                             <MessageReplyBox
-                                emailPart={(messagePart?.data || '')} messageData={threadDetails}
+                                emailPart={(messagePart?.data || '')} messageData={messageDetails}
                                 replyType={replyType}/>
                         </Flex>
                     </Flex>
