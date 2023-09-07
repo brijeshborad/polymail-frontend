@@ -46,6 +46,7 @@ export function MessageReplyBox(props: MessageBoxType) {
     const [scheduledDate, setScheduledDate] = useState<Date>();
     const [hideEditorToolbar, setHideEditorToolbar] = useState<boolean>(false);
     const [replyBoxHide, setReplyBoxHide] = useState<boolean>(false);
+    const [boxUpdatedFirstTime, setBoxUpdatedFirstTime] = useState<boolean>(false);
 
     const isValid = (email: string, type: string) => {
         let error = null;
@@ -128,6 +129,9 @@ export function MessageReplyBox(props: MessageBoxType) {
 
     const sendToDraft = (value: string, isValueUpdate: boolean = true) => {
         if (isValueUpdate) {
+            if (!boxUpdatedFirstTime) {
+                setBoxUpdatedFirstTime(true);
+            }
             setEmailBody(value);
         }
 
@@ -137,7 +141,7 @@ export function MessageReplyBox(props: MessageBoxType) {
             cc: emailRecipients.cc?.items && emailRecipients.cc?.items.length > 0 ? emailRecipients.cc?.items : [],
             bcc: emailRecipients.bcc?.items && emailRecipients.bcc?.items.length > 0 ? emailRecipients.bcc?.items : [],
             draftInfo: {
-                body: value
+                body: value || emailBody
             }
         }
 
@@ -156,7 +160,7 @@ export function MessageReplyBox(props: MessageBoxType) {
         // Add signature and draft to email body
         if (draft && draft.draftInfo) {
             if (draft.draftInfo.body) {
-                setEmailBody(prevState => (draft?.draftInfo?.body || '').concat(prevState));
+                setEmailBody(draft?.draftInfo?.body || '');
             }
             if (draft?.draftInfo?.attachments?.length) {
                 setAttachments([
@@ -243,6 +247,12 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
             }
         }));
     }, [])
+
+    useEffect(() => {
+        if (!draft) {
+            setBoxUpdatedFirstTime(false);
+        }
+    }, [draft])
 
     useEffect(() => {
         const propertiesToCheck: (keyof RecipientsType)[] = ['recipients', 'bcc', 'cc'];
@@ -502,7 +512,7 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                 <Flex direction={'column'} maxH={'285px'} overflow={'auto'} className={styles.replyBoxEditor}>
                     <RichTextEditor
                         className={`reply-message-area message-reply-box ${hideEditorToolbar ? 'hide-toolbar' : ''}`}
-                        initialUpdated={true}
+                        initialUpdated={boxUpdatedFirstTime}
                         placeholder='Reply with anything you like or @mention someone to share this thread'
                         value={emailBody} onChange={(e) => sendToDraft(e)}/>
                     {attachments && attachments.length > 0 ? <div style={{marginTop: '20px'}}>

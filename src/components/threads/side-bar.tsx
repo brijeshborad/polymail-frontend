@@ -109,11 +109,14 @@ export function ThreadsSideBar(props: {cachePrefix: string}) {
                     let draftIndex = currentMessages.findIndex((message: Message) => message.id === updatedDraft.id);
                     let messages = currentThreads[currentThreadIndex]?.messages || [];
                     const messagesCopy = [...messages];
-                    messagesCopy[draftIndex] = updatedDraft as Message;
-                    messages = messagesCopy;
+                    if (draftIndex !== -1) {
+                        messagesCopy[draftIndex] = updatedDraft as Message;
+                    } else {
+                        messagesCopy.push(updatedDraft as Message);
+                    }
                     currentThreads[currentThreadIndex] = {
                         ...currentThreads[currentThreadIndex],
-                        messages: [...messages]
+                        messages: [...messagesCopy]
                     };
                     dispatch(updateDraftState({success: false, updatedDraft: null}));
                     dispatch(updateThreadState({threads: currentThreads, success: true}));

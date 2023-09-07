@@ -34,31 +34,10 @@ export function ThreadsSideBarList(props: ThreadListProps) {
         }
         return;
     }
-    {/*if ((item.mailboxes || []).includes('UNREAD')) {
-        let currentThreads = [...threads || []] as Thread[];
-        let threadData = {...(item) || {}} as Thread;
-        let index1 = currentThreads.findIndex((item: Thread) => item.id === threadData?.id);
-        let finalArray = (item.mailboxes || []).filter(function (item: string) {
-            return item !== 'UNREAD'
-        })
-        let body = {
-            mailboxes: [
-                ...finalArray
-            ]
-        }
-        currentThreads[index1] = {
-            ...currentThreads[index1],
-            mailboxes: body?.mailboxes || []
-        };
-        dispatch(updateThreadState({threads: currentThreads, success: true}));
-        if (item && item.id) {
-            dispatch(updateThreads({id: item.id, body}));
-        }
-    }*/}
     dispatch(updateThreadState({selectedThread: item}));
     dispatch(updateMessageState({selectedMessage: null}));
     dispatch(updateDraftState({draft: null}));
-  }, [dispatch, threads, props.tab])
+  }, [dispatch, props.tab])
 
   return (
     <>
