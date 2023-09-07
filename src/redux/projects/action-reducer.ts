@@ -86,7 +86,7 @@ const projectsSlice = createSlice({
             return {...state, member: null, error, isLoading: false, updateSuccess: false, success: false}
         },
 
-        updateProject: (state: InitialProjectState,  _action: PayloadAction<{ id: string, body?: {  favorite?: boolean } }>) => {
+        updateProject: (state: InitialProjectState,  _action: PayloadAction<{ id: string, body?: {  favorite?: boolean, order?: number } }>) => {
             return {...state,isProjectUpdateSuccess: false, error: null}
         },
 

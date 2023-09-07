@@ -18,6 +18,9 @@ import Router, {useRouter} from "next/router";
 import {Project} from "@/models";
 import {SpinnerUI} from "@/components/common";
 import CreateNewProjectModal from "@/components/project/create-new-project";
+import {Simulate} from "react-dom/test-utils";
+import drop = Simulate.drop;
+import {POSITION_GAP} from "@/utils/constants";
 
 
 function Index() {
@@ -38,11 +41,13 @@ function Index() {
 
     useEffect(() => {
         if (projects && projects.length > 0) {
+
+            const sortedList = [...projects].sort((a: Project, b: Project) => (a.projectMeta?.order || 0) - (b.projectMeta?.order || 0));
             if (router.query.favorite === 'true') {
-                let favoriteData = projects.filter((item: Project) => item.projectMeta?.favorite);
+                let favoriteData = sortedList.filter((item: Project) => item.projectMeta?.favorite);
                 setItemList(favoriteData)
             } else {
-                setItemList(projects)
+                setItemList(sortedList)
             }
         }
     }, [router.query.favorite, projects])
@@ -56,28 +61,38 @@ function Index() {
         e.preventDefault();
     };
 
-    const handleDrop = (e: ChangeEvent | any, dropIndex: number) => {
-        // const handleDrop = (items: Project[], index: number, excludedId: Project, e: ChangeEvent | any) => {
-        // const filteredItems = isUndefined(excludedId) ? items : items.filter((item) => item.id !== excludedId.id);
-        //
-        // if (isUndefined(index)) {
-        //     const lastItem = filteredItems[filteredItems.length - 1];
-        //
-        //     return (lastItem ? lastItem.position : 0) + POSITION_GAP;
-        // }
-        //
-        // const prevItem = filteredItems[index - 1];
-        // const nextItem = filteredItems[index];
-        //
-        // const prevPosition = prevItem ? prevItem.position : 0;
-        //
-        // if (!nextItem) {
-        //     return prevPosition + POSITION_GAP;
-        // }
-        // return e.dataTransfer.setData('index', prevPosition + (nextItem.position - prevPosition) / 2);
 
+    const nextPosition = (items: Project[], index: number | undefined, excludedId: string | undefined) => {
+        const filteredItems = excludedId === undefined ? items : items.filter((item) => item.id !== excludedId);
+
+        if (index === undefined) {
+            const lastItem = filteredItems[filteredItems.length - 1];
+
+            return (lastItem ? lastItem.projectMeta?.order || 0 : 0) + POSITION_GAP;
+        }
+
+        const prevItem = filteredItems[index - 1];
+        const nextItem = filteredItems[index];
+
+        const prevPosition = prevItem ? prevItem.projectMeta?.order || 0 : 0;
+
+        if (!nextItem) {
+            return prevPosition + POSITION_GAP;
+        }
+
+        return prevPosition + (nextItem.projectMeta?.order || 0 - prevPosition) / 2;
+    };
+
+
+    const handleDrop = (e: ChangeEvent | any, dropIndex: number) => {
         const draggedIndex = +e.dataTransfer.getData('index');
         const draggedItem = itemList[draggedIndex];
+        // return e.dataTransfer.setData('index', prevPosition + (nextItem.position - prevPosition) / 2);
+
+        let body = {
+            order: nextPosition(itemList, dropIndex, draggedItem.id)
+        }
+        dispatch(updateProject({id: draggedItem.id!, body}))
 
         const newItems = (itemList || []).filter((_, index) => index !== draggedIndex);
         newItems.splice(dropIndex, 0, draggedItem);
