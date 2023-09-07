@@ -202,8 +202,8 @@ export function Message() {
                     <MessagesHeader inboxMessages={inboxMessages} index={index} closeCompose={closeCompose}
                                     herderType={'inbox'}/>
 
-                    <Flex padding={'20px'} direction={'column'} flex={1} overflow={'auto'}>
-                        <Flex gap={2} direction={'column'} height={'100%'}>
+                    <Flex padding={'20px'} direction={'column'} flex={1}>
+                        <Flex gap={2} direction={'column'}  height={'calc(100vh - 450px)'} overflow={'auto'}>
                             {messagesList && !!messagesList.length && messagesList.map((item: any, index: number) => (
                                 <div key={index}>
                                     <MessageBox item={item} index={index} threadDetails={item}
