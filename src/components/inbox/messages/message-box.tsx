@@ -8,15 +8,28 @@ import {useDispatch, useSelector} from "react-redux";
 import Image from "next/image";
 import {MessageAttachments} from "@/models";
 import {StateType} from "@/types";
+import {debounce} from "@/utils/common.functions";
 
 
 export function MessageBox(props: any) {
-    const dispatch = useDispatch();
+    const iframeRef = React.useRef<HTMLIFrameElement | null | any>(null);
+    const [iframeHeight, setIframeHeight] = React.useState("0px");
     const [isShowClass, setIsShowClass] = useState<boolean>(false);
+
+    const dispatch = useDispatch();
     const {
         selectedMessage
     } = useSelector((state: StateType) => state.messages);
 
+    // Set iframe height once content is loaded within iframe
+    const onIframeLoad = () => {
+        debounce(() => {
+            if (iframeRef.current && iframeRef.current.contentWindow) {
+                setIframeHeight(iframeRef.current.contentWindow.document.body.scrollHeight + "px");
+            }
+        }, 500);
+
+    };
 
     const setScope = (type: string, item: any) => {
         if (item && item.id) {
@@ -38,36 +51,44 @@ export function MessageBox(props: any) {
 
     return (
         <>
-            <Flex position={'relative'} direction={'column'} className={`${styles.oldMail} ${isShowClass ? styles.lastOneMail : ''}`} mb={3} gap={4} border={'1px solid #E5E7EB'} borderRadius={12} align={'center'} key={props.index}>
-                {!isShowClass &&  <Flex align={'center'} w={'100%'} gap={2} cursor={'pointer'} padding={4} onClick={() => setNewClass()}>
+            <Flex position={'relative'} direction={'column'}
+                  className={`${styles.oldMail} ${isShowClass ? styles.lastOneMail : ''}`} mb={3} gap={4}
+                  border={'1px solid #E5E7EB'} borderRadius={12} align={'center'} key={props.index}>
+                {!isShowClass &&
+                <Flex align={'center'} w={'100%'} gap={2} cursor={'pointer'} padding={4} onClick={() => setNewClass()}>
                     <div className={styles.mailBoxUserImage}>
 
                     </div>
 
                     <Flex w={'100%'} direction={'column'}>
                         <Flex align={'center'} justify={'space-between'} mb={1}>
-                            <Heading as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400} letterSpacing={'-0.13px'} lineHeight={1}>Michael Eisner</Heading>
+                            <Heading as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400}
+                                     letterSpacing={'-0.13px'} lineHeight={1}>Michael Eisner</Heading>
                             <div className={styles.mailBoxTime}>
                                 <Time time={props?.item.created || ''} isShowFullTime={true}/>
                             </div>
                         </Flex>
-                        <Text fontSize='13px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1} fontWeight={400}>{props?.item.snippet || '(no content)'}</Text>
+                        <Text fontSize='13px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
+                              fontWeight={400}>{props?.item.snippet || '(no content)'}</Text>
                     </Flex>
-                </Flex> }
+                </Flex>}
 
                 {props.threadDetails && isShowClass &&
                 <Flex direction={'column'} w={'100%'} pb={4}>
                     <Flex align={'flex-start'}>
-                        <Flex align={'center'} w={'100%'} cursor={'pointer'} gap={2} padding={4} onClick={() => setNewClass()}>
+                        <Flex align={'center'} w={'100%'} cursor={'pointer'} gap={2} padding={4}
+                              onClick={() => setNewClass()}>
                             <div className={styles.mailBoxUserImage}>
 
                             </div>
                             <Flex w={'100%'} direction={'column'} pr={'20px'}>
                                 <Flex align={'center'} justify={'space-between'} mb={1}>
                                     <Flex align={'flex-end'} gap={1}>
-                                        <Heading as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400} letterSpacing={'-0.13px'} lineHeight={1}>Michael Eisner</Heading>
-                                        <span className={'dot'} />
-                                        <Text fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1} fontWeight={400}>{props.threadDetails.from}</Text>
+                                        <Heading as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400}
+                                                 letterSpacing={'-0.13px'} lineHeight={1}>Michael Eisner</Heading>
+                                        <span className={'dot'}/>
+                                        <Text fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
+                                              fontWeight={400}>{props.threadDetails.from}</Text>
                                     </Flex>
 
                                     <Flex align={'center'} gap={'6px'}>
@@ -78,7 +99,8 @@ export function MessageBox(props: any) {
                                             <div className={styles.memberPhoto}>
                                                 <Image src="/image/user.png" width="24" height="24" alt=""/>
                                             </div>
-                                            <Flex align={'center'} justify={'center'} fontSize={'9px'} color={'#082561'} className={styles.memberPhoto}>
+                                            <Flex align={'center'} justify={'center'} fontSize={'9px'} color={'#082561'}
+                                                  className={styles.memberPhoto}>
                                                 +4
                                             </Flex>
                                         </Flex>
@@ -88,18 +110,23 @@ export function MessageBox(props: any) {
                                     </Flex>
                                 </Flex>
                                 {props.threadDetails && props.threadDetails.to && props.threadDetails.to.length > 0 &&
-                                <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1} fontWeight={400}>to:&nbsp;
-                                    {props.threadDetails.to[0]}&nbsp; <Text as='u'>{props.threadDetails.to.length - 1 > 0 && `and ${props.threadDetails.to.length - 1} others`} </Text>
+                                <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
+                                      fontWeight={400}>to:&nbsp;
+                                    {props.threadDetails.to[0]}&nbsp; <Text
+                                        as='u'>{props.threadDetails.to.length - 1 > 0 && `and ${props.threadDetails.to.length - 1} others`} </Text>
                                 </Flex>
                                 }
                             </Flex>
                         </Flex>
                         <Menu>
-                            <MenuButton position={'absolute'} right={'10px'} top={'20px'} className={styles.menuIcon} transition={'all 0.5s'} backgroundColor={'transparent'} fontSize={'12px'} h={'auto'} minWidth={'24px'} padding={'0'} as={Button} rightIcon={<MenuIcon />}>
+                            <MenuButton position={'absolute'} right={'10px'} top={'20px'} className={styles.menuIcon}
+                                        transition={'all 0.5s'} backgroundColor={'transparent'} fontSize={'12px'}
+                                        h={'auto'} minWidth={'24px'} padding={'0'} as={Button} rightIcon={<MenuIcon/>}>
                             </MenuButton>
                             <MenuList className={'drop-down-list'}>
                                 {props.threadDetails && (
-                                    <MenuItem onClick={() => setScope(props.threadDetails.scope === 'visible' ? 'hidden' : 'visible', props.threadDetails)}>
+                                    <MenuItem
+                                        onClick={() => setScope(props.threadDetails.scope === 'visible' ? 'hidden' : 'visible', props.threadDetails)}>
                                         {props.threadDetails.scope === 'visible' ? 'Hide from project members' : 'Show to project members'}
                                     </MenuItem>
                                 )}
@@ -113,6 +140,9 @@ export function MessageBox(props: any) {
                     {(!props.isLoading && props.emailPart) &&
                     <div className={styles.mailBodyContent}>
                         <iframe
+                            ref={iframeRef}
+                            onLoad={onIframeLoad}
+                            height={iframeHeight}
                             src={props.emailPart}
                             className={styles.mailBody}
                         />

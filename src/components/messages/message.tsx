@@ -29,9 +29,10 @@ import {MessagesHeader} from "@/components/messages/messages-header";
 import {updateDraftState} from "@/redux/draft/action-reducer";
 import {MessageBox} from "@/components/inbox/messages/message-box";
 import {MessageReplyBox} from "@/components/inbox/messages/message-reply-box";
+import {debounce} from "@/utils/common.functions";
 
 export function Message() {
-    const iframeRef = React.useRef<HTMLIFrameElement | null>(null);
+    const iframeRef = React.useRef<HTMLIFrameElement | null | any>(null);
     const [iframeHeight, setIframeHeight] = React.useState("0px");
 
     const [index, setIndex] = useState<number | null>(null);
@@ -155,9 +156,11 @@ export function Message() {
 
     // Set iframe height once content is loaded within iframe
     const onIframeLoad = () => {
-        if (iframeRef.current && iframeRef.current.contentWindow) {
-            setIframeHeight(iframeRef.current.contentWindow.document.body.scrollHeight + "px");
-        }
+        debounce(() => {
+            if (iframeRef.current && iframeRef.current.contentWindow) {
+                setIframeHeight(iframeRef.current.contentWindow.document.body.scrollHeight + "px");
+            }
+        }, 500)
     };
 
 
@@ -202,8 +205,8 @@ export function Message() {
                     <MessagesHeader inboxMessages={inboxMessages} index={index} closeCompose={closeCompose}
                                     herderType={'inbox'}/>
 
-                    <Flex padding={'20px'} direction={'column'} flex={1}>
-                        <Flex gap={2} direction={'column'}  height={'calc(100vh - 450px)'} overflow={'auto'}>
+                    <Flex padding={'20px'} gap={5} direction={'column'} flex={1} overflow={'auto'}>
+                        <Flex gap={2} direction={'column'} height={'100%'}>
                             {messagesList && !!messagesList.length && messagesList.map((item: any, index: number) => (
                                 <div key={index}>
                                     <MessageBox item={item} index={index} threadDetails={item}
@@ -218,7 +221,9 @@ export function Message() {
                             <Flex direction={'column'} className={`${styles.oldMail} ${styles.lastOneMail}`} gap={4}
                                   padding={4} border={'1px solid #E5E7EB'} borderRadius={12} align={'center'}>
                                 <Flex align={'center'} w={'100%'} gap={2}>
-                                    <div className={styles.mailBoxUserImage}/>
+                                    <div className={styles.mailBoxUserImage}>
+
+                                    </div>
 
                                     <Flex w={'100%'} direction={'column'}>
                                         <Flex align={'center'} justify={'space-between'} mb={1}>
@@ -309,10 +314,10 @@ export function Message() {
 
                             </Flex>}
 
-                        </Flex>
-                        <MessageReplyBox
+                            <MessageReplyBox
                                 emailPart={(messagePart?.data || '')} messageData={messageDetails}
-                            replyType={replyType}/>
+                                replyType={replyType}/>
+                        </Flex>
                     </Flex>
                 </>
                 }
