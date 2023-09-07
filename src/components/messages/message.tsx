@@ -31,6 +31,8 @@ import {MessageBox} from "@/components/inbox/messages/message-box";
 import {MessageReplyBox} from "@/components/inbox/messages/message-reply-box";
 import {debounce} from "@/utils/common.functions";
 
+let cacheMessages: { [key: string]: { body: MessagePart, attachments: MessageAttachments[] } } = {};
+
 export function Message() {
     const iframeRef = React.useRef<HTMLIFrameElement | null | any>(null);
     const [iframeHeight, setIframeHeight] = React.useState("0px");
@@ -50,9 +52,7 @@ export function Message() {
         attachmentUrl
     } = useSelector((state: StateType) => state.messages);
     const {selectedThread} = useSelector((state: StateType) => state.threads);
-    const [cacheMessages, setCacheMessages] = useState<{ [key: string]: { body: MessagePart, attachments: MessageAttachments[] } }>({});
-    const [messagesList, setMessagesList] = useState<any>([]);
-    const [messageDetails, setMessageDetails] = useState<any>(null);
+    const [lastMessageDetails, setLastMessageDetails] = useState<MessageModel | null>(null);
 
     const dispatch = useDispatch();
 
@@ -60,63 +60,55 @@ export function Message() {
         if (selectedThread && selectedThread?.id) {
             setIndex(null);
             setHideAndShowReplyBox(false);
+            setLastMessageDetails(null);
             dispatch(updateMessageState({messages: selectedThread.messages}));
         }
     }, [dispatch, selectedThread])
 
     useEffect(() => {
         if (messages && messages.length > 0) {
-            let data = [...messages]
-            data.length = data.length - 1
-            setMessagesList([...data])
-            setMessageDetails(messages[messages.length - 1])
             // remove draft messages and set index to last inbox message
-            const inboxMessages: MessageModel[] = messages.filter((msg: MessageModel) => !(msg.mailboxes || []).includes('DRAFT'));
-            setInboxMessages(inboxMessages);
+            const currentInboxMessages: MessageModel[] = messages.filter((msg: MessageModel) => !(msg.mailboxes || []).includes('DRAFT'));
+            let data = [...currentInboxMessages];
+            data.splice(currentInboxMessages.length - 1, 1);
+            setInboxMessages([...data]);
+            setLastMessageDetails(currentInboxMessages[currentInboxMessages.length - 1]);
             const draftMessage = messages.findLast((msg: MessageModel) => (msg.mailboxes || []).includes('DRAFT'));
             if (draftMessage) {
                 dispatch(updateDraftState({draft: draftMessage as MessageDraft}));
             }
-            setIndex(val => !val ? inboxMessages.length - 1 : val);
+            setIndex(null);
         }
     }, [messages, dispatch])
 
 
     const cacheMessage = useCallback((body: Object | any) => {
-        if (index !== null && inboxMessages && inboxMessages[index]) {
-            setCacheMessages(prev => ({
-                ...prev,
-                [inboxMessages[index].id!]: {
-                    ...prev[inboxMessages[index].id!],
+        let messageId = index === null ? (lastMessageDetails ? lastMessageDetails.id : null) : inboxMessages[index].id;
+        if (messageId) {
+            cacheMessages = {
+                ...cacheMessages,
+                [messageId]: {
+                    ...cacheMessages[messageId],
                     ...body
                 }
-            }))
+            }
         }
-    }, [index, inboxMessages])
-
-
-    useEffect(() => {
-        if (messagePart && messagePart.data) {
-            cacheMessage({body: messagePart});
-            let decoded = Buffer.from(messagePart.data || '', 'base64').toString('ascii');
-            let addTargetBlank = decoded.replace(/<a/g, '<a target="_blank"');
-            const blob = new Blob([addTargetBlank], {type: "text/html"});
-            const blobUrl = window.URL.createObjectURL(blob);
-            setEmailPart(blobUrl);
-        } else {
-            cacheMessage({body: {data: ''}});
-            setEmailPart('')
-        }
-    }, [messagePart, cacheMessage])
+    }, [inboxMessages, index, lastMessageDetails])
 
     useEffect(() => {
-        // convert blob url to image url
-        if (messageAttachments && messageAttachments.length) {
-            cacheMessage({attachments: messageAttachments});
-        } else {
-            cacheMessage({attachments: []});
+        if (lastMessageDetails) {
+            if (cacheMessages[lastMessageDetails.id!] && cacheMessages[lastMessageDetails.id!].body) {
+                dispatch(updateMessageState({messagePart: cacheMessages[lastMessageDetails.id!].body}));
+            } else {
+                dispatch(getMessageParts({id: lastMessageDetails.id!}));
+            }
+            if (cacheMessages[lastMessageDetails.id!] && cacheMessages[lastMessageDetails.id!].attachments) {
+                dispatch(updateMessageState({messageAttachments: cacheMessages[lastMessageDetails.id!].attachments}));
+            } else {
+                dispatch(getMessageAttachments({id: lastMessageDetails.id!}));
+            }
         }
-    }, [messageAttachments, cacheMessage])
+    }, [dispatch, lastMessageDetails])
 
     useEffect(() => {
         if (index !== null && inboxMessages && inboxMessages.length > 0) {
@@ -137,6 +129,30 @@ export function Message() {
             }
         }
     }, [dispatch, index, inboxMessages])
+
+
+    useEffect(() => {
+        if (messagePart && messagePart.data) {
+            cacheMessage({body: messagePart});
+            let decoded = Buffer.from(messagePart.data || '', 'base64').toString('ascii');
+            let addTargetBlank = decoded.replace(/<a/g, '<a target="_blank"');
+            const blob = new Blob([addTargetBlank], {type: "text/html"});
+            const blobUrl = window.URL.createObjectURL(blob);
+            setEmailPart(blobUrl);
+        } else {
+            cacheMessage({body: {data: ''}});
+            setEmailPart('')
+        }
+    }, [cacheMessage, messagePart])
+
+    useEffect(() => {
+        // convert blob url to image url
+        if (messageAttachments && messageAttachments.length) {
+            cacheMessage({attachments: messageAttachments});
+        } else {
+            cacheMessage({attachments: []});
+        }
+    }, [cacheMessage, messageAttachments])
 
     useEffect(() => {
         if (attachmentUrl) {
@@ -207,7 +223,7 @@ export function Message() {
 
                     <Flex padding={'20px'} gap={5} direction={'column'} flex={1} overflow={'auto'}>
                         <Flex gap={2} direction={'column'} height={'100%'}>
-                            {messagesList && !!messagesList.length && messagesList.map((item: any, index: number) => (
+                            {inboxMessages && !!inboxMessages.length && inboxMessages.map((item: any, index: number) => (
                                 <div key={index}>
                                     <MessageBox item={item} index={index} threadDetails={item}
                                                 isLoading={isLoading} emailPart={emailPart}
@@ -217,7 +233,7 @@ export function Message() {
 
                             ))}
 
-                            {messageDetails &&
+                            {lastMessageDetails &&
                             <Flex direction={'column'} className={`${styles.oldMail} ${styles.lastOneMail}`} gap={4}
                                   padding={4} border={'1px solid #E5E7EB'} borderRadius={12} align={'center'}>
                                 <Flex align={'center'} w={'100%'} gap={2}>
@@ -233,7 +249,7 @@ export function Message() {
                                                     Eisner</Heading>
                                                 <span className={'dot'}/>
                                                 <Text fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'}
-                                                      lineHeight={1} fontWeight={400}>{messageDetails.from}</Text>
+                                                      lineHeight={1} fontWeight={400}>{lastMessageDetails.from}</Text>
                                             </Flex>
 
                                             <Flex align={'center'} gap={'6px'}>
@@ -250,7 +266,8 @@ export function Message() {
                                                     </Flex>
                                                 </Flex>
                                                 <div className={styles.mailBoxTime}>
-                                                    <Time time={messageDetails?.created || ''} isShowFullTime={true}/>
+                                                    <Time time={lastMessageDetails?.created || ''}
+                                                          isShowFullTime={true}/>
                                                 </div>
                                                 <Menu>
                                                     <MenuButton className={styles.menuIcon} transition={'all 0.5s'}
@@ -259,10 +276,10 @@ export function Message() {
                                                                 rightIcon={<MenuIcon/>}>
                                                     </MenuButton>
                                                     <MenuList className={'drop-down-list'}>
-                                                        {messageDetails && (
+                                                        {lastMessageDetails && (
                                                             <MenuItem
-                                                                onClick={() => setScope(messageDetails.scope === 'visible' ? 'hidden' : 'visible', messageDetails)}>
-                                                                {messageDetails.scope === 'visible' ? 'Hide from project members' : 'Show to project members'}
+                                                                onClick={() => setScope(lastMessageDetails.scope === 'visible' ? 'hidden' : 'visible', lastMessageDetails)}>
+                                                                {lastMessageDetails.scope === 'visible' ? 'Hide from project members' : 'Show to project members'}
                                                             </MenuItem>
                                                         )}
 
@@ -279,11 +296,11 @@ export function Message() {
                                         </Flex>
                                         <Flex>
 
-                                            {messageDetails && messageDetails.to && messageDetails.to.length > 0 &&
+                                            {lastMessageDetails && lastMessageDetails.to && lastMessageDetails.to.length > 0 &&
                                             <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'}
                                                   lineHeight={1} fontWeight={400}>to:&nbsp;
-                                                {messageDetails.to[0]}&nbsp; <Text
-                                                    as='u'>{messageDetails.to.length - 1 > 0 && `and ${messageDetails.to.length - 1} others`} </Text>
+                                                {lastMessageDetails.to[0]}&nbsp; <Text
+                                                    as='u'>{lastMessageDetails.to.length - 1 > 0 && `and ${lastMessageDetails.to.length - 1} others`} </Text>
                                             </Flex>
                                             }
                                         </Flex>
@@ -315,7 +332,7 @@ export function Message() {
                             </Flex>}
 
                             <MessageReplyBox
-                                emailPart={(messagePart?.data || '')} messageData={messageDetails}
+                                emailPart={(messagePart?.data || '')} messageData={lastMessageDetails}
                                 replyType={replyType}/>
                         </Flex>
                     </Flex>
