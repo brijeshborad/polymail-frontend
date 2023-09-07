@@ -222,7 +222,7 @@ function Profile() {
                                             <div className={styles.userEditIcon}>
                                                 <EditIcon/>
                                             </div>
-                                            <input type='file' id='file' ref={inputFile}
+                                            <input type='file' id='file' ref={inputFile} accept={'image/*'}
                                                    onChange={(e) => handleFileUpload(e)}
                                                    style={{display: 'none'}}/>
                                         </div>

@@ -127,7 +127,7 @@ function CompleteProfile() {
                                             <Image src={profilePicture && profilePicture.url} width="100" height="100"
                                                    alt=""/> : <UploadIcon/> }
 
-                                        <input type='file' id='file' ref={inputFile}
+                                        <input type='file' id='file' ref={inputFile} accept={'image/*'}
                                                onChange={(e) => handleFileUpload(e)}
                                                style={{display: 'none'}}/>
                                     </Box>
