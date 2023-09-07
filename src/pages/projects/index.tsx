@@ -19,7 +19,6 @@ import {Project} from "@/models";
 import {SpinnerUI} from "@/components/common";
 import CreateNewProjectModal from "@/components/project/create-new-project";
 import {Simulate} from "react-dom/test-utils";
-import drop = Simulate.drop;
 import {POSITION_GAP} from "@/utils/constants";
 
 
