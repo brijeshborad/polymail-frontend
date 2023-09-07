@@ -50,22 +50,17 @@ export function ThreadsSideBar(props: {cachePrefix: string}) {
     const dispatch = useDispatch();
     const {isOpen, onOpen, onClose} = useDisclosure();
 
-    const getAllThread = useCallback((resetState: boolean = true, force: boolean = false) => {
+    const getAllThread = useCallback(() => {
         if (selectedAccount) {
-            console.log('---Step 1 Check for cache', resetState, force);
-            if (!cacheThreads[`${props.cachePrefix}-${tab}-${selectedAccount.id}`] && !force) {
-                force = true;
-            }
-            console.log('---Step 2 Check for force', force);
-            if (force) {
-                console.log('---Step 3 API CALLED and returned');
-                dispatch(getAllThreads({mailbox: tab, account: selectedAccount.id, enriched: true, resetState}));
-                return;
-            }
+            let resetState = true;
             if (currentCacheTab !== tab) {
                 currentCacheTab = tab;
+                if (cacheThreads[`${props.cachePrefix}-${tab}-${selectedAccount.id}`]) {
+                    resetState = false
+                }
                 dispatch(updateThreadState({threads: cacheThreads[`${props.cachePrefix}-${tab}-${selectedAccount.id}`]}));
             }
+            dispatch(getAllThreads({mailbox: tab, account: selectedAccount.id, enriched: true, resetState}));
         }
     }, [dispatch, props.cachePrefix, selectedAccount, tab]);
 
@@ -73,14 +68,14 @@ export function ThreadsSideBar(props: {cachePrefix: string}) {
         if (newMessage && newMessage.name === 'new_message') {
             console.log('---NEW MESSAGE---', newMessage);
             dispatch(updateLastMessage(null));
-            getAllThread(false, true);
+            getAllThread();
         }
     }, [getAllThread, newMessage, dispatch])
 
     useEffect(() => {
         if (updateSuccess) {
             dispatch(updateThreadState({updateSuccess: false}));
-            getAllThread(false);
+            getAllThread();
         }
     }, [updateSuccess, getAllThread, dispatch])
 
@@ -131,7 +126,7 @@ export function ThreadsSideBar(props: {cachePrefix: string}) {
 
     useEffect(() => {
         if (account && account.success) {
-            getAllThread(true, true);
+            getAllThread();
         }
     }, [account, dispatch, getAllThread])
 
