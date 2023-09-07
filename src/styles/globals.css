@@ -145,6 +145,8 @@ a {
 
 .default-editor-css {
     font-size: 13px;
+    color: #0A101D;
+    font-weight: 500;
 }
 
 .rdw-editor-wrapper .rdw-editor-toolbar .rdw-option-wrapper {
