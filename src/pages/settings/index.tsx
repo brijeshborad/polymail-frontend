@@ -20,25 +20,23 @@ const tabMenu = [
                 title: 'Email Address',
                 route: '/settings/email-address'
             },
-            {
-                title: 'Billing',
-                route: '/settings/billing'
-            },
-
         ]
     },
     {
         title: 'Organization',
         children: [
             {
+                title: 'Approved Domains',
+                route: '/settings/preferences'
+            },
+            {
+                title: 'Billing',
+                route: '/settings/billing'
+            },
+            {
                 title: 'Members',
                 route: '/settings/members'
             },
-            {
-                title: 'Approved Domains',
-                route: '/settings/preferences'
-            }
-
         ]
     },
 ];
