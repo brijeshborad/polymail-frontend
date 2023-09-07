@@ -42,7 +42,7 @@ function Billing() {
                                         <Flex alignItems={'center'} justify={'space-between'} pb={4} mb={4} borderBottom={'1px solid #000000'}>
                                             <Flex alignItems={'center'} gap={2} color={'#000000'}>
                                                 <CheckCircleIcon />
-                                                <Text fontSize={'14px'} fontWeight={'500'}>Full Name</Text>
+                                                <Text fontSize={'14px'} fontWeight={'500'}>Polymail Teams Basic</Text>
                                             </Flex>
                                             <Text className={styles.planMonth} fontSize={'14px'}>$10/month</Text>
                                         </Flex>
