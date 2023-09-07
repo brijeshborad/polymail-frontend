@@ -202,7 +202,7 @@ export function Message() {
                     <MessagesHeader inboxMessages={inboxMessages} index={index} closeCompose={closeCompose}
                                     herderType={'inbox'}/>
 
-                    <Flex padding={'20px'} gap={5} direction={'column'} flex={1} overflow={'auto'}>
+                    <Flex padding={'20px'} direction={'column'} flex={1} overflow={'auto'}>
                         <Flex gap={2} direction={'column'} height={'100%'}>
                             {messagesList && !!messagesList.length && messagesList.map((item: any, index: number) => (
                                 <div key={index}>
@@ -218,9 +218,7 @@ export function Message() {
                             <Flex direction={'column'} className={`${styles.oldMail} ${styles.lastOneMail}`} gap={4}
                                   padding={4} border={'1px solid #E5E7EB'} borderRadius={12} align={'center'}>
                                 <Flex align={'center'} w={'100%'} gap={2}>
-                                    <div className={styles.mailBoxUserImage}>
-
-                                    </div>
+                                    <div className={styles.mailBoxUserImage}/>
 
                                     <Flex w={'100%'} direction={'column'}>
                                         <Flex align={'center'} justify={'space-between'} mb={1}>
@@ -294,7 +292,6 @@ export function Message() {
                                         onLoad={onIframeLoad}
                                         height={iframeHeight}
                                         frameBorder="0"
-                                        id="frmid"
                                         className={styles.mailBody}/>
                                 </div>}
                                 {messageAttachments && !!messageAttachments.length && messageAttachments?.map((item: MessageAttachments, i) => (
@@ -312,10 +309,10 @@ export function Message() {
 
                             </Flex>}
 
-                            <MessageReplyBox
-                                emailPart={(messagePart?.data || '')} messageData={messageDetails}
-                                replyType={replyType}/>
                         </Flex>
+                        <MessageReplyBox
+                                emailPart={(messagePart?.data || '')} messageData={messageDetails}
+                            replyType={replyType}/>
                     </Flex>
                 </>
                 }
