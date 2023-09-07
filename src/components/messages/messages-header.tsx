@@ -26,7 +26,7 @@ import {
 import React, {useCallback, useEffect, useState} from "react";
 import {Project, Thread} from "@/models";
 import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
-import {addItemToGroup} from "@/redux/memberships/action-reducer";
+import {addItemToGroup, updateMembershipState} from "@/redux/memberships/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType, MessageHeaderTypes} from "@/types";
 import {getAllProjects} from "@/redux/projects/action-reducer";
@@ -40,6 +40,7 @@ export function MessagesHeader({
                                }: MessageHeaderTypes) {
     const {selectedThread, threads, updateSuccess} = useSelector((state: StateType) => state.threads);
     let {projects} = useSelector((state: StateType) => state.projects);
+    let {success: membershipSuccess} = useSelector((state: StateType) => state.memberships);
 
     const dispatch = useDispatch();
     const {onOpen} = useDisclosure();
@@ -62,6 +63,19 @@ export function MessagesHeader({
             dispatch(updateThreadState({updateSuccess: false}));
         }
     }, [updateSuccess, dispatch, successMessage]);
+
+
+    useEffect(() => {
+        if (membershipSuccess && successMessage) {
+            Toaster({
+                desc: successMessage.desc,
+                title: successMessage.title || '',
+                type: 'success'
+            })
+            setSuccessMessage(null)
+            dispatch(updateMembershipState({success: false}));
+        }
+    }, [membershipSuccess, dispatch, successMessage]);
 
 
     const updateMailBox = (messageBox: string) => {
@@ -118,7 +132,7 @@ export function MessagesHeader({
                     mailboxes: body.mailboxes || []
                 }
 
-                if (remove_from_list === true) {
+                if (remove_from_list) {
                     currentThreads.splice(index1, 1)
                 }
 
@@ -150,6 +164,10 @@ export function MessagesHeader({
                 groupId: item.id
             }
             dispatch(addItemToGroup(reqBody));
+            setSuccessMessage({
+                desc: 'Thread was added to ' + item.name?.toLowerCase() + '.',
+                title: selectedThread?.subject || '',
+            })
         }
     }, [dispatch, selectedThread]);
 
