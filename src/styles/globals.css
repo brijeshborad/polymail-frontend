@@ -143,6 +143,10 @@ a {
     margin: 0;
 }
 
+.default-editor-css {
+    font-size: 13px;
+}
+
 .rdw-editor-wrapper .rdw-editor-toolbar .rdw-option-wrapper {
     border: 0;
     transition: all 0.3s;

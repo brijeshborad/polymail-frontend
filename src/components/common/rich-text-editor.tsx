@@ -47,6 +47,7 @@ export function RichTextEditor({onChange, placeholder, className, value, initial
             placeholder={placeholder}
             editorState={editorState}
             wrapperClassName={className}
+            editorClassName={'default-editor-css'}
             onEditorStateChange={setEditorState}
             toolbarHidden={hideToolBar}
             toolbar={{
