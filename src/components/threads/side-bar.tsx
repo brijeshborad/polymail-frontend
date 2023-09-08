@@ -288,7 +288,7 @@ export function ThreadsSideBar(props: {cachePrefix: string}) {
                     </Flex>
 
                     <TabPanels marginTop={5}>
-                        <ThreadsSideBarTab tab={tab} showLoader={isLoading} cachePrefix={props.cachePrefix}/>
+                        <ThreadsSideBarTab tab={tab} showLoader={isLoading} />
                     </TabPanels>
                 </Tabs>
             </Flex>

@@ -9,14 +9,18 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {ThreadListProps} from "@/types";
 import { ThreadsSideBarListItem } from "./side-bar-list-item";
+import {useRouter} from "next/router";
 
 
 export function ThreadsSideBarList(props: ThreadListProps) {
   const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
   const dispatch = useDispatch()
   const listRef = useRef<any>(null);
+  const router = useRouter();
 
-  const handleClick = useCallback((item: Thread) => {
+   const routePaths = router.pathname.split('/');
+
+    const handleClick = useCallback((item: Thread) => {
     if (props.tab === 'DRAFT') {
         if (item && item.messages && item.messages[0]) {
             dispatch(updateMessageState({isCompose: false}));
@@ -43,7 +47,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     <>
       <div>
         <Flex direction={'column'} gap={1} marginTop={5} pb={3}
-            className={`${styles.mailList} ${props.cachePrefix === 'projects-page'? styles.projectMailList : ''}`}>
+            className={`${styles.mailList} ${routePaths.includes('projects') ? styles.projectMailList : ''}`}>
           <Input type={'text'} opacity={0} height={0} width={0} padding={0} border={0} outline={0}
                   ref={listRef}/>
 

@@ -53,7 +53,7 @@ export function ThreadsSideBarTab(props: TabProps) {
 
             {props.showLoader && <SpinnerUI/>}
 
-            <ThreadsSideBarList tab={props.tab} cachePrefix={props.cachePrefix} />
+            <ThreadsSideBarList tab={props.tab} />
         </>
     )
 }

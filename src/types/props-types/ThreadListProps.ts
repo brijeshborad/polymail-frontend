@@ -1,4 +1,3 @@
 export declare type ThreadListProps = {
-  tab: string,
-  cachePrefix: string
+  tab: string
 }
