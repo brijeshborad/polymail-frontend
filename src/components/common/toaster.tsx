@@ -43,7 +43,7 @@ export function Toaster(props: ToasterProps) {
                 // toastRefs.current.push(onClose);
                 return (
                     <>
-                        {props.toastType === 'sendMessageToaster' ?
+                        {props.toastType === 'send_confirmation' ?
                             <Box display={'flex'} alignItems={'center'} color='#000000' p={3} bg='#FFFFFF'
                                  borderRadius={'8px'} border={'1px solid #E5E7EB'} boxShadow={'0 0 12px 0 rgba(0,0,0, 0.08)'}
                                  className={styles.mailToaster} padding={'16px'} gap={2}>

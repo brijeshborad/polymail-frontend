@@ -367,7 +367,7 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
         <Flex maxHeight={'450px'} direction={'column'} paddingBottom={4} mt={'auto'}
              backgroundColor={'#FFFFFF'}  width={'100%'} position={'sticky'}
               bottom={"-20px"} onFocus={() => handleFocus()} onBlur={() => handleBlur()}>
-            {showToaster && <Toaster desc={`Your message has been sent to ${draftData?.to && draftData?.to[0]}${draftData?.to && draftData?.to?.length > 1 ? ` and ${draftData?.to && draftData?.to?.length - 1} other${draftData?.to && draftData?.to?.length === 2 ? '' : 's'}` : ''}`} type={'success'} title={''} toastType={'sendMessageToaster'}  draftData={draftData}/>}
+            {showToaster && <Toaster desc={`Your message has been sent to ${draftData?.to && draftData?.to[0]}${draftData?.to && draftData?.to?.length > 1 ? ` and ${draftData?.to && draftData?.to?.length - 1} other${draftData?.to && draftData?.to?.length === 2 ? '' : 's'}` : ''}`} type={'success'} title={''} toastType={'send_confirmation'}  draftData={draftData}/>}
             <Flex borderRadius={8} gap={4} border={'1px solid #F3F4F6'} direction={'column'} padding={4} >
             <Flex align={'center'} justify={'space-between'} gap={4} pb={4}
                   borderBottom={'1px solid #F3F4F6'}>

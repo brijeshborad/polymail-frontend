@@ -298,7 +298,7 @@ export function ComposeBox(props: any) {
 
     return (
         <>
-            {showToaster && <Toaster desc={`Your message has been sent to ${draftData?.to && draftData?.to[0]}${draftData?.to && draftData?.to?.length > 1 ? ` and ${draftData?.to && draftData?.to?.length - 1} other${draftData?.to && draftData?.to?.length === 2 ? '' : 's'}` : ''}`} type={'success'} title={''} toastType={'sendMessageToaster'} draftData={draftData}/>}
+            {showToaster && <Toaster desc={`Your message has been sent to ${draftData?.to && draftData?.to[0]}${draftData?.to && draftData?.to?.length > 1 ? ` and ${draftData?.to && draftData?.to?.length - 1} other${draftData?.to && draftData?.to?.length === 2 ? '' : 's'}` : ''}`} type={'success'} title={''} toastType={'send_confirmation'} draftData={draftData}/>}
 
             <Modal isOpen={props.isOpen} onClose={props.onClose} isCentered>
                 <ModalOverlay backgroundColor={'rgba(229, 231, 235, 0.50)'} backdropFilter={'blur(16px)'}/>
