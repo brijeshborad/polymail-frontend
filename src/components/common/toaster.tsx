@@ -37,7 +37,7 @@ export function Toaster(props: ToasterProps) {
     return (
         toast({
             id: 'poly-toast',
-            duration: (props.type !== 'reauth') ? 250000000000 : null,
+            duration: (props.type !== 'reauth') ? 3000 : null,
             isClosable: (props.type !== 'reauth') ? true : false,
             render: () => {
                 // toastRefs.current.push(onClose);
