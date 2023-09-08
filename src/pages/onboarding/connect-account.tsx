@@ -25,6 +25,7 @@ function ConnectAccount() {
             if (router.query.access_token) {
                 LocalStorageService.updateUser('store', {token: router.query.access_token})
                 dispatch(updateAuthState({user: {token: router.query.access_token.toString() || ''}}));
+                Router.replace('/onboarding/connect-account')
             }
 
             if (router.query.error) {
