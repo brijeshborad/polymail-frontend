@@ -24,13 +24,13 @@ const membershipSlice = createSlice({
         },
 
         // Delete members from project
-        deleteMemberFromProject: (state: InitialMembershipStateType, _action: PayloadAction<string>) => {
+        deleteMemberFromProject: (state: InitialMembershipStateType, _action: PayloadAction<{ id?: string}>) => {
             return {...state, error: null, isLoading: false, success: false}
         },
-        deleteMemberFromProjectSuccess: (state: InitialMembershipStateType, _action: PayloadAction<any>) => {
+        deleteMemberFromProjectSuccess: (state: InitialMembershipStateType, _action: PayloadAction<{}>) => {
             return {...state, error: null, isLoading: false, success: false}
         },
-        deleteMemberFromProjectError: (state: InitialMembershipStateType, {payload: error}: PayloadAction<any>) => {
+        deleteMemberFromProjectError: (state: InitialMembershipStateType, {payload: error}: PayloadAction<{ error: any }>) => {
             return {...state, error, isLoading: false}
         },
         updateMembershipState: (state: InitialMembershipStateType, action: PayloadAction<InitialMembershipStateType>) => {

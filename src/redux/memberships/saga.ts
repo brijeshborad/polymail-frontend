@@ -21,9 +21,9 @@ function* addItemToGroupService({payload}: PayloadAction<MembershipsRequestBody>
 }
 
 // Add Threads to Projects
-function* removeMemberFromProject({payload}: PayloadAction<MembershipsRequestBody>) {
+function* removeMemberFromProject({payload: {id}}: PayloadAction<{id: string}>) {
     try {
-        const response: AxiosResponse = yield ApiService.callDelete(`memberships/${payload}`, null);
+        const response: AxiosResponse = yield ApiService.callDelete(`memberships/${id}`, {});
         yield put(deleteMemberFromProjectSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;

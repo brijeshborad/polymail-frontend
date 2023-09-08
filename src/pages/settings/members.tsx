@@ -30,6 +30,7 @@ import {TeamMember} from "@/models";
 import {ChevronDownIcon} from "@chakra-ui/icons";
 import {PROJECT_ROLES} from "@/utils/constants";
 import RemoveRecordModal from "@/components/common/delete-record-modal";
+import {deleteMemberFromProject} from "@/redux/memberships/action-reducer";
 
 function Members() {
     const {isOpen: InviteModelIsOpen, onOpen: InviteModelOnOpen, onClose: InviteModelOnClose} = useDisclosure();
@@ -62,9 +63,13 @@ function Members() {
             name: event.target.value,
         }))
     }
-    const openEditModel = (item: any) => {
+    const openModel = (item: any, type: string) => {
         setSelectedMember({...item});
-        onEditOpen()
+        if (type === 'edit') {
+            onEditOpen()
+        } else {
+            onDeleteModalOpen()
+        }
     }
 
     const updateOrganizationMemberRoleData = (role: string) => {
@@ -75,20 +80,28 @@ function Members() {
 
     };
 
-    const onSubmit = () => {
-        if (organizations && organizations[0] && organizations[0].id && selectedAccount && selectedAccount.id) {
-            let body = {
-                role: selectedMember?.role,
-                name: selectedMember?.name
+    const onSubmit = (type: string) => {
+        if (type === 'edit') {
+            if (organizations && organizations[0] && organizations[0].id && selectedAccount && selectedAccount.id) {
+                let body = {
+                    role: selectedMember?.role,
+                    name: selectedMember?.name
+                }
+                dispatch(updateOrganizationMemberRole({
+                    organizationId: organizations[0].id,
+                    accountId: selectedAccount.id,
+                    body
+                }));
             }
-            dispatch(updateOrganizationMemberRole({
-                organizationId: organizations[0].id,
-                accountId: selectedAccount.id,
-                body
-            }));
+
+            onEditClose();
+        } else {
+            if (selectedMember && selectedMember?.id) {
+                dispatch(deleteMemberFromProject({id: selectedMember?.id}))
+            }
+            onDeleteModalClose()
         }
 
-        onEditClose();
         setSelectedMember(null);
     }
 
@@ -167,8 +180,8 @@ function Members() {
                                                                         minWidth={'32px'} border={'0'}/>
                                                             <MenuList className={'drop-down-list'}>
                                                                 <MenuItem
-                                                                    onClick={() => openEditModel(member)}>Edit</MenuItem>
-                                                                <MenuItem onClick={onDeleteModalOpen}>Delete</MenuItem>
+                                                                    onClick={() => openModel(member, 'edit')}>Edit</MenuItem>
+                                                                <MenuItem onClick={() => openModel(member, 'delete')}>Delete</MenuItem>
                                                             </MenuList>
                                                         </Menu>
                                                     </Td>
@@ -256,7 +269,7 @@ function Members() {
                                         <Button className={styles.settingCancel} colorScheme='blue' mr={3}
                                                 onClick={onEditClose}> Cancel </Button>
                                         <Button className={styles.settingSave} variant='ghost'
-                                                onClick={() => onSubmit()}>Save</Button>
+                                                onClick={() => onSubmit('edit')}>Save</Button>
                                     </ModalFooter>
                                 </ModalContent>
                             </Modal>
@@ -265,7 +278,7 @@ function Members() {
                 </GridItem>
             </Grid>
 
-            <RemoveRecordModal onOpen={onDeleteModalOpen} isOpen={isDeleteModalOpen} onClose={onDeleteModalClose}/>
+            <RemoveRecordModal onOpen={onDeleteModalOpen} isOpen={isDeleteModalOpen} onClose={onDeleteModalClose} onSubmit={onSubmit}/>
 
         </div>
 

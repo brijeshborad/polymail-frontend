@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {ThreadsSideBar} from "@/components/threads";
 import styles from "@/styles/Home.module.css";
-import {Grid, GridItem,} from "@chakra-ui/react";
+import {Flex, Grid, GridItem,} from "@chakra-ui/react";
 import withAuth from "@/components/auth/withAuth";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
@@ -9,6 +9,7 @@ import {Project, User} from "@/models";
 import {InboxHeaderProjectsList} from "@/components/project/inbox-header-projects-list";
 import {Message} from "@/components/messages";
 import {getAllProjects} from "@/redux/projects/action-reducer";
+import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 
 function InboxPage() {
     const [size, setSize] = useState<number>(0);
@@ -56,7 +57,10 @@ function InboxPage() {
 
     return (
         <div>
-            {!!projectData.length && <InboxHeaderProjectsList/>}
+            {!!projectData.length ? <InboxHeaderProjectsList/> : <Flex gap={2} py={4} px={10} backgroundColor={'#FFFFFF'} borderBottom={'1px solid #F3F4F6'}>
+                <SkeletonLoader height={'36px'} skeletonLength={4} />
+            </Flex>}
+
             <div className={styles.mailBg}>
                 <Grid className={styles.mailGrid} templateColumns='30% auto' gap={6} height={'100%'}>
                     <GridItem w='100%'>

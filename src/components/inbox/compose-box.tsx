@@ -1,6 +1,6 @@
 import {
     Box,
-    Button, createStandaloneToast,
+    Button,
     Flex, Heading, Input, InputGroup, InputLeftElement, Menu, MenuButton, MenuItem, MenuList,
     Modal,
     ModalBody,
@@ -41,10 +41,11 @@ export function ComposeBox(props: any) {
     const {isOpen, onOpen, onClose} = useDisclosure();
     const {isOpen: isOpenProject, onOpen: onOpenProject, onClose: onCloseProject} = useDisclosure();
     const [scheduledDate, setScheduledDate] = useState<Date>();
-    const {toast} = createStandaloneToast()
     const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
     const inputFile = useRef<HTMLInputElement | null>(null)
     let {projects} = useSelector((state: StateType) => state.projects);
+    const [showToaster, setShowToaster] = useState<boolean>(false);
+    const [draftData, setDraftData] = useState<any>(null);
 
     useEffect(() => {
         if (props.messageDetails) {
@@ -199,25 +200,6 @@ export function ComposeBox(props: any) {
         }, 500);
     }
 
-    const undoClick = (type: string) => {
-        if (draft && draft.id) {
-            let params = {};
-
-            if (type === 'undo') {
-                params = {
-                    undo: true
-                }
-            } else if (type === 'send-now') {
-                params = {
-                    now: true
-                }
-            }
-            dispatch(sendMessage({id: draft.id, ...params}));
-            toast.close('send-now');
-        }
-
-    }
-
     const sendMessages = (scheduled: boolean = false) => {
         if (draft && draft.id) {
             let params = {};
@@ -231,23 +213,8 @@ export function ComposeBox(props: any) {
                 }
             } else {
                 if (draft && draft.to && draft.to.length) {
-                    let undoToaster: any = {
-                        id: 'send-now',
-                        duration: 1500,
-                        render: () => (
-                            <Box display={'flex'} alignItems={'center'} color='black' p={3} bg='#FFFFFF'
-                                 border={'1px solid #E5E7EB'} borderRadius={'8px'} className='mailSendToaster'
-                                 fontSize={'14px'} padding={'13px 25px'} boxShadow={'0 0 12px 0 rgba(0,0,0, 0.08)'}>
-                                {`Your message has been sent to ${draft.to[0]}${draft.to.length > 1 ? ` and ${draft.to.length - 1} other${draft.to.length === 2 ? '' : 's'}` : ''}`}
-                                <Button onClick={() => undoClick('undo')} ml={3} height={"auto"}
-                                        padding={'7px 15px'}>Undo</Button>
-                                <Button onClick={() => undoClick('send-now')} height={"auto"} padding={'7px 15px'}>Send Now</Button>
-                            </Box>
-                        ),
-                        position: 'bottom-left'
-                    }
-                    toast(undoToaster)
-                }
+                    setShowToaster(true)
+                    setDraftData({...draft})                }
             }
             dispatch(sendMessage({id: draft.id, ...params}));
             onClose();
@@ -331,6 +298,8 @@ export function ComposeBox(props: any) {
 
     return (
         <>
+            {showToaster && <Toaster desc={`Your message has been sent to ${draftData?.to && draftData?.to[0]}${draftData?.to && draftData?.to?.length > 1 ? ` and ${draftData?.to && draftData?.to?.length - 1} other${draftData?.to && draftData?.to?.length === 2 ? '' : 's'}` : ''}`} type={'success'} title={''} toastType={'sendMessageToaster'} draftData={draftData}/>}
+
             <Modal isOpen={props.isOpen} onClose={props.onClose} isCentered>
                 <ModalOverlay backgroundColor={'rgba(229, 231, 235, 0.50)'} backdropFilter={'blur(16px)'}/>
                 <ModalContent className={styles.composeModal} maxWidth={'893px'} height={'708px'} maxHeight={'708px'}

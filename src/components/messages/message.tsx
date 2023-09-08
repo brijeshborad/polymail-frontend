@@ -30,7 +30,7 @@ import {updateDraftState} from "@/redux/draft/action-reducer";
 import {MessageBox} from "@/components/inbox/messages/message-box";
 import {MessageReplyBox} from "@/components/inbox/messages/message-reply-box";
 import {debounce} from "@/utils/common.functions";
-import {InboxLoader} from "@/components/loader-screen/inbox-loader";
+import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 
 let cacheMessages: { [key: string]: { body: MessagePart, attachments: MessageAttachments[] } } = {};
 
@@ -61,16 +61,11 @@ export function Message() {
     const [lastMessageDetails, setLastMessageDetails] = useState<MessageModel | null>(null);
     const [messageDetailsForReplyBox, setMessageDetailsForReplyBox] = useState<MessageModel | null>(null);
     const [isLoaderShow, setIsLoaderShow] = useState<boolean>(false);
-    const [loaderPercentage, setLoaderPercentage] = useState<number>(0);
 
     const dispatch = useDispatch();
 
 
     useEffect(() => {
-        if (threadLoading || !accountLoading || !organizationLoading || !usersProfilePictureLoading || !projectsLoading) {
-            setLoaderPercentage((prevState) => prevState += 20)
-
-        }
         if (!threadLoading && !accountLoading && !organizationLoading && !usersProfilePictureLoading && !projectsLoading) {
             setIsLoaderShow(false)
         } else {
@@ -236,7 +231,10 @@ export function Message() {
             <Flex justifyContent={'center'} alignItems={'center'} flexDir={'column'}
                   height={'100%'}>
                 {!isLoaderShow && <Heading as='h3' size='md'>Click on a thread from list to view messages!</Heading>}
-                {isLoaderShow && <InboxLoader loaderPercentage={loaderPercentage}/>}
+                {isLoaderShow && <Flex direction={'column'} gap={2} flex={1} w={'100%'}>
+                    <SkeletonLoader skeletonLength={1} height={'100%'}/>
+                </Flex>}
+
             </Flex>}
             {selectedThread && !isCompose &&
             <Flex flexDir={'column'} height={'100%'}>

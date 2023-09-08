@@ -1,6 +1,5 @@
 import {
-    Box,
-    Button, createStandaloneToast,
+    Button,
     Flex, Heading,
     Input,
     Menu,
@@ -41,6 +40,7 @@ export function MessageReplyBox(props: MessageBoxType) {
     const {draft} = useSelector((state: StateType) => state.draft);
     const dispatch = useDispatch();
     const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
+    const [draftData, setDraftData] = useState<any>(null);
     const {isOpen, onOpen, onClose} = useDisclosure();
     const inputFile = useRef<HTMLInputElement | null>(null)
     const [scheduledDate, setScheduledDate] = useState<Date>();
@@ -308,25 +308,8 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
         setScheduledDate(today);
     }
 
-    const {toast} = createStandaloneToast()
-    const undoClick = (type: string) => {
-        if (draft && draft.id) {
-            let params = {};
+    const [showToaster, setShowToaster] = useState<boolean>(false);
 
-            if (type === 'undo') {
-                params = {
-                    undo: true
-                }
-            } else if (type === 'send-now') {
-                params = {
-                    now: true
-                }
-            }
-            dispatch(sendMessage({id: draft.id, ...params}));
-            toast.close('send-now');
-        }
-
-    }
 
     const sendMessages = (scheduled: boolean = false) => {
         if (draft && draft.id) {
@@ -341,24 +324,8 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                 }
             } else {
                 if (draft && draft.to && draft.to.length) {
-                    let undoToaster: any = {
-                        id: 'send-now',
-                        duration: 1500,
-                        render: () => (
-                            <Box display={'flex'} alignItems={'center'} color='black' p={3} bg='#FFFFFF'
-                                 border={'1px solid #E5E7EB'} borderRadius={'8px'} className='mailSendToaster'
-                                 fontSize={'14px'} padding={'13px 25px'} boxShadow={'0 0 12px 0 rgba(0,0,0, 0.08)'}>
-                                {`Your message has been sent to ${draft.to[0]}${draft.to.length > 1 ? ` and ${draft.to.length - 1} other${draft.to.length === 2 ? '' : 's'}` : ''}`}
-                                <Button onClick={() => undoClick('undo')} ml={3} height={"auto"}
-                                        padding={'7px 15px'}>Undo</Button>
-                                <Button onClick={() => undoClick('send-now')} height={"auto"} padding={'7px 15px'}>Send
-                                    Now</Button>
-                            </Box>
-                        ),
-                        position: 'bottom-left'
-                    }
-
-                    toast(undoToaster)
+                    setShowToaster(true)
+                    setDraftData({...draft})
                 }
             }
             dispatch(sendMessage({id: draft.id, ...params}));
@@ -400,7 +367,8 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
         <Flex maxHeight={'450px'} direction={'column'} paddingBottom={4} mt={'auto'}
              backgroundColor={'#FFFFFF'}  width={'100%'} position={'sticky'}
               bottom={"-20px"} onFocus={() => handleFocus()} onBlur={() => handleBlur()}>
-        <Flex borderRadius={8} gap={4} border={'1px solid #F3F4F6'} direction={'column'} padding={4} >
+            {showToaster && <Toaster desc={`Your message has been sent to ${draftData?.to && draftData?.to[0]}${draftData?.to && draftData?.to?.length > 1 ? ` and ${draftData?.to && draftData?.to?.length - 1} other${draftData?.to && draftData?.to?.length === 2 ? '' : 's'}` : ''}`} type={'success'} title={''} toastType={'sendMessageToaster'}  draftData={draftData}/>}
+            <Flex borderRadius={8} gap={4} border={'1px solid #F3F4F6'} direction={'column'} padding={4} >
             <Flex align={'center'} justify={'space-between'} gap={4} pb={4}
                   borderBottom={'1px solid #F3F4F6'}>
                 <Flex gap={1} align={'center'}>
