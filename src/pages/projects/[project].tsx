@@ -194,7 +194,7 @@ function ProjectInbox() {
                                                     minWidth={'70px'} padding={0} height={'auto'} fontSize={'13px'}
                                                     color={'rgba(0,0,0, 0.5)'} as={Button}
                                                     rightIcon={<ChevronDownIcon/>}> {membersInputs.role} </MenuButton>
-                                        <MenuList>
+                                        <MenuList className={'drop-down-list'}>
                                             {PROJECT_ROLES.map((role, roleIndex) => {
                                                 if (membersInputs.role !== role) {
                                                     return <MenuItem onClick={() => {
@@ -235,7 +235,7 @@ function ProjectInbox() {
                                                     color={'#000000'} as={Button}
                                                     rightIcon={
                                                         <ChevronDownIcon/>}> {member.role} </MenuButton>
-                                        <MenuList>
+                                        <MenuList className={'drop-down-list'}>
                                             {PROJECT_ROLES.map((role, roleIndex) => {
                                                 if (member.role !== role) {
                                                     return <MenuItem textTransform={'capitalize'}  onClick={() => updateProjectMemberRoleData(role)} key={roleIndex}>
@@ -266,7 +266,7 @@ function ProjectInbox() {
                                                     color={'#000000'} as={Button}
                                                     rightIcon={
                                                         <ChevronDownIcon/>}> {invite.role} </MenuButton>
-                                        <MenuList>
+                                        <MenuList className={'drop-down-list'}>
                                             {PROJECT_ROLES.map((role, roleIndex) => {
                                                 if (invite.role !== role) {
                                                     return <MenuItem textTransform={'capitalize'} key={roleIndex}>

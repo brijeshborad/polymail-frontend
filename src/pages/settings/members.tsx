@@ -163,7 +163,7 @@ function Members() {
                                                                         aria-label='Options' icon={<MenuIcon/>}
                                                                         variant='outline' padding={0} height={'32px'}
                                                                         minWidth={'32px'} border={'0'}/>
-                                                            <MenuList>
+                                                            <MenuList className={'drop-down-list'}>
                                                                 <MenuItem
                                                                     onClick={() => openEditModel(member)}>Edit</MenuItem>
                                                                 <MenuItem>Delete</MenuItem>
@@ -232,7 +232,7 @@ function Members() {
                                                             color={'#000000'} as={Button}
                                                             rightIcon={
                                                                 <ChevronDownIcon/>}> {selectedMember?.role} </MenuButton>
-                                                <MenuList>
+                                                <MenuList className={'drop-down-list'}>
                                                     {PROJECT_ROLES.map((role, roleIndex) => {
                                                         if (selectedMember?.role !== role) {
                                                             return <MenuItem textTransform={'capitalize'}

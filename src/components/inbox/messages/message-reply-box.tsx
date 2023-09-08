@@ -543,7 +543,7 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                                 <MenuButton className={styles.replyArrowIcon} as={Button}
                                             aria-label='Options'
                                             variant='outline'><ChevronDownIcon/></MenuButton>
-                                <MenuList>
+                                <MenuList className={'drop-down-list'}>
                                     <MenuItem onClick={() => openCalender()}> Send Later </MenuItem>
                                 </MenuList>
                             </Menu>

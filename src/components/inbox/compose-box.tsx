@@ -432,7 +432,7 @@ export function ComposeBox(props: any) {
                                                     <Menu>
                                                         <MenuButton className={styles.replyArrowIcon} as={Button} aria-label='Options'
                                                                     variant='outline'><ChevronDownIcon/></MenuButton>
-                                                        <MenuList>
+                                                        <MenuList className={'drop-down-list'}>
                                                             <MenuItem onClick={() => openCalender()}> Send Later </MenuItem>
                                                         </MenuList>
                                                     </Menu>
