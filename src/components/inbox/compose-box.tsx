@@ -405,7 +405,7 @@ export function ComposeBox(props: any) {
                                         </Flex>
                                         <Flex width={'100%'} gap={2} padding={'4px 16px'} className={styles.replyBoxCC}>
                                             <Heading as={'h6'} fontSize={'13px'} paddingTop={1} fontWeight={500}
-                                                     lineHeight={1} color={'#374151'}>CC:</Heading>
+                                                     lineHeight={1} color={'#374151'}>Cc:</Heading>
                                             <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
                                                 {!!emailRecipients?.cc?.items?.length && emailRecipients.cc.items.map((item: string | undefined, i: number) => (
                                                     <Chip text={item} key={i}
@@ -424,7 +424,7 @@ export function ComposeBox(props: any) {
                                         </Flex>
                                         <Flex width={'100%'} gap={2} padding={'4px 16px'} className={styles.replyBoxCC}>
                                             <Heading as={'h6'} fontSize={'13px'} paddingTop={1} fontWeight={500}
-                                                     lineHeight={1} color={'#374151'}>BCC:</Heading>
+                                                     lineHeight={1} color={'#374151'}>Bcc:</Heading>
                                             <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
                                                 {!!emailRecipients?.bcc?.items?.length && emailRecipients.bcc.items.map((item: string | undefined, i: number) => (
                                                     <Chip text={item} key={i}
