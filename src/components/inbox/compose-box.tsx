@@ -216,9 +216,8 @@ export function ComposeBox(props: any) {
                 if (draft && draft.to && draft.to.length) {
                     Toaster({
                         desc: `Your message has been sent to ${draft?.to && draft?.to[0]}${draft?.to && draft?.to?.length > 1 ? ` and ${draft?.to && draft?.to?.length - 1} other${draft?.to && draft?.to?.length === 2 ? '' : 's'}` : ''}`,
-                        type: 'success',
-                        title: '',
-                        toastType: 'send_confirmation',
+                        type: 'send_confirmation',
+                        title: draft?.subject || '',
                         undoClick: (type: string) => {
                             let params = {};
 
