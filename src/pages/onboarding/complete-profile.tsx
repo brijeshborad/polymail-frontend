@@ -10,15 +10,34 @@ import {StateType} from "@/types";
 import {getProfilePicture, updateUsersDetails, uploadProfilePicture} from "@/redux/users/action-reducer";
 import {SpinnerUI, Toaster} from "@/components/common";
 import {getFileSize} from "@/utils/common.functions";
+import LocalStorageService from "@/utils/localstorage.service";
+import {useRouter} from "next/router";
+import {updateAuthState} from "@/redux/auth/action-reducer";
 
 
 function CompleteProfile() {
     const inputFile = useRef<HTMLInputElement | null>(null)
     const {profilePicture, profilePictureUpdated, userDetailsUpdateSuccess} = useSelector((state: StateType) => state.users);
     const dispatch = useDispatch();
+    const router = useRouter();
 
     const [firstName, setFirstName] = useState<any>('');
     const [showLoader, setShowLoader] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (router.query) {
+            if (router.query.access_token) {
+                LocalStorageService.updateUser('store', {token: router.query.access_token})
+                dispatch(updateAuthState({user: {token: router.query.access_token.toString() || ''}}));
+                Router.replace('/onboarding/complete-profile')
+            }
+
+            if (router.query.error) {
+                Router.replace('/onboarding', undefined, {shallow: true});
+                dispatch(updateAuthState({error: {description: 'Invalid account'}}));
+            }
+        }
+    }, [dispatch, router.query]);
 
     const setFullName = (event: ChangeEvent | any) => {
         setFirstName(event.target.value);
