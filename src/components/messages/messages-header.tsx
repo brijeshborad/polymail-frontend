@@ -177,7 +177,7 @@ export function MessagesHeader({
                   borderBottom={'1px solid #E5E7EB'}>
                 <Flex gap={1}>
                     <Heading as='h6' fontSize={'15px'} color={'#0A101D'}
-                             fontWeight={600}>{inboxMessages && inboxMessages.length && index !== null && inboxMessages[index]?.subject || '(no subject)'}</Heading>
+                             fontWeight={600}>{selectedThread?.subject || '(no subject)'}</Heading>
                 </Flex>
 
                 <Flex gap={3} align={'center'}>
