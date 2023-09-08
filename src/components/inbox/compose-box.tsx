@@ -1,7 +1,7 @@
 import {
     Box,
     Button, createStandaloneToast,
-    Flex, Heading, Input, InputGroup, InputLeftElement, Menu, MenuButton, MenuItem, MenuList,
+    Flex, Heading, Input, Menu, MenuButton, MenuItem, MenuList,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -11,8 +11,8 @@ import {
     Text, useDisclosure
 } from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
-import {DisneyIcon, FileIcon, FolderIcon, LinkIcon, TextIcon} from "@/icons";
-import {ChevronDownIcon, CloseIcon, SearchIcon, SmallAddIcon} from "@chakra-ui/icons";
+import {FileIcon, LinkIcon, TextIcon} from "@/icons";
+import {ChevronDownIcon, CloseIcon} from "@chakra-ui/icons";
 import React, {ChangeEvent, ChangeEventHandler, useEffect, useRef, useState} from "react";
 import {StateType} from "@/types";
 import {debounce, isEmail} from "@/utils/common.functions";
@@ -22,8 +22,9 @@ import {useDispatch, useSelector} from "react-redux";
 import dayjs from "dayjs";
 import {uploadAttachment} from "@/redux/messages/action-reducer";
 import {SingleDatepicker} from "chakra-dayzed-datepicker";
-import {MessageAttachments, Project} from "@/models";
+import {MessageAttachments} from "@/models";
 import CreateNewProject from "@/components/project/create-new-project";
+import {AddToProjectButton} from "@/components/common";
 
 declare type RecipientsValue = { items: string[], value: string };
 declare type RecipientsType = { cc: RecipientsValue, bcc: RecipientsValue, recipients: RecipientsValue };
@@ -44,7 +45,6 @@ export function ComposeBox(props: any) {
     const [scheduledDate, setScheduledDate] = useState<Date>();
     const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
     const inputFile = useRef<HTMLInputElement | null>(null)
-    let {projects} = useSelector((state: StateType) => state.projects);
     const {toast} = createStandaloneToast()
 
     useEffect(() => {
@@ -338,43 +338,7 @@ export function ComposeBox(props: any) {
                                        flex={1} fontWeight={'700'} padding={'0'} border={'0'} h={'auto'}
                                        defaultValue={subject || ''}
                                        borderRadius={'0'} lineHeight={1} color={'#0A101D'}/>
-                                <Menu>
-                                    <MenuButton className={styles.addToProject} leftIcon={<FolderIcon/>}
-                                                borderRadius={'50px'}
-                                                backgroundColor={'#2A6FFF'} color={'#FFFFFF'} as={Button}
-                                                boxShadow={'0 0 3px 0 rgba(38, 109, 240, 0.12)'}
-                                                padding={'4px 4px 4px 8px'}
-                                                fontSize={'12px'} fontWeight={500} h={'fit-content'}>Add to
-                                        Project <span className={styles.RightContent}>⌘P</span></MenuButton>
-                                    <MenuList className={`${styles.addToProjectList} drop-down-list`}>
-
-                                        <div className={'dropdown-searchbar'}>
-                                            <InputGroup>
-                                                <InputLeftElement h={'27px'} pointerEvents='none'>
-                                                    <SearchIcon/>
-                                                </InputLeftElement>
-                                                <Input placeholder='Search project'/>
-                                            </InputGroup>
-                                        </div>
-
-                                        {projects && !!projects.length && (projects || []).map((item: Project, index: number) => (
-                                            <MenuItem gap={2} key={index}>
-                                                <DisneyIcon/> {item.name}
-                                            </MenuItem>
-
-                                        ))}
-
-                                        <div className={styles.addNewProject}>
-                                            <Button backgroundColor={'transparent'} w={'100%'} borderRadius={0}
-                                                    justifyContent={'flex-start'} onClick={onOpenProject}>
-                                                <div className={styles.plusIcon}>
-                                                    <SmallAddIcon/>
-                                                </div>
-                                                Create New Project
-                                            </Button>
-                                        </div>
-                                    </MenuList>
-                                </Menu>
+                                <AddToProjectButton />
                             </Flex>
                             <Box flex={'1'} p={5}>
                                 <Flex direction={"column"} border={'1px solid #F3F4F6'} borderRadius={8} h={'100%'}

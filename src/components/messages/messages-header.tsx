@@ -1,45 +1,31 @@
-import styles from "@/styles/Inbox.module.css";
 import {
-    Button,
     Flex,
-    Menu,
-    MenuButton,
-    MenuItem,
-    MenuList,
     Tooltip,
-    Input,
-    InputGroup,
-    InputLeftElement, useDisclosure, Heading
+    Heading
 } from "@chakra-ui/react";
-import {
-    SearchIcon,
-    SmallAddIcon,
-} from "@chakra-ui/icons";
+
 import {
     ArchiveIcon,
-    FolderIcon,
     TimeSnoozeIcon,
     TrashIcon,
-    DisneyIcon,
     InboxIcon
 } from "@/icons";
-import React, {useCallback, useEffect, useState} from "react";
-import {Project, Thread} from "@/models";
+import React, {useEffect, useState} from "react";
 import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
-import {addItemToGroup, updateMembershipState} from "@/redux/memberships/action-reducer";
+import {updateMembershipState} from "@/redux/memberships/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType, MessageHeaderTypes} from "@/types";
 import {getAllProjects} from "@/redux/projects/action-reducer";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 import {Toaster} from "@/components/common";
+import {Thread} from "@/models";
+import {AddToProjectButton} from "@/components/common";
 
 export function MessagesHeader({herderType}: MessageHeaderTypes) {
     const {selectedThread, threads, updateSuccess} = useSelector((state: StateType) => state.threads);
-    let {projects} = useSelector((state: StateType) => state.projects);
     let {success: membershipSuccess} = useSelector((state: StateType) => state.memberships);
 
     const dispatch = useDispatch();
-    const {onOpen} = useDisclosure();
     const [successMessage, setSuccessMessage] = useState<{ desc: string, title: string } | null>(null);
 
 
@@ -146,27 +132,6 @@ export function MessagesHeader({herderType}: MessageHeaderTypes) {
         }
     }
 
-    const addThreadToProject = useCallback((item: Project) => {
-
-        if (selectedThread && selectedThread.id) {
-            let reqBody = {
-                threadIds: [
-                    selectedThread.id,
-                ],
-                roles: [
-                    'n/a',
-                ],
-                groupType: 'project',
-                groupId: item.id
-            }
-            dispatch(addItemToGroup(reqBody));
-            setSuccessMessage({
-                desc: 'Thread was added to ' + item.name?.toLowerCase() + '.',
-                title: selectedThread?.subject || '',
-            })
-        }
-    }, [dispatch, selectedThread]);
-
     return (
         <>
             <Flex gap={2} align={'center'} justify={'space-between'} padding={'16px 20px 12px'}
@@ -177,41 +142,7 @@ export function MessagesHeader({herderType}: MessageHeaderTypes) {
                 </Flex>
 
                 <Flex gap={3} align={'center'}>
-                    {herderType === 'inbox' && <Menu>
-                        <MenuButton className={styles.addToProject} leftIcon={<FolderIcon/>} borderRadius={'50px'}
-                                    backgroundColor={'#2A6FFF'} color={'#FFFFFF'} as={Button}
-                                    boxShadow={'0 0 3px 0 rgba(38, 109, 240, 0.12)'} padding={'4px 4px 4px 8px'}
-                                    fontSize={'12px'} fontWeight={500} h={'fit-content'}>Add to Project <span
-                            className={styles.RightContent}>⌘P</span></MenuButton>
-                        <MenuList className={`${styles.addToProjectList} drop-down-list`}>
-
-                            <div className={'dropdown-searchbar'}>
-                                <InputGroup>
-                                    <InputLeftElement h={'27px'} pointerEvents='none'>
-                                        <SearchIcon/>
-                                    </InputLeftElement>
-                                    <Input placeholder='Search project'/>
-                                </InputGroup>
-                            </div>
-
-                            {projects && !!projects.length && (projects || []).map((item: Project, index: number) => (
-                                <MenuItem gap={2} key={index} onClick={() => addThreadToProject(item)}>
-                                    <DisneyIcon/> {item.name}
-                                </MenuItem>
-
-                            ))}
-
-                            <div className={styles.addNewProject}>
-                                <Button backgroundColor={'transparent'} w={'100%'} borderRadius={0}
-                                        justifyContent={'flex-start'} onClick={onOpen}>
-                                    <div className={styles.plusIcon}>
-                                        <SmallAddIcon/>
-                                    </div>
-                                    Create New Project
-                                </Button>
-                            </div>
-                        </MenuList>
-                    </Menu>}
+                    {herderType === 'inbox' && <AddToProjectButton />}
                     {!(selectedThread?.mailboxes || []).includes("INBOX") && (
                         <Tooltip label='Inbox' placement='bottom' bg='gray.300' color='black'>
                             <div onClick={() => updateMailBox('INBOX')}>
