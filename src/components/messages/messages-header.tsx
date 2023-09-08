@@ -33,11 +33,7 @@ import {getAllProjects} from "@/redux/projects/action-reducer";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 import {Toaster} from "@/components/common";
 
-export function MessagesHeader({
-                                   inboxMessages,
-                                   index,
-                                   herderType
-                               }: MessageHeaderTypes) {
+export function MessagesHeader({herderType}: MessageHeaderTypes) {
     const {selectedThread, threads, updateSuccess} = useSelector((state: StateType) => state.threads);
     let {projects} = useSelector((state: StateType) => state.projects);
     let {success: membershipSuccess} = useSelector((state: StateType) => state.memberships);
