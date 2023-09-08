@@ -37,7 +37,7 @@ export function Toaster(props: ToasterProps) {
     return (
         toast({
             id: 'poly-toast',
-            duration: (props.type !== 'reauth') ? 2500 : null,
+            duration: (props.type !== 'reauth') ? 250000000000 : null,
             isClosable: (props.type !== 'reauth') ? true : false,
             render: () => {
                 // toastRefs.current.push(onClose);
@@ -51,9 +51,9 @@ export function Toaster(props: ToasterProps) {
                                     <CheckIcon onClick={() => toast.close('poly-toast')}/>
                                 </div>
                                 {props.desc}
-                                <Button onClick={() => undoClick('undo')} ml={3} height={"auto"}
-                                        padding={'7px 15px'}>Undo</Button>
-                                <Button onClick={() => undoClick('send-now')} height={"auto"} padding={'7px 15px'}>Send
+                                <Button className={styles.toasterUndoButton} backgroundColor={'#1F2937'} color={'#FFFFFF'} onClick={() => undoClick('undo')} ml={3} height={"auto"}
+                                        padding={'7px 20px'} borderRadius={'20px'}>Undo</Button>
+                                <Button className={styles.toasterUndoButton} borderRadius={'20px'} backgroundColor={'#1F2937'} color={'#FFFFFF'} onClick={() => undoClick('send-now')} height={"auto"} padding={'7px 20px'}>Send
                                     Now</Button>
                             </Box> : <Box /*onClick={() => (props.type === 'reauth') && connectGoogleAccount('authenticate') } */
                                 display={'flex'} alignItems={'center'} color='#000000' p={3} bg='#FFFFFF'
