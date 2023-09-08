@@ -234,7 +234,7 @@ export function Message() {
                             ))}
 
                             {lastMessageDetails &&
-                            <Flex direction={'column'} className={`${styles.oldMail} ${styles.lastOneMail}`} gap={4}
+                            <Flex direction={'column'} className={`${styles.oldMail} ${styles.lastOpenMail}`} gap={4}
                                   padding={4} border={'1px solid #E5E7EB'} borderRadius={12} align={'center'}>
                                 <Flex align={'center'} w={'100%'} gap={2}>
                                     <div className={styles.mailBoxUserImage}>

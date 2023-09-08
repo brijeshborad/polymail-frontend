@@ -15,7 +15,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
               <Flex align={"center"} className={styles.senderDetails} gap={1}>
                   <DisneyIcon/> {props.thread.from || 'Anonymous'}
               </Flex>
-              <Flex alignItems={'center'} className={styles2.receiveTime}>
+              <Flex alignItems={'center'} className={styles2.receiveTime} justify={'flex-end'}>
                   {(props.thread.mailboxes || []).includes('UNREAD') &&
                   <DotIcon marginRight={'5px'} className={`readThreadIcon`} color={'#9ca3af'}/>}
                   <Time time={props.thread.latestMessage} isShowFullTime={false}/>

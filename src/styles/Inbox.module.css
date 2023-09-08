@@ -161,12 +161,12 @@
 }
 
 .mailList {
-    max-height: calc(100vh - 290px);
+    max-height: calc(100vh - 280px);
     overflow-y: auto;
 }
 
-.mailListForArchive {
-    max-height: calc(100vh - 233px);
+.mailList.projectMailList {
+    max-height: calc(100vh - 290px);
 }
 
 .mailOpen .mailDetails {
@@ -810,7 +810,7 @@
     margin: 0;
 }
 
-.mailBox .oldMail.lastOneMail {
+.mailBox .oldMail.lastOpenMail {
     border-color: #FFFFFF;
 }
 

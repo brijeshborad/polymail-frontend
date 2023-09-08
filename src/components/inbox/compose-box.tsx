@@ -195,17 +195,16 @@ export function ComposeBox(props: any) {
                         id: 'send-now',
                         duration: 1500,
                         render: () => (
-                            <Box display={'flex'} alignItems={'center'} color='white' p={3} bg='#000000'
-                                 borderRadius={'5px'}
-                                 className='mailSendToaster' fontSize={'14px'} padding={'13px 25px'}>
+                            <Box display={'flex'} alignItems={'center'} color='black' p={3} bg='#FFFFFF'
+                                 border={'1px solid #E5E7EB'} borderRadius={'8px'} className='mailSendToaster'
+                                 fontSize={'14px'} padding={'13px 25px'} boxShadow={'0 0 12px 0 rgba(0,0,0, 0.08)'}>
                                 {`Your message has been sent to ${draft.to[0]}${draft.to.length > 1 ? ` and ${draft.to.length - 1} other${draft.to.length === 2 ? '' : 's'}` : ''}`}
                                 <Button onClick={() => undoClick('undo')} ml={3} height={"auto"}
                                         padding={'7px 15px'}>Undo</Button>
-                                <Button onClick={() => undoClick('send-now')} height={"auto"} padding={'7px 15px'}>Send
-                                    Now</Button>
+                                <Button onClick={() => undoClick('send-now')} height={"auto"} padding={'7px 15px'}>Send Now</Button>
                             </Box>
                         ),
-                        position: 'bottom'
+                        position: 'bottom-left'
                     }
                     toast(undoToaster)
                 }
