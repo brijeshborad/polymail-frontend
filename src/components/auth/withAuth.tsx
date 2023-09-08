@@ -6,6 +6,7 @@ import {updateLastMessage} from "@/redux/socket/action-reducer";
 import {useDispatch} from "react-redux";
 import {Flex} from "@chakra-ui/react";
 import {useSocket} from "@/hooks/use-socket.hook";
+import {debounce} from "@/utils/common.functions";
 
 // Multiple instances of the hook can exist simultaneously.
 // This stores the timestamp of the last heartbeat for a given socket url,
@@ -38,9 +39,15 @@ export default function withAuth(ProtectedComponent: any) {
                 const reader = new FileReader();
                 reader.onload = function () {
                     if (reader.result) {
+                        // Multiple instances of the hook can exist simultaneously.
+                        // preventing other instances to update the same event twice.
                         if (toRemoveDuplicateSocketEvents !== reader.result.toString()) {
                             toRemoveDuplicateSocketEvents = reader.result.toString();
                             dispatch(updateLastMessage(JSON.parse(reader.result.toString())));
+                            // Clear the instance once the spamming is done.
+                            debounce(() => {
+                                toRemoveDuplicateSocketEvents = '';
+                            }, 2000);
                         }
                     }
                 }
