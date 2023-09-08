@@ -228,14 +228,6 @@ a {
     color: #9CA3AF;
 }
 
-.delete-modal .cancel-button:hover {
-    background-color: #FFFFFF;
-}
-
-.delete-modal .remove-button:hover {
-    background-color: #FFC9B9;
-}
-
 .rdw-editor-wrapper .rdw-editor-main {
     max-height: calc(100vh - 319px);
 }
@@ -254,7 +246,6 @@ a {
 div:has(> .mailSendToaster) {
     max-width: 700px;
 }
-
 
 .disney-icon:before {
   position: absolute;
@@ -334,4 +325,42 @@ div:has(> .mailSendToaster) {
 
 .hide-toolbar.rdw-editor-wrapper .rdw-editor-toolbar {
     opacity: 1;
+}
+
+.confirm-modal .footer-button {
+    padding: 9px 12px;
+    font-size: 14px;
+    line-height: 16px;
+    height: auto;
+    border-radius: 8px;
+    font-weight: 500;
+    border: 1px solid transparent;
+}
+
+.confirm-modal .footer-button.remove-button {
+    background-color: #FF5E2C;
+    color: #FFFFFF;
+    border-color: #FF5E2C;
+}
+
+.confirm-modal .footer-button.cancel-button {
+    background-color: #FFFFFF;
+    color: #374151;
+    border-color: #374151;
+}
+
+.inbox-loader .progress-bar > div {
+    background-color: #FF87DB;
+}
+
+.inbox-loader-box {
+    transform: rotate(-1deg);
+}
+
+.inbox-loader-box-2 {
+    transform: rotate(-2deg);
+}
+
+.inbox-loader-box-3 {
+    transform: rotate(-3deg);
 }

@@ -7,7 +7,7 @@ import {
     ModalCloseButton,
     ModalContent,
     ModalHeader,
-    ModalOverlay, useDisclosure
+    ModalOverlay
 } from "@chakra-ui/react";
 import styles from "@/styles/project.module.css";
 import React, {ChangeEvent, useState} from "react";
@@ -23,7 +23,6 @@ function CreateNewProjectModal(props: any) {
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {selectedOrganization} = useSelector((state: StateType) => state.organizations);
     const [projectName, setProjectName] = useState<string>('');
-    const {onClose} = useDisclosure();
 
     const handleChange = (event: ChangeEvent | any) => {
         setProjectName(event.target.value);
@@ -79,7 +78,7 @@ function CreateNewProjectModal(props: any) {
                                             color={'#ffffff'} minWidth={'120px'} size='sm'> Add </Button>
 
                                     <Button className={styles.addMemberButton} backgroundColor={'#000000'} borderRadius={8} ml={2}
-                                            width={'fit-content'} onClick={() => onClose()}
+                                            width={'fit-content'} onClick={props.onClose}
                                             color={'#ffffff'} minWidth={'120px'} size='sm'> Cancel </Button>
                                 </Flex>
                             </Flex>

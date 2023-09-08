@@ -26,7 +26,9 @@ const {
     Spinner,
     List,
     Select,
-    Table
+    Table,
+    Progress,
+    Skeleton
 } = chakraTheme.components
 const config: ThemeConfig = {
     initialColorMode: 'light',
@@ -49,7 +51,9 @@ const theme = extendBaseTheme({
         Spinner,
         List,
         Select,
-        Table
+        Table,
+        Progress,
+        Skeleton
     },
 })
 

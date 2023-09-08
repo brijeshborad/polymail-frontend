@@ -8,7 +8,8 @@ const initialState: any = {
     isLoading: false,
     error: null,
     selectedAccount: LocalStorageService.updateAccount('get') || null,
-    success: false
+    success: false,
+    accountLoading: false
 } as InitialAccountStateType
 interface SuccessData {
     success: boolean;

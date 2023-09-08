@@ -130,9 +130,9 @@ export function MessageBox(props: any) {
                                         {props.threadDetails.scope === 'visible' ? 'Hide from project members' : 'Show to project members'}
                                     </MenuItem>
                                 )}
-                                <MenuItem> Reply </MenuItem>
-                                <MenuItem> Reply All </MenuItem>
-                                <MenuItem> Forward </MenuItem>
+                                <MenuItem onClick={() => props.hideAndShowReplayBox('reply', props.threadDetails)}> Reply </MenuItem>
+                                <MenuItem onClick={() => props.hideAndShowReplayBox('reply-all', props.threadDetails)}> Reply All </MenuItem>
+                                <MenuItem onClick={() => props.hideAndShowReplayBox('forward', props.threadDetails)}> Forward </MenuItem>
                             </MenuList>
                         </Menu>
                     </Flex>

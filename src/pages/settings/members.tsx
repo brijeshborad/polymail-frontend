@@ -29,10 +29,12 @@ import dayjs from "dayjs";
 import {TeamMember} from "@/models";
 import {ChevronDownIcon} from "@chakra-ui/icons";
 import {PROJECT_ROLES} from "@/utils/constants";
+import RemoveRecordModal from "@/components/common/delete-record-modal";
 
 function Members() {
     const {isOpen: InviteModelIsOpen, onOpen: InviteModelOnOpen, onClose: InviteModelOnClose} = useDisclosure();
     const {isOpen: isEditOpen, onOpen: onEditOpen, onClose: onEditClose} = useDisclosure()
+    const {isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose} = useDisclosure()
     const {members, organizations, updateMemberRoleSuccess} = useSelector((state: StateType) => state.organizations);
     const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
     const {userDetails} = useSelector((state: StateType) => state.users);
@@ -166,7 +168,7 @@ function Members() {
                                                             <MenuList className={'drop-down-list'}>
                                                                 <MenuItem
                                                                     onClick={() => openEditModel(member)}>Edit</MenuItem>
-                                                                <MenuItem>Delete</MenuItem>
+                                                                <MenuItem onClick={onDeleteModalOpen}>Delete</MenuItem>
                                                             </MenuList>
                                                         </Menu>
                                                     </Td>
@@ -262,6 +264,9 @@ function Members() {
                     </Flex>
                 </GridItem>
             </Grid>
+
+            <RemoveRecordModal onOpen={onDeleteModalOpen} isOpen={isDeleteModalOpen} onClose={onDeleteModalClose}/>
+
         </div>
 
     )

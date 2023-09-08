@@ -11,7 +11,8 @@ const initialState: any = {
     updateSuccess: false,
     success: false,
     isThreadSearched: false,
-    tabValue: ''
+    tabValue: '',
+    isThreadLoading: false
 } as InitialThreadStateType
 
 const threadsSlice = createSlice({
@@ -24,16 +25,17 @@ const threadsSlice = createSlice({
                 ...(_action.payload.hasOwnProperty('resetState') && _action.payload.resetState ? {threads: []} : {}),
                 isLoading: _action.payload.hasOwnProperty('resetState') ? _action.payload.resetState : true,
                 error: null,
-                success: false
+                success: false,
+                isThreadLoading: true
             }
         },
         getAllThreadsSuccess: (state: InitialThreadStateType, {payload: threads}: PayloadAction<any>) => {
             // Sort threads by latestMessage DESC
             threads = (threads || []).sort((a: Thread, b: Thread) => (new Date(b.latestMessage as string).valueOf() - new Date(a.latestMessage as string).valueOf()));
-            return {...state, threads, isLoading: false, error: null, success: true}
+            return {...state, threads, isLoading: false, error: null, success: true, isThreadLoading: false}
         },
         getAllThreadsError: (state: InitialThreadStateType, {payload: error}: PayloadAction<{ error: any }>) => {
-            return {...state, threads: [], isLoading: false, error, success: false}
+            return {...state, threads: [], isLoading: false, error, success: false, isThreadLoading: false}
         },
 
         updateThreads: (state: InitialThreadStateType, _action: PayloadAction<{ id?: string, body?: Thread }>) => {

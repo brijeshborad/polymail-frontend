@@ -1,7 +1,7 @@
 import {Message, Thread} from "@/models";
 import styles from "@/styles/Inbox.module.css";
 import {Flex, Input, useDisclosure} from "@chakra-ui/react";
-import React, {useCallback, useEffect, useRef, useState} from "react";
+import React, {useCallback, useRef, useState} from "react";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 import {updateThreadState} from "@/redux/threads/action-reducer";
 import {updateDraftState} from "@/redux/draft/action-reducer";
@@ -36,14 +36,10 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     dispatch(updateDraftState({draft: null}));
   }, [dispatch, props.tab]);
 
-    useEffect(() => {
-        console.log('messageDetails', messageDetails)
-    },[messageDetails])
-
   return (
     <>
       <div>
-        <Flex direction={'column'} gap={1} marginTop={5} pb={3}
+        <Flex direction={'column'} gap={2} marginTop={5} pb={3}
             className={`${styles.mailList} ${routePaths.includes('projects') ? styles.projectMailList : ''}`}>
           <Input type={'text'} opacity={0} height={0} width={0} padding={0} border={0} outline={0}
                   ref={listRef}/>

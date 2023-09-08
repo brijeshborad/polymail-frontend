@@ -30,6 +30,7 @@ import {updateDraftState} from "@/redux/draft/action-reducer";
 import {MessageBox} from "@/components/inbox/messages/message-box";
 import {MessageReplyBox} from "@/components/inbox/messages/message-reply-box";
 import {debounce} from "@/utils/common.functions";
+import {InboxLoader} from "@/components/loader-screen/inbox-loader";
 
 let cacheMessages: { [key: string]: { body: MessagePart, attachments: MessageAttachments[] } } = {};
 
@@ -46,15 +47,31 @@ export function Message() {
         messages,
         messagePart,
         isCompose,
-        isLoading,
+        isLoading: messageLoading,
         messageAttachments,
         selectedMessage,
         attachmentUrl
     } = useSelector((state: StateType) => state.messages);
-    const {selectedThread} = useSelector((state: StateType) => state.threads);
+    const {selectedThread, isThreadLoading: threadLoading} = useSelector((state: StateType) => state.threads);
+    const {isLoading: accountLoading} = useSelector((state: StateType) => state.accounts);
+    const {isLoading: organizationLoading} = useSelector((state: StateType) => state.organizations);
+    const {isLoading: usersProfilePictureLoading} = useSelector((state: StateType) => state.users);
+    const {isLoading: projectsLoading} = useSelector((state: StateType) => state.projects);
+
     const [lastMessageDetails, setLastMessageDetails] = useState<MessageModel | null>(null);
+    const [messageDetailsForReplyBox, setMessageDetailsForReplyBox] = useState<MessageModel | null>(null);
+    const [isLoaderShow, setIsLoaderShow] = useState<boolean>(false);
 
     const dispatch = useDispatch();
+
+
+    useEffect(() => {
+        if (threadLoading && accountLoading && organizationLoading && usersProfilePictureLoading && projectsLoading) {
+            setIsLoaderShow(true)
+        } else {
+            setIsLoaderShow(false)
+        }
+    }, [threadLoading, accountLoading, organizationLoading, usersProfilePictureLoading, projectsLoading])
 
     useEffect(() => {
         if (selectedThread && selectedThread?.id) {
@@ -187,8 +204,9 @@ export function Message() {
     }
 
 
-    const hideAndShowReplayBox = (type: string = '') => {
+    const hideAndShowReplayBox = (type: string = '', messageData: MessageModel) => {
         setReplyType(type);
+        setMessageDetailsForReplyBox(messageData)
     }
 
     const downloadImage = (item: MessageAttachments) => {
@@ -212,7 +230,8 @@ export function Message() {
             {!selectedThread && !isCompose &&
             <Flex justifyContent={'center'} alignItems={'center'} flexDir={'column'}
                   height={'100%'}>
-                <Heading as='h3' size='md'>Click on a thread from list to view messages!</Heading>
+                {!isLoaderShow && <Heading as='h3' size='md'>Click on a thread from list to view messages!</Heading>}
+                {isLoaderShow && <InboxLoader />}
             </Flex>}
             {selectedThread && !isCompose &&
             <Flex flexDir={'column'} height={'100%'}>
@@ -226,8 +245,8 @@ export function Message() {
                             {inboxMessages && !!inboxMessages.length && inboxMessages.map((item: any, index: number) => (
                                 <div key={index}>
                                     <MessageBox item={item} index={index} threadDetails={item}
-                                                isLoading={isLoading} emailPart={emailPart}
-                                                messageAttachments={messageAttachments}
+                                                isLoading={messageLoading} emailPart={emailPart}
+                                                messageAttachments={messageAttachments} hideAndShowReplayBox={hideAndShowReplayBox}
                                     />
                                 </div>
 
@@ -284,12 +303,11 @@ export function Message() {
                                                         )}
 
                                                         <MenuItem
-                                                            onClick={() => hideAndShowReplayBox('reply')}> Reply </MenuItem>
+                                                            onClick={() => hideAndShowReplayBox('reply', lastMessageDetails)}> Reply </MenuItem>
                                                         <MenuItem
-                                                            onClick={() => hideAndShowReplayBox('reply-all')}> Reply
-                                                            All </MenuItem>
+                                                            onClick={() => hideAndShowReplayBox('reply-all', lastMessageDetails)}> Reply All </MenuItem>
                                                         <MenuItem
-                                                            onClick={() => hideAndShowReplayBox('forward')}> Forward </MenuItem>
+                                                            onClick={() => hideAndShowReplayBox('forward', lastMessageDetails)}> Forward </MenuItem>
                                                     </MenuList>
                                                 </Menu>
                                             </Flex>
@@ -306,7 +324,7 @@ export function Message() {
                                         </Flex>
                                     </Flex>
                                 </Flex>
-                                {(!isLoading && emailPart) &&
+                                {(!messageLoading && emailPart) &&
                                 <div className={styles.mailBodyContent}>
                                     <iframe
                                         ref={iframeRef}
@@ -332,7 +350,7 @@ export function Message() {
                             </Flex>}
 
                             <MessageReplyBox
-                                emailPart={(messagePart?.data || '')} messageData={lastMessageDetails}
+                                emailPart={(messagePart?.data || '')} messageData={messageDetailsForReplyBox}
                                 replyType={replyType}/>
                         </Flex>
                     </Flex>

@@ -169,6 +169,11 @@
     max-height: calc(100vh - 290px);
 }
 
+.mailList .mailListSkeleton {
+    --skeleton-start-color: #E5E7EB;
+    --skeleton-end-color: #d7d7d7;
+}
+
 .mailOpen .mailDetails {
     border-color: rgba(38, 109, 240, 0.15);
     background-color: rgba(38, 109, 240, 0.03);

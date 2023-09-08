@@ -1,9 +1,8 @@
-import {Button, Checkbox, Flex} from "@chakra-ui/react";
+import {Button, Checkbox, Flex, Skeleton} from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
 import {StateType, TabProps} from "@/types";
 import React, {useState} from "react";
 import {ThreadsSideBarList} from "@/components/threads";
-import {SpinnerUI} from "@/components/common"
 import {getAllThreads} from "@/redux/threads/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 
@@ -51,7 +50,19 @@ export function ThreadsSideBarTab(props: TabProps) {
                 </div>
 
 
-            {props.showLoader && <SpinnerUI/>}
+            {props.showLoader && (
+                <Flex direction={'column'} gap={2} mt={5}>
+                    {Array(15).fill(null).map((_, index) => (
+                        <Skeleton
+                            key={index}
+                            className={styles.mailListSkeleton}
+                            height='60px'
+                            borderRadius={'8px'}
+                            border={'1px solid #E5E7EB'}
+                        />
+                    ))}
+                </Flex>
+            )}
 
             <ThreadsSideBarList tab={props.tab} />
         </>

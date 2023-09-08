@@ -46,7 +46,7 @@ const userSlice = createSlice({
         },
 
         getProfilePicture: (state: InitialUserState, _action: PayloadAction<{}>) => {
-            return {...state, profilePicture: null, error: null, isLoading: false, success: false}
+            return {...state, profilePicture: null, error: null, isLoading: true, success: false}
         },
         getProfilePictureSuccess: (state: InitialUserState, {payload: profilePicture}: PayloadAction<{}>) => {
             return {...state, profilePicture, error: null, isLoading: false, success: true}
