@@ -67,7 +67,6 @@ export function Message() {
 
 
     useEffect(() => {
-        let loaderPercentage = 0;
         if (threadLoading || !accountLoading || !organizationLoading || !usersProfilePictureLoading || !projectsLoading) {
             setLoaderPercentage((prevState) => prevState += 20)
 
