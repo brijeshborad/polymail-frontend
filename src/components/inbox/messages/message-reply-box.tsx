@@ -16,7 +16,7 @@ import {ChevronDownIcon, CloseIcon} from "@chakra-ui/icons";
 import {FileIcon, LinkIcon, TextIcon} from "@/icons";
 import React, {ChangeEvent, ChangeEventHandler, useEffect, useRef, useState} from "react";
 import {debounce, isEmail} from "@/utils/common.functions";
-import {Chip, RichTextEditor, Toaster} from "@/components/common";
+import {Chip, RichTextEditor, Time, Toaster} from "@/components/common";
 import {createDraft, sendMessage, updateDraftState, updatePartialMessage} from "@/redux/draft/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
@@ -447,7 +447,7 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                                 showRecipientsBox()
                             }}> {!replyBoxHide ? 'Edit' : 'Close'} </Button>
                 </Flex>
-                <Text fontSize='11px' color={'#6B7280'}>Saved 2m ago</Text>
+                <Text fontSize='11px' color={'#6B7280'} display={'flex'} gap={'2px'} className={styles.mailSaveTime}>Saved {draft ? <Time time={draft?.created || ''} isShowFullTime={false} showTimeInShortForm={true}/> : '0 s'} ago</Text>
             </Flex>
             {replyBoxHide && <Flex className={styles.mailRecipientsBox} flex={'none'} backgroundColor={'#FFFFFF'}
                                    border={'1px solid #E5E7EB'} direction={'column'}

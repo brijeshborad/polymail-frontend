@@ -337,7 +337,7 @@ export function ComposeBox(props: any) {
                               borderRadius={16} border={'1px solid #E5E7EB'}>
                     <ModalHeader display={'flex'} borderBottom={'1px solid #E5E7EB'} color={'#0A101D'}
                                  fontWeight={'500'} fontSize={'12px'} padding={'18px 20px'}>Draft&nbsp;<Text display={'flex'} gap={'2px'} className={styles.mailSaveTime}
-                        color={'#6B7280'} fontWeight={'400'}> (Saved to drafts <Time time={props.messageDetails?.created || ''} isShowFullTime={false} showTimeInShortForm={true}/> ago)</Text></ModalHeader>
+                        color={'#6B7280'} fontWeight={'400'}> (Saved to drafts {props.messageDetails ? <Time time={props.messageDetails?.created || ''} isShowFullTime={false} showTimeInShortForm={true}/> : '0 s'} ago)</Text></ModalHeader>
                     <ModalCloseButton color={'#6B7280'} fontSize={'13px'} top={'21px'} right={'20px'}/>
                     <ModalBody padding={0}>
                         <Flex direction={'column'} h={'100%'}>

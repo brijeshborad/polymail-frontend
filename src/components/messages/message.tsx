@@ -61,15 +61,21 @@ export function Message() {
     const [lastMessageDetails, setLastMessageDetails] = useState<MessageModel | null>(null);
     const [messageDetailsForReplyBox, setMessageDetailsForReplyBox] = useState<MessageModel | null>(null);
     const [isLoaderShow, setIsLoaderShow] = useState<boolean>(false);
+    const [loaderPercentage, setLoaderPercentage] = useState<number>(0);
 
     const dispatch = useDispatch();
 
 
     useEffect(() => {
-        if (threadLoading && accountLoading && organizationLoading && usersProfilePictureLoading && projectsLoading) {
-            setIsLoaderShow(true)
-        } else {
+        let loaderPercentage = 0;
+        if (threadLoading || !accountLoading || !organizationLoading || !usersProfilePictureLoading || !projectsLoading) {
+            setLoaderPercentage((prevState) => prevState += 20)
+
+        }
+        if (!threadLoading && !accountLoading && !organizationLoading && !usersProfilePictureLoading && !projectsLoading) {
             setIsLoaderShow(false)
+        } else {
+            setIsLoaderShow(true)
         }
     }, [threadLoading, accountLoading, organizationLoading, usersProfilePictureLoading, projectsLoading])
 
@@ -231,7 +237,7 @@ export function Message() {
             <Flex justifyContent={'center'} alignItems={'center'} flexDir={'column'}
                   height={'100%'}>
                 {!isLoaderShow && <Heading as='h3' size='md'>Click on a thread from list to view messages!</Heading>}
-                {isLoaderShow && <InboxLoader />}
+                {isLoaderShow && <InboxLoader loaderPercentage={loaderPercentage}/>}
             </Flex>}
             {selectedThread && !isCompose &&
             <Flex flexDir={'column'} height={'100%'}>
