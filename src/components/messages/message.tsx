@@ -27,8 +27,8 @@ import {
 import {Message as MessageModel, MessageDraft, MessagePart, MessageAttachments} from "@/models";
 import {MessagesHeader} from "@/components/messages/messages-header";
 import {updateDraftState} from "@/redux/draft/action-reducer";
-import {MessageBox} from "@/components/inbox/messages/message-box";
-import {MessageReplyBox} from "@/components/inbox/messages/message-reply-box";
+import {MessageBox} from "@/components/messages/message-box";
+import {MessageReplyBox} from "@/components/messages/message-reply-box";
 import {debounce} from "@/utils/common.functions";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 
