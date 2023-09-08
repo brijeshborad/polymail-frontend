@@ -128,11 +128,11 @@ function ProjectInbox() {
 
     return (
         <>
-            <Flex direction={'column'} padding={'28px 40px 16px'} className={styles.projectPage}
+            <Flex direction={'column'} className={styles.projectPage}
                   backgroundColor={'#FCFCFD'} height={'100%'} flex={1}>
 
-                <Flex align={'center'} justify={'space-between'} gap={4} paddingBottom={6}
-                      borderBottom={'1px solid rgba(8, 22, 47, 0.12)'}>
+                <Flex align={'center'} justify={'space-between'} gap={4} padding={'16px 40px 15px'}
+                      borderBottom={'1px solid rgba(8, 22, 47, 0.12)'} backgroundColor={'#FFFFFF'}>
                     <Flex align={'center'} gap={2}>
                         <div className={styles.imgWrapper}>
                             <Image src="/image/user.png" width="36" height="36" alt=""/>
@@ -154,11 +154,11 @@ function ProjectInbox() {
                         </div>
                         <Button className={styles.manageMembers} onClick={onOpen} ml={2} backgroundColor={'#000000'}
                                 color={'#ffffff'} lineHeight={'1'} fontSize={'14px'} borderRadius={'8px'}
-                                height={'auto'} padding={'12px 16px'}> Manage Members</Button>
+                                height={'auto'} padding={'11px 16px'}> Manage Members</Button>
                     </Flex>
                 </Flex>
 
-                <Grid className={styles.mailGrid} templateColumns='30% auto' paddingTop={8} gap={6} flex={1}>
+                <Grid className={styles.mailGrid} templateColumns='30% auto' padding={'32px 32px 16px'} gap={6} flex={1}>
                     <GridItem w='100%' flex={1}>
                         {((size < 991 && !selectedThread) || size > 991) &&
                         <ThreadsSideBar cachePrefix={'projects-page'} />
