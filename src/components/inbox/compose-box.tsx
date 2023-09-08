@@ -1,6 +1,6 @@
 import {
     Box,
-    Button,
+    Button, createStandaloneToast,
     Flex, Heading, Input, InputGroup, InputLeftElement, Menu, MenuButton, MenuItem, MenuList,
     Modal,
     ModalBody,
@@ -27,6 +27,7 @@ import CreateNewProject from "@/components/project/create-new-project";
 
 declare type RecipientsValue = { items: string[], value: string };
 declare type RecipientsType = { cc: RecipientsValue, bcc: RecipientsValue, recipients: RecipientsValue };
+
 export function ComposeBox(props: any) {
     const [emailRecipients, setEmailRecipients] = useState<RecipientsType>({
         cc: {items: [], value: ""},
@@ -36,7 +37,7 @@ export function ComposeBox(props: any) {
     const [subject, setSubject] = useState<string>('');
     const [emailBody, setEmailBody] = useState<string>('');
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
-    const { draft } = useSelector((state: StateType) => state.draft);
+    const {draft} = useSelector((state: StateType) => state.draft);
     const dispatch = useDispatch();
     const {isOpen, onOpen, onClose} = useDisclosure();
     const {isOpen: isOpenProject, onOpen: onOpenProject, onClose: onCloseProject} = useDisclosure();
@@ -44,12 +45,11 @@ export function ComposeBox(props: any) {
     const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
     const inputFile = useRef<HTMLInputElement | null>(null)
     let {projects} = useSelector((state: StateType) => state.projects);
-    const [showToaster, setShowToaster] = useState<boolean>(false);
-    const [draftData, setDraftData] = useState<any>(null);
+    const {toast} = createStandaloneToast()
 
     useEffect(() => {
         if (props.messageDetails) {
-            const { subject, to, cc, bcc, draftInfo } = props.messageDetails;
+            const {subject, to, cc, bcc, draftInfo} = props.messageDetails;
 
             if (subject) {
                 setSubject(subject)
@@ -80,7 +80,8 @@ export function ComposeBox(props: any) {
                         items: bcc,
                         value: ''
                     }
-                }));            }
+                }));
+            }
 
 
             if (draftInfo && draftInfo.body) {
@@ -213,8 +214,28 @@ export function ComposeBox(props: any) {
                 }
             } else {
                 if (draft && draft.to && draft.to.length) {
-                    setShowToaster(true)
-                    setDraftData({...draft})                }
+                    Toaster({
+                        desc: `Your message has been sent to ${draft?.to && draft?.to[0]}${draft?.to && draft?.to?.length > 1 ? ` and ${draft?.to && draft?.to?.length - 1} other${draft?.to && draft?.to?.length === 2 ? '' : 's'}` : ''}`,
+                        type: 'success',
+                        title: '',
+                        toastType: 'send_confirmation',
+                        undoClick: (type: string) => {
+                            let params = {};
+
+                            if (type === 'undo') {
+                                params = {
+                                    undo: true
+                                }
+                            } else if (type === 'send-now') {
+                                params = {
+                                    now: true
+                                }
+                            }
+                            dispatch(sendMessage({id: draft.id!, ...params}));
+                            toast.close('poly-toast');
+                        }
+                    })
+                }
             }
             dispatch(sendMessage({id: draft.id, ...params}));
             onClose();
@@ -298,28 +319,34 @@ export function ComposeBox(props: any) {
 
     return (
         <>
-            {showToaster && <Toaster desc={`Your message has been sent to ${draftData?.to && draftData?.to[0]}${draftData?.to && draftData?.to?.length > 1 ? ` and ${draftData?.to && draftData?.to?.length - 1} other${draftData?.to && draftData?.to?.length === 2 ? '' : 's'}` : ''}`} type={'success'} title={''} toastType={'send_confirmation'} draftData={draftData}/>}
-
             <Modal isOpen={props.isOpen} onClose={props.onClose} isCentered>
                 <ModalOverlay backgroundColor={'rgba(229, 231, 235, 0.50)'} backdropFilter={'blur(16px)'}/>
                 <ModalContent className={styles.composeModal} maxWidth={'893px'} height={'708px'} maxHeight={'708px'}
                               borderRadius={16} border={'1px solid #E5E7EB'}>
                     <ModalHeader display={'flex'} borderBottom={'1px solid #E5E7EB'} color={'#0A101D'}
-                                 fontWeight={'500'} fontSize={'12px'} padding={'18px 20px'}>Draft&nbsp;<Text display={'flex'} gap={'2px'} className={styles.mailSaveTime}
-                        color={'#6B7280'} fontWeight={'400'}> (Saved to drafts {props.messageDetails ? <Time time={props.messageDetails?.created || ''} isShowFullTime={false} showTimeInShortForm={true}/> : '0 s'} ago)</Text></ModalHeader>
+                                 fontWeight={'500'} fontSize={'12px'} padding={'18px 20px'}>Draft&nbsp;<Text
+                        display={'flex'} gap={'2px'} className={styles.mailSaveTime}
+                        color={'#6B7280'} fontWeight={'400'}> (Saved to drafts {props.messageDetails ?
+                        <Time time={props.messageDetails?.created || ''} isShowFullTime={false}
+                              showTimeInShortForm={true}/> : '0 s'} ago)</Text></ModalHeader>
                     <ModalCloseButton color={'#6B7280'} fontSize={'13px'} top={'21px'} right={'20px'}/>
                     <ModalBody padding={0}>
                         <Flex direction={'column'} h={'100%'}>
                             <Flex align={'center'} justify={'space-between'} gap={3} padding={'16px 20px'}
                                   borderBottom={'1px solid #E5E7EB'}>
-                                <Input className={styles.subjectInput} placeholder='Enter subject title' size='lg'  onChange={(e) => addSubject(e)}
-                                       flex={1} fontWeight={'700'} padding={'0'} border={'0'} h={'auto'} defaultValue={subject || ''}
+                                <Input className={styles.subjectInput} placeholder='Enter subject title' size='lg'
+                                       onChange={(e) => addSubject(e)}
+                                       flex={1} fontWeight={'700'} padding={'0'} border={'0'} h={'auto'}
+                                       defaultValue={subject || ''}
                                        borderRadius={'0'} lineHeight={1} color={'#0A101D'}/>
                                 <Menu>
-                                    <MenuButton className={styles.addToProject} leftIcon={<FolderIcon/>} borderRadius={'50px'}
+                                    <MenuButton className={styles.addToProject} leftIcon={<FolderIcon/>}
+                                                borderRadius={'50px'}
                                                 backgroundColor={'#2A6FFF'} color={'#FFFFFF'} as={Button}
-                                                boxShadow={'0 0 3px 0 rgba(38, 109, 240, 0.12)'} padding={'4px 4px 4px 8px'}
-                                                fontSize={'12px'} fontWeight={500} h={'fit-content'}>Add to Project <span className={styles.RightContent}>⌘P</span></MenuButton>
+                                                boxShadow={'0 0 3px 0 rgba(38, 109, 240, 0.12)'}
+                                                padding={'4px 4px 4px 8px'}
+                                                fontSize={'12px'} fontWeight={500} h={'fit-content'}>Add to
+                                        Project <span className={styles.RightContent}>⌘P</span></MenuButton>
                                     <MenuList className={`${styles.addToProjectList} drop-down-list`}>
 
                                         <div className={'dropdown-searchbar'}>
@@ -327,7 +354,7 @@ export function ComposeBox(props: any) {
                                                 <InputLeftElement h={'27px'} pointerEvents='none'>
                                                     <SearchIcon/>
                                                 </InputLeftElement>
-                                                <Input placeholder='Search project' />
+                                                <Input placeholder='Search project'/>
                                             </InputGroup>
                                         </div>
 
@@ -351,16 +378,20 @@ export function ComposeBox(props: any) {
                                 </Menu>
                             </Flex>
                             <Box flex={'1'} p={5}>
-                                <Flex direction={"column"} border={'1px solid #F3F4F6'} borderRadius={8} h={'100%'} padding={'16px'} gap={4}>
-                                    <Flex flex={'none'} backgroundColor={'#FFFFFF'} border={'1px solid #E5E7EB'} direction={'column'} borderRadius={8}>
+                                <Flex direction={"column"} border={'1px solid #F3F4F6'} borderRadius={8} h={'100%'}
+                                      padding={'16px'} gap={4}>
+                                    <Flex flex={'none'} backgroundColor={'#FFFFFF'} border={'1px solid #E5E7EB'}
+                                          direction={'column'} borderRadius={8}>
                                         <Flex width={'100%'} gap={2} padding={'4px 16px'} className={styles.replyBoxCC}>
-                                            <Heading as={'h6'} fontSize={'13px'} paddingTop={1} fontWeight={500} lineHeight={1} color={'#374151'}>To:</Heading>
+                                            <Heading as={'h6'} fontSize={'13px'} paddingTop={1} fontWeight={500}
+                                                     lineHeight={1} color={'#374151'}>To:</Heading>
                                             <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
                                                 {/*<Button className={styles.replyBoxCCTag} rightIcon={<ChevronDownIcon />}> Lee Clow </Button>*/}
                                                 {/*<Input width={'auto'} padding={0} height={'20px'} flex={'1 0 auto'}*/}
                                                 {/*       fontSize={'12px'} border={0} className={styles.ccInput} placeholder={'Recipient\'s Email'}/>*/}
                                                 {!!emailRecipients?.recipients?.items?.length && emailRecipients.recipients.items.map((item: string | undefined, i: number) => (
-                                                    <Chip text={item} key={i} click={() => handleItemDelete(item!, 'recipients')}/>
+                                                    <Chip text={item} key={i}
+                                                          click={() => handleItemDelete(item!, 'recipients')}/>
                                                 ))}
 
                                                 <Input width={'auto'} padding={0} height={'20px'} flex={'1 0 auto'}
@@ -374,10 +405,12 @@ export function ComposeBox(props: any) {
                                             </Flex>
                                         </Flex>
                                         <Flex width={'100%'} gap={2} padding={'4px 16px'} className={styles.replyBoxCC}>
-                                            <Heading as={'h6'} fontSize={'13px'} paddingTop={1} fontWeight={500} lineHeight={1} color={'#374151'}>CC:</Heading>
+                                            <Heading as={'h6'} fontSize={'13px'} paddingTop={1} fontWeight={500}
+                                                     lineHeight={1} color={'#374151'}>CC:</Heading>
                                             <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
                                                 {!!emailRecipients?.cc?.items?.length && emailRecipients.cc.items.map((item: string | undefined, i: number) => (
-                                                    <Chip text={item} key={i} click={() => handleItemDelete(item!, 'cc')}/>
+                                                    <Chip text={item} key={i}
+                                                          click={() => handleItemDelete(item!, 'cc')}/>
                                                 ))}
 
                                                 <Input width={'auto'} padding={0} height={'23px'}
@@ -391,10 +424,12 @@ export function ComposeBox(props: any) {
                                             </Flex>
                                         </Flex>
                                         <Flex width={'100%'} gap={2} padding={'4px 16px'} className={styles.replyBoxCC}>
-                                            <Heading as={'h6'} fontSize={'13px'} paddingTop={1} fontWeight={500} lineHeight={1} color={'#374151'}>BCC:</Heading>
+                                            <Heading as={'h6'} fontSize={'13px'} paddingTop={1} fontWeight={500}
+                                                     lineHeight={1} color={'#374151'}>BCC:</Heading>
                                             <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
                                                 {!!emailRecipients?.bcc?.items?.length && emailRecipients.bcc.items.map((item: string | undefined, i: number) => (
-                                                    <Chip text={item} key={i} click={() => handleItemDelete(item!, 'bcc')}/>
+                                                    <Chip text={item} key={i}
+                                                          click={() => handleItemDelete(item!, 'bcc')}/>
                                                 ))}
 
                                                 <Input width={'auto'} padding={0} height={'23px'}
@@ -416,9 +451,11 @@ export function ComposeBox(props: any) {
                                                             value={emailBody} onChange={(e) => sendToDraft(e)}/>
                                             {attachments && attachments.length > 0 ? <div style={{marginTop: '20px'}}>
                                                 {attachments.map((item, index: number) => (
-                                                    <Flex align={'center'} key={index} className={styles.attachmentsFile}>
+                                                    <Flex align={'center'} key={index}
+                                                          className={styles.attachmentsFile}>
                                                         {item.filename}
-                                                        <div className={styles.closeIcon} onClick={() => removeAttachment(index)}><CloseIcon/>
+                                                        <div className={styles.closeIcon}
+                                                             onClick={() => removeAttachment(index)}><CloseIcon/>
                                                         </div>
                                                     </Flex>
                                                 ))}
@@ -429,25 +466,31 @@ export function ComposeBox(props: any) {
                                                 <Flex gap={2} className={styles.replyBoxIcon}>
                                                     <Flex align={'center'} gap={3}>
                                                         <FileIcon click={() => inputFile.current?.click()}/>
-                                                        <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e)}
+                                                        <input type='file' id='file' ref={inputFile}
+                                                               onChange={(e) => handleFileUpload(e)}
                                                                style={{display: 'none'}}/>
                                                         <LinkIcon/>
                                                         <TextIcon/>
                                                     </Flex>
                                                 </Flex>
                                                 <Flex align={'center'} className={styles.replyButton}>
-                                                    <Button className={styles.replyTextButton} colorScheme='blue' onClick={() => sendMessages()}> Send </Button>
+                                                    <Button className={styles.replyTextButton} colorScheme='blue'
+                                                            onClick={() => sendMessages()}> Send </Button>
                                                     <Menu>
-                                                        <MenuButton className={styles.replyArrowIcon} as={Button} aria-label='Options'
+                                                        <MenuButton className={styles.replyArrowIcon} as={Button}
+                                                                    aria-label='Options'
                                                                     variant='outline'><ChevronDownIcon/></MenuButton>
                                                         <MenuList className={'drop-down-list'}>
-                                                            <MenuItem onClick={() => openCalender()}> Send Later </MenuItem>
+                                                            <MenuItem onClick={() => openCalender()}> Send
+                                                                Later </MenuItem>
                                                         </MenuList>
                                                     </Menu>
-                                                    <Modal isOpen={isOpen} onClose={onClose} isCentered={true} scrollBehavior={'outside'}>
+                                                    <Modal isOpen={isOpen} onClose={onClose} isCentered={true}
+                                                           scrollBehavior={'outside'}>
                                                         <ModalOverlay/>
                                                         <ModalContent minHeight="440px">
-                                                            <ModalHeader display="flex" justifyContent="space-between" alignItems="center">
+                                                            <ModalHeader display="flex" justifyContent="space-between"
+                                                                         alignItems="center">
                                                                 Schedule send
                                                             </ModalHeader>
                                                             <ModalCloseButton size={'xs'}/>
@@ -456,11 +499,13 @@ export function ComposeBox(props: any) {
                                                                     date={scheduledDate}
                                                                     defaultIsOpen={true}
                                                                     onDateChange={setScheduledDate}
-                                                                    name="date-input" />
+                                                                    name="date-input"/>
                                                             </ModalBody>
                                                             <ModalFooter>
-                                                                <Button variant='ghost' onClick={onClose}>Cancel</Button>
-                                                                <Button colorScheme='blue' mr={3} onClick={() => sendMessages(true)}> Schedule </Button>
+                                                                <Button variant='ghost'
+                                                                        onClick={onClose}>Cancel</Button>
+                                                                <Button colorScheme='blue' mr={3}
+                                                                        onClick={() => sendMessages(true)}> Schedule </Button>
                                                             </ModalFooter>
                                                         </ModalContent>
                                                     </Modal>

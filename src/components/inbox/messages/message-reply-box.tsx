@@ -1,5 +1,5 @@
 import {
-    Button,
+    Button, createStandaloneToast,
     Flex, Heading,
     Input,
     Menu,
@@ -40,13 +40,13 @@ export function MessageReplyBox(props: MessageBoxType) {
     const {draft} = useSelector((state: StateType) => state.draft);
     const dispatch = useDispatch();
     const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
-    const [draftData, setDraftData] = useState<any>(null);
     const {isOpen, onOpen, onClose} = useDisclosure();
     const inputFile = useRef<HTMLInputElement | null>(null)
     const [scheduledDate, setScheduledDate] = useState<Date>();
     const [hideEditorToolbar, setHideEditorToolbar] = useState<boolean>(false);
     const [replyBoxHide, setReplyBoxHide] = useState<boolean>(false);
     const [boxUpdatedFirstTime, setBoxUpdatedFirstTime] = useState<boolean>(false);
+    const {toast} = createStandaloneToast()
 
     const isValid = (email: string, type: string) => {
         let error = null;
@@ -308,8 +308,6 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
         setScheduledDate(today);
     }
 
-    const [showToaster, setShowToaster] = useState<boolean>(false);
-
 
     const sendMessages = (scheduled: boolean = false) => {
         if (draft && draft.id) {
@@ -324,8 +322,27 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                 }
             } else {
                 if (draft && draft.to && draft.to.length) {
-                    setShowToaster(true)
-                    setDraftData({...draft})
+                    Toaster({
+                        desc: `Your message has been sent to ${draft?.to && draft?.to[0]}${draft?.to && draft?.to?.length > 1 ? ` and ${draft?.to && draft?.to?.length - 1} other${draft?.to && draft?.to?.length === 2 ? '' : 's'}` : ''}`,
+                        type: 'success',
+                        title: '',
+                        toastType: 'send_confirmation',
+                        undoClick: (type: string) => {
+                            let params = {};
+
+                            if (type === 'undo') {
+                                params = {
+                                    undo: true
+                                }
+                            } else if (type === 'send-now') {
+                                params = {
+                                    now: true
+                                }
+                            }
+                            dispatch(sendMessage({id: draft.id!, ...params}));
+                            toast.close('poly-toast');
+                        }
+                    })
                 }
             }
             dispatch(sendMessage({id: draft.id, ...params}));
@@ -365,182 +382,185 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
 
     return (
         <Flex maxHeight={'450px'} direction={'column'} paddingBottom={4} mt={'auto'}
-             backgroundColor={'#FFFFFF'}  width={'100%'} position={'sticky'}
+              backgroundColor={'#FFFFFF'} width={'100%'} position={'sticky'}
               bottom={"-20px"} onFocus={() => handleFocus()} onBlur={() => handleBlur()}>
-            {showToaster && <Toaster desc={`Your message has been sent to ${draftData?.to && draftData?.to[0]}${draftData?.to && draftData?.to?.length > 1 ? ` and ${draftData?.to && draftData?.to?.length - 1} other${draftData?.to && draftData?.to?.length === 2 ? '' : 's'}` : ''}`} type={'success'} title={''} toastType={'send_confirmation'}  draftData={draftData}/>}
-            <Flex borderRadius={8} gap={4} border={'1px solid #F3F4F6'} direction={'column'} padding={4} >
-            <Flex align={'center'} justify={'space-between'} gap={4} pb={4}
-                  borderBottom={'1px solid #F3F4F6'}>
-                <Flex gap={1} align={'center'}>
-                    <Flex className={`${styles.memberImages} ${styles.smallMemberImage}`}>
-                        <div className={styles.memberPhoto}>
-                            <Image src="/image/user.png" width="24" height="24" alt=""/>
-                        </div>
-                        <div className={styles.memberPhoto}>
-                            <Image src="/image/user.png" width="24" height="24" alt=""/>
-                        </div>
-                        <Flex align={'center'} justify={'center'} fontSize={'9px'} color={'#082561'}
-                              className={styles.memberPhoto}>
-                            +4
-                        </Flex>
-                    </Flex>
-                    <Text fontSize='xs' color={'#374151'} fontWeight={500}>Draft</Text>
-                </Flex>
-                <Button className={styles.createNewDraft} backgroundColor={'#F3F4F6'} h={'auto'}
-                        padding={'4px 8px'} borderRadius={'30px'} color={'#374151'} fontSize={'12px'}
-                        fontWeight={500} lineHeight={'normal'}> Create new draft </Button>
-            </Flex>
-            <Flex align={'center'} justify={'space-between'} gap={4}>
-                <Flex align={'center'} gap={1}>
-                    <Button color={'#6B7280'} variant='link' size='xs'
-                            rightIcon={<ChevronDownIcon/>}> Reply to </Button>
-                    <Flex align={'center'} gap={1}>
-                        <div className={styles.mailUserImage}>
-
-                        </div>
-
-                        {!!emailRecipients?.recipients?.items?.length &&
-                        <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
-                              fontWeight={400}>
-                            {emailRecipients?.recipients?.items[0]}&nbsp; <Text
-                            as='u'>{emailRecipients?.recipients?.items?.length - 1 > 0 && `and ${emailRecipients?.recipients?.items?.length - 1} others`} </Text>
-                        </Flex>
-                        }
-                    </Flex>
-                    <Button className={styles.editButton} color={'#374151'} backgroundColor={'#F3F4F6'}
-                            borderRadius={'20px'} lineHeight={1} size='xs'
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                e.preventDefault();
-                                showRecipientsBox()
-                            }}> {!replyBoxHide ? 'Edit' : 'Close'} </Button>
-                </Flex>
-                <Text fontSize='11px' color={'#6B7280'} display={'flex'} gap={'2px'} className={styles.mailSaveTime}>Saved {draft ? <Time time={draft?.created || ''} isShowFullTime={false} showTimeInShortForm={true}/> : '0 s'} ago</Text>
-            </Flex>
-            {replyBoxHide && <Flex className={styles.mailRecipientsBox} flex={'none'} backgroundColor={'#FFFFFF'}
-                                   border={'1px solid #E5E7EB'} direction={'column'}
-                                   borderRadius={8}>
-                <Flex width={'100%'} gap={2} padding={'4px 16px'} className={styles.replyBoxCC}>
-                    <Heading as={'h6'} fontSize={'13px'} paddingTop={1} fontWeight={500} lineHeight={1}
-                             color={'#374151'}>To:</Heading>
-                    <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
-                        {!!emailRecipients?.recipients?.items?.length && emailRecipients.recipients.items.map((item: string | undefined, i: number) => (
-                            <Chip text={item} key={i} click={() => handleItemDelete(item!, 'recipients')}/>
-                        ))}
-
-                        <Input width={'auto'} padding={0} height={'20px'} flex={'1 0 auto'}
-                               fontSize={'12px'} border={0} className={styles.ccInput}
-                               value={emailRecipients.recipients.value}
-                               onKeyDown={(e) => handleKeyDown(e, 'recipients')}
-                               onChange={(e) => handleChange(e, 'recipients')}
-                               onPaste={(e) => handlePaste(e, 'recipients')}
-                               placeholder={'Recipient\'s Email'}
-                        />
-                    </Flex>
-                </Flex>
-                <Flex width={'100%'} gap={2} padding={'4px 16px'} className={styles.replyBoxCC}>
-                    <Heading as={'h6'} fontSize={'13px'} paddingTop={1} fontWeight={500} lineHeight={1}
-                             color={'#374151'}>Cc:</Heading>
-                    <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
-                        {!!emailRecipients?.cc?.items?.length && emailRecipients.cc.items.map((item: string | undefined, i: number) => (
-                            <Chip text={item} key={i} click={() => handleItemDelete(item!, 'cc')}/>
-                        ))}
-
-                        <Input width={'auto'} padding={0} height={'23px'}
-                               fontSize={'12px'}
-                               value={emailRecipients.cc.value}
-                               onKeyDown={(e) => handleKeyDown(e, 'cc')}
-                               onChange={(e) => handleChange(e, 'cc')}
-                               onPaste={(e) => handlePaste(e, 'cc')}
-                               border={0} className={styles.ccInput}
-                        />
-                    </Flex>
-                </Flex>
-                <Flex width={'100%'} gap={2} padding={'4px 16px'} className={styles.replyBoxCC}>
-                    <Heading as={'h6'} fontSize={'13px'} paddingTop={1} fontWeight={500} lineHeight={1}
-                             color={'#374151'}>Bcc:</Heading>
-                    <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
-                        {!!emailRecipients?.bcc?.items?.length && emailRecipients.bcc.items.map((item: string | undefined, i: number) => (
-                            <Chip text={item} key={i} click={() => handleItemDelete(item!, 'bcc')}/>
-                        ))}
-
-                        <Input width={'auto'} padding={0} height={'23px'}
-                               fontSize={'12px'}
-                               value={emailRecipients.bcc.value}
-                               onKeyDown={(e) => handleKeyDown(e, 'bcc')}
-                               onChange={(e) => handleChange(e, 'bcc')}
-                               onPaste={(e) => handlePaste(e, 'bcc')}
-                               border={0} className={styles.ccInput}
-                        />
-                    </Flex>
-                </Flex>
-            </Flex>}
-
-
-            <Flex direction={'column'} position={"relative"} flex={1}>
-                <Flex direction={'column'} maxH={'285px'} overflow={'auto'} className={styles.replyBoxEditor}>
-                    <RichTextEditor
-                        className={`reply-message-area message-reply-box ${hideEditorToolbar ? 'hide-toolbar' : ''}`}
-                        initialUpdated={boxUpdatedFirstTime}
-                        placeholder='Reply with anything you like or @mention someone to share this thread'
-                        value={emailBody} onChange={(e) => sendToDraft(e)}/>
-                    {attachments && attachments.length > 0 ? <div style={{marginTop: '20px'}}>
-                        {attachments.map((item, index: number) => (
-                            <Flex align={'center'} key={index} className={styles.attachmentsFile}>
-                                {item.filename}
-                                <div className={styles.closeIcon} onClick={() => removeAttachment(index)}><CloseIcon/>
-                                </div>
+            <Flex borderRadius={8} gap={4} border={'1px solid #F3F4F6'} direction={'column'} padding={4}>
+                <Flex align={'center'} justify={'space-between'} gap={4} pb={4}
+                      borderBottom={'1px solid #F3F4F6'}>
+                    <Flex gap={1} align={'center'}>
+                        <Flex className={`${styles.memberImages} ${styles.smallMemberImage}`}>
+                            <div className={styles.memberPhoto}>
+                                <Image src="/image/user.png" width="24" height="24" alt=""/>
+                            </div>
+                            <div className={styles.memberPhoto}>
+                                <Image src="/image/user.png" width="24" height="24" alt=""/>
+                            </div>
+                            <Flex align={'center'} justify={'center'} fontSize={'9px'} color={'#082561'}
+                                  className={styles.memberPhoto}>
+                                +4
                             </Flex>
-                        ))}
-                    </div> : null}
-                </Flex>
-                {hideEditorToolbar && <Flex direction={'column'} className={styles.composeModal}>
-                    <Flex align={'flex-end'} justify={'space-between'} gap={2}>
-                        <Flex gap={2} className={styles.replyBoxIcon}>
-                            <FileIcon click={() => inputFile.current?.click()}/>
-                            <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e)}
-                                   style={{display: 'none'}}/>
-                            <LinkIcon/>
-                            <TextIcon/>
-                            {/*<EmojiIcon/>*/}
                         </Flex>
-                        <Flex align={'center'} className={styles.replyButton}>
-                            <Button className={styles.replyTextButton} colorScheme='blue'
-                                    onClick={() => sendMessages()}> Send </Button>
-                            <Menu>
-                                <MenuButton className={styles.replyArrowIcon} as={Button}
-                                            aria-label='Options'
-                                            variant='outline'><ChevronDownIcon/></MenuButton>
-                                <MenuList className={'drop-down-list'}>
-                                    <MenuItem onClick={() => openCalender()}> Send Later </MenuItem>
-                                </MenuList>
-                            </Menu>
-                            <Modal isOpen={isOpen} onClose={onClose} isCentered={true} scrollBehavior={'outside'}>
-                                <ModalOverlay/>
-                                <ModalContent minHeight="440px">
-                                    <ModalHeader display="flex" justifyContent="space-between" alignItems="center">
-                                        Schedule send
-                                    </ModalHeader>
-                                    <ModalCloseButton size={'xs'}/>
-                                    <ModalBody>
-                                        <SingleDatepicker name="date-input"
-                                                          date={scheduledDate}
-                                                          defaultIsOpen={true}
-                                                          onDateChange={setScheduledDate}/>
-                                    </ModalBody>
-                                    <ModalFooter>
-                                        <Button variant='ghost' onClick={onClose}>Cancel</Button>
-                                        <Button colorScheme='blue' mr={3}
-                                                onClick={() => sendMessages(true)}> Schedule </Button>
-                                    </ModalFooter>
-                                </ModalContent>
-                            </Modal>
+                        <Text fontSize='xs' color={'#374151'} fontWeight={500}>Draft</Text>
+                    </Flex>
+                    <Button className={styles.createNewDraft} backgroundColor={'#F3F4F6'} h={'auto'}
+                            padding={'4px 8px'} borderRadius={'30px'} color={'#374151'} fontSize={'12px'}
+                            fontWeight={500} lineHeight={'normal'}> Create new draft </Button>
+                </Flex>
+                <Flex align={'center'} justify={'space-between'} gap={4}>
+                    <Flex align={'center'} gap={1}>
+                        <Button color={'#6B7280'} variant='link' size='xs'
+                                rightIcon={<ChevronDownIcon/>}> Reply to </Button>
+                        <Flex align={'center'} gap={1}>
+                            <div className={styles.mailUserImage}>
+
+                            </div>
+
+                            {!!emailRecipients?.recipients?.items?.length &&
+                            <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
+                                  fontWeight={400}>
+                                {emailRecipients?.recipients?.items[0]}&nbsp; <Text
+                                as='u'>{emailRecipients?.recipients?.items?.length - 1 > 0 && `and ${emailRecipients?.recipients?.items?.length - 1} others`} </Text>
+                            </Flex>
+                            }
+                        </Flex>
+                        <Button className={styles.editButton} color={'#374151'} backgroundColor={'#F3F4F6'}
+                                borderRadius={'20px'} lineHeight={1} size='xs'
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    showRecipientsBox()
+                                }}> {!replyBoxHide ? 'Edit' : 'Close'} </Button>
+                    </Flex>
+                    <Text as={'h1'} fontSize='11px' color={'#6B7280'} display={'flex'} gap={'2px'}
+                          className={styles.mailSaveTime}>Saved {draft ?
+                        <Time time={draft?.created || ''} isShowFullTime={false}
+                              showTimeInShortForm={true}/> : '0 s'} ago</Text>
+                </Flex>
+                {replyBoxHide && <Flex className={styles.mailRecipientsBox} flex={'none'} backgroundColor={'#FFFFFF'}
+                                       border={'1px solid #E5E7EB'} direction={'column'}
+                                       borderRadius={8}>
+                    <Flex width={'100%'} gap={2} padding={'4px 16px'} className={styles.replyBoxCC}>
+                        <Heading as={'h6'} fontSize={'13px'} paddingTop={1} fontWeight={500} lineHeight={1}
+                                 color={'#374151'}>To:</Heading>
+                        <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
+                            {!!emailRecipients?.recipients?.items?.length && emailRecipients.recipients.items.map((item: string | undefined, i: number) => (
+                                <Chip text={item} key={i} click={() => handleItemDelete(item!, 'recipients')}/>
+                            ))}
+
+                            <Input width={'auto'} padding={0} height={'20px'} flex={'1 0 auto'}
+                                   fontSize={'12px'} border={0} className={styles.ccInput}
+                                   value={emailRecipients.recipients.value}
+                                   onKeyDown={(e) => handleKeyDown(e, 'recipients')}
+                                   onChange={(e) => handleChange(e, 'recipients')}
+                                   onPaste={(e) => handlePaste(e, 'recipients')}
+                                   placeholder={'Recipient\'s Email'}
+                            />
                         </Flex>
                     </Flex>
+                    <Flex width={'100%'} gap={2} padding={'4px 16px'} className={styles.replyBoxCC}>
+                        <Heading as={'h6'} fontSize={'13px'} paddingTop={1} fontWeight={500} lineHeight={1}
+                                 color={'#374151'}>Cc:</Heading>
+                        <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
+                            {!!emailRecipients?.cc?.items?.length && emailRecipients.cc.items.map((item: string | undefined, i: number) => (
+                                <Chip text={item} key={i} click={() => handleItemDelete(item!, 'cc')}/>
+                            ))}
+
+                            <Input width={'auto'} padding={0} height={'23px'}
+                                   fontSize={'12px'}
+                                   value={emailRecipients.cc.value}
+                                   onKeyDown={(e) => handleKeyDown(e, 'cc')}
+                                   onChange={(e) => handleChange(e, 'cc')}
+                                   onPaste={(e) => handlePaste(e, 'cc')}
+                                   border={0} className={styles.ccInput}
+                            />
+                        </Flex>
+                    </Flex>
+                    <Flex width={'100%'} gap={2} padding={'4px 16px'} className={styles.replyBoxCC}>
+                        <Heading as={'h6'} fontSize={'13px'} paddingTop={1} fontWeight={500} lineHeight={1}
+                                 color={'#374151'}>Bcc:</Heading>
+                        <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
+                            {!!emailRecipients?.bcc?.items?.length && emailRecipients.bcc.items.map((item: string | undefined, i: number) => (
+                                <Chip text={item} key={i} click={() => handleItemDelete(item!, 'bcc')}/>
+                            ))}
+
+                            <Input width={'auto'} padding={0} height={'23px'}
+                                   fontSize={'12px'}
+                                   value={emailRecipients.bcc.value}
+                                   onKeyDown={(e) => handleKeyDown(e, 'bcc')}
+                                   onChange={(e) => handleChange(e, 'bcc')}
+                                   onPaste={(e) => handlePaste(e, 'bcc')}
+                                   border={0} className={styles.ccInput}
+                            />
+                        </Flex>
+                    </Flex>
+                </Flex>}
+
+
+                <Flex direction={'column'} position={"relative"} flex={1}>
+                    <Flex direction={'column'} maxH={'285px'} overflow={'auto'} className={styles.replyBoxEditor}>
+                        <RichTextEditor
+                            className={`reply-message-area message-reply-box ${hideEditorToolbar ? 'hide-toolbar' : ''}`}
+                            initialUpdated={boxUpdatedFirstTime}
+                            placeholder='Reply with anything you like or @mention someone to share this thread'
+                            value={emailBody} onChange={(e) => sendToDraft(e)}/>
+                        {attachments && attachments.length > 0 ? <div style={{marginTop: '20px'}}>
+                            {attachments.map((item, index: number) => (
+                                <Flex align={'center'} key={index} className={styles.attachmentsFile}>
+                                    {item.filename}
+                                    <div className={styles.closeIcon} onClick={() => removeAttachment(index)}>
+                                        <CloseIcon/>
+                                    </div>
+                                </Flex>
+                            ))}
+                        </div> : null}
+                    </Flex>
+                    {hideEditorToolbar && <Flex direction={'column'} className={styles.composeModal}>
+                        <Flex align={'flex-end'} justify={'space-between'} gap={2}>
+                            <Flex gap={2} className={styles.replyBoxIcon}>
+                                <FileIcon click={() => inputFile.current?.click()}/>
+                                <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e)}
+                                       style={{display: 'none'}}/>
+                                <LinkIcon/>
+                                <TextIcon/>
+                                {/*<EmojiIcon/>*/}
+                            </Flex>
+                            <Flex align={'center'} className={styles.replyButton}>
+                                <Button className={styles.replyTextButton} colorScheme='blue'
+                                        onClick={() => sendMessages()}> Send </Button>
+                                <Menu>
+                                    <MenuButton className={styles.replyArrowIcon} as={Button}
+                                                aria-label='Options'
+                                                variant='outline'><ChevronDownIcon/></MenuButton>
+                                    <MenuList className={'drop-down-list'}>
+                                        <MenuItem onClick={() => openCalender()}> Send Later </MenuItem>
+                                    </MenuList>
+                                </Menu>
+                                <Modal isOpen={isOpen} onClose={onClose} isCentered={true} scrollBehavior={'outside'}>
+                                    <ModalOverlay/>
+                                    <ModalContent minHeight="440px">
+                                        <ModalHeader display="flex" justifyContent="space-between" alignItems="center">
+                                            Schedule send
+                                        </ModalHeader>
+                                        <ModalCloseButton size={'xs'}/>
+                                        <ModalBody>
+                                            <SingleDatepicker name="date-input"
+                                                              date={scheduledDate}
+                                                              defaultIsOpen={true}
+                                                              onDateChange={setScheduledDate}/>
+                                        </ModalBody>
+                                        <ModalFooter>
+                                            <Button variant='ghost' onClick={onClose}>Cancel</Button>
+                                            <Button colorScheme='blue' mr={3}
+                                                    onClick={() => sendMessages(true)}> Schedule </Button>
+                                        </ModalFooter>
+                                    </ModalContent>
+                                </Modal>
+                            </Flex>
+                        </Flex>
+                    </Flex>
+                    }
                 </Flex>
-                }
             </Flex>
-        </Flex>
         </Flex>
     )
 }
