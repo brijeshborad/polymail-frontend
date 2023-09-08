@@ -78,7 +78,7 @@ function Index() {
             return prevPosition + POSITION_GAP;
         }
 
-        return prevPosition + (nextItem.projectMeta?.order || 0 - prevPosition) / 2;
+        return (prevPosition + (nextItem.projectMeta?.order || 0)) / 2;
     };
 
 

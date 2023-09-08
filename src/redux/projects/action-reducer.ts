@@ -102,7 +102,8 @@ const projectsSlice = createSlice({
                     favorite: projectData.projectMeta?.favorite,
                 }
             };
-            return {...state, projects: [...currentProjects],isProjectUpdateSuccess: true, error: null}
+            const sortedList = [...currentProjects].sort((a: Project, b: Project) => (a.projectMeta?.order || 0) - (b.projectMeta?.order || 0));
+            return {...state, projects: [...sortedList],isProjectUpdateSuccess: true, error: null}
         },
         updateProjectError: (state: InitialProjectState, {payload: error}: PayloadAction<{ error: any }>) => {
             return {...state,isProjectUpdateSuccess: false, error}
