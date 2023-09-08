@@ -125,7 +125,8 @@ function Billing() {
                                         <Button className={styles.settingSave} variant='ghost'>Add</Button>
                                     </ModalFooter>
                                 </ModalContent>
-                            </Modal>                    </Flex>
+                            </Modal>                    
+                        </Flex>
                     </Flex>
                 </GridItem>
             </Grid>
