@@ -228,7 +228,7 @@ function Members() {
                                 <ModalContent maxWidth={'490px'} className={styles.inviteMemberModal}>
                                     <ModalHeader padding={'40px 40px 24px 40px'}>
                                         <Heading as='h3' size='lg' pb={1} color={'#101828'}>Edit members</Heading>
-                                        <Text fontSize='md' color={'#475467'} fontWeight={'400'}>Edit polyMail
+                                        <Text fontSize='md' color={'#475467'} fontWeight={'400'}>Edit Polymail
                                             member</Text>
                                     </ModalHeader>
                                     <ModalBody padding={'8px 40px 16px'}>
