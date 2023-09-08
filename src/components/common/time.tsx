@@ -4,16 +4,31 @@ import {useEffect, useState} from "react";
 import dayjs from "dayjs";
 
 export function Time(props: TimeProps) {
-    const [time, setTime] = useState<string | undefined>(props.time);
+    const [_elapsedTime, setElapsedTime] = useState(0);
 
     useEffect(() => {
+        const dynamicDate = dayjs(props.time); // For example, you can fetch it from an API
+
+        const timerInterval = setInterval(() => {
+            const now = dayjs();
+            const timeDifference = now.valueOf() - dynamicDate.valueOf();
+            const secondsElapsed = Math.floor(timeDifference / 1000);
+
+            setElapsedTime(secondsElapsed);
+        }, 1000); // Update every second
+
+        return () => {
+            clearInterval(timerInterval); // Cleanup the interval when the component unmounts
+        };
+    }, []);
+
+    const formatElapsedTime = () => {
         const infoDate = dayjs(props.time);
         const currentDate = dayjs();
         let numberOfDaysBetweenTwoDates: number = currentDate.diff(infoDate, 'day');
         let timeString: string = '';
         if (props.isShowFullTime) {
-            setTime(dayjs(props.time).format('MM/DD/YYYY hh:mm A'))
-            return;
+            return dayjs(props.time).format('MM/DD/YYYY hh:mm A');
         }
         if (numberOfDaysBetweenTwoDates < 1) {
             const numberOfHoursBetweenTwoDates = currentDate.diff(infoDate, 'hour');
@@ -33,10 +48,11 @@ export function Time(props: TimeProps) {
         } else {
             timeString = dayjs(props.time).format('MM/DD/YYYY')
         }
-        setTime(timeString)
-    }, [props.time, props.isShowFullTime])
+
+        return timeString;
+    };
 
     return (
-        <Text fontSize={'sm'}>{time}</Text>
+        <Text fontSize={'sm'}>{formatElapsedTime()}</Text>
     )
 }
