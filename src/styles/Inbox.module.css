@@ -992,3 +992,9 @@
     overflow: auto;
 }
 
+
+
+.composeModal .mailSaveTime p  {
+    font-size: 12px;
+}
+

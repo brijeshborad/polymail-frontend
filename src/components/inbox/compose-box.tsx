@@ -16,7 +16,7 @@ import {ChevronDownIcon, CloseIcon, SearchIcon, SmallAddIcon} from "@chakra-ui/i
 import React, {ChangeEvent, ChangeEventHandler, useEffect, useRef, useState} from "react";
 import {StateType} from "@/types";
 import {debounce, isEmail} from "@/utils/common.functions";
-import {Chip, RichTextEditor, Toaster} from "@/components/common";
+import {Chip, RichTextEditor, Time, Toaster} from "@/components/common";
 import {createDraft, sendMessage, updateDraftState, updatePartialMessage} from "@/redux/draft/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import dayjs from "dayjs";
@@ -46,7 +46,47 @@ export function ComposeBox(props: any) {
     const inputFile = useRef<HTMLInputElement | null>(null)
     let {projects} = useSelector((state: StateType) => state.projects);
 
+    useEffect(() => {
+        if (props.messageDetails) {
+            const { subject, to, cc, bcc, draftInfo } = props.messageDetails;
 
+            if (subject) {
+                setSubject(subject)
+            }
+
+            if (to && to.length) {
+                setEmailRecipients((prevState) => ({
+                    ...prevState,
+                    recipients: {
+                        items: to,
+                        value: ''
+                    }
+                }));
+            }
+            if (cc && cc.length) {
+                setEmailRecipients((prevState) => ({
+                    ...prevState,
+                    cc: {
+                        items: cc,
+                        value: ''
+                    }
+                }));
+            }
+            if (bcc && bcc.length) {
+                setEmailRecipients((prevState) => ({
+                    ...prevState,
+                    bcc: {
+                        items: bcc,
+                        value: ''
+                    }
+                }));            }
+
+
+            if (draftInfo && draftInfo.body) {
+                setEmailBody(draftInfo.body);
+            }
+        }
+    }, [props.messageDetails])
 
     const isValid = (email: string, type: string) => {
         let error = null;
@@ -296,15 +336,15 @@ export function ComposeBox(props: any) {
                 <ModalContent className={styles.composeModal} maxWidth={'893px'} height={'708px'} maxHeight={'708px'}
                               borderRadius={16} border={'1px solid #E5E7EB'}>
                     <ModalHeader display={'flex'} borderBottom={'1px solid #E5E7EB'} color={'#0A101D'}
-                                 fontWeight={'500'} fontSize={'12px'} padding={'18px 20px'}>Draft&nbsp;<Text
-                        color={'#6B7280'} fontWeight={'400'}> (Saved to drafts 2m ago)</Text></ModalHeader>
+                                 fontWeight={'500'} fontSize={'12px'} padding={'18px 20px'}>Draft&nbsp;<Text display={'flex'} gap={'2px'} className={styles.mailSaveTime}
+                        color={'#6B7280'} fontWeight={'400'}> (Saved to drafts <Time time={props.messageDetails?.created || ''} isShowFullTime={false} showTimeInShortForm={true}/> ago)</Text></ModalHeader>
                     <ModalCloseButton color={'#6B7280'} fontSize={'13px'} top={'21px'} right={'20px'}/>
                     <ModalBody padding={0}>
                         <Flex direction={'column'} h={'100%'}>
                             <Flex align={'center'} justify={'space-between'} gap={3} padding={'16px 20px'}
                                   borderBottom={'1px solid #E5E7EB'}>
                                 <Input className={styles.subjectInput} placeholder='Enter subject title' size='lg'  onChange={(e) => addSubject(e)}
-                                       flex={1} fontWeight={'700'} padding={'0'} border={'0'} h={'auto'}
+                                       flex={1} fontWeight={'700'} padding={'0'} border={'0'} h={'auto'} defaultValue={subject || ''}
                                        borderRadius={'0'} lineHeight={1} color={'#0A101D'}/>
                                 <Menu>
                                     <MenuButton className={styles.addToProject} leftIcon={<FolderIcon/>} borderRadius={'50px'}

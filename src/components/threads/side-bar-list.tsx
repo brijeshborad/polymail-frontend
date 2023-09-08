@@ -1,7 +1,7 @@
-import {MessageDraft, Thread} from "@/models";
+import {Message, Thread} from "@/models";
 import styles from "@/styles/Inbox.module.css";
-import {Flex, Input} from "@chakra-ui/react";
-import {useCallback, useRef} from "react";
+import {Flex, Input, useDisclosure} from "@chakra-ui/react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 import {updateThreadState} from "@/redux/threads/action-reducer";
 import {updateDraftState} from "@/redux/draft/action-reducer";
@@ -10,6 +10,7 @@ import {StateType} from "@/types";
 import {ThreadListProps} from "@/types";
 import { ThreadsSideBarListItem } from "./side-bar-list-item";
 import {useRouter} from "next/router";
+import {ComposeBox} from "@/components/inbox";
 
 
 export function ThreadsSideBarList(props: ThreadListProps) {
@@ -17,31 +18,27 @@ export function ThreadsSideBarList(props: ThreadListProps) {
   const dispatch = useDispatch()
   const listRef = useRef<any>(null);
   const router = useRouter();
+    const {isOpen, onOpen, onClose} = useDisclosure();
+    const [messageDetails, setMessageDetails] = useState<Message | null>(null);
 
    const routePaths = router.pathname.split('/');
 
     const handleClick = useCallback((item: Thread) => {
     if (props.tab === 'DRAFT') {
-        if (item && item.messages && item.messages[0]) {
-            dispatch(updateMessageState({isCompose: false}));
-            setTimeout(() => {
-                if (item && item.messages && item.messages[0]) {
-                    dispatch(updateMessageState({
-                        selectedMessage: null,
-                        isCompose: true
-                    }));
-                    dispatch(updateDraftState({
-                        draft: {...item.messages[0] as MessageDraft}
-                    }));
-                }
-            }, 500)
+        if (item && item.messages && item.messages.length === 1) {
+            setMessageDetails(item.messages[0])
+            onOpen();
+            return;
         }
-        return;
     }
     dispatch(updateThreadState({selectedThread: item}));
     dispatch(updateMessageState({selectedMessage: null, messages: []}));
     dispatch(updateDraftState({draft: null}));
-  }, [dispatch, props.tab])
+  }, [dispatch, props.tab]);
+
+    useEffect(() => {
+        console.log('messageDetails', messageDetails)
+    },[messageDetails])
 
   return (
     <>
@@ -59,6 +56,8 @@ export function ThreadsSideBarList(props: ThreadListProps) {
           ))}
         </Flex>
       </div>
+
+        <ComposeBox onOpen={onOpen} isOpen={isOpen} onClose={onClose} messageDetails={messageDetails}/>
     </>
   )
 }

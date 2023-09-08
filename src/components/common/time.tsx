@@ -36,12 +36,12 @@ export function Time(props: TimeProps) {
                 const numberOfMinutesBetweenTwoDates = currentDate.diff(infoDate, 'minutes');
                 if (numberOfMinutesBetweenTwoDates < 1) {
                     const numberOfSecondsBetweenTwoDates = currentDate.diff(infoDate, 'seconds');
-                    timeString = `${numberOfSecondsBetweenTwoDates} seconds ago`;
+                    timeString = `${numberOfSecondsBetweenTwoDates} ${props.showTimeInShortForm ? 's' : 'seconds ago'}`;
                 } else {
-                    timeString = `${numberOfMinutesBetweenTwoDates} mins ago`;
+                    timeString = `${numberOfMinutesBetweenTwoDates} ${props.showTimeInShortForm ? 'm' : 'mins ago'}`;
                 }
             } else {
-                timeString = `${numberOfHoursBetweenTwoDates} hours ago`;
+                timeString = `${numberOfHoursBetweenTwoDates} ${props.showTimeInShortForm ? 'h' : 'hours ago'}`;
             }
         } else if (currentDate.format('YYYY') === infoDate.format('YYYY')) {
             timeString = dayjs(props.time).format('MMM DD');

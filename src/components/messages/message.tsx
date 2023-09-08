@@ -267,7 +267,7 @@ export function Message() {
                                                 </Flex>
                                                 <div className={styles.mailBoxTime}>
                                                     <Time time={lastMessageDetails?.created || ''}
-                                                          isShowFullTime={true}/>
+                                                          isShowFullTime={true} showTimeInShortForm={false}/>
                                                 </div>
                                                 <Menu>
                                                     <MenuButton className={styles.menuIcon} transition={'all 0.5s'}

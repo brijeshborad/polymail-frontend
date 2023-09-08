@@ -65,7 +65,7 @@ export function MessageBox(props: any) {
                             <Heading as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400}
                                      letterSpacing={'-0.13px'} lineHeight={1}>Michael Eisner</Heading>
                             <div className={styles.mailBoxTime}>
-                                <Time time={props?.item.created || ''} isShowFullTime={true}/>
+                                <Time time={props?.item.created || ''} isShowFullTime={true} showTimeInShortForm={false}/>
                             </div>
                         </Flex>
                         <Text fontSize='13px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
@@ -105,7 +105,7 @@ export function MessageBox(props: any) {
                                             </Flex>
                                         </Flex>
                                         <div className={styles.mailBoxTime}>
-                                            <Time time={props.threadDetails?.created || ''} isShowFullTime={true}/>
+                                            <Time time={props.threadDetails?.created || ''} isShowFullTime={true} showTimeInShortForm={false}/>
                                         </div>
                                     </Flex>
                                 </Flex>
