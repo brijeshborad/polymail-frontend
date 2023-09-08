@@ -36,10 +36,11 @@ export const useSocket = function () {
     }, [sendJsonMessage, userDetails?.id]);
 
     useEffect(() => {
+        console.log(lastMessage)
         if (lastMessage) {
             setSocketMessage(lastMessage);
         }
-    }, [lastMessage])
+    }, [lastMessage, setSocketMessage])
 
     useEffect(() => {
         window.addEventListener("beforeunload", alertUser);

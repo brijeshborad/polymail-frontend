@@ -41,8 +41,8 @@ function CompleteProfile() {
             dispatch(updateUsersDetails({firstName: firstName}));
         } else {
             Toaster({
-                desc: "Please valid Enter name",
-                title: "Enter valid name",
+                title: "Stranger Danger!",
+                desc: "Please enter valid a name.",
                 type: 'error'
             });
         }
@@ -55,7 +55,7 @@ function CompleteProfile() {
             if (!['jpg', 'gif', 'png', 'jpeg', 'svg'].includes(contentType)) {
                 let validationError = {
                     desc: 'Only .jpg, .gif, .png, .jpeg and .svg files are allowed',
-                    title: 'Any file other than image is not valid',
+                    title: 'Avatars must be image files.',
                     type: 'error'
                 }
                 Toaster(validationError)
