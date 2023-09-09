@@ -6,11 +6,12 @@ import {ThreadsSideBarList} from "@/components/threads";
 import {getAllThreads} from "@/redux/threads/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
+import {useRouter} from "next/router";
 
 export function ThreadsSideBarTab(props: TabProps) {
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const [tabName, setTabName] = useState<string>('every-thing');
-
+    const router = useRouter();
     const dispatch = useDispatch();
 
     const changeThread = (type: string) => {
@@ -20,7 +21,7 @@ export function ThreadsSideBarTab(props: TabProps) {
                  dispatch(getAllThreads({mailbox: props.tab, account: selectedAccount.id}));
              }
          } else if (type === 'just-mine') {
-             //dispatch(getAllThreads({mailbox: props.tab}));
+            dispatch(getAllThreads({mailbox: props.tab, project: router.query.project as string, mine: true}));
          } else if (type === 'projects') {
              dispatch(getAllThreads({project: "ALL", mailbox: props.tab}));
          }

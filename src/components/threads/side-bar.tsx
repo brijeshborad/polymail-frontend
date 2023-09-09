@@ -26,6 +26,7 @@ import {updateLastMessage} from "@/redux/socket/action-reducer";
 import {TriangleDownIcon} from "@chakra-ui/icons";
 import {useSocket} from "@/hooks/use-socket.hook";
 import {ComposeBox} from "@/components/inbox/compose-box";
+import {useRouter} from "next/router";
 
 let cacheThreads: { [key: string]: Thread[] } = {};
 let currentCacheTab = 'INBOX';
@@ -33,6 +34,7 @@ let currentCacheTab = 'INBOX';
 export function ThreadsSideBar(props: {cachePrefix: string}) {
     const [tab, setTab] = useState<string>('INBOX');
     const [countUnreadMessages, setCountUnreadMessages] = useState<number>(0);
+    const router = useRouter();
 
     const {
         threads,
@@ -60,10 +62,8 @@ export function ThreadsSideBar(props: {cachePrefix: string}) {
                 }
                 dispatch(updateThreadState({threads: cacheThreads[`${props.cachePrefix}-${tab}-${selectedAccount.id}`]}));
             }
-            if (props.cachePrefix.includes('project')) {
-                let project_id = props.cachePrefix.split("-")[1]
-                console.log(project_id)
-                dispatch(getAllThreads({mailbox: tab, project: project_id, resetState: resetState}));
+            if (router.query.project) {
+                dispatch(getAllThreads({mailbox: tab, project: router.query.project as string, resetState: resetState}));
             } else {
                 dispatch(getAllThreads({mailbox: tab, account: selectedAccount.id, resetState: resetState}));
             }
