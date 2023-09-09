@@ -39,7 +39,6 @@ import {
 import {Project} from "@/models";
 import {PROJECT_ROLES} from "@/utils/constants";
 import {isEmail} from "@/utils/common.functions";
-import {getAllThreads} from "@/redux/threads/action-reducer";
 import {Message} from "@/components/messages";
 
 function ProjectInbox() {
