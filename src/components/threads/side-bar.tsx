@@ -31,7 +31,7 @@ import {useRouter} from "next/router";
 let cacheThreads: { [key: string]: Thread[] } = {};
 let currentCacheTab = 'INBOX';
 
-export function ThreadsSideBar(props: {cachePrefix: string, projectView: boolean}) {
+export function ThreadsSideBar(props: {cachePrefix: string}) {
     const [tab, setTab] = useState<string>('INBOX');
     const [countUnreadMessages, setCountUnreadMessages] = useState<number>(0);
     const router = useRouter();
@@ -294,7 +294,7 @@ export function ThreadsSideBar(props: {cachePrefix: string, projectView: boolean
                     </Flex>
 
                     <TabPanels marginTop={5}>
-                        <ThreadsSideBarTab tab={tab} showLoader={isLoading} projectView={props.projectView} />
+                        <ThreadsSideBarTab tab={tab} showLoader={isLoading} />
                     </TabPanels>
                 </Tabs>
             </Flex>

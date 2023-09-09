@@ -21,7 +21,11 @@ export function ThreadsSideBarTab(props: TabProps) {
                  dispatch(getAllThreads({mailbox: props.tab, account: selectedAccount.id}));
              }
          } else if (type === 'just-mine') {
-            dispatch(getAllThreads({mailbox: props.tab, project: router.query.project as string, mine: true}));
+            if (router.query.project) {
+                dispatch(getAllThreads({mailbox: props.tab, project: router.query.project as string, mine: true}));
+            } else {
+                dispatch(getAllThreads({mailbox: props.tab}));
+            }
          } else if (type === 'projects') {
              dispatch(getAllThreads({project: "ALL", mailbox: props.tab}));
          }
@@ -36,13 +40,15 @@ export function ThreadsSideBarTab(props: TabProps) {
 
                     <div className={styles.mailOtherOption}>
                         <Flex align={'center'} gap={2}>
+                            { router.query.project && (
                             <div className={tabName === 'every-thing' ? styles.active : ''}>
                                 <Button colorScheme='white' onClick={() => changeThread('every-thing')}>Everything</Button>
                             </div>
+                            )}
                             <div className={tabName === 'just-mine' ? styles.active : ''}>
                                 <Button colorScheme='white' onClick={() => changeThread('just-mine')}>Just mine</Button>
                             </div>
-                            { !props.projectView &&
+                            { !router.query.project &&
                             <div className={tabName === 'projects' ? styles.active : ''}>
                                 <Button colorScheme='white' onClick={() => changeThread('projects')}>Projects</Button>
                             </div>
