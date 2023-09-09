@@ -18,7 +18,7 @@ export function ThreadsSideBarTab(props: TabProps) {
          setTabName(type);
          if (type === 'every-thing') {
              if (selectedAccount && selectedAccount.id) {
-                 dispatch(getAllThreads({mailbox: props.tab, account: selectedAccount.id}));
+                 dispatch(getAllThreads({mailbox: props.tab, project: router.query.project as string}));
              }
          } else if (type === 'just-mine') {
             if (router.query.project) {
