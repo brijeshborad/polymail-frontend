@@ -41,9 +41,11 @@ export function ThreadsSideBarTab(props: TabProps) {
                             <div className={tabName === 'just-mine' ? styles.active : ''}>
                                 <Button colorScheme='white' onClick={() => changeThread('just-mine')}>Just mine</Button>
                             </div>
+                            { !props.projectView &&
                             <div className={tabName === 'projects' ? styles.active : ''}>
                                 <Button colorScheme='white' onClick={() => changeThread('projects')}>Projects</Button>
                             </div>
+                            }
                         </Flex>
                     </div>
                 </Flex>
