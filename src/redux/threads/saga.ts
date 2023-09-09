@@ -15,16 +15,16 @@ function* getThreads({
                              mailbox,
                              project,
                              account,
-                             enriched,
+                             mine,
                              query
                          }
-                     }: PayloadAction<{ mailbox?: string, project?: string, account?: string, enriched?: boolean, query?: string }>) {
+                     }: PayloadAction<{ mailbox?: string, project?: string, account?: string, mine?: boolean, query?: string }>) {
     try {
         const response: AxiosResponse = yield ApiService.callGet(`threads`, {
             ...(mailbox ? {mailbox}: {}),
             ...(project ? {project}: {}),
             ...(account ? {account}: {}),
-            ...(enriched ? {enriched}: {}),
+            ...(mine ? {mine}: {}),
             ...(query ? {query} : {})
         });
         yield put(getAllThreadsSuccess(response));
