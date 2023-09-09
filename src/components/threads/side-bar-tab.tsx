@@ -17,14 +17,14 @@ export function ThreadsSideBarTab(props: TabProps) {
     const changeThread = (type: string) => {
          setTabName(type);
          if (type === 'every-thing') {
-             if (selectedAccount && selectedAccount.id) {
-                 dispatch(getAllThreads({mailbox: props.tab, project: router.query.project as string}));
-             }
+            dispatch(getAllThreads({mailbox: props.tab, project: router.query.project as string}));
          } else if (type === 'just-mine') {
             if (router.query.project) {
                 dispatch(getAllThreads({mailbox: props.tab, project: router.query.project as string, mine: true}));
             } else {
-                dispatch(getAllThreads({mailbox: props.tab}));
+                if (selectedAccount && selectedAccount.id) {
+                    dispatch(getAllThreads({mailbox: props.tab, account: selectedAccount.id}));
+                }
             }
          } else if (type === 'projects') {
              dispatch(getAllThreads({project: "ALL", mailbox: props.tab}));
