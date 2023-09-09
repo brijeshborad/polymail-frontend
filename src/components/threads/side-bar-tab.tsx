@@ -28,28 +28,29 @@ export function ThreadsSideBarTab(props: TabProps) {
     }
     return (
         <>
+            <div>
+                <Flex overflowX={'auto'} align={'center'}>
+                    <div className={styles.checkBoxLabel}>
+                        <Checkbox defaultChecked>Select All</Checkbox>
+                    </div>
 
-                 <div>
-                    <Flex overflowX={'auto'} align={'center'}>
-                        <div className={styles.checkBoxLabel}>
-                            <Checkbox defaultChecked>Select All</Checkbox>
-                        </div>
-
-                        <div className={styles.mailOtherOption}>
-                            <Flex align={'center'} gap={2}>
-                                <div className={tabName === 'every-thing' ? styles.active : ''}>
-                                    <Button colorScheme='white' onClick={() => changeThread('every-thing')}>Everything</Button>
-                                </div>
-                                <div className={tabName === 'just-mine' ? styles.active : ''}>
-                                    <Button colorScheme='white' onClick={() => changeThread('just-mine')}>Just mine</Button>
-                                </div>
-                                <div className={tabName === 'projects' ? styles.active : ''}>
-                                    <Button colorScheme='white' onClick={() => changeThread('projects')}>Projects</Button>
-                                </div>
-                            </Flex>
-                        </div>
-                    </Flex>
-                </div>
+                    <div className={styles.mailOtherOption}>
+                        <Flex align={'center'} gap={2}>
+                            <div className={tabName === 'every-thing' ? styles.active : ''}>
+                                <Button colorScheme='white' onClick={() => changeThread('every-thing')}>Everything</Button>
+                            </div>
+                            <div className={tabName === 'just-mine' ? styles.active : ''}>
+                                <Button colorScheme='white' onClick={() => changeThread('just-mine')}>Just mine</Button>
+                            </div>
+                            { !props.projectView &&
+                            <div className={tabName === 'projects' ? styles.active : ''}>
+                                <Button colorScheme='white' onClick={() => changeThread('projects')}>Projects</Button>
+                            </div>
+                            }
+                        </Flex>
+                    </div>
+                </Flex>
+            </div>
 
 
             {props.showLoader && (

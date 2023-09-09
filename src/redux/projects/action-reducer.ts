@@ -1,6 +1,6 @@
 import {createSlice, current, PayloadAction} from "@reduxjs/toolkit";
 import {InitialProjectState} from "@/types";
-import { Project, TeamMember} from "@/models";
+import { Project, ProjectMetaData, ProjectRequestBodyWithUndo, TeamMember} from "@/models";
 
 const initialState: any = {
     projects: [],
@@ -90,6 +90,25 @@ const projectsSlice = createSlice({
             return {...state,isProjectUpdateSuccess: false, error: null}
         },
 
+        updateOptimisticProject: (state: InitialProjectState, {payload: project}: PayloadAction<{id:string, body:{ do: ProjectMetaData, undo: ProjectMetaData}}>) => {
+          let currentProjects = [...(current(state).projects || [])] as Project[];
+          let projectData = {...({...project, projectMeta: project.body.do}) || {}} as Project;
+          let targetIndex = currentProjects.findIndex((item: Project) => item.id === projectData?.id);
+
+          
+          currentProjects[targetIndex] = {
+            ...currentProjects[targetIndex],
+            projectMeta: {
+              ...currentProjects[targetIndex].projectMeta,
+              order: projectData.projectMeta?.order,
+              favorite: projectData.projectMeta?.favorite,
+            }
+          };
+          
+          const sortedList = [...currentProjects].sort((a: Project, b: Project) => (a.projectMeta?.order || 0) - (b.projectMeta?.order || 0));
+          return {...state, projects: [...sortedList],isProjectUpdateSuccess: false, error: null}
+        },
+
         updateProjectSuccess: (state: InitialProjectState, {payload: project}: PayloadAction<{}>) => {
             let currentProjects = [...(current(state).projects || [])] as Project[];
             let projectData = {...(project) || {}} as Project;
@@ -108,7 +127,24 @@ const projectsSlice = createSlice({
         updateProjectError: (state: InitialProjectState, {payload: error}: PayloadAction<{ error: any }>) => {
             return {...state,isProjectUpdateSuccess: false, error}
         },
+        undoProjectUpdate: (state: InitialProjectState, {payload: error}: PayloadAction<{ error: any, project: {id:string, body: ProjectRequestBodyWithUndo} }>) => {
 
+
+          let currentProjects = [...(current(state).projects || [])] as Project[];
+          let projectData = {...({...error.project, projectMeta: error.project.body.undo}) || {}} as Project;
+          let index1 = currentProjects.findIndex((item: Project) => item.id === projectData?.id);
+          currentProjects[index1] = {
+              ...currentProjects[index1],
+              projectMeta: {
+                  ...currentProjects[index1].projectMeta,
+                  order: projectData.projectMeta?.order,
+                  favorite: projectData.projectMeta?.favorite,
+              }
+          };
+
+          const sortedList = [...currentProjects].sort((a: Project, b: Project) => (a.projectMeta?.order || 0) - (b.projectMeta?.order || 0));
+          return {...state,projects: [...sortedList],isProjectUpdateSuccess: false, error}
+        },
         updateProjectState: (state: InitialProjectState, action: PayloadAction<InitialProjectState>) => {
             return {...state, ...action.payload}
         },
@@ -136,7 +172,9 @@ export const {
     updateProjectMemberRoleSuccess,
     updateProjectMemberRoleError,
     updateProject,
+    updateOptimisticProject,
     updateProjectSuccess,
-    updateProjectError
+    updateProjectError,
+    undoProjectUpdate
 } = projectsSlice.actions
 export default projectsSlice.reducer

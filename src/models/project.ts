@@ -15,6 +15,16 @@ export interface ProjectRequestBody {
     projectMeta?: ProjectMetaData
 }
 
+
+export interface ProjectRequestBodyWithUndo {
+  do: {
+    projectMeta: ProjectMetaData
+  }
+  undo: {
+    projectMeta: ProjectMetaData
+  }
+}
+
 export interface ProjectMetaData {
     userId?: string,
     projectId?: string,
