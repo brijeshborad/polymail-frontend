@@ -23,9 +23,11 @@ import {
     updateProjectSuccess,
     updateProjectError,
     updateProject,
+    updateOptimisticProject,
+    undoProjectUpdate
 } from "@/redux/projects/action-reducer";
 import {PayloadAction} from "@reduxjs/toolkit";
-import {ProjectRequestBody} from "@/models";
+import {ProjectRequestBody, ProjectRequestBodyWithUndo} from "@/models";
 
 
 function* getProjects() {
@@ -100,6 +102,18 @@ function* updateProjectData({payload: {id, body}}: PayloadAction<{ id: string, b
     }
 }
 
+function* updateProjectDataWithUndo({payload: {id, body}}: PayloadAction<{ id: string, body: ProjectRequestBodyWithUndo }>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callPatch(`projects/${id}`, body.do);
+        yield put(updateProjectSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        yield put(undoProjectUpdate({
+          error: error?.response?.data || {code: '400', description: 'Something went wrong'},
+          project: {id, body}
+        }));
+    }
+}
 
 export function* watchGetProjects() {
     yield takeLatest(getAllProjects.type, getProjects);
@@ -129,6 +143,10 @@ export function* watchUpdateProjectData() {
     yield takeLatest(updateProject.type, updateProjectData);
 }
 
+export function* watchUpdateOptimisticProjectData() {
+    yield takeLatest(updateOptimisticProject.type, updateProjectDataWithUndo);
+}
+
 export default function* rootSaga() {
     yield all([
         fork(watchGetProjects),
@@ -138,7 +156,7 @@ export default function* rootSaga() {
         fork(watchGetProjectMembersInvitees),
         fork(watchUpdateProjectMembersData),
         fork(watchUpdateProjectData),
-
+        fork(watchUpdateOptimisticProjectData),
     ]);
 }
 
