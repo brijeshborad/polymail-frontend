@@ -60,7 +60,13 @@ export function ThreadsSideBar(props: {cachePrefix: string}) {
                 }
                 dispatch(updateThreadState({threads: cacheThreads[`${props.cachePrefix}-${tab}-${selectedAccount.id}`]}));
             }
-            dispatch(getAllThreads({mailbox: tab, account: selectedAccount.id, enriched: true, resetState}));
+            if (props.cachePrefix.includes('project')) {
+                let project_id = props.cachePrefix.split("-")[1]
+                console.log(project_id)
+                dispatch(getAllThreads({mailbox: tab, project: project_id, resetState: resetState}));
+            } else {
+                dispatch(getAllThreads({mailbox: tab, account: selectedAccount.id, resetState: resetState}));
+            }
         }
     }, [dispatch, props.cachePrefix, selectedAccount, tab]);
 

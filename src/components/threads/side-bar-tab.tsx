@@ -17,12 +17,12 @@ export function ThreadsSideBarTab(props: TabProps) {
          setTabName(type);
          if (type === 'every-thing') {
              if (selectedAccount && selectedAccount.id) {
-                 dispatch(getAllThreads({mailbox: "INBOX", account: selectedAccount.id, enriched: true}));
+                 dispatch(getAllThreads({mailbox: "INBOX", account: selectedAccount.id}));
              }
          } else if (type === 'just-mine') {
-             dispatch(getAllThreads({mailbox: "INBOX", enriched: true}));
+             dispatch(getAllThreads({mailbox: "INBOX"}));
          } else if (type === 'projects') {
-             dispatch(getAllThreads({project: "all"}));
+             dispatch(getAllThreads({project: "ALL"}));
          }
     }
     return (

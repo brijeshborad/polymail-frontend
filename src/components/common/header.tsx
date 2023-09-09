@@ -212,7 +212,7 @@ export function Header() {
                 return
             }
             if (selectedAccount && selectedAccount.id) {
-                dispatch(getAllThreads({mailbox: tabValue, account: selectedAccount.id, enriched: true}));
+                dispatch(getAllThreads({mailbox: tabValue, account: selectedAccount.id}));
             }
         }
     }

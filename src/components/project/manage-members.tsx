@@ -36,7 +36,6 @@ import {
 import {Project} from "@/models";
 import {PROJECT_ROLES} from "@/utils/constants";
 import {isEmail} from "@/utils/common.functions";
-import {getAllThreads} from "@/redux/threads/action-reducer";
 
 function ManageMembersModal() {
   const {isOpen, onClose} = useDisclosure();
@@ -61,7 +60,6 @@ function ManageMembersModal() {
           dispatch(getProjectById({id: projectId}));
           dispatch(getProjectMembers({projectId: projectId}));
           dispatch(getProjectMembersInvites({projectId: projectId}));
-          dispatch(getAllThreads({project: projectId, enriched: true, resetState: true}));
       }
   }, [router.query.project, dispatch])
 

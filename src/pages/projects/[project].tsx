@@ -67,7 +67,6 @@ function ProjectInbox() {
             dispatch(getProjectById({id: projectId}));
             dispatch(getProjectMembers({projectId: projectId}));
             dispatch(getProjectMembersInvites({projectId: projectId}));
-            dispatch(getAllThreads({project: projectId, enriched: true, resetState: true}));
         }
     }, [router.query.project, dispatch])
 
@@ -161,7 +160,7 @@ function ProjectInbox() {
                 <Grid className={styles.mailGrid} templateColumns='30% auto' padding={'32px 32px 16px'} gap={6} flex={1}>
                     <GridItem w='100%' flex={1}>
                         {((size < 991 && !selectedThread) || size > 991) &&
-                        <ThreadsSideBar cachePrefix={'projects-page'} />
+                        <ThreadsSideBar cachePrefix={`project-${router.query.project}`} />
                         }
                     </GridItem>
                     <GridItem w='100%' flex={1}>
