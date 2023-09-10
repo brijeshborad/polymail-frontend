@@ -1,7 +1,6 @@
 import {
     Button, createStandaloneToast,
-    Flex, Heading,
-    Input,
+    Flex,
     Menu,
     MenuButton,
     MenuItem,
@@ -15,7 +14,7 @@ import {ChevronDownIcon, CloseIcon} from "@chakra-ui/icons";
 import {FileIcon, LinkIcon, TextIcon} from "@/icons";
 import React, {ChangeEvent, ChangeEventHandler, useEffect, useRef, useState} from "react";
 import {debounce, isEmail} from "@/utils/common.functions";
-import {Chip, RichTextEditor, Time, Toaster} from "@/components/common";
+import {RichTextEditor, Time, Toaster} from "@/components/common";
 import {createDraft, sendMessage, updateDraftState, updatePartialMessage} from "@/redux/draft/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
@@ -24,9 +23,8 @@ import {MessageAttachments} from "@/models";
 import {uploadAttachment} from "@/redux/messages/action-reducer";
 import {SingleDatepicker} from "chakra-dayzed-datepicker";
 import {MessageBoxType} from "@/types/props-types/message-box.type";
-
-declare type RecipientsValue = { items: string[], value: string };
-declare type RecipientsType = { cc: RecipientsValue, bcc: RecipientsValue, recipients: RecipientsValue };
+import MessageRecipients from "./message-recipients";
+import { RecipientsType } from "@/types/props-types/message-recipients.type";
 
 export function MessageReplyBox(props: MessageBoxType) {
     const [emailRecipients, setEmailRecipients] = useState<RecipientsType>({
@@ -438,60 +436,13 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                 {replyBoxHide && <Flex className={styles.mailRecipientsBox} flex={'none'} backgroundColor={'#FFFFFF'}
                                        border={'1px solid #E5E7EB'} direction={'column'}
                                        borderRadius={8}>
-                    <Flex width={'100%'} gap={2} padding={'4px 16px'} className={styles.replyBoxCC}>
-                        <Heading as={'h6'} fontSize={'13px'} paddingTop={1} fontWeight={500} lineHeight={1}
-                                 color={'#374151'}>To:</Heading>
-                        <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
-                            {!!emailRecipients?.recipients?.items?.length && emailRecipients.recipients.items.map((item: string | undefined, i: number) => (
-                                <Chip text={item} key={i} click={() => handleItemDelete(item!, 'recipients')}/>
-                            ))}
-
-                            <Input width={'auto'} padding={0} height={'20px'} flex={'1 0 auto'}
-                                   fontSize={'12px'} border={0} className={styles.ccInput}
-                                   value={emailRecipients.recipients.value}
-                                   onKeyDown={(e) => handleKeyDown(e, 'recipients')}
-                                   onChange={(e) => handleChange(e, 'recipients')}
-                                   onPaste={(e) => handlePaste(e, 'recipients')}
-                                   placeholder={'Recipient\'s Email'}
-                            />
-                        </Flex>
-                    </Flex>
-                    <Flex width={'100%'} gap={2} padding={'4px 16px'} className={styles.replyBoxCC}>
-                        <Heading as={'h6'} fontSize={'13px'} paddingTop={1} fontWeight={500} lineHeight={1}
-                                 color={'#374151'}>Cc:</Heading>
-                        <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
-                            {!!emailRecipients?.cc?.items?.length && emailRecipients.cc.items.map((item: string | undefined, i: number) => (
-                                <Chip text={item} key={i} click={() => handleItemDelete(item!, 'cc')}/>
-                            ))}
-
-                            <Input width={'auto'} padding={0} height={'23px'}
-                                   fontSize={'12px'}
-                                   value={emailRecipients.cc.value}
-                                   onKeyDown={(e) => handleKeyDown(e, 'cc')}
-                                   onChange={(e) => handleChange(e, 'cc')}
-                                   onPaste={(e) => handlePaste(e, 'cc')}
-                                   border={0} className={styles.ccInput}
-                            />
-                        </Flex>
-                    </Flex>
-                    <Flex width={'100%'} gap={2} padding={'4px 16px'} className={styles.replyBoxCC}>
-                        <Heading as={'h6'} fontSize={'13px'} paddingTop={1} fontWeight={500} lineHeight={1}
-                                 color={'#374151'}>Bcc:</Heading>
-                        <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
-                            {!!emailRecipients?.bcc?.items?.length && emailRecipients.bcc.items.map((item: string | undefined, i: number) => (
-                                <Chip text={item} key={i} click={() => handleItemDelete(item!, 'bcc')}/>
-                            ))}
-
-                            <Input width={'auto'} padding={0} height={'23px'}
-                                   fontSize={'12px'}
-                                   value={emailRecipients.bcc.value}
-                                   onKeyDown={(e) => handleKeyDown(e, 'bcc')}
-                                   onChange={(e) => handleChange(e, 'bcc')}
-                                   onPaste={(e) => handlePaste(e, 'bcc')}
-                                   border={0} className={styles.ccInput}
-                            />
-                        </Flex>
-                    </Flex>
+                    <MessageRecipients
+                      emailRecipients={emailRecipients} 
+                      handleKeyDown={handleKeyDown}
+                      handleChange={handleChange}
+                      handlePaste={handlePaste}
+                      handleItemDelete={handleItemDelete}
+                    />
                 </Flex>}
 
 
