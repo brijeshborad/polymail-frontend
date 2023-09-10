@@ -3,19 +3,9 @@ import {
 } from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
 import { Chip } from "@/components/common";
-import { ChangeEvent, ClipboardEvent, KeyboardEvent } from "react";
+import { MessageRecipientsType } from "@/types/props-types/message-recipients.type";
 
-declare type RecipientsValue = { items: string[], value: string };
-declare type RecipientsType = { cc: RecipientsValue, bcc: RecipientsValue, recipients: RecipientsValue };
-interface MessageRecipientsIT {
-  emailRecipients: RecipientsType
-  handleKeyDown: (_e: KeyboardEvent, _type: string) => void
-  handleChange: (_e: ChangeEvent, _type: string) => void
-  handlePaste: (_e: ClipboardEvent, _type: string) => void
-  handleItemDelete: (_item: string, _type: string) => void
-}
-
-export default function MessageRecipients({ emailRecipients, handleKeyDown, handleChange, handlePaste, handleItemDelete }: MessageRecipientsIT) {
+export default function MessageRecipients({ emailRecipients, handleKeyDown, handleChange, handlePaste, handleItemDelete }: MessageRecipientsType) {
   return (
     <Flex className={styles.mailRecipientsBox} flex={'none'} backgroundColor={'#FFFFFF'}
       border={'1px solid #E5E7EB'} direction={'column'}

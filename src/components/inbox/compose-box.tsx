@@ -26,9 +26,7 @@ import {MessageAttachments} from "@/models";
 import CreateNewProject from "@/components/project/create-new-project";
 import {AddToProjectButton} from "@/components/common";
 import MessageRecipients from "../messages/message-recipients";
-
-declare type RecipientsValue = { items: string[], value: string };
-declare type RecipientsType = { cc: RecipientsValue, bcc: RecipientsValue, recipients: RecipientsValue };
+import { RecipientsType } from "@/types/props-types/message-recipients.type";
 
 export function ComposeBox(props: any) {
     const [emailRecipients, setEmailRecipients] = useState<RecipientsType>({
