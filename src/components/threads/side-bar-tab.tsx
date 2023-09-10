@@ -1,7 +1,7 @@
 import {Button, Checkbox, Flex} from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
 import {StateType, TabProps} from "@/types";
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {ThreadsSideBarList} from "@/components/threads";
 import {getAllThreads} from "@/redux/threads/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
@@ -14,9 +14,12 @@ export function ThreadsSideBarTab(props: TabProps) {
     const router = useRouter();
     const dispatch = useDispatch();
     const [tabName, setTabName] = useState<string>('just-mine');
-    if (router.query.project) {
-        setTabName('every-thing')
-    }
+
+    useEffect(() => {
+        if (router.query.project) {
+            setTabName('every-thing')
+        }
+    }, [router.query.project])
 
     const changeThread = (type: string) => {
          setTabName(type);
