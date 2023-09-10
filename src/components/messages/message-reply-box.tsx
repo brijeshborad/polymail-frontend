@@ -24,9 +24,7 @@ import {uploadAttachment} from "@/redux/messages/action-reducer";
 import {SingleDatepicker} from "chakra-dayzed-datepicker";
 import {MessageBoxType} from "@/types/props-types/message-box.type";
 import MessageRecipients from "./message-recipients";
-
-declare type RecipientsValue = { items: string[], value: string };
-declare type RecipientsType = { cc: RecipientsValue, bcc: RecipientsValue, recipients: RecipientsValue };
+import { RecipientsType } from "@/types/props-types/message-recipients.type";
 
 export function MessageReplyBox(props: MessageBoxType) {
     const [emailRecipients, setEmailRecipients] = useState<RecipientsType>({
