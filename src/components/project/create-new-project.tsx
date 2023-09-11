@@ -16,8 +16,7 @@ import {createProjects} from "@/redux/projects/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import withAuth from "@/components/auth/withAuth";
-import {ChevronDownIcon, SmallAddIcon, TriangleDownIcon} from "@chakra-ui/icons";
-import {PROJECT_ROLES} from "@/utils/constants";
+import {SmallAddIcon, TriangleDownIcon} from "@chakra-ui/icons";
 
 
 function CreateNewProjectModal(props: any) {
