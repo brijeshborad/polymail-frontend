@@ -28,7 +28,7 @@ export function MessageBox(props: any) {
             if (iframeRef.current && iframeRef.current.contentWindow) {
                 setIframeHeight((iframeRef.current.contentWindow.document.body.scrollHeight + 20 ) + "px");
             }
-        }, 600);
+        }, 500);
 
     };
 

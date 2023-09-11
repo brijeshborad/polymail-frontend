@@ -78,6 +78,7 @@ export function Message() {
             setIndex(null);
             setHideAndShowReplyBox(false);
             setLastMessageDetails(null);
+            setIframeHeight('0px');
             dispatch(updateMessageState({messages: selectedThread.messages}));
         }
     }, [dispatch, selectedThread])
@@ -191,9 +192,9 @@ export function Message() {
     const onIframeLoad = () => {
         debounce(() => {
             if (iframeRef.current && iframeRef.current.contentWindow) {
-                setIframeHeight((iframeRef.current.contentWindow.document.body.scrollHeight + 20)+ "px");
+                setIframeHeight((iframeRef.current.contentWindow.document.body.scrollHeight + 20) + "px");
             }
-        }, 600)
+        }, 500)
     };
 
 
@@ -244,7 +245,7 @@ export function Message() {
                                     herderType={'inbox'}/>
 
                     <Flex padding={'20px'} gap={5} direction={'column'} flex={1} overflow={'auto'}>
-                        <Flex gap={2} direction={'column'} height={'100%'} justifyContent={'space-between'}>
+                        <Flex gap={2} direction={'column'} height={'100%'}>
                             {inboxMessages && !!inboxMessages.length && inboxMessages.map((item: any, index: number) => (
                                 <div key={index}>
                                     <MessageBox item={item} index={index} threadDetails={item}
