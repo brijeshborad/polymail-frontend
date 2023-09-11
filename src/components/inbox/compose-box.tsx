@@ -370,7 +370,7 @@ export function ComposeBox(props: any) {
                                         </Flex>
                                         <Flex direction={'column'}>
                                             <Flex align={'flex-end'} justify={'space-between'} gap={2}>
-                                                <Flex gap={2} className={styles.replyBoxIcon}>
+                                                <Flex gap={2} className={styles.replyBoxIcon} ml={'166px'}>
                                                     <Flex align={'center'} gap={3}>
                                                         <FileIcon click={() => inputFile.current?.click()}/>
                                                         <input type='file' id='file' ref={inputFile}

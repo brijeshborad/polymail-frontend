@@ -958,9 +958,10 @@
 }
 
 .replyBoxIcon svg {
-    width: 18px;
-    height: 18px;
+    width: 15px;
+    height: 15px;
     cursor: pointer;
+    margin: 0;
 }
 
 .composeModal .replyButton .replyTextButton,

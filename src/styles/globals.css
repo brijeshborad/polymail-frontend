@@ -150,9 +150,14 @@ a {
 }
 
 .rdw-editor-wrapper .rdw-editor-toolbar .rdw-option-wrapper {
-    border: 0;
     transition: all 0.3s;
     background-color: transparent;
+    width: 16px;
+    padding: 0;
+    margin: 0;
+    min-width: 20px;
+     border: 1px solid transparent;
+    box-shadow: none;
 }
 
 .rdw-editor-wrapper .rdw-editor-toolbar .rdw-option-wrapper:hover {
@@ -167,14 +172,30 @@ a {
     width: fit-content;
     background-color: transparent;
     position: absolute;
-    bottom: 7px;
-    left: 102px;
+    left: -4px;
+    bottom: -4px;
+    gap: 8px;
 }
 
-.rdw-editor-wrapper .rdw-editor-toolbar .rdw-link-wrapper,
-.rdw-editor-wrapper .rdw-editor-toolbar .rdw-list-wrapper,
+.rdw-editor-wrapper.show-shadow:before {
+    position: absolute;
+    content: '';
+    width: 100%;
+    height: 72px;
+    background: linear-gradient(180deg, #FFF 0%, rgba(255, 255, 255, 0.00) 100%);
+    z-index: 5;
+}
+
 .rdw-editor-wrapper .rdw-editor-toolbar .rdw-emoji-wrapper {
     border-left: 1px solid rgba(8, 22, 47, 0.1);
+    margin-bottom: 0;
+    padding-left: 4px;
+}
+
+.rdw-editor-wrapper .rdw-editor-toolbar .rdw-list-wrapper,
+.rdw-editor-wrapper .rdw-editor-toolbar .rdw-inline-wrapper {
+    margin-bottom: 0;
+    gap: 8px;
 }
 
 .drop-down-list {
@@ -312,15 +333,7 @@ div:has(> .mailSendToaster) {
     max-height: 100%;
 }
 
-.reply-message-area.rdw-editor-wrapper .rdw-editor-toolbar {
-    padding: 0;
-    bottom: -10px;
-    left: 85px;
-}
-
 .message-reply-box.rdw-editor-wrapper .rdw-editor-toolbar {
-    left: 87px;
-    bottom: -8px;
     opacity: 0;
 }
 
@@ -364,6 +377,11 @@ div:has(> .mailSendToaster) {
 
 .inbox-loader-box-3 {
     transform: rotate(-3deg);
+}
+
+.rdw-editor-wrapper .emoji-picker {
+    top: unset;
+    bottom: 30px;
 }
 
 .custom-dropdown {
