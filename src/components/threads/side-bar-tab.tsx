@@ -37,6 +37,7 @@ export function ThreadsSideBarTab(props: TabProps) {
              dispatch(getAllThreads({project: "ALL", mailbox: props.tab}));
          }
     }
+
     return (
         <>
             <div>
