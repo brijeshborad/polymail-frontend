@@ -41,7 +41,6 @@ function Members() {
     const {isOrganizationRemoveSuccess, success} = useSelector((state: StateType) => state.memberships);
     const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
     const {userDetails} = useSelector((state: StateType) => state.users);
-    const {selectedAccount} = useSelector((state: StateType) => state.accounts);
 
     const dispatch = useDispatch();
 
@@ -103,14 +102,14 @@ function Members() {
 
     const onSubmit = (type: string) => {
         if (type === 'edit') {
-            if (organizations && organizations[0] && organizations[0].id && selectedAccount && selectedAccount.id) {
+            if (organizations && organizations[0] && organizations[0].id && selectedMember && selectedMember.id) {
                 let body = {
                     role: selectedMember?.role,
                     name: selectedMember?.name
                 }
                 dispatch(updateOrganizationMemberRole({
                     organizationId: organizations[0].id,
-                    accountId: selectedAccount.id,
+                    accountId: selectedMember?.id,
                     body
                 }));
             }
@@ -119,8 +118,8 @@ function Members() {
             setSelectedMember(null);
 
         } else {
-            if (organizations && organizations[0] && organizations[0].id && selectedAccount && selectedAccount.id) {
-                dispatch(deleteMemberFromOrganization({id: organizations[0].id, accountId: selectedAccount.id}))
+            if (organizations && organizations[0] && organizations[0].id && selectedMember && selectedMember.id) {
+                dispatch(deleteMemberFromOrganization({id: organizations[0].id, accountId: selectedMember?.id}))
             }
             onDeleteModalClose()
         }
