@@ -9,7 +9,7 @@ import {
     MenuButton,
     MenuItem,
     MenuList,
-    Text
+    Text, useDisclosure
 } from "@chakra-ui/react";
 import React, {useCallback, useEffect, useState} from "react";
 import Image from "next/image";
@@ -23,22 +23,26 @@ import {
     getProjectById,
     getProjectMembers,
     getProjectMembersInvites,
-    updateProjectMemberRole
+    updateProjectMemberRole, updateProjectState
 } from "@/redux/projects/action-reducer";
 import {
-    addItemToGroup,
+    addItemToGroup, deleteMemberFromOrganization, deleteMemberFromProject,
     updateMembershipState
 } from "@/redux/memberships/action-reducer";
-import {Project} from "@/models";
+import {Project, TeamMember} from "@/models";
 import {isEmail} from "@/utils/common.functions";
 import {Message} from "@/components/messages";
 import {PROJECT_ROLES} from "@/utils/constants";
+import {updateOrganizationMemberRole, updateOrganizationState} from "@/redux/organizations/action-reducer";
+import RemoveRecordModal from "@/components/common/delete-record-modal";
+import {Toaster} from "@/components/common";
 
 function ProjectInbox() {
     const {members, project, invitees} = useSelector((state: StateType) => state.projects);
     const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {success: membershipSuccess} = useSelector((state: StateType) => state.memberships);
+    const {isProjectRemoveSuccess, success} = useSelector((state: StateType) => state.memberships);
 
     const [size, setSize] = useState<number>(0);
     const [allowAdd, setAllowAdd] = useState<boolean>(false);
@@ -46,6 +50,8 @@ function ProjectInbox() {
         input: '',
         role: 'member'
     });
+    const {isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose} = useDisclosure()
+    const [selectedMember, setSelectedMember] = useState<any>(null);
 
     const router = useRouter();
 
@@ -114,6 +120,47 @@ function ProjectInbox() {
         }
 
     };
+
+    const openModel =(item: any) => {
+        setSelectedMember(item)
+        onDeleteModalOpen()
+    }
+
+    const removeMemberFromProject = () => {
+            if (project && project.id && selectedAccount && selectedAccount.id) {
+                dispatch(deleteMemberFromProject({id: project.id, accountId: selectedAccount.id}))
+            }
+        onDeleteModalClose()
+    }
+
+    useEffect(() => {
+        if (success && selectedMember && selectedMember?.id) {
+            if (selectedMember && selectedMember?.invite) {
+                let data = (invitees || []).filter((item: TeamMember) => item.id !== selectedMember.id);
+                dispatch(updateProjectState({invitees: data}));
+            } else {
+                let data = (members || []).filter((item: TeamMember) => item.id !== selectedMember.id);
+
+                dispatch(updateProjectState({members: data}));
+            }
+
+            setSelectedMember(null);
+        }
+    }, [success, selectedMember, dispatch])
+
+    useEffect(() => {
+        console.log('invitees-**************', invitees)
+    }, [invitees])
+
+    useEffect(() => {
+        if (isProjectRemoveSuccess) {
+            Toaster({
+                desc: 'Member is removed form project successfully',
+                title: 'Remove member form project',
+                type: 'success'
+            });
+        }
+    }, [isProjectRemoveSuccess])
 
     return (
         <>
@@ -195,7 +242,7 @@ function ProjectInbox() {
                                                     })}
                                                 </MenuList>
                                             </Menu>
-                                            <IconButton className={styles.closeIcon} cursor={'pointer'} backgroundColor={'#FFFFFF'} padding={0} minWidth={'1px'} aria-label='Add to friends' icon={<CloseIcon />} />
+                                            <IconButton className={styles.closeIcon} onClick={() => openModel(member)} cursor={'pointer'} backgroundColor={'#FFFFFF'} padding={0} minWidth={'1px'} aria-label='Add to friends' icon={<CloseIcon />} />
                                         </Flex>
                                     </Flex>
                                 ))}
@@ -220,7 +267,7 @@ function ProjectInbox() {
                                                     })}
                                                 </MenuList>
                                             </Menu>
-                                            <IconButton className={styles.closeIcon} cursor={'pointer'} backgroundColor={'#FFFFFF'} padding={0} minWidth={'1px'} aria-label='Add to friends' icon={<CloseIcon />} />
+                                            <IconButton className={styles.closeIcon} onClick={() => openModel(invite)} cursor={'pointer'} backgroundColor={'#FFFFFF'} padding={0} minWidth={'1px'} aria-label='Add to friends' icon={<CloseIcon />} />
                                         </Flex>
                                     </Flex>
                                 ))}
@@ -240,6 +287,9 @@ function ProjectInbox() {
                     </GridItem>
                 </Grid>
             </Flex>
+
+            <RemoveRecordModal onOpen={onDeleteModalOpen} isOpen={isDeleteModalOpen} onClose={onDeleteModalClose} confirmDelete={removeMemberFromProject} modelTitle={'Are you sure you want to remove member from peoject?'}/>
+
         </>
     )
 }

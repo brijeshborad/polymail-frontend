@@ -1,4 +1,4 @@
-import {Button, Flex, Grid, GridItem, Heading, Link, Text} from "@chakra-ui/react";
+import {Button, Flex, Grid, GridItem, Heading, Link, Text, useDisclosure} from "@chakra-ui/react";
 import styles from "@/styles/setting.module.css";
 import {GoogleIcon} from "@/icons";
 import React, {useCallback, useEffect, useState} from "react";
@@ -11,11 +11,12 @@ import withAuth from "@/components/auth/withAuth";
 import {CloseIcon} from "@chakra-ui/icons";
 import {removeAccountDetails, updateAccountState} from "@/redux/accounts/action-reducer";
 import LocalStorageService from "@/utils/localstorage.service";
+import RemoveRecordModal from "@/components/common/delete-record-modal";
 
 function EmailAddress() {
     let {accounts, success, selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
-
+    const {isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose} = useDisclosure()
     const dispatch = useDispatch();
 
     function addNewGoogleAccount(mode: string) {
@@ -34,14 +35,20 @@ function EmailAddress() {
             window.location.href = googleAuthRedirectionLink.url || '';
         }
     }, [googleAuthRedirectionLink])
-    const [accountData, setAccountData] = useState<Account>();
+    const [accountData, setAccountData] = useState<Account | null>(null);
 
-    const removeAccount = useCallback((item: Account) => {
-        if (item && item.id) {
-            setAccountData(item)
-            dispatch(removeAccountDetails({id: item.id}));
+    const removeAccount = useCallback(() => {
+        if (accountData && accountData.id) {
+            dispatch(removeAccountDetails({id: accountData.id}));
+            setAccountData(null)
         }
     }, [dispatch])
+
+
+    const openModel = (item: Account) => {
+        setAccountData(item);
+        onDeleteModalOpen()
+    }
 
     useEffect(() => {
         if (success && accountData && accountData.id) {
@@ -94,7 +101,7 @@ function EmailAddress() {
                                                           isExternal>{item.email} </Link>
                                                 </Flex>
                                                 <CloseIcon className={styles.closeIcon} cursor={"pointer"}
-                                                           onClick={() => removeAccount(item)}/>
+                                                           onClick={() => openModel(item)}/>
                                             </Flex>
                                         </Flex>
                                     ))}
@@ -108,6 +115,9 @@ function EmailAddress() {
                     </Flex>
                 </GridItem>
             </Grid>
+
+            <RemoveRecordModal onOpen={onDeleteModalOpen} isOpen={isDeleteModalOpen} onClose={onDeleteModalClose} confirmDelete={removeAccount} modelTitle={'Are you sure you want to remove account?'}/>
+
         </div>
     )
 }

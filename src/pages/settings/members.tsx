@@ -30,13 +30,15 @@ import {TeamMember} from "@/models";
 import {ChevronDownIcon} from "@chakra-ui/icons";
 import {PROJECT_ROLES} from "@/utils/constants";
 import RemoveRecordModal from "@/components/common/delete-record-modal";
-import {deleteMemberFromProject} from "@/redux/memberships/action-reducer";
+import {deleteMemberFromOrganization} from "@/redux/memberships/action-reducer";
+import {Toaster} from "@/components/common";
 
 function Members() {
     const {isOpen: InviteModelIsOpen, onOpen: InviteModelOnOpen, onClose: InviteModelOnClose} = useDisclosure();
     const {isOpen: isEditOpen, onOpen: onEditOpen, onClose: onEditClose} = useDisclosure()
     const {isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose} = useDisclosure()
     const {members, organizations, updateMemberRoleSuccess} = useSelector((state: StateType) => state.organizations);
+    const {isOrganizationRemoveSuccess, success} = useSelector((state: StateType) => state.memberships);
     const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
     const {userDetails} = useSelector((state: StateType) => state.users);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
@@ -48,6 +50,16 @@ function Members() {
             dispatch(getOrganizationMembers({orgId: organizations[0].id}));
         }
     }, [dispatch, organizations])
+
+    useEffect(() => {
+        if (isOrganizationRemoveSuccess) {
+            Toaster({
+                desc: 'Member is removed form organization successfully',
+                title: 'Remove member form organization',
+                type: 'success'
+            });
+        }
+    }, [isOrganizationRemoveSuccess])
 
     useEffect(() => {
         if (updateMemberRoleSuccess && members && members.length) {
@@ -72,6 +84,15 @@ function Members() {
         }
     }
 
+    useEffect(() => {
+        if (success && selectedMember && selectedMember?.id) {
+            let data = (members || []).filter((item: TeamMember) => item.id !== selectedMember.id);
+            dispatch(updateOrganizationState({members: data}));
+            setSelectedMember(null);
+
+        }
+    }, [success, selectedMember, dispatch])
+
     const updateOrganizationMemberRoleData = (role: string) => {
         setSelectedMember(prevState => ({
             ...prevState,
@@ -95,14 +116,15 @@ function Members() {
             }
 
             onEditClose();
+            setSelectedMember(null);
+
         } else {
-            if (selectedMember && selectedMember?.id) {
-                dispatch(deleteMemberFromProject({id: selectedMember?.id}))
+            if (organizations && organizations[0] && organizations[0].id && selectedAccount && selectedAccount.id) {
+                dispatch(deleteMemberFromOrganization({id: organizations[0].id, accountId: selectedAccount.id}))
             }
             onDeleteModalClose()
         }
 
-        setSelectedMember(null);
     }
 
     return (
@@ -278,7 +300,7 @@ function Members() {
                 </GridItem>
             </Grid>
 
-            <RemoveRecordModal onOpen={onDeleteModalOpen} isOpen={isDeleteModalOpen} onClose={onDeleteModalClose} onSubmit={onSubmit}/>
+            <RemoveRecordModal onOpen={onDeleteModalOpen} isOpen={isDeleteModalOpen} onClose={onDeleteModalClose} confirmDelete={onSubmit} modelTitle={'Are you sure you want to remove member?'}/>
 
         </div>
 

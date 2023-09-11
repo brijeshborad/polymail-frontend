@@ -5,7 +5,9 @@ const initialState: any = {
     membership: {},
     isLoading: false,
     error: null,
-    success: false
+    success: false,
+    isOrganizationRemoveSuccess: false,
+    isProjectRemoveSuccess: false,
 } as InitialMembershipStateType;
 
 const membershipSlice = createSlice({
@@ -24,14 +26,25 @@ const membershipSlice = createSlice({
         },
 
         // Delete members from project
-        deleteMemberFromProject: (state: InitialMembershipStateType, _action: PayloadAction<{ id?: string}>) => {
-            return {...state, error: null, isLoading: false, success: false}
+        deleteMemberFromProject: (state: InitialMembershipStateType, _action: PayloadAction<{ id?: string, accountId?: string }>) => {
+            return {...state, error: null, isLoading: false, success: false, isProjectRemoveSuccess: false}
         },
         deleteMemberFromProjectSuccess: (state: InitialMembershipStateType, _action: PayloadAction<{}>) => {
-            return {...state, error: null, isLoading: false, success: false}
+            return {...state, error: null, isLoading: false, success: true, isProjectRemoveSuccess: true}
         },
         deleteMemberFromProjectError: (state: InitialMembershipStateType, {payload: error}: PayloadAction<{ error: any }>) => {
-            return {...state, error, isLoading: false}
+            return {...state, error, isLoading: false, isProjectRemoveSuccess: false}
+        },
+
+        // Delete members from organization
+        deleteMemberFromOrganization: (state: InitialMembershipStateType, _action: PayloadAction<{ id?: string, accountId?: string }>) => {
+            return {...state, error: null, isLoading: false, success: false, isOrganizationRemoveSuccess: false}
+        },
+        deleteMemberFromOrganizationSuccess: (state: InitialMembershipStateType, _action: PayloadAction<{}>) => {
+            return {...state, error: null, isLoading: false, success: true, isOrganizationRemoveSuccess: true}
+        },
+        deleteMemberFromOrganizationError: (state: InitialMembershipStateType, {payload: error}: PayloadAction<{ error: any }>) => {
+            return {...state, error, isLoading: false, isOrganizationRemoveSuccess: false}
         },
         updateMembershipState: (state: InitialMembershipStateType, action: PayloadAction<InitialMembershipStateType>) => {
             return {...state, ...action.payload}
@@ -44,6 +57,7 @@ export const {
     addItemToGroup,
     addItemToGroupSuccess,
     addItemToGroupError, updateMembershipState,
-    deleteMemberFromProject, deleteMemberFromProjectSuccess, deleteMemberFromProjectError
+    deleteMemberFromProject, deleteMemberFromProjectSuccess, deleteMemberFromProjectError,
+    deleteMemberFromOrganization, deleteMemberFromOrganizationSuccess, deleteMemberFromOrganizationError
 } = membershipSlice.actions
 export default membershipSlice.reducer

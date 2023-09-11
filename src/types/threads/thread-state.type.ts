@@ -17,4 +17,6 @@ export declare type InitialMembershipStateType = {
     isLoading?: boolean
     error?: Error | any
     success?: boolean
+    isProjectRemoveSuccess?: boolean
+    isOrganizationRemoveSuccess?: boolean
 }

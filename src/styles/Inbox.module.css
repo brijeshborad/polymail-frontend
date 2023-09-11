@@ -914,6 +914,17 @@
     line-height: 1;
 }
 
+.mailBox .mailBoxTime .hideShowIcon {
+    width: 20px;
+    height: 20px;
+    background: #F3F4F6;
+    border-radius: 4px;
+}
+.mailBox .mailBoxTime svg {
+    width: 12px;
+    height: 12px;
+}
+
 .mailBox .createNewDraft:hover {
     background-color: #F3F4F6;
 }
