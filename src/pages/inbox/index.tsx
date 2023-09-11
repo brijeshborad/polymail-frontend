@@ -60,8 +60,7 @@ function InboxPage() {
             {isLoading && <Flex gap={2} py={4} px={10} backgroundColor={'#FFFFFF'} borderBottom={'1px solid #F3F4F6'}>
                 <SkeletonLoader height={'36px'} skeletonLength={4} />
                 </Flex>}
-            {!!projectData.length && <InboxHeaderProjectsList/>}
-
+            <InboxHeaderProjectsList/>
             <div className={styles.mailBg}>
                 <Grid className={styles.mailGrid} templateColumns='30% auto' gap={6} height={'100%'}>
                     <GridItem w='100%'>

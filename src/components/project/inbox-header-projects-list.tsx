@@ -7,7 +7,7 @@ import {Project} from "@/models";
 import Router from "next/router";
 
 export function InboxHeaderProjectsList() {
-    const {projects} = useSelector((state: StateType) => state.projects);
+    const {projects, isLoading} = useSelector((state: StateType) => state.projects);
     const [projectData, setProjectData] = useState<Project[]>([]);
     const [projectDataLength, setProjectDataLength] = useState<Project[]>([]);
 
@@ -47,7 +47,7 @@ export function InboxHeaderProjectsList() {
 
                 ))
                 }
-
+                {!isLoading &&
                 <Button alignItems={'center'} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
                         onClick={() => changePage()} padding={'7px'} minWidth={'216px'}
                         border={'1px solid #F3F4F6'} borderRadius={'8px'} h={'fit-content'}
@@ -60,6 +60,8 @@ export function InboxHeaderProjectsList() {
                           color={'#374151'} flex={'1'}>Show all
                         projects {projectDataLength.length > 5 && `(${projectDataLength.length - projectData.length})`}</Text>
                 </Button>
+                }
+
             </Flex>
         </>
     )
