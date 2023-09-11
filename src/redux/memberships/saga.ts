@@ -5,8 +5,14 @@ import {all, fork, put, takeLatest} from "@redux-saga/core/effects";
 import {
     addItemToGroup,
     addItemToGroupError,
-    addItemToGroupSuccess, deleteMemberFromProject, deleteMemberFromProjectError, deleteMemberFromProjectSuccess,
-    deleteMemberFromOrganization, deleteMemberFromOrganizationSuccess, deleteMemberFromOrganizationError
+    addItemToGroupSuccess,
+    deleteMemberFromProject,
+    deleteMemberFromProjectError,
+    deleteMemberFromProjectSuccess,
+    deleteMemberFromOrganization,
+    deleteMemberFromOrganizationSuccess,
+    deleteMemberFromOrganizationError,
+    deleteMemberShipFromProjectError, deleteMemberShipFromProjectSuccess, deleteMemberShipFromProject
 } from "@/redux/memberships/action-reducer";
 import {MembershipsRequestBody} from "@/models/memberships";
 
@@ -32,6 +38,16 @@ function* removeMemberFromProject({payload: {id, accountId}}: PayloadAction<{id:
     }
 }
 
+function* removeMemberShipFromProject({payload: {id}}: PayloadAction<{id: string}>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callDelete(`memberships/${id}`, {});
+        yield put(deleteMemberShipFromProjectSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        yield put(deleteMemberShipFromProjectError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
+    }
+}
+
 function* removeMemberFromOrganization({payload: {id, accountId}}: PayloadAction<{id: string, accountId: string}>) {
     try {
         const response: AxiosResponse = yield ApiService.callDelete(`organizations/${id}/accounts/${accountId}`, {});
@@ -50,6 +66,10 @@ export function* watchDeleteMemberFromProject() {
     yield takeLatest(deleteMemberFromProject.type, removeMemberFromProject);
 }
 
+export function* watchDeleteMemberShipFromProject() {
+    yield takeLatest(deleteMemberShipFromProject.type, removeMemberShipFromProject);
+}
+
 export function* watchDeleteMemberFromOrganization() {
     yield takeLatest(deleteMemberFromOrganization.type, removeMemberFromOrganization);
 }
@@ -58,6 +78,7 @@ export default function* rootSaga() {
     yield all([
         fork(watchAddItemToGroup),
         fork(watchDeleteMemberFromProject),
+        fork(watchDeleteMemberShipFromProject),
         fork(watchDeleteMemberFromOrganization),
     ]);
 }

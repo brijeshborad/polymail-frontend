@@ -1038,9 +1038,13 @@
     overflow: auto;
 }
 
-
-
 .mailSaveTime p  {
     font-size: 12px;
 }
 
+.dropDownCloseIcon svg {
+    color: #6B7280;
+    width: 12px;
+    height: 12px;
+    margin-right: 0;
+}

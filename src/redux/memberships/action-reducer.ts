@@ -36,6 +36,16 @@ const membershipSlice = createSlice({
             return {...state, error, isLoading: false, isProjectRemoveSuccess: false}
         },
 
+        deleteMemberShipFromProject: (state: InitialMembershipStateType, _action: PayloadAction<{ id?: string}>) => {
+            return {...state, error: null, isLoading: false, success: false, isProjectRemoveSuccess: false}
+        },
+        deleteMemberShipFromProjectSuccess: (state: InitialMembershipStateType, _action: PayloadAction<{}>) => {
+            return {...state, error: null, isLoading: false, success: true, isProjectRemoveSuccess: true}
+        },
+        deleteMemberShipFromProjectError: (state: InitialMembershipStateType, {payload: error}: PayloadAction<{ error: any }>) => {
+            return {...state, error, isLoading: false, isProjectRemoveSuccess: false}
+        },
+
         // Delete members from organization
         deleteMemberFromOrganization: (state: InitialMembershipStateType, _action: PayloadAction<{ id?: string, accountId?: string }>) => {
             return {...state, error: null, isLoading: false, success: false, isOrganizationRemoveSuccess: false}
@@ -58,6 +68,7 @@ export const {
     addItemToGroupSuccess,
     addItemToGroupError, updateMembershipState,
     deleteMemberFromProject, deleteMemberFromProjectSuccess, deleteMemberFromProjectError,
+    deleteMemberShipFromProject, deleteMemberShipFromProjectSuccess, deleteMemberShipFromProjectError,
     deleteMemberFromOrganization, deleteMemberFromOrganizationSuccess, deleteMemberFromOrganizationError
 } = membershipSlice.actions
 export default membershipSlice.reducer

@@ -28,7 +28,8 @@ const {
     Select,
     Table,
     Progress,
-    Skeleton
+    Skeleton,
+    Radio
 } = chakraTheme.components
 const config: ThemeConfig = {
     initialColorMode: 'light',
@@ -53,7 +54,8 @@ const theme = extendBaseTheme({
         Select,
         Table,
         Progress,
-        Skeleton
+        Skeleton,
+        Radio
     },
 })
 

@@ -26,14 +26,13 @@ import {
     updateProjectMemberRole, updateProjectState
 } from "@/redux/projects/action-reducer";
 import {
-    addItemToGroup, deleteMemberFromOrganization, deleteMemberFromProject,
+    addItemToGroup, deleteMemberFromProject, deleteMemberShipFromProject,
     updateMembershipState
 } from "@/redux/memberships/action-reducer";
-import {Project, TeamMember} from "@/models";
+import {InviteMember, Project, TeamMember} from "@/models";
 import {isEmail} from "@/utils/common.functions";
 import {Message} from "@/components/messages";
 import {PROJECT_ROLES} from "@/utils/constants";
-import {updateOrganizationMemberRole, updateOrganizationState} from "@/redux/organizations/action-reducer";
 import RemoveRecordModal from "@/components/common/delete-record-modal";
 import {Toaster} from "@/components/common";
 
@@ -121,36 +120,38 @@ function ProjectInbox() {
 
     };
 
-    const openModel =(item: any) => {
+    const openModel = (item: any) => {
         setSelectedMember(item)
         onDeleteModalOpen()
     }
 
     const removeMemberFromProject = () => {
-            if (project && project.id && selectedAccount && selectedAccount.id) {
-                dispatch(deleteMemberFromProject({id: project.id, accountId: selectedAccount.id}))
+        if (selectedMember) {
+            if (selectedMember?.invite) {
+                dispatch(deleteMemberShipFromProject({id: selectedMember.id}));
+            } else {
+                if (project && project.id && selectedMember?.id) {
+                    dispatch(deleteMemberFromProject({id: project.id, accountId: selectedMember.id}));
+                }
             }
+        }
         onDeleteModalClose()
     }
 
     useEffect(() => {
         if (success && selectedMember && selectedMember?.id) {
             if (selectedMember && selectedMember?.invite) {
-                let data = (invitees || []).filter((item: TeamMember) => item.id !== selectedMember.id);
+                let data = (invitees || []).filter((item: InviteMember) => item.id !== selectedMember.id);
+
                 dispatch(updateProjectState({invitees: data}));
             } else {
                 let data = (members || []).filter((item: TeamMember) => item.id !== selectedMember.id);
-
                 dispatch(updateProjectState({members: data}));
             }
 
             setSelectedMember(null);
         }
     }, [success, selectedMember, dispatch])
-
-    useEffect(() => {
-        console.log('invitees-**************', invitees)
-    }, [invitees])
 
     useEffect(() => {
         if (isProjectRemoveSuccess) {
@@ -193,18 +194,27 @@ function ProjectInbox() {
                                         color={'#ffffff'} lineHeight={'1'} fontSize={'14px'} borderRadius={'8px'}
                                         height={'auto'} padding={'11px 16px'}> Manage Members </MenuButton>
                             <MenuList className={`${styles.manageMemberDropDown} drop-down-list`}>
-                                <Flex color={'#374151'} fontWeight={'500'} fontSize={'13px'} padding={'12px'} justifyContent={'space-between'} alignItems={'center'} borderBottom={'1px solid #F3F4F6'}>Manage members <CloseIcon/></Flex>
+                                <Flex color={'#374151'} fontWeight={'500'} fontSize={'13px'} padding={'12px'}
+                                      justifyContent={'space-between'} alignItems={'center'}
+                                      borderBottom={'1px solid #F3F4F6'}>Manage members <CloseIcon/></Flex>
 
                                 <div className={styles.dropDownSearchBar}>
-                                    <Text color={'#374151'} fontSize={'13px'} fontWeight={'500'} lineHeight={'normal'} letterSpacing={'-0.13px'}>Add members</Text>
+                                    <Text color={'#374151'} fontSize={'13px'} fontWeight={'500'} lineHeight={'normal'}
+                                          letterSpacing={'-0.13px'}>Add members</Text>
                                     <Flex align={'center'} gap={3} pt={2}>
-                                        <Flex w={'100%'} backgroundColor={'#FFFFFF'} border={'1px solid #E5E7EB'} borderRadius={8} padding={'10px 10px 10px 16px'}>
-                                            <Input padding={'0'} fontSize={'13px'} border={0} h={'auto'} lineHeight={1} fontWeight={400} borderRadius={'0'}  placeholder='Name or email address' onChange={(e) => {
+                                        <Flex w={'100%'} backgroundColor={'#FFFFFF'} border={'1px solid #E5E7EB'}
+                                              borderRadius={8} padding={'10px 10px 10px 16px'}>
+                                            <Input padding={'0'} fontSize={'13px'} border={0} h={'auto'} lineHeight={1}
+                                                   fontWeight={400} borderRadius={'0'}
+                                                   placeholder='Name or email address' onChange={(e) => {
                                                 membersInputs.input = e.target.value;
                                                 setMembersInput({...membersInputs})
                                             }}/>
                                             <Menu isLazy>
-                                                <MenuButton className={styles.addMemberDropDownButton} minWidth={'65px'} color={'#374151'} backgroundColor={'transparent'} h={'auto'} padding={0} as={Button} rightIcon={<ChevronDownIcon />}> Member </MenuButton>
+                                                <MenuButton className={styles.addMemberDropDownButton} minWidth={'65px'}
+                                                            color={'#374151'} backgroundColor={'transparent'} h={'auto'}
+                                                            padding={0} as={Button}
+                                                            rightIcon={<ChevronDownIcon/>}> Member </MenuButton>
                                                 <MenuList>
                                                     {PROJECT_ROLES.map((role, roleIndex) => {
                                                         return <MenuItem onClick={() => {
@@ -217,7 +227,10 @@ function ProjectInbox() {
                                                 </MenuList>
                                             </Menu>
                                         </Flex>
-                                        <Button className={styles.addMemberButton} backgroundColor={'#1F2937'} border={'8px'} color={'#FFFFFF'} padding={'9px 12px'} isDisabled={!allowAdd} onClick={() => inviteAccountToProject(project)}>Add</Button>
+                                        <Button className={styles.addMemberButton} backgroundColor={'#1F2937'}
+                                                border={'8px'} color={'#FFFFFF'} padding={'9px 12px'}
+                                                isDisabled={!allowAdd}
+                                                onClick={() => inviteAccountToProject(project || null)}>Add</Button>
                                     </Flex>
                                 </div>
 
@@ -231,18 +244,27 @@ function ProjectInbox() {
                                         </MenuItem>
                                         <Flex align={'center'} gap={1}>
                                             <Menu>
-                                                <MenuButton className={styles.memberDropDown} fontSize={'12px'} color={'#374151'} textTransform={'capitalize'} backgroundColor={'#FFFFFF'} h={'auto'} border={'1px solid #D1D5DB'} borderRadius={'50px'} as={Button} rightIcon={<TriangleDownIcon />}>
+                                                <MenuButton className={styles.memberDropDown} fontSize={'12px'}
+                                                            color={'#374151'} textTransform={'capitalize'}
+                                                            backgroundColor={'#FFFFFF'} h={'auto'}
+                                                            border={'1px solid #D1D5DB'} borderRadius={'50px'}
+                                                            as={Button} rightIcon={<TriangleDownIcon/>}>
                                                     {member.role}
                                                 </MenuButton>
                                                 <MenuList className={`drop-down-list`}>
                                                     {PROJECT_ROLES.map((role, roleIndex) => {
-                                                            return <MenuItem onClick={() => updateProjectMemberRoleData(role)} textTransform={'capitalize'} key={roleIndex}>
-                                                                {role}
-                                                            </MenuItem>
+                                                        return <MenuItem
+                                                            onClick={() => updateProjectMemberRoleData(role)}
+                                                            textTransform={'capitalize'} key={roleIndex}>
+                                                            {role}
+                                                        </MenuItem>
                                                     })}
                                                 </MenuList>
                                             </Menu>
-                                            <IconButton className={styles.closeIcon} onClick={() => openModel(member)} cursor={'pointer'} backgroundColor={'#FFFFFF'} padding={0} minWidth={'1px'} aria-label='Add to friends' icon={<CloseIcon />} />
+                                            <IconButton className={styles.closeIcon} onClick={() => openModel(member)}
+                                                        cursor={'pointer'} backgroundColor={'#FFFFFF'} padding={0}
+                                                        minWidth={'1px'} aria-label='Add to friends'
+                                                        icon={<CloseIcon/>}/>
                                         </Flex>
                                     </Flex>
                                 ))}
@@ -256,18 +278,27 @@ function ProjectInbox() {
                                         </MenuItem>
                                         <Flex align={'center'} gap={1}>
                                             <Menu>
-                                                <MenuButton className={styles.memberDropDown} fontSize={'12px'} color={'#374151'} textTransform={'capitalize'} backgroundColor={'#FFFFFF'} h={'auto'} border={'1px solid #D1D5DB'} borderRadius={'50px'} as={Button} rightIcon={<TriangleDownIcon />}>
+                                                <MenuButton className={styles.memberDropDown} fontSize={'12px'}
+                                                            color={'#374151'} textTransform={'capitalize'}
+                                                            backgroundColor={'#FFFFFF'} h={'auto'}
+                                                            border={'1px solid #D1D5DB'} borderRadius={'50px'}
+                                                            as={Button} rightIcon={<TriangleDownIcon/>}>
                                                     {invite.role}
                                                 </MenuButton>
                                                 <MenuList className={`drop-down-list`}>
                                                     {PROJECT_ROLES.map((role, roleIndex) => {
-                                                        return <MenuItem onClick={() => updateProjectMemberRoleData(role)} textTransform={'capitalize'} key={roleIndex}>
+                                                        return <MenuItem
+                                                            onClick={() => updateProjectMemberRoleData(role)}
+                                                            textTransform={'capitalize'} key={roleIndex}>
                                                             {role}
                                                         </MenuItem>
                                                     })}
                                                 </MenuList>
                                             </Menu>
-                                            <IconButton className={styles.closeIcon} onClick={() => openModel(invite)} cursor={'pointer'} backgroundColor={'#FFFFFF'} padding={0} minWidth={'1px'} aria-label='Add to friends' icon={<CloseIcon />} />
+                                            <IconButton className={styles.closeIcon} onClick={() => openModel(invite)}
+                                                        cursor={'pointer'} backgroundColor={'#FFFFFF'} padding={0}
+                                                        minWidth={'1px'} aria-label='Add to friends'
+                                                        icon={<CloseIcon/>}/>
                                         </Flex>
                                     </Flex>
                                 ))}
@@ -276,10 +307,11 @@ function ProjectInbox() {
                     </Flex>
                 </Flex>
 
-                <Grid className={styles.mailGrid} templateColumns='30% auto' padding={'32px 32px 16px'} gap={6} flex={1}>
+                <Grid className={styles.mailGrid} templateColumns='30% auto' padding={'32px 32px 16px'} gap={6}
+                      flex={1}>
                     <GridItem w='100%' flex={1}>
                         {((size < 991 && !selectedThread) || size > 991) &&
-                        <ThreadsSideBar cachePrefix={`project-${router.query.project}`} />
+                        <ThreadsSideBar cachePrefix={`project-${router.query.project}`}/>
                         }
                     </GridItem>
                     <GridItem w='100%' flex={1}>
@@ -288,7 +320,9 @@ function ProjectInbox() {
                 </Grid>
             </Flex>
 
-            <RemoveRecordModal onOpen={onDeleteModalOpen} isOpen={isDeleteModalOpen} onClose={onDeleteModalClose} confirmDelete={removeMemberFromProject} modelTitle={'Are you sure you want to remove member from peoject?'}/>
+            <RemoveRecordModal onOpen={onDeleteModalOpen} isOpen={isDeleteModalOpen} onClose={onDeleteModalClose}
+                               confirmDelete={removeMemberFromProject}
+                               modelTitle={'Are you sure you want to remove member from peoject?'}/>
 
         </>
     )

@@ -5,7 +5,7 @@ import {Flex, Grid, GridItem,} from "@chakra-ui/react";
 import withAuth from "@/components/auth/withAuth";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {Project, User} from "@/models";
+import {User} from "@/models";
 import {InboxHeaderProjectsList} from "@/components/project/inbox-header-projects-list";
 import {Message} from "@/components/messages";
 import {getAllProjects} from "@/redux/projects/action-reducer";

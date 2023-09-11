@@ -147,7 +147,7 @@ function ManageMembersModal() {
                                     className={styles.addMemberButton} backgroundColor={'#000000'}
                                     borderRadius={8}
                                     color={'#ffffff'} minWidth={'120px'} size='sm'
-                                    onClick={() => inviteAccountToProject(project)}>
+                                    onClick={() => inviteAccountToProject(project || null)}>
                                 Add
                             </Button>
                         </Flex>

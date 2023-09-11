@@ -365,3 +365,56 @@ div:has(> .mailSendToaster) {
 .inbox-loader-box-3 {
     transform: rotate(-3deg);
 }
+
+.custom-dropdown {
+    border-radius: 12px !important;
+    padding: 0 !important;
+    overflow: hidden;
+}
+
+.custom-dropdown .radio-group-button label {
+    line-height: 1;
+    color: #374151;
+    letter-spacing: -0.13px;
+    font-weight: 400;
+    border-color: #E5E7EB;
+}
+
+.custom-dropdown .radio-group-button label span {
+    font-size: 13px;
+}
+
+.custom-dropdown .radio-group-button label span[data-checked] {
+    background: #2A6FFF;
+    border-color: #2A6FFF;
+}
+
+.custom-dropdown .radio-group-button label span[data-checked] + span {
+    background: transparent;
+}
+
+.custom-dropdown .radio-group-button label span span {
+    color: #9CA3AF;
+}
+
+.custom-dropdown .custom-time-date:hover {
+    background-color: #FFFFFF;
+}
+
+.radio-group-button .custom-time input:focus-visible,
+.radio-group-button .custom-time select:focus-visible {
+    border: 1px solid #E5E7EB;
+    box-shadow: none;
+}
+
+.radio-group-button .custom-time select {
+    padding: 12px 16px 11px;
+}
+
+.radio-group-button .custom-time select {
+    padding: 12px 16px 11px;
+}
+
+.radio-group-button .schedule-button:hover {
+    background-color: #1F2937;
+}

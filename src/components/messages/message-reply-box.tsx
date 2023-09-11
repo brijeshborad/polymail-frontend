@@ -1,10 +1,9 @@
 import {
     Button, createStandaloneToast,
-    Flex,
+    Flex, Grid, GridItem, Input,
     Menu,
     MenuButton,
-    MenuItem,
-    MenuList, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay,
+    MenuList, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Radio, Select,
     Text,
     useDisclosure
 } from "@chakra-ui/react";
@@ -24,7 +23,7 @@ import {uploadAttachment} from "@/redux/messages/action-reducer";
 import {SingleDatepicker} from "chakra-dayzed-datepicker";
 import {MessageBoxType} from "@/types/props-types/message-box.type";
 import MessageRecipients from "./message-recipients";
-import { RecipientsType } from "@/types/props-types/message-recipients.type";
+import {RecipientsType} from "@/types/props-types/message-recipients.type";
 
 export function MessageReplyBox(props: MessageBoxType) {
     const [emailRecipients, setEmailRecipients] = useState<RecipientsType>({
@@ -38,13 +37,14 @@ export function MessageReplyBox(props: MessageBoxType) {
     const {draft} = useSelector((state: StateType) => state.draft);
     const dispatch = useDispatch();
     const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
-    const {isOpen, onOpen, onClose} = useDisclosure();
+    const {isOpen, onClose} = useDisclosure();
     const inputFile = useRef<HTMLInputElement | null>(null)
     const [scheduledDate, setScheduledDate] = useState<Date>();
     const [hideEditorToolbar, setHideEditorToolbar] = useState<boolean>(false);
     const [replyBoxHide, setReplyBoxHide] = useState<boolean>(false);
     const [boxUpdatedFirstTime, setBoxUpdatedFirstTime] = useState<boolean>(false);
     const {toast} = createStandaloneToast()
+    const monthArray = ['Jan', 'Feb', 'March', 'April', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
     const isValid = (email: string, type: string) => {
         let error = null;
@@ -299,12 +299,12 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
         setAttachments([...newArr!]);
     }
 
-    const openCalender = () => {
-        onOpen();
-        let today = new Date();
-        today.setDate(today.getDate() + 1);
-        setScheduledDate(today);
-    }
+    // const openCalender = () => {
+    //     onOpen();
+    //     let today = new Date();
+    //     today.setDate(today.getDate() + 1);
+    //     setScheduledDate(today);
+    // }
 
 
     const sendMessages = (scheduled: boolean = false) => {
@@ -464,7 +464,8 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                             ))}
                         </div> : null}
                     </Flex>
-                    {hideEditorToolbar && <Flex direction={'column'} className={styles.composeModal}>
+                    {/*{hideEditorToolbar && */}
+                    <Flex direction={'column'} className={styles.composeModal}>
                         <Flex align={'flex-end'} justify={'space-between'} gap={2}>
                             <Flex gap={2} className={styles.replyBoxIcon}>
                                 <FileIcon click={() => inputFile.current?.click()}/>
@@ -481,8 +482,101 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                                     <MenuButton className={styles.replyArrowIcon} as={Button}
                                                 aria-label='Options'
                                                 variant='outline'><ChevronDownIcon/></MenuButton>
-                                    <MenuList className={'drop-down-list'}>
-                                        <MenuItem onClick={() => openCalender()}> Send Later </MenuItem>
+                                    <MenuList className={'custom-dropdown'} width={'360px'}>
+                                        <Flex padding={'12px 12px 11px'} align={'center'}
+                                              justifyContent={'space-between'} borderBottom={'1px solid #F3F4F6'}>
+                                            <Text fontSize='13px' color={'#374151'} letterSpacing={'-0.13px'}
+                                                  lineHeight={'normal'}>Schedule send (CEST)</Text>
+                                            <Button h={'20px'} minW={'20px'} className={styles.dropDownCloseIcon}
+                                                    backgroundColor={'transparent'} padding={0} color={'#6B7280'}
+                                                    colorScheme='blue'><CloseIcon/> </Button>
+                                        </Flex>
+
+                                        <Flex mt={4} direction={'column'} gap={4} px={3}
+                                              className={'radio-group-button'}>
+                                            <Radio value='1'>Tomorrow morning <span>(Aug, 26, 8:00AM)</span></Radio>
+                                            <Radio value='2'>Tomorrow afternoon <span>(Aug, 26, 1:00PM)</span></Radio>
+                                            <Radio value='3'>Monday morning <span>(Aug, 28, 8:00AM)</span></Radio>
+                                            <Flex w={'100%'} pt={4} pb={3} borderTop={'1px solid #F3F4F6'}>
+                                                {/*<Button className={'custom-time-date'} border={'1px solid #374151'}*/}
+                                                {/*        lineHeight={1} borderRadius={8} color={'#374151'} h={'auto'}*/}
+                                                {/*        backgroundColor={'#FFFFFF'} fontSize={'14px'}  padding={'10px 12px'}>*/}
+                                                {/*    Custom time & date </Button>*/}
+                                                <Menu>
+                                                    <MenuButton className={'custom-time-date'} border={'1px solid #374151'}
+                                                                lineHeight={1} borderRadius={8} color={'#374151'} h={'auto'}
+                                                                backgroundColor={'#FFFFFF'} fontSize={'14px'} padding={'10px 12px'}>
+                                                        Custom time & date </MenuButton>
+                                                    <MenuList className={'custom-dropdown'} width={'360px'}>
+                                                        <Flex padding={'12px 12px 11px'} align={'center'}
+                                                              justifyContent={'space-between'} borderBottom={'1px solid #F3F4F6'}>
+                                                            <Text fontSize='13px' color={'#374151'} letterSpacing={'-0.13px'}
+                                                                  lineHeight={'normal'}>Custom time & date</Text>
+                                                            <Button h={'20px'} minW={'20px'} className={'dropdown-close-icon'}
+                                                                    backgroundColor={'transparent'} padding={0} color={'#6B7280'}
+                                                                    colorScheme='blue'><CloseIcon/> </Button>
+                                                        </Flex>
+
+                                                        <Flex mt={4} direction={'column'} gap={4} px={3}
+                                                              className={'radio-group-button'}>
+                                                            <Flex direction={'column'} className={'custom-time'}>
+                                                                <Text fontSize={'13px'} fontWeight={500} mb={2} color={'#0A101D'} letterSpacing={'-0.13px'} lineHeight={'normal'}>Time</Text>
+
+                                                                <Grid templateColumns='repeat(3, 1fr)' gap={3}>
+                                                                    <GridItem w='100%'>
+                                                                        <Input border={'1px solid #E5E7EB'} fontSize={'13px'} fontWeight={400} lineHeight={1} padding={'10px 16px'} h={'auto'} backgroundColor={'#FFFFFF'} borderRadius={8} placeholder='1:30' />
+                                                                    </GridItem>
+                                                                    <GridItem w='100%'>
+                                                                        <Select border={'1px solid #E5E7EB'} fontSize={'13px'} fontWeight={400} lineHeight={1} h={'auto'} backgroundColor={'#FFFFFF'} borderRadius={8}>
+                                                                            <option value='option1'>PM</option>
+                                                                            <option value='option2'>AM</option>
+                                                                        </Select>
+                                                                    </GridItem>
+                                                                    <GridItem w='100%'>
+                                                                        <Select border={'1px solid #E5E7EB'} fontSize={'13px'} fontWeight={400} lineHeight={1} h={'auto'} backgroundColor={'#FFFFFF'} borderRadius={8}>
+                                                                            <option value='option1'>CEST</option>
+                                                                            <option value='option2'>AM</option>
+                                                                        </Select>
+                                                                    </GridItem>
+                                                                </Grid>
+                                                            </Flex>
+
+                                                            <Flex direction={'column'} className={'custom-time'}>
+                                                                <Text fontSize={'13px'} fontWeight={500} mb={2} color={'#0A101D'} letterSpacing={'-0.13px'} lineHeight={'normal'}>Date</Text>
+
+                                                                <Grid templateColumns='repeat(3, 1fr)' gap={3}>
+                                                                    <GridItem w='100%'>
+                                                                        <Select border={'1px solid #E5E7EB'} fontSize={'13px'} fontWeight={400} lineHeight={1} h={'auto'} backgroundColor={'#FFFFFF'} borderRadius={8}>
+                                                                            {monthArray && monthArray.map((item: string, index: number) => (
+                                                                                <option value={item} key={index}>{item}</option>
+                                                                            ))}
+                                                                        </Select>
+                                                                    </GridItem>
+                                                                    <GridItem w='100%'>
+                                                                        <Input border={'1px solid #E5E7EB'} fontSize={'13px'} fontWeight={400} lineHeight={1} padding={'10px 16px'} h={'auto'} backgroundColor={'#FFFFFF'} borderRadius={8} placeholder='23' />
+                                                                    </GridItem>
+                                                                    <GridItem w='100%'>
+                                                                        <Input border={'1px solid #E5E7EB'} fontSize={'13px'} fontWeight={400} lineHeight={1} padding={'10px 16px'} h={'auto'} backgroundColor={'#FFFFFF'} borderRadius={8} placeholder='2023' />
+                                                                    </GridItem>
+                                                                </Grid>
+                                                            </Flex>
+
+                                                            <Flex w={'100%'} pt={4} pb={3} gap={3} justify={'flex-end'} borderTop={'1px solid #F3F4F6'}>
+                                                                <Button className={'custom-time-date'} border={'1px solid #374151'}
+                                                                        lineHeight={1} borderRadius={8} color={'#374151'} h={'auto'}
+                                                                        backgroundColor={'#FFFFFF'} fontSize={'14px'}  padding={'10px 12px'}>
+                                                                    Cancel </Button>
+
+                                                                <Button className={'schedule-button'} border={'1px solid #374151'}
+                                                                        lineHeight={1} borderRadius={8} color={'#FFFFFF'} h={'auto'}
+                                                                        backgroundColor={'#1F2937'} fontSize={'14px'} padding={'10px 12px'}>
+                                                                    Schedule </Button>
+                                                            </Flex>
+                                                        </Flex>
+                                                    </MenuList>
+                                                </Menu>
+                                            </Flex>
+                                        </Flex>
                                     </MenuList>
                                 </Menu>
                                 <Modal isOpen={isOpen} onClose={onClose} isCentered={true} scrollBehavior={'outside'}>
@@ -508,7 +602,7 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                             </Flex>
                         </Flex>
                     </Flex>
-                    }
+                    {/*}*/}
                 </Flex>
             </Flex>
         </Flex>
