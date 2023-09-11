@@ -12,7 +12,8 @@ const initialState: any = {
     success: false,
     isThreadSearched: false,
     tabValue: '',
-    isThreadLoading: false
+    isThreadLoading: false,
+    isThreadFocused: false
 } as InitialThreadStateType
 
 const threadsSlice = createSlice({

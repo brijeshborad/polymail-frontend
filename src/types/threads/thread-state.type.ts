@@ -10,6 +10,7 @@ export declare type InitialThreadStateType = {
     isThreadSearched?: boolean
     tabValue?: string
     isThreadLoading?: boolean
+    isThreadFocused?: boolean
 }
 
 export declare type InitialMembershipStateType = {

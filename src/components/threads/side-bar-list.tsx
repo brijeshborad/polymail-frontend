@@ -3,7 +3,7 @@ import styles from "@/styles/Inbox.module.css";
 import { Flex, Input, useDisclosure } from "@chakra-ui/react";
 import React, { useCallback, useRef, useState } from "react";
 import { updateMessageState } from "@/redux/messages/action-reducer";
-import { updateThreadState, updateThreads } from "@/redux/threads/action-reducer";
+import { updateThreadState } from "@/redux/threads/action-reducer";
 import { updateDraftState } from "@/redux/draft/action-reducer";
 import { useDispatch, useSelector } from "react-redux";
 import { StateType } from "@/types";
@@ -31,18 +31,9 @@ export function ThreadsSideBarList(props: ThreadListProps) {
         return;
       }
     }
-    dispatch(updateThreadState({ selectedThread: item }));
+    dispatch(updateThreadState({ selectedThread: item, isThreadFocused: false }));
     dispatch(updateMessageState({ selectedMessage: null, messages: [] }));
     dispatch(updateDraftState({ draft: null }));
-
-    if (item?.mailboxes?.includes('UNREAD')) {
-      dispatch(updateThreads({
-        id: item.id,
-        body: {
-          mailboxes: (item.mailboxes || []).filter(i => i !== 'UNREAD')
-        }
-      }))
-    }
   }, [dispatch, props.tab]);
 
 
