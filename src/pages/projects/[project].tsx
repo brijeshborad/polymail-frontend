@@ -3,27 +3,20 @@ import {
     Button,
     Flex,
     Grid, GridItem,
-    Heading,
+    Heading, IconButton,
     Input,
     Menu,
     MenuButton,
     MenuItem,
     MenuList,
-    Modal,
-    ModalBody,
-    ModalCloseButton,
-    ModalContent,
-    ModalHeader,
-    ModalOverlay,
-    Text,
-    useDisclosure
+    Text
 } from "@chakra-ui/react";
 import React, {useCallback, useEffect, useState} from "react";
 import Image from "next/image";
 import {useDispatch, useSelector} from "react-redux";
 import {useRouter} from "next/router";
 import {StateType} from "@/types";
-import {ChevronDownIcon} from "@chakra-ui/icons";
+import {ChevronDownIcon, CloseIcon, TriangleDownIcon} from "@chakra-ui/icons";
 import styles from "@/styles/project.module.css";
 import {ThreadsSideBar} from "@/components/threads";
 import {
@@ -37,16 +30,14 @@ import {
     updateMembershipState
 } from "@/redux/memberships/action-reducer";
 import {Project} from "@/models";
-import {PROJECT_ROLES} from "@/utils/constants";
 import {isEmail} from "@/utils/common.functions";
 import {Message} from "@/components/messages";
+import {PROJECT_ROLES} from "@/utils/constants";
 
 function ProjectInbox() {
-    const {isOpen, onOpen, onClose} = useDisclosure();
     const {members, project, invitees} = useSelector((state: StateType) => state.projects);
     const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
-    const {userDetails} = useSelector((state: StateType) => state.users);
     const {success: membershipSuccess} = useSelector((state: StateType) => state.memberships);
 
     const [size, setSize] = useState<number>(0);
@@ -150,9 +141,91 @@ function ProjectInbox() {
                         <div className={styles.userImage}>
                             <Image src="/image/user.png" width="36" height="36" alt=""/>
                         </div>
-                        <Button className={styles.manageMembers} onClick={onOpen} ml={2} backgroundColor={'#000000'}
-                                color={'#ffffff'} lineHeight={'1'} fontSize={'14px'} borderRadius={'8px'}
-                                height={'auto'} padding={'11px 16px'}> Manage Members</Button>
+                        <Menu>
+                            <MenuButton as={Button} className={styles.manageMembers} ml={2} backgroundColor={'#000000'}
+                                        color={'#ffffff'} lineHeight={'1'} fontSize={'14px'} borderRadius={'8px'}
+                                        height={'auto'} padding={'11px 16px'}> Manage Members </MenuButton>
+                            <MenuList className={`${styles.manageMemberDropDown} drop-down-list`}>
+                                <Flex color={'#374151'} fontWeight={'500'} fontSize={'13px'} padding={'12px'} justifyContent={'space-between'} alignItems={'center'} borderBottom={'1px solid #F3F4F6'}>Manage members <CloseIcon/></Flex>
+
+                                <div className={styles.dropDownSearchBar}>
+                                    <Text color={'#374151'} fontSize={'13px'} fontWeight={'500'} lineHeight={'normal'} letterSpacing={'-0.13px'}>Add members</Text>
+                                    <Flex align={'center'} gap={3} pt={2}>
+                                        <Flex w={'100%'} backgroundColor={'#FFFFFF'} border={'1px solid #E5E7EB'} borderRadius={8} padding={'10px 10px 10px 16px'}>
+                                            <Input padding={'0'} fontSize={'13px'} border={0} h={'auto'} lineHeight={1} fontWeight={400} borderRadius={'0'}  placeholder='Name or email address' onChange={(e) => {
+                                                membersInputs.input = e.target.value;
+                                                setMembersInput({...membersInputs})
+                                            }}/>
+                                            <Menu isLazy>
+                                                <MenuButton className={styles.addMemberDropDownButton} minWidth={'65px'} color={'#374151'} backgroundColor={'transparent'} h={'auto'} padding={0} as={Button} rightIcon={<ChevronDownIcon />}> Member </MenuButton>
+                                                <MenuList>
+                                                    {PROJECT_ROLES.map((role, roleIndex) => {
+                                                        return <MenuItem onClick={() => {
+                                                            membersInputs.role = role;
+                                                            setMembersInput({...membersInputs})
+                                                        }} textTransform={'capitalize'} key={roleIndex}>
+                                                            {role}
+                                                        </MenuItem>
+                                                    })}
+                                                </MenuList>
+                                            </Menu>
+                                        </Flex>
+                                        <Button className={styles.addMemberButton} backgroundColor={'#1F2937'} border={'8px'} color={'#FFFFFF'} padding={'9px 12px'} isDisabled={!allowAdd} onClick={() => inviteAccountToProject(project)}>Add</Button>
+                                    </Flex>
+                                </div>
+
+                                {members && !!members.length && members.map((member, index) => (
+                                    <Flex align={'center'} pr={3} key={index}>
+                                        <MenuItem>
+                                            <div className={styles.imgWrapper}>
+                                                <Image src="/image/user.png" width="36" height="36" alt=""/>
+                                            </div>
+                                            {member.name}
+                                        </MenuItem>
+                                        <Flex align={'center'} gap={1}>
+                                            <Menu>
+                                                <MenuButton className={styles.memberDropDown} fontSize={'12px'} color={'#374151'} textTransform={'capitalize'} backgroundColor={'#FFFFFF'} h={'auto'} border={'1px solid #D1D5DB'} borderRadius={'50px'} as={Button} rightIcon={<TriangleDownIcon />}>
+                                                    {member.role}
+                                                </MenuButton>
+                                                <MenuList className={`drop-down-list`}>
+                                                    {PROJECT_ROLES.map((role, roleIndex) => {
+                                                            return <MenuItem onClick={() => updateProjectMemberRoleData(role)} textTransform={'capitalize'} key={roleIndex}>
+                                                                {role}
+                                                            </MenuItem>
+                                                    })}
+                                                </MenuList>
+                                            </Menu>
+                                            <IconButton className={styles.closeIcon} cursor={'pointer'} backgroundColor={'#FFFFFF'} padding={0} minWidth={'1px'} aria-label='Add to friends' icon={<CloseIcon />} />
+                                        </Flex>
+                                    </Flex>
+                                ))}
+                                {invitees && !!invitees.length && invitees.map((invite, index) => (
+                                    <Flex align={'center'} pr={3} key={index}>
+                                        <MenuItem>
+                                            <div className={styles.imgWrapper}>
+                                                <Image src="/image/user.png" width="36" height="36" alt=""/>
+                                            </div>
+                                            {invite?.invite?.toEmail}
+                                        </MenuItem>
+                                        <Flex align={'center'} gap={1}>
+                                            <Menu>
+                                                <MenuButton className={styles.memberDropDown} fontSize={'12px'} color={'#374151'} textTransform={'capitalize'} backgroundColor={'#FFFFFF'} h={'auto'} border={'1px solid #D1D5DB'} borderRadius={'50px'} as={Button} rightIcon={<TriangleDownIcon />}>
+                                                    {invite.role}
+                                                </MenuButton>
+                                                <MenuList className={`drop-down-list`}>
+                                                    {PROJECT_ROLES.map((role, roleIndex) => {
+                                                        return <MenuItem onClick={() => updateProjectMemberRoleData(role)} textTransform={'capitalize'} key={roleIndex}>
+                                                            {role}
+                                                        </MenuItem>
+                                                    })}
+                                                </MenuList>
+                                            </Menu>
+                                            <IconButton className={styles.closeIcon} cursor={'pointer'} backgroundColor={'#FFFFFF'} padding={0} minWidth={'1px'} aria-label='Add to friends' icon={<CloseIcon />} />
+                                        </Flex>
+                                    </Flex>
+                                ))}
+                            </MenuList>
+                        </Menu>
                     </Flex>
                 </Flex>
 
@@ -167,121 +240,6 @@ function ProjectInbox() {
                     </GridItem>
                 </Grid>
             </Flex>
-
-            <Modal isOpen={isOpen} onClose={onClose} isCentered>
-                <ModalOverlay/>
-                <ModalContent maxWidth={'480px'} className={styles.projectMemberModal}>
-                    <ModalHeader fontSize={'13px'} color={'#08162F'} borderBottom={'1px solid rgba(0, 0, 0, 0.1)'}>Project
-                        Members</ModalHeader>
-                    <ModalCloseButton top={'13px'} right={'17px'} className={styles.closeIcon}/>
-                    <ModalBody padding={'12px 16px 16px'}>
-
-                        <div className={styles.addProjectMember}>
-                            <Heading as='h6' size='xs' mb={2}>Add Members</Heading>
-                            <Flex align={'center'} gap={1}>
-                                <Flex align={'center'} position={"relative"} className={styles.emailAddress}
-                                      padding={'6px 8px 6px 16px'} width={'100%'}>
-                                    <Input p={0} h={'auto'} onChange={(e) => {
-                                        membersInputs.input = e.target.value;
-                                        setMembersInput({...membersInputs})
-                                    }} border={0} value={membersInputs.input}
-                                           placeholder='Name or Email Address' size='xs'/>
-                                    <Menu>
-                                        <MenuButton className={styles.memberButton} backgroundColor={'transparent'}
-                                                    textTransform={'capitalize'}
-                                                    minWidth={'70px'} padding={0} height={'auto'} fontSize={'13px'}
-                                                    color={'rgba(0,0,0, 0.5)'} as={Button}
-                                                    rightIcon={<ChevronDownIcon/>}> {membersInputs.role} </MenuButton>
-                                        <MenuList className={'drop-down-list'}>
-                                            {PROJECT_ROLES.map((role, roleIndex) => {
-                                                if (membersInputs.role !== role) {
-                                                    return <MenuItem onClick={() => {
-                                                        membersInputs.role = role;
-                                                        setMembersInput({...membersInputs})
-                                                    }} textTransform={'capitalize'} key={roleIndex}>
-                                                        {role}
-                                                    </MenuItem>
-                                                }
-                                                return null
-                                            })}
-                                        </MenuList>
-                                    </Menu>
-                                </Flex>
-                                <Button isDisabled={!allowAdd}
-                                        className={styles.addMemberButton} backgroundColor={'#000000'}
-                                        borderRadius={8}
-                                        color={'#ffffff'} minWidth={'120px'} size='sm'
-                                        onClick={() => inviteAccountToProject(project)}>
-                                    Add
-                                </Button>
-                            </Flex>
-                        </div>
-                        <Flex direction={'column'} gap={4} pt={4}>
-                            {members && !!members.length && members.map((member, index) => (
-                                <Flex key={index + 1} align={'center'} justify={'space-between'} gap={4}>
-                                    <Flex align={'center'} gap={2}>
-                                        <div className={styles.addMemberImage}>
-                                            <Image src="/image/user.png" width="36" height="36" alt=""/>
-                                        </div>
-                                        <Text fontSize='sm' color={'#000000'}>{member.name}</Text>
-                                    </Flex>
-                                    <Menu>
-                                        <MenuButton className={styles.memberButton} backgroundColor={'#E9E9E9'}
-                                                    borderRadius={4} padding={'2px 4px '} height={'auto'}
-                                                    textTransform={'capitalize'}
-                                                    fontSize={'12px'}
-                                                    color={'#000000'} as={Button}
-                                                    rightIcon={
-                                                        <ChevronDownIcon/>}> {member.role} </MenuButton>
-                                        <MenuList className={'drop-down-list'}>
-                                            {PROJECT_ROLES.map((role, roleIndex) => {
-                                                if (member.role !== role) {
-                                                    return <MenuItem textTransform={'capitalize'}  onClick={() => updateProjectMemberRoleData(role)} key={roleIndex}>
-                                                        {role}
-                                                    </MenuItem>
-                                                }
-                                                return null
-                                            })}
-                                            <MenuItem
-                                                onClick={() => updateProjectMemberRoleData('deactivated')}>{member.userId === userDetails?.id ? 'Leave' : 'Remove'}</MenuItem>
-                                        </MenuList>
-                                    </Menu>
-                                </Flex>
-                            ))}
-                            {invitees && !!invitees.length && invitees.map((invite, index) => (
-                                <Flex key={index + 1} align={'center'} justify={'space-between'} gap={4}>
-                                    <Flex align={'center'} gap={2}>
-                                        <div className={styles.addMemberImage}>
-                                            <Image src="/image/user.png" width="36" height="36" alt=""/>
-                                        </div>
-                                        <Text fontSize='sm' color={'#000000'}>{invite?.invite?.toEmail}</Text>
-                                    </Flex>
-                                    <Menu>
-                                        <MenuButton className={styles.memberButton} backgroundColor={'#E9E9E9'}
-                                                    borderRadius={4} padding={'2px 4px '} height={'auto'}
-                                                    textTransform={'capitalize'}
-                                                    fontSize={'12px'}
-                                                    color={'#000000'} as={Button}
-                                                    rightIcon={
-                                                        <ChevronDownIcon/>}> {invite.role} </MenuButton>
-                                        <MenuList className={'drop-down-list'}>
-                                            {PROJECT_ROLES.map((role, roleIndex) => {
-                                                if (invite.role !== role) {
-                                                    return <MenuItem textTransform={'capitalize'} key={roleIndex}>
-                                                        {role}
-                                                    </MenuItem>
-                                                }
-                                                return null
-                                            })}
-                                            <MenuItem>Delete</MenuItem>
-                                        </MenuList>
-                                    </Menu>
-                                </Flex>
-                            ))}
-                        </Flex>
-                    </ModalBody>
-                </ModalContent>
-            </Modal>
         </>
     )
 }

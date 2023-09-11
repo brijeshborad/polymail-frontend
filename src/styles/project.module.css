@@ -8,7 +8,6 @@
 .projectPage .imgWrapper img,
 .projectPage .userImage img,
 .mailBox .imgWrapper img,
-.projectMemberModal .addMemberImage img,
 .projectList .projectIcon img,
 .memberImages .memberPhoto img{
     width: 100%;
@@ -136,45 +135,8 @@
     width: 12px;
 }
 
-.addProjectMember {
-    background: #F5F5F5;
-    border-radius: 8px;
-    padding: 16px;
-}
-
-
-.addProjectMember .emailAddress {
-    background: #FFFFFF;
-    border: 1px solid #E5E5E5;
-    border-radius: 8px;
-}
-.emailAddress input::placeholder {
-    color: rgba(0,0,0, 0.3);
-}
-.emailAddress input:focus-visible {
-    box-shadow: none;
-    border: 0;
-}
-
-.emailAddress .memberButton:hover,
-.emailAddress .memberButton:active {
-    background-color: transparent;
-}
-
-.addProjectMember .addMemberButton:hover, .addMemberButton:hover:disabled, .addMemberButton:hover[disabled] {
-    background-color: #000000 !important;
-}
-
 .saveMemberButton:hover, .saveMemberButton:hover:disabled, .saveMemberButton:hover[disabled] {
     background-color: #2F855A !important;
-}
-
-.projectMemberModal .addMemberImage {
-    min-width: 24px;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    overflow: hidden;
 }
 
 .mailBox .mailBoxBackground {
@@ -323,6 +285,87 @@
 
 .mailDetails.readThread {
     background-color: #eeeeee;
+}
+
+
+.manageMemberDropDown .dropDownSearchBar {
+    margin: 16px 12px;
+    padding: 12px;
+    min-width: 456px;
+    background-color: #F3F4F6;
+    border-radius: 12px;
+}
+
+.manageMemberDropDown .addMemberDropDownButton {
+    padding: 0;
+    min-width: 70px;
+}
+
+.manageMemberDropDown .addMemberDropDownButton:hover {
+    background-color: transparent;
+}
+
+.manageMemberDropDown .addMemberButton {
+    border: 0;
+    color: #FFFFFF;
+    height: 100%;
+    padding: 12px;
+    line-height: 1;
+    font-size: 14px;
+    min-width: 56px;
+}
+
+.manageMemberDropDown button {
+    color: #0A101D;
+    flex: 1;
+    gap: 8px;
+}
+
+.manageMemberDropDown .addMemberButton:hover {
+    background-color: #1F2937;
+}
+
+.manageMemberDropDown .dropDownSearchBar input::placeholder {
+    color: #9CA3AF;
+}
+
+.manageMemberDropDown .dropDownSearchBar input:focus-visible {
+    box-shadow: none;
+}
+
+.manageMemberDropDown .imgWrapper {
+    min-width: 24px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50px;
+    overflow: hidden;
+}
+
+.manageMemberDropDown .memberDropDown {
+    padding: 5px 10px;
+}
+
+.manageMemberDropDown .memberDropDown:hover,
+.manageMemberDropDown .memberDropDown:active,
+.manageMemberDropDown .memberDropDown[data-active] {
+    background-color: #FFFFFF;
+}
+
+.manageMemberDropDown .memberDropDown span {
+    margin-left: 0;
+}
+
+.manageMemberDropDown .memberDropDown svg {
+    font-size: 10px;
+}
+
+.manageMemberDropDown .closeIcon {
+    max-width: 20px;
+    height: 20px;
+}
+
+.manageMemberDropDown .closeIcon:hover {
+    background-color: #FFFFFF;
 }
 
 @media (max-width: 991px) {
