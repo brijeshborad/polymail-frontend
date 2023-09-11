@@ -58,6 +58,8 @@ export function MessageReplyBox(props: MessageBoxType) {
     const [isShowText, _setIsShowText] = useState<boolean>(false);
     const [replyBoxHide, setReplyBoxHide] = useState<boolean>(false);
     const [boxUpdatedFirstTime, setBoxUpdatedFirstTime] = useState<boolean>(false);
+    const [extraClassNames, setExtraClassNames] = useState<string>('');
+    const editorRef = useRef<any>(null);
     const {toast} = createStandaloneToast()
     const monthArray = ['Jan', 'Feb', 'March', 'April', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
@@ -421,6 +423,14 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
         }
     }
 
+    function handleEditorScroll(event: any) {
+        if (event.target.scrollTop > 0) {
+            setExtraClassNames(prevState => !prevState.includes('show-shadow') ? prevState + ' show-shadow' : prevState);
+        } else {
+            setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
+        }
+    }
+
     return (
         <Flex backgroundColor={'#FFFFFF'} position={'sticky'} bottom={"-20px"} paddingBottom={5}>
             <Flex maxHeight={'450px'} direction={'column'} mt={'auto'} backgroundColor={'#FFFFFF'} width={'100%'}
@@ -492,9 +502,10 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
 
 
                     <Flex direction={'column'} position={"relative"} flex={1}>
-                        <Flex direction={'column'} maxH={'285px'} overflow={'auto'} className={styles.replyBoxEditor}>
+                        <Flex direction={'column'} maxH={'285px'} overflow={'auto'} ref={editorRef} className={styles.replyBoxEditor}
+                              onScroll={handleEditorScroll}>
                             <RichTextEditor
-                                className={`reply-message-area message-reply-box ${hideEditorToolbar ? 'hide-toolbar' : ''} ${isShowText ? 'input-value-shadow' : ''}`}
+                                className={`reply-message-area message-reply-box ${hideEditorToolbar ? 'hide-toolbar' : ''} ${isShowText ? 'input-value-shadow' : ''} ${extraClassNames}`}
                                 initialUpdated={boxUpdatedFirstTime}
                                 placeholder='Reply with anything you like or @mention someone to share this thread'
                                 value={emailBody} onChange={(e) => sendToDraft(e)}/>

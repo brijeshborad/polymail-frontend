@@ -191,9 +191,9 @@ export function Message() {
     const onIframeLoad = () => {
         debounce(() => {
             if (iframeRef.current && iframeRef.current.contentWindow) {
-                setIframeHeight(iframeRef.current.contentWindow.document.body.scrollHeight + "px");
+                setIframeHeight((iframeRef.current.contentWindow.document.body.scrollHeight + 20)+ "px");
             }
-        }, 500)
+        }, 600)
     };
 
 
@@ -244,7 +244,7 @@ export function Message() {
                                     herderType={'inbox'}/>
 
                     <Flex padding={'20px'} gap={5} direction={'column'} flex={1} overflow={'auto'}>
-                        <Flex gap={2} direction={'column'} height={'100%'}>
+                        <Flex gap={2} direction={'column'} height={'100%'} justifyContent={'space-between'}>
                             {inboxMessages && !!inboxMessages.length && inboxMessages.map((item: any, index: number) => (
                                 <div key={index}>
                                     <MessageBox item={item} index={index} threadDetails={item}
