@@ -23,6 +23,8 @@ export function RichTextEditor({onChange, placeholder, className, value, initial
     const [editorState, setEditorState] = useState<EditorState>(EditorState.createEmpty());
     const emojiArray = ["😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇", "🙂", "🙃", "😉", "😌", "😍", "🥰", "😘", "😗", "😙", "😚", "😋", "😛", "😝", "😜", "🤪", "👶", "👧", "🧒", "👦", "👩", "🧑", "👨", "👵", "🧓", "👴", "👮", "👷", "💂", "🕵️‍♂️", "👩‍⚕️", "👨‍⚕️", "👩‍🌾", "👨‍🌾", "👩‍🍳", "👨‍🍳", "👩‍🎓", "👨‍🎓", "👩‍🎤", "👨‍🎤", "👩‍🏫", "👨‍🏫", "🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🦝", "🐻", "🐨", "🐼", "🦁", "🐯", "🐮", "🐷", "🐽", "🐸", "🐵", "🙈", "🙉", "🙊", "🐒", "🦍", "🦧", "🐔", "🍔", "🍟", "🍕", "🌭", "🍿", "🧂", "🍞", "🥖", "🥐", "🥨", "🥯", "🥞", "🧇", "🍳", "🍗", "🍖", "🥩", "🍔", "🍟", "🍕", "🌭", "🍿", "🧂", "🚗", "🚕", "🚆", "🚇", "🚈", "🚂", "🚊", "🚝", "🚄", "🚅", "🚈", "🚞", "🚋", "🚲", "🛴", "🛵", "🏍️", "🚨", "🚍", "🚌", "🚒", "🚑", "🚓", "⚽", "🏀", "🏈", "⚾", "🥎", "🎾", "🏐", "🏉", "🎱", "🏓", "🏸", "🥏", "🥅", "🏒", "🏑", "🏏", "🥋", "🥊", "🥇", "🥈", "🥉", "🏆"]
     const updateParentComponent = useCallback(() => {
+        console.log(editorState.isSelectionAtStartOfContent());
+        console.log(editorState.isSelectionAtEndOfContent());
         if (onChange && editorState?.getCurrentContent().getPlainText().trim()) {
             onChange(draftToHtml(convertToRaw(editorState?.getCurrentContent() as ContentState)));
         }
@@ -49,7 +51,7 @@ export function RichTextEditor({onChange, placeholder, className, value, initial
             wrapperClassName={className}
             editorClassName={'default-editor-css'}
             onEditorStateChange={setEditorState}
-            toolbarHidden={hideToolBar}
+
             toolbar={{
                 options: ['inline', 'list', 'emoji'],
                 inline: {
@@ -62,8 +64,8 @@ export function RichTextEditor({onChange, placeholder, className, value, initial
                 list: {
                     inDropdown: false,
                     options: ['ordered', 'unordered'],
-                    unordered: {icon: "/image/icon/ordered.svg"},
-                    ordered: {icon: "/image/icon/unordered.svg"},
+                    unordered: {icon: "/image/icon/unordered.svg"},
+                    ordered: {icon: "/image/icon/ordered.svg"},
                 },
                 emoji: {
                     icon: "/image/icon/emoji.svg",
