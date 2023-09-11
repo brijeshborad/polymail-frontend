@@ -16,7 +16,7 @@ function InboxPage() {
     const [userData, setUserData] = useState<User | null | undefined>(null);
     const {user} = useSelector((state: StateType) => state.auth);
     const {selectedThread} = useSelector((state: StateType) => state.threads);
-    const {projects} = useSelector((state: StateType) => state.projects);
+    const {projects, isLoading} = useSelector((state: StateType) => state.projects);
     const [projectData, setProjectData] = useState<Project[]>([]);
     const dispatch = useDispatch();
 
@@ -57,9 +57,10 @@ function InboxPage() {
 
     return (
         <div>
-            {!!projectData.length ? <InboxHeaderProjectsList/> : <Flex gap={2} py={4} px={10} backgroundColor={'#FFFFFF'} borderBottom={'1px solid #F3F4F6'}>
+            {isLoading && <Flex gap={2} py={4} px={10} backgroundColor={'#FFFFFF'} borderBottom={'1px solid #F3F4F6'}>
                 <SkeletonLoader height={'36px'} skeletonLength={4} />
-            </Flex>}
+                </Flex>}
+            {!!projectData.length && <InboxHeaderProjectsList/>}
 
             <div className={styles.mailBg}>
                 <Grid className={styles.mailGrid} templateColumns='30% auto' gap={6} height={'100%'}>
