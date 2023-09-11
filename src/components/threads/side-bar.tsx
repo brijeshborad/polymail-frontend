@@ -62,10 +62,12 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     const {sendJsonMessage} = useSocket();
     const dispatch = useDispatch();
     const {isOpen, onOpen, onClose} = useDisclosure();
+    const [initialized, setInitialized] = useState(false)
 
     const getAllThread = useCallback(() => {
+
         if (selectedAccount) {
-            let resetState = true;
+            let resetState = !initialized ? true : false;
             if (currentCacheTab !== tab) {
                 currentCacheTab = tab;
                 if (cacheThreads[`${props.cachePrefix}-${tab}-${selectedAccount.id}`]) {
@@ -73,6 +75,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                 }
                 dispatch(updateThreadState({threads: cacheThreads[`${props.cachePrefix}-${tab}-${selectedAccount.id}`]}));
             }
+
             if (router.query.project) {
                 dispatch(getAllThreads({
                     mailbox: tab,
@@ -83,7 +86,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                 dispatch(getAllThreads({mailbox: tab, account: selectedAccount.id, resetState: resetState}));
             }
         }
-    }, [dispatch, props.cachePrefix, selectedAccount, tab]);
+    }, [dispatch, props.cachePrefix, router.query.project, selectedAccount, tab, initialized]);
 
     useEffect(() => {
         if (newMessage && newMessage.name === 'new_message') {
@@ -108,6 +111,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                 [`${props.cachePrefix}-${tab}-${selectedAccount?.id}`]: threads ? [...threads] : []
             }
             dispatch(updateThreadState({success: false}));
+            setInitialized(true)
         }
     }, [selectedAccount, tab, threadListSuccess, threads, dispatch, props.cachePrefix])
 
@@ -347,7 +351,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
 
 
                     <TabPanels marginTop={5}>
-                        <ThreadsSideBarTab tab={tab} showLoader={isLoading}/>
+                        <ThreadsSideBarTab tab={tab} showLoader={isLoading} />
                     </TabPanels>
                 </Tabs>
             </Flex>
