@@ -21,17 +21,9 @@ if (typeof window === 'object') {
 
 export function RichTextEditor({onChange, placeholder, className, value, initialUpdated, hideToolBar = false}: RichTextEditorProps) {
     const [editorState, setEditorState] = useState<EditorState>(EditorState.createEmpty());
-    const [extraClassNames, setExtraClassNames] = useState<string>('');
     const emojiArray = ["😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇", "🙂", "🙃", "😉", "😌", "😍", "🥰", "😘", "😗", "😙", "😚", "😋", "😛", "😝", "😜", "🤪", "👶", "👧", "🧒", "👦", "👩", "🧑", "👨", "👵", "🧓", "👴", "👮", "👷", "💂", "🕵️‍♂️", "👩‍⚕️", "👨‍⚕️", "👩‍🌾", "👨‍🌾", "👩‍🍳", "👨‍🍳", "👩‍🎓", "👨‍🎓", "👩‍🎤", "👨‍🎤", "👩‍🏫", "👨‍🏫", "🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🦝", "🐻", "🐨", "🐼", "🦁", "🐯", "🐮", "🐷", "🐽", "🐸", "🐵", "🙈", "🙉", "🙊", "🐒", "🦍", "🦧", "🐔", "🍔", "🍟", "🍕", "🌭", "🍿", "🧂", "🍞", "🥖", "🥐", "🥨", "🥯", "🥞", "🧇", "🍳", "🍗", "🍖", "🥩", "🍔", "🍟", "🍕", "🌭", "🍿", "🧂", "🚗", "🚕", "🚆", "🚇", "🚈", "🚂", "🚊", "🚝", "🚄", "🚅", "🚈", "🚞", "🚋", "🚲", "🛴", "🛵", "🏍️", "🚨", "🚍", "🚌", "🚒", "🚑", "🚓", "⚽", "🏀", "🏈", "⚾", "🥎", "🎾", "🏐", "🏉", "🎱", "🏓", "🏸", "🥏", "🥅", "🏒", "🏑", "🏏", "🥋", "🥊", "🥇", "🥈", "🥉", "🏆"]
     const updateParentComponent = useCallback(() => {
         if (onChange && editorState?.getCurrentContent().getPlainText().trim()) {
-            console.log(editorState?.getCurrentContent().getPlainText().length);
-            if(editorState?.getCurrentContent().getPlainText().length > 500) {
-                console.log(extraClassNames)
-                setExtraClassNames(prevState => !prevState.includes('show-shadow') ? prevState + ' show-shadow' : prevState);
-            } else {
-                setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
-            }
             onChange(draftToHtml(convertToRaw(editorState?.getCurrentContent() as ContentState)));
         }
         // eslint-disable-next-line
@@ -54,7 +46,7 @@ export function RichTextEditor({onChange, placeholder, className, value, initial
         <Editor
             placeholder={placeholder}
             editorState={editorState}
-            wrapperClassName={`${className} ${extraClassNames}`}
+            wrapperClassName={className}
             editorClassName={'default-editor-css'}
             onEditorStateChange={setEditorState}
             toolbarHidden={hideToolBar}
@@ -70,8 +62,8 @@ export function RichTextEditor({onChange, placeholder, className, value, initial
                 list: {
                     inDropdown: false,
                     options: ['ordered', 'unordered'],
-                    unordered: { icon: "/image/icon/ordered.png"},
-                    ordered: { icon: "/image/icon/unordered.png"},
+                    unordered: {icon: "/image/icon/ordered.png"},
+                    ordered: {icon: "/image/icon/unordered.png"},
                 },
                 emoji: {
                     icon: "/image/icon/emoji.png",

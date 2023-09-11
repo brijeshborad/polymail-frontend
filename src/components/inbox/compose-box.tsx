@@ -43,7 +43,9 @@ export function ComposeBox(props: any) {
     const {isOpen: isOpenProject, onOpen: onOpenProject, onClose: onCloseProject} = useDisclosure();
     const [scheduledDate, setScheduledDate] = useState<Date>();
     const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
-    const inputFile = useRef<HTMLInputElement | null>(null)
+    const [extraClassNames, setExtraClassNames] = useState<string>('');
+    const inputFile = useRef<HTMLInputElement | null>(null);
+    const editorRef = useRef<any>(null);
     const {toast} = createStandaloneToast()
 
     useEffect(() => {
@@ -283,6 +285,7 @@ export function ComposeBox(props: any) {
         }
     }, [emailRecipients.recipients.items, emailRecipients.cc.items, emailRecipients.bcc.items, subject]);
 
+
     function handleFileUpload(event: ChangeEventHandler | any) {
         const file = event.target.files[0];
         if (draft && draft.id) {
@@ -315,6 +318,15 @@ export function ComposeBox(props: any) {
         setAttachments([...newArr!]);
     }
 
+
+    function handleEditorScroll(event: any) {
+        if (event.target.scrollTop > 0) {
+            setExtraClassNames(prevState => !prevState.includes('show-shadow') ? prevState + ' show-shadow' : prevState);
+        } else {
+            setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
+        }
+    }
+
     return (
         <>
             <Modal isOpen={props.isOpen} onClose={props.onClose} isCentered>
@@ -342,9 +354,9 @@ export function ComposeBox(props: any) {
                             <Box flex={'1'} p={5}>
                                 <Flex direction={"column"} border={'1px solid #F3F4F6'} borderRadius={8} h={'100%'}
                                       padding={'16px'} gap={4}>
-                                        
+
                                     <MessageRecipients
-                                      emailRecipients={emailRecipients} 
+                                      emailRecipients={emailRecipients}
                                       handleKeyDown={handleKeyDown}
                                       handleChange={handleChange}
                                       handlePaste={handlePaste}
@@ -352,8 +364,8 @@ export function ComposeBox(props: any) {
                                     />
 
                                     <Flex flex={1} direction={'column'} position={'relative'}>
-                                        <Flex direction={'column'} className={styles.replyBoxEditor}>
-                                            <RichTextEditor className={'reply-message-area'} initialUpdated={true}
+                                        <Flex direction={'column'} ref={editorRef} className={styles.replyBoxEditor} onScroll={handleEditorScroll}>
+                                            <RichTextEditor className={`reply-message-area ${extraClassNames}`} initialUpdated={true}
                                                             placeholder='Reply with anything you like or @mention someone to share this thread'
                                                             value={emailBody} onChange={(e) => sendToDraft(e)}/>
                                             {attachments && attachments.length > 0 ? <div style={{marginTop: '20px'}}>
