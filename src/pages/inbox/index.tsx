@@ -16,8 +16,7 @@ function InboxPage() {
     const [userData, setUserData] = useState<User | null | undefined>(null);
     const {user} = useSelector((state: StateType) => state.auth);
     const {selectedThread} = useSelector((state: StateType) => state.threads);
-    const {projects, isLoading} = useSelector((state: StateType) => state.projects);
-    const [projectData, setProjectData] = useState<Project[]>([]);
+    const {isLoading} = useSelector((state: StateType) => state.projects);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -27,13 +26,6 @@ function InboxPage() {
     useEffect(() => {
         dispatch(getAllProjects());
     }, [dispatch])
-
-    useEffect(() => {
-        if (projects && projects.length > 0) {
-            let favoriteData = projects.filter((item: Project) => item.projectMeta?.favorite);
-            setProjectData(favoriteData)
-        }
-    }, [projects])
 
     function updateSize() {
         setSize(window.innerWidth);
