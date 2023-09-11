@@ -63,12 +63,11 @@ export function AddToProjectButton() {
         padding={'4px 4px 4px 8px'}
         fontSize={'12px'} fontWeight={500} 
         h={'fit-content'}
-        zIndex='overlay'
       >
         Add to Project 
         <span className={styles.RightContent}>⌘P</span>
       </MenuButton>
-      <MenuList className={`${styles.addToProjectList} drop-down-list`}>
+      <MenuList className={`${styles.addToProjectList} drop-down-list`} zIndex={'overlay'}>
 
           <div className={'dropdown-searchbar'}>
               <InputGroup>
