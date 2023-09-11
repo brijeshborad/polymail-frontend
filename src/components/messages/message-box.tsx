@@ -9,6 +9,7 @@ import Image from "next/image";
 import {MessageAttachments} from "@/models";
 import {StateType} from "@/types";
 import {debounce} from "@/utils/common.functions";
+import {ViewIcon, ViewOffIcon} from "@chakra-ui/icons";
 
 
 export function MessageBox(props: any) {
@@ -64,9 +65,12 @@ export function MessageBox(props: any) {
                         <Flex align={'center'} justify={'space-between'} mb={1}>
                             <Heading as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400}
                                      letterSpacing={'-0.13px'} lineHeight={1}>Michael Eisner</Heading>
-                            <div className={styles.mailBoxTime}>
+                            <Flex align={'center'} className={styles.mailBoxTime} gap={3}>
+                                <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
+                                    {props?.item.scope === 'visible' ? <ViewOffIcon /> : <ViewIcon />}
+                                </Flex>
                                 <Time time={props?.item.created || ''} isShowFullTime={true} showTimeInShortForm={false}/>
-                            </div>
+                            </Flex>
                         </Flex>
                         <Text fontSize='13px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
                               fontWeight={400}>{props?.item.snippet || '(no content)'}</Text>
