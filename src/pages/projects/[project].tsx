@@ -215,7 +215,7 @@ function ProjectInbox() {
                                                             color={'#374151'} backgroundColor={'transparent'} h={'auto'}
                                                             padding={0} as={Button}
                                                             rightIcon={<ChevronDownIcon/>}> Member </MenuButton>
-                                                <MenuList>
+                                                <MenuList className={'drop-down-list'}>
                                                     {PROJECT_ROLES.map((role, roleIndex) => {
                                                         return <MenuItem onClick={() => {
                                                             membersInputs.role = role;

@@ -368,6 +368,38 @@
     background-color: #FFFFFF;
 }
 
+.projectMemberModal .projectSearchBar:focus-visible,
+.projectMemberModal .projectSearchBar:hover {
+    border-color: #E5E7EB;
+    box-shadow: none;
+}
+
+.projectMemberModal .addProjectMember {
+    background-color: #F3F4F6;
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.projectMemberModal .memberRoleDropDown:hover,
+.projectMemberModal .memberRoleDropDown:active,
+.projectMemberModal .memberRoleDropDown[data-active] {
+    background-color: #ffffff;
+}
+
+.projectMemberModal .memberRoleDropDown svg {
+    width: 10px;
+    height: 10px;
+}
+
+.projectMemberModal .addMemberButton:hover {
+    background-color: #1F2937;
+}
+
+.projectMemberModal .cancelModalButton:hover {
+    background-color: #ffffff;
+}
+
+
 @media (max-width: 991px) {
     .projectPage .mailGrid {
         grid-template-columns: 100% 100%;

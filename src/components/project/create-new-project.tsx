@@ -1,7 +1,7 @@
 import {
     Button,
     Flex,
-    Heading, Input,
+    Heading, Input, Menu, MenuButton, MenuItem, MenuList,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -16,6 +16,8 @@ import {createProjects} from "@/redux/projects/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import withAuth from "@/components/auth/withAuth";
+import {ChevronDownIcon, SmallAddIcon, TriangleDownIcon} from "@chakra-ui/icons";
+import {PROJECT_ROLES} from "@/utils/constants";
 
 
 function CreateNewProjectModal(props: any) {
@@ -59,30 +61,51 @@ function CreateNewProjectModal(props: any) {
             <Modal isOpen={props.isOpen} onClose={props.onClose} isCentered>
                 <ModalOverlay/>
                 <ModalContent maxWidth={'480px'} className={styles.projectMemberModal}>
-                    <ModalHeader fontSize={'13px'} color={'#08162F'} borderBottom={'1px solid rgba(0, 0, 0, 0.1)'}>Create
-                        project
+                    <ModalHeader fontSize={'13px'} color={'#374151'} borderBottom={'1px solid #F3F4F6'}>
+                        Create project
                     </ModalHeader>
                     <ModalCloseButton top={'13px'} right={'17px'} className={styles.closeIcon}/>
-                    <ModalBody padding={'12px 16px 16px'}>
-                        <div className={styles.addProjectMember}>
-                            <Heading as='h6' size='xs' mb={2}>Add Project Name</Heading>
-                            <Flex direction={'column'} gap={6}>
-                                <Flex align={'center'} position={"relative"} className={styles.emailAddress}
-                                      padding={'6px 8px 6px 16px'} width={'100%'}>
-                                    <Input p={0} h={'auto'} border={0} placeholder='Enter Project Name' size='md'
-                                           onChange={handleChange}/>
+                    <ModalBody padding={'20px 12px 12px'}>
+                        <Flex direction={'column'} gap={4}>
+                            <Flex align={'center'} gap={4}>
+                                <Flex backgroundColor={'#F9FAFB'} color={'#374151'} fontSize={'24px'} w={'48px'} h={'48px'} borderRadius={'50%'} align={'center'} justify={'center'}>
+                                    <SmallAddIcon/>
                                 </Flex>
-                                <Flex align={'space-between'}>
-                                    <Button className={styles.addMemberButton} backgroundColor={'#000000'} borderRadius={8}
-                                            width={'fit-content'} onClick={() => addNewProject()}
-                                            color={'#ffffff'} minWidth={'120px'} size='sm'> Add </Button>
-
-                                    <Button className={styles.addMemberButton} backgroundColor={'#000000'} borderRadius={8} ml={2}
-                                            width={'fit-content'} onClick={props.onClose}
-                                            color={'#ffffff'} minWidth={'120px'} size='sm'> Cancel </Button>
-                                </Flex>
+                                <Input className={styles.projectSearchBar} borderColor={'#E5E7EB'} borderRadius={8} backgroundColor={'#FFFFFF'} fontSize={'13px'} padding={'10px 16px'} lineHeight={1} height={'auto'} placeholder='Project name' />
                             </Flex>
-                        </div>
+
+                            <div className={styles.addProjectMember}>
+                                <Heading as='h6' fontSize={'16px'} color={'#374151'} letterSpacing={'-0.13px'} lineHeight={1} fontWeight={500} mb={2}>Add Project Name</Heading>
+                                <Flex align={'center'} gap={'14px'}>
+                                    <Flex align={'center'} position={"relative"} padding={'10px 10px 10px 16px'} width={'100%'}>
+                                        <Input p={0} h={'auto'} fontSize={'13px'} lineHeight={1} letterSpacing={'-0.13px'} border={0} placeholder='Name or email address' size='md'
+                                               onChange={handleChange}/>
+                                        <Menu isLazy>
+                                            <MenuButton className={styles.memberRoleDropDown} minWidth={'65px'}
+                                                        fontSize={'12px'} lineHeight={1}
+                                                        color={'#374151'}  backgroundColor={'transparent'} h={'auto'}
+                                                        padding={0} as={Button} rightIcon={<TriangleDownIcon/>}> Member </MenuButton>
+                                            <MenuList className={'drop-down-list'}>
+                                                <MenuItem> Member </MenuItem>
+                                                <MenuItem> Admin </MenuItem>
+                                            </MenuList>
+                                        </Menu>
+                                    </Flex>
+                                    <Button className={styles.addMemberButton} backgroundColor={'#1F2937'} fontSize={'14px'}
+                                            borderRadius={'8px'} minW={'52px'} height={'auto'} lineHeight={'1'} color={'#FFFFFF'} padding={'11px 12px'}>Add</Button>
+                                </Flex>
+                            </div>
+                            <Flex align={'center'} justify={'flex-end'} pt={4} borderTop={'1px solid #F3F4F6'} gap={3}>
+                                <Button className={styles.cancelModalButton} border={'1px solid #374151'}  backgroundColor={'#FFFFFF'} borderRadius={8}
+                                        onClick={props.onClose} fontSize={'14px'} height={'auto'} lineHeight={1} padding={'10px 12px'}
+                                        color={'#374151'}> Cancel </Button>
+
+                                <Button className={styles.addMemberButton} backgroundColor={'#1F2937'} borderRadius={8}
+                                        onClick={() => addNewProject()} fontSize={'14px'} height={'auto'} lineHeight={1} padding={'11px 12px'}
+                                        color={'#ffffff'}> Create Project </Button>
+                            </Flex>
+                        </Flex>
+
                     </ModalBody>
                 </ModalContent>
             </Modal>
