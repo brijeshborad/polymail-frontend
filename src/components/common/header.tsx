@@ -39,7 +39,7 @@ export function Header() {
         isLoading: isOrganizationLoading
     } = useSelector((state: StateType) => state.organizations);
     const {accounts, selectedAccount} = useSelector((state: StateType) => state.accounts);
-    const {threads, tabValue} = useSelector((state: StateType) => state.threads);
+    const {threads, tabValue, isThreadSearched} = useSelector((state: StateType) => state.threads);
     const {googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
     const {userDetails, profilePicture} = useSelector((state: StateType) => state.users);
     const [userData, setUserData] = useState<User>();
@@ -189,6 +189,12 @@ export function Header() {
         }
     }, [reAuthToast, selectedAccount])
 
+    useEffect(() => {
+        if (!isThreadSearched) {
+            setSearchString('')
+        }
+    }, [isThreadSearched])
+
     if (!userData) {
         return <></>;
     }
@@ -256,6 +262,7 @@ export function Header() {
                            onChange={event => {
                                setSearchString(event.target.value)
                            }}
+                           value={searchString}
                            onKeyPress={(e) => handleKeyPress(e)}
                     />
                     <InputRightElement>

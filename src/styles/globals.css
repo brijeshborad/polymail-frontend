@@ -194,6 +194,7 @@ a {
 
 .drop-down-list button svg {
     margin: 0;
+    font-size: 16px;
 }
 
 .drop-down-list button:hover {

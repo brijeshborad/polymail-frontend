@@ -13,7 +13,16 @@ import {
     Tabs,
     Tooltip, useDisclosure
 } from "@chakra-ui/react";
-import {ArchiveIcon, DraftIcon, EditIcon, InboxIcon, SendIcon, StarIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
+import {
+    ArchiveIcon,
+    DraftIcon,
+    EditIcon,
+    InboxIcon,
+    SendIcon,
+    StarIcon,
+    TimeSnoozeIcon,
+    TrashIcon
+} from "@/icons";
 import {StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
@@ -23,15 +32,16 @@ import {Message, Thread} from "@/models";
 import {ThreadsSideBarTab} from "@/components/threads";
 import {updateDraftState} from "@/redux/draft/action-reducer";
 import {updateLastMessage} from "@/redux/socket/action-reducer";
-import {TriangleDownIcon} from "@chakra-ui/icons";
+import {SmallCloseIcon, TriangleDownIcon} from "@chakra-ui/icons";
 import {useSocket} from "@/hooks/use-socket.hook";
 import {ComposeBox} from "@/components/inbox/compose-box";
 import {useRouter} from "next/router";
+import {AddToProjectButton} from "@/components/common";
 
 let cacheThreads: { [key: string]: Thread[] } = {};
 let currentCacheTab = 'INBOX';
 
-export function ThreadsSideBar(props: {cachePrefix: string}) {
+export function ThreadsSideBar(props: { cachePrefix: string }) {
     const [tab, setTab] = useState<string>('INBOX');
     const [countUnreadMessages, setCountUnreadMessages] = useState<number>(0);
     const router = useRouter();
@@ -42,7 +52,8 @@ export function ThreadsSideBar(props: {cachePrefix: string}) {
         selectedThread,
         updateSuccess,
         success: threadListSuccess,
-        tabValue
+        tabValue,
+        isThreadSearched
     } = useSelector((state: StateType) => state.threads);
     const {success: draftSuccess, updatedDraft} = useSelector((state: StateType) => state.draft);
     const {selectedAccount, account} = useSelector((state: StateType) => state.accounts);
@@ -63,7 +74,11 @@ export function ThreadsSideBar(props: {cachePrefix: string}) {
                 dispatch(updateThreadState({threads: cacheThreads[`${props.cachePrefix}-${tab}-${selectedAccount.id}`]}));
             }
             if (router.query.project) {
-                dispatch(getAllThreads({mailbox: tab, project: router.query.project as string, resetState: resetState}));
+                dispatch(getAllThreads({
+                    mailbox: tab,
+                    project: router.query.project as string,
+                    resetState: resetState
+                }));
             } else {
                 dispatch(getAllThreads({mailbox: tab, account: selectedAccount.id, resetState: resetState}));
             }
@@ -157,13 +172,21 @@ export function ThreadsSideBar(props: {cachePrefix: string}) {
         }
     }, [dispatch, getAllThread, tab])
 
+    const searchCancel = () => {
+        dispatch(updateThreadState({ isThreadSearched: false }));
+        sendJsonMessage({
+            "userId": userDetails?.id,
+            "name": "SearchCancel",
+        });
+        if (selectedAccount && selectedAccount.id) {
+            dispatch(getAllThreads({mailbox: tabValue, account: selectedAccount.id}));
+        }
+
+    }
+
     const changeEmailTabs = (value: string) => {
         if (currentCacheTab !== value) {
-            dispatch(updateThreadState({isThreadSearched: false}));
-            sendJsonMessage({
-                "userId": userDetails?.id,
-                "name": "SearchCancel",
-            });
+            searchCancel();
         }
         setTab(value);
     }
@@ -172,7 +195,34 @@ export function ThreadsSideBar(props: {cachePrefix: string}) {
         <>
             <Flex direction={'column'} gap={5} className={styles.mailListTabs}>
                 <Tabs>
-                    <Flex align={'center'} gap={'3'}>
+                    {isThreadSearched ? <Flex overflow={'auto'} backgroundColor={'#FFFFFF'} border={'1px solid #F3F4F6'} borderRadius={16} padding={'10px 14px'} gap={2} align={'center'} justify={'space-between'}>
+                        <Flex align={'center'} fontSize={'13px'} fontWeight={'400'} color={'#374151'} gap={2} letterSpacing={'-0.13px'} whiteSpace={'nowrap'}>
+                            <span>Search Results {countUnreadMessages > 0 &&
+                            <Badge backgroundColor={'#F3F4F6'} fontSize={'12px'} color={'#6B7280'} padding={'1px 4px'} borderRadius={4} fontWeight={500}>{countUnreadMessages}</Badge>}</span>
+                        </Flex>
+                        <Flex gap={2}>
+                            <AddToProjectButton />
+                            <Menu>
+                                <MenuButton className={styles.tabListMoreButton} minWidth={'60px'} height={'auto'}
+                                            backgroundColor={'transparent'} border={'1px solid #D1D5DB'} lineHeight={1}
+                                            fontSize={'12px'} color={'#374151'} as={Button} borderRadius={'50px'}
+                                            rightIcon={<TriangleDownIcon color={'#374151'}/>} p={'0 8px 0 10px'}> More </MenuButton>
+                                <MenuList className={`${styles.tabListDropDown} drop-down-list`}>
+                                    <MenuItem onClick={() => changeEmailTabs('INBOX')}><InboxIcon/> Inbox</MenuItem>
+                                    <MenuItem onClick={() => changeEmailTabs('SENT')}><SendIcon/> Sent</MenuItem>
+                                    <MenuItem onClick={() => changeEmailTabs('SNOOZED')}><TimeSnoozeIcon/> Snoozed</MenuItem>
+                                    <MenuItem onClick={() => changeEmailTabs('TRASH')}><TrashIcon/> Trash</MenuItem>
+                                    <MenuItem onClick={() => changeEmailTabs('STARRED')}><StarIcon/> Starred</MenuItem>
+                                    <MenuItem onClick={() => changeEmailTabs('ARCHIVE')}><ArchiveIcon/> Archive</MenuItem>
+                                    <MenuItem onClick={() => changeEmailTabs('DRAFT')}><DraftIcon/> Draft</MenuItem>
+                                </MenuList>
+                            </Menu>
+
+                            <div className={styles.searchCloseIcon} onClick={() => searchCancel()}>
+                                <SmallCloseIcon />
+                            </div>
+                        </Flex>
+                    </Flex> : <Flex align={'center'} gap={'3'}>
                         <TabList justifyContent={'space-between'} flex={1} alignItems={'center'}
                                  className={styles.mailTabList}
                                  overflowX={"auto"}>
@@ -268,7 +318,8 @@ export function ThreadsSideBar(props: {cachePrefix: string}) {
                                 </MenuButton>
                                 <MenuList className={`${styles.tabListDropDown} drop-down-list`}>
                                     {['TRASH', 'STARRED', 'ARCHIVE', 'DRAFT'].includes(tab) &&
-                                    <MenuItem onClick={() => changeEmailTabs('SNOOZED')}><TimeSnoozeIcon/> Snoozed</MenuItem>
+                                    <MenuItem
+                                        onClick={() => changeEmailTabs('SNOOZED')}><TimeSnoozeIcon/> Snoozed</MenuItem>
                                     }
 
                                     {tab !== 'TRASH' &&
@@ -290,16 +341,18 @@ export function ThreadsSideBar(props: {cachePrefix: string}) {
                         </TabList>
                         <Button className={styles.composeButton} borderRadius={8} height={'auto'} padding={'10px'}
                                 minWidth={'101px'} backgroundColor={'#FFFFFF'} color={'#374151'} borderColor={'#E5E7EB'}
-                                leftIcon={<EditIcon/>} colorScheme='blue' variant='outline' onClick={onOpen}>Compose</Button>
-                    </Flex>
+                                leftIcon={<EditIcon/>} colorScheme='blue' variant='outline'
+                                onClick={onOpen}>Compose</Button>
+                    </Flex>}
+
 
                     <TabPanels marginTop={5}>
-                        <ThreadsSideBarTab tab={tab} showLoader={isLoading} />
+                        <ThreadsSideBarTab tab={tab} showLoader={isLoading}/>
                     </TabPanels>
                 </Tabs>
             </Flex>
 
-            <ComposeBox onOpen={onOpen} isOpen={isOpen} onClose={onClose} />
+            <ComposeBox onOpen={onOpen} isOpen={isOpen} onClose={onClose}/>
         </>
     )
 }

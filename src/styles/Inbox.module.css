@@ -101,6 +101,29 @@
     width: 9px;
 }
 
+.searchCloseIcon svg {
+    color: #6B7280;
+}
+
+.tabListMoreButton svg {
+    width: 9px;
+    height: 9px;
+}
+
+.tabListMoreButton span {
+    margin-left: 4px;
+}
+
+.searchCloseIcon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.tabListDropDown button {
+    gap: 8px;
+}
+
 .mailTabList .tabListDropDown button {
     gap: 8px;
     padding: 10px 12px;
@@ -297,9 +320,9 @@
     font-size: 14px;
 }
 
-.mailBox .addToProject {
+.addToProject {
     border-radius: 50px;
-    background: #000000;
+    background: #2A6FFF;
     color: #FFFFFF;
     box-shadow: 0 0 3px 0 rgba(38, 109, 240, 0.12);
     padding: 4px 4px 4px 8px;
@@ -308,48 +331,55 @@
     height: fit-content;
 }
 
-.mailBox .addToProject:hover,
-.mailBox .addToProject[data-active] {
-    background: #000000;
+.addToProject:hover,
+.addToProject[data-active] {
+    background: #2A6FFF !important;
 }
 
-.mailBox .addToProject .RightContent {
+.addToProject .RightContent {
     display: inline-block;
     background-color: rgba(255, 255, 255, 0.1);
     border-radius: 50px;
     padding: 2px 4px;
     margin-left: 5px;
+    line-height: 1;
 }
 
-.mailBox .addToProject svg {
+.addToProject svg {
     stroke: #FFFFFF;
     margin: 0;
+    width: 20px;
+    height: 20px;
 }
 
-.mailBox .addToProjectList .addNewProject,
+.addToProjectList .addNewProject,
 .composeModal .addToProjectList .addNewProject {
     width: calc(100% - 24px);
     margin: 0 auto;
 }
 
-.mailBox .addToProjectList .addNewProject button,
+.addToProjectList .addNewProject button,
 .composeModal .addToProjectList .addNewProject button {
     border-top: 1px solid #F3F4F6;
     padding: 0;
     gap: 8px;
 }
 
-.mailBox .addToProjectList .addNewProject button:hover {
+.addToProjectList .addNewProject button:hover {
     background-color: transparent;
 }
 
-.mailBox .addToProjectList .addNewProject button .plusIcon,
+.addToProjectList .addNewProject button .plusIcon,
 .composeModal .addToProjectList .addNewProject button .plusIcon {
     width: 20px;
     height: 20px;
     border-radius: 3px;
     background-color: #1F2937;
     color: #FFFFFF;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .replyBox h1 {
