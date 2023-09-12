@@ -432,8 +432,8 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
     }
 
     return (
-        <Flex backgroundColor={'#FFFFFF'} position={'sticky'} bottom={"-20px"} paddingBottom={5}>
-            <Flex maxHeight={'450px'} direction={'column'} mt={'auto'} backgroundColor={'#FFFFFF'} width={'100%'}
+        <Flex backgroundColor={'#FFFFFF'} position={'sticky'} mt={'auto'} bottom={"-21px"} paddingBottom={5}>
+            <Flex maxHeight={'450px'} direction={'column'} backgroundColor={'#FFFFFF'} width={'100%'}
                   onFocus={() => handleFocus()} onBlur={() => handleBlur()}>
                 <Flex borderRadius={8} gap={4} border={'1px solid #F3F4F6'} direction={'column'} padding={4}>
                     <Flex align={'center'} justify={'space-between'} gap={4} pb={4}
@@ -538,7 +538,7 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                                 <Flex align={'center'} className={styles.replyButton}>
                                     <Button className={styles.replyTextButton} colorScheme='blue'
                                             onClick={() => sendMessages()}> Send </Button>
-                                    <Menu>
+                                    <Menu isLazy={true} lazyBehavior={"keepMounted"}>
                                         <MenuButton className={styles.replyArrowIcon} as={Button}
                                                     aria-label='Options'
                                                     variant='outline'><ChevronDownIcon/></MenuButton>
