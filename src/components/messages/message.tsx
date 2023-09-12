@@ -38,7 +38,9 @@ let cacheMessages: { [key: string]: { body: MessagePart, attachments: MessageAtt
 
 export function Message() {
   const iframeRef = React.useRef<HTMLIFrameElement | null | any>(null);
+  const messagesWrapperRef = React.useRef<HTMLDivElement | null | any>(null);
   const [iframeHeight, setIframeHeight] = React.useState("0px");
+  const [hasScrollableContent, setHasScrollableContent] = React.useState(false);
 
   const [index, setIndex] = useState<number | null>(null);
   const [emailPart, setEmailPart] = useState<string>("");
@@ -234,6 +236,13 @@ export function Message() {
       debounce(() => {
           if (iframeRef.current && iframeRef.current.contentWindow) {
               setIframeHeight((iframeRef.current.contentWindow.document.body.scrollHeight + 20) + "px");
+              debounce(() => {
+                  if(messagesWrapperRef.current.scrollHeight > messagesWrapperRef.current.offsetHeight) {
+                      setHasScrollableContent(true)
+                  } else {
+                      setHasScrollableContent(false)
+                  }
+              }, 100)
           }
       }, 500)
   };
@@ -269,7 +278,7 @@ export function Message() {
   return (
     <Box
       className={`${styles.mailBox} ${isThreadFocused ? styles.mailBoxFocused : ''}`}
-      height={'calc(100vh - 180px)'}
+      height={'calc(100vh - 180px)'} overflow={'hidden'} borderRadius={'15px'}
       onClick={() => setThreadFocus(true)}
     >
       {!selectedThread && !isCompose &&
@@ -288,7 +297,7 @@ export function Message() {
               <MessagesHeader inboxMessages={inboxMessages} index={index} closeCompose={closeCompose}
                 herderType={'inbox'} />
 
-              <Flex padding={'20px'} gap={5} direction={'column'} flex={1} overflow={'auto'}>
+              <Flex padding={'20px'} ref={messagesWrapperRef} gap={5} direction={'column'} flex={1} overflow={'auto'}>
                 <Flex gap={2} direction={'column'} height={'100%'}>
                   {inboxMessages && !!inboxMessages.length && inboxMessages.map((item: any, index: number) => (
                     <div key={index}>
@@ -404,7 +413,7 @@ export function Message() {
 
                   <MessageReplyBox
                     emailPart={(messagePart?.data || '')} messageData={messageDetailsForReplyBox}
-                    replyType={replyType} />
+                    replyType={replyType} parentHasScroll={hasScrollableContent} />
                 </Flex>
               </Flex>
             </>
