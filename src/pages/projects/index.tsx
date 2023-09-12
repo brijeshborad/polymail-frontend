@@ -132,7 +132,7 @@ function Index() {
     return (
         <>
             <Flex maxH={"calc(100vh - 65px)"} overflow={"auto"}>
-                <Flex direction={'column'} gap={7} maxWidth={'935px'} padding={'27px 20px'} margin={'0 auto'} w={'100%'}
+                <Flex direction={'column'} gap={7} maxWidth={'935px'} padding={'27px 20px'} margin={'0 auto'} w={'100%'} h={'100%'}
                       className={styles.projectListPage}>
                     <Flex align={'center'} justify={'space-between'}>
                         <Heading as='h4' fontSize={'24px'} fontWeight={600} color={'#08162F'}>Projects <Badge
