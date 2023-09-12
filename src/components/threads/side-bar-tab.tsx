@@ -3,17 +3,29 @@ import styles from "@/styles/Inbox.module.css";
 import {StateType, TabProps} from "@/types";
 import React, {useState, useEffect} from "react";
 import {ThreadsSideBarList} from "@/components/threads";
-import {getAllThreads} from "@/redux/threads/action-reducer";
+import {getAllThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import {useRouter} from "next/router";
 
 export function ThreadsSideBarTab(props: TabProps) {
+    const { multiSelection, threads } = useSelector((state: StateType) => state.threads)
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
 
+    
     const router = useRouter();
     const dispatch = useDispatch();
     const [tabName, setTabName] = useState<string>('just-mine');
+
+    const toggleSelectAllThreads = (checked: boolean) => {
+      dispatch(updateThreadState({
+      isThreadSearched: checked,
+      multiSelection: !checked ? [] : threads?.map((thread) => thread.id!)
+      }))
+      return
+    }
+    
+    const isSelectedAllChecked = ((multiSelection && multiSelection.length > 0) && multiSelection.length === (threads || []).length)
 
     useEffect(() => {
         if (router.query.project) {
@@ -43,7 +55,12 @@ export function ThreadsSideBarTab(props: TabProps) {
             <div>
                 <Flex overflowX={'auto'} align={'center'}>
                     <div className={styles.checkBoxLabel}>
-                        <Checkbox defaultChecked>Select All</Checkbox>
+                        <Checkbox 
+                          isChecked={isSelectedAllChecked}
+                          onChange={(e) => toggleSelectAllThreads(e.target.checked)}
+                        >
+                          Select All
+                        </Checkbox>
                     </div>
 
                     <div className={styles.mailOtherOption}>
