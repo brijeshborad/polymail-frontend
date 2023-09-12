@@ -26,6 +26,7 @@ export function MessageBox(props: any) {
     const onIframeLoad = () => {
         debounce(() => {
             if (iframeRef.current && iframeRef.current.contentWindow) {
+                iframeRef.current.contentWindow.document.body.style = "margin: 0; overflow: hidden;";
                 setIframeHeight((iframeRef.current.contentWindow.document.body.scrollHeight + 20 ) + "px");
             }
         }, 500);
