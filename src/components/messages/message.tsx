@@ -329,7 +329,7 @@ export function Message() {
                             </Flex>
 
                             <Flex align={'center'} gap={'6px'}>
-                                {lastMessageDetails.scope === 'visible' ? <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
+                                {lastMessageDetails.scope !== 'visible' ? <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
                                     <ViewOffIcon />
                                 </Flex> : ''}
                               <Flex className={styles.memberImages}>

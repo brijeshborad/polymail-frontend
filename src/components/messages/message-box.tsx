@@ -66,7 +66,7 @@ export function MessageBox(props: any) {
                             <Heading as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400}
                                      letterSpacing={'-0.13px'} lineHeight={1}>Michael Eisner</Heading>
                             <Flex align={'center'} className={styles.mailBoxTime} gap={3}>
-                                {props?.item.scope === 'visible' ? <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
+                                {props?.item.scope !== 'visible' ? <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
                                      <ViewOffIcon />
                                 </Flex> : ''}
                                 <Time time={props?.item.created || ''} isShowFullTime={true} showTimeInShortForm={false}/>
@@ -96,7 +96,7 @@ export function MessageBox(props: any) {
                                     </Flex>
 
                                     <Flex align={'center'} gap={'6px'}>
-                                        {props?.threadDetails?.scope === 'visible' ? <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
+                                        {props?.threadDetails?.scope !== 'visible' ? <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
                                             <ViewOffIcon />
                                         </Flex> : ''}
                                         <Flex className={styles.memberImages}>
