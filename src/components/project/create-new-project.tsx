@@ -7,7 +7,7 @@ import {
     ModalCloseButton,
     ModalContent,
     ModalHeader,
-    ModalOverlay, Spinner
+    ModalOverlay
 } from "@chakra-ui/react";
 import styles from "@/styles/project.module.css";
 import React, {ChangeEvent, useEffect, useState} from "react";
