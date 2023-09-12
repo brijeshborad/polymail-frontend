@@ -962,6 +962,10 @@
     stroke: #6B7280;
 }
 
+.composeModal .replyBoxIcon .replyIcon:hover {
+    background-color: rgba(32, 33, 36, 0.059);
+}
+
 .replyBoxIcon svg {
     width: 15px;
     height: 15px;

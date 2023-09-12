@@ -10,7 +10,8 @@ const initialState: any = {
     selectedProject: null,
     members: [],
     invitees: [],
-    isProjectUpdateSuccess: false
+    isProjectUpdateSuccess: false,
+    createProjectSuccess: false
 } as InitialProjectState
 
 const projectsSlice = createSlice({
@@ -38,18 +39,18 @@ const projectsSlice = createSlice({
         },
 
         createProjects: (state: InitialProjectState, _action: PayloadAction<{ name?: string, accountId?: string, organizationId?: string }>) => {
-            return {...state, project: null, isLoading: true, error: null}
+            return {...state, project: null, isLoading: true, error: null, createProjectSuccess: false}
         },
         createProjectsSuccess: (state: InitialProjectState, {payload: project}: PayloadAction<{ }>) => {
             let currentThreads = [...(current(state).projects || [])] as Project[];
-            return {...state, projects: [project, ...currentThreads], project, isLoading: false, error: null}
+            return {...state, projects: [project, ...currentThreads], project, isLoading: false, error: null, createProjectSuccess: true}
         },
         createProjectsError: (state: InitialProjectState, {payload: error}: PayloadAction<{ error: any }>) => {
             return {...state, project: null, isLoading: false, error}
         },
 
         getProjectMembers: (state: InitialProjectState,  _action: PayloadAction<{ projectId: string }>) => {
-            return {...state, members: [], isLoading: true, error: null}
+            return {...state, members: [], isLoading: true, error: null, createProjectSuccess: false}
         },
         getProjectMembersSuccess: (state: InitialProjectState, {payload: members}: PayloadAction<{}>) => {
             return {...state, members, isLoading: false, error: null}

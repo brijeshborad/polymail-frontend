@@ -23,8 +23,6 @@ export function RichTextEditor({onChange, placeholder, className, value, initial
     const [editorState, setEditorState] = useState<EditorState>(EditorState.createEmpty());
     const emojiArray = ["😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇", "🙂", "🙃", "😉", "😌", "😍", "🥰", "😘", "😗", "😙", "😚", "😋", "😛", "😝", "😜", "🤪", "👶", "👧", "🧒", "👦", "👩", "🧑", "👨", "👵", "🧓", "👴", "👮", "👷", "💂", "🕵️‍♂️", "👩‍⚕️", "👨‍⚕️", "👩‍🌾", "👨‍🌾", "👩‍🍳", "👨‍🍳", "👩‍🎓", "👨‍🎓", "👩‍🎤", "👨‍🎤", "👩‍🏫", "👨‍🏫", "🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🦝", "🐻", "🐨", "🐼", "🦁", "🐯", "🐮", "🐷", "🐽", "🐸", "🐵", "🙈", "🙉", "🙊", "🐒", "🦍", "🦧", "🐔", "🍔", "🍟", "🍕", "🌭", "🍿", "🧂", "🍞", "🥖", "🥐", "🥨", "🥯", "🥞", "🧇", "🍳", "🍗", "🍖", "🥩", "🍔", "🍟", "🍕", "🌭", "🍿", "🧂", "🚗", "🚕", "🚆", "🚇", "🚈", "🚂", "🚊", "🚝", "🚄", "🚅", "🚈", "🚞", "🚋", "🚲", "🛴", "🛵", "🏍️", "🚨", "🚍", "🚌", "🚒", "🚑", "🚓", "⚽", "🏀", "🏈", "⚾", "🥎", "🎾", "🏐", "🏉", "🎱", "🏓", "🏸", "🥏", "🥅", "🏒", "🏑", "🏏", "🥋", "🥊", "🥇", "🥈", "🥉", "🏆"]
     const updateParentComponent = useCallback(() => {
-        console.log(editorState.isSelectionAtStartOfContent());
-        console.log(editorState.isSelectionAtEndOfContent());
         if (onChange && editorState?.getCurrentContent().getPlainText().trim()) {
             onChange(draftToHtml(convertToRaw(editorState?.getCurrentContent() as ContentState)));
         }
@@ -53,7 +51,7 @@ export function RichTextEditor({onChange, placeholder, className, value, initial
             onEditorStateChange={setEditorState}
 
             toolbar={{
-                options: ['inline', 'list', 'emoji'],
+                options: ['inline', 'list', 'emoji', 'link'],
                 inline: {
                     inDropdown: false,
                     options: ['bold', 'italic', 'strikethrough'],
@@ -71,6 +69,19 @@ export function RichTextEditor({onChange, placeholder, className, value, initial
                     icon: "/image/icon/emoji.svg",
                     popupClassName: 'emoji-picker',
                     emojis: emojiArray,
+                },
+
+                link: {
+                    inDropdown: false,
+                    className: 'link-class',
+                    component: undefined,
+                    popupClassName: 'emoji-picker',
+                    dropdownClassName: undefined,
+                    showOpenOptionOnHover: true,
+                    defaultTargetOption: '_self',
+                    options: ['link'],
+                    link: {icon: "/image/icon/link.svg", className: undefined },
+                    linkCallback: undefined
                 },
             }}
         />

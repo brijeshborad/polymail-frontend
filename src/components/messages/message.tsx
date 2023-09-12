@@ -24,13 +24,14 @@ import {
   getMessageParts, updateMessage,
   updateMessageState
 } from "@/redux/messages/action-reducer";
-import { Message as MessageModel, MessageDraft, MessagePart, MessageAttachments } from "@/models";
-import { MessagesHeader } from "@/components/messages/messages-header";
-import { updateDraftState } from "@/redux/draft/action-reducer";
-import { MessageBox } from "@/components/messages/message-box";
-import { MessageReplyBox } from "@/components/messages/message-reply-box";
-import { debounce } from "@/utils/common.functions";
-import { SkeletonLoader } from "@/components/loader-screen/skeleton-loader";
+import {Message as MessageModel, MessageDraft, MessagePart, MessageAttachments} from "@/models";
+import {MessagesHeader} from "@/components/messages/messages-header";
+import {updateDraftState} from "@/redux/draft/action-reducer";
+import {MessageBox} from "@/components/messages/message-box";
+import {MessageReplyBox} from "@/components/messages/message-reply-box";
+import {debounce} from "@/utils/common.functions";
+import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
+import {ViewOffIcon} from "@chakra-ui/icons";
 import { updateThreadState, updateThreads } from "@/redux/threads/action-reducer";
 
 let cacheMessages: { [key: string]: { body: MessagePart, attachments: MessageAttachments[] } } = {};
@@ -202,7 +203,7 @@ export function Message() {
               setEmailPart('')
           }
       }, [cacheMessage, messagePart])
-  
+
       useEffect(() => {
           // convert blob url to image url
           if (messageAttachments && messageAttachments.length) {
@@ -211,7 +212,7 @@ export function Message() {
               cacheMessage({attachments: []});
           }
       }, [cacheMessage, messageAttachments])
-  
+
       useEffect(() => {
         if (attachmentUrl) {
             const link: HTMLAnchorElement = document.createElement('a');
@@ -319,6 +320,9 @@ export function Message() {
                             </Flex>
 
                             <Flex align={'center'} gap={'6px'}>
+                                {lastMessageDetails.scope === 'visible' ? <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
+                                    <ViewOffIcon />
+                                </Flex> : ''}
                               <Flex className={styles.memberImages}>
                                 <div className={styles.memberPhoto}>
                                   <Image src="/image/user.png" width="24" height="24" alt="" />

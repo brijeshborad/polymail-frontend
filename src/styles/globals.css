@@ -382,6 +382,54 @@ div:has(> .mailSendToaster) {
 .rdw-editor-wrapper .emoji-picker {
     top: unset;
     bottom: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 4px 0 rgba(0,0,0, 0.1);
+}
+
+.rdw-editor-wrapper .emoji-picker.rdw-link-modal {
+    height: auto;
+}
+
+.rdw-editor-wrapper .emoji-picker label {
+    font-size: 13px;
+    color: #374151;
+    line-height: 1;
+    font-weight: 500;
+}
+
+.rdw-editor-wrapper .emoji-picker .rdw-link-modal-btn {
+    background-color: #1F2937;
+    color: #FFFFFF;
+    padding: 10px;
+    height: auto;
+    line-height: 1;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 8px;
+    border: 1px solid #1F2937;
+}
+
+.rdw-editor-wrapper .emoji-picker .rdw-link-modal-btn + .rdw-link-modal-btn {
+    background-color: #FFFFFF;
+    color: #1F2937;
+}
+
+.rdw-editor-wrapper .emoji-picker .rdw-link-modal-btn:hover {
+    box-shadow: none;
+}
+
+.rdw-editor-wrapper .emoji-picker input {
+    border-radius: 8px;
+    padding: 10px 15px;
+    height: auto;
+    line-height: 1;
+    font-size: 13px;
+    border: 1px solid #E5E7EB;
+}
+
+.rdw-editor-wrapper .link-class {
+    margin-left: 52px;
+    margin-bottom: 0;
 }
 
 .custom-dropdown {

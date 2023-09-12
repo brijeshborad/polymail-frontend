@@ -11,7 +11,7 @@ import {
     Text, useDisclosure
 } from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
-import {FileIcon, LinkIcon, TextIcon} from "@/icons";
+import {FileIcon, TextIcon} from "@/icons";
 import {ChevronDownIcon, CloseIcon} from "@chakra-ui/icons";
 import React, {ChangeEvent, ChangeEventHandler, useEffect, useRef, useState} from "react";
 import {StateType} from "@/types";
@@ -320,6 +320,7 @@ export function ComposeBox(props: any) {
 
 
     function handleEditorScroll(event: any) {
+        console.log('HERE')
         if (event.target.scrollTop > 0) {
             setExtraClassNames(prevState => !prevState.includes('show-shadow') ? prevState + ' show-shadow' : prevState);
         } else {
@@ -380,55 +381,57 @@ export function ComposeBox(props: any) {
                                                 ))}
                                             </div> : null}
                                         </Flex>
-                                        <Flex direction={'column'}>
-                                            <Flex align={'flex-end'} justify={'space-between'} gap={2}>
-                                                <Flex gap={2} className={styles.replyBoxIcon} ml={'166px'}>
-                                                    <Flex align={'center'} gap={3}>
+                                        <Flex align={'flex-end'} justify={'space-between'} gap={2}>
+                                            <Flex gap={2} className={styles.replyBoxIcon} mb={'-3px'} position={'relative'} zIndex={5} ml={'170px'}>
+                                                <Flex align={'center'} gap={2}>
+                                                    <Flex width={'20px'} h={'20px'} align={'center'} justify={'center'} cursor={'pointer'} className={styles.replyIcon}>
                                                         <FileIcon click={() => inputFile.current?.click()}/>
-                                                        <input type='file' id='file' ref={inputFile}
-                                                               onChange={(e) => handleFileUpload(e)}
-                                                               style={{display: 'none'}}/>
-                                                        <LinkIcon/>
+                                                    </Flex>
+
+                                                    <input type='file' id='file' ref={inputFile}
+                                                           onChange={(e) => handleFileUpload(e)}
+                                                           style={{display: 'none'}}/>
+                                                    <Flex width={'20px'} h={'20px'} align={'center'} justify={'center'} cursor={'pointer'} className={styles.replyIcon}>
                                                         <TextIcon/>
                                                     </Flex>
                                                 </Flex>
-                                                <Flex align={'center'} className={styles.replyButton}>
-                                                    <Button className={styles.replyTextButton} colorScheme='blue'
-                                                            onClick={() => sendMessages()}> Send </Button>
-                                                    <Menu>
-                                                        <MenuButton className={styles.replyArrowIcon} as={Button}
-                                                                    aria-label='Options'
-                                                                    variant='outline'><ChevronDownIcon/></MenuButton>
-                                                        <MenuList className={'drop-down-list'}>
-                                                            <MenuItem onClick={() => openCalender()}> Send
-                                                                Later </MenuItem>
-                                                        </MenuList>
-                                                    </Menu>
-                                                    <Modal isOpen={isOpen} onClose={onClose} isCentered={true}
-                                                           scrollBehavior={'outside'}>
-                                                        <ModalOverlay/>
-                                                        <ModalContent minHeight="440px">
-                                                            <ModalHeader display="flex" justifyContent="space-between"
-                                                                         alignItems="center">
-                                                                Schedule send
-                                                            </ModalHeader>
-                                                            <ModalCloseButton size={'xs'}/>
-                                                            <ModalBody>
-                                                                <SingleDatepicker
-                                                                    date={scheduledDate}
-                                                                    defaultIsOpen={true}
-                                                                    onDateChange={setScheduledDate}
-                                                                    name="date-input"/>
-                                                            </ModalBody>
-                                                            <ModalFooter>
-                                                                <Button variant='ghost'
-                                                                        onClick={onClose}>Cancel</Button>
-                                                                <Button colorScheme='blue' mr={3}
-                                                                        onClick={() => sendMessages(true)}> Schedule </Button>
-                                                            </ModalFooter>
-                                                        </ModalContent>
-                                                    </Modal>
-                                                </Flex>
+                                            </Flex>
+                                            <Flex align={'center'} className={styles.replyButton}>
+                                                <Button className={styles.replyTextButton} colorScheme='blue'
+                                                        onClick={() => sendMessages()}> Send </Button>
+                                                <Menu>
+                                                    <MenuButton className={styles.replyArrowIcon} as={Button}
+                                                                aria-label='Options'
+                                                                variant='outline'><ChevronDownIcon/></MenuButton>
+                                                    <MenuList className={'drop-down-list'}>
+                                                        <MenuItem onClick={() => openCalender()}> Send
+                                                            Later </MenuItem>
+                                                    </MenuList>
+                                                </Menu>
+                                                <Modal isOpen={isOpen} onClose={onClose} isCentered={true}
+                                                       scrollBehavior={'outside'}>
+                                                    <ModalOverlay/>
+                                                    <ModalContent minHeight="440px">
+                                                        <ModalHeader display="flex" justifyContent="space-between"
+                                                                     alignItems="center">
+                                                            Schedule send
+                                                        </ModalHeader>
+                                                        <ModalCloseButton size={'xs'}/>
+                                                        <ModalBody>
+                                                            <SingleDatepicker
+                                                                date={scheduledDate}
+                                                                defaultIsOpen={true}
+                                                                onDateChange={setScheduledDate}
+                                                                name="date-input"/>
+                                                        </ModalBody>
+                                                        <ModalFooter>
+                                                            <Button variant='ghost'
+                                                                    onClick={onClose}>Cancel</Button>
+                                                            <Button colorScheme='blue' mr={3}
+                                                                    onClick={() => sendMessages(true)}> Schedule </Button>
+                                                        </ModalFooter>
+                                                    </ModalContent>
+                                                </Modal>
                                             </Flex>
                                         </Flex>
 

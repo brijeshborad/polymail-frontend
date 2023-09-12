@@ -523,12 +523,16 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                         {hideEditorToolbar &&
                         <Flex direction={'column'} className={styles.composeModal}>
                             <Flex align={'flex-end'} justify={'space-between'} gap={2}>
-                                <Flex gap={2} className={styles.replyBoxIcon} ml={'166px'}>
-                                    <FileIcon click={() => inputFile.current?.click()}/>
+                                <Flex gap={2} className={styles.replyBoxIcon} mb={'-3px'} position={'relative'} zIndex={5} ml={'170px'}>
+                                    <Flex width={'20px'} h={'20px'} align={'center'} justify={'center'} cursor={'pointer'} className={styles.replyIcon}>
+                                        <FileIcon click={() => inputFile.current?.click()}/>
+                                    </Flex>
                                     <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e)}
                                            style={{display: 'none'}}/>
                                     {/*<LinkIcon/>*/}
-                                    <TextIcon/>
+                                    <Flex width={'20px'} h={'20px'} align={'center'} justify={'center'} cursor={'pointer'} className={styles.replyIcon}>
+                                        <TextIcon/>
+                                    </Flex>
                                     {/*<EmojiIcon/>*/}
                                 </Flex>
                                 <Flex align={'center'} className={styles.replyButton}>
@@ -588,9 +592,6 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                                                             <Flex mt={4} direction={'column'} gap={4} px={3}
                                                                   className={'radio-group-button'}>
                                                                 <Flex direction={'column'} className={'custom-time'}>
-                                                                    <Text fontSize={'13px'} fontWeight={500} mb={2}
-                                                                          color={'#0A101D'} letterSpacing={'-0.13px'}
-                                                                          lineHeight={'normal'}>Time</Text>
                                                                     <Flex mt={4} direction={'column'} gap={4} px={3}
                                                                           className={'radio-group-button'}>
                                                                         <Flex direction={'column'}
@@ -646,68 +647,21 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                                                                         <Flex direction={'column'}
                                                                               className={'custom-time'}>
                                                                             <Text fontSize={'13px'} fontWeight={500}
-                                                                                  mb={2} color={'#0A101D'}
+                                                                                  mb={2}
+                                                                                  color={'#0A101D'}
                                                                                   letterSpacing={'-0.13px'}
                                                                                   lineHeight={'normal'}>Date</Text>
-                                                                            <Flex direction={'column'}
-                                                                                  className={'custom-time'}>
-                                                                                <Text fontSize={'13px'} fontWeight={500}
-                                                                                      mb={2}
-                                                                                      color={'#0A101D'}
-                                                                                      letterSpacing={'-0.13px'}
-                                                                                      lineHeight={'normal'}>Date</Text>
 
-                                                                                <Grid templateColumns='repeat(3, 1fr)'
-                                                                                      gap={3}>
-                                                                                    <GridItem w='100%'>
-                                                                                        <Select
-                                                                                            border={'1px solid #E5E7EB'}
-                                                                                            fontSize={'13px'}
-                                                                                            fontWeight={400}
-                                                                                            lineHeight={1} h={'auto'}
-                                                                                            backgroundColor={'#FFFFFF'}
-                                                                                            borderRadius={8}>
-                                                                                            {monthArray && monthArray.map((item: string, index: number) => (
-                                                                                                <option value={item}
-                                                                                                        key={index}>{item}</option>
-                                                                                            ))}
-                                                                                        </Select>
-                                                                                    </GridItem>
-                                                                                    <GridItem w='100%'>
-                                                                                        <Input
-                                                                                            border={'1px solid #E5E7EB'}
-                                                                                            fontSize={'13px'}
-                                                                                            fontWeight={400}
-                                                                                            lineHeight={1}
-                                                                                            padding={'10px 16px'}
-                                                                                            h={'auto'}
-                                                                                            backgroundColor={'#FFFFFF'}
-                                                                                            borderRadius={8}
-                                                                                            placeholder='23'/>
-                                                                                    </GridItem>
-                                                                                    <GridItem w='100%'>
-                                                                                        <Input
-                                                                                            border={'1px solid #E5E7EB'}
-                                                                                            fontSize={'13px'}
-                                                                                            fontWeight={400}
-                                                                                            lineHeight={1}
-                                                                                            padding={'10px 16px'}
-                                                                                            h={'auto'}
-                                                                                            backgroundColor={'#FFFFFF'}
-                                                                                            borderRadius={8}
-                                                                                            placeholder='2023'/>
-                                                                                    </GridItem>
-                                                                                </Grid>
-                                                                            </Flex>
                                                                             <Grid templateColumns='repeat(3, 1fr)'
                                                                                   gap={3}>
                                                                                 <GridItem w='100%'>
-                                                                                    <Select border={'1px solid #E5E7EB'}
-                                                                                            fontSize={'13px'}
-                                                                                            fontWeight={400}
-                                                                                            lineHeight={1} h={'auto'}
-                                                                                            backgroundColor={'#FFFFFF'}
-                                                                                            borderRadius={8}>
+                                                                                    <Select
+                                                                                        border={'1px solid #E5E7EB'}
+                                                                                        fontSize={'13px'}
+                                                                                        fontWeight={400}
+                                                                                        lineHeight={1} h={'auto'}
+                                                                                        backgroundColor={'#FFFFFF'}
+                                                                                        borderRadius={8}>
                                                                                         {monthArray && monthArray.map((item: string, index: number) => (
                                                                                             <option value={item}
                                                                                                     key={index}>{item}</option>
@@ -715,26 +669,28 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                                                                                     </Select>
                                                                                 </GridItem>
                                                                                 <GridItem w='100%'>
-                                                                                    <Input border={'1px solid #E5E7EB'}
-                                                                                           fontSize={'13px'}
-                                                                                           fontWeight={400}
-                                                                                           lineHeight={1}
-                                                                                           padding={'10px 16px'}
-                                                                                           h={'auto'}
-                                                                                           backgroundColor={'#FFFFFF'}
-                                                                                           borderRadius={8}
-                                                                                           placeholder='23'/>
+                                                                                    <Input
+                                                                                        border={'1px solid #E5E7EB'}
+                                                                                        fontSize={'13px'}
+                                                                                        fontWeight={400}
+                                                                                        lineHeight={1}
+                                                                                        padding={'10px 16px'}
+                                                                                        h={'auto'}
+                                                                                        backgroundColor={'#FFFFFF'}
+                                                                                        borderRadius={8}
+                                                                                        placeholder='23'/>
                                                                                 </GridItem>
                                                                                 <GridItem w='100%'>
-                                                                                    <Input border={'1px solid #E5E7EB'}
-                                                                                           fontSize={'13px'}
-                                                                                           fontWeight={400}
-                                                                                           lineHeight={1}
-                                                                                           padding={'10px 16px'}
-                                                                                           h={'auto'}
-                                                                                           backgroundColor={'#FFFFFF'}
-                                                                                           borderRadius={8}
-                                                                                           placeholder='2023'/>
+                                                                                    <Input
+                                                                                        border={'1px solid #E5E7EB'}
+                                                                                        fontSize={'13px'}
+                                                                                        fontWeight={400}
+                                                                                        lineHeight={1}
+                                                                                        padding={'10px 16px'}
+                                                                                        h={'auto'}
+                                                                                        backgroundColor={'#FFFFFF'}
+                                                                                        borderRadius={8}
+                                                                                        placeholder='2023'/>
                                                                                 </GridItem>
                                                                             </Grid>
                                                                         </Flex>

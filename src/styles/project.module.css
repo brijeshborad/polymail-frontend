@@ -380,6 +380,15 @@
     padding: 16px;
 }
 
+.projectMemberModal .addProjectMember input:focus-visible {
+    border: 0;
+    box-shadow: none;
+}
+
+.projectMemberModal .addProjectMember input {
+    padding-right: 10px;
+}
+
 .projectMemberModal .memberRoleDropDown:hover,
 .projectMemberModal .memberRoleDropDown:active,
 .projectMemberModal .memberRoleDropDown[data-active] {

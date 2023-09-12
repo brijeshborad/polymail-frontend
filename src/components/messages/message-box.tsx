@@ -9,7 +9,7 @@ import Image from "next/image";
 import {MessageAttachments} from "@/models";
 import {StateType} from "@/types";
 import {debounce} from "@/utils/common.functions";
-import {ViewIcon, ViewOffIcon} from "@chakra-ui/icons";
+import {ViewOffIcon} from "@chakra-ui/icons";
 
 
 export function MessageBox(props: any) {
@@ -66,9 +66,9 @@ export function MessageBox(props: any) {
                             <Heading as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400}
                                      letterSpacing={'-0.13px'} lineHeight={1}>Michael Eisner</Heading>
                             <Flex align={'center'} className={styles.mailBoxTime} gap={3}>
-                                <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
-                                    {props?.item.scope === 'visible' ? <ViewOffIcon /> : <ViewIcon />}
-                                </Flex>
+                                {props?.item.scope === 'visible' ? <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
+                                     <ViewOffIcon />
+                                </Flex> : ''}
                                 <Time time={props?.item.created || ''} isShowFullTime={true} showTimeInShortForm={false}/>
                             </Flex>
                         </Flex>
@@ -96,6 +96,9 @@ export function MessageBox(props: any) {
                                     </Flex>
 
                                     <Flex align={'center'} gap={'6px'}>
+                                        {props?.threadDetails?.scope === 'visible' ? <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
+                                            <ViewOffIcon />
+                                        </Flex> : ''}
                                         <Flex className={styles.memberImages}>
                                             <div className={styles.memberPhoto}>
                                                 <Image src="/image/user.png" width="24" height="24" alt=""/>
