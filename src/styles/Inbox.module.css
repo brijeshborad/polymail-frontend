@@ -186,6 +186,8 @@
 .mailList {
     max-height: calc(100vh - 280px);
     overflow-y: auto;
+    padding: 0 6px;
+    scrollbar-gutter: stable;
 }
 
 .mailList.projectMailList {
