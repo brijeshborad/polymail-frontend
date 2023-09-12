@@ -432,7 +432,7 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
     }
 
     return (
-        <Flex backgroundColor={'#FFFFFF'} position={'sticky'} mt={'auto'} bottom={'-21px'} paddingBottom={props.parentHasScroll ? 5 : 0}>
+        <Flex backgroundColor={'#FFFFFF'} position={'sticky'} mt={'auto'} bottom={'-20px'} paddingBottom={props.parentHasScroll ? 5 : 0}>
             <Flex maxHeight={'450px'} direction={'column'} backgroundColor={'#FFFFFF'} width={'100%'}
                   onFocus={() => handleFocus()} onBlur={() => handleBlur()}>
                 <Flex borderRadius={8} gap={4} border={'1px solid #F3F4F6'} direction={'column'} padding={4}>

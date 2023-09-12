@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { Time } from "@/components/common";
 import {
-  DownloadIcon, MenuIcon
+    DownloadIcon, MenuIcon
 } from "@/icons";
 import Image from "next/image";
 import { StateType } from "@/types";
@@ -31,8 +31,8 @@ import {MessageBox} from "@/components/messages/message-box";
 import {MessageReplyBox} from "@/components/messages/message-reply-box";
 import {debounce} from "@/utils/common.functions";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
-import {ViewOffIcon} from "@chakra-ui/icons";
-import { updateThreadState, updateThreads } from "@/redux/threads/action-reducer";
+import {updateThreadState, updateThreads} from "@/redux/threads/action-reducer";
+import {EyeSlashedIcon} from "@/icons/eye-slashed.icon";
 
 let cacheMessages: { [key: string]: { body: MessagePart, attachments: MessageAttachments[] } } = {};
 
@@ -330,7 +330,7 @@ export function Message() {
 
                             <Flex align={'center'} gap={'6px'}>
                                 {lastMessageDetails.scope !== 'visible' ? <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
-                                    <ViewOffIcon />
+                                    <EyeSlashedIcon />
                                 </Flex> : ''}
                               <Flex className={styles.memberImages}>
                                 <div className={styles.memberPhoto}>

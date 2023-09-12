@@ -9,7 +9,7 @@ import Image from "next/image";
 import {MessageAttachments} from "@/models";
 import {StateType} from "@/types";
 import {debounce} from "@/utils/common.functions";
-import {ViewOffIcon} from "@chakra-ui/icons";
+import {EyeSlashedIcon} from "@/icons/eye-slashed.icon";
 
 
 export function MessageBox(props: any) {
@@ -67,7 +67,7 @@ export function MessageBox(props: any) {
                                      letterSpacing={'-0.13px'} lineHeight={1}>Michael Eisner</Heading>
                             <Flex align={'center'} className={styles.mailBoxTime} gap={3}>
                                 {props?.item.scope !== 'visible' ? <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
-                                     <ViewOffIcon />
+                                     <EyeSlashedIcon />
                                 </Flex> : ''}
                                 <Time time={props?.item.created || ''} isShowFullTime={true} showTimeInShortForm={false}/>
                             </Flex>
@@ -97,7 +97,7 @@ export function MessageBox(props: any) {
 
                                     <Flex align={'center'} gap={'6px'}>
                                         {props?.threadDetails?.scope !== 'visible' ? <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
-                                            <ViewOffIcon />
+                                            <EyeSlashedIcon />
                                         </Flex> : ''}
                                         <Flex className={styles.memberImages}>
                                             <div className={styles.memberPhoto}>
