@@ -322,7 +322,7 @@
 }
 
 .manageMemberDropDown .addMemberButton:hover {
-    background-color: #1F2937;
+    background-color: #1F2937 !important;
 }
 
 .manageMemberDropDown .dropDownSearchBar input::placeholder {
@@ -401,7 +401,7 @@
 }
 
 .projectMemberModal .addMemberButton:hover {
-    background-color: #1F2937;
+    background-color: #1F2937 !important;
 }
 
 .projectMemberModal .cancelModalButton:hover {
