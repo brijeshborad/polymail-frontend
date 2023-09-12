@@ -52,6 +52,13 @@ function CreateNewProjectModal(props: any) {
                 }
                 dispatch(addItemToGroup(reqBody))
             }
+
+            Toaster({
+                desc: "New project added successfully",
+                title: "New project added",
+                type: 'success'
+            });
+            props.onClose();
         }
     }, [createProjectSuccess, selectedAccount])
 
@@ -67,23 +74,21 @@ function CreateNewProjectModal(props: any) {
                 }]
 
             });
-            props.onClose();
-
         }
     }, [dispatch, membershipSuccess])
 
     const addNewProject = () => {
         if (projectName.length === 0) {
-            Toaster({desc: 'Please enter the project\'s name',title: 'Add Project Name', type: 'error'})
+            Toaster({desc: 'Please enter the project\'s name',title: 'Project name is required!', type: 'error'})
             return;
         }
         if (!selectedAccount) {
-            Toaster({desc: 'Your account is not created',title: 'Add Account', type: 'error'})
+            Toaster({desc: 'Your account is not created',title: 'Account is required!', type: 'error'})
             return;
         }
 
         if (!selectedOrganization) {
-            Toaster({desc: 'Your organization is not created',title: 'Add Organization', type: 'error'})
+            Toaster({desc: 'Your organization is not created',title: 'Organization is required!', type: 'error'})
             return;
         }
 
@@ -100,7 +105,7 @@ function CreateNewProjectModal(props: any) {
 
     const addNewMembers = () => {
         if (!membersInputs.input) {
-            Toaster({desc: 'Please add member\'s email',title: 'Add member\'s email', type: 'error'})
+            Toaster({desc: 'Please add member\'s email',title: 'Add member\'s email required!', type: 'error'})
             return;
         }
         setMembersInput(prevState => ({
