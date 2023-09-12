@@ -137,16 +137,16 @@ function CreateNewProjectModal(props: any) {
     return (
         <>
             <Modal isOpen={props.isOpen} onClose={props.onClose} isCentered>
-                <ModalOverlay/>
-                <ModalContent maxWidth={'480px'} className={styles.projectMemberModal}>
-                    <ModalHeader fontSize={'13px'} color={'#374151'} borderBottom={'1px solid #F3F4F6'}>
+                <ModalOverlay backgroundColor={'rgba(229, 231, 235, 0.50)'} backdropFilter={'blur(16px)'}/>
+                <ModalContent maxWidth={'480px'} borderRadius={'12px'} className={styles.projectMemberModal}>
+                    <ModalHeader padding={'12px 14px'} fontSize={'13px'} color={'#374151'} borderBottom={'1px solid #F3F4F6'}>
                         Create project
                     </ModalHeader>
-                    <ModalCloseButton top={'13px'} right={'17px'} className={styles.closeIcon}/>
+                    <ModalCloseButton top={'9px'} right={'12px'} className={styles.closeIcon}/>
                     <ModalBody padding={'20px 12px 12px'}>
                         <Flex direction={'column'} gap={4}>
                             <Flex align={'center'} gap={4}>
-                                <Flex backgroundColor={'#F9FAFB'} color={'#374151'} fontSize={'24px'} w={'48px'} h={'48px'} borderRadius={'50%'} align={'center'} justify={'center'}>
+                                <Flex backgroundColor={'#F9FAFB'} color={'#374151'} cursor={'pointer'} fontSize={'24px'} minW={'48px'} w={'48px'} h={'48px'} borderRadius={'50%'} align={'center'} justify={'center'}>
                                     <SmallAddIcon/>
                                 </Flex>
                                 <Input className={styles.projectSearchBar} onChange={handleChange} borderColor={'#E5E7EB'} borderRadius={8} backgroundColor={'#FFFFFF'} fontSize={'13px'} padding={'10px 16px'} lineHeight={1} height={'auto'} placeholder='Project name' />
