@@ -99,6 +99,10 @@ function CreateNewProjectModal(props: any) {
     }
 
     const addNewMembers = () => {
+        if (!membersInputs.input) {
+            Toaster({desc: 'Please add member\'s email',title: 'Add member\'s email', type: 'error'})
+            return;
+        }
         setMembersInput(prevState => ({
                 ...prevState,
                 memberArray: [
@@ -180,7 +184,6 @@ function CreateNewProjectModal(props: any) {
                                         </Menu>
                                     </Flex>
                                     <Button className={styles.addMemberButton} backgroundColor={'#1F2937'} fontSize={'14px'} onClick={() => addNewMembers()}
-                                            isDisabled={!membersInputs.input}
                                             borderRadius={'8px'} minW={'52px'} height={'auto'} lineHeight={'1'} color={'#FFFFFF'} padding={'11px 12px'}>Add</Button>
                                 </Flex>
                             </div>
@@ -222,7 +225,7 @@ function CreateNewProjectModal(props: any) {
                                         onClick={props.onClose} fontSize={'14px'} height={'auto'} lineHeight={1} padding={'10px 12px'}
                                         color={'#374151'}> Cancel </Button>
 
-                                <Button className={styles.addMemberButton} backgroundColor={'#1F2937'} borderRadius={8} isDisabled={projectName.length === 0}
+                                <Button className={styles.addMemberButton} backgroundColor={'#1F2937'} borderRadius={8}
                                         onClick={() => addNewProject()} fontSize={'14px'} height={'auto'} lineHeight={1} padding={'11px 12px'}
                                         color={'#ffffff'}> Create Project </Button>
                             </Flex>

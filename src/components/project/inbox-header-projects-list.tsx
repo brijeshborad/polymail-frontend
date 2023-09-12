@@ -1,5 +1,5 @@
 import {Flex, Text, Image, Button, useDisclosure} from "@chakra-ui/react";
-import {DisneyDIcon} from "@/icons";
+import {DisneyDIcon, FolderIcon} from "@/icons";
 import React, {useEffect, useState} from "react";
 import {useSelector} from "react-redux";
 import {StateType} from "@/types";
@@ -11,7 +11,7 @@ import CreateNewProjectModal from "@/components/project/create-new-project";
 export function InboxHeaderProjectsList() {
     const {projects, isLoading} = useSelector((state: StateType) => state.projects);
     const [projectData, setProjectData] = useState<Project[]>([]);
-    const [_projectDataLength, setProjectDataLength] = useState<Project[]>([]);
+    const [projectDataLength, setProjectDataLength] = useState<Project[]>([]);
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     useEffect(() => {
@@ -21,6 +21,10 @@ export function InboxHeaderProjectsList() {
             setProjectDataLength(favoriteData)
         }
     }, [projects]);
+
+    const changePage = () => {
+        Router.push(`/projects?favorite=true`)
+    }
 
     return (
         <>
@@ -46,19 +50,35 @@ export function InboxHeaderProjectsList() {
 
                 ))
                 }
-                {!isLoading &&
-                <Button alignItems={'center'} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
-                        onClick={() => { onOpen() }} padding={'7px'} minWidth={'216px'}
-                        border={'1px dashed #E5E7EB'} borderRadius={'8px'} h={'fit-content'}
-                        maxWidth={'216px'} className={'create-project-button'}>
-                    <div className={'folder-icon'}>
-                        <PlusIcon />
-                    </div>
 
-                    <Text whiteSpace={'nowrap'} overflow={'hidden'} textOverflow={'ellipsis'} fontSize='13px'
-                          color={'#374151'} flex={'1'}>Create Project</Text>
-                </Button>
+                {projectData && !!projectData.length &&
+                    <Button alignItems={'center'} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
+                            onClick={() => changePage()} padding={'7px'} minWidth={'216px'}
+                            border={'1px solid #F3F4F6'} borderRadius={'8px'} h={'fit-content'}
+                            maxWidth={'216px'}>
+                        <div className={'folder-icon'}>
+                            <FolderIcon/>
+                        </div>
+
+                        <Text whiteSpace={'nowrap'} overflow={'hidden'} textOverflow={'ellipsis'} fontSize='13px'
+                              color={'#374151'} flex={'1'}>Show all
+                            projects {projectDataLength.length > 5 && `(${projectDataLength.length - projectData.length})`}</Text>
+                    </Button>
                 }
+                {!isLoading && projectData && !projectData.length &&
+                <Button alignItems={'center'} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
+                            onClick={() => { onOpen() }} padding={'7px'} minWidth={'216px'}
+                            border={'1px dashed #E5E7EB'} borderRadius={'8px'} h={'fit-content'}
+                            maxWidth={'216px'} className={'create-project-button'}>
+                        <div className={'folder-icon'}>
+                            <PlusIcon />
+                        </div>
+
+                        <Text whiteSpace={'nowrap'} overflow={'hidden'} textOverflow={'ellipsis'} fontSize='13px'
+                              color={'#374151'} flex={'1'}>{isLoading}Create Project</Text>
+                    </Button>
+                }
+
 
             </Flex>
 
