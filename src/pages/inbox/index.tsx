@@ -10,14 +10,17 @@ import {InboxHeaderProjectsList} from "@/components/project/inbox-header-project
 import {Message} from "@/components/messages";
 import {getAllProjects} from "@/redux/projects/action-reducer";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
+import SelectedThreads from "@/components/threads/selected-threads";
 
 function InboxPage() {
     const [size, setSize] = useState<number>(0);
     const [userData, setUserData] = useState<User | null | undefined>(null);
     const {user} = useSelector((state: StateType) => state.auth);
-    const {selectedThread} = useSelector((state: StateType) => state.threads);
+    const {selectedThread, isThreadSearched, multiSelection} = useSelector((state: StateType) => state.threads);
     const {isLoading} = useSelector((state: StateType) => state.projects);
     const dispatch = useDispatch();
+
+    const isMultiItemsSelected = isThreadSearched && multiSelection && multiSelection.length > 0
 
     useEffect(() => {
         setUserData(user);
@@ -60,7 +63,15 @@ function InboxPage() {
                         <ThreadsSideBar cachePrefix={'inbox-page'} />}
                     </GridItem>
                     <GridItem w='100%'>
-                        {((size < 991 && selectedThread) || size > 991) && <Message/>}
+                        {((size < 991 && selectedThread) || size > 991) && (
+                          <>
+                            {isMultiItemsSelected ? (
+                              <SelectedThreads />
+                            ) : (
+                              <Message/>
+                            )}
+                          </>
+                        )}
                     </GridItem>
                 </Grid>
             </div>

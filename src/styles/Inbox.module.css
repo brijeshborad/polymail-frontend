@@ -212,6 +212,10 @@
     cursor: pointer;
 }
 
+.mailDetailsSelected {
+  border-color: #76A2FF;
+}
+
 .mailDetails .SenderIcon svg {
     width: 20px;
     height: 20px;
@@ -284,6 +288,19 @@
 .mailBox.mailBoxFocused {
   border: 1px solid #000;
   box-shadow: 0 0 0 3px #e5e7eb;
+}
+
+.mailBox.mailBoxCentered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.mailBoxCenteredLabel {
+  font-size: 14px; 
+  line-height: 16px;
 }
 
 .mailBox svg {
@@ -751,8 +768,8 @@
 }
 
 .selectedThread .mailDetails {
-    border: 1px solid #6b7280;
-    box-shadow: 0 0 0 3px #e5e7eb;
+  border: 1px solid #6b7280;
+  box-shadow: 0 0 0 3px #e5e7eb;
 }
 
 .mailMessageOption button {
@@ -1059,4 +1076,10 @@
     width: 12px;
     height: 12px;
     margin-right: 0;
+}
+
+.addToProjectPlusActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }

@@ -4,13 +4,17 @@ import styles from "@/styles/Inbox.module.css";
 import {Flex} from "@chakra-ui/react";
 import {Time} from "@/components/common";
 import {DisneyIcon, DotIcon} from "@/icons";
-import {ThreadListItemProps} from "@/types";
+import {StateType, ThreadListItemProps} from "@/types";
+import { useSelector } from "react-redux";
 
 
 export function ThreadsSideBarListItem(props: ThreadListItemProps) {
+  const { multiSelection } = useSelector((state: StateType) => state.threads);
+  const isSelected = (multiSelection || [])?.includes(props.thread.id!)
+
   return (
     <>
-      <div className={`${styles.mailDetails}`}>
+      <div className={`${styles.mailDetails} ${isSelected ? styles.mailDetailsSelected : ''}`}>
           <Flex align={"center"} justify={'space-between'}>
               <Flex align={"center"} className={styles.senderDetails} gap={1}>
                   <DisneyIcon/> {props.thread.from || 'Anonymous'}
