@@ -49,8 +49,8 @@ export function InboxHeaderProjectsList() {
                 {!isLoading &&
                 <Button alignItems={'center'} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
                         onClick={() => { onOpen() }} padding={'7px'} minWidth={'216px'}
-                        border={'1px solid #F3F4F6'} borderRadius={'8px'} h={'fit-content'}
-                        maxWidth={'216px'}>
+                        border={'1px dashed #E5E7EB'} borderRadius={'8px'} h={'fit-content'}
+                        maxWidth={'216px'} className={'create-project-button'}>
                     <div className={'folder-icon'}>
                         <PlusIcon />
                     </div>
