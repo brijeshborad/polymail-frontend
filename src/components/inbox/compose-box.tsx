@@ -13,7 +13,7 @@ import {
 import styles from "@/styles/Inbox.module.css";
 import {FileIcon, TextIcon} from "@/icons";
 import {ChevronDownIcon, CloseIcon} from "@chakra-ui/icons";
-import React, {ChangeEvent, ChangeEventHandler, useEffect, useRef, useState} from "react";
+import React, {ChangeEvent, ChangeEventHandler, useCallback, useEffect, useRef, useState} from "react";
 import {StateType} from "@/types";
 import {debounce, isEmail} from "@/utils/common.functions";
 import {RichTextEditor, Time, Toaster} from "@/components/common";
@@ -90,6 +90,12 @@ export function ComposeBox(props: any) {
       }
     }
   }, [props.messageDetails])
+
+  useEffect(() => {
+    if(props.isOpen) {
+      handleEditorScroll();
+    }
+  }, [props.isOpen]);
 
   const isValid = (email: string, type: string) => {
     let error = null;
@@ -319,14 +325,14 @@ export function ComposeBox(props: any) {
   }
 
 
-  function handleEditorScroll(event: any) {
-    console.log('HERE')
-    if (event.target.scrollTop > 0) {
+  const handleEditorScroll = useCallback(() => {
+    console.log(editorRef.current);
+    if (editorRef.current && editorRef.current.scrollTop > 0) {
       setExtraClassNames(prevState => !prevState.includes('show-shadow') ? prevState + ' show-shadow' : prevState);
     } else {
       setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
     }
-  }
+  },[editorRef.current]);
 
   return (
     <>
@@ -369,7 +375,7 @@ export function ComposeBox(props: any) {
 
                   <Flex flex={1} direction={'column'} position={'relative'}>
                     <Flex direction={'column'} ref={editorRef} className={styles.replyBoxEditor}
-                          onScroll={handleEditorScroll}>
+                          onScroll={() => handleEditorScroll()}>
                       <RichTextEditor className={`reply-message-area ${extraClassNames}`}
                                       initialUpdated={true}
                                       placeholder='Reply with anything you like or @mention someone to share this thread'
