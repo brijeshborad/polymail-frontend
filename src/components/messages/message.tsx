@@ -101,7 +101,7 @@ export function Message() {
       setLastMessageDetails(currentInboxMessages[currentInboxMessages.length - 1]);
       const draftMessage = messages.findLast((msg: MessageModel) => (msg.mailboxes || []).includes('DRAFT'));
       if (draftMessage) {
-        dispatch(updateDraftState({draft: draftMessage as unknown as MessageDraft}));
+        dispatch(updateDraftState({draft: draftMessage as MessageDraft}));
       }
       setIndex(null);
     }
