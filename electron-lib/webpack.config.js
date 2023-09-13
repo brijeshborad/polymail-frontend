@@ -42,68 +42,64 @@ const path = require('path');
 const webpack = require('webpack');
 const fs = require('fs');
 const {merge} = require('webpack-merge');
+const {getElectronConfig} = require('./helper');
 
 const cwd = process.cwd();
 const externals = require(path.join(cwd, 'package.json')).dependencies;
 
 // ENV = 'development' | 'production'
-const webpackConfig = (env) => ({
-    mode: env,
-    target: 'electron-main',
-    node: {
-        __dirname: false,
-        __filename: false,
-    },
-    externals: [...Object.keys(externals || {})],
-    devtool: 'source-map',
-    resolve: {
-        extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
-        modules: [path.join(cwd, 'out'), 'node_modules'],
-    },
-    output: {
-        libraryTarget: 'commonjs2',
-    },
-    module: {
-        rules: [
-            {
-                test: /\.(js|ts)x?$/,
-                use: {
-                    options: {
-                        cacheDirectory: true
+const configure = (env) => {
+    return {
+        mode: env,
+        target: 'electron-main',
+        node: {
+            __dirname: false,
+            __filename: false,
+        },
+        externals: [...Object.keys(externals || {})],
+        devtool: 'source-map',
+        resolve: {
+            extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
+            modules: [path.join(cwd, 'out'), 'node_modules'],
+        },
+        output: {
+            libraryTarget: 'commonjs2',
+        },
+        module: {
+            rules: [
+                {
+                    test: /\.(js|ts)x?$/,
+                    use: {
+                        loader: require.resolve("babel-loader"),
+                        options: {
+                            cacheDirectory: false,
+                            extends: path.join(cwd, 'electron-lib/.babelrc')
+                        },
                     },
+                    exclude: [
+                        /node_modules/,
+                        path.join(cwd, 'src'),
+                        path.join(cwd, 'public'),
+                    ],
                 },
-                exclude: [
-                    /node_modules/,
-                    path.join(cwd, 'src'),
-                    path.join(cwd, 'public'),
-                ],
-            },
+            ],
+        },
+        plugins: [
+            new webpack.EnvironmentPlugin({
+                NODE_ENV: env,
+            }),
         ],
-    },
-    plugins: [
-        new webpack.EnvironmentPlugin({
-            NODE_ENV: env,
-        }),
-    ],
-});
+    }
+};
 
 const ext = fs.existsSync(path.join(cwd, 'tsconfig.json')) ? '.ts' : '.js';
 
-const getElectronConfig = () => {
-    const electronConfigPath = path.join(cwd, 'electron-lib/electron.config.js');
-    if (fs.existsSync(electronConfigPath)) {
-        return require(electronConfigPath);
-    } else {
-        return {};
-    }
-}
-
-const buildPack = webpack((env => {
+const webpackConfig = env => {
     const {mainSrcDir, webpack} = getElectronConfig();
 
-    const userConfig = merge(webpackConfig(env), {
+    const userConfig = merge(configure(env), {
         entry: {
-            background: path.join(cwd, mainSrcDir || 'main', `electron${ext}`),
+            electron: path.join(cwd, mainSrcDir || 'main', `electron${ext}`),
         },
         output: {
             filename: '[name].js',
@@ -117,9 +113,9 @@ const buildPack = webpack((env => {
     } else {
         return merge(userConfig, userWebpack);
     }
-}))
+}
 
-buildPack('production').run((err, stats) => {
+webpack(webpackConfig('production')).run((err, stats) => {
     if (err) {
         console.error(err);
     }

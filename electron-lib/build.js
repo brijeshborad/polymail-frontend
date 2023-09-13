@@ -35,23 +35,23 @@ async function build() {
     // Ignore missing dependencies
     process.env.ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES = 'true';
 
-    const appdir = path.join(cwd, 'out');
-    const distdir = path.join(cwd, 'dist');
+    const appDir = path.join(cwd, 'out');
+    const distDir = path.join(cwd, 'dist');
 
     try {
-        // console.log('Clearing previous builds');
-        // fs.removeSync(appdir);
-        // fs.removeSync(distdir);
-        //
-        // console.log('Building renderer process');
-        // await execa('next', ['build'], execaOptions);
-        // await execa('next', ['export', '-o', appdir], execaOptions);
+        console.log('Clearing previous builds');
+        fs.removeSync(appDir);
+        fs.removeSync(distDir);
+
+        console.log('Building renderer process');
+        await execa('next', ['build'], execaOptions);
+        await execa('next', ['export', '-o', appDir], execaOptions);
 
         console.log('Building main process');
-        await execa('node', [path.join(__dirname, 'webpack.config.js'), '&> output.txt'], execaOptions);
+        await execa('node', [path.join(__dirname, 'webpack.config.js')], execaOptions);
 
-        // console.log('Packaging - please wait a moment');
-        // await execa('electron-builder', createBuilderArgs(), execaOptions);
+        console.log('Packaging - please wait a moment');
+        await execa('electron-builder', createBuilderArgs(), execaOptions);
 
         console.log('See `dist` directory');
     } catch (err) {

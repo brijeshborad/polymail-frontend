@@ -3,9 +3,8 @@ import serve from 'electron-serve';
 import {createWindow} from './helpers';
 
 const isProd: boolean = process.env.NODE_ENV === 'production';
-
 if (isProd) {
-    serve({directory: 'app'});
+    serve({directory: 'out'});
 } else {
     app.setPath('userData', `${app.getPath('userData')} (development)`);
 }
@@ -20,7 +19,8 @@ if (isProd) {
     });
 
     if (isProd) {
-        await mainWindow.loadURL('app://./index.html');
+        await mainWindow.loadURL(`out://./index.html`);
+        mainWindow.webContents.openDevTools();
     } else {
         const port = process.argv[2];
         await mainWindow.loadURL(`http://localhost:${port}`);
