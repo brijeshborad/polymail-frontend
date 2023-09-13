@@ -1,0 +1,12 @@
+appId: com.polymail.teams
+productName: Polymail
+copyright: Copyright © 2023 Polymail
+directories:
+  output: dist
+  buildResources: resources
+files:
+  - from: .
+    filter:
+      - package.json
+      - out
+publish: null
