@@ -19,7 +19,7 @@ import styles from '@/styles/Home.module.css'
 import { useDispatch, useSelector } from "react-redux";
 import Router, { useRouter } from "next/router";
 import { StateType } from "@/types";
-import React, { useCallback, useEffect, useState } from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import { getAllOrganizations, updateOrganizationState } from "@/redux/organizations/action-reducer";
 import { Account, Message, Organization, User } from "@/models";
 import { getAllAccount, updateAccountState } from "@/redux/accounts/action-reducer";
@@ -293,7 +293,7 @@ export function Header() {
             onChange={event => {
               setSearchString(event.target.value)
             }}
-            value={searchString}
+          value={searchString}
             onKeyPress={(e) => handleKeyPress(e)}
           />
           <InputRightElement>

@@ -436,7 +436,7 @@ div:has(> .mailSendToaster) {
 
 .rdw-editor-wrapper .link-class {
     margin-left: 52px;
-    margin-bottom: 0;
+    margin-bottom: -3px;
 }
 
 .custom-dropdown {

@@ -12,7 +12,7 @@ import {
 import styles from "@/styles/project.module.css";
 import React, {ChangeEvent, useEffect, useState} from "react";
 import {Toaster} from "@/components/common";
-import {createProjects} from "@/redux/projects/action-reducer";
+import {createProjects, updateProjectState} from "@/redux/projects/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import withAuth from "@/components/auth/withAuth";
@@ -59,13 +59,13 @@ function CreateNewProjectModal(props: any) {
                 }
                 dispatch(addItemToGroup(reqBody))
             }
-
             Toaster({
                 desc: "New project added successfully",
-                title: "New project added",
+                title: "Success",
                 type: 'success'
             });
             props.onClose();
+            dispatch(updateProjectState({createProjectSuccess: false}))
         }
     }, [createProjectSuccess, selectedAccount])
 

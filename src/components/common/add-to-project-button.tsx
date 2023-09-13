@@ -65,6 +65,7 @@ export function AddToProjectButton() {
                   padding={'4px 4px 4px 8px'}
                   fontSize={'12px'} fontWeight={500}
                   h={'fit-content'}
+
               >
                   Add to Project
                   <span className={styles.RightContent}>⌘P</span>
