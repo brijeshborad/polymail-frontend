@@ -47,7 +47,7 @@
     "next-redux-wrapper": "^8.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-draft-wysiwyg": "git+https://git@github.com/brijeshborad/react-draft-wysiwyg.git",
+    "react-draft-wysiwyg": "github:brijeshborad/react-draft-wysiwyg",
     "react-redux": "^8.1.1",
     "react-use-websocket": "^4.3.1",
     "redux-saga": "^1.2.3",
