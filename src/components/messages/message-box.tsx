@@ -16,6 +16,7 @@ export function MessageBox(props: any) {
     const iframeRef = React.useRef<HTMLIFrameElement | null | any>(null);
     const [iframeHeight, setIframeHeight] = React.useState("0px");
     const [isShowClass, setIsShowClass] = useState<boolean>(false);
+    const message = props.item
 
     const dispatch = useDispatch();
     const {
@@ -65,7 +66,7 @@ export function MessageBox(props: any) {
                     <Flex w={'100%'} direction={'column'}>
                         <Flex align={'center'} justify={'space-between'} mb={1}>
                             <Heading as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400}
-                                     letterSpacing={'-0.13px'} lineHeight={1}>Michael Eisner</Heading>
+                                     letterSpacing={'-0.13px'} lineHeight={1}>{message.from.name}</Heading>
                             <Flex align={'center'} className={styles.mailBoxTime} gap={3}>
                                 {props?.item.scope !== 'visible' ? <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
                                      <EyeSlashedIcon />
@@ -89,11 +90,24 @@ export function MessageBox(props: any) {
                             <Flex w={'100%'} direction={'column'} pr={'20px'}>
                                 <Flex align={'center'} justify={'space-between'} mb={1}>
                                     <Flex align={'flex-end'} gap={1}>
-                                        <Heading as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400}
-                                                 letterSpacing={'-0.13px'} lineHeight={1}>Michael Eisner</Heading>
-                                        <span className={'dot'}/>
-                                        <Text fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
-                                              fontWeight={400}>{props.threadDetails.from}</Text>
+                                        <Heading 
+                                          as='h6' fontSize={'13px'} color={'#0A101D'} 
+                                          fontWeight={400} letterSpacing={'-0.13px'} lineHeight={1}
+                                        >
+                                          {message.from?.name || message.from.email}
+                                        </Heading>
+                                        {!message.from?.name && (
+                                          <>
+                                            <span className={'dot'}/>
+                                            <Text 
+                                              fontSize='12px' letterSpacing={'-0.13px'} 
+                                              color={'#6B7280'} lineHeight={1}
+                                              fontWeight={400}
+                                            >
+                                              {props.threadDetails.from.email}
+                                            </Text>
+                                          </>
+                                        )}
                                     </Flex>
 
                                     <Flex align={'center'} gap={'6px'}>
@@ -120,7 +134,7 @@ export function MessageBox(props: any) {
                                 {props.threadDetails && props.threadDetails.to && props.threadDetails.to.length > 0 &&
                                 <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
                                       fontWeight={400}>to:&nbsp;
-                                    {props.threadDetails.to[0]}&nbsp; <Text
+                                    {props.threadDetails.to[0].email}&nbsp; <Text
                                         as='u'>{props.threadDetails.to.length - 1 > 0 && `and ${props.threadDetails.to.length - 1} others`} </Text>
                                 </Flex>
                                 }
