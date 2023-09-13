@@ -330,7 +330,7 @@ export function Message() {
                                       >
                                         {lastMessageDetails?.from?.name || lastMessageDetails?.from?.email}
                                       </Heading>
-                                      {lastMessageDetails && lastMessageDetails.from && !lastMessageDetails.from.name && (
+                                      {lastMessageDetails && lastMessageDetails.from && lastMessageDetails.from.name && (
                                         <>
                                           <span className={'dot'}/>
                                           <Text 
@@ -394,7 +394,7 @@ export function Message() {
                                 {lastMessageDetails && lastMessageDetails.to && lastMessageDetails.to.length > 0 &&
                                 <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'}
                                       lineHeight={1} fontWeight={400}>to:&nbsp;
-                                  {lastMessageDetails.to[0].name}&nbsp; <Text
+                                  {lastMessageDetails.to[0].email}&nbsp; <Text
                                         as='u'>{lastMessageDetails.to.length - 1 > 0 && `and ${lastMessageDetails.to.length - 1} others`} </Text>
                                 </Flex>
                                 }

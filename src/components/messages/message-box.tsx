@@ -96,9 +96,9 @@ export function MessageBox(props: any) {
                                         >
                                           {message.from?.name || message.from.email}
                                         </Heading>
-                                        {!message.from?.name && (
+                                        {message.from?.name && (
                                           <>
-                                            <span className={'dot'}/>
+                                            <span className={'dot'} />
                                             <Text 
                                               fontSize='12px' letterSpacing={'-0.13px'} 
                                               color={'#6B7280'} lineHeight={1}
