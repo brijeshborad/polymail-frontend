@@ -9,7 +9,7 @@ import type {
   Rectangle
 } from "electron";
 
-export default (windowName: string, options: BrowserWindowConstructorOptions | any): BrowserWindow => {
+export default (windowName: string, options: BrowserWindowConstructorOptions): BrowserWindow => {
   const key = 'window-state';
   const name = `window-state-${windowName}`;
   const store = new Store<Rectangle>({ name });
@@ -17,7 +17,7 @@ export default (windowName: string, options: BrowserWindowConstructorOptions | a
     width: options.width,
     height: options.height,
   };
-  let state: any = {};
+  let state = {};
   let win: any;
 
   const restore = () => store.get(key, defaultSize);
@@ -35,10 +35,10 @@ export default (windowName: string, options: BrowserWindowConstructorOptions | a
 
   const windowWithinBounds = (windowState: any, bounds: any) => {
     return (
-      windowState.x >= bounds.x &&
-      windowState.y >= bounds.y &&
-      windowState.x + windowState.width <= bounds.x + bounds.width &&
-      windowState.y + windowState.height <= bounds.y + bounds.height
+        windowState.x >= bounds.x &&
+        windowState.y >= bounds.y &&
+        windowState.x + windowState.width <= bounds.x + bounds.width &&
+        windowState.y + windowState.height <= bounds.y + bounds.height
     );
   };
 

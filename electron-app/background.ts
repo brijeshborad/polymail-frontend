@@ -3,6 +3,13 @@ import serve from 'electron-serve';
 import {createWindow} from './helpers';
 
 const isProd: boolean = process.env.NODE_ENV === 'production';
+
+const defaultWindowConfig = {
+    width: 1000,
+    height: 600,
+    autoHideMenuBar: isProd
+}
+
 if (isProd) {
     serve({directory: process.env.BUILD_DIR || 'out'});
 } else {
@@ -12,21 +19,16 @@ if (isProd) {
 (async () => {
     await app.whenReady();
 
-    const mainWindow = createWindow('main', {
-        width: 1000,
-        height: 600,
-        autoHideMenuBar: !isProd
-    });
+    const mainWindow = createWindow('main', defaultWindowConfig);
 
     if (isProd) {
-        await mainWindow.loadURL(`app://./inbox.html`);
-        mainWindow.webContents.openDevTools();
+        await mainWindow.loadURL(`app://./index.html`);
     } else {
         const port = process.argv[2];
         await mainWindow.loadURL(`http://localhost:${port}`);
         mainWindow.webContents.openDevTools();
     }
-    mainWindow.maximize();
+    // mainWindow.maximize();
 })();
 
 app.on('window-all-closed', () => {
@@ -40,7 +42,7 @@ app.on('activate', () => {
         createWindow('main', {
             width: 1000,
             height: 600,
-            autoHideMenuBar: !isProd
+            autoHideMenuBar: isProd
         });
     }
 });
