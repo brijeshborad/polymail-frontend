@@ -1,3 +1,4 @@
 module.exports = {
-    mainSrcDir: 'electron'
+    mainSrcDir: 'electron',
+    buildDir: 'electron-build'
 };

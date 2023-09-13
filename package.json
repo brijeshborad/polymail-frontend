@@ -1,8 +1,10 @@
 {
   "name": "polymail",
   "version": "0.1.0",
+  "author": "polymail",
+  "description": "Email designed for working professionals",
   "private": true,
-  "main": "out/electron.js",
+  "main": "electron-build/electron.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

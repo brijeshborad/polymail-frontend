@@ -4,7 +4,7 @@ import {createWindow} from './helpers';
 
 const isProd: boolean = process.env.NODE_ENV === 'production';
 if (isProd) {
-    serve({directory: 'out'});
+    serve({directory: process.env.BUILD_DIR || 'out'});
 } else {
     app.setPath('userData', `${app.getPath('userData')} (development)`);
 }
@@ -19,7 +19,7 @@ if (isProd) {
     });
 
     if (isProd) {
-        await mainWindow.loadURL(`out://./index.html`);
+        await mainWindow.loadURL(`app://./inbox.html`);
         mainWindow.webContents.openDevTools();
     } else {
         const port = process.argv[2];

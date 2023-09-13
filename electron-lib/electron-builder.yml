@@ -8,5 +8,5 @@ files:
   - from: .
     filter:
       - package.json
-      - out
+      - electron-build
 publish: null

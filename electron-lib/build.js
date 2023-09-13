@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs-extra');
 const execa = require('execa');
 const arg = require('arg');
+const {getElectronConfig} = require("./helper");
 
 let cwd = process.cwd();
 let execaOptions = {
@@ -32,10 +33,11 @@ let args = arg({
 });
 
 async function build() {
+    const {buildDir} = getElectronConfig();
     // Ignore missing dependencies
     process.env.ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES = 'true';
 
-    const appDir = path.join(cwd, 'out');
+    const appDir = path.join(cwd, buildDir || 'out');
     const distDir = path.join(cwd, 'dist');
 
     try {

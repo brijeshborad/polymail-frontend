@@ -1,42 +1,3 @@
-// var e = require("webpack"), n = require("fs"), r = require("path"), o = require("webpack-merge");
-// const s = process.cwd(), i = require(r.join(s, "package.json")).dependencies;
-// var t = o => ({
-//     mode: o,
-//     target: "electron-main",
-//     node: {__dirname: !1, __filename: !1},
-//     externals: [...Object.keys(i || {})],
-//     devtool: "source-map",
-//     resolve: {extensions: [".js", ".jsx", ".json", ".ts", ".tsx"], modules: [r.join(s, "out"), "node_modules"]},
-//     output: {libraryTarget: "commonjs2"},
-//     module: {
-//         rules: [{
-//             test: /\.(js|ts)x?$/,
-//             use: {
-//                 // loader: require.resolve("babel-loader"),
-//                 options: {
-//                     cacheDirectory: !0,
-//                     // extends: n.existsSync(r.join(s, ".babelrc")) ? r.join(s, ".babelrc") : n.existsSync(r.join(s, ".babelrc.js")) ? r.join(s, ".babelrc.js") : n.existsSync(r.join(s, "babel.config.js")) ? r.join(s, "babel.config.js") : r.join(__dirname, "../babel.js")
-//                 }
-//             },
-//             exclude: [/node_modules/, r.join(s, "src"), r.join(s, "public")]
-//         }]
-//     },
-//     plugins: [new e.EnvironmentPlugin({NODE_ENV: o})]
-// });
-// const c = process.cwd(), a = n.existsSync(r.join(c, "tsconfig.json")) ? ".ts" : ".js";
-// e((e => {
-//     const {mainSrcDir: s, webpack: i} = (() => {
-//         const e = r.join(c, "electron-lib/electron.config.js");
-//         return n.existsSync(e) ? require(e) : {}
-//     })(), j = o.merge(t(e), {
-//         entry: {background: r.join(c, s || "main", `electron${a}`)},
-//         output: {filename: "[name].js", path: r.join(c, "out")}
-//     }), u = i || {};
-//     return "function" == typeof u ? u(j, e) : o.merge(j, u)
-// })("production")).run(((e, n) => {
-//     e && console.error(e.stack || e), n && n.hasErrors() && console.error(n.toString())
-// }));
-
 "use strict";
 const path = require('path');
 const webpack = require('webpack');
@@ -49,6 +10,7 @@ const externals = require(path.join(cwd, 'package.json')).dependencies;
 
 // ENV = 'development' | 'production'
 const configure = (env) => {
+    const {buildDir} = getElectronConfig();
     return {
         mode: env,
         target: 'electron-main',
@@ -60,7 +22,7 @@ const configure = (env) => {
         devtool: 'source-map',
         resolve: {
             extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
-            modules: [path.join(cwd, 'out'), 'node_modules'],
+            modules: [path.join(cwd, buildDir || 'out'), 'node_modules'],
         },
         output: {
             libraryTarget: 'commonjs2',
@@ -78,8 +40,7 @@ const configure = (env) => {
                     },
                     exclude: [
                         /node_modules/,
-                        path.join(cwd, 'src'),
-                        path.join(cwd, 'public'),
+                        path.join(cwd, 'src')
                     ],
                 },
             ],
@@ -87,6 +48,7 @@ const configure = (env) => {
         plugins: [
             new webpack.EnvironmentPlugin({
                 NODE_ENV: env,
+                BUILD_DIR: buildDir
             }),
         ],
     }
@@ -95,7 +57,7 @@ const configure = (env) => {
 const ext = fs.existsSync(path.join(cwd, 'tsconfig.json')) ? '.ts' : '.js';
 
 const webpackConfig = env => {
-    const {mainSrcDir, webpack} = getElectronConfig();
+    const {mainSrcDir, webpack, buildDir} = getElectronConfig();
 
     const userConfig = merge(configure(env), {
         entry: {
@@ -103,7 +65,7 @@ const webpackConfig = env => {
         },
         output: {
             filename: '[name].js',
-            path: path.join(cwd, 'out'),
+            path: path.join(cwd, buildDir || 'out'),
         },
     })
 
