@@ -66,6 +66,17 @@ function Profile() {
         }
     }
 
+    // useEffect(() => {
+    //     if (userDetailsUpdateSuccess) {
+    //         Toaster({
+    //             desc: "Account details updated successfully",
+    //             title: "Account details updated",
+    //             type: 'success'
+    //         });
+    //         dispatch(updateUserState({ userDetailsUpdateSuccess: false }))
+    //     }
+    // }, [userDetailsUpdateSuccess])
+
     useEffect(() => {
         if (profilePictureUpdated) {
             dispatch(getProfilePicture({}));

@@ -213,6 +213,13 @@ a {
     padding: 8px 12px;
 }
 
+.drop-down-list button.emoji-modal-icon {
+    font-size: 16px;
+    padding: 3px 2px;
+    border-radius: 3px;
+    line-height: 1;
+}
+
 .drop-down-list button svg {
     margin: 0;
     font-size: 16px;
@@ -429,7 +436,7 @@ div:has(> .mailSendToaster) {
 
 .rdw-editor-wrapper .link-class {
     margin-left: 52px;
-    margin-bottom: 0;
+    margin-bottom: -3px;
 }
 
 .custom-dropdown {
@@ -489,4 +496,8 @@ div:has(> .mailSendToaster) {
     width: 20px;
     height: 20px;
     border-radius: 3px;
+}
+
+.rdw-editor-wrapper .emoji-picker.rdw-emoji-modal {
+    width: 238px;
 }

@@ -28,10 +28,15 @@ export function ThreadsSideBarTab(props: TabProps) {
     const isSelectedAllChecked = ((multiSelection && multiSelection.length > 0) && multiSelection.length === (threads || []).length)
 
     useEffect(() => {
+      if (props.tab) {
         if (router.query.project) {
-            setTabName('every-thing')
+          setTabName('every-thing')
+
+        } else {
+          setTabName('just-mine')
         }
-    }, [router.query.project])
+      }
+    }, [props.tab])
 
     const changeThread = (type: string) => {
          setTabName(type);

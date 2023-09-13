@@ -52,10 +52,12 @@ function InboxPage() {
 
     return (
         <div>
-            {isLoading && <Flex gap={2} py={4} px={10} backgroundColor={'#FFFFFF'} borderBottom={'1px solid #F3F4F6'}>
-                <SkeletonLoader height={'36px'} skeletonLength={4} />
-                </Flex>}
-            <InboxHeaderProjectsList/>
+            <Flex padding={'16px 40px 15px'} backgroundColor={'#FFFFFF'} borderBottom={'1px solid #F3F4F6'} gap={3}
+                                 overflowX={'auto'}>
+                {isLoading && <SkeletonLoader height={'36px'} skeletonLength={6} width={'216px'}/>}
+                <InboxHeaderProjectsList/>
+            </Flex>
+
             <div className={styles.mailBg}>
                 <Grid className={styles.mailGrid} templateColumns='30% auto' gap={6} height={'100%'}>
                     <GridItem w='100%'>

@@ -164,7 +164,7 @@ function Index() {
 
                                 <Flex align={'center'} gap={2}>
                                     <div className={styles.projectIcon}>
-                                        <Image src="/image/handcraft.png" width="24" height="24" alt=""/>
+                                        { project?.emoji ? project.emoji : <Image src="/image/handcraft.png" width="24" height="24" alt=""/> }
                                     </div>
                                     <Text fontSize='md' color={'#08162F'} fontWeight={'600'}>{project.name}</Text>
                                     <Badge backgroundColor={'rgba(8, 22, 47, 0.05)'} fontSize={'12px'}

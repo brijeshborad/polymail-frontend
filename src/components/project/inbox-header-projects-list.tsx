@@ -28,8 +28,7 @@ export function InboxHeaderProjectsList() {
 
     return (
         <>
-            <Flex padding={'16px 40px 15px'} backgroundColor={'#FFFFFF'} borderBottom={'1px solid #F3F4F6'} gap={3}
-                  overflowX={'auto'}>
+            <>
                 {projectData && !!projectData.length && (projectData || []).map((project: Project, index: number) => (
                     <Button onClick={() => Router.push(`/projects/${project.id}`)}
                             key={index} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
@@ -37,7 +36,7 @@ export function InboxHeaderProjectsList() {
                             borderRadius={'8px'} padding={'7px'} minWidth={'216px'} maxWidth={'216px'}>
                         <Flex className={'disney-icon'} position={'relative'} align={'center'} justify={'center'}
                               borderRadius={'3px'} backgroundColor={'#C5D5ED'} h={'20px'} w={'20px'}>
-                            <DisneyDIcon/>
+                            { project?.emoji ? project.emoji : <DisneyDIcon/> }
                         </Flex>
                         <Text whiteSpace={'nowrap'} overflow={'hidden'} textOverflow={'ellipsis'} fontSize='13px'
                               color={'#0A101D'} flex={'1'}>{project.name}</Text>
@@ -80,7 +79,7 @@ export function InboxHeaderProjectsList() {
                 }
 
 
-            </Flex>
+            </>
 
             <CreateNewProjectModal onOpen={onOpen} isOpen={isOpen} onClose={onClose} />
         </>

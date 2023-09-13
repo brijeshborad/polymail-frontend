@@ -1,6 +1,7 @@
 export interface Project {
     id?: string,
     name?: string,
+    emoji?: string,
     organizationId?: string,
     accountId?: string,
     created?: string,
@@ -8,7 +9,6 @@ export interface Project {
     numThreads?: number,
     scope?: string,
     projectMeta?: ProjectMetaData
-
 }
 
 export interface ProjectRequestBody {
