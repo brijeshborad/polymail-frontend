@@ -325,11 +325,10 @@ export function Message() {
                               <Flex align={'center'} justify={'space-between'} mb={1}>
                                   <Flex align={'center'} gap={1}>
                                       <Heading as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400}
-                                               letterSpacing={'-0.13px'} lineHeight={1}>Michael
-                                          Eisner</Heading>
+                                               letterSpacing={'-0.13px'} lineHeight={1}>{lastMessageDetails?.from?.name}</Heading>
                                       <span className={'dot'}/>
                                       <Text fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'}
-                                            lineHeight={1} fontWeight={400}>{lastMessageDetails?.from?.name}</Text>
+                                            lineHeight={1} fontWeight={400}>{lastMessageDetails?.from?.email}</Text>
                                   </Flex>
 
                                   <Flex align={'center'} gap={'6px'}>
