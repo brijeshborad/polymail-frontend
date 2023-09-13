@@ -50,9 +50,9 @@ function* getProject({payload: {id}}: PayloadAction<{id: string}>) {
     }
 }
 
-function* addProjects({payload: {name, accountId, organizationId}}: PayloadAction<{name: string, accountId: string, organizationId: string}>) {
+function* addProjects({payload: {name, accountId, organizationId, emoji}}: PayloadAction<{name: string, accountId: string, organizationId: string, emoji?: string}>) {
     try {
-        const response: AxiosResponse = yield ApiService.callPost(`projects`, {name, accountId, organizationId});
+        const response: AxiosResponse = yield ApiService.callPost(`projects`, {name, accountId, organizationId, emoji});
         yield put(createProjectsSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;

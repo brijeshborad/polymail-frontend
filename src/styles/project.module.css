@@ -408,6 +408,22 @@
     background-color: #ffffff;
 }
 
+.projectMemberModal .emojiSearchBar:focus-visible {
+    box-shadow: none;
+}
+
+.projectMemberModal .emojiSearchBar::placeholder {
+    color: #9CA3AF;
+}
+
+.projectMemberModal .emojiModalButton:hover {
+    background-color: #F9FAFB;
+}
+
+.projectMemberModal .emojiModalButton span {
+    line-height: 1;
+}
+
 
 @media (max-width: 991px) {
     .projectPage .mailGrid {

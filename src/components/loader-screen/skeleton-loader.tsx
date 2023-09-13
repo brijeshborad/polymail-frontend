@@ -15,7 +15,7 @@ export function SkeletonLoader(props: Loader) {
                     height={props.height || '60px'}
                     borderRadius={'8px'}
                     border={'1px solid #E5E7EB'}
-                    width={'100%'}
+                    width={props.width || '100%'}
                 />
             ))}
         </>

@@ -1,7 +1,7 @@
 import {
     Button,
-    Flex,
-    Heading, IconButton, Input, Menu, MenuButton, MenuItem, MenuList,
+    Flex, Grid, GridItem,
+    Heading, IconButton, Input, InputGroup, InputLeftElement, Menu, MenuButton, MenuItem, MenuList,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -16,10 +16,11 @@ import {createProjects} from "@/redux/projects/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import withAuth from "@/components/auth/withAuth";
-import {CloseIcon, SmallAddIcon, TriangleDownIcon} from "@chakra-ui/icons";
+import {CloseIcon, Search2Icon, SmallAddIcon, TriangleDownIcon} from "@chakra-ui/icons";
 import {PROJECT_ROLES} from "@/utils/constants";
 import {addItemToGroup, updateMembershipState} from "@/redux/memberships/action-reducer";
 import Image from "next/image";
+import {emojiArray} from "@/utils/common.functions";
 
 
 function CreateNewProjectModal(props: any) {
@@ -32,12 +33,18 @@ function CreateNewProjectModal(props: any) {
         role: 'member',
         memberArray: []
     });
+    const [projectEmoji, setProjectEmoji] = useState<string>('');
+
     const {success: membershipSuccess} = useSelector((state: StateType) => state.memberships);
     const {createProjectSuccess, project} = useSelector((state: StateType) => state.projects);
 
 
     const handleChange = (event: ChangeEvent | any) => {
         setProjectName(event.target.value);
+    }
+
+    const emojiChange = (item: string) => {
+        setProjectEmoji(item);
     }
 
     useEffect(() => {
@@ -96,7 +103,8 @@ function CreateNewProjectModal(props: any) {
             let body = {
                 name: projectName,
                 accountId: selectedAccount.id,
-                organizationId: selectedOrganization.id
+                organizationId: selectedOrganization.id,
+                emoji: projectEmoji
             }
             dispatch(createProjects(body));
         }
@@ -143,6 +151,7 @@ function CreateNewProjectModal(props: any) {
             memberArray: updatedMemberArray,
         });
     }
+
     return (
         <>
             <Modal isOpen={props.isOpen} onClose={props.onClose} isCentered>
@@ -155,9 +164,31 @@ function CreateNewProjectModal(props: any) {
                     <ModalBody padding={'20px 12px 12px'}>
                         <Flex direction={'column'} gap={4}>
                             <Flex align={'center'} gap={4}>
-                                <Flex backgroundColor={'#F9FAFB'} color={'#374151'} cursor={'pointer'} fontSize={'24px'} minW={'48px'} w={'48px'} h={'48px'} borderRadius={'50%'} align={'center'} justify={'center'}>
-                                    <SmallAddIcon/>
-                                </Flex>
+                                <Menu>
+                                    <MenuButton className={styles.emojiModalButton} as={IconButton} backgroundColor={'#F9FAFB'}
+                                                color={'#374151'} cursor={'pointer'} fontSize={'24px'} minW={'48px'}
+                                                w={'48px'} h={'48px'} borderRadius={'50%'} alignItems={'center'} justifyContent={'center'} >{projectEmoji ? projectEmoji : <SmallAddIcon/>} </MenuButton>
+                                    <MenuList className={'drop-down-list'}>
+                                        <Flex padding={3} borderBottom={'1px solid #F3F4F6'}>
+                                            <InputGroup>
+                                                <InputLeftElement h={'29px'} w={'30px'} fontSize={'13px'} color={'#6B7280'} pointerEvents='none'>
+                                                    <Search2Icon/>
+                                                </InputLeftElement>
+                                                <Input className={styles.emojiSearchBar} backgroundColor={'#F3F4F6'} borderRadius={20} fontSize={'14px'}
+                                                       fontWeight={500} h={'auto'} lineHeight={1} type='tel'
+                                                       border={0} padding={'5px 15px 5px 30px'} placeholder='Search emoji' />
+                                            </InputGroup>
+                                        </Flex>
+                                        <Grid templateColumns='repeat(10, 1fr)' maxH={'175px'} overflow={'auto'} gap={2} padding={3}>
+                                            {emojiArray.map((item: string, index: number) => (
+                                              <GridItem w='100%' key={index} onClick={() => emojiChange(item)}>
+                                                  <MenuItem className={'emoji-modal-icon'}> {item} </MenuItem>
+                                              </GridItem>
+                                            ))}
+                                        </Grid>
+                                    </MenuList>
+                                </Menu>
+
                                 <Input className={styles.projectSearchBar} onChange={handleChange} borderColor={'#E5E7EB'} borderRadius={8} backgroundColor={'#FFFFFF'} fontSize={'13px'} padding={'10px 16px'} lineHeight={1} height={'auto'} placeholder='Project name' />
                             </Flex>
 

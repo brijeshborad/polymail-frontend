@@ -38,7 +38,7 @@ const projectsSlice = createSlice({
             return {...state, projects: {}, isLoading: false, error}
         },
 
-        createProjects: (state: InitialProjectState, _action: PayloadAction<{ name?: string, accountId?: string, organizationId?: string }>) => {
+        createProjects: (state: InitialProjectState, _action: PayloadAction<{ name?: string, accountId?: string, organizationId?: string, emoji?: string }>) => {
             return {...state, project: null, isLoading: true, error: null, createProjectSuccess: false}
         },
         createProjectsSuccess: (state: InitialProjectState, {payload: project}: PayloadAction<{ }>) => {

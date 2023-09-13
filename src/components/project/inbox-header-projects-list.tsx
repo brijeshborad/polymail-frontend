@@ -28,8 +28,7 @@ export function InboxHeaderProjectsList() {
 
     return (
         <>
-            <Flex padding={'16px 40px 15px'} backgroundColor={'#FFFFFF'} borderBottom={'1px solid #F3F4F6'} gap={3}
-                  overflowX={'auto'}>
+            <>
                 {projectData && !!projectData.length && (projectData || []).map((project: Project, index: number) => (
                     <Button onClick={() => Router.push(`/projects/${project.id}`)}
                             key={index} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
@@ -80,7 +79,7 @@ export function InboxHeaderProjectsList() {
                 }
 
 
-            </Flex>
+            </>
 
             <CreateNewProjectModal onOpen={onOpen} isOpen={isOpen} onClose={onClose} />
         </>
