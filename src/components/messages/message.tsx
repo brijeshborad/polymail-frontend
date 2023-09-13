@@ -324,12 +324,23 @@ export function Message() {
                           <Flex w={'100%'} direction={'column'}>
                               <Flex align={'center'} justify={'space-between'} mb={1}>
                                   <Flex align={'center'} gap={1}>
-                                      <Heading as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400}
-                                               letterSpacing={'-0.13px'} lineHeight={1}>Michael
-                                          Eisner</Heading>
-                                      <span className={'dot'}/>
-                                      <Text fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'}
-                                            lineHeight={1} fontWeight={400}>{lastMessageDetails.from}</Text>
+                                      <Heading 
+                                        as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400}
+                                        letterSpacing={'-0.13px'} lineHeight={1}
+                                      >
+                                        {lastMessageDetails?.from?.name || lastMessageDetails?.from?.email}
+                                      </Heading>
+                                      {lastMessageDetails && lastMessageDetails.from && lastMessageDetails.from.name && (
+                                        <>
+                                          <span className={'dot'}/>
+                                          <Text 
+                                            fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'}
+                                            lineHeight={1} fontWeight={400}
+                                          >
+                                            {lastMessageDetails?.from?.email}
+                                          </Text>
+                                        </>
+                                      )}
                                   </Flex>
 
                                   <Flex align={'center'} gap={'6px'}>
@@ -383,7 +394,7 @@ export function Message() {
                                 {lastMessageDetails && lastMessageDetails.to && lastMessageDetails.to.length > 0 &&
                                 <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'}
                                       lineHeight={1} fontWeight={400}>to:&nbsp;
-                                  {lastMessageDetails.to[0]}&nbsp; <Text
+                                  {lastMessageDetails.to[0].email}&nbsp; <Text
                                         as='u'>{lastMessageDetails.to.length - 1 > 0 && `and ${lastMessageDetails.to.length - 1} others`} </Text>
                                 </Flex>
                                 }

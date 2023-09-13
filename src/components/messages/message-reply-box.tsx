@@ -32,7 +32,7 @@ import {createDraft, sendMessage, updateDraftState, updatePartialMessage} from "
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import dayjs from "dayjs";
-import {MessageAttachments} from "@/models";
+import {MessageAttachments, MessageRecipient} from "@/models";
 import {uploadAttachment} from "@/redux/messages/action-reducer";
 import {SingleDatepicker} from "chakra-dayzed-datepicker";
 import {MessageBoxType} from "@/types/props-types/message-box.type";
@@ -40,10 +40,14 @@ import MessageRecipients from "./message-recipients";
 import {RecipientsType} from "@/types/props-types/message-recipients.type";
 
 export function MessageReplyBox(props: MessageBoxType) {
-    const [emailRecipients, setEmailRecipients] = useState<RecipientsType>({
-        cc: {items: [], value: ""},
-        bcc: {items: [], value: ""},
-        recipients: {items: [], value: ""},
+    const blankRecipientValue: MessageRecipient = {
+      name: '',
+      email: ''
+    }
+    const [emailRecipients, setEmailRecipients] = useState<RecipientsType | any>({
+        cc: {items: [], value: blankRecipientValue},
+        bcc: {items: [], value: blankRecipientValue},
+        recipients: {items: [], value: blankRecipientValue},
     })
     const [subject, setSubject] = useState<string>('');
     const [emailBody, setEmailBody] = useState<string>('');
@@ -65,7 +69,7 @@ export function MessageReplyBox(props: MessageBoxType) {
 
     const isValid = (email: string, type: string) => {
         let error = null;
-        if ((emailRecipients[type as keyof RecipientsType].items || []).includes(email)) {
+        if ((emailRecipients[type as keyof RecipientsType].items || []).map((r: MessageRecipient) => r.email).includes(email)) {
             error = `This email has already been added.`;
         }
 
@@ -86,12 +90,15 @@ export function MessageReplyBox(props: MessageBoxType) {
         return true;
     }
     const handleChange = (evt: ChangeEvent | any, type: string) => {
-        setEmailRecipients((prevState) => ({
-            ...prevState,
-            [type as keyof RecipientsType]: {
-                items: [...(prevState[type as keyof RecipientsType].items || [])],
-                value: evt.target.value
+        setEmailRecipients((prevState: RecipientsType) => ({
+          ...prevState,
+          [type as keyof RecipientsType]: {
+            items: [...(prevState[type as keyof RecipientsType].items || [])],
+            value: {
+              name: '',
+              email: evt.target.value
             }
+          }
         }));
     };
 
@@ -102,42 +109,57 @@ export function MessageReplyBox(props: MessageBoxType) {
         let emails = paste.match(/[\w\d\.-]+@[\w\d\.-]+\.[\w\d\.-]+/g);
 
         if (emails) {
-            let toBeAdded = emails.filter((item: string) => !emailRecipients[type as keyof RecipientsType].items.includes(item));
-            setEmailRecipients((prevState) => ({
+            let emailsToBeAdded = emails
+            .filter((email: string) => !emailRecipients[type as keyof RecipientsType].items
+            .map((i: MessageRecipient) => i.email)
+            .includes(email))
+            .map((email: string) => ({
+              email: email,
+              name: ''
+            }))
+
+            setEmailRecipients((prevState: RecipientsType) => ({
                 ...prevState,
                 [type as keyof RecipientsType]: {
-                    items: [...prevState[type as keyof RecipientsType].items, ...toBeAdded],
-                    value: ''
+                    items: [
+                      ...prevState[type as keyof RecipientsType].items, 
+                      ...emailsToBeAdded
+                  ],
+                    value: blankRecipientValue
                 }
             }));
         }
     };
 
     const handleKeyDown = (evt: KeyboardEvent | any, type: string) => {
-        if (["Enter", "Tab"].includes(evt.key)) {
-            evt.preventDefault();
-            let value = emailRecipients[type as keyof RecipientsType].value.trim();
-            let emailArray = value.split(',');
-            !!emailArray.length && emailArray.map(item => {
-                if (item && isValid(item, type)) {
-                    setEmailRecipients((prevState) => ({
-                        ...prevState,
-                        [type as keyof RecipientsType]: {
-                            items: [...prevState[type as keyof RecipientsType].items, item],
-                            value: ''
-                        }
-                    }));
-                }
-            })
-        }
+      if (["Enter", "Tab"].includes(evt.key)) {
+        evt.preventDefault();
+        let value = emailRecipients[type as keyof RecipientsType].value.email.trim();
+  
+        let emailArray = value.split(',');
+        !!emailArray.length && emailArray.map((email: string) => {
+          if (email && isValid(email, type)) {
+            setEmailRecipients((prevState: RecipientsType) => ({
+              ...prevState,
+              [type as keyof RecipientsType]: {
+                items: [...prevState[type as keyof RecipientsType].items, {
+                  name: '',
+                  email: email
+                }],
+                value: blankRecipientValue
+              }
+            }));
+          }
+        })
+      }
     };
 
     const handleItemDelete = (item: string, type: string) => {
-        setEmailRecipients((prevState) => ({
+        setEmailRecipients((prevState: RecipientsType) => ({
             ...prevState,
             [type as keyof RecipientsType]: {
-                items: prevState[type as keyof RecipientsType].items.filter(i => i !== item),
-                value: ''
+                items: prevState[type as keyof RecipientsType].items.map(i => i.email).filter(i => i !== item),
+                value: blankRecipientValue
             }
         }));
     };
@@ -209,22 +231,22 @@ export function MessageReplyBox(props: MessageBoxType) {
                     ]);
                 }
             } else {
-                setEmailRecipients((prevState) => ({
+                setEmailRecipients((prevState: RecipientsType) => ({
                     ...prevState,
                     recipients: {
-                        items: draft ? (draft.to || []) : [props.messageData?.from!],
+                        items: draft ? ({name: '', email: draft.to} || [{name: '', email: ''}]) : [props.messageData?.from!],
                         value: prevState.recipients.value
                     }
                 }));
 
                 if (props.replyType === 'reply-all' && props.messageData.cc) {
-                    let items: string[] = (draft ? (draft.cc || []) : props.messageData.cc)!.filter(t => t);
+                    let items: MessageRecipient[] = (draft ? (draft.cc || []) : props.messageData.cc)!.filter(t => t);
                     if (items.length > 0) {
-                        setEmailRecipients((prevState) => ({
+                        setEmailRecipients((prevState: RecipientsType) => ({
                             ...prevState,
                             cc: {
                                 items: items,
-                                value: ''
+                                value: blankRecipientValue
                             }
                         }));
                         // setHideShowCCBccFields(prev => ({...prev, cc: true}));
@@ -250,15 +272,15 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
     }
 
     useEffect(() => {
-        setEmailRecipients((prevState) => ({
+        setEmailRecipients((prevState: RecipientsType) => ({
             ...prevState,
             cc: {
                 items: [],
-                value: "",
+                value: blankRecipientValue,
             },
             bcc: {
                 items: [],
-                value: "",
+                value: blankRecipientValue,
             }
         }));
     }, [])
@@ -271,7 +293,7 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
 
     useEffect(() => {
         const propertiesToCheck: (keyof RecipientsType)[] = ['recipients', 'bcc', 'cc'];
-        let allValues: string[] = [];
+        let allValues: MessageRecipient[] = [];
         // add message to draft when user add cc, bcc, recipients and subject
         for (const property of propertiesToCheck) {
             if (emailRecipients && emailRecipients[property] && emailRecipients[property].items) {
@@ -338,7 +360,7 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
             } else {
                 if (draft && draft.to && draft.to.length) {
                     Toaster({
-                        desc: `Your message has been sent to ${draft?.to && draft?.to[0]}${draft?.to && draft?.to?.length > 1 ? ` and ${draft?.to && draft?.to?.length - 1} other${draft?.to && draft?.to?.length === 2 ? '' : 's'}` : ''}`,
+                        desc: `Your message has been sent to ${draft?.to && draft?.to[0].email}${draft?.to && draft?.to?.length > 1 ? ` and ${draft?.to && draft?.to?.length - 1} other${draft?.to && draft?.to?.length === 2 ? '' : 's'}` : ''}`,
                         type: 'send_confirmation',
                         title: draft?.subject || '',
                         undoClick: (type: string) => {
@@ -366,9 +388,9 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
             // }
 
             setEmailRecipients({
-                cc: {items: [], value: ""},
-                bcc: {items: [], value: ""},
-                recipients: {items: props.messageData ? [props.messageData.from!] : [], value: ''}
+                cc: {items: [], value: blankRecipientValue},
+                bcc: {items: [], value: blankRecipientValue},
+                recipients: {items: props.messageData ? [props.messageData.from!] : [], value: blankRecipientValue}
             });
             setEmailBody('');
             dispatch(updateDraftState({
@@ -469,7 +491,7 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                                 {!!emailRecipients?.recipients?.items?.length &&
                                 <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
                                       fontWeight={400}>
-                                    {emailRecipients?.recipients?.items[0]}&nbsp; <Text
+                                    {emailRecipients?.recipients?.items[0].email}&nbsp; <Text
                                     as='u'>{emailRecipients?.recipients?.items?.length - 1 > 0 && `and ${emailRecipients?.recipients?.items?.length - 1} others`} </Text>
                                 </Flex>
                                 }

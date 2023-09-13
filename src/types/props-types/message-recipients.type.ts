@@ -1,6 +1,7 @@
+import { MessageRecipient } from "@/models/message";
 import { ChangeEvent, ClipboardEvent, KeyboardEvent } from "react";
 
-export declare type RecipientsValue = { items: string[], value: string };
+export declare type RecipientsValue = { items: MessageRecipient[], value: MessageRecipient };
 export declare type RecipientsType = { cc: RecipientsValue, bcc: RecipientsValue, recipients: RecipientsValue };
 
 export declare type MessageRecipientsType = {

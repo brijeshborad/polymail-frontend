@@ -11,46 +11,59 @@ import {
   Text, useDisclosure
 } from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
-import {FileIcon, TextIcon} from "@/icons";
-import {ChevronDownIcon, CloseIcon} from "@chakra-ui/icons";
-import React, {ChangeEvent, ChangeEventHandler, useCallback, useEffect, useRef, useState} from "react";
-import {StateType} from "@/types";
-import {debounce, isEmail} from "@/utils/common.functions";
-import {RichTextEditor, Time, Toaster} from "@/components/common";
-import {createDraft, sendMessage, updateDraftState, updatePartialMessage} from "@/redux/draft/action-reducer";
-import {useDispatch, useSelector} from "react-redux";
+import { FileIcon, TextIcon } from "@/icons";
+import { ChevronDownIcon, CloseIcon } from "@chakra-ui/icons";
+import React, { ChangeEvent, ChangeEventHandler, useCallback, useEffect, useRef, useState } from "react";
+import { StateType } from "@/types";
+import { debounce, isEmail } from "@/utils/common.functions";
+import { RichTextEditor, Time, Toaster } from "@/components/common";
+import { createDraft, sendMessage, updateDraftState, updatePartialMessage } from "@/redux/draft/action-reducer";
+import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
-import {uploadAttachment} from "@/redux/messages/action-reducer";
-import {SingleDatepicker} from "chakra-dayzed-datepicker";
-import {MessageAttachments} from "@/models";
+import { uploadAttachment } from "@/redux/messages/action-reducer";
+import { SingleDatepicker } from "chakra-dayzed-datepicker";
+import { MessageAttachments, MessageRecipient } from "@/models";
 import CreateNewProject from "@/components/project/create-new-project";
-import {AddToProjectButton} from "@/components/common";
+import { AddToProjectButton } from "@/components/common";
 import MessageRecipients from "../messages/message-recipients";
-import {RecipientsType} from "@/types/props-types/message-recipients.type";
+import { RecipientsType } from "@/types/props-types/message-recipients.type";
 
 export function ComposeBox(props: any) {
+  const blankRecipientValue: MessageRecipient = {
+    name: '',
+    email: ''
+  }
   const [emailRecipients, setEmailRecipients] = useState<RecipientsType>({
-    cc: {items: [], value: ""},
-    bcc: {items: [], value: ""},
-    recipients: {items: [], value: ""},
+    cc: {
+      items: [],
+      value: blankRecipientValue
+    },
+    bcc: {
+      items: [],
+      value: blankRecipientValue
+    },
+    recipients: {
+      items: [],
+      value: blankRecipientValue
+    },
   })
   const [subject, setSubject] = useState<string>('');
   const [emailBody, setEmailBody] = useState<string>('');
-  const {selectedAccount} = useSelector((state: StateType) => state.accounts);
-  const {draft} = useSelector((state: StateType) => state.draft);
+  const { selectedAccount } = useSelector((state: StateType) => state.accounts);
+  const { draft } = useSelector((state: StateType) => state.draft);
   const dispatch = useDispatch();
-  const {isOpen, onOpen, onClose} = useDisclosure();
-  const {isOpen: isOpenProject, onOpen: onOpenProject, onClose: onCloseProject} = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isOpenProject, onOpen: onOpenProject, onClose: onCloseProject } = useDisclosure();
   const [scheduledDate, setScheduledDate] = useState<Date>();
   const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
   const [extraClassNames, setExtraClassNames] = useState<string>('');
   const inputFile = useRef<HTMLInputElement | null>(null);
   const editorRef = useRef<any>(null);
-  const {toast} = createStandaloneToast()
+  const { toast } = createStandaloneToast()
 
   useEffect(() => {
     if (props.messageDetails) {
-      const {subject, to, cc, bcc, draftInfo} = props.messageDetails;
+      const { subject, to, cc, bcc, draftInfo } = props.messageDetails;
 
       if (subject) {
         setSubject(subject)
@@ -61,7 +74,7 @@ export function ComposeBox(props: any) {
           ...prevState,
           recipients: {
             items: to,
-            value: ''
+            value: blankRecipientValue
           }
         }));
       }
@@ -70,7 +83,7 @@ export function ComposeBox(props: any) {
           ...prevState,
           cc: {
             items: cc,
-            value: ''
+            value: blankRecipientValue
           }
         }));
       }
@@ -79,7 +92,7 @@ export function ComposeBox(props: any) {
           ...prevState,
           bcc: {
             items: bcc,
-            value: ''
+            value: blankRecipientValue
           }
         }));
       }
@@ -92,14 +105,14 @@ export function ComposeBox(props: any) {
   }, [props.messageDetails])
 
   useEffect(() => {
-    if(props.isOpen) {
+    if (props.isOpen) {
       handleEditorScroll();
     }
   }, [props.isOpen]);
 
   const isValid = (email: string, type: string) => {
     let error = null;
-    if ((emailRecipients[type as keyof RecipientsType].items || []).includes(email)) {
+    if ((emailRecipients[type as keyof RecipientsType].items || []).map(r => r.email).includes(email)) {
       error = `This email has already been added.`;
     }
 
@@ -124,7 +137,10 @@ export function ComposeBox(props: any) {
       ...prevState,
       [type as keyof RecipientsType]: {
         items: [...(prevState[type as keyof RecipientsType].items || [])],
-        value: evt.target.value
+        value: {
+          name: '',
+          email: evt.target.value
+        }
       }
     }));
   };
@@ -136,12 +152,12 @@ export function ComposeBox(props: any) {
     let emails = paste.match(/[\w\d\.-]+@[\w\d\.-]+\.[\w\d\.-]+/g);
 
     if (emails) {
-      let toBeAdded = emails.filter((item: string) => !emailRecipients[type as keyof RecipientsType].items.includes(item));
+      let toBeAdded = emails.filter((item: string) => !emailRecipients[type as keyof RecipientsType].items.map(r => r.email).includes(item));
       setEmailRecipients((prevState) => ({
         ...prevState,
         [type as keyof RecipientsType]: {
           items: [...prevState[type as keyof RecipientsType].items, ...toBeAdded],
-          value: ''
+          value: blankRecipientValue
         }
       }));
     }
@@ -151,15 +167,19 @@ export function ComposeBox(props: any) {
   const handleKeyDown = (evt: KeyboardEvent | any, type: string) => {
     if (["Enter", "Tab"].includes(evt.key)) {
       evt.preventDefault();
-      let value = emailRecipients[type as keyof RecipientsType].value.trim();
+      let value = emailRecipients[type as keyof RecipientsType].value.email.trim();
+
       let emailArray = value.split(',');
-      !!emailArray.length && emailArray.map(item => {
-        if (item && isValid(item, type)) {
+      !!emailArray.length && emailArray.map((email: string) => {
+        if (email && isValid(email, type)) {
           setEmailRecipients((prevState) => ({
             ...prevState,
             [type as keyof RecipientsType]: {
-              items: [...prevState[type as keyof RecipientsType].items, item],
-              value: ''
+              items: [...prevState[type as keyof RecipientsType].items, {
+                name: '',
+                email: email
+              }],
+              value: blankRecipientValue
             }
           }));
         }
@@ -172,8 +192,8 @@ export function ComposeBox(props: any) {
     setEmailRecipients((prevState) => ({
       ...prevState,
       [type as keyof RecipientsType]: {
-        items: prevState[type as keyof RecipientsType].items.filter(i => i !== item),
-        value: ''
+        items: prevState[type as keyof RecipientsType].items.map(i => i.email).filter(i => i !== item),
+        value: blankRecipientValue
       }
     }));
   };
@@ -200,9 +220,9 @@ export function ComposeBox(props: any) {
     debounce(() => {
       if (selectedAccount && selectedAccount.id) {
         if (draft && draft.id) {
-          dispatch(updatePartialMessage({id: draft.id, body}));
+          dispatch(updatePartialMessage({ id: draft.id, body }));
         } else {
-          dispatch(createDraft({accountId: selectedAccount.id, body}));
+          dispatch(createDraft({ accountId: selectedAccount.id, body }));
         }
       }
     }, 500);
@@ -237,13 +257,13 @@ export function ComposeBox(props: any) {
                   now: true
                 }
               }
-              dispatch(sendMessage({id: draft.id!, ...params}));
+              dispatch(sendMessage({ id: draft.id!, ...params }));
               toast.close('poly-toast');
             }
           })
         }
       }
-      dispatch(sendMessage({id: draft.id, ...params}));
+      dispatch(sendMessage({ id: draft.id, ...params }));
       onClose();
 
       if (props.onClose) {
@@ -251,9 +271,18 @@ export function ComposeBox(props: any) {
       }
 
       setEmailRecipients({
-        cc: {items: [], value: ""},
-        bcc: {items: [], value: ""},
-        recipients: {items: [], value: ''}
+        cc: {
+          items: [],
+          value: blankRecipientValue
+        },
+        bcc: {
+          items: [],
+          value: blankRecipientValue
+        },
+        recipients: {
+          items: [],
+          value: blankRecipientValue
+        }
       });
       setEmailBody('');
       setSubject('');
@@ -278,7 +307,7 @@ export function ComposeBox(props: any) {
 
   useEffect(() => {
     const propertiesToCheck: (keyof RecipientsType)[] = ['recipients', 'bcc', 'cc'];
-    let allValues: string[] = [];
+    let allValues: MessageRecipient[] = [];
     // add message to draft when user add cc, bcc, recipients and subject
     for (const property of propertiesToCheck) {
       if (emailRecipients && emailRecipients[property] && emailRecipients[property].items) {
@@ -308,7 +337,7 @@ export function ComposeBox(props: any) {
               mimeType: event.target.files[0].type
             }
           ]);
-          dispatch(uploadAttachment({id: draft.id, file}));
+          dispatch(uploadAttachment({ id: draft.id, file }));
           sendToDraft('', false);
         }
       };
@@ -332,38 +361,38 @@ export function ComposeBox(props: any) {
     } else {
       setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
     }
-  },[editorRef.current]);
+  }, [editorRef.current]);
 
   return (
     <>
       <Modal isOpen={props.isOpen} onClose={props.onClose} isCentered>
-        <ModalOverlay backgroundColor={'rgba(229, 231, 235, 0.50)'} backdropFilter={'blur(16px)'}/>
+        <ModalOverlay backgroundColor={'rgba(229, 231, 235, 0.50)'} backdropFilter={'blur(16px)'} />
         <ModalContent className={styles.composeModal} maxWidth={'893px'} height={'708px'} maxHeight={'708px'}
-                      borderRadius={16} border={'1px solid #E5E7EB'}>
+          borderRadius={16} border={'1px solid #E5E7EB'}>
           <ModalHeader display={'flex'} borderBottom={'1px solid #E5E7EB'} color={'#0A101D'}
-                       fontWeight={'500'} fontSize={'12px'} padding={'18px 20px'}>Draft&nbsp;<Text
-            display={'flex'} gap={'2px'} className={styles.mailSaveTime}
-            color={'#6B7280'} fontWeight={'400'}> (Saved to drafts {props.messageDetails ?
-            <Time time={props.messageDetails?.created || ''} isShowFullTime={false}
-                  showTimeInShortForm={true}/> : '0 s'} ago)</Text></ModalHeader>
-          <ModalCloseButton color={'#6B7280'} fontSize={'13px'} top={'21px'} right={'20px'}/>
+            fontWeight={'500'} fontSize={'12px'} padding={'18px 20px'}>Draft&nbsp;<Text
+              display={'flex'} gap={'2px'} className={styles.mailSaveTime}
+              color={'#6B7280'} fontWeight={'400'}> (Saved to drafts {props.messageDetails ?
+                <Time time={props.messageDetails?.created || ''} isShowFullTime={false}
+                  showTimeInShortForm={true} /> : '0 s'} ago)</Text></ModalHeader>
+          <ModalCloseButton color={'#6B7280'} fontSize={'13px'} top={'21px'} right={'20px'} />
           <ModalBody padding={0}>
             <Flex direction={'column'} h={'100%'}>
               <Flex align={'center'} justify={'space-between'} gap={3} padding={'16px 20px'}
-                    borderBottom={'1px solid #E5E7EB'}>
+                borderBottom={'1px solid #E5E7EB'}>
                 <Input className={styles.subjectInput} placeholder='Enter subject title' size='lg'
-                       onChange={(e) => addSubject(e)}
-                       flex={1} fontWeight={'700'} padding={'0'} border={'0'} h={'auto'}
-                       defaultValue={subject || ''}
-                       borderRadius={'0'} lineHeight={1} color={'#0A101D'}/>
+                  onChange={(e) => addSubject(e)}
+                  flex={1} fontWeight={'700'} padding={'0'} border={'0'} h={'auto'}
+                  defaultValue={subject || ''}
+                  borderRadius={'0'} lineHeight={1} color={'#0A101D'} />
                 <div>
-                  <AddToProjectButton/>
+                  <AddToProjectButton />
                 </div>
 
               </Flex>
               <Box flex={'1'} p={5}>
                 <Flex direction={"column"} border={'1px solid #F3F4F6'} borderRadius={8} h={'100%'}
-                      padding={'16px'} gap={4}>
+                  padding={'16px'} gap={4}>
 
                   <MessageRecipients
                     emailRecipients={emailRecipients}
@@ -375,18 +404,18 @@ export function ComposeBox(props: any) {
 
                   <Flex flex={1} direction={'column'} position={'relative'}>
                     <Flex direction={'column'} ref={editorRef} className={styles.replyBoxEditor}
-                          onScroll={() => handleEditorScroll()}>
+                      onScroll={() => handleEditorScroll()}>
                       <RichTextEditor className={`reply-message-area ${extraClassNames}`}
-                                      initialUpdated={true}
-                                      placeholder='Reply with anything you like or @mention someone to share this thread'
-                                      value={emailBody} onChange={(e) => sendToDraft(e)}/>
-                      {attachments && attachments.length > 0 ? <div style={{marginTop: '20px'}}>
+                        initialUpdated={true}
+                        placeholder='Reply with anything you like or @mention someone to share this thread'
+                        value={emailBody} onChange={(e) => sendToDraft(e)} />
+                      {attachments && attachments.length > 0 ? <div style={{ marginTop: '20px' }}>
                         {attachments.map((item, index: number) => (
                           <Flex align={'center'} key={index}
-                                className={styles.attachmentsFile}>
+                            className={styles.attachmentsFile}>
                             {item.filename}
                             <div className={styles.closeIcon}
-                                 onClick={() => removeAttachment(index)}><CloseIcon/>
+                              onClick={() => removeAttachment(index)}><CloseIcon />
                             </div>
                           </Flex>
                         ))}
@@ -394,55 +423,55 @@ export function ComposeBox(props: any) {
                     </Flex>
                     <Flex align={'flex-end'} justify={'space-between'} gap={2}>
                       <Flex gap={2} className={styles.replyBoxIcon} mb={'-3px'}
-                            position={'relative'} zIndex={5} ml={'170px'}>
+                        position={'relative'} zIndex={5} ml={'170px'}>
                         <Flex align={'center'} gap={2}>
                           <Flex width={'20px'} h={'20px'} align={'center'} justify={'center'}
-                                cursor={'pointer'} className={styles.replyIcon}>
-                            <FileIcon click={() => inputFile.current?.click()}/>
+                            cursor={'pointer'} className={styles.replyIcon}>
+                            <FileIcon click={() => inputFile.current?.click()} />
                           </Flex>
 
                           <input type='file' id='file' ref={inputFile}
-                                 onChange={(e) => handleFileUpload(e)}
-                                 style={{display: 'none'}}/>
+                            onChange={(e) => handleFileUpload(e)}
+                            style={{ display: 'none' }} />
                           <Flex width={'20px'} h={'20px'} align={'center'} justify={'center'}
-                                cursor={'pointer'} className={styles.replyIcon}>
-                            <TextIcon/>
+                            cursor={'pointer'} className={styles.replyIcon}>
+                            <TextIcon />
                           </Flex>
                         </Flex>
                       </Flex>
                       <Flex align={'center'} className={styles.replyButton}>
                         <Button className={styles.replyTextButton} colorScheme='blue'
-                                onClick={() => sendMessages()}> Send </Button>
+                          onClick={() => sendMessages()}> Send </Button>
                         <Menu>
                           <MenuButton className={styles.replyArrowIcon} as={Button}
-                                      aria-label='Options'
-                                      variant='outline'><ChevronDownIcon/></MenuButton>
+                            aria-label='Options'
+                            variant='outline'><ChevronDownIcon /></MenuButton>
                           <MenuList className={'drop-down-list'}>
                             <MenuItem onClick={() => openCalender()}> Send
                               Later </MenuItem>
                           </MenuList>
                         </Menu>
                         <Modal isOpen={isOpen} onClose={onClose} isCentered={true}
-                               scrollBehavior={'outside'}>
-                          <ModalOverlay/>
+                          scrollBehavior={'outside'}>
+                          <ModalOverlay />
                           <ModalContent minHeight="440px">
                             <ModalHeader display="flex" justifyContent="space-between"
-                                         alignItems="center">
+                              alignItems="center">
                               Schedule send
                             </ModalHeader>
-                            <ModalCloseButton size={'xs'}/>
+                            <ModalCloseButton size={'xs'} />
                             <ModalBody>
                               <SingleDatepicker
                                 date={scheduledDate}
                                 defaultIsOpen={true}
                                 onDateChange={setScheduledDate}
-                                name="date-input"/>
+                                name="date-input" />
                             </ModalBody>
                             <ModalFooter>
                               <Button variant='ghost'
-                                      onClick={onClose}>Cancel</Button>
+                                onClick={onClose}>Cancel</Button>
                               <Button colorScheme='blue' mr={3}
-                                      onClick={() => sendMessages(true)}> Schedule </Button>
+                                onClick={() => sendMessages(true)}> Schedule </Button>
                             </ModalFooter>
                           </ModalContent>
                         </Modal>
@@ -458,12 +487,12 @@ export function ComposeBox(props: any) {
       </Modal>
 
       <Modal isOpen={isOpen} onClose={onClose} isCentered={true} scrollBehavior={'outside'}>
-        <ModalOverlay/>
+        <ModalOverlay />
         <ModalContent minHeight="440px">
           <ModalHeader display="flex" justifyContent="space-between" alignItems="center">
             Schedule send
           </ModalHeader>
-          <ModalCloseButton size={'xs'}/>
+          <ModalCloseButton size={'xs'} />
           <ModalBody>
 
             <SingleDatepicker
@@ -483,7 +512,7 @@ export function ComposeBox(props: any) {
         </ModalContent>
       </Modal>
 
-      <CreateNewProject onOpen={onOpenProject} isOpen={isOpenProject} onClose={onCloseProject}/>
+      <CreateNewProject onOpen={onOpenProject} isOpen={isOpenProject} onClose={onCloseProject} />
 
     </>
   )
