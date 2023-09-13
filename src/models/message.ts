@@ -1,6 +1,11 @@
 import {MessagePart} from "@/models/messagesPart";
 import {MessageAttachments} from "@/models/messageAttachments";
 
+export type MessageRecipient = {
+  name: string
+  email: string
+}
+
 export interface Message {
     id?: string,
     _id?: string,
@@ -12,9 +17,9 @@ export interface Message {
     mailboxes?: string[],
     subject?: string,
     snippet?: string,
-    from?: string,
-    to?: string[],
-    cc?: string[],
+    from?: MessageRecipient,
+    to?: MessageRecipient[],
+    cc?: MessageRecipient[],
     headers?: MessageHeaders[],
     contentRoot?: string,
     draftInfo?: MessageDraftInfo,
@@ -25,9 +30,9 @@ export interface Message {
 
 export interface MessageDraft {
     id?: string,
-    from?: string,
-    to: string[],
-    cc?: string[],
+    from?: MessageRecipient,
+    to: MessageRecipient[],
+    cc?: MessageRecipient[],
     threadId?: string,
     mailboxes?: string[],
     providerId?: string,
@@ -54,7 +59,7 @@ export interface MessageDraftInfo {
 
 export interface MessageRequestBody {
     subject?: string,
-    to: string[],
+    to: MessageRecipient[],
     body?: string,
     draftInfo?: MessageDraftInfo,
     mailboxes?: string[] | undefined,

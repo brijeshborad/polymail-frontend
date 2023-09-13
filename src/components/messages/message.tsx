@@ -101,7 +101,7 @@ export function Message() {
       setLastMessageDetails(currentInboxMessages[currentInboxMessages.length - 1]);
       const draftMessage = messages.findLast((msg: MessageModel) => (msg.mailboxes || []).includes('DRAFT'));
       if (draftMessage) {
-        dispatch(updateDraftState({draft: draftMessage as MessageDraft}));
+        dispatch(updateDraftState({draft: draftMessage as unknown as MessageDraft}));
       }
       setIndex(null);
     }
@@ -329,7 +329,7 @@ export function Message() {
                                           Eisner</Heading>
                                       <span className={'dot'}/>
                                       <Text fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'}
-                                            lineHeight={1} fontWeight={400}>{lastMessageDetails.from}</Text>
+                                            lineHeight={1} fontWeight={400}>{lastMessageDetails?.from?.name}</Text>
                                   </Flex>
 
                                   <Flex align={'center'} gap={'6px'}>
@@ -383,7 +383,7 @@ export function Message() {
                                 {lastMessageDetails && lastMessageDetails.to && lastMessageDetails.to.length > 0 &&
                                 <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'}
                                       lineHeight={1} fontWeight={400}>to:&nbsp;
-                                  {lastMessageDetails.to[0]}&nbsp; <Text
+                                  {lastMessageDetails.to[0].name}&nbsp; <Text
                                         as='u'>{lastMessageDetails.to.length - 1 > 0 && `and ${lastMessageDetails.to.length - 1} others`} </Text>
                                 </Flex>
                                 }
