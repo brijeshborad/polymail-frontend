@@ -17,7 +17,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
       <div className={`${styles.mailDetails} ${isSelected ? styles.mailDetailsSelected : ''}`}>
           <Flex align={"center"} justify={'space-between'}>
               <Flex align={"center"} className={styles.senderDetails} gap={1}>
-                  <DisneyIcon/> {props?.thread?.from?.name || 'Anonymous'}
+                  <DisneyIcon/> {props?.thread?.from?.name || props?.thread?.from?.email}
               </Flex>
               <Flex alignItems={'center'} className={styles2.receiveTime} justify={'flex-end'}>
                   {(props.thread.mailboxes || []).includes('UNREAD') &&
