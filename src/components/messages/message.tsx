@@ -430,8 +430,8 @@ export function Message() {
                   </Flex>}
 
                     <MessageReplyBox
-                        emailPart={(messagePart?.data || '')} messageData={messageDetailsForReplyBox}
-                        replyType={replyType} parentHasScroll={hasScrollableContent}/>
+                        emailPart={(messagePart?.data || '')} messageData={messageDetailsForReplyBox} threadDetails={lastMessageDetails}
+                        replyType={replyType} parentHasScroll={hasScrollableContent} hideAndShowReplayBox={hideAndShowReplayBox}/>
                 </Flex>
             </Flex>
         </>

@@ -6,7 +6,7 @@ import {
     GridItem,
     Input,
     Menu,
-    MenuButton,
+    MenuButton, MenuItem,
     MenuList,
     Modal,
     ModalBody,
@@ -223,6 +223,7 @@ export function MessageReplyBox(props: MessageBoxType) {
             if (props.replyType === 'forward') {
                 emailSubject = `Fwd: ${props.messageData.subject}`;
                 let decoded = Buffer.from(props.emailPart || '', 'base64').toString('ascii');
+                setBoxUpdatedFirstTime(false);
                 setEmailBody(getForwardContent() + (decoded || '') + (selectedAccount?.signature || ''));
                 if (draft && draft.draftInfo && draft?.draftInfo?.attachments?.length) {
                     setAttachments([
@@ -236,7 +237,7 @@ export function MessageReplyBox(props: MessageBoxType) {
                 setEmailRecipients((prevState: RecipientsType) => ({
                     ...prevState,
                     recipients: {
-                        items: draft ? ({name: '', email: draft.to} || [{name: '', email: ''}]) : [props.messageData?.from!],
+                        items: draft ? (draft.to|| [{name: '', email: ''}]) : [props.messageData?.from!],
                         value: prevState.recipients.value
                     }
                 }));
@@ -263,12 +264,21 @@ export function MessageReplyBox(props: MessageBoxType) {
     }, [props.messageData, props.replyType, props.emailPart])
 
     function getForwardContent() {
+        const to = props.messageData?.to;
+         let toEmailString = ''
+        if (to && Array.isArray(to)) {
+            if (to.length === 1) {
+                toEmailString = to[0].email
+            } else if (to.length > 1) {
+                toEmailString = `${to[0].email} and ${to.length - 1} other`
+            }
+        }
         const forwardContent: string = `
              <p style="color: black; background: none">---------- Forwarded message ----------
-From: ${props.messageData?.from}
+From: ${props.messageData?.from?.email}
 Date: ${dayjs(props.messageData?.created, 'ddd, MMM DD, YYYY [at] hh:mm A')}
 Subject: ${props.messageData?.subject}
-To: ${props.messageData?.to}
+To: ${toEmailString}
 ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}</p><br/><br/><br/>`;
         return forwardContent;
     }
@@ -294,11 +304,23 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
     }, [draft])
 
     useEffect(() => {
+        if (props.threadDetails && props.threadDetails?.to.length) {
+            setEmailRecipients((prevState: RecipientsType) => ({
+                ...prevState,
+                recipients: {
+                    items: props.threadDetails.to   ,
+                    value: prevState.recipients.value
+                }
+            }));
+        }
+    }, [props.threadDetails])
+
+    useEffect(() => {
         const propertiesToCheck: (keyof RecipientsType)[] = ['recipients', 'bcc', 'cc'];
         let allValues: MessageRecipient[] = [];
         // add message to draft when user add cc, bcc, recipients and subject
         for (const property of propertiesToCheck) {
-            if (emailRecipients && emailRecipients[property] && emailRecipients[property].items) {
+            if (emailRecipients && emailRecipients[property] && emailRecipients[property].items && Array.isArray(emailRecipients[property].items)) {
                 allValues = [...allValues, ...emailRecipients[property].items];
             }
         }
@@ -483,10 +505,16 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                                 fontWeight={500} lineHeight={'normal'}> Create new draft </Button>
                     </Flex>
                     )}
-                    <Flex align={'center'} justify={'space-between'} gap={4}>
+                    <Flex align={'center'} justify={'space-between'} gap={4} position={"relative"} zIndex={10}>
                         <Flex align={'center'} gap={1}>
-                            <Button color={'#6B7280'} variant='link' size='xs'
-                                    rightIcon={<ChevronDownIcon/>}> Reply to </Button>
+                            <Menu>
+                                <MenuButton color={'#6B7280'} variant='link' size='xs' as={Button} rightIcon={<ChevronDownIcon/>}>Reply to
+                                </MenuButton>
+                                <MenuList className={'drop-down-list reply-dropdown'}>
+                                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply-all', props.threadDetails) : null}> Reply to All </MenuItem>
+                                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('forward', props.threadDetails) : null}> Forward </MenuItem>
+                                </MenuList>
+                            </Menu>
                             <Flex align={'center'} gap={1}>
                                 <div className={styles.mailUserImage}>
 
