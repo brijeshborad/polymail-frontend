@@ -24,8 +24,10 @@ export function LoginSignup({type = 'login'}: LoginProps) {
     const router = useRouter();
 
     useEffect(() => {
+        console.log('router--111', router.query, global.location);
         if (router.query) {
             if (router.query.access_token) {
+                console.log('router', router.query);
                 LocalStorageService.updateUser('store', {token: router.query.access_token})
                 dispatch(updateAuthState({user: {token: router.query.access_token.toString() || ''}}));
                 Router.push('/inbox');

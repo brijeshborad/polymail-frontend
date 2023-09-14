@@ -1,14 +1,10 @@
-import {app, BrowserWindow, Rectangle, session} from 'electron';
+import {app, BrowserWindow, ipcMain} from 'electron';
 import serve from 'electron-serve';
-import {createWindow} from './helpers';
+import {createWindow, updateLocalStorage} from './helpers';
+import path from "path";
 
 const isProd: boolean = process.env.NODE_ENV === 'production';
 let mainWindow: BrowserWindow | any;
-const defaultWindowConfig = {
-    width: 1000,
-    height: 600,
-    autoHideMenuBar: isProd
-}
 
 if (isProd) {
     serve({directory: process.env.BUILD_DIR || 'out'});
@@ -19,10 +15,10 @@ if (isProd) {
 (async () => {
     await app.whenReady();
 
-    mainWindow = createWindow('main', defaultWindowConfig);
+    mainWindow = createWindow('main', getDefaultWindowConfig());
 
     if (isProd) {
-        await mainWindow.loadURL(`app://./index.html`);
+        await mainWindow.loadURL(`app://-`);
     } else {
         const port = process.argv[2];
         await mainWindow.loadURL(`http://localhost:${port}`);
@@ -31,8 +27,25 @@ if (isProd) {
     mainWindow.maximize();
     if (isProd) {
         updateSession();
+        loadEvents();
     }
 })();
+
+function getDefaultWindowConfig() {
+    return {
+        width: 1000,
+        height: 600,
+        autoHideMenuBar: isProd,
+        webPreferences: {
+            sandbox: false,
+            preload: path.join(__dirname, 'preload.js'),
+        }
+    }
+}
+
+function loadEvents() {
+    ipcMain.on('store-data', updateLocalStorage)
+}
 
 function UpsertKeyValue(obj: any, keyToChange: string, value: any) {
     const keyToChangeLower = keyToChange.toLowerCase();
@@ -78,10 +91,6 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-        createWindow('main', {
-            width: 1000,
-            height: 600,
-            autoHideMenuBar: isProd
-        });
+        createWindow('main', getDefaultWindowConfig());
     }
 });

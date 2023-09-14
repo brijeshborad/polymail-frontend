@@ -77,6 +77,7 @@ module.exports = {
         const userConfig = merge(configure(env), {
             entry: {
                 background: path.join(cwd, mainSrcDir || 'main', `background${ext}`),
+                preload: path.join(cwd, mainSrcDir || 'main', `preload${ext}`),
             },
             output: {
                 filename: '[name].js',
