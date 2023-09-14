@@ -26,7 +26,7 @@ import {getAllAccount, updateAccountState} from "@/redux/accounts/action-reducer
 import LocalStorageService from "@/utils/localstorage.service";
 import {getAllThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {useSocket} from "@/hooks/use-socket.hook";
-import {getProfilePicture, updateUsersDetailsSuccess} from "@/redux/users/action-reducer";
+import {getProfilePicture, updateUsersDetailsSuccess, updateUserState} from "@/redux/users/action-reducer";
 import {googleAuthLink} from "@/redux/auth/action-reducer";
 import {updateLastMessage} from "@/redux/socket/action-reducer";
 import {updateMessageState} from "@/redux/messages/action-reducer";
@@ -187,6 +187,7 @@ export function Header() {
             id: accounts[0].userId
           } : userDetails)
         }));
+        dispatch(updateUserState({ userDetailsUpdateSuccess: false }))
       }
     }
   }, [accounts, dispatch, setAccounts]);
