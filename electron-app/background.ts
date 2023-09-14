@@ -1,9 +1,9 @@
-import {app, BrowserWindow, session} from 'electron';
+import {app, BrowserWindow, Rectangle, session} from 'electron';
 import serve from 'electron-serve';
 import {createWindow} from './helpers';
 
 const isProd: boolean = process.env.NODE_ENV === 'production';
-
+let mainWindow: BrowserWindow | any;
 const defaultWindowConfig = {
     width: 1000,
     height: 600,
@@ -19,7 +19,7 @@ if (isProd) {
 (async () => {
     await app.whenReady();
 
-    const mainWindow = createWindow('main', defaultWindowConfig);
+    mainWindow = createWindow('main', defaultWindowConfig);
 
     if (isProd) {
         await mainWindow.loadURL(`app://./index.html`);
@@ -29,28 +29,42 @@ if (isProd) {
         mainWindow.webContents.openDevTools();
     }
     mainWindow.maximize();
-    updateSession();
+    if (isProd) {
+        updateSession();
+    }
 })();
 
+function UpsertKeyValue(obj: any, keyToChange: string, value: any) {
+    const keyToChangeLower = keyToChange.toLowerCase();
+    for (const key of Object.keys(obj)) {
+        if (key.toLowerCase() === keyToChangeLower) {
+            // Reassign old key
+            obj[key] = value;
+            // Done
+            return;
+        }
+    }
+    // Insert at end instead
+    obj[keyToChange] = value;
+}
+
 function updateSession() {
-    // const filter = {
-    //     urls: ['https://api-development.polymail.io/*', 'https://api-teams.polymail.io/*']
-    // };
-    session.defaultSession.webRequest.onBeforeSendHeaders(
+    mainWindow.webContents.session.webRequest.onBeforeSendHeaders(
         (details: any, callback: any) => {
-            callback({requestHeaders: {Origin: '*', ...details.requestHeaders}})
+            const {requestHeaders} = details;
+            UpsertKeyValue(requestHeaders, 'Access-Control-Allow-Origin', ['*']);
+            UpsertKeyValue(requestHeaders, 'Origin', ['*']);
+            callback({requestHeaders});
         }
     );
 
-    session.defaultSession.webRequest.onHeadersReceived(
+    mainWindow.webContents.session.webRequest.onHeadersReceived(
         (details: any, callback: any) => {
+            const {responseHeaders} = details;
+            UpsertKeyValue(responseHeaders, 'Access-Control-Allow-Origin', ['*']);
+            UpsertKeyValue(responseHeaders, 'Access-Control-Allow-Headers', ['*']);
             callback({
-                responseHeaders: {
-                    'Access-Control-Allow-Origin': ['*'],
-                    // We use this to bypass headers
-                    'Access-Control-Allow-Headers': ['*'],
-                    ...details.responseHeaders,
-                },
+                responseHeaders,
             });
         }
     )
