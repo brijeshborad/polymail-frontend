@@ -355,7 +355,6 @@ export function ComposeBox(props: any) {
 
 
   const handleEditorScroll = useCallback(() => {
-    console.log(editorRef.current);
     if (editorRef.current && editorRef.current.scrollTop > 0) {
       setExtraClassNames(prevState => !prevState.includes('show-shadow') ? prevState + ' show-shadow' : prevState);
     } else {
