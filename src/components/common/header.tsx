@@ -235,7 +235,7 @@ export function Header() {
         "name": "SearchCancel",
       })
       if (searchString) {
-        dispatch(updateThreadState({ threads: [], isThreadSearched: true }));
+        dispatch(updateThreadState({ threads: [], isThreadSearched: true, isLoading: true }));
         sendJsonMessage({
           "userId": userDetails?.id,
           "name": "SearchRequest",
