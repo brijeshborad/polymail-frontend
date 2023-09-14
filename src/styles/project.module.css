@@ -421,7 +421,8 @@
 }
 
 .projectMemberModal .emojiModalButton span {
-    line-height: 1;
+    display: flex;
+    justify-content: center;
 }
 
 

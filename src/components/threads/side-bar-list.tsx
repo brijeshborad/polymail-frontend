@@ -1,7 +1,7 @@
 import { Message, Thread } from "@/models";
 import styles from "@/styles/Inbox.module.css";
 import { Flex, Input, useDisclosure } from "@chakra-ui/react";
-import React, { useCallback, useRef, useState } from "react";
+import React, {useCallback, useRef, useState} from "react";
 import { updateMessageState } from "@/redux/messages/action-reducer";
 import { updateThreadState } from "@/redux/threads/action-reducer";
 import { updateDraftState } from "@/redux/draft/action-reducer";
