@@ -288,8 +288,8 @@
 
 .mailBg {
     background-color: #FCFCFD;
-    padding: 32px 40px 0;
-    height: calc(100vh - 70px);
+    padding: 16px 20px 0px 20px;
+    height: calc(100vh);
 }
 
 .mailBoxTabs {
