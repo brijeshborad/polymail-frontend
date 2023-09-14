@@ -1,7 +1,7 @@
 import {
     Button,
     Flex, Grid, GridItem,
-    Heading, IconButton, Input, InputGroup, InputLeftElement, Menu, MenuButton, MenuItem, MenuList,
+    Heading, IconButton, Input, Menu, MenuButton, MenuItem, MenuList,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -16,7 +16,7 @@ import {createProjects, updateProjectState} from "@/redux/projects/action-reduce
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import withAuth from "@/components/auth/withAuth";
-import {CloseIcon, Search2Icon, SmallAddIcon, TriangleDownIcon} from "@chakra-ui/icons";
+import {CloseIcon, SmallAddIcon, TriangleDownIcon} from "@chakra-ui/icons";
 import {PROJECT_ROLES} from "@/utils/constants";
 import {addItemToGroup, updateMembershipState} from "@/redux/memberships/action-reducer";
 import Image from "next/image";
@@ -169,6 +169,7 @@ function CreateNewProjectModal(props: any) {
                                                 color={'#374151'} cursor={'pointer'} fontSize={'24px'} minW={'48px'}
                                                 w={'48px'} h={'48px'} borderRadius={'50%'} alignItems={'center'} justifyContent={'center'} >{projectEmoji ? projectEmoji : <SmallAddIcon/>} </MenuButton>
                                     <MenuList className={'drop-down-list'}>
+                                        {/*
                                         <Flex padding={3} borderBottom={'1px solid #F3F4F6'}>
                                             <InputGroup>
                                                 <InputLeftElement h={'29px'} w={'30px'} fontSize={'13px'} color={'#6B7280'} pointerEvents='none'>
@@ -178,7 +179,7 @@ function CreateNewProjectModal(props: any) {
                                                        fontWeight={500} h={'auto'} lineHeight={1} type='tel'
                                                        border={0} padding={'5px 15px 5px 30px'} placeholder='Search emoji' />
                                             </InputGroup>
-                                        </Flex>
+                                        </Flex>*/}
                                         <Grid templateColumns='repeat(10, 1fr)' maxH={'175px'} overflow={'auto'} gap={2} padding={3}>
                                             {emojiArray.map((item: string, index: number) => (
                                               <GridItem w='100%' key={index} onClick={() => emojiChange(item)}>

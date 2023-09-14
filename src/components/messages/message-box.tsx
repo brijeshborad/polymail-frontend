@@ -5,7 +5,6 @@ import {DownloadIcon, MenuIcon} from "@/icons";
 import React, {useState} from "react";
 import {getAttachmentDownloadUrl, updateMessage} from "@/redux/messages/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
-import Image from "next/image";
 import {MessageAttachments} from "@/models";
 import {StateType} from "@/types";
 import {debounce} from "@/utils/common.functions";
