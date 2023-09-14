@@ -12,12 +12,15 @@ import {CloseIcon} from "@chakra-ui/icons";
 import {removeAccountDetails, updateAccountState} from "@/redux/accounts/action-reducer";
 import LocalStorageService from "@/utils/localstorage.service";
 import RemoveRecordModal from "@/components/common/delete-record-modal";
+import Router, {useRouter} from "next/router";
+import {Toaster} from "@/components/common";
 
 function EmailAddress() {
     let {accounts, success, selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
     const {isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose} = useDisclosure()
     const dispatch = useDispatch();
+    const router = useRouter();
 
     function addNewGoogleAccount(mode: string) {
         let body = {
@@ -29,6 +32,32 @@ function EmailAddress() {
         }
         dispatch(googleAuthLink(body));
     }
+
+    useEffect(() => {
+        if (router.query.error) {
+            let errorMessage = {
+                desc: '',
+                title: ''
+            }
+            if (router.query.error === 'account_exists') {
+                errorMessage = {
+                    desc: 'This account is already exist',
+                    title: 'Account already exist'
+                }
+            } else {
+                errorMessage = {
+                    desc: 'This account is invalid',
+                    title: 'Invalid account'
+                }
+            }
+            Toaster({
+                desc: errorMessage.desc,
+                title: errorMessage.title,
+                type: 'error'
+            });
+            Router.replace('/settings/email-address', undefined, {shallow: true});
+        }
+    }, [dispatch, router.query]);
 
     useEffect(() => {
         if (googleAuthRedirectionLink) {
