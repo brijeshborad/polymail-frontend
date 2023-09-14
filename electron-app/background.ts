@@ -1,4 +1,4 @@
-import {app, BrowserWindow} from 'electron';
+import {app, BrowserWindow, session} from 'electron';
 import serve from 'electron-serve';
 import {createWindow} from './helpers';
 
@@ -28,8 +28,33 @@ if (isProd) {
         await mainWindow.loadURL(`http://localhost:${port}`);
         mainWindow.webContents.openDevTools();
     }
-    // mainWindow.maximize();
+    mainWindow.maximize();
+    updateSession();
 })();
+
+function updateSession() {
+    // const filter = {
+    //     urls: ['https://api-development.polymail.io/*', 'https://api-teams.polymail.io/*']
+    // };
+    session.defaultSession.webRequest.onBeforeSendHeaders(
+        (details: any, callback: any) => {
+            callback({requestHeaders: {Origin: '*', ...details.requestHeaders}})
+        }
+    );
+
+    session.defaultSession.webRequest.onHeadersReceived(
+        (details: any, callback: any) => {
+            callback({
+                responseHeaders: {
+                    'Access-Control-Allow-Origin': ['*'],
+                    // We use this to bypass headers
+                    'Access-Control-Allow-Headers': ['*'],
+                    ...details.responseHeaders,
+                },
+            });
+        }
+    )
+}
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {

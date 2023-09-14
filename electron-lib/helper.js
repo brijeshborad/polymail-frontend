@@ -39,7 +39,14 @@ const configure = (env) => {
                     },
                     exclude: [
                         /node_modules/,
-                        path.join(cwd, 'src')
+                        path.join(cwd, 'src'),
+                        path.join(cwd, 'next.config.js'),
+                        path.join(cwd, 'next-env.d.ts'),
+                        path.join(cwd, '.env.local'),
+                        path.join(cwd, '.env.example'),
+                        path.join(cwd, '.eslintrc.json'),
+                        path.join(cwd, '.gitignore'),
+                        path.join(cwd, '.gitlab-ci.yml')
                     ],
                 },
             ],

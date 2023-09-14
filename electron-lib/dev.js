@@ -46,7 +46,7 @@ const execaOptions = {
     };
 
     const startRendererProcess = () => {
-        const child = execa('npm', ['run', 'dev'], execaOptions);
+        const child = execa('next', ['-p', rendererPort], execaOptions);
         child.on('close', () => {
             process.exit(0);
         });
