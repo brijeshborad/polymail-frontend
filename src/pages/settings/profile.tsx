@@ -15,7 +15,7 @@ import {StateType} from "@/types";
 import {
     getProfilePicture,
     getUsersDetails,
-    updateUsersDetails,
+    updateUsersDetails, updateUserState,
     uploadProfilePicture
 } from "@/redux/users/action-reducer";
 import {Account, UserDetails} from "@/models";
@@ -29,7 +29,7 @@ import {changePassword, updateAuthState} from "@/redux/auth/action-reducer";
 import {Toaster} from "@/components/common";
 
 function Profile() {
-    const {userDetails, profilePicture, profilePictureUpdated} = useSelector((state: StateType) => state.users);
+    const {userDetails, profilePicture, profilePictureUpdated, userDetailsUpdateSuccess} = useSelector((state: StateType) => state.users);
     const dispatch = useDispatch();
     const {isOpen, onOpen, onClose} = useDisclosure()
     const inputFile = useRef<HTMLInputElement | null>(null)
@@ -66,16 +66,16 @@ function Profile() {
         }
     }
 
-    // useEffect(() => {
-    //     if (userDetailsUpdateSuccess) {
-    //         Toaster({
-    //             desc: "Account details updated successfully",
-    //             title: "Account details updated",
-    //             type: 'success'
-    //         });
-    //         dispatch(updateUserState({ userDetailsUpdateSuccess: false }))
-    //     }
-    // }, [userDetailsUpdateSuccess])
+    useEffect(() => {
+        if (userDetailsUpdateSuccess) {
+            Toaster({
+                desc: "Account details updated successfully",
+                title: "Account details updated",
+                type: 'success'
+            });
+            dispatch(updateUserState({ userDetailsUpdateSuccess: false }))
+        }
+    }, [userDetailsUpdateSuccess])
 
     useEffect(() => {
         if (profilePictureUpdated) {

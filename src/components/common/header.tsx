@@ -174,7 +174,7 @@ export function Header() {
         }));
       }
     }
-  }, [accounts, dispatch, setAccounts, userDetails]);
+  }, [accounts, dispatch, setAccounts]);
 
 
   function logout() {
