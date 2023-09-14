@@ -114,6 +114,7 @@ export function MessageBox(props: any) {
                                         {props?.threadDetails?.scope !== 'visible' ? <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
                                             <EyeSlashedIcon />
                                         </Flex> : ''}
+                                        {/*
                                         <Flex className={styles.memberImages}>
                                             <div className={styles.memberPhoto}>
                                                 <Image src="/image/user.png" width="24" height="24" alt=""/>
@@ -125,7 +126,7 @@ export function MessageBox(props: any) {
                                                   className={styles.memberPhoto}>
                                                 +4
                                             </Flex>
-                                        </Flex>
+                                        </Flex>*/}
                                         <div className={styles.mailBoxTime}>
                                             <Time time={props.threadDetails?.created || ''} isShowFullTime={true} showTimeInShortForm={false}/>
                                         </div>
