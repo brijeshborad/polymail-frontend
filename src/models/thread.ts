@@ -1,9 +1,9 @@
-import {Message} from "@/models/message";
+import {Message, MessageRecipient} from "@/models/message";
 
 export interface Thread {
     id?: string | undefined,
     _id?: string | undefined,
-    from?: string,
+    from?: MessageRecipient,
     firstMessage?: string,
     latestMessage?: string,
     updated?: string,

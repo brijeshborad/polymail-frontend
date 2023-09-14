@@ -9,7 +9,7 @@ import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import {useRouter} from "next/router";
 
 export function ThreadsSideBarTab(props: TabProps) {
-    const { multiSelection, threads } = useSelector((state: StateType) => state.threads)
+    const { multiSelection, threads, isThreadSearched} = useSelector((state: StateType) => state.threads)
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
 
     
@@ -24,6 +24,13 @@ export function ThreadsSideBarTab(props: TabProps) {
       }))
       return
     }
+
+
+  useEffect(() => {
+      if (isThreadSearched && threads && threads.length >= 1) {
+        dispatch(updateThreadState({ isThreadSearched: false }));
+      }
+  }, [isThreadSearched, threads])
     
     const isSelectedAllChecked = ((multiSelection && multiSelection.length > 0) && multiSelection.length === (threads || []).length)
 
@@ -89,11 +96,12 @@ export function ThreadsSideBarTab(props: TabProps) {
             </div>
 
 
-            {props.showLoader && (
-                <Flex direction={'column'} gap={2} mt={5}>
-                    <SkeletonLoader skeletonLength={15} />
-                </Flex>
-            )}
+          { (props.showLoader || isThreadSearched) && (
+            <Flex direction="column" gap={2} mt={5}>
+              <SkeletonLoader skeletonLength={15} />
+            </Flex>
+          )}
+
 
             <ThreadsSideBarList tab={props.tab} />
         </>
