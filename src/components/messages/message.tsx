@@ -14,7 +14,6 @@ import {Time} from "@/components/common";
 import {
   DownloadIcon, MenuIcon
 } from "@/icons";
-import Image from "next/image";
 import {StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
