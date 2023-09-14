@@ -188,12 +188,6 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
 
     }
 
-    useEffect(() => {
-        if (isLoading && threads && threads.length >= 1) {
-            dispatch(updateThreadState({ isLoading: false }));
-        }
-    }, [isLoading, threads])
-
     const changeEmailTabs = (value: string) => {
         if (currentCacheTab !== value) {
             searchCancel();
