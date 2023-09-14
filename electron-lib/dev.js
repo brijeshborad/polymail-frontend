@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+"use strict";
 const arg = require('arg');
 const execa = require('execa');
 const webpack = require('webpack');

@@ -34,7 +34,7 @@ const configure = (env) => {
                         loader: require.resolve("babel-loader"),
                         options: {
                             cacheDirectory: false,
-                            extends: path.join(cwd, 'electron-lib/.babelrc')
+                            extends: path.join(cwd, 'electron-lib/babel.js')
                         },
                     },
                     exclude: [

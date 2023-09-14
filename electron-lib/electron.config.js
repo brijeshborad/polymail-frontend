@@ -1,5 +1,5 @@
 module.exports = {
-    mainSrcDir: 'electron-app',
+    mainSrcDir: 'main',
     buildDir: 'electron-build',
     startupDelay: 5000
 };
