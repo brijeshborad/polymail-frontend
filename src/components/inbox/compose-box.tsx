@@ -57,6 +57,7 @@ export function ComposeBox(props: any) {
   const [scheduledDate, setScheduledDate] = useState<string>();
   const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
   const [extraClassNames, setExtraClassNames] = useState<string>('');
+  const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
   const inputFile = useRef<HTMLInputElement | null>(null);
   const editorRef = useRef<any>(null);
   const { toast } = createStandaloneToast()
@@ -380,6 +381,19 @@ export function ComposeBox(props: any) {
     } else {
       setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
     }
+
+    const container = editorRef.current;
+    if (container) {
+      const scrollHeight = container?.scrollHeight;
+      const containerHeight = container?.clientHeight;
+      const scrollBottom = scrollHeight - containerHeight - editorRef.current.scrollTop;
+      if (scrollBottom > 1) {
+        setExtraClassNamesForBottom(prevState => !prevState.includes('show-shadow-bottom') ? prevState + ' show-shadow-bottom' : prevState);
+      } else {
+        setExtraClassNamesForBottom(prevState => prevState.replace('show-shadow-bottom', ''));
+      }
+    }
+
   }, [editorRef.current]);
 
   return (
@@ -422,9 +436,9 @@ export function ComposeBox(props: any) {
                   />
 
                   <Flex flex={1} direction={'column'} position={'relative'}>
-                    <Flex direction={'column'} ref={editorRef} className={styles.replyBoxEditor}
+                    <Flex direction={'column'} ref={editorRef} className={`${styles.replyBoxEditor} editor-bottom-shadow`}
                       onScroll={() => handleEditorScroll()}>
-                      <RichTextEditor className={`reply-message-area ${extraClassNames}`}
+                      <RichTextEditor className={`reply-message-area ${extraClassNames} ${extraClassNamesForBottom}`}
                         initialUpdated={true}
                         placeholder='Reply with anything you like or @mention someone to share this thread'
                         value={emailBody} onChange={(e) => sendToDraft(e)} />

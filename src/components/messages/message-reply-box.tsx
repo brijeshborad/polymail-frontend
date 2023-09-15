@@ -62,6 +62,8 @@ export function MessageReplyBox(props: MessageBoxType) {
   const [replyBoxHide, setReplyBoxHide] = useState<boolean>(false);
   const [boxUpdatedFirstTime, setBoxUpdatedFirstTime] = useState<boolean>(false);
   const [extraClassNames, setExtraClassNames] = useState<string>('');
+  const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
+
   const editorRef = useRef<any>(null);
   const { toast } = createStandaloneToast()
   const router = useRouter();
@@ -523,6 +525,18 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     } else {
       setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
     }
+
+    const container = editorRef.current;
+    if (container) {
+      const scrollHeight = container?.scrollHeight;
+      const containerHeight = container?.clientHeight;
+      const scrollBottom = scrollHeight - containerHeight - editorRef.current.scrollTop;
+      if (scrollBottom > 3) {
+        setExtraClassNamesForBottom(prevState => !prevState.includes('show-shadow-bottom') ? prevState + ' show-shadow-bottom' : prevState);
+      } else {
+        setExtraClassNamesForBottom(prevState => prevState.replace('show-shadow-bottom', ''));
+      }
+    }
   }
 
   return (
@@ -610,10 +624,10 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
 
           <Flex direction={'column'} position={"relative"} flex={1}>
-            <Flex direction={'column'} maxH={'285px'} overflow={'auto'} ref={editorRef} className={styles.replyBoxEditor}
+            <Flex direction={'column'} maxH={'285px'} overflow={'auto'} ref={editorRef} className={`${styles.replyBoxEditor} editor-bottom-shadow`}
               onScroll={handleEditorScroll}>
               <RichTextEditor
-                className={`reply-message-area message-reply-box ${hideEditorToolbar ? 'hide-toolbar' : ''} ${isShowText ? 'input-value-shadow' : ''} ${extraClassNames}`}
+                className={`reply-message-area message-reply-box ${hideEditorToolbar ? 'hide-toolbar' : ''} ${isShowText ? 'input-value-shadow' : ''} ${extraClassNames} ${extraClassNamesForBottom}`}
                 initialUpdated={boxUpdatedFirstTime}
                 placeholder='Reply with anything you like or @mention someone to share this thread'
                 value={emailBody} onChange={(e) => sendToDraft(e)} />
