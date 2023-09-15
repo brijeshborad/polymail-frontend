@@ -373,6 +373,12 @@ div:has(> .mailSendToaster) {
     border-color: #FF5E2C;
 }
 
+.confirm-modal .footer-button.confirm-button {
+    background-color: #1F2937;
+    color: #FFFFFF;
+    border-color: #1F2937;
+}
+
 .confirm-modal .footer-button.cancel-button {
     background-color: #FFFFFF;
     color: #374151;

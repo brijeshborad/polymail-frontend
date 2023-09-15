@@ -19,7 +19,7 @@ import styles from "@/styles/Inbox.module.css";
 import Image from "next/image";
 import { ChevronDownIcon, CloseIcon } from "@chakra-ui/icons";
 import { FileIcon, TextIcon } from "@/icons";
-import React, { ChangeEvent, ChangeEventHandler, useEffect, useRef, useState } from "react";
+import React, {ChangeEvent, ChangeEventHandler, useCallback, useEffect, useRef, useState} from "react";
 import { debounce, isEmail } from "@/utils/common.functions";
 import { RichTextEditor, Time, Toaster } from "@/components/common";
 import { createDraft, sendMessage, updateDraftState, updatePartialMessage } from "@/redux/draft/action-reducer";
@@ -35,6 +35,7 @@ import MessageRecipients from "./message-recipients";
 import { RecipientsType } from "@/types/props-types/message-recipients.type";
 import { useRouter } from "next/router";
 import MessageSchedule from "./message-schedule";
+import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
 
 dayjs.extend(relativeTime)
 
@@ -72,7 +73,7 @@ export function MessageReplyBox(props: MessageBoxType) {
 
   useEffect(() => {
     if (divRef.current) {
-      const height = divRef.current?.offsetHeight;
+      const height = divRef.current?.offsetHeight || 0;
       setDivHeight(height);
     }
   }, [replyBoxHide, emailRecipients]);
@@ -229,11 +230,6 @@ export function MessageReplyBox(props: MessageBoxType) {
           }))
         ]);
       }
-    } else {
-      // Add signature to email body
-      if (selectedAccount && selectedAccount.signature && props.replyType !== 'forward') {
-        setEmailBody(selectedAccount.signature);
-      }
     }
   }, [draft, props.replyType, selectedAccount])
 
@@ -245,6 +241,9 @@ export function MessageReplyBox(props: MessageBoxType) {
         let decoded = Buffer.from(props.emailPart || '', 'base64').toString('ascii');
         setBoxUpdatedFirstTime(false);
         setEmailBody(getForwardContent() + (decoded || '') + (selectedAccount?.signature || ''));
+        debounce(() => {
+          handleEditorScroll();
+        }, 200)
         if (draft && draft.draftInfo && draft?.draftInfo?.attachments?.length) {
           setAttachments([
             ...draft.draftInfo.attachments.map(t => ({
@@ -301,7 +300,7 @@ export function MessageReplyBox(props: MessageBoxType) {
     const cc = props.messageData?.cc; // Changed cc assignment to match the correct prop
     const ccEmailString = formatEmailString(cc);
 
-    const forwardContent: string = `
+    const forwardContent: string = `<p></p><p></p><p></p><p></p>
              <p style="color: black; background: none">---------- Forwarded message ----------
 From: ${props.messageData?.from?.email}
 Date: ${dayjs(props.messageData?.created).format('ddd, MMM DD, YYYY [at] hh:mm A')}
@@ -314,6 +313,8 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   useEffect(() => {
     setHideEditorToolbar(false)
     setScheduledDate(undefined)
+    setBoxUpdatedFirstTime(false);
+    setEmailBody('')
     setEmailRecipients((prevState: RecipientsType) => ({
       ...prevState,
       cc: {
@@ -504,6 +505,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         recipients: { items: props.messageData ? [props.messageData.from!] : [], value: blankRecipientValue }
       });
       setScheduledDate(undefined)
+      setBoxUpdatedFirstTime(false);
       setEmailBody('');
       dispatch(updateDraftState({
         draft: null,
@@ -520,7 +522,12 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
   const handleFocus = () => {
     setTimeout(() => {
-      setHideEditorToolbar(true)
+      setHideEditorToolbar(true);
+      let currentEmailBody: string = getPlainTextFromHtml(emailBody);
+      if (selectedAccount && selectedAccount.signature && props.replyType !== 'forward' && !currentEmailBody.trim()) {
+        setBoxUpdatedFirstTime(false);
+        setEmailBody(`<p></p><p></p><p>${selectedAccount.signature}</p>`);
+      }
     }, 500)
   }
 
@@ -540,8 +547,8 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     setScheduledDate(date);
   }
 
-  function handleEditorScroll(event: any) {
-    if (event.target.scrollTop > 0) {
+  const handleEditorScroll = useCallback(() => {
+    if (editorRef.current && editorRef.current.scrollTop > 0) {
       setExtraClassNames(prevState => !prevState.includes('show-shadow') ? prevState + ' show-shadow' : prevState);
     } else {
       setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
@@ -558,7 +565,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         setExtraClassNamesForBottom(prevState => prevState.replace('show-shadow-bottom', ''));
       }
     }
-  }
+  }, [])
 
   return (
     <Flex backgroundColor={'#FFFFFF'} position={'sticky'} mt={'auto'} bottom={'-20px'} paddingBottom={props.parentHasScroll ? 5 : 0}>
@@ -642,9 +649,9 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             </div>}
 
 
-          <Flex direction={'column'} position={"relative"} flex={1}>
+          <Flex direction={'column'} position={"relative"} flex={1} >
             <Flex direction={'column'} maxH={`calc(285px - ${divHeight}px)`} overflow={'auto'} ref={editorRef} className={`${styles.replyBoxEditor} editor-bottom-shadow`}
-              onScroll={handleEditorScroll}>
+              onScroll={() => handleEditorScroll()}>
               <RichTextEditor
                 className={`reply-message-area message-reply-box ${hideEditorToolbar ? 'hide-toolbar' : ''} ${isShowText ? 'input-value-shadow' : ''} ${extraClassNames} ${extraClassNamesForBottom}`}
                 initialUpdated={boxUpdatedFirstTime}

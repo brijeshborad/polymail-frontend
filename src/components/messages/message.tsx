@@ -87,6 +87,7 @@ export function Message() {
       setHideAndShowReplyBox(false);
       setLastMessageDetails(null);
       setIframeHeight('0px');
+      setMessageDetailsForReplyBox(null);
       dispatch(updateMessageState({messages: selectedThread.messages}));
     }
   }, [dispatch, selectedThread])
