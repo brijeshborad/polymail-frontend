@@ -313,8 +313,6 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   useEffect(() => {
     setHideEditorToolbar(false)
     setScheduledDate(undefined)
-    setBoxUpdatedFirstTime(false);
-    setEmailBody('')
     setEmailRecipients((prevState: RecipientsType) => ({
       ...prevState,
       cc: {
@@ -505,7 +503,6 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         recipients: { items: props.messageData ? [props.messageData.from!] : [], value: blankRecipientValue }
       });
       setScheduledDate(undefined)
-      setBoxUpdatedFirstTime(false);
       setEmailBody('');
       dispatch(updateDraftState({
         draft: null,
