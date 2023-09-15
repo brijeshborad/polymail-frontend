@@ -518,3 +518,7 @@ div:has(> .mailSendToaster) {
     margin: 0;
     width: 25px;
 }
+
+::-webkit-datetime-edit-ampm-field {
+  display: none;
+}

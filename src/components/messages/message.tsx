@@ -282,7 +282,11 @@ export function Message() {
     <Box
       className={`${styles.mailBox} ${isThreadFocused ? styles.mailBoxFocused : ''}`}
       height={'calc(100vh - 180px)'} overflow={'hidden'} borderRadius={'15px'}
-      onClick={() => setThreadFocus(true)}
+      onClick={() => {
+        if(!isThreadFocused) {
+          setThreadFocus(true)
+        }
+      }}
     >
       {!selectedThread && !isCompose &&
       <Flex justifyContent={'center'} alignItems={'center'} flexDir={'column'}
@@ -430,8 +434,8 @@ export function Message() {
                   </Flex>}
 
                     <MessageReplyBox
-                        emailPart={(messagePart?.data || '')} messageData={messageDetailsForReplyBox}
-                        replyType={replyType} parentHasScroll={hasScrollableContent}/>
+                        emailPart={(messagePart?.data || '')} messageData={messageDetailsForReplyBox} threadDetails={lastMessageDetails}
+                        replyType={replyType} parentHasScroll={hasScrollableContent} hideAndShowReplayBox={hideAndShowReplayBox}/>
                 </Flex>
             </Flex>
         </>
