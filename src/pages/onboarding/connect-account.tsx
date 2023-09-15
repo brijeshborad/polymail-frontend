@@ -12,6 +12,7 @@ import {getAllAccount, removeAccountDetails, updateAccountState} from "@/redux/a
 import LocalStorageService from "@/utils/localstorage.service";
 import {googleAuthLink, updateAuthState} from "@/redux/auth/action-reducer";
 import {useRouter} from "next/router";
+import {getRedirectionUrl} from "@/utils/common.functions";
 
 function ConnectAccount() {
     const dispatch = useDispatch();
@@ -38,7 +39,7 @@ function ConnectAccount() {
     function oauthWithGoogle() {
         let body = {
             mode: 'create',
-            redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}/onboarding/connect-account`,
+            redirectUrl: getRedirectionUrl('/onboarding/connect-account'),
             accountType: "google",
             platform: "web"
         }
@@ -90,7 +91,7 @@ function ConnectAccount() {
                                 </InputRightElement>
                             </InputGroup>
                     ))}
-                        <Button onClick={() => oauthWithGoogle()} 
+                        <Button onClick={() => oauthWithGoogle()}
                                 className={styles.connectGoogleAccount} padding={'4px'} height={'auto'}
                                 border={'1px solid #E5E7EB'} width={'100%'} color={'#374151'}
                                 justifyContent={'flex-start'} gap={3} backgroundColor={'#FFFFFF'} fontSize={'14px'}

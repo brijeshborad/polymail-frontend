@@ -1,13 +1,13 @@
-import {app, BrowserWindow, ipcMain} from 'electron';
+import {app, BrowserWindow} from 'electron';
 import serve from 'electron-serve';
-import {createWindow, updateLocalStorage} from './helpers';
+import {createWindow} from './helpers';
 import path from "path";
 
 const isProd: boolean = process.env.NODE_ENV === 'production';
 let mainWindow: BrowserWindow | any;
 
 if (isProd) {
-    serve({directory: process.env.BUILD_DIR || 'out'});
+    serve({directory: process.env.BUILD_DIR || 'out', scheme: 'app'});
 } else {
     app.setPath('userData', `${app.getPath('userData')} (development)`);
 }
@@ -15,6 +15,7 @@ if (isProd) {
 (async () => {
     await app.whenReady();
 
+    loadEvents();
     mainWindow = createWindow('main', getDefaultWindowConfig());
 
     if (isProd) {
@@ -27,7 +28,6 @@ if (isProd) {
     mainWindow.maximize();
     if (isProd) {
         updateSession();
-        loadEvents();
     }
 })();
 
@@ -44,7 +44,7 @@ function getDefaultWindowConfig() {
 }
 
 function loadEvents() {
-    ipcMain.on('store-data', updateLocalStorage)
+    // IPCMain Events.
 }
 
 function UpsertKeyValue(obj: any, keyToChange: string, value: any) {

@@ -1,4 +1,5 @@
 import {contextBridge, ipcRenderer} from 'electron';
+import {updateLocalStorage} from "./helpers";
 
 export const ElectronApi = {
     /**
@@ -33,6 +34,8 @@ export const ElectronApi = {
      */
     off: (channel: string, callback: Function) =>
         ipcRenderer.removeListener(channel, (_, data) => callback(data)),
+
+    updateLocalStorage: updateLocalStorage
 };
 
 contextBridge.exposeInMainWorld('ElectronApi', ElectronApi);

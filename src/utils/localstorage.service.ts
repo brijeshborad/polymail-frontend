@@ -21,7 +21,7 @@ class LocalStorageService {
         } else {
             if (typeof window !== 'undefined') {
                 if (window.ElectronApi) {
-                    window.ElectronApi.send('store-data', {key, type, data, isJson});
+                    return window.ElectronApi.updateLocalStorage(key, type, data, isJson)
                 }
             }
         }

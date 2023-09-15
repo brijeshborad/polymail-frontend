@@ -12,6 +12,7 @@ import {CloseIcon} from "@chakra-ui/icons";
 import {removeAccountDetails, updateAccountState} from "@/redux/accounts/action-reducer";
 import LocalStorageService from "@/utils/localstorage.service";
 import RemoveRecordModal from "@/components/common/delete-record-modal";
+import {getRedirectionUrl} from "@/utils/common.functions";
 
 function EmailAddress() {
     let {accounts, success, selectedAccount} = useSelector((state: StateType) => state.accounts);
@@ -22,7 +23,7 @@ function EmailAddress() {
     function addNewGoogleAccount(mode: string) {
         let body = {
             mode: mode,
-            redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}/settings/email-address`,
+            redirectUrl: getRedirectionUrl('/settings/email-address'),
             accountType: "google",
             platform: "web",
             withToken: true

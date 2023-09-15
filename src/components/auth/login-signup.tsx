@@ -9,7 +9,7 @@ import {googleAuthLink, loginUser, registerUser, updateAuthState} from "@/redux/
 import {InfoIcon} from "@chakra-ui/icons";
 import Router, {useRouter} from "next/router";
 import LocalStorageService from "@/utils/localstorage.service";
-import {encryptData} from "@/utils/common.functions";
+import {encryptData, getRedirectionUrl} from "@/utils/common.functions";
 
 declare type LoginForm = {
     email: string,
@@ -24,10 +24,8 @@ export function LoginSignup({type = 'login'}: LoginProps) {
     const router = useRouter();
 
     useEffect(() => {
-        console.log('router--111', router.query, global.location);
         if (router.query) {
             if (router.query.access_token) {
-                console.log('router', router.query);
                 LocalStorageService.updateUser('store', {token: router.query.access_token})
                 dispatch(updateAuthState({user: {token: router.query.access_token.toString() || ''}}));
                 Router.push('/inbox');
@@ -66,7 +64,7 @@ export function LoginSignup({type = 'login'}: LoginProps) {
             dispatch(registerUser({
                 email: formValues.email,
                 password: encryptData(formValues.password),
-                redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}/inbox`,
+                redirectUrl: getRedirectionUrl('/inbox'),
             }))
         }
     }
@@ -74,7 +72,7 @@ export function LoginSignup({type = 'login'}: LoginProps) {
     function loginWithGoogle() {
         let body = {
             mode: type === 'login' ? "login" : 'register',
-            redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}/auth/login`,
+            redirectUrl: getRedirectionUrl('/auth/login'),
             accountType: "google",
             platform: "web"
         }
@@ -111,11 +109,11 @@ export function LoginSignup({type = 'login'}: LoginProps) {
                 <Input onChange={handleChange} name={'password'} placeholder={'password'}
                        className={`${styles.loginInput}`} type={'password'}/>
 
-               <div className={styles.forgotPasswordButton}>
-                   <Link href={'/auth/forgot-password'}>
-                       Forgot Password?
-                   </Link>
-               </div>
+                <div className={styles.forgotPasswordButton}>
+                    <Link href={'/auth/forgot-password'}>
+                        Forgot Password?
+                    </Link>
+                </div>
 
                 <Button onClick={() => signIn()} className={styles.loginButton}
                         py={'25px'}>Sign {type === 'login' ? `In` : 'Up'} With

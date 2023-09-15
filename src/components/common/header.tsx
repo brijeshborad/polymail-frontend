@@ -31,6 +31,7 @@ import { googleAuthLink } from "@/redux/auth/action-reducer";
 import { updateLastMessage } from "@/redux/socket/action-reducer";
 import { updateMessageState } from "@/redux/messages/action-reducer";
 import { Toaster } from "@/components/common";
+import {getRedirectionUrl} from "@/utils/common.functions";
 
 export function Header() {
   const dispatch = useDispatch();
@@ -58,7 +59,7 @@ export function Header() {
   const connectGoogleAccount = useCallback((mode: string) => {
     let body = {
       mode,
-      redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}/inbox`,
+      redirectUrl: getRedirectionUrl('/inbox'),
       accountType: "google",
       platform: "web",
       withToken: true

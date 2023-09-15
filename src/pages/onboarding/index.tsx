@@ -5,6 +5,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {googleAuthLink} from "@/redux/auth/action-reducer";
 import {useEffect} from "react";
+import {getRedirectionUrl} from "@/utils/common.functions";
 
 
 
@@ -15,7 +16,7 @@ function OnBoarding() {
     function oauthWithGoogle() {
         let body = {
             mode: 'register',
-            redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}/onboarding/complete-profile`,
+            redirectUrl: getRedirectionUrl('/onboarding/complete-profile'),
             accountType: "google",
             platform: "web"
         }
