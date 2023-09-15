@@ -26,7 +26,7 @@ export const getFileSize = (size: number) => {
 export const emojiArray = ["😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇", "🙂", "🙃", "😉", "😌", "😍", "🥰", "😘", "😗", "😙", "😚", "😋", "😛", "😝", "😜", "🤪", "👶", "👧", "🧒", "👦", "👩", "🧑", "👨", "👵", "🧓", "👴", "👮", "👷", "💂", "🕵️‍♂️", "👩‍⚕️", "👨‍⚕️", "👩‍🌾", "👨‍🌾", "👩‍🍳", "👨‍🍳", "👩‍🎓", "👨‍🎓", "👩‍🎤", "👨‍🎤", "👩‍🏫", "👨‍🏫", "🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🦝", "🐻", "🐨", "🐼", "🦁", "🐯", "🐮", "🐷", "🐽", "🐸", "🐵", "🙈", "🙉", "🙊", "🐒", "🦍", "🦧", "🐔", "🍔", "🍟", "🍕", "🌭", "🍿", "🧂", "🍞", "🥖", "🥐", "🥨", "🥯", "🥞", "🧇", "🍳", "🍗", "🍖", "🥩", "🍔", "🍟", "🍕", "🌭", "🍿", "🧂", "🚗", "🚕", "🚆", "🚇", "🚈", "🚂", "🚊", "🚝", "🚄", "🚅", "🚈", "🚞", "🚋", "🚲", "🛴", "🛵", "🏍️", "🚨", "🚍", "🚌", "🚒", "🚑", "🚓", "⚽", "🏀", "🏈", "⚾", "🥎", "🎾", "🏐", "🏉", "🎱", "🏓", "🏸", "🥏", "🥅", "🏒", "🏑", "🏏", "🥋", "🥊", "🥇", "🥈", "🥉", "🏆"]
 
 export function isElectron() {
-    if (process.env.ELECTRON_RUN) {
+    if (process.env.NEXT_PUBLIC_ELECTRON_RUN) {
         return false;
     }
     // Renderer process
@@ -49,7 +49,7 @@ export function isElectron() {
 
 export function getRedirectionUrl(path: string) {
     if (isElectron()) {
-        return `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL_ELECTRON}${path}.html`;
+        return `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}${path}.html`;
     }
     return `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}${path}`;
 }

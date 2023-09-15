@@ -46,7 +46,7 @@ async function build() {
         fs.removeSync(distDir);
 
         console.log('Building renderer process');
-        await execa('next', ['build'], execaOptions);
+        await execa('env-cmd -f .env.electron-build next', ['build'], execaOptions);
         await execa('next', ['export', '-o', appDir], execaOptions);
 
         console.log('Building main process');
