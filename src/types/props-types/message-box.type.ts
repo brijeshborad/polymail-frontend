@@ -6,5 +6,6 @@ export declare type MessageBoxType = {
     replyType?: string,
     parentHasScroll?: boolean,
     hideAndShowReplayBox?: (_type: string, _messageData: any) => void,
-    threadDetails?: any
+    threadDetails?: any,
+    replyTypeName?: string
 }

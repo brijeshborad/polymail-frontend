@@ -45,6 +45,7 @@ export function Message() {
   const [emailPart, setEmailPart] = useState<string>("");
   const [hideAndShowReplyBox, setHideAndShowReplyBox] = useState<boolean>(false);
   const [replyType, setReplyType] = useState<string>('');
+  const [replyTypeName, setReplyTypeName] = useState<string>('');
   const [inboxMessages, setInboxMessages] = useState<MessageModel[]>([]);
   const {
     messages,
@@ -259,6 +260,13 @@ export function Message() {
 
 
   const hideAndShowReplayBox = (type: string = '', messageData: MessageModel) => {
+    if (type === 'reply') {
+      setReplyTypeName('Reply to')
+    } else if (type === 'reply-all') {
+      setReplyTypeName('Reply to All')
+    } else {
+      setReplyTypeName('Forward')
+    }
     setReplyType(type);
     setMessageDetailsForReplyBox(messageData)
   }
@@ -435,7 +443,7 @@ export function Message() {
 
                     <MessageReplyBox
                         emailPart={(messagePart?.data || '')} messageData={messageDetailsForReplyBox} threadDetails={lastMessageDetails}
-                        replyType={replyType} parentHasScroll={hasScrollableContent} hideAndShowReplayBox={hideAndShowReplayBox}/>
+                        replyType={replyType} parentHasScroll={hasScrollableContent} hideAndShowReplayBox={hideAndShowReplayBox} replyTypeName={replyTypeName}/>
                 </Flex>
             </Flex>
         </>

@@ -260,23 +260,31 @@ export function MessageReplyBox(props: MessageBoxType) {
     }
   }, [props.messageData, props.replyType, props.emailPart])
 
-  function getForwardContent() {
-    const to = props.messageData?.to;
-    let toEmailString = ''
-    if (to && Array.isArray(to)) {
-      if (to.length === 1) {
-        toEmailString = to[0].email
-      } else if (to.length > 1) {
-        toEmailString = `${to[0].email} and ${to.length - 1} other`
+  function formatEmailString(emailArray: any) {
+    if (Array.isArray(emailArray)) {
+      if (emailArray.length === 1) {
+        return emailArray[0].email;
+      } else if (emailArray.length > 1) {
+        return `${emailArray[0].email} and ${emailArray.length - 1} other`;
       }
     }
+    return '';
+  }
+
+  function getForwardContent() {
+    const to = props.messageData?.to;
+    const toEmailString = formatEmailString(to);
+
+    const cc = props.messageData?.cc; // Changed cc assignment to match the correct prop
+    const ccEmailString = formatEmailString(cc);
+
     const forwardContent: string = `
              <p style="color: black; background: none">---------- Forwarded message ----------
 From: ${props.messageData?.from?.email}
-Date: ${dayjs(props.messageData?.created, 'ddd, MMM DD, YYYY [at] hh:mm A')}
+Date: ${dayjs(props.messageData?.created).format('ddd, MMM DD, YYYY [at] hh:mm A')}
 Subject: ${props.messageData?.subject}
 To: ${toEmailString}
-${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}</p><br/><br/><br/>`;
+${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     return forwardContent;
   }
 
@@ -303,14 +311,37 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
   }, [draft])
 
   useEffect(() => {
-    if (props.threadDetails && props.threadDetails?.to.length) {
-      setEmailRecipients((prevState: RecipientsType) => ({
-        ...prevState,
-        recipients: {
-          items: props.threadDetails.to,
-          value: prevState.recipients.value
-        }
-      }));
+    if (props.threadDetails) {
+      if ( props.threadDetails?.to?.length) {
+        setEmailRecipients((prevState: RecipientsType) => ({
+          ...prevState,
+          recipients: {
+            items: props.threadDetails.to,
+            value: prevState.recipients.value
+          }
+        }));
+      }
+
+    if (props.threadDetails?.cc?.length) {
+        setEmailRecipients((prevState: RecipientsType) => ({
+          ...prevState,
+          cc: {
+            items: props.threadDetails.cc,
+            value: prevState.cc.value
+          }
+        }));
+      }
+
+    if (props.threadDetails?.bcc?.length) {
+        setEmailRecipients((prevState: RecipientsType) => ({
+          ...prevState,
+          bcc: {
+            items: props.threadDetails.bcc,
+            value: prevState.bcc.value
+          }
+        }));
+      }
+
     }
   }, [props.threadDetails])
 
@@ -474,6 +505,14 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
     setReplyBoxHide((current) => !current)
   }
 
+  useEffect(() => {
+    if (props.replyType === 'reply-all') {
+      setReplyBoxHide(true)
+    } else {
+      setReplyBoxHide(false)
+    }
+  }, [props.replyType])
+
   const handleSchedule = (date: string) => {
     setScheduledDate(date);
   }
@@ -517,11 +556,17 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
           <Flex align={'center'} justify={'space-between'} gap={4} position={"relative"} zIndex={10}>
             <Flex align={'center'} gap={1}>
               <Menu>
-                <MenuButton color={'#6B7280'} variant='link' size='xs' as={Button} rightIcon={<ChevronDownIcon />}>Reply to
+                <MenuButton color={'#6B7280'} variant='link' size='xs' as={Button} rightIcon={<ChevronDownIcon />}>{props.replyTypeName || 'Reply to'}
                 </MenuButton>
                 <MenuList className={'drop-down-list reply-dropdown'}>
-                  <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply-all', props.threadDetails) : null}> Reply to All </MenuItem>
-                  <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('forward', props.threadDetails) : null}> Forward </MenuItem>
+                  {props.replyType === 'reply-all' ?
+                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply', props.threadDetails) : null}> Reply to </MenuItem> :
+                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply-all', props.threadDetails) : null}> Reply to All </MenuItem>
+                  }
+                  {props.replyType === 'forward' ?
+                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply', props.threadDetails) : null}> Reply to </MenuItem> :
+                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('forward', props.threadDetails) : null}> Forward </MenuItem>
+                  }
                 </MenuList>
               </Menu>
               <Flex align={'center'} gap={1}>
