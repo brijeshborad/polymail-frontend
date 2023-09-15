@@ -52,7 +52,7 @@ export function ComposeBox(props: any) {
   const { selectedAccount } = useSelector((state: StateType) => state.accounts);
   const { draft } = useSelector((state: StateType) => state.draft);
   const dispatch = useDispatch();
-  const { onOpen, onClose } = useDisclosure();
+  const { onClose } = useDisclosure();
   const { isOpen: isOpenProject, onOpen: onOpenProject, onClose: onCloseProject } = useDisclosure();
   const [scheduledDate, setScheduledDate] = useState<string>();
   const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
