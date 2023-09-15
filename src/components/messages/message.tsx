@@ -282,7 +282,11 @@ export function Message() {
     <Box
       className={`${styles.mailBox} ${isThreadFocused ? styles.mailBoxFocused : ''}`}
       height={'calc(100vh - 180px)'} overflow={'hidden'} borderRadius={'15px'}
-      onClick={() => setThreadFocus(true)}
+      onClick={() => {
+        if(!isThreadFocused) {
+          setThreadFocus(true)
+        }
+      }}
     >
       {!selectedThread && !isCompose &&
       <Flex justifyContent={'center'} alignItems={'center'} flexDir={'column'}

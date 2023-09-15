@@ -1,18 +1,18 @@
 import {
   Box,
   Button, createStandaloneToast,
-  Flex, Input, Menu, MenuButton, MenuItem, MenuList,
+  Flex, Input,
   Modal,
   ModalBody,
   ModalCloseButton,
-  ModalContent, ModalFooter,
+  ModalContent,
   ModalHeader,
   ModalOverlay,
   Text, useDisclosure
 } from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
 import { FileIcon, TextIcon } from "@/icons";
-import { ChevronDownIcon, CloseIcon } from "@chakra-ui/icons";
+import { CloseIcon } from "@chakra-ui/icons";
 import React, { ChangeEvent, ChangeEventHandler, useCallback, useEffect, useRef, useState } from "react";
 import { StateType } from "@/types";
 import { debounce, isEmail } from "@/utils/common.functions";
@@ -21,12 +21,12 @@ import { createDraft, sendMessage, updateDraftState, updatePartialMessage } from
 import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
 import { uploadAttachment } from "@/redux/messages/action-reducer";
-import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { MessageAttachments, MessageRecipient } from "@/models";
 import CreateNewProject from "@/components/project/create-new-project";
 import { AddToProjectButton } from "@/components/common";
 import MessageRecipients from "../messages/message-recipients";
 import { RecipientsType } from "@/types/props-types/message-recipients.type";
+import MessageSchedule from "../messages/message-schedule";
 
 export function ComposeBox(props: any) {
   const blankRecipientValue: MessageRecipient = {
@@ -52,9 +52,9 @@ export function ComposeBox(props: any) {
   const { selectedAccount } = useSelector((state: StateType) => state.accounts);
   const { draft } = useSelector((state: StateType) => state.draft);
   const dispatch = useDispatch();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { onOpen, onClose } = useDisclosure();
   const { isOpen: isOpenProject, onOpen: onOpenProject, onClose: onCloseProject } = useDisclosure();
-  const [scheduledDate, setScheduledDate] = useState<Date>();
+  const [scheduledDate, setScheduledDate] = useState<string>();
   const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
   const [extraClassNames, setExtraClassNames] = useState<string>('');
   const inputFile = useRef<HTMLInputElement | null>(null);
@@ -228,17 +228,41 @@ export function ComposeBox(props: any) {
     }, 500);
   }
 
-  const sendMessages = (scheduled: boolean = false) => {
+  const sendMessages = () => {
     if (draft && draft.id) {
       let params = {};
-      if (scheduled) {
-        const targetDate = dayjs(scheduledDate).set('hour', 8);
+      if (scheduledDate) {
+        const targetDate = dayjs(scheduledDate)
         // Get the current date and time
         const currentDate = dayjs();
         const secondsDifference = targetDate.diff(currentDate, 'second');
         params = {
           delay: secondsDifference
         }
+
+        dispatch(sendMessage({ id: draft.id, ...params }));
+
+        Toaster({
+          desc: `Your message has been scheduled`,
+          type: 'send_confirmation',
+          title: 'Your message has been scheduled',
+          undoClick: (type: string) => {
+            let params = {};
+
+            if (type === 'undo') {
+              params = {
+                undo: true
+              }
+            } else if (type === 'send-now') {
+              params = {
+                now: true
+              }
+            }
+            dispatch(sendMessage({ id: draft.id!, ...params }));
+            toast.close('poly-toast');
+          }
+        })
+
       } else {
         if (draft && draft.to && draft.to.length) {
           Toaster({
@@ -263,7 +287,6 @@ export function ComposeBox(props: any) {
           })
         }
       }
-      dispatch(sendMessage({ id: draft.id, ...params }));
       onClose();
 
       if (props.onClose) {
@@ -298,11 +321,8 @@ export function ComposeBox(props: any) {
     }
   }, [selectedAccount])
 
-  const openCalender = () => {
-    onOpen();
-    let today = new Date();
-    today.setDate(today.getDate() + 1);
-    setScheduledDate(today);
+  const handleSchedule = (date: string) => {
+    setScheduledDate(date);
   }
 
   useEffect(() => {
@@ -439,41 +459,24 @@ export function ComposeBox(props: any) {
                         </Flex>
                       </Flex>
                       <Flex align={'center'} className={styles.replyButton}>
-                        <Button className={styles.replyTextButton} colorScheme='blue'
-                          onClick={() => sendMessages()}> Send </Button>
-                        <Menu>
-                          <MenuButton className={styles.replyArrowIcon} as={Button}
-                            aria-label='Options'
-                            variant='outline'><ChevronDownIcon /></MenuButton>
-                          <MenuList className={'drop-down-list'}>
-                            <MenuItem onClick={() => openCalender()}> Send
-                              Later </MenuItem>
-                          </MenuList>
-                        </Menu>
-                        <Modal isOpen={isOpen} onClose={onClose} isCentered={true}
-                          scrollBehavior={'outside'}>
-                          <ModalOverlay />
-                          <ModalContent minHeight="440px">
-                            <ModalHeader display="flex" justifyContent="space-between"
-                              alignItems="center">
-                              Schedule send
-                            </ModalHeader>
-                            <ModalCloseButton size={'xs'} />
-                            <ModalBody>
-                              <SingleDatepicker
-                                date={scheduledDate}
-                                defaultIsOpen={true}
-                                onDateChange={setScheduledDate}
-                                name="date-input" />
-                            </ModalBody>
-                            <ModalFooter>
-                              <Button variant='ghost'
-                                onClick={onClose}>Cancel</Button>
-                              <Button colorScheme='blue' mr={3}
-                                onClick={() => sendMessages(true)}> Schedule </Button>
-                            </ModalFooter>
-                          </ModalContent>
-                        </Modal>
+                        <Button 
+                          className={styles.replyTextButton} 
+                          colorScheme='blue'
+                          onClick={() => sendMessages()}
+                        >
+                          {scheduledDate ? (
+                            <>Send {dayjs(scheduledDate).from(dayjs())} @ {dayjs(scheduledDate).format('hh:mmA')}</>
+                          ) : (
+                            <>Send</>
+                          )}
+                        </Button>
+
+
+                        <MessageSchedule
+                          date={scheduledDate}
+                          sendMessages={sendMessages}
+                          onChange={handleSchedule}
+                        />
                       </Flex>
                     </Flex>
 
@@ -482,32 +485,6 @@ export function ComposeBox(props: any) {
               </Box>
             </Flex>
           </ModalBody>
-        </ModalContent>
-      </Modal>
-
-      <Modal isOpen={isOpen} onClose={onClose} isCentered={true} scrollBehavior={'outside'}>
-        <ModalOverlay />
-        <ModalContent minHeight="440px">
-          <ModalHeader display="flex" justifyContent="space-between" alignItems="center">
-            Schedule send
-          </ModalHeader>
-          <ModalCloseButton size={'xs'} />
-          <ModalBody>
-
-            <SingleDatepicker
-              name="date-input"
-              date={scheduledDate}
-              defaultIsOpen={true}
-              onDateChange={setScheduledDate}
-            />
-
-          </ModalBody>
-          <ModalFooter>
-            <Button variant='ghost' onClick={onClose}>Cancel</Button>
-            <Button colorScheme='blue' mr={3} onClick={() => sendMessages(true)}>
-              Schedule
-            </Button>
-          </ModalFooter>
         </ModalContent>
       </Modal>
 
