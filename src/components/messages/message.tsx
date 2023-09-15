@@ -310,7 +310,7 @@ export function Message() {
         {!hideAndShowReplyBox &&
         <>
             <MessagesHeader inboxMessages={inboxMessages} index={index} closeCompose={closeCompose}
-                            herderType={'inbox'}/>
+                            headerType={'inbox'}/>
 
             <Flex padding={'20px'} ref={messagesWrapperRef} gap={5} direction={'column'} flex={1} overflow={'auto'}>
                 <Flex gap={2} direction={'column'} height={'100%'}>
@@ -335,7 +335,7 @@ export function Message() {
                           <Flex w={'100%'} direction={'column'}>
                               <Flex align={'center'} justify={'space-between'} mb={1}>
                                   <Flex align={'center'} gap={1}>
-                                      <Heading 
+                                      <Heading
                                         as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400}
                                         letterSpacing={'-0.13px'} lineHeight={1}
                                       >
@@ -344,7 +344,7 @@ export function Message() {
                                       {lastMessageDetails && lastMessageDetails.from && lastMessageDetails.from.name && (
                                         <>
                                           <span className={'dot'}/>
-                                          <Text 
+                                          <Text
                                             fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'}
                                             lineHeight={1} fontWeight={400}
                                           >

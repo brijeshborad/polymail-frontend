@@ -23,7 +23,7 @@ if (typeof window === 'object') {
 export function RichTextEditor({onChange, placeholder, className, value, initialUpdated}: RichTextEditorProps) {
     const [editorState, setEditorState] = useState<EditorState>(EditorState.createEmpty());
     const updateParentComponent = useCallback(() => {
-        if (onChange && editorState?.getCurrentContent().getPlainText().trim()) {
+        if (onChange) { // editorState?.getCurrentContent().getPlainText().trim()
             onChange(draftToHtml(convertToRaw(editorState?.getCurrentContent() as ContentState)));
         }
         // eslint-disable-next-line

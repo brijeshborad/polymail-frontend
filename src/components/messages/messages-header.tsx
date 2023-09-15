@@ -21,7 +21,7 @@ import {Toaster} from "@/components/common";
 import {Thread} from "@/models";
 import {AddToProjectButton} from "@/components/common";
 
-export function MessagesHeader({herderType}: MessageHeaderTypes) {
+export function MessagesHeader({headerType}: MessageHeaderTypes) {
     const {selectedThread, threads, updateSuccess} = useSelector((state: StateType) => state.threads);
     let {success: membershipSuccess} = useSelector((state: StateType) => state.memberships);
 
@@ -142,7 +142,7 @@ export function MessagesHeader({herderType}: MessageHeaderTypes) {
                 </Flex>
 
                 <Flex gap={3} align={'center'}>
-                    {herderType === 'inbox' && <AddToProjectButton />}
+                    {headerType === 'inbox' && <AddToProjectButton />}
                     {!(selectedThread?.mailboxes || []).includes("INBOX") && (
                         <Tooltip label='Inbox' placement='bottom' bg='gray.300' color='black'>
                             <div onClick={() => updateMailBox('INBOX')}>

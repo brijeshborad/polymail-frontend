@@ -205,6 +205,10 @@ export function ComposeBox(props: any) {
 
   const sendToDraft = (value: string, isValueUpdate: boolean = true) => {
     if (isValueUpdate) {
+      if (!value.trim()) {
+        setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
+        setExtraClassNamesForBottom(prevState => prevState.replace('show-shadow-bottom', ''));
+      }
       setEmailBody(value);
     }
 
@@ -394,7 +398,7 @@ export function ComposeBox(props: any) {
       }
     }
 
-  }, [editorRef.current]);
+  }, []);
 
   return (
     <>
@@ -473,8 +477,8 @@ export function ComposeBox(props: any) {
                         </Flex>
                       </Flex>
                       <Flex align={'center'} className={styles.replyButton}>
-                        <Button 
-                          className={styles.replyTextButton} 
+                        <Button
+                          className={styles.replyTextButton}
                           colorScheme='blue'
                           onClick={() => sendMessages()}
                         >

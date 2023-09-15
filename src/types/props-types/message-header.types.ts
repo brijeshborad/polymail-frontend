@@ -4,5 +4,5 @@ export declare type MessageHeaderTypes = {
     closeCompose: () => void,
     index: number | null,
     inboxMessages: Message[],
-    herderType: string
+    headerType: string
 }

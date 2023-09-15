@@ -322,7 +322,7 @@ function ProjectInbox() {
 
             <RemoveRecordModal onOpen={onDeleteModalOpen} isOpen={isDeleteModalOpen} onClose={onDeleteModalClose}
                                confirmDelete={removeMemberFromProject}
-                               modelTitle={'Are you sure you want to remove member from peoject?'}/>
+                               modelTitle={'Are you sure you want to remove member from project?'}/>
 
         </>
     )

@@ -170,6 +170,10 @@ export function MessageReplyBox(props: MessageBoxType) {
       if (!boxUpdatedFirstTime) {
         setBoxUpdatedFirstTime(true);
       }
+      if (!value.trim()) {
+        setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
+        setExtraClassNamesForBottom(prevState => prevState.replace('show-shadow-bottom', ''));
+      }
       setEmailBody(value);
     }
 
