@@ -232,7 +232,28 @@
 }
 
 .projects:hover {
-    box-shadow: 0 4px 8px 0 rgba(8, 22, 47, 0.08);
+    border-color: #D1D5DB;
+}
+
+.projects .projectListIcon svg {
+    stroke: #374151;
+}
+
+.projects .projectListIcon.projectFillStar svg,
+.projects .projectListDropDownButton:hover svg,
+.projects .projectListDropDownButton[data-active] svg,
+.projects .projectListDropDownButton:active svg {
+    fill: #374151;
+}
+
+.projects .projectListDropDownButton svg {
+    fill: #9CA3AF;
+}
+
+.projects .projectListDropDownButton:hover,
+.projects .projectListDropDownButton[data-active],
+.projects .projectListDropDownButton:active {
+    background-color: #F3F4F6;
 }
 
 .projects .projectIcon,
@@ -244,38 +265,45 @@
     overflow: hidden;
 }
 
+.memberImages .memberPhoto {
+    min-width: 20px;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #5BDF68;
+}
+
 .memberImages .memberPhoto + .memberPhoto {
     margin-left: -12px;
+    border: 1px solid #FF5E2C;
 }
 
 .memberImages .memberPhoto + .memberPhoto + .memberPhoto {
     display: flex;
     align-items: center;
-    background-color: #000000;
+    background-color: #EBF2FF;
     justify-content: center;
-    color: #FFFFFF;
-    font-size: 11px;
-}
-
-.projects .dragIcon {
-    height: 24px;
+    color: #082561;
+    font-size: 9px;
+    line-height: 1.667;
+    letter-spacing: 0.18px;
+    border: 1px solid #FFFFFF;
 }
 
 .projects .dragIcon svg {
     height: 24px;
     width: 24px;
-    opacity: 0;
 }
 
 .projects:hover .dragIcon svg {
-    opacity: 1;
+    stroke: #374151;
 }
 
 .projects .borderStar svg {
     fill: none;
 }
+
 .projectListPage .createProjectButton:hover {
-    background-color: #000000;
+    background-color: #1F2937;
 }
 
 .selectedThread .mailDetails {

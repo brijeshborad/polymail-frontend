@@ -34,7 +34,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     dispatch(updateThreadState({ selectedThread: item, isThreadFocused: false }));
     dispatch(updateMessageState({ selectedMessage: null, messages: [] }));
     dispatch(updateDraftState({ draft: null }));
-  }, [dispatch, props.tab]);
+  }, [dispatch, onOpen, props.tab]);
 
 
   return (

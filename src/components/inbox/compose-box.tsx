@@ -57,6 +57,7 @@ export function ComposeBox(props: any) {
   const [scheduledDate, setScheduledDate] = useState<string>();
   const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
   const [extraClassNames, setExtraClassNames] = useState<string>('');
+  const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
   const inputFile = useRef<HTMLInputElement | null>(null);
   const editorRef = useRef<any>(null);
   const { toast } = createStandaloneToast()
@@ -204,6 +205,10 @@ export function ComposeBox(props: any) {
 
   const sendToDraft = (value: string, isValueUpdate: boolean = true) => {
     if (isValueUpdate) {
+      if (!value.trim()) {
+        setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
+        setExtraClassNamesForBottom(prevState => prevState.replace('show-shadow-bottom', ''));
+      }
       setEmailBody(value);
     }
 
@@ -380,7 +385,20 @@ export function ComposeBox(props: any) {
     } else {
       setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
     }
-  }, [editorRef.current]);
+
+    const container = editorRef.current;
+    if (container) {
+      const scrollHeight = container?.scrollHeight;
+      const containerHeight = container?.clientHeight;
+      const scrollBottom = scrollHeight - containerHeight - editorRef.current.scrollTop;
+      if (scrollBottom > 1) {
+        setExtraClassNamesForBottom(prevState => !prevState.includes('show-shadow-bottom') ? prevState + ' show-shadow-bottom' : prevState);
+      } else {
+        setExtraClassNamesForBottom(prevState => prevState.replace('show-shadow-bottom', ''));
+      }
+    }
+
+  }, []);
 
   return (
     <>
@@ -422,9 +440,9 @@ export function ComposeBox(props: any) {
                   />
 
                   <Flex flex={1} direction={'column'} position={'relative'}>
-                    <Flex direction={'column'} ref={editorRef} className={styles.replyBoxEditor}
+                    <Flex direction={'column'} ref={editorRef} className={`${styles.replyBoxEditor} editor-bottom-shadow`}
                       onScroll={() => handleEditorScroll()}>
-                      <RichTextEditor className={`reply-message-area ${extraClassNames}`}
+                      <RichTextEditor className={`reply-message-area ${extraClassNames} ${extraClassNamesForBottom}`}
                         initialUpdated={true}
                         placeholder='Reply with anything you like or @mention someone to share this thread'
                         value={emailBody} onChange={(e) => sendToDraft(e)} />
@@ -459,8 +477,8 @@ export function ComposeBox(props: any) {
                         </Flex>
                       </Flex>
                       <Flex align={'center'} className={styles.replyButton}>
-                        <Button 
-                          className={styles.replyTextButton} 
+                        <Button
+                          className={styles.replyTextButton}
                           colorScheme='blue'
                           onClick={() => sendMessages()}
                         >

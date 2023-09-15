@@ -9,47 +9,46 @@ import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import {useRouter} from "next/router";
 
 export function ThreadsSideBarTab(props: TabProps) {
-    const { multiSelection, threads, isLoading} = useSelector((state: StateType) => state.threads)
+    const {multiSelection, threads, isLoading} = useSelector((state: StateType) => state.threads)
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
 
-    
+
     const router = useRouter();
     const dispatch = useDispatch();
     const [tabName, setTabName] = useState<string>('just-mine');
 
     const toggleSelectAllThreads = (checked: boolean) => {
-      dispatch(updateThreadState({
-      isThreadSearched: checked,
-      multiSelection: !checked ? [] : threads?.map((thread) => thread.id!)
-      }))
-      return
+        dispatch(updateThreadState({
+            isThreadSearched: checked,
+            multiSelection: !checked ? [] : threads?.map((thread) => thread.id!)
+        }))
+        return
     }
 
 
-  useEffect(() => {
-      if (isLoading && threads && threads.length >= 1) {
-        dispatch(updateThreadState({ isLoading: false }));
-      }
-  }, [isLoading, threads])
-    
+    useEffect(() => {
+        if (isLoading && threads && threads.length >= 1) {
+            dispatch(updateThreadState({isLoading: false}));
+        }
+    }, [dispatch, isLoading, threads])
+
     const isSelectedAllChecked = ((multiSelection && multiSelection.length > 0) && multiSelection.length === (threads || []).length)
 
     useEffect(() => {
-      if (props.tab) {
-        if (router.query.project) {
-          setTabName('every-thing')
-
-        } else {
-          setTabName('just-mine')
+        if (props.tab) {
+            if (router.query.project) {
+                setTabName('every-thing')
+            } else {
+                setTabName('just-mine')
+            }
         }
-      }
-    }, [props.tab])
+    }, [props.tab, router.query.project])
 
     const changeThread = (type: string) => {
-         setTabName(type);
-         if (type === 'every-thing') {
+        setTabName(type);
+        if (type === 'every-thing') {
             dispatch(getAllThreads({mailbox: props.tab, project: router.query.project as string}));
-         } else if (type === 'just-mine') {
+        } else if (type === 'just-mine') {
             if (router.query.project) {
                 dispatch(getAllThreads({mailbox: props.tab, project: router.query.project as string, mine: true}));
             } else {
@@ -57,9 +56,9 @@ export function ThreadsSideBarTab(props: TabProps) {
                     dispatch(getAllThreads({mailbox: props.tab, account: selectedAccount.id}));
                 }
             }
-         } else if (type === 'projects') {
-             dispatch(getAllThreads({project: "ALL", mailbox: props.tab}));
-         }
+        } else if (type === 'projects') {
+            dispatch(getAllThreads({project: "ALL", mailbox: props.tab}));
+        }
     }
 
     return (
@@ -67,25 +66,26 @@ export function ThreadsSideBarTab(props: TabProps) {
             <div>
                 <Flex overflowX={'auto'} align={'center'}>
                     <div className={styles.checkBoxLabel}>
-                        <Checkbox 
-                          isChecked={isSelectedAllChecked}
-                          onChange={(e) => toggleSelectAllThreads(e.target.checked)}
+                        <Checkbox
+                            isChecked={isSelectedAllChecked}
+                            onChange={(e) => toggleSelectAllThreads(e.target.checked)}
                         >
-                          Select All
+                            Select All
                         </Checkbox>
                     </div>
 
                     <div className={styles.mailOtherOption}>
                         <Flex align={'center'} gap={2}>
-                            { router.query.project && (
-                            <div className={tabName === 'every-thing' ? styles.active : ''}>
-                                <Button colorScheme='white' onClick={() => changeThread('every-thing')}>Everything</Button>
-                            </div>
+                            {router.query.project && (
+                                <div className={tabName === 'every-thing' ? styles.active : ''}>
+                                    <Button colorScheme='white'
+                                            onClick={() => changeThread('every-thing')}>Everything</Button>
+                                </div>
                             )}
                             <div className={tabName === 'just-mine' ? styles.active : ''}>
                                 <Button colorScheme='white' onClick={() => changeThread('just-mine')}>Just mine</Button>
                             </div>
-                            { !router.query.project &&
+                            {!router.query.project &&
                             <div className={tabName === 'projects' ? styles.active : ''}>
                                 <Button colorScheme='white' onClick={() => changeThread('projects')}>Projects</Button>
                             </div>
@@ -96,14 +96,14 @@ export function ThreadsSideBarTab(props: TabProps) {
             </div>
 
 
-          {isLoading && (
-            <Flex direction="column" gap={2} mt={5}>
-              <SkeletonLoader skeletonLength={15} />
-            </Flex>
-          )}
+            {isLoading && (
+                <Flex direction="column" gap={2} mt={5}>
+                    <SkeletonLoader skeletonLength={15}/>
+                </Flex>
+            )}
 
 
-            <ThreadsSideBarList tab={props.tab} />
+            <ThreadsSideBarList tab={props.tab}/>
         </>
     )
 }

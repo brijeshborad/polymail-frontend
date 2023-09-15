@@ -62,9 +62,28 @@ export function MessageReplyBox(props: MessageBoxType) {
   const [replyBoxHide, setReplyBoxHide] = useState<boolean>(false);
   const [boxUpdatedFirstTime, setBoxUpdatedFirstTime] = useState<boolean>(false);
   const [extraClassNames, setExtraClassNames] = useState<string>('');
+  const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
+
   const editorRef = useRef<any>(null);
   const { toast } = createStandaloneToast()
   const router = useRouter();
+  const divRef = useRef<HTMLDivElement | null>(null);
+  const [divHeight, setDivHeight] = useState<number>(0);
+
+  useEffect(() => {
+    if (divRef.current) {
+      const height = divRef.current?.offsetHeight;
+      setDivHeight(height);
+    }
+  }, [replyBoxHide, emailRecipients]);
+
+  useEffect(() => {
+    if(!replyBoxHide) {
+      setDivHeight(0)
+    }
+
+  }, [replyBoxHide, divHeight])
+
 
   const isValid = (email: string, type: string) => {
     let error = null;
@@ -168,6 +187,10 @@ export function MessageReplyBox(props: MessageBoxType) {
       if (!boxUpdatedFirstTime) {
         setBoxUpdatedFirstTime(true);
       }
+      if (!value.trim()) {
+        setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
+        setExtraClassNamesForBottom(prevState => prevState.replace('show-shadow-bottom', ''));
+      }
       setEmailBody(value);
     }
 
@@ -260,23 +283,31 @@ export function MessageReplyBox(props: MessageBoxType) {
     }
   }, [props.messageData, props.replyType, props.emailPart])
 
-  function getForwardContent() {
-    const to = props.messageData?.to;
-    let toEmailString = ''
-    if (to && Array.isArray(to)) {
-      if (to.length === 1) {
-        toEmailString = to[0].email
-      } else if (to.length > 1) {
-        toEmailString = `${to[0].email} and ${to.length - 1} other`
+  function formatEmailString(emailArray: any) {
+    if (Array.isArray(emailArray)) {
+      if (emailArray.length === 1) {
+        return emailArray[0].email;
+      } else if (emailArray.length > 1) {
+        return `${emailArray[0].email} and ${emailArray.length - 1} other`;
       }
     }
+    return '';
+  }
+
+  function getForwardContent() {
+    const to = props.messageData?.to;
+    const toEmailString = formatEmailString(to);
+
+    const cc = props.messageData?.cc; // Changed cc assignment to match the correct prop
+    const ccEmailString = formatEmailString(cc);
+
     const forwardContent: string = `
              <p style="color: black; background: none">---------- Forwarded message ----------
 From: ${props.messageData?.from?.email}
-Date: ${dayjs(props.messageData?.created, 'ddd, MMM DD, YYYY [at] hh:mm A')}
+Date: ${dayjs(props.messageData?.created).format('ddd, MMM DD, YYYY [at] hh:mm A')}
 Subject: ${props.messageData?.subject}
 To: ${toEmailString}
-${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}</p><br/><br/><br/>`;
+${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     return forwardContent;
   }
 
@@ -303,14 +334,37 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
   }, [draft])
 
   useEffect(() => {
-    if (props.threadDetails && props.threadDetails?.to.length) {
-      setEmailRecipients((prevState: RecipientsType) => ({
-        ...prevState,
-        recipients: {
-          items: props.threadDetails.to,
-          value: prevState.recipients.value
-        }
-      }));
+    if (props.threadDetails) {
+      if ( props.threadDetails?.to?.length) {
+        setEmailRecipients((prevState: RecipientsType) => ({
+          ...prevState,
+          recipients: {
+            items: props.threadDetails.to,
+            value: prevState.recipients.value
+          }
+        }));
+      }
+
+    if (props.threadDetails?.cc?.length) {
+        setEmailRecipients((prevState: RecipientsType) => ({
+          ...prevState,
+          cc: {
+            items: props.threadDetails.cc,
+            value: prevState.cc.value
+          }
+        }));
+      }
+
+    if (props.threadDetails?.bcc?.length) {
+        setEmailRecipients((prevState: RecipientsType) => ({
+          ...prevState,
+          bcc: {
+            items: props.threadDetails.bcc,
+            value: prevState.bcc.value
+          }
+        }));
+      }
+
     }
   }, [props.threadDetails])
 
@@ -471,8 +525,16 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
   }
 
   const showRecipientsBox = () => {
-    setReplyBoxHide((current) => !current)
+    setReplyBoxHide((current) => !current);
   }
+
+  useEffect(() => {
+    if (props.replyType === 'reply-all') {
+      setReplyBoxHide(true)
+    } else {
+      setReplyBoxHide(false)
+    }
+  }, [props.replyType])
 
   const handleSchedule = (date: string) => {
     setScheduledDate(date);
@@ -483,6 +545,18 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
       setExtraClassNames(prevState => !prevState.includes('show-shadow') ? prevState + ' show-shadow' : prevState);
     } else {
       setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
+    }
+
+    const container = editorRef.current;
+    if (container) {
+      const scrollHeight = container?.scrollHeight;
+      const containerHeight = container?.clientHeight;
+      const scrollBottom = scrollHeight - containerHeight - editorRef.current.scrollTop;
+      if (scrollBottom > 3) {
+        setExtraClassNamesForBottom(prevState => !prevState.includes('show-shadow-bottom') ? prevState + ' show-shadow-bottom' : prevState);
+      } else {
+        setExtraClassNamesForBottom(prevState => prevState.replace('show-shadow-bottom', ''));
+      }
     }
   }
 
@@ -517,11 +591,17 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
           <Flex align={'center'} justify={'space-between'} gap={4} position={"relative"} zIndex={10}>
             <Flex align={'center'} gap={1}>
               <Menu>
-                <MenuButton color={'#6B7280'} variant='link' size='xs' as={Button} rightIcon={<ChevronDownIcon />}>Reply to
+                <MenuButton color={'#6B7280'} variant='link' size='xs' as={Button} rightIcon={<ChevronDownIcon />}>{props.replyTypeName || 'Reply to'}
                 </MenuButton>
                 <MenuList className={'drop-down-list reply-dropdown'}>
-                  <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply-all', props.threadDetails) : null}> Reply to All </MenuItem>
-                  <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('forward', props.threadDetails) : null}> Forward </MenuItem>
+                  {props.replyType === 'reply-all' ?
+                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply', props.threadDetails) : null}> Reply to </MenuItem> :
+                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply-all', props.threadDetails) : null}> Reply to All </MenuItem>
+                  }
+                  {props.replyType === 'forward' ?
+                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply', props.threadDetails) : null}> Reply to </MenuItem> :
+                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('forward', props.threadDetails) : null}> Forward </MenuItem>
+                  }
                 </MenuList>
               </Menu>
               <Flex align={'center'} gap={1}>
@@ -551,9 +631,7 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                   showTimeInShortForm={true} /> : '0 s'} ago</Text>
           </Flex>
           {replyBoxHide &&
-            <Flex className={styles.mailRecipientsBox} flex={'none'} backgroundColor={'#FFFFFF'}
-              border={'1px solid #E5E7EB'} direction={'column'}
-              borderRadius={8}>
+            <div ref={divRef}>
               <MessageRecipients
                 emailRecipients={emailRecipients}
                 handleKeyDown={handleKeyDown}
@@ -561,14 +639,14 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                 handlePaste={handlePaste}
                 handleItemDelete={handleItemDelete}
               />
-            </Flex>}
+            </div>}
 
 
           <Flex direction={'column'} position={"relative"} flex={1}>
-            <Flex direction={'column'} maxH={'285px'} overflow={'auto'} ref={editorRef} className={styles.replyBoxEditor}
+            <Flex direction={'column'} maxH={`calc(285px - ${divHeight}px)`} overflow={'auto'} ref={editorRef} className={`${styles.replyBoxEditor} editor-bottom-shadow`}
               onScroll={handleEditorScroll}>
               <RichTextEditor
-                className={`reply-message-area message-reply-box ${hideEditorToolbar ? 'hide-toolbar' : ''} ${isShowText ? 'input-value-shadow' : ''} ${extraClassNames}`}
+                className={`reply-message-area message-reply-box ${hideEditorToolbar ? 'hide-toolbar' : ''} ${isShowText ? 'input-value-shadow' : ''} ${extraClassNames} ${extraClassNamesForBottom}`}
                 initialUpdated={boxUpdatedFirstTime}
                 placeholder='Reply with anything you like or @mention someone to share this thread'
                 value={emailBody} onChange={(e) => sendToDraft(e)} />
