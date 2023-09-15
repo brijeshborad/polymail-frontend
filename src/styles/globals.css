@@ -211,6 +211,10 @@ a {
     min-width: 135px;
 }
 
+.drop-down-list .delete-button {
+    color: #F44B16;
+}
+
 .drop-down-list button {
     color: #374151;
     font-size: 13px;
