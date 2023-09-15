@@ -16,7 +16,7 @@ const args = arg({
     '--startup-delay': Number,
     '-p': '--port',
     '-r': '--run-only',
-    '-d': '--startup-delay',
+    '-d': '--startup-delay'
 });
 
 const electronConfig = getElectronConfig();
@@ -27,7 +27,7 @@ const startupDelay = electronConfig.startupDelay || args['--startup-delay'] || 0
 
 const execaOptions = {
     cwd: process.cwd(),
-    stdio: 'inherit',
+    stdio: 'inherit'
 };
 
 (async () => {
@@ -40,13 +40,13 @@ const execaOptions = {
         mainProcess = execa(
             'electron',
             ['.', `${rendererPort}`, `--remote-debugging-port=${remoteDebuggingPort}`, `--inspect=${inspectPort}`],
-            {detached: true, ...execaOptions}
+            { detached: true, ...execaOptions }
         );
         mainProcess.unref();
     };
 
     const startRendererProcess = () => {
-        const child = execa('env-cmd -f .env.electron-run next', ['-p', rendererPort], execaOptions);
+        const child = execa('env-cmd', ['-f', '.env.electron-run', 'next', '-p', rendererPort], execaOptions);
         child.on('close', () => {
             process.exit(0);
         });

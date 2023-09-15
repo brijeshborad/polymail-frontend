@@ -4,12 +4,12 @@ const path = require('path');
 const fs = require('fs-extra');
 const execa = require('execa');
 const arg = require('arg');
-const {getElectronConfig} = require("./helper");
+const { getElectronConfig } = require("./helper");
 
 let cwd = process.cwd();
 let execaOptions = {
     cwd,
-    stdio: 'inherit',
+    stdio: 'inherit'
 };
 
 let args = arg({
@@ -29,11 +29,11 @@ let args = arg({
     '-m': '--mac',
     '-l': '--linux',
     '-c': '--config',
-    '-p': '--publish',
+    '-p': '--publish'
 });
 
 async function build() {
-    const {buildDir} = getElectronConfig();
+    const { buildDir } = getElectronConfig();
     // Ignore missing dependencies
     process.env.ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES = 'true';
 
@@ -46,7 +46,7 @@ async function build() {
         fs.removeSync(distDir);
 
         console.log('Building renderer process');
-        await execa('env-cmd -f .env.electron-build next', ['build'], execaOptions);
+        await execa('env-cmd', ['-f', '.env.electron-build', 'next', 'build'], execaOptions);
         await execa('next', ['export', '-o', appDir], execaOptions);
 
         console.log('Building main process');
