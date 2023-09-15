@@ -166,7 +166,6 @@ export function Message() {
 
   useEffect(() => {
     if (lastMessageDetails) {
-      console.log(lastMessageDetails, cacheMessages[lastMessageDetails.id!]);
       if (cacheMessages[lastMessageDetails.id!] && cacheMessages[lastMessageDetails.id!].body) {
         dispatch(updateMessageState({messagePart: cacheMessages[lastMessageDetails.id!].body}));
       } else {
