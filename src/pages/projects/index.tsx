@@ -152,7 +152,7 @@ function Index() {
                     </Flex>}
                     <Flex align={'center'} direction={'column'} gap={3}>
                         {itemList && itemList.length > 0 && itemList.map((project: Project, index: number) => (
-                            <Flex key={index + 1} width={'100%'} cPMlassName={styles.projects} cursor={'pointer'}
+                            <Flex key={index + 1} width={'100%'} className={styles.projects} cursor={'pointer'}
                                   align={'center'}
                                   justify={'space-between'} gap={3} padding={5} backgroundColor={'#ffffff'}
                                   borderRadius={8}
