@@ -26,6 +26,7 @@ import { createDraft, sendMessage, updateDraftState, updatePartialMessage } from
 import { useDispatch, useSelector } from "react-redux";
 import { StateType } from "@/types";
 import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 import { MessageAttachments, MessageRecipient } from "@/models";
 import { uploadAttachment } from "@/redux/messages/action-reducer";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
@@ -34,6 +35,8 @@ import MessageRecipients from "./message-recipients";
 import { RecipientsType } from "@/types/props-types/message-recipients.type";
 import { useRouter } from "next/router";
 import MessageSchedule from "./message-schedule";
+
+dayjs.extend(relativeTime)
 
 export function MessageReplyBox(props: MessageBoxType) {
   const blankRecipientValue: MessageRecipient = {
@@ -278,6 +281,7 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
   }
 
   useEffect(() => {
+    setHideEditorToolbar(false)
     setScheduledDate(undefined)
     setEmailRecipients((prevState: RecipientsType) => ({
       ...prevState,
@@ -372,7 +376,7 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
 
       // if the user has set a schedule date
       if (scheduledDate) {
-        const targetDate = dayjs(scheduledDate).set('hour', 8);
+        const targetDate = dayjs(scheduledDate)
         // Get the current date and time
         const currentDate = dayjs();
 
@@ -391,7 +395,7 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
         Toaster({
           desc: `Your message has been scheduled`,
           type: 'send_confirmation',
-          title: draft?.subject || '',
+          title: 'Your message has been scheduled',
           undoClick: (type: string) => {
             let params = {};
 
@@ -434,7 +438,7 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
         }
       }
 
-      
+
       onClose();
       // if (props.onClose) {
       //     props.onClose();
@@ -455,9 +459,9 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
 
 
   const handleBlur = () => {
-    setTimeout(() => {
-      setHideEditorToolbar(false)
-    }, 500)
+    // setTimeout(() => {
+    //   setHideEditorToolbar(false)
+    // }, 500)
   }
 
   const handleFocus = () => {
@@ -595,20 +599,25 @@ ${props.messageData?.cc ? 'Cc: ' + (props.messageData?.cc || []).join(',') : ''}
                     {/*<EmojiIcon/>*/}
                   </Flex>
                   <Flex align={'center'} className={styles.replyButton}>
-                    <Button 
-                      className={styles.replyTextButton} 
+                    <Button
+                      className={styles.replyTextButton}
                       colorScheme='blue'
+                      fontSize={14} lineHeight={16}
                       onClick={() => sendMessages()}
-                    > 
-                      {scheduledDate ? 'Schedule' : 'Send'}
+                    >
+                      {scheduledDate ? (
+                        <>Send {dayjs(scheduledDate).from(dayjs())} @ {dayjs(scheduledDate).format('hh:mmA')}</>
+                      ) : (
+                        <>Send</>
+                      )}
                     </Button>
-                    
+
                     <MessageSchedule
                       date={scheduledDate}
                       sendMessages={sendMessages}
                       onChange={handleSchedule}
                     />
-                      
+
                     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}
                       scrollBehavior={'outside'}>
                       <ModalOverlay />
