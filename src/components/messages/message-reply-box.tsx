@@ -67,6 +67,23 @@ export function MessageReplyBox(props: MessageBoxType) {
   const editorRef = useRef<any>(null);
   const { toast } = createStandaloneToast()
   const router = useRouter();
+  const divRef = useRef<HTMLDivElement | null>(null);
+  const [divHeight, setDivHeight] = useState<number>(0);
+
+  useEffect(() => {
+    if (divRef.current) {
+      const height = divRef.current?.offsetHeight;
+      setDivHeight(height);
+    }
+  }, [replyBoxHide, emailRecipients]);
+
+  useEffect(() => {
+    if(!replyBoxHide) {
+      setDivHeight(0)
+    }
+
+  }, [replyBoxHide, divHeight])
+
 
   const isValid = (email: string, type: string) => {
     let error = null;
@@ -508,7 +525,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   }
 
   const showRecipientsBox = () => {
-    setReplyBoxHide((current) => !current)
+    setReplyBoxHide((current) => !current);
   }
 
   useEffect(() => {
@@ -614,9 +631,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                   showTimeInShortForm={true} /> : '0 s'} ago</Text>
           </Flex>
           {replyBoxHide &&
-            <Flex className={styles.mailRecipientsBox} flex={'none'} backgroundColor={'#FFFFFF'}
-              border={'1px solid #E5E7EB'} direction={'column'}
-              borderRadius={8}>
+            <div ref={divRef}>
               <MessageRecipients
                 emailRecipients={emailRecipients}
                 handleKeyDown={handleKeyDown}
@@ -624,11 +639,11 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 handlePaste={handlePaste}
                 handleItemDelete={handleItemDelete}
               />
-            </Flex>}
+            </div>}
 
 
           <Flex direction={'column'} position={"relative"} flex={1}>
-            <Flex direction={'column'} maxH={'285px'} overflow={'auto'} ref={editorRef} className={`${styles.replyBoxEditor} editor-bottom-shadow`}
+            <Flex direction={'column'} maxH={`calc(285px - ${divHeight}px)`} overflow={'auto'} ref={editorRef} className={`${styles.replyBoxEditor} editor-bottom-shadow`}
               onScroll={handleEditorScroll}>
               <RichTextEditor
                 className={`reply-message-area message-reply-box ${hideEditorToolbar ? 'hide-toolbar' : ''} ${isShowText ? 'input-value-shadow' : ''} ${extraClassNames} ${extraClassNamesForBottom}`}
