@@ -1,11 +1,10 @@
 import {
   Box,
   Button, createStandaloneToast,
-  Flex, Input,
+  Flex, Heading, Input,
   Modal,
   ModalBody,
-  ModalCloseButton,
-  ModalContent,
+  ModalContent, ModalFooter,
   ModalHeader,
   ModalOverlay,
   Text, useDisclosure
@@ -54,6 +53,7 @@ export function ComposeBox(props: any) {
   const dispatch = useDispatch();
   const { onClose } = useDisclosure();
   const { isOpen: isOpenProject, onOpen: onOpenProject, onClose: onCloseProject } = useDisclosure();
+  const { isOpen: isDraftConformationModal, onOpen: onOpenDraftConformationModal, onClose: onCloseDraftConformationModal } = useDisclosure();
   const [scheduledDate, setScheduledDate] = useState<string>();
   const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
   const [extraClassNames, setExtraClassNames] = useState<string>('');
@@ -400,9 +400,22 @@ export function ComposeBox(props: any) {
 
   }, []);
 
+  const overlayClick = () => {
+    onOpenDraftConformationModal()
+  }
+
+  const modalCloseConfirmation = (type: string) => {
+    if (type === 'yes') {
+      sendToDraft('', false)
+    }
+    onCloseDraftConformationModal();
+    props.onClose();
+  }
+
+
   return (
     <>
-      <Modal isOpen={props.isOpen} onClose={props.onClose} isCentered>
+      <Modal isOpen={props.isOpen} onClose={props.onClose} isCentered onOverlayClick={() => overlayClick()} closeOnOverlayClick={false} onEsc={() => overlayClick()} closeOnEsc={false}>
         <ModalOverlay backgroundColor={'rgba(229, 231, 235, 0.50)'} backdropFilter={'blur(16px)'} />
         <ModalContent className={styles.composeModal} maxWidth={'893px'} height={'708px'} maxHeight={'708px'}
           borderRadius={16} border={'1px solid #E5E7EB'}>
@@ -412,7 +425,9 @@ export function ComposeBox(props: any) {
               color={'#6B7280'} fontWeight={'400'}> (Saved to drafts {props.messageDetails ?
                 <Time time={props.messageDetails?.created || ''} isShowFullTime={false}
                   showTimeInShortForm={true} /> : '0 s'} ago)</Text></ModalHeader>
-          <ModalCloseButton color={'#6B7280'} fontSize={'13px'} top={'21px'} right={'20px'} />
+          <Flex color={'#6B7280'} fontSize={'13px'} top={'21px'} right={'20px'} position={'absolute'} cursor={'pointer'} onClick={() => overlayClick()}>
+            <CloseIcon/>
+          </Flex>
           <ModalBody padding={0}>
             <Flex direction={'column'} h={'100%'}>
               <Flex align={'center'} justify={'space-between'} gap={3} padding={'16px 20px'}
@@ -508,6 +523,20 @@ export function ComposeBox(props: any) {
 
       <CreateNewProject onOpen={onOpenProject} isOpen={isOpenProject} onClose={onCloseProject} />
 
+      <Modal isOpen={isDraftConformationModal} onClose={onOpenDraftConformationModal} isCentered>
+        <ModalOverlay backgroundColor={'rgba(229, 231, 235, 0.50)'} backdropFilter={'blur(16px)'}/>
+        <ModalContent className={'confirm-modal'} borderRadius={12} boxShadow={'0 0 12px 0 rgba(0,0,0, 0.08)'} padding={'12px'} maxW={'420px'}>
+          <ModalBody padding={'12px 12px 24px'}>
+            <Heading as='h5' fontSize={'15px'} color={'#0A101D'} lineHeight={1.21}>Are you want to save this draft?</Heading>
+            <Text color={'#6B7280'} mt={1} fontSize='13px'>This action cannot be undone</Text>
+          </ModalBody>
+
+          <ModalFooter className={'confirm-modal-footer'} borderTop={'1px solid #F3F4F6'} px={0} pb={0}>
+            <Button className={'cancel-button footer-button'} colorScheme='blue' mr={3} onClick={() => modalCloseConfirmation('no')}>No</Button>
+            <Button className={'remove-button footer-button'} variant='ghost' onClick={() => modalCloseConfirmation('yes')}>Yes</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   )
 }
