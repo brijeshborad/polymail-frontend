@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { Badge, Button, createStandaloneToast, Flex, Input, InputGroup, InputLeftElement, InputRightElement, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
+import { Button, createStandaloneToast, Flex, Input, InputGroup, InputLeftElement, InputRightElement, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
 import { CheckIcon, ChevronDownIcon, SearchIcon } from '@chakra-ui/icons';
 import { FolderIcon, MailIcon } from '@/icons';
 import styles from '@/styles/Home.module.css';
