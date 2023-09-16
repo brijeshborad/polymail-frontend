@@ -631,8 +631,8 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             </Flex>
             <Text as={'h1'} fontSize='11px' color={'#6B7280'} display={'flex'} gap={'2px'}
               className={styles.mailSaveTime}>Saved {draft ?
-                <Time time={draft?.created || ''} isShowFullTime={false}
-                  showTimeInShortForm={true} /> : '0 s'} ago</Text>
+                <Time time={draft?.updated || ''} isShowFullTime={false}
+                  showTimeInShortForm={true} /> : '0s'} ago</Text>
           </Flex>
           {replyBoxHide &&
             <div ref={divRef}>
