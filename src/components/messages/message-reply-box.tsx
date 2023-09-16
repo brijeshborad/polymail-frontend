@@ -235,7 +235,7 @@ export function MessageReplyBox(props: MessageBoxType) {
 
   useEffect(() => {
     if (props.messageData) {
-      let emailSubject = `Re: ${props.messageData.subject}`;
+      let emailSubject = `${props.messageData.subject}`;
       if (props.replyType === 'forward') {
         emailSubject = `Fwd: ${props.messageData.subject}`;
         let decoded = Buffer.from(props.emailPart || '', 'base64').toString('ascii');
