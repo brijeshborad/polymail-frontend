@@ -173,6 +173,7 @@ function Index() {
                                     </Flex>
 
                                     <Flex align={'center'} gap={2}>
+                                        {/*
                                         <Flex className={styles.memberImages}>
                                             <div className={styles.memberPhoto}>
                                                 <Image src="/image/user.png" width="24" height="24" alt=""/>
@@ -182,6 +183,7 @@ function Index() {
                                             </div>
                                             <div className={styles.memberPhoto}> +6 </div>
                                         </Flex>
+                                        */}
                                         {project.scope === "private" && (
                                             <Flex align={'center'} justify={'center'} h={'20px'} w={'20px'}
                                                   borderRadius={50} className={styles.projectListIcon}
