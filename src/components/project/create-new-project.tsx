@@ -194,7 +194,7 @@ function CreateNewProjectModal(props: any) {
                             </Flex>
 
                             <div className={styles.addProjectMember}>
-                                <Heading as='h6' fontSize={'16px'} color={'#374151'} letterSpacing={'-0.13px'} lineHeight={1} fontWeight={500} mb={2}>Add Members</Heading>
+                                <Heading as='h6' fontSize={'16px'} color={'#374151'} letterSpacing={'-0.13px'} lineHeight={1} fontWeight={500} mb={2}>Add Members (optional)</Heading>
                                 <Flex align={'center'} gap={'14px'}>
                                     <Flex align={'center'} position={"relative"} borderRadius={'8px'} padding={'10px 10px 10px 16px'} width={'100%'} backgroundColor={'#ffffff'} border={'1px solid #E5E7EB'}>
                                         <Input p={0} h={'auto'} borderRadius={0} fontSize={'13px'} lineHeight={1} letterSpacing={'-0.13px'} border={0} placeholder='Name or email address' size='md'
