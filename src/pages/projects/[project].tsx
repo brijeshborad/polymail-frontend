@@ -35,6 +35,8 @@ import {Message} from "@/components/messages";
 import {PROJECT_ROLES} from "@/utils/constants";
 import RemoveRecordModal from "@/components/common/delete-record-modal";
 import {Toaster} from "@/components/common";
+import { sendMessage } from "@/redux/draft/action-reducer";
+import { useSocket } from '@/hooks/use-socket.hook';
 
 function ProjectInbox() {
     const {members, project, invitees} = useSelector((state: StateType) => state.projects);
@@ -55,6 +57,29 @@ function ProjectInbox() {
     const router = useRouter();
 
     const dispatch = useDispatch();
+    const { sendJsonMessage } = useSocket();
+
+    useEffect(() => {
+      if (router.query.project) {
+
+        const interval = setInterval(() => {
+          console.log('Sending activity event');
+          let projectId = router.query.project as string;
+            sendJsonMessage({
+                userId: selectedAccount?.userId,
+                name: 'Activity',
+                data: {
+                    type: "ViewingProject",
+                    id: projectId,
+                },
+            });
+        }, 2000);
+      
+        return () => clearInterval(interval);
+      }
+
+      return undefined
+    }, []);
 
     useEffect(() => {
         if (router.query.project) {
