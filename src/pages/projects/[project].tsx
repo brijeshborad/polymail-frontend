@@ -35,7 +35,6 @@ import {Message} from "@/components/messages";
 import {PROJECT_ROLES} from "@/utils/constants";
 import RemoveRecordModal from "@/components/common/delete-record-modal";
 import {Toaster} from "@/components/common";
-import { sendMessage } from "@/redux/draft/action-reducer";
 import { useSocket } from '@/hooks/use-socket.hook';
 
 function ProjectInbox() {

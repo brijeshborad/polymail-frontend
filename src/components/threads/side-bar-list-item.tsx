@@ -11,7 +11,7 @@ import { useSelector } from "react-redux";
 export function ThreadsSideBarListItem(props: ThreadListItemProps) {
   const { multiSelection } = useSelector((state: StateType) => state.threads);
   const isSelected = (multiSelection || [])?.includes(props.thread.id!)
-
+  
   return (
     <>
       <div className={`${styles.mailDetails} ${isSelected ? styles.mailDetailsSelected : ''}`}>

@@ -1,7 +1,7 @@
 import { Message, Thread } from "@/models";
 import styles from "@/styles/Inbox.module.css";
 import { Flex, Input, useDisclosure } from "@chakra-ui/react";
-import React, {useCallback, useRef, useState} from "react";
+import React, {useEffect, useCallback, useRef, useState} from "react";
 import { updateMessageState } from "@/redux/messages/action-reducer";
 import { updateThreadState } from "@/redux/threads/action-reducer";
 import { updateDraftState } from "@/redux/draft/action-reducer";
@@ -11,6 +11,7 @@ import { ThreadListProps } from "@/types";
 import { ThreadsSideBarListItem } from "./side-bar-list-item";
 import { useRouter } from "next/router";
 import { ComposeBox } from "@/components/inbox";
+import { useSocket } from '@/hooks/use-socket.hook';
 
 
 export function ThreadsSideBarList(props: ThreadListProps) {
@@ -20,8 +21,10 @@ export function ThreadsSideBarList(props: ThreadListProps) {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [messageDetails, setMessageDetails] = useState<Message | null>(null);
+  const {selectedAccount} = useSelector((state: StateType) => state.accounts);
 
   const routePaths = router.pathname.split('/');
+  const { sendJsonMessage } = useSocket();
 
   const handleClick = useCallback((item: Thread) => {
     if (props.tab === 'DRAFT') {
@@ -36,6 +39,24 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     dispatch(updateDraftState({ draft: null }));
   }, [dispatch, onOpen, props.tab]);
 
+  useEffect(() => {
+    if (selectedThread) {
+      const interval = setInterval(() => {
+        console.log('Sending activity event');
+            sendJsonMessage({
+                userId: selectedAccount?.userId,
+                name: 'Activity',
+                data: {
+                    type: "ViewingThread",
+                    id: selectedThread.id,
+                },
+            });
+      }, 1000);
+    
+      return () => clearInterval(interval);
+    }
+    return undefined
+  }, [selectedThread]);
 
   return (
     <>
