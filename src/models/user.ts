@@ -29,7 +29,6 @@ export interface UserDetails {
     email?: string,
     firstName?: string,
     lastName?: string,
-    middleName?: string,
     deviceIds?: string,
     preferences?: Preferences | null,
     avatar?: Avatar | null

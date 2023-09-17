@@ -7,7 +7,7 @@ import Image from "next/image";
 import React, {ChangeEvent, ChangeEventHandler, useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {getProfilePicture, updateUsersDetails, uploadProfilePicture} from "@/redux/users/action-reducer";
+import {getUsersDetails, getProfilePicture, updateUsersDetails, uploadProfilePicture} from "@/redux/users/action-reducer";
 import {SpinnerUI, Toaster} from "@/components/common";
 import {getFileSize} from "@/utils/common.functions";
 import LocalStorageService from "@/utils/localstorage.service";
@@ -17,12 +17,22 @@ import {updateAuthState} from "@/redux/auth/action-reducer";
 
 function CompleteProfile() {
     const inputFile = useRef<HTMLInputElement | null>(null)
-    const {profilePicture, profilePictureUpdated, userDetailsUpdateSuccess} = useSelector((state: StateType) => state.users);
+    const {userDetails, profilePicture, profilePictureUpdated, userDetailsUpdateSuccess} = useSelector((state: StateType) => state.users);
     const dispatch = useDispatch();
     const router = useRouter();
 
-    const [firstName, setFirstName] = useState<any>('');
+    const [name, setName] = useState<string>('');
     const [showLoader, setShowLoader] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (userDetails) {
+            setName(userDetails.firstName + " " + userDetails.lastName)
+        }
+    }, [userDetails]);
+
+    useEffect(() => {
+        dispatch(getUsersDetails({}));
+    }, [dispatch])
 
     useEffect(() => {
         if (router.query) {
@@ -40,7 +50,7 @@ function CompleteProfile() {
     }, [dispatch, router.query]);
 
     const setFullName = (event: ChangeEvent | any) => {
-        setFirstName(event.target.value);
+        setName(event.target.value);
     }
 
     useEffect(() => {
@@ -56,8 +66,11 @@ function CompleteProfile() {
     }, [userDetailsUpdateSuccess])
 
     const submit = () => {
-        if (firstName) {
-            dispatch(updateUsersDetails({firstName: firstName}));
+        let tmp = name.split(' ')
+        if (name && tmp.length > 1) {
+            let firstName = tmp[0]
+            let lastName = tmp[tmp.length - 1]
+            dispatch(updateUsersDetails({firstName: firstName, lastName: lastName}));
         } else {
             Toaster({
                 title: "Stranger Danger!",
@@ -125,7 +138,7 @@ function CompleteProfile() {
                     <Flex direction={"column"} mb={10} gap={6}>
                         <div>
                             <Text fontSize={'13px'} mb={2} lineHeight={'1'} color={'#374151'}>Full Name</Text>
-                            <Input placeholder='Enter Full Name' value={firstName}
+                            <Input placeholder='Enter Full Name' value={name}
                                    onChange={(event) => setFullName(event)}/>
                         </div>
                         <div>

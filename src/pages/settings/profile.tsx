@@ -38,7 +38,6 @@ function Profile() {
 
     const [profileDetails, setProfileDetails] = useState<UserDetails>({
         firstName: '',
-        middleName: '',
         lastName: ''
     });
 
@@ -101,14 +100,6 @@ function Profile() {
                 setProfileDetails((prevState) => {
                     return {
                         ...prevState, firstName: userDetails.firstName
-                    }
-                });
-            }
-
-            if (userDetails.middleName) {
-                setProfileDetails((prevState) => {
-                    return {
-                        ...prevState, middleName: userDetails.middleName
                     }
                 });
             }
@@ -244,10 +235,6 @@ function Profile() {
                                             <Text fontSize={'14px'}>First Name</Text>
                                             <Input placeholder='Enter First Name' value={profileDetails.firstName}
                                                    onChange={(event) => setFullName(event, 'firstName')}/>
-
-                                            <Text fontSize={'14px'} mt={2}>Middle Name</Text>
-                                            <Input placeholder='Enter Middle Name' value={profileDetails.middleName}
-                                                   onChange={(event) => setFullName(event, 'middleName')}/>
 
                                             <Text fontSize={'14px'} mt={2}>Last Name</Text>
                                             <Input placeholder='Enter Last Name' value={profileDetails.lastName}
