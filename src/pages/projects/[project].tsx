@@ -214,14 +214,15 @@ function ProjectInbox() {
                             <Image src="/image/user.png" width="36" height="36" alt=""/>
                         </div>
                         <Menu>
+                        {({ onClose }) => (
+                          <>
                             <MenuButton as={Button} className={styles.manageMembers} ml={2} backgroundColor={'#000000'}
                                         color={'#ffffff'} lineHeight={'1'} fontSize={'14px'} borderRadius={'8px'}
                                         height={'auto'} padding={'11px 16px'}> Manage Members </MenuButton>
                             <MenuList className={`${styles.manageMemberDropDown} drop-down-list`}>
                                 <Flex color={'#374151'} fontWeight={'500'} fontSize={'13px'} padding={'12px'}
                                       justifyContent={'space-between'} alignItems={'center'}
-                                      borderBottom={'1px solid #F3F4F6'}>Manage members <CloseIcon/></Flex>
-
+                                      borderBottom={'1px solid #F3F4F6'}>Manage members <CloseIcon onClick={onClose} /></Flex>
                                 <div className={styles.dropDownSearchBar}>
                                     <Text color={'#374151'} fontSize={'13px'} fontWeight={'500'} lineHeight={'normal'}
                                           letterSpacing={'-0.13px'}>Add members</Text>
@@ -327,6 +328,8 @@ function ProjectInbox() {
                                     </Flex>
                                 ))}
                             </MenuList>
+                          </>
+                        )}
                         </Menu>
                     </Flex>
                 </Flex>
