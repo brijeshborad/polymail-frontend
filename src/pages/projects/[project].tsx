@@ -222,7 +222,12 @@ function ProjectInbox() {
                             <MenuList className={`${styles.manageMemberDropDown} drop-down-list`}>
                                 <Flex color={'#374151'} fontWeight={'500'} fontSize={'13px'} padding={'12px'}
                                       justifyContent={'space-between'} alignItems={'center'}
-                                      borderBottom={'1px solid #F3F4F6'}>Manage members <CloseIcon onClick={onClose} /></Flex>
+                                      borderBottom={'1px solid #F3F4F6'}>Manage members
+                                  <IconButton className={styles.closeIcon} onClick={onClose}
+                                                    cursor={'pointer'} backgroundColor={'#FFFFFF'} padding={0}
+                                                    minWidth={'1px'} aria-label='Add to friends'
+                                                    icon={<CloseIcon/>}/>
+                                </Flex>
                                 <div className={styles.dropDownSearchBar}>
                                     <Text color={'#374151'} fontSize={'13px'} fontWeight={'500'} lineHeight={'normal'}
                                           letterSpacing={'-0.13px'}>Add members</Text>
