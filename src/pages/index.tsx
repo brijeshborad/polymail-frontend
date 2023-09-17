@@ -10,7 +10,7 @@ export default function Home() {
 
     useEffect(() => {
         dispatch(getAllProjects());
-        Router.push('/inbox');
+        Router.push('/onboarding');
     }, []);
 
     return (

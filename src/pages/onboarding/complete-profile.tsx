@@ -28,10 +28,14 @@ function CompleteProfile() {
         if (userDetails) {
             setName(userDetails.firstName + " " + userDetails.lastName)
         }
-    }, [userDetails]);
+        if (profilePicture && name) {
+            router.push('/inbox')
+        }
+    }, [userDetails, profilePicture]);
 
     useEffect(() => {
         dispatch(getUsersDetails({}));
+        dispatch(getProfilePicture({}));
     }, [dispatch])
 
     useEffect(() => {
