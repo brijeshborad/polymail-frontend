@@ -22,9 +22,8 @@ export function ThreadsSideBarList(props: ThreadListProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [messageDetails, setMessageDetails] = useState<Message | null>(null);
   const {selectedAccount} = useSelector((state: StateType) => state.accounts);
-
   const routePaths = router.pathname.split('/');
-  const { sendJsonMessage } = useSocket();
+  const {sendJsonMessage} = useSocket();
 
   const handleClick = useCallback((item: Thread) => {
     if (props.tab === 'DRAFT') {
