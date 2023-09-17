@@ -16,14 +16,13 @@ export function InboxHeaderProjectsList() {
 
     useEffect(() => {
         if (projects && projects.length > 0) {
-            let favoriteData = projects.filter((item: Project) => item.projectMeta?.favorite);
-            setProjectData(favoriteData.slice(0, 5))
-            setProjectDataLength(favoriteData)
+            setProjectData(projects.slice(0, 5))
+            setProjectDataLength(projects)
         }
     }, [projects]);
 
     const changePage = () => {
-        Router.push(`/projects?favorite=true`)
+        Router.push(`/projects`)
     }
 
     return (
