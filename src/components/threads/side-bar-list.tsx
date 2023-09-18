@@ -11,7 +11,7 @@ import { ThreadListProps } from "@/types";
 import { ThreadsSideBarListItem } from "./side-bar-list-item";
 import { useRouter } from "next/router";
 import { ComposeBox } from "@/components/inbox";
-import { useSocket } from '@/hooks/use-socket.hook';
+//import { useSocket } from '@/hooks/use-socket.hook';
 
 
 export function ThreadsSideBarList(props: ThreadListProps) {
@@ -21,9 +21,9 @@ export function ThreadsSideBarList(props: ThreadListProps) {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [messageDetails, setMessageDetails] = useState<Message | null>(null);
-  const {selectedAccount} = useSelector((state: StateType) => state.accounts);
+  //const {selectedAccount} = useSelector((state: StateType) => state.accounts);
   const routePaths = router.pathname.split('/');
-  const {sendJsonMessage} = useSocket();
+  //const {sendJsonMessage} = useSocket();
   const editorRef = useRef<any>(null);
   const [extraClassNames, setExtraClassNames] = useState<string>('');
   const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
@@ -68,6 +68,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     }
   }, [])
 
+  /*
   useEffect(() => {
     if (selectedThread) {
       const interval = setInterval(() => {
@@ -86,7 +87,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     }
     return undefined
   }, [selectedThread]);
-
+  */
   return (
     <>
       <div className={'project-list-shadow'}>

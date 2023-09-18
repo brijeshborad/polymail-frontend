@@ -35,7 +35,7 @@ import {Message} from "@/components/messages";
 import {PROJECT_ROLES} from "@/utils/constants";
 import RemoveRecordModal from "@/components/common/delete-record-modal";
 import {Toaster} from "@/components/common";
-import { useSocket } from '@/hooks/use-socket.hook';
+//import { useSocket } from '@/hooks/use-socket.hook';
 
 function ProjectInbox() {
     const {members, project, invitees} = useSelector((state: StateType) => state.projects);
@@ -56,8 +56,9 @@ function ProjectInbox() {
     const router = useRouter();
 
     const dispatch = useDispatch();
-    const { sendJsonMessage } = useSocket();
+    //const { sendJsonMessage } = useSocket();
 
+    /*
     useEffect(() => {
       if (router.query.project) {
 
@@ -79,6 +80,7 @@ function ProjectInbox() {
 
       return undefined
     }, []);
+    */
 
     useEffect(() => {
         if (router.query.project) {
