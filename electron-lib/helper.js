@@ -10,7 +10,7 @@ const ext = fs.existsSync(path.join(cwd, 'tsconfig.json')) ? '.ts' : '.js';
 // ENV = 'development' | 'production'
 const configure = (env) => {
     const {buildDir} = getElectronConfig();
-    return {
+    const config = {
         mode: env,
         target: 'electron-main',
         node: {
@@ -58,6 +58,12 @@ const configure = (env) => {
             }),
         ],
     }
+    if (env === "production") {
+        config.optimization = {
+            minimize: true,
+        };
+    }
+    return config;
 };
 
 const getElectronConfig = () => {

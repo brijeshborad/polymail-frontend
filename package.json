@@ -8,7 +8,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "electron-build": "node electron-lib/build.js --config electron-lib/electron-builder.yml --win --x64",
+    "electron-build-win": "node electron-lib/build.js --config electron-lib/electron-builder-config.js --win",
+    "electron-build-mac": "node electron-lib/build.js --config electron-lib/electron-builder-config.js --mac",
     "electron-run": "node electron-lib/dev.js",
     "start": "next start",
     "lint": "next lint",
