@@ -9,6 +9,8 @@ import { MessageScheduleCustomProps } from "@/types/props-types/message-schedule
 import { timezoneList } from "@/utils/timezones";
 import { ChevronDownIcon, SearchIcon } from "@chakra-ui/icons";
 import React from "react";
+import TimePicker from "../common/time-picker";
+import { TimePickerScheduledDateProps } from "@/types/props-types/time-picker.props.type";
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -16,19 +18,21 @@ dayjs.extend(customParseFormat)
 
 export default function MessageScheduleCustom({ date, onChange, onCancel }: MessageScheduleCustomProps) {
   const [timezoneSearch, setTimezoneSearch] = useState<string>('')
-  const currentDate = date ? dayjs(date) : dayjs()
+  const currentDate = date ? dayjs(date) : (dayjs().add(1, 'hour').minute(0))
   const guessedTimezone = dayjs.tz.guess()
-  const [scheduleDate, setScheduledDate] = useState({
-    time: currentDate.minute(0).format('hh:mm'),
+  const [scheduleDate, setScheduledDate] = useState<TimePickerScheduledDateProps>({
+    time: {
+      hour: currentDate.format('hh'),
+      minute: currentDate.format('mm')
+    },
     amPm: currentDate.format('A'),
     timezone: guessedTimezone,
     month: currentDate.format('MMM'),
-    day: currentDate.day(),
+    day: currentDate.format('D'),
     year: currentDate.year()
   })
-  const inputRef = React.useRef<HTMLInputElement>(null)
-
-
+  const today = dayjs()
+  const yearOptions = [today.year(), today.add(1, 'year').year()]
   const monthArray = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
   const currentTimezone = timezoneList.find(tl => tl.utc.includes(scheduleDate.timezone))?.value || guessedTimezone
   let daysArray: number[] = []
@@ -42,19 +46,19 @@ export default function MessageScheduleCustom({ date, onChange, onCancel }: Mess
   }
 
   const handleUpdate = () => {
-    const { year, month, day, time, amPm, timezone } = scheduleDate
+    const { year, day } = scheduleDate
 
-    if (day < 1) {
+    if (parseInt(day) < 1) {
       Toaster({ desc: 'Please enter a valid day', title: 'Day can\'t be lower than 1', type: 'error' })
       return
     }
 
-    if (day > 31) {
+    if (parseInt(day) > 31) {
       Toaster({ desc: 'Please enter a valid day', title: 'Day can\'t be higher than 31', type: 'error' })
       return
     }
 
-    const currentYear = dayjs().year()
+    const currentYear = today.year()
     if (year < currentYear) {
       Toaster({ desc: 'Please enter a valid year', title: 'You can\'t schedule on a past date', type: 'error' })
       return
@@ -62,11 +66,12 @@ export default function MessageScheduleCustom({ date, onChange, onCancel }: Mess
 
     let outputScheduledDate;
     try {
-      outputScheduledDate = dayjs.tz(
-        `${year}-${month}-${day} ${time}:00 ${amPm}`,
-        'YYYY-MMM-D hh:mm:ss A',
-        timezone
-      )
+      outputScheduledDate = buildDate()
+
+      if(outputScheduledDate.isBefore(today)) {
+        Toaster({ desc: 'Please enter a valid date', title: 'You can\'t schedule on a past date', type: 'error' })
+        return
+      }
 
       onChange(outputScheduledDate.format())
     } catch (e) {
@@ -74,6 +79,12 @@ export default function MessageScheduleCustom({ date, onChange, onCancel }: Mess
     }
   }
 
+  const buildDate = () => {
+    return dayjs(
+      `${scheduleDate.year}-${scheduleDate.month}-${scheduleDate.day} ${scheduleDate.time.hour}:${scheduleDate.time.minute}:00 ${scheduleDate.amPm}`,
+      'YYYY-MMM-D hh:mm:ss A'
+    )
+  }
 
   const filteredTimezoneList = timezoneSearch.length ? (
     timezoneList.filter(tl => tl.value.search(timezoneSearch) !== -1)
@@ -94,21 +105,15 @@ export default function MessageScheduleCustom({ date, onChange, onCancel }: Mess
           <Grid templateColumns='repeat(3, 1fr)'
             gap={3}>
             <GridItem w='100%'>
-              <Input
-                ref={inputRef}
-                type='time'
-                value={scheduleDate.time}
-                onClick={() => inputRef.current?.showPicker()}
-                onChange={(e) => handleChange(e.target.value, 'time')}
-                border={'1px solid #E5E7EB'}
-                fontSize={'13px'}
-                fontWeight={400}
-                lineHeight={1}
-                padding={'10px 16px'}
-                h={'auto'}
-                backgroundColor={'#FFFFFF'}
-                borderRadius={8}
-                placeholder='1:30' />
+              <TimePicker
+                scheduledDate={scheduleDate}
+                onChange={(date) => {
+                  handleChange({
+                    hour: date.time.hour,
+                    minute: date.time.minute
+                  }, 'time')
+                }}
+              />
             </GridItem>
             <GridItem w='100%'>
               <Menu closeOnSelect={true}>
@@ -204,16 +209,21 @@ export default function MessageScheduleCustom({ date, onChange, onCancel }: Mess
                   {scheduleDate.month}
                 </MenuButton>
                 <MenuList className={`drop-down-list`} zIndex={'overlay'}>
-                  {monthArray && monthArray.map((month: string, index: number) => (
-                    <MenuItem
-                      key={index}
-                      onClick={() => handleChange(month, 'month')}
-                      backgroundColor={'transparent'} w={'100%'} borderRadius={0}
-                      justifyContent={'flex-start'}
-                    >
-                      {month}
-                    </MenuItem>
-                  ))}
+                  {monthArray && monthArray.map((month: string, index: number) => {
+                    const currentDate = dayjs(`${scheduleDate.year}-${month}-${scheduleDate.day}`, 'YYYY-MMM-D')
+                    const isPastDate = today.isAfter(currentDate, 'day')
+                    return (
+                      <MenuItem
+                        key={index}
+                        onClick={() => handleChange(month, 'month')}
+                        backgroundColor={'transparent'} w={'100%'} borderRadius={0}
+                        justifyContent={'flex-start'}
+                        isDisabled={isPastDate}
+                      >
+                        {month}
+                      </MenuItem>
+                    )
+                  })}
                 </MenuList>
               </Menu>
             </GridItem>
@@ -230,16 +240,21 @@ export default function MessageScheduleCustom({ date, onChange, onCancel }: Mess
                 </MenuButton>
                 <MenuList className={`drop-down-list grid`} zIndex={'overlay'}>
                   <SimpleGrid columns={6} spacing={1} padding={4}>
-                    {daysArray.map(day => (
-                      <MenuItem
-                        key={day}
-                        onClick={() => handleChange(day, 'day')}
-                        backgroundColor={'transparent'} w={'100%'} borderRadius={0}
-                        justifyContent={'flex-start'}
-                      >
-                        {day}
-                      </MenuItem>
-                    ))}
+                    {daysArray.map(day => {
+                      const currentDate = dayjs(`${scheduleDate.year}-${scheduleDate.month}-${day}`, 'YYYY-MMM-D')
+                      const isPastDate = today.isAfter(currentDate, 'day')
+                      return (
+                        <MenuItem
+                          key={day}
+                          onClick={() => handleChange(day, 'day')}
+                          backgroundColor={'transparent'} w={'100%'} borderRadius={0}
+                          justifyContent={'flex-start'}
+                          isDisabled={isPastDate}
+                        >
+                          {day}
+                        </MenuItem>
+                      )
+                    })}
                   </SimpleGrid>
                 </MenuList>
               </Menu>
@@ -257,20 +272,21 @@ export default function MessageScheduleCustom({ date, onChange, onCancel }: Mess
                   {scheduleDate.year}
                 </MenuButton>
                 <MenuList className={`drop-down-list`} zIndex={'overlay'}>
-                  <MenuItem
-                    onClick={() => handleChange(dayjs().year(), 'year')}
-                    backgroundColor={'transparent'} w={'100%'} borderRadius={0}
-                    justifyContent={'flex-start'}
-                  >
-                    {dayjs().year()}
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() => handleChange(dayjs().add(1, 'year').year(), 'year')}
-                    backgroundColor={'transparent'} w={'100%'} borderRadius={0}
-                    justifyContent={'flex-start'}
-                  >
-                    {dayjs().add(1, 'year').year()}
-                  </MenuItem>
+                  {yearOptions.map(year => {
+                    const currentDate = dayjs(`${year}-${scheduleDate.month}-${scheduleDate.day}`, 'YYYY-MMM-D')
+                    const isPastDate = today.isAfter(currentDate, 'day')
+                    return (
+                      <MenuItem
+                        key={year}
+                        onClick={() => handleChange(year, 'year')}
+                        backgroundColor={'transparent'} w={'100%'} borderRadius={0}
+                        justifyContent={'flex-start'}
+                        isDisabled={isPastDate}
+                      >
+                        {year}
+                      </MenuItem>
+                    )
+                  })}
                 </MenuList>
               </Menu>
             </GridItem>
