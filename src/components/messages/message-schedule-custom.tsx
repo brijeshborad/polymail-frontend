@@ -18,12 +18,12 @@ dayjs.extend(customParseFormat)
 
 export default function MessageScheduleCustom({ date, onChange, onCancel }: MessageScheduleCustomProps) {
   const [timezoneSearch, setTimezoneSearch] = useState<string>('')
-  const currentDate = date ? dayjs(date) : dayjs()
+  const currentDate = date ? dayjs(date) : (dayjs().add(1, 'hour').minute(0))
   const guessedTimezone = dayjs.tz.guess()
   const [scheduleDate, setScheduledDate] = useState<TimePickerScheduledDateProps>({
     time: {
-      hour: currentDate.add(1, 'hour').format('hh'),
-      minute: currentDate.minute(0).format('mm')
+      hour: currentDate.format('hh'),
+      minute: currentDate.format('mm')
     },
     amPm: currentDate.format('A'),
     timezone: guessedTimezone,
