@@ -9,6 +9,8 @@ import { MessageScheduleCustomProps } from "@/types/props-types/message-schedule
 import { timezoneList } from "@/utils/timezones";
 import { ChevronDownIcon, SearchIcon } from "@chakra-ui/icons";
 import React from "react";
+import TimePicker from "../common/time-picker";
+import { TimePickerScheduledDateProps } from "@/types/props-types/time-picker.props.type";
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -18,15 +20,17 @@ export default function MessageScheduleCustom({ date, onChange, onCancel }: Mess
   const [timezoneSearch, setTimezoneSearch] = useState<string>('')
   const currentDate = date ? dayjs(date) : dayjs()
   const guessedTimezone = dayjs.tz.guess()
-  const [scheduleDate, setScheduledDate] = useState({
-    time: currentDate.add(1, 'hour').minute(0).format('hh:mm'),
+  const [scheduleDate, setScheduledDate] = useState<TimePickerScheduledDateProps>({
+    time: {
+      hour: currentDate.add(1, 'hour').format('hh'),
+      minute: currentDate.minute(0).format('mm')
+    },
     amPm: currentDate.format('A'),
     timezone: guessedTimezone,
     month: currentDate.format('MMM'),
     day: currentDate.format('D'),
     year: currentDate.year()
   })
-  const inputRef = React.useRef<HTMLInputElement>(null)
   const today = dayjs()
   const yearOptions = [today.year(), today.add(1, 'year').year()]
   const monthArray = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -42,7 +46,7 @@ export default function MessageScheduleCustom({ date, onChange, onCancel }: Mess
   }
 
   const handleUpdate = () => {
-    const { year, month, day, time, amPm, timezone } = scheduleDate
+    const { year, day } = scheduleDate
 
     if (parseInt(day) < 1) {
       Toaster({ desc: 'Please enter a valid day', title: 'Day can\'t be lower than 1', type: 'error' })
@@ -62,11 +66,12 @@ export default function MessageScheduleCustom({ date, onChange, onCancel }: Mess
 
     let outputScheduledDate;
     try {
-      outputScheduledDate = dayjs.tz(
-        `${year}-${month}-${day} ${time}:00 ${amPm}`,
-        'YYYY-MMM-D hh:mm:ss A',
-        timezone
-      )
+      outputScheduledDate = buildDate()
+
+      if(outputScheduledDate.isBefore(today)) {
+        Toaster({ desc: 'Please enter a valid date', title: 'You can\'t schedule on a past date', type: 'error' })
+        return
+      }
 
       onChange(outputScheduledDate.format())
     } catch (e) {
@@ -74,6 +79,12 @@ export default function MessageScheduleCustom({ date, onChange, onCancel }: Mess
     }
   }
 
+  const buildDate = () => {
+    return dayjs(
+      `${scheduleDate.year}-${scheduleDate.month}-${scheduleDate.day} ${scheduleDate.time.hour}:${scheduleDate.time.minute}:00 ${scheduleDate.amPm}`,
+      'YYYY-MMM-D hh:mm:ss A'
+    )
+  }
 
   const filteredTimezoneList = timezoneSearch.length ? (
     timezoneList.filter(tl => tl.value.search(timezoneSearch) !== -1)
@@ -94,21 +105,15 @@ export default function MessageScheduleCustom({ date, onChange, onCancel }: Mess
           <Grid templateColumns='repeat(3, 1fr)'
             gap={3}>
             <GridItem w='100%'>
-              <Input
-                ref={inputRef}
-                type='time'
-                value={scheduleDate.time}
-                onClick={() => inputRef.current?.showPicker()}
-                onChange={(e) => handleChange(e.target.value, 'time')}
-                border={'1px solid #E5E7EB'}
-                fontSize={'13px'}
-                fontWeight={400}
-                lineHeight={1}
-                padding={'10px 16px'}
-                h={'auto'}
-                backgroundColor={'#FFFFFF'}
-                borderRadius={8}
-                placeholder='1:30' />
+              <TimePicker
+                scheduledDate={scheduleDate}
+                onChange={(date) => {
+                  handleChange({
+                    hour: date.time.hour,
+                    minute: date.time.minute
+                  }, 'time')
+                }}
+              />
             </GridItem>
             <GridItem w='100%'>
               <Menu closeOnSelect={true}>

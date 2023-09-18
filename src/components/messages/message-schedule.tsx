@@ -202,12 +202,7 @@ export default function MessageSchedule({ date, onChange }: MessageScheduleProps
                 <MessageScheduleCustom
                   date={scheduleDate}
                   onChange={onSetValue}
-                  onCancel={() => {
-                    setOpen(false)
-                    setTimeout(() => {
-                      setCustomSchedule(false)
-                    }, 500)
-                  }}
+                  onCancel={() => closeScheduleDropdown()}
                 />
               </Flex>
             </>
