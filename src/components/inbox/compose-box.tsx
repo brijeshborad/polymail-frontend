@@ -329,7 +329,7 @@ export function ComposeBox(props: any) {
     }
   }, [selectedAccount])
 
-  const handleSchedule = (date: string) => {
+  const handleSchedule = (date: string | undefined) => {
     setScheduledDate(date);
   }
 

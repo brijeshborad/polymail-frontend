@@ -19,18 +19,16 @@ export default function MessageScheduleCustom({ date, onChange, onCancel }: Mess
   const currentDate = date ? dayjs(date) : dayjs()
   const guessedTimezone = dayjs.tz.guess()
   const [scheduleDate, setScheduledDate] = useState({
-    time: currentDate.minute(0).format('hh:mm'),
+    time: currentDate.add(1, 'hour').minute(0).format('hh:mm'),
     amPm: currentDate.format('A'),
     timezone: guessedTimezone,
     month: currentDate.format('MMM'),
-    day: currentDate.day(),
+    day: currentDate.format('D'),
     year: currentDate.year()
   })
   const inputRef = React.useRef<HTMLInputElement>(null)
   const today = dayjs()
   const yearOptions = [today.year(), today.add(1, 'year').year()]
-
-
   const monthArray = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
   const currentTimezone = timezoneList.find(tl => tl.utc.includes(scheduleDate.timezone))?.value || guessedTimezone
   let daysArray: number[] = []
@@ -46,17 +44,17 @@ export default function MessageScheduleCustom({ date, onChange, onCancel }: Mess
   const handleUpdate = () => {
     const { year, month, day, time, amPm, timezone } = scheduleDate
 
-    if (day < 1) {
+    if (parseInt(day) < 1) {
       Toaster({ desc: 'Please enter a valid day', title: 'Day can\'t be lower than 1', type: 'error' })
       return
     }
 
-    if (day > 31) {
+    if (parseInt(day) > 31) {
       Toaster({ desc: 'Please enter a valid day', title: 'Day can\'t be higher than 31', type: 'error' })
       return
     }
 
-    const currentYear = dayjs().year()
+    const currentYear = today.year()
     if (year < currentYear) {
       Toaster({ desc: 'Please enter a valid year', title: 'You can\'t schedule on a past date', type: 'error' })
       return

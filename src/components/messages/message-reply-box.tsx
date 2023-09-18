@@ -57,7 +57,7 @@ export function MessageReplyBox(props: MessageBoxType) {
   const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
   const { isOpen, onClose } = useDisclosure();
   const inputFile = useRef<HTMLInputElement | null>(null)
-  const [scheduledDate, setScheduledDate] = useState<string>();
+  const [scheduledDate, setScheduledDate] = useState<string | undefined>();
   const [hideEditorToolbar, setHideEditorToolbar] = useState<boolean>(false);
   const [isShowText, _setIsShowText] = useState<boolean>(false);
   const [replyBoxHide, setReplyBoxHide] = useState<boolean>(false);
@@ -552,7 +552,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     }
   }, [props.replyType])
 
-  const handleSchedule = (date: string) => {
+  const handleSchedule = (date: string | undefined) => {
     setScheduledDate(date);
   }
 
