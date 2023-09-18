@@ -40,7 +40,6 @@ import {AddToProjectButton} from "@/components/common";
 
 let cacheThreads: { [key: string]: Thread[] } = {};
 let currentCacheTab = 'INBOX';
-let threadSetFirstTime = false;
 
 export function ThreadsSideBar(props: { cachePrefix: string }) {
     const [tab, setTab] = useState<string>('INBOX');
@@ -66,7 +65,6 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     const [initialized, setInitialized] = useState(false)
 
     const getAllThread = useCallback(() => {
-
         if (selectedAccount) {
             let resetState = !initialized ? true : false;
             if (currentCacheTab !== tab) {
@@ -74,7 +72,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                 if (cacheThreads[`${props.cachePrefix}-${tab}-${selectedAccount.id}`]) {
                     resetState = false
                 }
-                dispatch(updateThreadState({threads: cacheThreads[`${props.cachePrefix}-${tab}-${selectedAccount.id}`]}));
+                dispatch(updateThreadState({threads: cacheThreads[`${props.cachePrefix}-${tab}-${selectedAccount.id}`], isLoading: false}));
             }
 
             if (router.query.project) {
@@ -148,10 +146,6 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
 
     useEffect(() => {
         setCountUnreadMessages((threads || []).filter(item => (item.mailboxes || [])?.includes('UNREAD')).length);
-        if (threads && threads.length > 0 && !threadSetFirstTime) {
-            threadSetFirstTime = true;
-            dispatch(updateThreadState({selectedThread: threads[0]}));
-        }
     }, [threads])
 
     useEffect(() => {
@@ -166,13 +160,20 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
         }
     }, [threads, dispatch, selectedThread])
 
+    useEffect(() => {
+        if (threads && threads.length > 0 && !selectedThread && !isLoading) {
+            dispatch(updateThreadState({selectedThread: threads[0]}));
+        }
+    }, [threads, dispatch, selectedThread, isLoading])
+
 
     useEffect(() => {
         if (tabValue && tabValue === 'reset') {
+            dispatch(updateThreadState({selectedThread: null, isLoading: true}));
             currentCacheTab = '';
             getAllThread();
         }
-    }, [getAllThread, tabValue])
+    }, [dispatch, getAllThread, tabValue])
 
     useEffect(() => {
         if (tab !== '' && currentCacheTab !== '') {
@@ -182,7 +183,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     }, [dispatch, getAllThread, tab])
 
     const searchCancel = () => {
-        dispatch(updateThreadState({ isThreadSearched: false }));
+        dispatch(updateThreadState({isThreadSearched: false}));
         sendJsonMessage({
             "userId": userDetails?.id,
             "name": "SearchCancel",
@@ -195,6 +196,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
 
     const changeEmailTabs = (value: string) => {
         if (currentCacheTab !== value) {
+            dispatch(updateThreadState({selectedThread: null}));
             searchCancel();
         }
         setTab(value);
@@ -204,31 +206,38 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
         <>
             <Flex direction={'column'} gap={5} className={styles.mailListTabs}>
                 <Tabs>
-                    {isThreadSearched ? <Flex overflow={'auto'} backgroundColor={'#FFFFFF'} border={'1px solid #F3F4F6'} borderRadius={16} padding={'10px 14px'} gap={2} align={'center'} justify={'space-between'}>
-                        <Flex align={'center'} fontSize={'13px'} fontWeight={'400'} color={'#374151'} gap={2} letterSpacing={'-0.13px'} whiteSpace={'nowrap'}>
+                    {isThreadSearched ? <Flex overflow={'auto'} backgroundColor={'#FFFFFF'} border={'1px solid #F3F4F6'}
+                                              borderRadius={16} padding={'10px 14px'} gap={2} align={'center'}
+                                              justify={'space-between'}>
+                        <Flex align={'center'} fontSize={'13px'} fontWeight={'400'} color={'#374151'} gap={2}
+                              letterSpacing={'-0.13px'} whiteSpace={'nowrap'}>
                             <span>Search Results {countUnreadMessages > 0 &&
-                            <Badge backgroundColor={'#F3F4F6'} fontSize={'12px'} color={'#6B7280'} padding={'1px 4px'} borderRadius={4} fontWeight={500}>{countUnreadMessages}</Badge>}</span>
+                            <Badge backgroundColor={'#F3F4F6'} fontSize={'12px'} color={'#6B7280'} padding={'1px 4px'}
+                                   borderRadius={4} fontWeight={500}>{countUnreadMessages}</Badge>}</span>
                         </Flex>
                         <Flex gap={2}>
-                            <AddToProjectButton />
+                            <AddToProjectButton/>
                             <Menu>
                                 <MenuButton className={styles.tabListMoreButton} minWidth={'60px'} height={'auto'}
                                             backgroundColor={'transparent'} border={'1px solid #D1D5DB'} lineHeight={1}
                                             fontSize={'12px'} color={'#374151'} as={Button} borderRadius={'50px'}
-                                            rightIcon={<TriangleDownIcon color={'#374151'}/>} p={'0 8px 0 10px'}> More </MenuButton>
+                                            rightIcon={<TriangleDownIcon color={'#374151'}/>}
+                                            p={'0 8px 0 10px'}> More </MenuButton>
                                 <MenuList className={`${styles.tabListDropDown} drop-down-list`}>
                                     <MenuItem onClick={() => changeEmailTabs('INBOX')}><InboxIcon/> Inbox</MenuItem>
                                     <MenuItem onClick={() => changeEmailTabs('SENT')}><SendIcon/> Sent</MenuItem>
-                                    <MenuItem onClick={() => changeEmailTabs('SNOOZED')}><TimeSnoozeIcon/> Snoozed</MenuItem>
+                                    <MenuItem
+                                        onClick={() => changeEmailTabs('SNOOZED')}><TimeSnoozeIcon/> Snoozed</MenuItem>
                                     <MenuItem onClick={() => changeEmailTabs('TRASH')}><TrashIcon/> Trash</MenuItem>
                                     <MenuItem onClick={() => changeEmailTabs('STARRED')}><StarIcon/> Starred</MenuItem>
-                                    <MenuItem onClick={() => changeEmailTabs('ARCHIVE')}><ArchiveIcon/> Archive</MenuItem>
+                                    <MenuItem
+                                        onClick={() => changeEmailTabs('ARCHIVE')}><ArchiveIcon/> Archive</MenuItem>
                                     <MenuItem onClick={() => changeEmailTabs('DRAFT')}><DraftIcon/> Draft</MenuItem>
                                 </MenuList>
                             </Menu>
 
                             <div className={styles.searchCloseIcon} onClick={() => searchCancel()}>
-                                <SmallCloseIcon />
+                                <SmallCloseIcon/>
                             </div>
                         </Flex>
                     </Flex> : <Flex align={'center'} gap={'3'}>
@@ -356,7 +365,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
 
 
                     <TabPanels marginTop={5}>
-                        <ThreadsSideBarTab tab={tab} showLoader={isLoading} />
+                        <ThreadsSideBarTab tab={tab} showLoader={isLoading}/>
                     </TabPanels>
                 </Tabs>
             </Flex>

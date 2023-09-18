@@ -127,6 +127,7 @@ a {
 
 .chakra-toast .chakra-alert {
     font-size: 12px;
+    max-width: 530px;
 }
 
 .chakra-toast .chakra-alert button {

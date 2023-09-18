@@ -28,7 +28,7 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
     let {undoBody} = useSelector((state: StateType) => state.undoBody);
 
     const dispatch = useDispatch();
-    const [successMessage, setSuccessMessage] = useState<{ desc: string, title: string } | null>(null);
+    const [successMessage, setSuccessMessage] = useState<{ desc: string, title: string }[]>([]);
     const { toast } = createStandaloneToast()
     const [mailBoxName, setMailBoxName] = useState<string>('');
 
@@ -39,42 +39,55 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
 
 
     useEffect(() => {
-            if (updateSuccess && successMessage && undoBody) {
-                let polyToast = `poly-toast-${new Date().getTime().toString()}`;
-                Toaster({
-                    desc: successMessage.desc,
-                    title: successMessage.title || '',
-                    type: 'undo_changes',
-                    id: polyToast,
+        if (updateSuccess && successMessage.length > 0) {
+            let polyToast = `poly-toast-${new Date().getTime().toString()}`;
+            let successToastMessage: any = successMessage[0];
+            Toaster({
+                desc: successToastMessage.desc,
+                title: successToastMessage.title || '',
+                type: undoBody ? 'undo_changes': 'success',
+                id: polyToast,
+                ...(undoBody ? {
                     undoUpdateRecordClick: () => {
                         if (undoBody && undoBody.id) {
                             let body = {
                                 mailboxes: undoBody.mailboxes || []
                             }
+                            dispatch(undoBodyData(null));
                             dispatch(updateThreads({id: undoBody.id, body}));
-                            setSuccessMessage({
-                                desc: 'Thread was removed from ' + mailBoxName.toLowerCase() + '.',
+                            successMessage.push({
+                                desc: 'Thread was moved from ' + mailBoxName.toLowerCase() + '.',
                                 title: undoBody?.subject || '',
-                            })
+                            });
+                            setSuccessMessage(successMessage)
                         }
                         toast.close(`${polyToast}`);
                     }
-                })
-                setSuccessMessage(null)
-                dispatch(updateThreadState({updateSuccess: false}));
+                }: {})
+            })
+            successMessage.splice(0, 1);
+            setSuccessMessage(successMessage);
+            dispatch(updateThreadState({updateSuccess: false}));
+            if (successMessage.length > 0) {
+                setTimeout(() => {
+                    dispatch(updateThreadState({updateSuccess: true}));
+                }, 100);
             }
+        }
 
     }, [updateSuccess, dispatch, successMessage]);
 
 
     useEffect(() => {
         if (membershipSuccess && successMessage) {
+            let successToastMessage: any = successMessage[0];
             Toaster({
-                desc: successMessage.desc,
-                title: successMessage.title || '',
+                desc: successToastMessage.desc,
+                title: successToastMessage.title || '',
                 type: 'success'
             })
-            setSuccessMessage(null)
+            successMessage.splice(0, 1);
+            setSuccessMessage(successMessage);
             dispatch(updateMembershipState({success: false}));
         }
     }, [membershipSuccess, dispatch, successMessage]);
@@ -146,10 +159,11 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                 }));
                 dispatch(undoBodyData(selectedThread))
                 dispatch(updateThreads({id: selectedThread.id, body}));
-                setSuccessMessage({
+                successMessage.push({
                     desc: 'Thread was moved to ' + messageBox.toLowerCase() + '.',
                     title: selectedThread?.subject || '',
                 })
+                setSuccessMessage(successMessage)
             }
         }
     }

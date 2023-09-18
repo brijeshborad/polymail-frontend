@@ -32,19 +32,10 @@ export function Toaster(props: ToasterProps) {
                             </div>
                         }
 
-                        <Flex direction={'column'} gap={'2px'}>
+                        <Flex direction={'column'} gap={'2px'} overflow={'hidden'} whiteSpace={'nowrap'} textOverflow={'ellipsis'}>
                             <Heading as='h6' fontSize={'15px'} lineHeight={'1.21'}>{props.title}</Heading>
                             <Text fontSize='13px' color={'#6B7280'} lineHeight={'1.21'}>{props.desc}</Text>
                         </Flex>
-
-                        {['success', 'error'].includes(props.type) && (
-                            <Button
-                                className={styles.toasterCloseIcon}
-                                ml={'auto'} height={"auto"}
-                                backgroundColor={'transparent'} padding={'0'}
-                                minWidth={'auto'}><SmallCloseIcon
-                                onClick={() => toast.close(`${props.id ? props.id : polyToasterId}`)}/></Button>
-                        )}
 
                         {props.type === 'send_confirmation' && (
                             <>
@@ -69,6 +60,14 @@ export function Toaster(props: ToasterProps) {
                                   padding={'7px 20px'} borderRadius={'20px'}>Undo</Button>
                         </>
                       )}
+                        {['success', 'error', 'undo_changes'].includes(props.type) && (
+                            <Button
+                                className={styles.toasterCloseIcon}
+                                ml={'auto'} height={"auto"}
+                                backgroundColor={'transparent'} padding={'0'}
+                                minWidth={'auto'}><SmallCloseIcon
+                                onClick={() => toast.close(`${props.id ? props.id : polyToasterId}`)}/></Button>
+                        )}
                     </Box>
                 )
             },

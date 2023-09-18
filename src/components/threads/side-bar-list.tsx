@@ -66,7 +66,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
         setExtraClassNamesForBottom(prevState => prevState.replace('project-list-bottom-shadow', ''));
       }
     }
-  }, [])
+  }, [isLoading])
 
   /*
   useEffect(() => {
@@ -82,7 +82,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
                 },
             });
       }, 1000);
-    
+
       return () => clearInterval(interval);
     }
     return undefined

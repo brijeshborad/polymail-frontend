@@ -1,18 +1,21 @@
 import {Flex, Text, Image, Button, useDisclosure} from "@chakra-ui/react";
 import {DisneyDIcon, FolderIcon} from "@/icons";
 import React, {useEffect, useState} from "react";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {Project} from "@/models";
 import Router from "next/router";
 import {PlusIcon} from "@/icons/plus.icon";
 import CreateNewProjectModal from "@/components/project/create-new-project";
+import {updateThreadState} from "@/redux/threads/action-reducer";
+import {updateMessageState} from "@/redux/messages/action-reducer";
 
 export function InboxHeaderProjectsList() {
     const {projects, isLoading} = useSelector((state: StateType) => state.projects);
     const [projectData, setProjectData] = useState<Project[]>([]);
     const [projectDataLength, setProjectDataLength] = useState<Project[]>([]);
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const dispatch = useDispatch();
 
     useEffect(() => {
         if (projects && projects.length > 0) {
@@ -22,14 +25,33 @@ export function InboxHeaderProjectsList() {
     }, [projects]);
 
     const changePage = () => {
+        applyChanges();
         Router.push(`/projects`)
+    }
+
+    const gotoProject = (id: string) => {
+        applyChanges();
+        Router.push(`/projects/${id}`)
+    }
+
+    function applyChanges() {
+        dispatch(
+            updateThreadState({
+                threads: [],
+                success: false,
+                updateSuccess: false,
+                tabValue: 'reset',
+                selectedThread: null,
+            }),
+        );
+        dispatch(updateMessageState({ selectedMessage: null }));
     }
 
     return (
         <>
             <>
                 {projectData && !!projectData.length && (projectData || []).map((project: Project, index: number) => (
-                    <Button onClick={() => Router.push(`/projects/${project.id}`)}
+                    <Button onClick={() => gotoProject(project.id!)}
                             key={index} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
                             border={'1px solid #F3F4F6'} h={'fit-content'}
                             borderRadius={'8px'} padding={'7px'} minWidth={'216px'} maxWidth={'216px'}>
