@@ -11,7 +11,7 @@ import {
     useDisclosure,
 } from "@chakra-ui/react";
 import {SearchIcon, SmallAddIcon} from "@chakra-ui/icons";
-import {FolderIcon, DisneyIcon} from "@/icons";
+import {FolderIcon} from "@/icons";
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import {Project} from "@/models";
 import {addItemToGroup, updateMembershipState} from "@/redux/memberships/action-reducer";
