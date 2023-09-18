@@ -22,9 +22,8 @@ export const FeedSidebar = () => {
                     <Box borderLeft="1px solid #F3F4F6" height="100vh">
                         {/* Header */}
                         <Box height="65px" borderBottom="1px solid #F3F4F6" padding="12px 16px" display="flex" justifyContent="space-between" alignItems="center">
-                            <Flex align={'center'} justify={'center'} className={styles.feedIcon}>
-                                <EnergyIcon />
-                                <Badge>3</Badge>
+                            <Flex align={'center'} justify={'center'}>
+                                <Text fontStyle="bold">Updates</Text>
                             </Flex>
 
                             <Box
