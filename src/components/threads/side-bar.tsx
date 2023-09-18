@@ -40,6 +40,7 @@ import {AddToProjectButton} from "@/components/common";
 
 let cacheThreads: { [key: string]: Thread[] } = {};
 let currentCacheTab = 'INBOX';
+let threadSetFirstTime = false;
 
 export function ThreadsSideBar(props: { cachePrefix: string }) {
     const [tab, setTab] = useState<string>('INBOX');
@@ -147,6 +148,10 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
 
     useEffect(() => {
         setCountUnreadMessages((threads || []).filter(item => (item.mailboxes || [])?.includes('UNREAD')).length);
+        if (threads && threads.length > 0 && !threadSetFirstTime) {
+            threadSetFirstTime = true;
+            dispatch(updateThreadState({selectedThread: threads[0]}));
+        }
     }, [threads])
 
     useEffect(() => {
