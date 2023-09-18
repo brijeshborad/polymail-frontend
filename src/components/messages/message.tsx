@@ -264,9 +264,9 @@ export function Message() {
 
   const hideAndShowReplayBox = (type: string = '', messageData: MessageModel) => {
     if (type === 'reply') {
-      setReplyTypeName('Reply to')
+      setReplyTypeName('Reply')
     } else if (type === 'reply-all') {
-      setReplyTypeName('Reply to All')
+      setReplyTypeName('Reply All')
     } else {
       setReplyTypeName('Forward')
     }

@@ -595,16 +595,16 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
           <Flex align={'center'} justify={'space-between'} gap={4} position={"relative"} zIndex={10}>
             <Flex align={'center'} gap={1}>
               <Menu>
-                <MenuButton color={'#6B7280'} variant='link' size='xs' as={Button} rightIcon={<ChevronDownIcon />}>{props.replyTypeName || 'Reply to'}
+                <MenuButton color={'#6B7280'} variant='link' size='xs' as={Button} rightIcon={<ChevronDownIcon />}>{props.replyTypeName || 'Reply'}
                 </MenuButton>
                 <MenuList className={'drop-down-list reply-dropdown'}>
                   {props.replyType === 'reply-all' ?
-                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply', props.threadDetails) : null}> Reply to </MenuItem> :
-                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply-all', props.threadDetails) : null}> Reply to All </MenuItem>
+                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply', props.threadDetails) : null}> Reply</MenuItem> :
+                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply-all', props.threadDetails) : null}> Reply All</MenuItem>
                   }
                   {props.replyType === 'forward' ?
-                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply', props.threadDetails) : null}> Reply to </MenuItem> :
-                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('forward', props.threadDetails) : null}> Forward </MenuItem>
+                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply', props.threadDetails) : null}> Reply</MenuItem> :
+                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('forward', props.threadDetails) : null}> Forward</MenuItem>
                   }
                 </MenuList>
               </Menu>
