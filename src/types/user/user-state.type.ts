@@ -20,4 +20,5 @@ export declare type InitialUserState = {
     profilePicture?: Avatar | undefined,
     profilePictureUpdated?: boolean | undefined
     userDetailsUpdateSuccess?: boolean | undefined
+    profilePictureRemoved?: boolean | undefined
 }

@@ -6,7 +6,7 @@ import {
     ModalHeader,
     ModalFooter,
     ModalBody,
-    ModalCloseButton, useDisclosure, InputRightElement, InputGroup,
+    ModalCloseButton, useDisclosure, InputRightElement, InputGroup, Menu, MenuItem, MenuList, MenuButton,
 } from "@chakra-ui/react";
 import Image from "next/image";
 import React, {ChangeEvent, ChangeEventHandler, useCallback, useEffect, useRef, useState} from "react";
@@ -14,14 +14,14 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {
     getProfilePicture,
-    getUsersDetails,
+    getUsersDetails, removeProfilePicture,
     updateUsersDetails, updateUserState,
     uploadProfilePicture
 } from "@/redux/users/action-reducer";
 import {Account, UserDetails} from "@/models";
 import Index from "@/pages/settings/index";
 import withAuth from "@/components/auth/withAuth";
-import {EditIcon, ViewIcon, ViewOffIcon} from "@chakra-ui/icons";
+import { EditIcon, ViewIcon, ViewOffIcon} from "@chakra-ui/icons";
 import {updateAccountState} from "@/redux/accounts/action-reducer";
 import LocalStorageService from "@/utils/localstorage.service";
 import {debounce, encryptData} from "@/utils/common.functions";
@@ -29,7 +29,7 @@ import {changePassword, updateAuthState} from "@/redux/auth/action-reducer";
 import {Toaster} from "@/components/common";
 
 function Profile() {
-    const {userDetails, profilePicture, profilePictureUpdated, userDetailsUpdateSuccess} = useSelector((state: StateType) => state.users);
+    const {userDetails, profilePicture, profilePictureUpdated, userDetailsUpdateSuccess, profilePictureRemoved} = useSelector((state: StateType) => state.users);
     const dispatch = useDispatch();
     const {isOpen, onOpen, onClose} = useDisclosure()
     const inputFile = useRef<HTMLInputElement | null>(null)
@@ -73,14 +73,21 @@ function Profile() {
                 type: 'success'
             });
             dispatch(updateUserState({ userDetailsUpdateSuccess: false }))
+        } else if (profilePictureRemoved) {
+            Toaster({
+                desc: "Profile picture removed successfully",
+                title: "Successfully",
+                type: 'success'
+            });
+            dispatch(updateUserState({ profilePictureRemoved: false }))
         }
-    }, [userDetailsUpdateSuccess])
+    }, [userDetailsUpdateSuccess, profilePictureRemoved])
 
     useEffect(() => {
-        if (profilePictureUpdated) {
+        if (profilePictureUpdated || profilePictureRemoved) {
             dispatch(getProfilePicture({}));
         }
-    }, [dispatch, profilePictureUpdated]);
+    }, [dispatch, profilePictureUpdated, profilePictureRemoved]);
 
     useEffect(() => {
         if (passwordChangeSuccess) {
@@ -196,6 +203,10 @@ function Profile() {
         dispatch(changePassword({password: passwordUpdate.old, newPasswordOne: newPHash, newPasswordTwo: newPHash}));
     }
 
+    const removePhoto = () => {
+        dispatch(removeProfilePicture());
+    }
+
     return (
         <div className={styles.setting}>
             <Grid templateColumns='232px auto' gap={6} h={'100%'} minHeight={'calc(100vh - 65px)'}>
@@ -216,17 +227,25 @@ function Profile() {
                                 <div className={styles.profileDetails}>
                                     <div className={styles.ProfileImage}>
                                         <Text fontSize='sm' className={styles.ProfileText} mb={3}>Profile Picture</Text>
-                                        <div className={styles.userImage} onClick={() => inputFile.current?.click()}>
-                                            {profilePicture && profilePicture.url &&
-                                            <Image src={profilePicture && profilePicture.url} width="100" height="100"
-                                                   alt=""/>}
-
-                                            <div className={styles.userEditIcon}>
-                                                <EditIcon/>
+                                        <div className={styles.profileImageBox}>
+                                            <div className={styles.userImage} >
+                                                {profilePicture && profilePicture.url &&
+                                                <Image src={profilePicture && profilePicture.url} width="100" height="100"
+                                                       alt=""/>}
                                             </div>
-                                            <input type='file' id='file' ref={inputFile} accept={'image/*'}
-                                                   onChange={(e) => handleFileUpload(e)}
-                                                   style={{display: 'none'}}/>
+                                            <Menu>
+                                                <MenuButton position={'absolute'} width={'72px'} h={'72px'} backgroundColor={'0,0,0, 0.5'} borderRadius={'50px'} color={'#FFFFFF'} bottom={0} left={0} zIndex={1} as={Button} className={styles.userEditIcon}>
+                                                    <EditIcon/>
+                                                </MenuButton>
+                                                <MenuList className={'drop-down-list'}>
+                                                    <MenuItem onClick={() => inputFile.current?.click()}>Change Photo
+                                                        <input type='file' id='file' ref={inputFile} accept={'image/*'}
+                                                               onChange={(e) => handleFileUpload(e)}
+                                                               style={{display: 'none'}}/>
+                                                    </MenuItem>
+                                                    <MenuItem className={'delete-button'} onClick={() => removePhoto()}>Remove Photo</MenuItem>
+                                                </MenuList>
+                                            </Menu>
                                         </div>
                                     </div>
 

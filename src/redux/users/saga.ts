@@ -14,7 +14,7 @@ import {
     getProfilePictureSuccess,
     uploadProfilePicture,
     uploadProfilePictureError,
-    uploadProfilePictureSuccess
+    uploadProfilePictureSuccess, removeProfilePictureSuccess, removeProfilePictureError, removeProfilePicture
 } from "@/redux/users/action-reducer";
 
 function* updateUserPersonalDetails({payload: {firstName, lastName, middleName}}: PayloadAction<{ firstName?: string, lastName?: string, middleName?: string  }>) {
@@ -73,6 +73,16 @@ function* getProfilePictureUrl({payload: { }}: PayloadAction<{}>) {
     }
 }
 
+function* deleteProfilePictureUrl() {
+    try {
+        let response: AxiosResponse = yield ApiService.callDelete(`users/avatar`, {});
+        yield put(removeProfilePictureSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        yield put(removeProfilePictureError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
+    }
+}
+
 
 export function* watchUpdateCurrentDraftMessage() {
     yield takeLatest(updateUsersDetails.type, updateUserPersonalDetails);
@@ -90,11 +100,16 @@ export function* watchGetProfilePictureUrlFromS3() {
     yield takeLatest(getProfilePicture.type, getProfilePictureUrl);
 }
 
+export function* watchRemoveProfilePictureUrlFromS3() {
+    yield takeLatest(removeProfilePicture.type, deleteProfilePictureUrl);
+}
+
 export default function* rootSaga() {
     yield all([
         fork(watchUpdateCurrentDraftMessage),
         fork(watchGetUserDetails),
         fork(watchAddProfilePictureUrlToS3),
         fork(watchGetProfilePictureUrlFromS3),
+        fork(watchRemoveProfilePictureUrlFromS3),
     ]);
 }
