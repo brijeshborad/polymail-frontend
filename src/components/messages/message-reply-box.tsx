@@ -533,7 +533,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   }
 
   useEffect(() => {
-    if (props.replyType === 'reply-all') {
+    if (props.replyType === 'forward') {
       setReplyBoxHide(true)
     } else {
       setReplyBoxHide(false)
