@@ -61,7 +61,6 @@ export default function TimePicker({ scheduledDate, onChange }: TimePickerProps)
                     onClick={() => handleChange(min, 'minute')}
                     backgroundColor={'transparent'} w={'100%'} borderRadius={0}
                     justifyContent={'flex-start'}
-                  // isDisabled={isPastDate}
                   >
                     {min}
                   </MenuItem>
