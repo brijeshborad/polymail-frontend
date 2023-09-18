@@ -27,7 +27,7 @@ export default function withAuth(ProtectedComponent: any) {
         const userIsAuthenticated = user !== null;
         useEffect(() => {
             if (!userIsAuthenticated) {
-                router.push('/auth/signup');
+                router.push('/onboarding');
             }
         }, [userIsAuthenticated, router]);
 

@@ -114,6 +114,7 @@ function ManageMembersModal() {
 
                     <div className={styles.addProjectMember}>
                         <Heading as='h6' size='xs' mb={2}>Add Members</Heading>
+
                         <Flex align={'center'} gap={1}>
                             <Flex align={'center'} position={"relative"} className={styles.emailAddress}
                                   padding={'6px 8px 6px 16px'} width={'100%'}>

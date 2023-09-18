@@ -11,7 +11,7 @@ export default function Logout() {
         dispatch(logoutUser());
         setTimeout(() => {
             LocalStorageService.clearStorage();
-            Router.push('/auth/login');
+            Router.push('/onboarding');
         }, 1000);
     }, [dispatch])
 }

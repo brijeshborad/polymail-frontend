@@ -19,7 +19,7 @@ import styles from "@/styles/Inbox.module.css";
 import Image from "next/image";
 import { ChevronDownIcon, CloseIcon } from "@chakra-ui/icons";
 import { FileIcon, TextIcon } from "@/icons";
-import React, { ChangeEvent, ChangeEventHandler, useEffect, useRef, useState } from "react";
+import React, {ChangeEvent, ChangeEventHandler, useCallback, useEffect, useRef, useState} from "react";
 import { debounce, isEmail } from "@/utils/common.functions";
 import { RichTextEditor, Time, Toaster } from "@/components/common";
 import { createDraft, sendMessage, updateDraftState, updatePartialMessage } from "@/redux/draft/action-reducer";
@@ -35,6 +35,7 @@ import MessageRecipients from "./message-recipients";
 import { RecipientsType } from "@/types/props-types/message-recipients.type";
 import { useRouter } from "next/router";
 import MessageSchedule from "./message-schedule";
+import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
 
 dayjs.extend(relativeTime)
 
@@ -72,7 +73,7 @@ export function MessageReplyBox(props: MessageBoxType) {
 
   useEffect(() => {
     if (divRef.current) {
-      const height = divRef.current?.offsetHeight;
+      const height = divRef.current?.offsetHeight || 0;
       setDivHeight(height);
     }
   }, [replyBoxHide, emailRecipients]);
@@ -229,22 +230,24 @@ export function MessageReplyBox(props: MessageBoxType) {
           }))
         ]);
       }
-    } else {
-      // Add signature to email body
-      if (selectedAccount && selectedAccount.signature && props.replyType !== 'forward') {
-        setEmailBody(selectedAccount.signature);
-      }
     }
   }, [draft, props.replyType, selectedAccount])
 
   useEffect(() => {
+    handleEditorScroll();
+  }, []);
+
+  useEffect(() => {
     if (props.messageData) {
-      let emailSubject = `Re: ${props.messageData.subject}`;
+      let emailSubject = `${props.messageData.subject}`;
       if (props.replyType === 'forward') {
         emailSubject = `Fwd: ${props.messageData.subject}`;
         let decoded = Buffer.from(props.emailPart || '', 'base64').toString('ascii');
         setBoxUpdatedFirstTime(false);
         setEmailBody(getForwardContent() + (decoded || '') + (selectedAccount?.signature || ''));
+        debounce(() => {
+          handleEditorScroll();
+        }, 200)
         if (draft && draft.draftInfo && draft?.draftInfo?.attachments?.length) {
           setAttachments([
             ...draft.draftInfo.attachments.map(t => ({
@@ -301,7 +304,7 @@ export function MessageReplyBox(props: MessageBoxType) {
     const cc = props.messageData?.cc; // Changed cc assignment to match the correct prop
     const ccEmailString = formatEmailString(cc);
 
-    const forwardContent: string = `
+    const forwardContent: string = `<p></p><p></p><p></p><p></p>
              <p style="color: black; background: none">---------- Forwarded message ----------
 From: ${props.messageData?.from?.email}
 Date: ${dayjs(props.messageData?.created).format('ddd, MMM DD, YYYY [at] hh:mm A')}
@@ -427,6 +430,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
     if (draft && draft.id) {
       let params = {};
+      let polyToast = `poly-toast-${new Date().getTime().toString()}`;
 
       // if the user has set a schedule date
       if (scheduledDate) {
@@ -450,6 +454,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
           desc: `Your message has been scheduled`,
           type: 'send_confirmation',
           title: 'Your message has been scheduled',
+          id: polyToast,
           undoClick: (type: string) => {
             let params = {};
 
@@ -463,7 +468,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
               }
             }
             dispatch(sendMessage({ id: draft.id!, ...params }));
-            toast.close('poly-toast');
+            toast.close(`${polyToast}`);
           }
         })
 
@@ -473,6 +478,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             desc: `Your message has been sent to ${draft?.to && draft?.to[0].email}${draft?.to && draft?.to?.length > 1 ? ` and ${draft?.to && draft?.to?.length - 1} other${draft?.to && draft?.to?.length === 2 ? '' : 's'}` : ''}`,
             type: 'send_confirmation',
             title: draft?.subject || '',
+            id: polyToast,
             undoClick: (type: string) => {
               let params = {};
 
@@ -486,7 +492,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 }
               }
               dispatch(sendMessage({ id: draft.id!, ...params }));
-              toast.close('poly-toast');
+              toast.close(`${polyToast}`);
             }
           })
         }
@@ -520,7 +526,12 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
   const handleFocus = () => {
     setTimeout(() => {
-      setHideEditorToolbar(true)
+      setHideEditorToolbar(true);
+      let currentEmailBody: string = getPlainTextFromHtml(emailBody);
+      if (selectedAccount && selectedAccount.signature && props.replyType !== 'forward' && !currentEmailBody.trim()) {
+        setBoxUpdatedFirstTime(false);
+        setEmailBody(`<p></p><p></p><p>${selectedAccount.signature}</p>`);
+      }
     }, 500)
   }
 
@@ -529,7 +540,12 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   }
 
   useEffect(() => {
-    if (props.replyType === 'reply-all') {
+    if (props.replyType) {
+      setTimeout(() => {
+        handleEditorScroll();
+      }, 500)
+    }
+    if (props.replyType === 'forward') {
       setReplyBoxHide(true)
     } else {
       setReplyBoxHide(false)
@@ -540,8 +556,8 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     setScheduledDate(date);
   }
 
-  function handleEditorScroll(event: any) {
-    if (event.target.scrollTop > 0) {
+  const handleEditorScroll = useCallback(() => {
+    if (editorRef.current && editorRef.current.scrollTop > 0) {
       setExtraClassNames(prevState => !prevState.includes('show-shadow') ? prevState + ' show-shadow' : prevState);
     } else {
       setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
@@ -558,7 +574,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         setExtraClassNamesForBottom(prevState => prevState.replace('show-shadow-bottom', ''));
       }
     }
-  }
+  }, [])
 
   return (
     <Flex backgroundColor={'#FFFFFF'} position={'sticky'} mt={'auto'} bottom={'-20px'} paddingBottom={props.parentHasScroll ? 5 : 0}>
@@ -591,16 +607,16 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
           <Flex align={'center'} justify={'space-between'} gap={4} position={"relative"} zIndex={10}>
             <Flex align={'center'} gap={1}>
               <Menu>
-                <MenuButton color={'#6B7280'} variant='link' size='xs' as={Button} rightIcon={<ChevronDownIcon />}>{props.replyTypeName || 'Reply to'}
+                <MenuButton color={'#6B7280'} variant='link' size='xs' as={Button} rightIcon={<ChevronDownIcon />}>{props.replyTypeName || 'Reply'}
                 </MenuButton>
                 <MenuList className={'drop-down-list reply-dropdown'}>
                   {props.replyType === 'reply-all' ?
-                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply', props.threadDetails) : null}> Reply to </MenuItem> :
-                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply-all', props.threadDetails) : null}> Reply to All </MenuItem>
+                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply', props.threadDetails) : null}> Reply</MenuItem> :
+                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply-all', props.threadDetails) : null}> Reply All</MenuItem>
                   }
                   {props.replyType === 'forward' ?
-                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply', props.threadDetails) : null}> Reply to </MenuItem> :
-                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('forward', props.threadDetails) : null}> Forward </MenuItem>
+                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply', props.threadDetails) : null}> Reply</MenuItem> :
+                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('forward', props.threadDetails) : null}> Forward</MenuItem>
                   }
                 </MenuList>
               </Menu>
@@ -627,8 +643,8 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             </Flex>
             <Text as={'h1'} fontSize='11px' color={'#6B7280'} display={'flex'} gap={'2px'}
               className={styles.mailSaveTime}>Saved {draft ?
-                <Time time={draft?.created || ''} isShowFullTime={false}
-                  showTimeInShortForm={true} /> : '0 s'} ago</Text>
+                <Time time={draft?.updated || ''} isShowFullTime={false}
+                  showTimeInShortForm={true} /> : '0s'} ago</Text>
           </Flex>
           {replyBoxHide &&
             <div ref={divRef}>
@@ -642,9 +658,9 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             </div>}
 
 
-          <Flex direction={'column'} position={"relative"} flex={1}>
+          <Flex direction={'column'} position={"relative"} flex={1} >
             <Flex direction={'column'} maxH={`calc(285px - ${divHeight}px)`} overflow={'auto'} ref={editorRef} className={`${styles.replyBoxEditor} editor-bottom-shadow`}
-              onScroll={handleEditorScroll}>
+              onScroll={() => handleEditorScroll()}>
               <RichTextEditor
                 className={`reply-message-area message-reply-box ${hideEditorToolbar ? 'hide-toolbar' : ''} ${isShowText ? 'input-value-shadow' : ''} ${extraClassNames} ${extraClassNamesForBottom}`}
                 initialUpdated={boxUpdatedFirstTime}

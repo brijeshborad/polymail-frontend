@@ -35,10 +35,11 @@ import {Message} from "@/components/messages";
 import {PROJECT_ROLES} from "@/utils/constants";
 import RemoveRecordModal from "@/components/common/delete-record-modal";
 import {Toaster} from "@/components/common";
+import { useSocket } from '@/hooks/use-socket.hook';
 
 function ProjectInbox() {
     const {members, project, invitees} = useSelector((state: StateType) => state.projects);
-    const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
+    const {selectedThread} = useSelector((state: StateType) => state.threads);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {success: membershipSuccess} = useSelector((state: StateType) => state.memberships);
     const {isProjectRemoveSuccess, success} = useSelector((state: StateType) => state.memberships);
@@ -55,6 +56,29 @@ function ProjectInbox() {
     const router = useRouter();
 
     const dispatch = useDispatch();
+    const { sendJsonMessage } = useSocket();
+
+    useEffect(() => {
+      if (router.query.project) {
+
+        const interval = setInterval(() => {
+          console.log('Sending activity event');
+          let projectId = router.query.project as string;
+            sendJsonMessage({
+                userId: selectedAccount?.userId,
+                name: 'Activity',
+                data: {
+                    type: "ViewingProject",
+                    id: projectId,
+                },
+            });
+        }, 2000);
+      
+        return () => clearInterval(interval);
+      }
+
+      return undefined
+    }, []);
 
     useEffect(() => {
         if (router.query.project) {
@@ -177,7 +201,7 @@ function ProjectInbox() {
                         <Heading as='h4' fontSize={'24px'} color={'#08162F'}>{project && project.name}</Heading>
                         <Badge color={'#000000'} fontSize={'14px'} fontWeight={'600'} backgroundColor={'#E9E9E9'}
                                padding={'3px 6px'} borderRadius={'4px'}
-                               lineHeight={'1.19'}>{threads && threads?.length || 0} threads</Badge>
+                               lineHeight={'1.19'}>{members && members?.length || 0} members</Badge>
                     </Flex>
                     <Flex align={'center'} gap={1}>
                         <div className={styles.userImage}>
@@ -190,14 +214,20 @@ function ProjectInbox() {
                             <Image src="/image/user.png" width="36" height="36" alt=""/>
                         </div>
                         <Menu>
+                        {({ onClose }) => (
+                          <>
                             <MenuButton as={Button} className={styles.manageMembers} ml={2} backgroundColor={'#000000'}
                                         color={'#ffffff'} lineHeight={'1'} fontSize={'14px'} borderRadius={'8px'}
                                         height={'auto'} padding={'11px 16px'}> Manage Members </MenuButton>
                             <MenuList className={`${styles.manageMemberDropDown} drop-down-list`}>
                                 <Flex color={'#374151'} fontWeight={'500'} fontSize={'13px'} padding={'12px'}
                                       justifyContent={'space-between'} alignItems={'center'}
-                                      borderBottom={'1px solid #F3F4F6'}>Manage members <CloseIcon/></Flex>
-
+                                      borderBottom={'1px solid #F3F4F6'}>Manage members
+                                  <IconButton className={styles.closeIcon} onClick={onClose}
+                                                    cursor={'pointer'} backgroundColor={'#FFFFFF'} padding={0}
+                                                    minWidth={'1px'} aria-label='Add to friends'
+                                                    icon={<CloseIcon/>}/>
+                                </Flex>
                                 <div className={styles.dropDownSearchBar}>
                                     <Text color={'#374151'} fontSize={'13px'} fontWeight={'500'} lineHeight={'normal'}
                                           letterSpacing={'-0.13px'}>Add members</Text>
@@ -303,6 +333,8 @@ function ProjectInbox() {
                                     </Flex>
                                 ))}
                             </MenuList>
+                          </>
+                        )}
                         </Menu>
                     </Flex>
                 </Flex>

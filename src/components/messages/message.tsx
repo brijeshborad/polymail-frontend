@@ -43,7 +43,6 @@ export function Message() {
 
   const [index, setIndex] = useState<number | null>(null);
   const [emailPart, setEmailPart] = useState<string>("");
-  const [hideAndShowReplyBox, setHideAndShowReplyBox] = useState<boolean>(false);
   const [replyType, setReplyType] = useState<string>('');
   const [replyTypeName, setReplyTypeName] = useState<string>('');
   const [inboxMessages, setInboxMessages] = useState<MessageModel[]>([]);
@@ -69,6 +68,7 @@ export function Message() {
   const [lastMessageDetails, setLastMessageDetails] = useState<MessageModel | null>(null);
   const [messageDetailsForReplyBox, setMessageDetailsForReplyBox] = useState<MessageModel | null>(null);
   const [isLoaderShow, setIsLoaderShow] = useState<boolean>(false);
+  const [showReplyBox, setShowReplyBox] = useState<boolean>(false);
 
   const dispatch = useDispatch();
 
@@ -83,11 +83,15 @@ export function Message() {
 
   useEffect(() => {
     if (selectedThread && selectedThread?.id) {
+      setShowReplyBox(false)
       setIndex(null);
-      setHideAndShowReplyBox(false);
       setLastMessageDetails(null);
       setIframeHeight('0px');
+      setMessageDetailsForReplyBox(null);
       dispatch(updateMessageState({messages: selectedThread.messages}));
+      setTimeout(() => {
+        setShowReplyBox(true)
+      }, 200);
     }
   }, [dispatch, selectedThread])
 
@@ -198,14 +202,14 @@ export function Message() {
 
   useEffect(() => {
     if (messagePart && messagePart.data) {
-      cacheMessage({body: messagePart});
+      cacheMessage({data: messagePart.data});
       let decoded = Buffer.from(messagePart.data || '', 'base64').toString('ascii');
       let addTargetBlank = decoded.replace(/<a/g, '<a target="_blank"');
       const blob = new Blob([addTargetBlank], {type: "text/html"});
       const blobUrl = window.URL.createObjectURL(blob);
       setEmailPart(blobUrl);
     } else {
-      cacheMessage({body: {data: ''}});
+      cacheMessage({data: ''});
       setEmailPart('')
     }
   }, [cacheMessage, messagePart])
@@ -253,7 +257,6 @@ export function Message() {
 
 
   const closeCompose = () => {
-    setHideAndShowReplyBox(false)
     setReplyType('');
     dispatch(updateMessageState({isCompose: false}));
   }
@@ -261,9 +264,9 @@ export function Message() {
 
   const hideAndShowReplayBox = (type: string = '', messageData: MessageModel) => {
     if (type === 'reply') {
-      setReplyTypeName('Reply to')
+      setReplyTypeName('Reply')
     } else if (type === 'reply-all') {
-      setReplyTypeName('Reply to All')
+      setReplyTypeName('Reply All')
     } else {
       setReplyTypeName('Forward')
     }
@@ -307,59 +310,58 @@ export function Message() {
       </Flex>}
       {selectedThread && !isCompose &&
       <Flex flexDir={'column'} height={'100%'}>
-        {!hideAndShowReplyBox &&
         <>
-            <MessagesHeader inboxMessages={inboxMessages} index={index} closeCompose={closeCompose}
-                            headerType={'inbox'}/>
+          <MessagesHeader inboxMessages={inboxMessages} index={index} closeCompose={closeCompose}
+                          headerType={'inbox'}/>
 
-            <Flex padding={'20px'} ref={messagesWrapperRef} gap={5} direction={'column'} flex={1} overflow={'auto'}>
-                <Flex gap={2} direction={'column'} height={'100%'}>
-                  {inboxMessages && !!inboxMessages.length && inboxMessages.map((item: any, index: number) => (
-                    <div key={index}>
-                      <MessageBox item={item} index={index} threadDetails={item}
-                                  isLoading={messageLoading} emailPart={emailPart}
-                                  messageAttachments={messageAttachments} hideAndShowReplayBox={hideAndShowReplayBox}
-                      />
-                    </div>
+          <Flex padding={'20px'} ref={messagesWrapperRef} gap={5} direction={'column'} flex={1} overflow={'auto'}>
+            <Flex gap={2} direction={'column'} height={'100%'}>
+              {inboxMessages && !!inboxMessages.length && inboxMessages.map((item: any, index: number) => (
+                  <div key={index}>
+                    <MessageBox item={item} index={index} threadDetails={item}
+                                isLoading={messageLoading} emailPart={emailPart}
+                                messageAttachments={messageAttachments} hideAndShowReplayBox={hideAndShowReplayBox}
+                    />
+                  </div>
 
-                  ))}
+              ))}
 
-                  {lastMessageDetails &&
-                  <Flex direction={'column'} className={`${styles.oldMail} ${styles.lastOpenMail}`} gap={4}
-                        padding={4} border={'1px solid #E5E7EB'} borderRadius={12} align={'center'}>
-                      <Flex align={'center'} w={'100%'} gap={2}>
-                          <div className={styles.mailBoxUserImage}>
+              {lastMessageDetails &&
+              <Flex direction={'column'} className={`${styles.oldMail} ${styles.lastOpenMail}`} gap={4}
+                    padding={4} border={'1px solid #E5E7EB'} borderRadius={12} align={'center'}>
+                <Flex align={'center'} w={'100%'} gap={2}>
+                  <div className={styles.mailBoxUserImage}>
 
-                          </div>
+                  </div>
 
-                          <Flex w={'100%'} direction={'column'}>
-                              <Flex align={'center'} justify={'space-between'} mb={1}>
-                                  <Flex align={'center'} gap={1}>
-                                      <Heading
-                                        as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400}
-                                        letterSpacing={'-0.13px'} lineHeight={1}
-                                      >
-                                        {lastMessageDetails?.from?.name || lastMessageDetails?.from?.email}
-                                      </Heading>
-                                      {lastMessageDetails && lastMessageDetails.from && lastMessageDetails.from.name && (
-                                        <>
-                                          <span className={'dot'}/>
-                                          <Text
-                                            fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'}
-                                            lineHeight={1} fontWeight={400}
-                                          >
-                                            {lastMessageDetails?.from?.email}
-                                          </Text>
-                                        </>
-                                      )}
-                                  </Flex>
+                  <Flex w={'100%'} direction={'column'}>
+                    <Flex align={'center'} justify={'space-between'} mb={1}>
+                      <Flex align={'center'} gap={1}>
+                        <Heading
+                            as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400}
+                            letterSpacing={'-0.13px'} lineHeight={1}
+                        >
+                          {lastMessageDetails?.from?.name || lastMessageDetails?.from?.email}
+                        </Heading>
+                        {lastMessageDetails && lastMessageDetails.from && lastMessageDetails.from.name && (
+                            <>
+                              <span className={'dot'}/>
+                              <Text
+                                  fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'}
+                                  lineHeight={1} fontWeight={400}
+                              >
+                                {lastMessageDetails?.from?.email}
+                              </Text>
+                            </>
+                        )}
+                      </Flex>
 
-                                  <Flex align={'center'} gap={'6px'}>
-                                    {lastMessageDetails.scope !== 'visible' ?
-                                      <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
-                                        <EyeSlashedIcon/>
-                                      </Flex> : ''}
-                                      {/*
+                      <Flex align={'center'} gap={'6px'}>
+                        {lastMessageDetails.scope !== 'visible' ?
+                            <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
+                              <EyeSlashedIcon/>
+                            </Flex> : ''}
+                        {/*
                                       <Flex className={styles.memberImages}>
                                           <div className={styles.memberPhoto}>
                                               <Image src="/image/user.png" width="24" height="24" alt=""/>
@@ -373,81 +375,84 @@ export function Message() {
                                           </Flex>
                                       </Flex>
                                       */}
-                                      <div className={styles.mailBoxTime}>
-                                          <Time time={lastMessageDetails?.created || ''}
-                                                isShowFullTime={true} showTimeInShortForm={false}/>
-                                      </div>
-                                      <Menu>
-                                          <MenuButton className={styles.menuIcon} transition={'all 0.5s'}
-                                                      backgroundColor={'transparent'} fontSize={'12px'}
-                                                      h={'auto'} minWidth={'24px'} padding={'0'} as={Button}
-                                                      rightIcon={<MenuIcon/>}>
-                                          </MenuButton>
-                                          <MenuList className={'drop-down-list'}>
-                                            {lastMessageDetails && (
-                                              <MenuItem
-                                                onClick={() => setScope(lastMessageDetails.scope === 'visible' ? 'hidden' : 'visible', lastMessageDetails)}>
-                                                {lastMessageDetails.scope === 'visible' ? 'Hide from project members' : 'Show to project members'}
-                                              </MenuItem>
-                                            )}
+                        <div className={styles.mailBoxTime}>
+                          <Time time={lastMessageDetails?.created || ''}
+                                isShowFullTime={true} showTimeInShortForm={false}/>
+                        </div>
+                        <Menu>
+                          <MenuButton className={styles.menuIcon} transition={'all 0.5s'}
+                                      backgroundColor={'transparent'} fontSize={'12px'}
+                                      h={'auto'} minWidth={'24px'} padding={'0'} as={Button}
+                                      rightIcon={<MenuIcon/>}>
+                          </MenuButton>
+                          <MenuList className={'drop-down-list'}>
+                            {lastMessageDetails && (
+                                <MenuItem
+                                    onClick={() => setScope(lastMessageDetails.scope === 'visible' ? 'hidden' : 'visible', lastMessageDetails)}>
+                                  {lastMessageDetails.scope === 'visible' ? 'Hide from project members' : 'Show to project members'}
+                                </MenuItem>
+                            )}
 
-                                              <MenuItem
-                                                  onClick={() => hideAndShowReplayBox('reply', lastMessageDetails)}> Reply </MenuItem>
-                                              <MenuItem
-                                                  onClick={() => hideAndShowReplayBox('reply-all', lastMessageDetails)}> Reply
-                                                  All </MenuItem>
-                                              <MenuItem
-                                                  onClick={() => hideAndShowReplayBox('forward', lastMessageDetails)}> Forward </MenuItem>
-                                          </MenuList>
-                                      </Menu>
-                                  </Flex>
-                              </Flex>
-                              <Flex>
-
-                                {lastMessageDetails && lastMessageDetails.to && lastMessageDetails.to.length > 0 &&
-                                <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'}
-                                      lineHeight={1} fontWeight={400}>to:&nbsp;
-                                  {lastMessageDetails.to[0].email}&nbsp; <Text
-                                        as='u'>{lastMessageDetails.to.length - 1 > 0 && `and ${lastMessageDetails.to.length - 1} others`} </Text>
-                                </Flex>
-                                }
-                              </Flex>
-                          </Flex>
+                            <MenuItem
+                                onClick={() => hideAndShowReplayBox('reply', lastMessageDetails)}> Reply </MenuItem>
+                            <MenuItem
+                                onClick={() => hideAndShowReplayBox('reply-all', lastMessageDetails)}> Reply
+                              All </MenuItem>
+                            <MenuItem
+                                onClick={() => hideAndShowReplayBox('forward', lastMessageDetails)}> Forward </MenuItem>
+                          </MenuList>
+                        </Menu>
                       </Flex>
-                    {(!messageLoading && emailPart) &&
-                    <div className={styles.mailBodyContent}>
-                        <iframe
-                            id='message-content'
-                            ref={iframeRef}
-                            src={emailPart}
-                            onLoad={onIframeLoad}
-                            height={iframeHeight}
-                            frameBorder="0"
-                            className={styles.mailBody}
-                        />
-                    </div>}
-                    {messageAttachments && !!messageAttachments.length && messageAttachments?.map((item: MessageAttachments, i) => (
+                    </Flex>
+                    <Flex>
 
-                      <div className={styles.mailBodyAttachments} key={i}>
-                        <Flex align={'center'} className={styles.attachmentsFile}>
-                          {item.filename}
-                          <div className={`${styles.closeIcon} ${styles.downloadIcon}`}
-                               onClick={() => downloadImage(item)}>
-                            <DownloadIcon/>
-                          </div>
-                        </Flex>
-                      </div>
-                    ))}
-
-                  </Flex>}
-
-                    <MessageReplyBox
-                        emailPart={(messagePart?.data || '')} messageData={messageDetailsForReplyBox} threadDetails={lastMessageDetails}
-                        replyType={replyType} parentHasScroll={hasScrollableContent} hideAndShowReplayBox={hideAndShowReplayBox} replyTypeName={replyTypeName}/>
+                      {lastMessageDetails && lastMessageDetails.to && lastMessageDetails.to.length > 0 &&
+                      <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'}
+                            lineHeight={1} fontWeight={400}>to:&nbsp;
+                        {lastMessageDetails.to[0].email}&nbsp; <Text
+                            as='u'>{lastMessageDetails.to.length - 1 > 0 && `and ${lastMessageDetails.to.length - 1} others`} </Text>
+                      </Flex>
+                      }
+                    </Flex>
+                  </Flex>
                 </Flex>
+                {(!messageLoading && emailPart) &&
+                <div className={styles.mailBodyContent}>
+                  <iframe
+                      id='message-content'
+                      ref={iframeRef}
+                      src={emailPart}
+                      onLoad={onIframeLoad}
+                      height={iframeHeight}
+                      frameBorder="0"
+                      className={styles.mailBody}
+                  />
+                </div>}
+                {messageAttachments && !!messageAttachments.length && messageAttachments?.map((item: MessageAttachments, i) => (
+
+                    <div className={styles.mailBodyAttachments} key={i}>
+                      <Flex align={'center'} className={styles.attachmentsFile}>
+                        {item.filename}
+                        <div className={`${styles.closeIcon} ${styles.downloadIcon}`}
+                             onClick={() => downloadImage(item)}>
+                          <DownloadIcon/>
+                        </div>
+                      </Flex>
+                    </div>
+                ))}
+
+              </Flex>}
+
+              {showReplyBox &&
+              <MessageReplyBox
+                  emailPart={(messagePart?.data || '')} messageData={messageDetailsForReplyBox}
+                  threadDetails={lastMessageDetails}
+                  replyType={replyType} parentHasScroll={hasScrollableContent}
+                  hideAndShowReplayBox={hideAndShowReplayBox} replyTypeName={replyTypeName}/>
+              }
             </Flex>
+          </Flex>
         </>
-        }
       </Flex>
       }
     </Box>

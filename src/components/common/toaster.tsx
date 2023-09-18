@@ -7,13 +7,13 @@ import React from "react";
 const {toast} = createStandaloneToast()
 
 export function Toaster(props: ToasterProps) {
-
-    if (toast.isActive('poly-toast')) {
+    let polyToasterId = `poly-toast-${new Date().getTime().toString()}`;
+    if (toast.isActive(`${polyToasterId}`)) {
         return null;
     }
     return (
         toast({
-            id: 'poly-toast',
+            id: polyToasterId,
             duration: (props.type !== 'reauth') ? 3000 : null,
             isClosable: props.type !== 'reauth',
             render: () => {
@@ -25,10 +25,10 @@ export function Toaster(props: ToasterProps) {
                         className={styles.mailToaster} padding={'16px'} gap={2}>
                         {(['reauth', 'error']).includes(props.type) ?
                             <div className={`${styles.toastIcon} ${styles.toastCloseIcon}`}>
-                                <SmallCloseIcon onClick={() => toast.close('poly-toast')}/>
+                                <SmallCloseIcon onClick={() => toast.close(`${props.id ? props.id : polyToasterId}`)}/>
                             </div> :
                             <div className={`${styles.toastIcon} ${styles.toastSuccessIcon}`}>
-                                <CheckIcon onClick={() => toast.close('poly-toast')}/>
+                                <CheckIcon onClick={() => toast.close(`${props.id ? props.id : polyToasterId}`)}/>
                             </div>
                         }
 
@@ -43,7 +43,7 @@ export function Toaster(props: ToasterProps) {
                                 ml={'auto'} height={"auto"}
                                 backgroundColor={'transparent'} padding={'0'}
                                 minWidth={'auto'}><SmallCloseIcon
-                                onClick={() => toast.close('poly-toast')}/></Button>
+                                onClick={() => toast.close(`${props.id ? props.id : polyToasterId}`)}/></Button>
                         )}
 
                         {props.type === 'send_confirmation' && (

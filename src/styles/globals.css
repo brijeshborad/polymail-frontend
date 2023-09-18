@@ -21,7 +21,7 @@
             rgba(255, 255, 255, 1),
             rgba(255, 255, 255, 0)
     );
-
+    --alias-bg-subtle: #F3F4F6;
     --tile-start-rgb: 239, 245, 249;
     --tile-end-rgb: 228, 232, 233;
     --tile-border: conic-gradient(
@@ -373,6 +373,12 @@ div:has(> .mailSendToaster) {
     border-color: #FF5E2C;
 }
 
+.confirm-modal .footer-button.confirm-button {
+    background-color: #1F2937;
+    color: #FFFFFF;
+    border-color: #1F2937;
+}
+
 .confirm-modal .footer-button.cancel-button {
     background-color: #FFFFFF;
     color: #374151;
@@ -541,4 +547,28 @@ div:has(> .mailSendToaster) {
 
 ::-webkit-datetime-edit-ampm-field {
   display: none;
+}
+
+.project-list-shadow {
+    position: relative;
+}
+
+.project-list-shadow .project-list-top-shadow:before {
+    position: absolute;
+    content: '';
+    width: calc(100% - 12px);
+    height: 80px;
+    left: 6px;
+    top: 0;
+    background: linear-gradient(180deg, #F9FAFB 0%, rgba(249, 250, 251, 0.00) 100%);
+}
+
+.project-list-shadow .project-list-bottom-shadow:after {
+    position: absolute;
+    content: '';
+    width: calc(100% - 12px);
+    height: 80px;
+    left: 6px;
+    bottom: 0;
+    background: linear-gradient(0deg, #F9FAFB 0%, rgba(249, 250, 251, 0.00) 100%);
 }

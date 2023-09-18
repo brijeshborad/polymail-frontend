@@ -236,6 +236,7 @@ export function ComposeBox(props: any) {
   const sendMessages = () => {
     if (draft && draft.id) {
       let params = {};
+      let polyToast = `poly-toast-${new Date().getTime().toString()}`;
       if (scheduledDate) {
         const targetDate = dayjs(scheduledDate)
         // Get the current date and time
@@ -251,6 +252,7 @@ export function ComposeBox(props: any) {
           desc: `Your message has been scheduled`,
           type: 'send_confirmation',
           title: 'Your message has been scheduled',
+          id: polyToast,
           undoClick: (type: string) => {
             let params = {};
 
@@ -264,7 +266,7 @@ export function ComposeBox(props: any) {
               }
             }
             dispatch(sendMessage({ id: draft.id!, ...params }));
-            toast.close('poly-toast');
+            toast.close(`${polyToast}`);
           }
         })
 
@@ -274,6 +276,7 @@ export function ComposeBox(props: any) {
             desc: `Your message has been sent to ${draft?.to && draft?.to[0]}${draft?.to && draft?.to?.length > 1 ? ` and ${draft?.to && draft?.to?.length - 1} other${draft?.to && draft?.to?.length === 2 ? '' : 's'}` : ''}`,
             type: 'send_confirmation',
             title: draft?.subject || '',
+            id: polyToast,
             undoClick: (type: string) => {
               let params = {};
 
@@ -287,7 +290,7 @@ export function ComposeBox(props: any) {
                 }
               }
               dispatch(sendMessage({ id: draft.id!, ...params }));
-              toast.close('poly-toast');
+              toast.close(`${polyToast}`);
             }
           })
         }
@@ -527,13 +530,13 @@ export function ComposeBox(props: any) {
         <ModalOverlay backgroundColor={'rgba(229, 231, 235, 0.50)'} backdropFilter={'blur(16px)'}/>
         <ModalContent className={'confirm-modal'} borderRadius={12} boxShadow={'0 0 12px 0 rgba(0,0,0, 0.08)'} padding={'12px'} maxW={'420px'}>
           <ModalBody padding={'12px 12px 24px'}>
-            <Heading as='h5' fontSize={'15px'} color={'#0A101D'} lineHeight={1.21}>Are you want to save this draft?</Heading>
+            <Heading as='h5' fontSize={'15px'} color={'#0A101D'} lineHeight={1.21}>Are you sure?</Heading>
             <Text color={'#6B7280'} mt={1} fontSize='13px'>This action cannot be undone</Text>
           </ModalBody>
 
           <ModalFooter className={'confirm-modal-footer'} borderTop={'1px solid #F3F4F6'} px={0} pb={0}>
-            <Button className={'cancel-button footer-button'} colorScheme='blue' mr={3} onClick={() => modalCloseConfirmation('no')}>No</Button>
-            <Button className={'remove-button footer-button'} variant='ghost' onClick={() => modalCloseConfirmation('yes')}>Yes</Button>
+            <Button className={'cancel-button footer-button'} colorScheme='blue' mr={3} onClick={() => modalCloseConfirmation('no')}>Cancel</Button>
+            <Button className={'confirm-button footer-button'} variant='ghost' onClick={() => modalCloseConfirmation('yes')}>Confirm</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

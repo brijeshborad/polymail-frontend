@@ -3,15 +3,39 @@ import styles from "@/styles/Login.module.css";
 import {Button, Flex, Heading, Image} from "@chakra-ui/react";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {googleAuthLink} from "@/redux/auth/action-reducer";
 import {useEffect} from "react";
+import {useRouter} from 'next/router';
+import LocalStorageService from "@/utils/localstorage.service";
+import {googleAuthLink, updateAuthState} from "@/redux/auth/action-reducer";
 import {getRedirectionUrl} from "@/utils/common.functions";
 
 
 
 function OnBoarding() {
     const dispatch = useDispatch();
-    const {googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
+    const {user, googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
+    const router = useRouter();
+
+    useEffect(() => {
+        if (router.query) {
+            if (router.query.access_token) {
+                LocalStorageService.updateUser('store', {token: router.query.access_token})
+                dispatch(updateAuthState({user: {token: router.query.access_token.toString() || ''}}));
+                router.push('/inbox');
+            }
+
+            if (router.query.error) {
+                router.replace('/onboarding', undefined, {shallow: true});
+                dispatch(updateAuthState({error: {description: 'Invalid account'}}));
+            }
+        }
+    }, [dispatch, router.query]);
+
+    useEffect(() => {
+        if (user && user?.token) {
+            router.push('/inbox');
+        }
+    }, [user])
 
     function oauthWithGoogle() {
         let body = {
