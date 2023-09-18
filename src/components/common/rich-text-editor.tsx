@@ -20,7 +20,7 @@ if (typeof window === 'object') {
     htmlToDraft = require('html-to-draftjs').default;
 }
 
-export function RichTextEditor({onChange, placeholder, className, value, initialUpdated}: RichTextEditorProps) {
+export function RichTextEditor({onChange, placeholder, className, value, initialUpdated, hideToolBar}: RichTextEditorProps) {
     const [editorState, setEditorState] = useState<EditorState>(EditorState.createEmpty());
     const updateParentComponent = useCallback(() => {
         if (onChange) { // editorState?.getCurrentContent().getPlainText().trim()
@@ -49,7 +49,7 @@ export function RichTextEditor({onChange, placeholder, className, value, initial
             wrapperClassName={className}
             editorClassName={'default-editor-css'}
             onEditorStateChange={setEditorState}
-
+            toolbarHidden={hideToolBar}
             toolbar={{
                 options: ['inline', 'list', 'emoji', 'link'],
                 inline: {
