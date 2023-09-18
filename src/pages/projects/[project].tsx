@@ -39,7 +39,7 @@ import { useSocket } from '@/hooks/use-socket.hook';
 
 function ProjectInbox() {
     const {members, project, invitees} = useSelector((state: StateType) => state.projects);
-    const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
+    const {selectedThread} = useSelector((state: StateType) => state.threads);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {success: membershipSuccess} = useSelector((state: StateType) => state.memberships);
     const {isProjectRemoveSuccess, success} = useSelector((state: StateType) => state.memberships);
