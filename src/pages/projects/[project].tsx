@@ -58,6 +58,7 @@ function ProjectInbox() {
     const dispatch = useDispatch();
     const { sendJsonMessage } = useSocket();
 
+    /*
     useEffect(() => {
       if (router.query.project) {
 
@@ -79,6 +80,7 @@ function ProjectInbox() {
 
       return undefined
     }, []);
+    */
 
     useEffect(() => {
         if (router.query.project) {

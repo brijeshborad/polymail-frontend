@@ -68,6 +68,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     }
   }, [])
 
+  /*
   useEffect(() => {
     if (selectedThread) {
       const interval = setInterval(() => {
@@ -86,7 +87,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     }
     return undefined
   }, [selectedThread]);
-
+  */
   return (
     <>
       <div className={'project-list-shadow'}>
