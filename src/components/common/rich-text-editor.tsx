@@ -49,7 +49,7 @@ export function RichTextEditor({onChange, placeholder, className, value, initial
             wrapperClassName={className}
             editorClassName={'default-editor-css'}
             onEditorStateChange={setEditorState}
-            toolbarHidden={hideToolBar}
+            toolbarHidden={hideToolBar ? hideToolBar : false}
             toolbar={{
                 options: ['inline', 'list', 'emoji', 'link'],
                 inline: {

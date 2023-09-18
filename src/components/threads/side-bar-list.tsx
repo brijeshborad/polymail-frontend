@@ -24,6 +24,9 @@ export function ThreadsSideBarList(props: ThreadListProps) {
   const {selectedAccount} = useSelector((state: StateType) => state.accounts);
   const routePaths = router.pathname.split('/');
   const {sendJsonMessage} = useSocket();
+  const editorRef = useRef<any>(null);
+  const [extraClassNames, setExtraClassNames] = useState<string>('');
+  const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
 
   const handleClick = useCallback((item: Thread) => {
     if (props.tab === 'DRAFT') {
@@ -37,6 +40,27 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     dispatch(updateMessageState({ selectedMessage: null, messages: [] }));
     dispatch(updateDraftState({ draft: null }));
   }, [dispatch, onOpen, props.tab]);
+
+
+  const handleEditorScroll = useCallback(() => {
+    if (editorRef.current && editorRef.current.scrollTop > 0) {
+      setExtraClassNames(prevState => !prevState.includes('project-list-top-shadow') ? prevState + 'project-list-top-shadow' : prevState);
+    } else {
+      setExtraClassNames(prevState => prevState.replace('project-list-top-shadow', ''));
+    }
+
+    const container = editorRef.current;
+    if (container) {
+      const scrollHeight = container?.scrollHeight;
+      const containerHeight = container?.clientHeight;
+      const scrollBottom = scrollHeight - containerHeight - editorRef.current.scrollTop;
+      if (scrollBottom > 3) {
+        setExtraClassNamesForBottom(prevState => !prevState.includes('project-list-bottom-shadow') ? prevState + 'project-list-bottom-shadow' : prevState);
+      } else {
+        setExtraClassNamesForBottom(prevState => prevState.replace('project-list-bottom-shadow', ''));
+      }
+    }
+  }, [])
 
   useEffect(() => {
     if (selectedThread) {
@@ -59,9 +83,9 @@ export function ThreadsSideBarList(props: ThreadListProps) {
 
   return (
     <>
-      <div>
-        <Flex direction={'column'} gap={2} marginTop={5} pb={3}
-          className={`${styles.mailList} ${routePaths.includes('projects') ? styles.projectMailList : ''}`}>
+      <div className={'project-list-shadow'}>
+        <Flex direction={'column'} gap={2} marginTop={5} pb={3}  ref={editorRef} onScroll={() => handleEditorScroll()}
+              className={`${styles.mailList} ${extraClassNames} ${extraClassNamesForBottom} ${routePaths.includes('projects') ? styles.projectMailList : ''}`}>
           <Input type={'text'} opacity={0} height={0} width={0} padding={0} border={0} outline={0}
             ref={listRef} />
 
