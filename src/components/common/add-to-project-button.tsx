@@ -143,7 +143,7 @@ export function AddToProjectButton() {
 
                     {filteredProjects && !!filteredProjects.length && (filteredProjects || []).map((item: Project, index: number) => (
                         <MenuItem gap={2} key={index} onClick={() => addThreadToProject(item)}>
-                            <DisneyIcon/> {item.name}
+                            {item.emoji}   {item.name}
                         </MenuItem>
 
                     ))}
