@@ -234,6 +234,10 @@ export function MessageReplyBox(props: MessageBoxType) {
   }, [draft, props.replyType, selectedAccount])
 
   useEffect(() => {
+    handleEditorScroll();
+  }, []);
+
+  useEffect(() => {
     if (props.messageData) {
       let emailSubject = `${props.messageData.subject}`;
       if (props.replyType === 'forward') {
@@ -536,6 +540,11 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   }
 
   useEffect(() => {
+    if (props.replyType) {
+      setTimeout(() => {
+        handleEditorScroll();
+      }, 500)
+    }
     if (props.replyType === 'forward') {
       setReplyBoxHide(true)
     } else {

@@ -15,7 +15,7 @@ import { useSocket } from '@/hooks/use-socket.hook';
 
 
 export function ThreadsSideBarList(props: ThreadListProps) {
-  const { selectedThread, threads } = useSelector((state: StateType) => state.threads);
+  const { selectedThread, threads, isLoading } = useSelector((state: StateType) => state.threads);
   const dispatch = useDispatch()
   const listRef = useRef<any>(null);
   const router = useRouter();
@@ -27,6 +27,13 @@ export function ThreadsSideBarList(props: ThreadListProps) {
   const editorRef = useRef<any>(null);
   const [extraClassNames, setExtraClassNames] = useState<string>('');
   const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
+
+
+  useEffect(() => {
+    if (!isLoading) {
+      handleEditorScroll();
+    }
+  }, [isLoading]);
 
   const handleClick = useCallback((item: Thread) => {
     if (props.tab === 'DRAFT') {
@@ -48,13 +55,12 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     } else {
       setExtraClassNames(prevState => prevState.replace('project-list-top-shadow', ''));
     }
-
     const container = editorRef.current;
-    if (container) {
+    if (container && !isLoading) {
       const scrollHeight = container?.scrollHeight;
       const containerHeight = container?.clientHeight;
       const scrollBottom = scrollHeight - containerHeight - editorRef.current.scrollTop;
-      if (scrollBottom > 3) {
+      if (scrollBottom > 0) {
         setExtraClassNamesForBottom(prevState => !prevState.includes('project-list-bottom-shadow') ? prevState + 'project-list-bottom-shadow' : prevState);
       } else {
         setExtraClassNamesForBottom(prevState => prevState.replace('project-list-bottom-shadow', ''));
@@ -89,12 +95,12 @@ export function ThreadsSideBarList(props: ThreadListProps) {
           <Input type={'text'} opacity={0} height={0} width={0} padding={0} border={0} outline={0}
             ref={listRef} />
 
-          {threads && threads.length > 0 && threads.map((item: Thread, index: number) => (
-            <div onClick={() => handleClick(item)} key={index}
-              className={`${selectedThread && selectedThread.id === item.id ? styles.selectedThread : ''}`}>
-              <ThreadsSideBarListItem thread={item} tab={props.tab} />
-            </div>
-          ))}
+            {threads && threads.length > 0 && threads.map((item: Thread, index: number) => (
+              <div onClick={() => handleClick(item)} key={index}
+                   className={`${selectedThread && selectedThread.id === item.id ? styles.selectedThread : ''}`}>
+                <ThreadsSideBarListItem thread={item} tab={props.tab} />
+              </div>
+            ))}
         </Flex>
       </div>
 
