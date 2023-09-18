@@ -14,7 +14,7 @@ export function Toaster(props: ToasterProps) {
     return (
         toast({
             id: polyToasterId,
-            duration: (props.type !== 'reauth') ? 3000 : null,
+            duration: (props.type !== 'reauth') ? 300000 : null,
             isClosable: props.type !== 'reauth',
             render: () => {
                 return (
@@ -60,6 +60,15 @@ export function Toaster(props: ToasterProps) {
                                     Now</Button>
                             </>
                         )}
+                      {props.type === 'undo_changes' && (
+                        <>
+                          <Button className={styles.toasterUndoButton} backgroundColor={'#1F2937'}
+                                  color={'#FFFFFF'}
+                                  onClick={() => props.undoUpdateRecordClick ? props.undoUpdateRecordClick() : null} ml={3}
+                                  height={"auto"}
+                                  padding={'7px 20px'} borderRadius={'20px'}>Undo</Button>
+                        </>
+                      )}
                     </Box>
                 )
             },

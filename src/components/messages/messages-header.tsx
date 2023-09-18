@@ -1,7 +1,7 @@
 import {
     Flex,
     Tooltip,
-    Heading
+    Heading, createStandaloneToast
 } from "@chakra-ui/react";
 
 import {
@@ -20,13 +20,17 @@ import {updateMessageState} from "@/redux/messages/action-reducer";
 import {Toaster} from "@/components/common";
 import {Thread} from "@/models";
 import {AddToProjectButton} from "@/components/common";
+import {undoBodyData} from "@/redux/undo-body/action-reducer";
 
 export function MessagesHeader({headerType}: MessageHeaderTypes) {
     const {selectedThread, threads, updateSuccess} = useSelector((state: StateType) => state.threads);
     let {success: membershipSuccess} = useSelector((state: StateType) => state.memberships);
+    let {undoBody} = useSelector((state: StateType) => state.undoBody);
 
     const dispatch = useDispatch();
     const [successMessage, setSuccessMessage] = useState<{ desc: string, title: string } | null>(null);
+    const { toast } = createStandaloneToast()
+    const [mailBoxName, setMailBoxName] = useState<string>('');
 
 
     useEffect(() => {
@@ -35,15 +39,31 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
 
 
     useEffect(() => {
-        if (updateSuccess && successMessage) {
-            Toaster({
-                desc: successMessage.desc,
-                title: successMessage.title || '',
-                type: 'success'
-            })
-            setSuccessMessage(null)
-            dispatch(updateThreadState({updateSuccess: false}));
-        }
+            if (updateSuccess && successMessage && undoBody) {
+                let polyToast = `poly-toast-${new Date().getTime().toString()}`;
+                Toaster({
+                    desc: successMessage.desc,
+                    title: successMessage.title || '',
+                    type: 'undo_changes',
+                    id: polyToast,
+                    undoUpdateRecordClick: () => {
+                        if (undoBody && undoBody.id) {
+                            let body = {
+                                mailboxes: undoBody.mailboxes || []
+                            }
+                            dispatch(updateThreads({id: undoBody.id, body}));
+                            setSuccessMessage({
+                                desc: 'Thread was removed from ' + mailBoxName.toLowerCase() + '.',
+                                title: undoBody?.subject || '',
+                            })
+                        }
+                        toast.close(`${polyToast}`);
+                    }
+                })
+                setSuccessMessage(null)
+                dispatch(updateThreadState({updateSuccess: false}));
+            }
+
     }, [updateSuccess, dispatch, successMessage]);
 
 
@@ -61,6 +81,7 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
 
 
     const updateMailBox = (messageBox: string) => {
+        setMailBoxName(messageBox)
         if (selectedThread && selectedThread.id) {
             if (messageBox) {
                 let currentThreads = [...threads || []] as Thread[];
@@ -123,6 +144,7 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                     selectedThread: currentThreads[index1],
                     success: true
                 }));
+                dispatch(undoBodyData(selectedThread))
                 dispatch(updateThreads({id: selectedThread.id, body}));
                 setSuccessMessage({
                     desc: 'Thread was moved to ' + messageBox.toLowerCase() + '.',

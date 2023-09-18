@@ -37,3 +37,5 @@ export * from './props-types/billing-type';
 export * from './props-types/ThreadListProps';
 export * from './props-types/ThreadListItemProps';
 
+//Undo Body
+export * from './undo-body/undo-body-state.type'

@@ -7,7 +7,8 @@ import {
     InitialThreadStateType,
     InitialSocketType,
     InitialDraftStateType,
-    InitialUserState, InitialMembershipStateType
+    InitialUserState, InitialMembershipStateType,
+    InitialUndoBodyType
 } from "./";
 
 export declare type StateType = {
@@ -21,4 +22,5 @@ export declare type StateType = {
     draft: InitialDraftStateType,
     users: InitialUserState,
     memberships: InitialMembershipStateType,
+    undoBody: InitialUndoBodyType,
 }
