@@ -236,6 +236,7 @@ export function ComposeBox(props: any) {
   const sendMessages = () => {
     if (draft && draft.id) {
       let params = {};
+      let polyToast = `poly-toast-${new Date().getTime().toString()}`;
       if (scheduledDate) {
         const targetDate = dayjs(scheduledDate)
         // Get the current date and time
@@ -251,6 +252,7 @@ export function ComposeBox(props: any) {
           desc: `Your message has been scheduled`,
           type: 'send_confirmation',
           title: 'Your message has been scheduled',
+          id: polyToast,
           undoClick: (type: string) => {
             let params = {};
 
@@ -264,7 +266,7 @@ export function ComposeBox(props: any) {
               }
             }
             dispatch(sendMessage({ id: draft.id!, ...params }));
-            toast.close('poly-toast');
+            toast.close(`${polyToast}`);
           }
         })
 
@@ -274,6 +276,7 @@ export function ComposeBox(props: any) {
             desc: `Your message has been sent to ${draft?.to && draft?.to[0]}${draft?.to && draft?.to?.length > 1 ? ` and ${draft?.to && draft?.to?.length - 1} other${draft?.to && draft?.to?.length === 2 ? '' : 's'}` : ''}`,
             type: 'send_confirmation',
             title: draft?.subject || '',
+            id: polyToast,
             undoClick: (type: string) => {
               let params = {};
 
@@ -287,7 +290,7 @@ export function ComposeBox(props: any) {
                 }
               }
               dispatch(sendMessage({ id: draft.id!, ...params }));
-              toast.close('poly-toast');
+              toast.close(`${polyToast}`);
             }
           })
         }
