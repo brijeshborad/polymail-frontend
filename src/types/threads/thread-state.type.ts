@@ -21,4 +21,5 @@ export declare type InitialMembershipStateType = {
     success?: boolean
     isProjectRemoveSuccess?: boolean
     isOrganizationRemoveSuccess?: boolean
+    isThreadAddedToProjectSuccess?: boolean
 }
