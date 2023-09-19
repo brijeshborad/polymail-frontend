@@ -19,7 +19,7 @@ import {
     uploadProfilePicture
 } from "@/redux/users/action-reducer";
 import {Account, UserDetails} from "@/models";
-import Index from "@/pages/settings/index";
+const Index = dynamic(() => import('@/pages/settings/index').then(mod => mod.default));
 import withAuth from "@/components/auth/withAuth";
 import { EditIcon, ViewIcon, ViewOffIcon} from "@chakra-ui/icons";
 import {updateAccountState} from "@/redux/accounts/action-reducer";
@@ -27,6 +27,7 @@ import LocalStorageService from "@/utils/localstorage.service";
 import {debounce, encryptData} from "@/utils/common.functions";
 import {changePassword, updateAuthState} from "@/redux/auth/action-reducer";
 import {Toaster} from "@/components/common";
+import dynamic from "next/dynamic";
 
 function Profile() {
     const {userDetails, profilePicture, profilePictureUpdated, userDetailsUpdateSuccess, profilePictureRemoved} = useSelector((state: StateType) => state.users);
@@ -81,7 +82,7 @@ function Profile() {
             });
             dispatch(updateUserState({ profilePictureRemoved: false }))
         }
-    }, [userDetailsUpdateSuccess, profilePictureRemoved])
+    }, [userDetailsUpdateSuccess, profilePictureRemoved, dispatch])
 
     useEffect(() => {
         if (profilePictureUpdated || profilePictureRemoved) {

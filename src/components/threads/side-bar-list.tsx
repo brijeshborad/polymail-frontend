@@ -8,32 +8,23 @@ import { updateDraftState } from "@/redux/draft/action-reducer";
 import { useDispatch, useSelector } from "react-redux";
 import { StateType } from "@/types";
 import { ThreadListProps } from "@/types";
-import { ThreadsSideBarListItem } from "./side-bar-list-item";
+const ThreadsSideBarListItem = dynamic(() => import("./side-bar-list-item").then(mod => mod.ThreadsSideBarListItem));
 import { useRouter } from "next/router";
-import { ComposeBox } from "@/components/inbox";
-import { useSocket } from '@/hooks/use-socket.hook';
+const ComposeBox = dynamic(() => import("@/components/inbox").then(mod => mod.ComposeBox));
+import dynamic from "next/dynamic";
 
 
 export function ThreadsSideBarList(props: ThreadListProps) {
-  const { selectedThread, threads, isLoading } = useSelector((state: StateType) => state.threads);
+  const { selectedThread, threads } = useSelector((state: StateType) => state.threads);
   const dispatch = useDispatch()
   const listRef = useRef<any>(null);
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [messageDetails, setMessageDetails] = useState<Message | null>(null);
-  const {selectedAccount} = useSelector((state: StateType) => state.accounts);
   const routePaths = router.pathname.split('/');
-  const {sendJsonMessage} = useSocket();
   const editorRef = useRef<any>(null);
   const [extraClassNames, setExtraClassNames] = useState<string>('');
   const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
-
-
-  useEffect(() => {
-    if (!isLoading) {
-      handleEditorScroll();
-    }
-  }, [isLoading]);
 
   const handleClick = useCallback((item: Thread) => {
     if (props.tab === 'DRAFT') {
@@ -56,7 +47,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
       setExtraClassNames(prevState => prevState.replace('project-list-top-shadow', ''));
     }
     const container = editorRef.current;
-    if (container && !isLoading) {
+    if (container) {
       const scrollHeight = container?.scrollHeight;
       const containerHeight = container?.clientHeight;
       const scrollBottom = scrollHeight - containerHeight - editorRef.current.scrollTop;
@@ -68,6 +59,13 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     }
   }, [])
 
+  useEffect(() => {
+    if (threads) {
+      handleEditorScroll();
+    }
+  }, [threads, handleEditorScroll]);
+
+  /*
   useEffect(() => {
     if (selectedThread) {
       const interval = setInterval(() => {
@@ -81,12 +79,12 @@ export function ThreadsSideBarList(props: ThreadListProps) {
                 },
             });
       }, 1000);
-    
+
       return () => clearInterval(interval);
     }
     return undefined
   }, [selectedThread]);
-
+  */
   return (
     <>
       <div className={'project-list-shadow'}>

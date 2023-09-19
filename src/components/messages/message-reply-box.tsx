@@ -21,7 +21,9 @@ import { ChevronDownIcon, CloseIcon } from "@chakra-ui/icons";
 import { FileIcon, TextIcon } from "@/icons";
 import React, {ChangeEvent, ChangeEventHandler, useCallback, useEffect, useRef, useState} from "react";
 import { debounce, isEmail } from "@/utils/common.functions";
-import { RichTextEditor, Time, Toaster } from "@/components/common";
+import { Toaster } from "@/components/common";
+const RichTextEditor = dynamic(() => import("@/components/common").then(mod => mod.RichTextEditor));
+const Time = dynamic(() => import("@/components/common").then(mod => mod.Time));
 import { createDraft, sendMessage, updateDraftState, updatePartialMessage } from "@/redux/draft/action-reducer";
 import { useDispatch, useSelector } from "react-redux";
 import { StateType } from "@/types";
@@ -31,11 +33,12 @@ import { MessageAttachments, MessageRecipient } from "@/models";
 import { uploadAttachment } from "@/redux/messages/action-reducer";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { MessageBoxType } from "@/types/props-types/message-box.type";
-import MessageRecipients from "./message-recipients";
+const MessageRecipients = dynamic(() => import("./message-recipients").then(mod => mod.default));
+const MessageSchedule = dynamic(() => import("./message-schedule").then(mod => mod.default));
 import { RecipientsType } from "@/types/props-types/message-recipients.type";
 import { useRouter } from "next/router";
-import MessageSchedule from "./message-schedule";
 import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
+import dynamic from "next/dynamic";
 
 dayjs.extend(relativeTime)
 
@@ -57,7 +60,7 @@ export function MessageReplyBox(props: MessageBoxType) {
   const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
   const { isOpen, onClose } = useDisclosure();
   const inputFile = useRef<HTMLInputElement | null>(null)
-  const [scheduledDate, setScheduledDate] = useState<string>();
+  const [scheduledDate, setScheduledDate] = useState<string | undefined>();
   const [hideEditorToolbar, setHideEditorToolbar] = useState<boolean>(false);
   const [isShowText, _setIsShowText] = useState<boolean>(false);
   const [replyBoxHide, setReplyBoxHide] = useState<boolean>(false);
@@ -552,7 +555,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     }
   }, [props.replyType])
 
-  const handleSchedule = (date: string) => {
+  const handleSchedule = (date: string | undefined) => {
     setScheduledDate(date);
   }
 

@@ -10,13 +10,13 @@ import {
   MenuList,
   Text
 } from "@chakra-ui/react";
-import {Time} from "@/components/common";
+import { Time } from "@/components/common";
 import {
   DownloadIcon, MenuIcon
 } from "@/icons";
-import {StateType} from "@/types";
-import React, {useCallback, useEffect, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
+import { StateType } from "@/types";
+import React, { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   getAttachmentDownloadUrl,
   getMessageAttachments,
@@ -24,14 +24,15 @@ import {
   updateMessageState
 } from "@/redux/messages/action-reducer";
 import {Message as MessageModel, MessageDraft, MessagePart, MessageAttachments} from "@/models";
-import {MessagesHeader} from "@/components/messages/messages-header";
+const MessagesHeader = dynamic(() => import('@/components/messages/messages-header').then(mod => mod.MessagesHeader));
+const MessageBox = dynamic(() => import('@/components/messages/message-box').then(mod => mod.MessageBox));
+const MessageReplyBox = dynamic(() => import('@/components/messages/message-reply-box').then(mod => mod.MessageReplyBox));
 import {updateDraftState} from "@/redux/draft/action-reducer";
-import {MessageBox} from "@/components/messages/message-box";
-import {MessageReplyBox} from "@/components/messages/message-reply-box";
 import {debounce} from "@/utils/common.functions";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import {updateThreadState, updateThreads} from "@/redux/threads/action-reducer";
 import {EyeSlashedIcon} from "@/icons/eye-slashed.icon";
+import dynamic from "next/dynamic";
 
 let cacheMessages: { [key: string]: { body: MessagePart, attachments: MessageAttachments[] } } = {};
 
@@ -60,11 +61,11 @@ export function Message() {
     isThreadLoading: threadLoading,
     isThreadFocused
   } = useSelector((state: StateType) => state.threads);
-  const {isLoading: accountLoading} = useSelector((state: StateType) => state.accounts);
-  const {isLoading: organizationLoading} = useSelector((state: StateType) => state.organizations);
-  const {isLoading: usersProfilePictureLoading} = useSelector((state: StateType) => state.users);
-  const {isLoading: projectsLoading} = useSelector((state: StateType) => state.projects);
-
+  const { isLoading: accountLoading } = useSelector((state: StateType) => state.accounts);
+  const { isLoading: organizationLoading } = useSelector((state: StateType) => state.organizations);
+  const { isLoading: usersProfilePictureLoading } = useSelector((state: StateType) => state.users);
+  const { isLoading: projectsLoading } = useSelector((state: StateType) => state.projects);
+  const [expandedRow, setExpandedRow] = useState<number|null>(null);
   const [lastMessageDetails, setLastMessageDetails] = useState<MessageModel | null>(null);
   const [messageDetailsForReplyBox, setMessageDetailsForReplyBox] = useState<MessageModel | null>(null);
   const [isLoaderShow, setIsLoaderShow] = useState<boolean>(false);
@@ -88,7 +89,7 @@ export function Message() {
       setLastMessageDetails(null);
       setIframeHeight('0px');
       setMessageDetailsForReplyBox(null);
-      dispatch(updateMessageState({messages: selectedThread.messages}));
+      dispatch(updateMessageState({ messages: selectedThread.messages }));
       setTimeout(() => {
         setShowReplyBox(true)
       }, 200);
@@ -105,7 +106,7 @@ export function Message() {
       setLastMessageDetails(currentInboxMessages[currentInboxMessages.length - 1]);
       const draftMessage = messages.findLast((msg: MessageModel) => (msg.mailboxes || []).includes('DRAFT'));
       if (draftMessage) {
-        dispatch(updateDraftState({draft: draftMessage as MessageDraft}));
+        dispatch(updateDraftState({ draft: draftMessage as MessageDraft }));
       }
       setIndex(null);
     }
@@ -167,32 +168,33 @@ export function Message() {
   useEffect(() => {
     if (lastMessageDetails) {
       if (cacheMessages[lastMessageDetails.id!] && cacheMessages[lastMessageDetails.id!].body) {
-        dispatch(updateMessageState({messagePart: cacheMessages[lastMessageDetails.id!].body}));
+        dispatch(updateMessageState({ messagePart: cacheMessages[lastMessageDetails.id!].body }));
       } else {
-        dispatch(getMessageParts({id: lastMessageDetails.id!}));
+        dispatch(getMessageParts({ id: lastMessageDetails.id! }));
       }
       if (cacheMessages[lastMessageDetails.id!] && cacheMessages[lastMessageDetails.id!].attachments) {
-        dispatch(updateMessageState({messageAttachments: cacheMessages[lastMessageDetails.id!].attachments}));
+        dispatch(updateMessageState({ messageAttachments: cacheMessages[lastMessageDetails.id!].attachments }));
       } else {
-        dispatch(getMessageAttachments({id: lastMessageDetails.id!}));
+        dispatch(getMessageAttachments({ id: lastMessageDetails.id! }));
       }
+      setExpandedRow(inboxMessages?.length)
     }
   }, [dispatch, lastMessageDetails])
 
   useEffect(() => {
     if (index !== null && inboxMessages && inboxMessages.length > 0) {
       if (inboxMessages[index]) {
-        dispatch(updateMessageState({selectedMessage: inboxMessages[index]}));
+        dispatch(updateMessageState({ selectedMessage: inboxMessages[index] }));
         // We already set index to last inbox message
         if (cacheMessages[inboxMessages[index].id!] && cacheMessages[inboxMessages[index].id!].body) {
-          dispatch(updateMessageState({messagePart: cacheMessages[inboxMessages[index].id!].body}));
+          dispatch(updateMessageState({ messagePart: cacheMessages[inboxMessages[index].id!].body }));
         } else {
-          dispatch(getMessageParts({id: inboxMessages[index].id!}));
+          dispatch(getMessageParts({ id: inboxMessages[index].id! }));
         }
         if (cacheMessages[inboxMessages[index].id!] && cacheMessages[inboxMessages[index].id!].attachments) {
-          dispatch(updateMessageState({messageAttachments: cacheMessages[inboxMessages[index].id!].attachments}));
+          dispatch(updateMessageState({ messageAttachments: cacheMessages[inboxMessages[index].id!].attachments }));
         } else {
-          dispatch(getMessageAttachments({id: inboxMessages[index].id!}));
+          dispatch(getMessageAttachments({ id: inboxMessages[index].id! }));
         }
 
       }
@@ -202,14 +204,14 @@ export function Message() {
 
   useEffect(() => {
     if (messagePart && messagePart.data) {
-      cacheMessage({data: messagePart.data});
+      cacheMessage({ data: messagePart.data });
       let decoded = Buffer.from(messagePart.data || '', 'base64').toString('ascii');
       let addTargetBlank = decoded.replace(/<a/g, '<a target="_blank"');
-      const blob = new Blob([addTargetBlank], {type: "text/html"});
+      const blob = new Blob([addTargetBlank], { type: "text/html" });
       const blobUrl = window.URL.createObjectURL(blob);
       setEmailPart(blobUrl);
     } else {
-      cacheMessage({data: ''});
+      cacheMessage({ data: '' });
       setEmailPart('')
     }
   }, [cacheMessage, messagePart])
@@ -217,9 +219,9 @@ export function Message() {
   useEffect(() => {
     // convert blob url to image url
     if (messageAttachments && messageAttachments.length) {
-      cacheMessage({attachments: messageAttachments});
+      cacheMessage({ attachments: messageAttachments });
     } else {
-      cacheMessage({attachments: []});
+      cacheMessage({ attachments: [] });
     }
   }, [cacheMessage, messageAttachments])
 
@@ -235,7 +237,7 @@ export function Message() {
       if (link.parentNode) {
         link.parentNode.removeChild(link);
       }
-      dispatch(updateMessageState({attachmentUrl: null}));
+      dispatch(updateMessageState({ attachmentUrl: null }));
     }
   }, [dispatch, attachmentUrl])
 
@@ -248,8 +250,9 @@ export function Message() {
 
         // pin the reply box when there is scroll in message list
         debounce(() => {
-          setHasScrollableContent(messagesWrapperRef.current.scrollHeight > messagesWrapperRef.current.offsetHeight)
-
+          if (messagesWrapperRef.current) {
+            setHasScrollableContent(messagesWrapperRef.current.scrollHeight > messagesWrapperRef.current.offsetHeight)
+          }
         }, 100)
       }
     }, 500)
@@ -258,7 +261,7 @@ export function Message() {
 
   const closeCompose = () => {
     setReplyType('');
-    dispatch(updateMessageState({isCompose: false}));
+    dispatch(updateMessageState({ isCompose: false }));
   }
 
 
@@ -276,7 +279,7 @@ export function Message() {
 
   const downloadImage = (item: MessageAttachments) => {
     if (selectedMessage && selectedMessage.id) {
-      dispatch(getAttachmentDownloadUrl({id: selectedMessage.id, attachment: item.id}));
+      dispatch(getAttachmentDownloadUrl({ id: selectedMessage.id, attachment: item.id }));
     }
   }
 
@@ -285,175 +288,192 @@ export function Message() {
       let body = {
         scope: type
       }
-      dispatch(updateMessage({id: item.id, body}))
+      dispatch(updateMessage({ id: item.id, body }))
     }
   }
-
+  const handleRowClick = (index: any) => {
+    if (expandedRow === index) {
+      // Clicking on an already expanded row, so close it
+      setExpandedRow(null);
+    } else {
+      // Clicking on a new row, expand it
+      setExpandedRow(index);
+    }
+  };
   return (
     <Box
       className={`${styles.mailBox} ${isThreadFocused ? styles.mailBoxFocused : ''}`}
       height={'calc(100vh - 180px)'} overflow={'hidden'} borderRadius={'15px'}
       onClick={() => {
-        if(!isThreadFocused) {
+        if (!isThreadFocused) {
           setThreadFocus(true)
         }
       }}
     >
       {!selectedThread && !isCompose &&
-      <Flex justifyContent={'center'} alignItems={'center'} flexDir={'column'}
-            height={'100%'}>
-        {!isLoaderShow && <Heading as='h3' size='md'>Click on a thread from list to view messages!</Heading>}
-        {isLoaderShow && <Flex direction={'column'} gap={2} flex={1} w={'100%'}>
-            <SkeletonLoader skeletonLength={1} height={'100%'}/>
+        <Flex justifyContent={'center'} alignItems={'center'} flexDir={'column'}
+          height={'100%'}>
+          {!isLoaderShow && <Heading as='h3' size='md'>Click on a thread from list to view messages!</Heading>}
+          {isLoaderShow && <Flex direction={'column'} gap={2} flex={1} w={'100%'}>
+            <SkeletonLoader skeletonLength={1} height={'100%'} />
+          </Flex>}
+
         </Flex>}
-
-      </Flex>}
       {selectedThread && !isCompose &&
-      <Flex flexDir={'column'} height={'100%'}>
-        <>
-          <MessagesHeader inboxMessages={inboxMessages} index={index} closeCompose={closeCompose}
-                          headerType={'inbox'}/>
+        <Flex flexDir={'column'} height={'100%'}>
+          <>
+            <MessagesHeader inboxMessages={inboxMessages} index={index} closeCompose={closeCompose}
+              headerType={'inbox'} />
 
-          <Flex padding={'20px'} ref={messagesWrapperRef} gap={5} direction={'column'} flex={1} overflow={'auto'}>
-            <Flex gap={2} direction={'column'} height={'100%'}>
-              {inboxMessages && !!inboxMessages.length && inboxMessages.map((item: any, index: number) => (
+            <Flex padding={'20px'} ref={messagesWrapperRef} gap={5} direction={'column'} flex={1} overflow={'auto'}>
+              <Flex gap={2} direction={'column'} height={'100%'}>
+                {inboxMessages && !!inboxMessages.length && inboxMessages.map((item: any, index: number) => (
                   <div key={index}>
                     <MessageBox item={item} index={index} threadDetails={item}
-                                isLoading={messageLoading} emailPart={emailPart}
-                                messageAttachments={messageAttachments} hideAndShowReplayBox={hideAndShowReplayBox}
+                      isLoading={messageLoading} emailPart={emailPart}
+                      messageAttachments={messageAttachments} hideAndShowReplayBox={hideAndShowReplayBox}
+                      isExpanded={index === expandedRow}
+                      onClick={() => handleRowClick(index)}
                     />
                   </div>
 
-              ))}
+                ))}
 
-              {lastMessageDetails &&
-              <Flex direction={'column'} className={`${styles.oldMail} ${styles.lastOpenMail}`} gap={4}
-                    padding={4} border={'1px solid #E5E7EB'} borderRadius={12} align={'center'}>
-                <Flex align={'center'} w={'100%'} gap={2}>
-                  <div className={styles.mailBoxUserImage}>
 
-                  </div>
+                {lastMessageDetails && (expandedRow===inboxMessages?.length) ?
+                 <Flex direction={'column'} onClick={() => handleRowClick(inboxMessages?.length)}  className={`${styles.oldMail} ${styles.lastOpenMail}`} gap={4}
+                  padding={4} border={'1px solid #E5E7EB'} borderRadius={12} align={'center'}>
+                  <Flex align={'center'} w={'100%'} gap={2}>
+                    <div className={styles.mailBoxUserImage}>
 
-                  <Flex w={'100%'} direction={'column'}>
-                    <Flex align={'center'} justify={'space-between'} mb={1}>
-                      <Flex align={'center'} gap={1}>
-                        <Heading
+                    </div>
+
+                    <Flex w={'100%'} direction={'column'}>
+                      <Flex align={'center'} justify={'space-between'} mb={1}>
+                        <Flex align={'center'} gap={1}>
+                          <Heading
                             as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400}
                             letterSpacing={'-0.13px'} lineHeight={1}
-                        >
-                          {lastMessageDetails?.from?.name || lastMessageDetails?.from?.email}
-                        </Heading>
-                        {lastMessageDetails && lastMessageDetails.from && lastMessageDetails.from.name && (
+                          >
+                            {lastMessageDetails?.from?.name || lastMessageDetails?.from?.email}
+                          </Heading>
+                          {lastMessageDetails && lastMessageDetails.from && lastMessageDetails.from.name && (
                             <>
-                              <span className={'dot'}/>
+                              <span className={'dot'} />
                               <Text
-                                  fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'}
-                                  lineHeight={1} fontWeight={400}
+                                fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'}
+                                lineHeight={1} fontWeight={400}
                               >
                                 {lastMessageDetails?.from?.email}
                               </Text>
                             </>
-                        )}
-                      </Flex>
+                          )}
+                        </Flex>
 
-                      <Flex align={'center'} gap={'6px'}>
-                        {lastMessageDetails.scope !== 'visible' ?
+                        <Flex align={'center'} gap={'6px'}>
+                          {lastMessageDetails.scope !== 'visible' ?
                             <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
-                              <EyeSlashedIcon/>
+                              <EyeSlashedIcon />
                             </Flex> : ''}
-                        {/*
-                                      <Flex className={styles.memberImages}>
-                                          <div className={styles.memberPhoto}>
-                                              <Image src="/image/user.png" width="24" height="24" alt=""/>
-                                          </div>
-                                          <div className={styles.memberPhoto}>
-                                              <Image src="/image/user.png" width="24" height="24" alt=""/>
-                                          </div>
-                                          <Flex align={'center'} justify={'center'} fontSize={'9px'}
-                                                color={'#082561'} className={styles.memberPhoto}>
-                                              +4
-                                          </Flex>
-                                      </Flex>
-                                      */}
-                        <div className={styles.mailBoxTime}>
-                          <Time time={lastMessageDetails?.created || ''}
-                                isShowFullTime={true} showTimeInShortForm={false}/>
-                        </div>
-                        <Menu>
-                          <MenuButton className={styles.menuIcon} transition={'all 0.5s'}
-                                      backgroundColor={'transparent'} fontSize={'12px'}
-                                      h={'auto'} minWidth={'24px'} padding={'0'} as={Button}
-                                      rightIcon={<MenuIcon/>}>
-                          </MenuButton>
-                          <MenuList className={'drop-down-list'}>
-                            {lastMessageDetails && (
+
+                          <div className={styles.mailBoxTime}>
+                            <Time time={lastMessageDetails?.created || ''}
+                              isShowFullTime={true} showTimeInShortForm={false} />
+                          </div>
+                          <Menu>
+                            <MenuButton className={styles.menuIcon} transition={'all 0.5s'}
+                              backgroundColor={'transparent'} fontSize={'12px'}
+                              h={'auto'} minWidth={'24px'} padding={'0'} as={Button}
+                              rightIcon={<MenuIcon />}>
+                            </MenuButton>
+                            <MenuList className={'drop-down-list'}>
+                              {lastMessageDetails && (
                                 <MenuItem
-                                    onClick={() => setScope(lastMessageDetails.scope === 'visible' ? 'hidden' : 'visible', lastMessageDetails)}>
+                                  onClick={() => setScope(lastMessageDetails.scope === 'visible' ? 'hidden' : 'visible', lastMessageDetails)}>
                                   {lastMessageDetails.scope === 'visible' ? 'Hide from project members' : 'Show to project members'}
                                 </MenuItem>
-                            )}
+                              )}
 
-                            <MenuItem
+                              <MenuItem
                                 onClick={() => hideAndShowReplayBox('reply', lastMessageDetails)}> Reply </MenuItem>
-                            <MenuItem
+                              <MenuItem
                                 onClick={() => hideAndShowReplayBox('reply-all', lastMessageDetails)}> Reply
-                              All </MenuItem>
-                            <MenuItem
+                                All </MenuItem>
+                              <MenuItem
                                 onClick={() => hideAndShowReplayBox('forward', lastMessageDetails)}> Forward </MenuItem>
-                          </MenuList>
-                        </Menu>
+                            </MenuList>
+                          </Menu>
+                        </Flex>
                       </Flex>
-                    </Flex>
-                    <Flex>
+                      <Flex>
 
-                      {lastMessageDetails && lastMessageDetails.to && lastMessageDetails.to.length > 0 &&
-                      <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'}
+                        {lastMessageDetails && lastMessageDetails.to && lastMessageDetails.to.length > 0 &&
+                          <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'}
                             lineHeight={1} fontWeight={400}>to:&nbsp;
-                        {lastMessageDetails.to[0].email}&nbsp; <Text
-                            as='u'>{lastMessageDetails.to.length - 1 > 0 && `and ${lastMessageDetails.to.length - 1} others`} </Text>
+                            {lastMessageDetails.to[0].email}&nbsp; <Text
+                              as='u'>{lastMessageDetails.to.length - 1 > 0 && `and ${lastMessageDetails.to.length - 1} others`} </Text>
+                          </Flex>
+                        }
                       </Flex>
-                      }
                     </Flex>
                   </Flex>
-                </Flex>
-                {(!messageLoading && emailPart) &&
-                <div className={styles.mailBodyContent}>
-                  <iframe
-                      id='message-content'
-                      ref={iframeRef}
-                      src={emailPart}
-                      onLoad={onIframeLoad}
-                      height={iframeHeight}
-                      frameBorder="0"
-                      className={styles.mailBody}
-                  />
-                </div>}
-                {messageAttachments && !!messageAttachments.length && messageAttachments?.map((item: MessageAttachments, i) => (
+                  {(!messageLoading && emailPart) &&
+                    <div className={styles.mailBodyContent}>
+                      <iframe
+                        id='message-content'
+                        ref={iframeRef}
+                        src={emailPart}
+                        onLoad={onIframeLoad}
+                        height={iframeHeight}
+                        frameBorder="0"
+                        className={styles.mailBody}
+                      />
+                    </div>}
+                  {messageAttachments && !!messageAttachments.length && messageAttachments?.map((item: MessageAttachments, i) => (
 
                     <div className={styles.mailBodyAttachments} key={i}>
                       <Flex align={'center'} className={styles.attachmentsFile}>
                         {item.filename}
                         <div className={`${styles.closeIcon} ${styles.downloadIcon}`}
-                             onClick={() => downloadImage(item)}>
-                          <DownloadIcon/>
+                          onClick={() => downloadImage(item)}>
+                          <DownloadIcon />
                         </div>
                       </Flex>
                     </div>
-                ))}
+                  ))}
 
-              </Flex>}
+                </Flex> : <Flex border={'1px solid #E5E7EB'}  onClick={() => handleRowClick(inboxMessages?.length)}  borderRadius={12} align={'center'} w={'100%'} gap={2} cursor={'pointer'} padding={4} >
+                  <div className={styles.mailBoxUserImage}>
+                  </div>
 
-              {showReplyBox &&
-              <MessageReplyBox
-                  emailPart={(messagePart?.data || '')} messageData={messageDetailsForReplyBox}
-                  threadDetails={lastMessageDetails}
-                  replyType={replyType} parentHasScroll={hasScrollableContent}
-                  hideAndShowReplayBox={hideAndShowReplayBox} replyTypeName={replyTypeName}/>
-              }
+                  <Flex w={'100%'} direction={'column'}>
+                    <Flex align={'center'} justify={'space-between'} mb={1}>
+                      <Heading as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400}
+                        letterSpacing={'-0.13px'} lineHeight={1}>{lastMessageDetails?.from?.name}</Heading>
+                      <Flex align={'center'} className={styles.mailBoxTime} gap={3}>
+                        {lastMessageDetails?.scope !== 'visible' ? <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
+                          <EyeSlashedIcon />
+                        </Flex> : ''}
+                        <Time time={lastMessageDetails?.created || ''} isShowFullTime={true} showTimeInShortForm={false} />
+                      </Flex>
+                    </Flex>
+                    <Text fontSize='13px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
+                      fontWeight={400}>{lastMessageDetails?.snippet || '(no content)'}</Text>
+                  </Flex>
+                </Flex>
+                }
+
+                {showReplyBox &&
+                  <MessageReplyBox
+                    emailPart={(messagePart?.data || '')} messageData={messageDetailsForReplyBox}
+                    threadDetails={lastMessageDetails}
+                    replyType={replyType} parentHasScroll={hasScrollableContent}
+                    hideAndShowReplayBox={hideAndShowReplayBox} replyTypeName={replyTypeName} />
+                }
+              </Flex>
             </Flex>
-          </Flex>
-        </>
-      </Flex>
+          </>
+        </Flex>
       }
     </Box>
   )

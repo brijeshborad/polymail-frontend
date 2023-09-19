@@ -6,9 +6,10 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {RichTextEditor, Toaster} from "@/components/common";
 import {updateAccountDetails, updateAccountState} from "@/redux/accounts/action-reducer";
-import Index from "@/pages/settings/index";
+const Index = dynamic(() => import('@/pages/settings/index').then(mod => mod.default));
 import withAuth from "@/components/auth/withAuth";
 import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
+import dynamic from "next/dynamic";
 
 function Signature() {
 

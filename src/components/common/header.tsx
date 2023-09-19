@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { Button, createStandaloneToast, Flex, Input, InputGroup, InputLeftElement, InputRightElement, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
+import { Button, Flex, Input, InputGroup, InputLeftElement, InputRightElement, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
 import { CheckIcon, ChevronDownIcon, SearchIcon } from '@chakra-ui/icons';
 import { FolderIcon, MailIcon } from '@/icons';
 import styles from '@/styles/Home.module.css';
@@ -7,18 +7,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import Router, { useRouter } from 'next/router';
 import { StateType } from '@/types';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { getAllOrganizations, updateOrganizationState } from '@/redux/organizations/action-reducer';
+import { updateOrganizationState } from '@/redux/organizations/action-reducer';
 import { Account, Message, Organization, User } from '@/models';
-import { getAllAccount, updateAccountState } from '@/redux/accounts/action-reducer';
+import { updateAccountState } from '@/redux/accounts/action-reducer';
 import LocalStorageService from '@/utils/localstorage.service';
 import { getAllThreads, updateThreadState } from '@/redux/threads/action-reducer';
-import { useSocket } from '@/hooks/use-socket.hook';
-import { getProfilePicture, updateUsersDetailsSuccess, updateUserState } from '@/redux/users/action-reducer';
-import { googleAuthLink } from '@/redux/auth/action-reducer';
+import { updateUsersDetailsSuccess, updateUserState } from '@/redux/users/action-reducer';
 import { updateLastMessage } from '@/redux/socket/action-reducer';
 import { updateMessageState } from '@/redux/messages/action-reducer';
 import { Toaster } from '@/components/common';
-import { FeedSidebar } from './feedSidebar';
+import dynamic from 'next/dynamic'
+const FeedSidebar = dynamic(
+    () => import('./feedSidebar').then((mod) => mod.FeedSidebar)
+)
 import {getRedirectionUrl} from "@/utils/common.functions";
 
 export function Header() {
@@ -29,17 +30,15 @@ export function Header() {
     const { googleAuthRedirectionLink } = useSelector((state: StateType) => state.auth);
     const { userDetails, profilePicture } = useSelector((state: StateType) => state.users);
     const [userData, setUserData] = useState<User>();
-    const { newMessage } = useSelector((state: StateType) => state.socket);
+    const { newMessage, sendJsonMessage } = useSelector((state: StateType) => state.socket);
     const [isWindowActive, setWindowActive] = useState<boolean>(true);
     const [showSettingsMenu, setShowSettingsMenu] = useState(false);
 
     const { user } = useSelector((state: StateType) => state.auth);
     const [searchString, setSearchString] = useState<string>('');
-    const { sendJsonMessage } = useSocket();
     const router = useRouter();
 
     let currentRoute = router.pathname.split('/');
-    const { toast } = createStandaloneToast();
     const searchInputRef = useRef<HTMLInputElement | null>(null);
     // keyboard shortcuts
     useEffect(() => {
@@ -56,19 +55,6 @@ export function Header() {
             window.removeEventListener('keydown', handleShortcutKeyPress);
         };
     }, []);
-    const connectGoogleAccount = useCallback(
-        (mode: string) => {
-            let body = {
-                mode,
-      redirectUrl: getRedirectionUrl('/inbox'),
-      accountType: "google",
-      platform: "web",
-      withToken: true
-    }
-            dispatch(googleAuthLink(body));
-        },
-        [dispatch],
-    );
 
     useEffect(() => {
         if (user) {
@@ -86,7 +72,7 @@ export function Header() {
 
             Router.push('/settings/email-address');
         },
-        [connectGoogleAccount, toast],
+        [],
     );
 
     useEffect(() => {
@@ -122,16 +108,6 @@ export function Header() {
             window.location.href = googleAuthRedirectionLink.url || '';
         }
     }, [googleAuthRedirectionLink]);
-
-    const getAllAccountAndOrganizationsDetails = useCallback(() => {
-        dispatch(getAllAccount());
-        dispatch(getAllOrganizations());
-        dispatch(getProfilePicture({}));
-    }, [dispatch]);
-
-    useEffect(() => {
-        getAllAccountAndOrganizationsDetails();
-    }, [getAllAccountAndOrganizationsDetails]);
 
     useEffect(() => {
         let timer1 = setTimeout(() => {
@@ -248,19 +224,23 @@ export function Header() {
     const handleKeyPress = (event: KeyboardEvent | any) => {
         if (event.key.toLowerCase() === 'enter') {
             dispatch(updateThreadState({ isThreadSearched: false }));
-            sendJsonMessage({
-                userId: userDetails?.id,
-                name: 'SearchCancel',
-            });
-            if (searchString) {
-                dispatch(updateThreadState({ threads: [], isThreadSearched: true, isLoading: true }));
+            if (sendJsonMessage) {
                 sendJsonMessage({
                     userId: userDetails?.id,
-                    name: 'SearchRequest',
-                    data: {
-                        query: searchString,
-                    },
+                    name: 'SearchCancel',
                 });
+            }
+            if (searchString) {
+                dispatch(updateThreadState({ threads: [], isThreadSearched: true, isLoading: true }));
+                if (sendJsonMessage) {
+                    sendJsonMessage({
+                        userId: userDetails?.id,
+                        name: 'SearchRequest',
+                        data: {
+                            query: searchString,
+                        },
+                    });
+                }
                 return;
             }
             if (selectedAccount && selectedAccount.id) {
@@ -275,7 +255,6 @@ export function Header() {
                 threads: [],
                 success: false,
                 updateSuccess: false,
-                tabValue: 'reset',
                 selectedThread: null,
             }),
         );

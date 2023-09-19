@@ -13,10 +13,13 @@ import Image from "next/image";
 import {BlueStarIcon, DragIcon, LockIcon, StarIcon, MenuIcon} from "@/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {getAllProjects, updateProject, updateOptimisticProject} from "@/redux/projects/action-reducer";
+import {updateProject, updateOptimisticProject} from "@/redux/projects/action-reducer";
 import Router, {useRouter} from "next/router";
 import {Project} from "@/models";
-import CreateNewProjectModal from "@/components/project/create-new-project";
+import dynamic from 'next/dynamic'
+const CreateNewProjectModal = dynamic(
+    () => import('@/components/project/create-new-project').then((mod) => mod.default)
+)
 import {POSITION_GAP} from "@/utils/constants";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 
@@ -27,15 +30,8 @@ function Index() {
     const router = useRouter();
     const dispatch = useDispatch();
     const [isOpenByRoute, setIsOpenByRoute] = useState<boolean>(false);
-    // const {selectedAccount} = useSelector((state: StateType) => state.accounts);
-    // const {selectedOrganization} = useSelector((state: StateType) => state.organizations);
-    // const [projectName, setProjectName] = useState<string>('');
 
     const [itemList, setItemList] = useState<Project[]>([]);
-
-    useEffect(() => {
-        dispatch(getAllProjects());
-    }, [dispatch])
 
     useEffect(() => {
         if (projects && projects.length > 0) {

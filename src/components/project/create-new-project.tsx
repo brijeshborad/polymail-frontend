@@ -67,7 +67,7 @@ function CreateNewProjectModal(props: any) {
             props.onClose();
             dispatch(updateProjectState({createProjectSuccess: false}))
         }
-    }, [createProjectSuccess, selectedAccount])
+    }, [dispatch, createProjectSuccess, selectedAccount])
 
     useEffect(() => {
         if (membershipSuccess) {

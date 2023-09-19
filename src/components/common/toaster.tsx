@@ -3,6 +3,7 @@ import {ToasterProps} from "@/types/props-types/toaster.type";
 import styles from "@/styles/Home.module.css";
 import {CheckIcon, SmallCloseIcon} from "@chakra-ui/icons";
 import React from "react";
+import {RepIcon} from "@/icons";
 
 const {toast} = createStandaloneToast()
 
@@ -32,19 +33,10 @@ export function Toaster(props: ToasterProps) {
                             </div>
                         }
 
-                        <Flex direction={'column'} gap={'2px'}>
+                        <Flex direction={'column'} gap={'2px'} overflow={'hidden'} whiteSpace={'nowrap'} textOverflow={'ellipsis'}>
                             <Heading as='h6' fontSize={'15px'} lineHeight={'1.21'}>{props.title}</Heading>
                             <Text fontSize='13px' color={'#6B7280'} lineHeight={'1.21'}>{props.desc}</Text>
                         </Flex>
-
-                        {['success', 'error'].includes(props.type) && (
-                            <Button
-                                className={styles.toasterCloseIcon}
-                                ml={'auto'} height={"auto"}
-                                backgroundColor={'transparent'} padding={'0'}
-                                minWidth={'auto'}><SmallCloseIcon
-                                onClick={() => toast.close(`${props.id ? props.id : polyToasterId}`)}/></Button>
-                        )}
 
                         {props.type === 'send_confirmation' && (
                             <>
@@ -59,6 +51,23 @@ export function Toaster(props: ToasterProps) {
                                         height={"auto"} padding={'7px 20px'}>Send
                                     Now</Button>
                             </>
+                        )}
+                      {props.type === 'undo_changes' && (
+                        <>
+                          <Button className={styles.toasterUndoButton} backgroundColor={'#1F2937'}
+                                  color={'#FFFFFF'}
+                                  onClick={() => props.undoUpdateRecordClick ? props.undoUpdateRecordClick() : null} ml={3}
+                                  height={"auto"}
+                                  padding={'7px 20px'} borderRadius={'20px'}><RepIcon /></Button>
+                        </>
+                      )}
+                        {['success', 'error', 'undo_changes'].includes(props.type) && (
+                            <Button
+                                className={styles.toasterCloseIcon}
+                                ml={'auto'} height={"auto"}
+                                backgroundColor={'transparent'} padding={'0'}
+                                minWidth={'auto'}><SmallCloseIcon
+                                onClick={() => toast.close(`${props.id ? props.id : polyToasterId}`)}/></Button>
                         )}
                     </Box>
                 )

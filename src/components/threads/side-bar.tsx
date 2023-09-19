@@ -24,96 +24,38 @@ import {
     TrashIcon
 } from "@/icons";
 import {StateType} from "@/types";
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {getAllThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 import {Message, Thread} from "@/models";
-import {ThreadsSideBarTab} from "@/components/threads";
-import {updateDraftState} from "@/redux/draft/action-reducer";
-import {updateLastMessage} from "@/redux/socket/action-reducer";
-import {SmallCloseIcon, TriangleDownIcon} from "@chakra-ui/icons";
-import {useSocket} from "@/hooks/use-socket.hook";
-import {ComposeBox} from "@/components/inbox/compose-box";
-import {useRouter} from "next/router";
-import {AddToProjectButton} from "@/components/common";
+import dynamic from "next/dynamic";
 
-let cacheThreads: { [key: string]: Thread[] } = {};
-let currentCacheTab = 'INBOX';
+const ThreadsSideBarTab = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarTab));
+import {updateDraftState} from "@/redux/draft/action-reducer";
+import {SmallCloseIcon, TriangleDownIcon} from "@chakra-ui/icons";
+
+const ComposeBox = dynamic(() => import("@/components/inbox/compose-box").then(mod => mod.ComposeBox));
+import {getCurrentCacheTab} from "@/utils/common.functions";
+
+const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
 
 export function ThreadsSideBar(props: { cachePrefix: string }) {
     const [tab, setTab] = useState<string>('INBOX');
     const [countUnreadMessages, setCountUnreadMessages] = useState<number>(0);
-    const router = useRouter();
-
     const {
         threads,
         isLoading,
         selectedThread,
-        updateSuccess,
-        success: threadListSuccess,
         tabValue,
         isThreadSearched
     } = useSelector((state: StateType) => state.threads);
     const {success: draftSuccess, updatedDraft} = useSelector((state: StateType) => state.draft);
-    const {selectedAccount, account} = useSelector((state: StateType) => state.accounts);
-    const {newMessage} = useSelector((state: StateType) => state.socket);
+    const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {userDetails} = useSelector((state: StateType) => state.users);
-    const {sendJsonMessage} = useSocket();
+    const { sendJsonMessage } = useSelector((state: StateType) => state.socket);
     const dispatch = useDispatch();
     const {isOpen, onOpen, onClose} = useDisclosure();
-    const [initialized, setInitialized] = useState(false)
-
-    const getAllThread = useCallback(() => {
-
-        if (selectedAccount) {
-            let resetState = !initialized ? true : false;
-            if (currentCacheTab !== tab) {
-                currentCacheTab = tab;
-                if (cacheThreads[`${props.cachePrefix}-${tab}-${selectedAccount.id}`]) {
-                    resetState = false
-                }
-                dispatch(updateThreadState({threads: cacheThreads[`${props.cachePrefix}-${tab}-${selectedAccount.id}`]}));
-            }
-
-            if (router.query.project) {
-                dispatch(getAllThreads({
-                    mailbox: tab,
-                    project: router.query.project as string,
-                    resetState: resetState
-                }));
-            } else {
-                dispatch(getAllThreads({mailbox: tab, account: selectedAccount.id, resetState: resetState}));
-            }
-        }
-    }, [dispatch, props.cachePrefix, router.query.project, selectedAccount, tab, initialized]);
-
-    useEffect(() => {
-        if (newMessage && newMessage.name === 'new_message') {
-            console.log('---NEW MESSAGE---', newMessage);
-            dispatch(updateLastMessage(null));
-            getAllThread();
-        }
-    }, [getAllThread, newMessage, dispatch])
-
-    useEffect(() => {
-        if (updateSuccess) {
-            dispatch(updateThreadState({updateSuccess: false}));
-            getAllThread();
-        }
-    }, [updateSuccess, getAllThread, dispatch])
-
-    useEffect(() => {
-        if (threadListSuccess && selectedAccount) {
-            currentCacheTab = tab;
-            cacheThreads = {
-                ...cacheThreads,
-                [`${props.cachePrefix}-${tab}-${selectedAccount?.id}`]: threads ? [...threads] : []
-            }
-            dispatch(updateThreadState({success: false}));
-            setInitialized(true)
-        }
-    }, [selectedAccount, tab, threadListSuccess, threads, dispatch, props.cachePrefix])
 
     useEffect(() => {
         if (draftSuccess) {
@@ -150,46 +92,39 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     }, [threads])
 
     useEffect(() => {
-        if (account && account.success) {
-            getAllThread();
-        }
-    }, [account, dispatch, getAllThread])
-
-    useEffect(() => {
         if (threads && threads.length > 0 && !selectedThread) {
             dispatch(updateMessageState({selectedMessage: null}));
         }
     }, [threads, dispatch, selectedThread])
 
-
     useEffect(() => {
-        if (tabValue && tabValue === 'reset') {
-            currentCacheTab = '';
-            getAllThread();
+        if (threads && threads.length > 0 && !selectedThread && !isLoading) {
+            dispatch(updateThreadState({selectedThread: threads[0]}));
         }
-    }, [getAllThread, tabValue])
+    }, [threads, dispatch, selectedThread, isLoading])
 
     useEffect(() => {
-        if (tab !== '' && currentCacheTab !== '') {
-            getAllThread();
+        if (tab !== '' && getCurrentCacheTab() !== '') {
             dispatch(updateThreadState({tabValue: tab}));
         }
-    }, [dispatch, getAllThread, tab])
+    }, [dispatch, tab])
 
-    const searchCancel = () => {
-        dispatch(updateThreadState({ isThreadSearched: false }));
-        sendJsonMessage({
-            "userId": userDetails?.id,
-            "name": "SearchCancel",
-        });
-        if (selectedAccount && selectedAccount.id) {
+    const searchCancel = (callAPI: boolean = false) => {
+        dispatch(updateThreadState({isThreadSearched: false}));
+        if (sendJsonMessage) {
+            sendJsonMessage({
+                "userId": userDetails?.id,
+                "name": "SearchCancel",
+            });
+        }
+        if (selectedAccount && selectedAccount.id && callAPI) {
             dispatch(getAllThreads({mailbox: tabValue, account: selectedAccount.id}));
         }
-
     }
 
     const changeEmailTabs = (value: string) => {
-        if (currentCacheTab !== value) {
+        if (getCurrentCacheTab() !== value) {
+            dispatch(updateThreadState({tabValue: tab}));
             searchCancel();
         }
         setTab(value);
@@ -199,31 +134,38 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
         <>
             <Flex direction={'column'} gap={5} className={styles.mailListTabs}>
                 <Tabs>
-                    {isThreadSearched ? <Flex overflow={'auto'} backgroundColor={'#FFFFFF'} border={'1px solid #F3F4F6'} borderRadius={16} padding={'10px 14px'} gap={2} align={'center'} justify={'space-between'}>
-                        <Flex align={'center'} fontSize={'13px'} fontWeight={'400'} color={'#374151'} gap={2} letterSpacing={'-0.13px'} whiteSpace={'nowrap'}>
+                    {isThreadSearched ? <Flex overflow={'auto'} backgroundColor={'#FFFFFF'} border={'1px solid #F3F4F6'}
+                                              borderRadius={16} padding={'10px 14px'} gap={2} align={'center'}
+                                              justify={'space-between'}>
+                        <Flex align={'center'} fontSize={'13px'} fontWeight={'400'} color={'#374151'} gap={2}
+                              letterSpacing={'-0.13px'} whiteSpace={'nowrap'}>
                             <span>Search Results {countUnreadMessages > 0 &&
-                            <Badge backgroundColor={'#F3F4F6'} fontSize={'12px'} color={'#6B7280'} padding={'1px 4px'} borderRadius={4} fontWeight={500}>{countUnreadMessages}</Badge>}</span>
+                            <Badge backgroundColor={'#F3F4F6'} fontSize={'12px'} color={'#6B7280'} padding={'1px 4px'}
+                                   borderRadius={4} fontWeight={500}>{countUnreadMessages}</Badge>}</span>
                         </Flex>
                         <Flex gap={2}>
-                            <AddToProjectButton />
+                            <AddToProjectButton/>
                             <Menu>
                                 <MenuButton className={styles.tabListMoreButton} minWidth={'60px'} height={'auto'}
                                             backgroundColor={'transparent'} border={'1px solid #D1D5DB'} lineHeight={1}
                                             fontSize={'12px'} color={'#374151'} as={Button} borderRadius={'50px'}
-                                            rightIcon={<TriangleDownIcon color={'#374151'}/>} p={'0 8px 0 10px'}> More </MenuButton>
+                                            rightIcon={<TriangleDownIcon color={'#374151'}/>}
+                                            p={'0 8px 0 10px'}> More </MenuButton>
                                 <MenuList className={`${styles.tabListDropDown} drop-down-list`}>
                                     <MenuItem onClick={() => changeEmailTabs('INBOX')}><InboxIcon/> Inbox</MenuItem>
                                     <MenuItem onClick={() => changeEmailTabs('SENT')}><SendIcon/> Sent</MenuItem>
-                                    <MenuItem onClick={() => changeEmailTabs('SNOOZED')}><TimeSnoozeIcon/> Snoozed</MenuItem>
+                                    <MenuItem
+                                        onClick={() => changeEmailTabs('SNOOZED')}><TimeSnoozeIcon/> Snoozed</MenuItem>
                                     <MenuItem onClick={() => changeEmailTabs('TRASH')}><TrashIcon/> Trash</MenuItem>
                                     <MenuItem onClick={() => changeEmailTabs('STARRED')}><StarIcon/> Starred</MenuItem>
-                                    <MenuItem onClick={() => changeEmailTabs('ARCHIVE')}><ArchiveIcon/> Archive</MenuItem>
+                                    <MenuItem
+                                        onClick={() => changeEmailTabs('ARCHIVE')}><ArchiveIcon/> Archive</MenuItem>
                                     <MenuItem onClick={() => changeEmailTabs('DRAFT')}><DraftIcon/> Draft</MenuItem>
                                 </MenuList>
                             </Menu>
 
-                            <div className={styles.searchCloseIcon} onClick={() => searchCancel()}>
-                                <SmallCloseIcon />
+                            <div className={styles.searchCloseIcon} onClick={() => searchCancel(true)}>
+                                <SmallCloseIcon/>
                             </div>
                         </Flex>
                     </Flex> : <Flex align={'center'} gap={'3'}>
@@ -351,7 +293,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
 
 
                     <TabPanels marginTop={5}>
-                        <ThreadsSideBarTab tab={tab} showLoader={isLoading} />
+                        <ThreadsSideBarTab showLoader={isLoading} cachePrefix={props.cachePrefix}/>
                     </TabPanels>
                 </Tabs>
             </Flex>

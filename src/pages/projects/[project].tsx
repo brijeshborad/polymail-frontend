@@ -18,7 +18,10 @@ import {useRouter} from "next/router";
 import {StateType} from "@/types";
 import {ChevronDownIcon, CloseIcon, TriangleDownIcon} from "@chakra-ui/icons";
 import styles from "@/styles/project.module.css";
-import {ThreadsSideBar} from "@/components/threads";
+import dynamic from 'next/dynamic'
+const ThreadsSideBar = dynamic(
+    () => import('@/components/threads').then((mod) => mod.ThreadsSideBar)
+)
 import {
     getProjectById,
     getProjectMembers,
@@ -35,7 +38,6 @@ import {Message} from "@/components/messages";
 import {PROJECT_ROLES} from "@/utils/constants";
 import RemoveRecordModal from "@/components/common/delete-record-modal";
 import {Toaster} from "@/components/common";
-import { useSocket } from '@/hooks/use-socket.hook';
 
 function ProjectInbox() {
     const {members, project, invitees} = useSelector((state: StateType) => state.projects);
@@ -54,10 +56,9 @@ function ProjectInbox() {
     const [selectedMember, setSelectedMember] = useState<any>(null);
 
     const router = useRouter();
-
     const dispatch = useDispatch();
-    const { sendJsonMessage } = useSocket();
 
+    /*
     useEffect(() => {
       if (router.query.project) {
 
@@ -73,13 +74,13 @@ function ProjectInbox() {
                 },
             });
         }, 2000);
-      
+
         return () => clearInterval(interval);
       }
 
       return undefined
     }, []);
-
+    */
     useEffect(() => {
         if (router.query.project) {
             let projectId = router.query.project as string;
@@ -90,7 +91,7 @@ function ProjectInbox() {
     }, [router.query.project, dispatch])
 
     useEffect(() => {
-        if (membershipSuccess) {
+        if (membershipSuccess && router.query.project) {
             dispatch(updateMembershipState({success: false}));
             let projectId = router.query.project as string;
             dispatch(getProjectMembersInvites({projectId: projectId}));
@@ -160,6 +161,10 @@ function ProjectInbox() {
             }
         }
         onDeleteModalClose()
+    }
+
+    const capitalizeFLetter = (value: string) => {
+        return value[0].toUpperCase() + value.slice(1)
     }
 
     useEffect(() => {
@@ -244,7 +249,7 @@ function ProjectInbox() {
                                                 <MenuButton className={styles.addMemberDropDownButton} minWidth={'65px'}
                                                             color={'#374151'} backgroundColor={'transparent'} h={'auto'}
                                                             padding={0} as={Button}
-                                                            rightIcon={<ChevronDownIcon/>}> Member </MenuButton>
+                                                            rightIcon={<ChevronDownIcon/>}> {capitalizeFLetter(membersInputs.role)} </MenuButton>
                                                 <MenuList className={'drop-down-list'}>
                                                     {PROJECT_ROLES.map((role, roleIndex) => {
                                                         return <MenuItem onClick={() => {

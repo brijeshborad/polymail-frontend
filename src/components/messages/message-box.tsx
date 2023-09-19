@@ -2,7 +2,7 @@ import styles from "@/styles/Inbox.module.css";
 import {Button, Flex, Heading, Menu, MenuButton, MenuItem, MenuList, Text} from "@chakra-ui/react";
 import {Time} from "@/components/common";
 import {DownloadIcon, MenuIcon} from "@/icons";
-import React, {useState} from "react";
+import React from "react";
 import {getAttachmentDownloadUrl, updateMessage} from "@/redux/messages/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {MessageAttachments} from "@/models";
@@ -14,8 +14,8 @@ import {EyeSlashedIcon} from "@/icons/eye-slashed.icon";
 export function MessageBox(props: any) {
     const iframeRef = React.useRef<HTMLIFrameElement | null | any>(null);
     const [iframeHeight, setIframeHeight] = React.useState("0px");
-    const [isShowClass, setIsShowClass] = useState<boolean>(false);
     const message = props.item
+    const {isExpanded}=props
 
     const dispatch = useDispatch();
     const {
@@ -41,9 +41,7 @@ export function MessageBox(props: any) {
             dispatch(updateMessage({id: item.id, body}))
         }
     }
-    const setNewClass = () => {
-        setIsShowClass(!isShowClass);
-    }
+
 
     const downloadImage = (item: MessageAttachments) => {
         if (selectedMessage && selectedMessage.id) {
@@ -54,10 +52,10 @@ export function MessageBox(props: any) {
     return (
         <>
             <Flex position={'relative'} direction={'column'}
-                  className={`${styles.oldMail} ${isShowClass ? styles.lastOpenMail : ''}`} mb={3} gap={4}
+                  className={`${styles.oldMail} ${isExpanded ? styles.lastOpenMail : ''}`} mb={3} gap={4}
                   border={'1px solid #E5E7EB'} borderRadius={12} align={'center'} key={props.index}>
-                {!isShowClass &&
-                <Flex align={'center'} w={'100%'} gap={2} cursor={'pointer'} padding={4} onClick={() => setNewClass()}>
+                {!isExpanded &&
+                <Flex align={'center'} w={'100%'} gap={2} cursor={'pointer'} padding={4} onClick={props?.onClick}>
                     <div className={styles.mailBoxUserImage}>
 
                     </div>
@@ -78,11 +76,11 @@ export function MessageBox(props: any) {
                     </Flex>
                 </Flex>}
 
-                {props.threadDetails && isShowClass &&
+                {props.threadDetails && isExpanded &&
                 <Flex direction={'column'} w={'100%'} pb={4}>
                     <Flex align={'flex-start'}>
                         <Flex align={'center'} w={'100%'} cursor={'pointer'} gap={2} padding={4}
-                              onClick={() => setNewClass()}>
+                            onClick={props?.onClick}>
                             <div className={styles.mailBoxUserImage}>
 
                             </div>

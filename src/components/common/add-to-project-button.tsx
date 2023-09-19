@@ -11,13 +11,16 @@ import {
     useDisclosure,
 } from "@chakra-ui/react";
 import {SearchIcon, SmallAddIcon} from "@chakra-ui/icons";
-import {FolderIcon, DisneyIcon} from "@/icons";
+import {FolderIcon} from "@/icons";
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import {Project} from "@/models";
 import {addItemToGroup, updateMembershipState} from "@/redux/memberships/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import CreateNewProjectModal from "@/components/project/create-new-project";
+import dynamic from 'next/dynamic'
+const CreateNewProjectModal = dynamic(
+    () => import('@/components/project/create-new-project').then((mod) => mod.default)
+)
 import {Toaster} from "@/components/common/toaster";
 
 export function AddToProjectButton() {
@@ -59,7 +62,7 @@ export function AddToProjectButton() {
             });
             dispatch(updateMembershipState({isThreadAddedToProjectSuccess: false}))
         }
-    }, [isThreadAddedToProjectSuccess])
+    }, [dispatch, isThreadAddedToProjectSuccess, successMessage])
 
     useEffect(() => {
         setFilteredProjects((projects || []));
@@ -143,7 +146,7 @@ export function AddToProjectButton() {
 
                     {filteredProjects && !!filteredProjects.length && (filteredProjects || []).map((item: Project, index: number) => (
                         <MenuItem gap={2} key={index} onClick={() => addThreadToProject(item)}>
-                            <DisneyIcon/> {item.name}
+                            {item.emoji}   {item.name}
                         </MenuItem>
 
                     ))}

@@ -3,6 +3,7 @@ import {InitialSocketType} from "@/types";
 
 const initialState: any = {
     newMessage: null,
+    sendJsonMessage: null,
 } as InitialSocketType
 
 const socketSlice = createSlice({
@@ -10,10 +11,13 @@ const socketSlice = createSlice({
     initialState,
     reducers: {
         updateLastMessage: (state: InitialSocketType, {payload: newMessage}: PayloadAction<any | null>) => {
-            return {newMessage};
+            return {...state, newMessage};
+        },
+        updateSendFunction: (state: InitialSocketType, {payload: sendJsonMessage}: PayloadAction<any | null>) => {
+            return {...state, sendJsonMessage};
         }
     }
 })
 
-export const {updateLastMessage} = socketSlice.actions
+export const {updateLastMessage, updateSendFunction} = socketSlice.actions
 export default socketSlice.reducer
