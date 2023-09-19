@@ -2,6 +2,7 @@ import styles from "@/styles/Inbox.module.css";
 import {
     Badge,
     Button,
+    Checkbox,
     Flex,
     Menu,
     MenuButton,
@@ -49,7 +50,8 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
         isLoading,
         selectedThread,
         tabValue,
-        isThreadSearched
+        isThreadSearched,
+        multiSelection
     } = useSelector((state: StateType) => state.threads);
     const {success: draftSuccess, updatedDraft} = useSelector((state: StateType) => state.draft);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
@@ -122,6 +124,14 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
         }
     }
 
+    const toggleSelectAllThreads = (checked: boolean) => {
+      dispatch(updateThreadState({
+          multiSelection: !checked ? [] : threads?.map((thread) => thread.id!)
+      }))
+      return
+    }
+    const isSelectedAllChecked = ((multiSelection && multiSelection.length > 0) && multiSelection.length === (threads || []).length)
+
     const changeEmailTabs = (value: string) => {
         if (getCurrentCacheTab() !== value) {
             dispatch(updateThreadState({tabValue: tab}));
@@ -157,6 +167,14 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                 </Badge>
                               )}
                             </span>
+                          </Flex>
+                          <Flex className={styles.checkBoxLabel}>
+                            <Checkbox
+                              isChecked={isSelectedAllChecked}
+                              onChange={(e) => toggleSelectAllThreads(e.target.checked)}
+                            >
+                              Select All
+                            </Checkbox>
                           </Flex>
                           <Flex gap={2}>
                               <AddToProjectButton/>

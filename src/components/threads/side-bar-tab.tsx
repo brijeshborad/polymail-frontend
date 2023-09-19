@@ -1,4 +1,4 @@
-import {Button, Checkbox, Flex} from "@chakra-ui/react";
+import {Button, Flex} from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
 import {StateType, TabProps} from "@/types";
 import React, {useState, useEffect, useCallback} from "react";
@@ -16,13 +16,11 @@ let tab: string = '';
 
 export function ThreadsSideBarTab(props: TabProps) {
     const {
-        multiSelection,
         threads,
         isLoading,
         success: threadListSuccess,
         updateSuccess,
-        tabValue,
-        isThreadSearched
+        tabValue
     } = useSelector((state: StateType) => state.threads)
     const {selectedAccount, account} = useSelector((state: StateType) => state.accounts);
     const {newMessage} = useSelector((state: StateType) => state.socket);
@@ -104,20 +102,12 @@ export function ThreadsSideBarTab(props: TabProps) {
         }
     }, [dispatch, getAllThread, tabValue])
 
-    const toggleSelectAllThreads = (checked: boolean) => {
-        dispatch(updateThreadState({
-            multiSelection: !checked ? [] : threads?.map((thread) => thread.id!)
-        }))
-        return
-    }
-
     useEffect(() => {
         if (isLoading && threads && threads.length >= 1) {
             dispatch(updateThreadState({isLoading: false}));
         }
     }, [dispatch, isLoading, threads])
 
-    const isSelectedAllChecked = ((multiSelection && multiSelection.length > 0) && multiSelection.length === (threads || []).length)
 
     useEffect(() => {
         if (tabValue) {
@@ -170,16 +160,6 @@ export function ThreadsSideBarTab(props: TabProps) {
                     }
                 </Flex>
             </div>
-            {isThreadSearched && (
-              <Flex className={styles.checkBoxLabel}>
-                <Checkbox
-                  isChecked={isSelectedAllChecked}
-                  onChange={(e) => toggleSelectAllThreads(e.target.checked)}
-                >
-                  Select All
-                </Checkbox>
-              </Flex>
-            )}
           </Flex>
 
 
