@@ -21,7 +21,8 @@ export function ThreadsSideBarTab(props: TabProps) {
         isLoading,
         success: threadListSuccess,
         updateSuccess,
-        tabValue
+        tabValue,
+        isThreadSearched
     } = useSelector((state: StateType) => state.threads)
     const {selectedAccount, account} = useSelector((state: StateType) => state.accounts);
     const {newMessage} = useSelector((state: StateType) => state.socket);
@@ -105,7 +106,6 @@ export function ThreadsSideBarTab(props: TabProps) {
 
     const toggleSelectAllThreads = (checked: boolean) => {
         dispatch(updateThreadState({
-            isThreadSearched: checked,
             multiSelection: !checked ? [] : threads?.map((thread) => thread.id!)
         }))
         return
@@ -137,37 +137,50 @@ export function ThreadsSideBarTab(props: TabProps) {
 
     return (
         <>
-            <div>
-                <Flex overflowX={'auto'} align={'center'}>
-                    <div className={styles.checkBoxLabel}>
-                        <Checkbox
-                            isChecked={isSelectedAllChecked}
-                            onChange={(e) => toggleSelectAllThreads(e.target.checked)}
+          <Flex overflowX={'auto'} align={'center'} alignItems={'center'} alignContent={'center'} gap={2}>
+            <div className={styles.mailOtherOption}>
+                <Flex align={'center'} gap={2}>
+                    {router.query.project && (
+                      <div className={tabName === 'every-thing' ? styles.active : ''}>
+                        <Button 
+                          colorScheme='white'
+                          onClick={() => changeThread('every-thing')}
                         >
-                            Select All
-                        </Checkbox>
+                          Everything
+                        </Button>
+                      </div>
+                    )}
+                    <div className={tabName === 'just-mine' ? styles.active : ''}>
+                      <Button 
+                        colorScheme='white' 
+                        onClick={() => changeThread('just-mine')}
+                      >
+                        Just mine
+                      </Button>
                     </div>
-
-                    <div className={styles.mailOtherOption}>
-                        <Flex align={'center'} gap={2}>
-                            {router.query.project && (
-                                <div className={tabName === 'every-thing' ? styles.active : ''}>
-                                    <Button colorScheme='white'
-                                            onClick={() => changeThread('every-thing')}>Everything</Button>
-                                </div>
-                            )}
-                            <div className={tabName === 'just-mine' ? styles.active : ''}>
-                                <Button colorScheme='white' onClick={() => changeThread('just-mine')}>Just mine</Button>
-                            </div>
-                            {!router.query.project &&
-                            <div className={tabName === 'projects' ? styles.active : ''}>
-                                <Button colorScheme='white' onClick={() => changeThread('projects')}>Projects</Button>
-                            </div>
-                            }
-                        </Flex>
+                    {!router.query.project &&
+                    <div className={tabName === 'projects' ? styles.active : ''}>
+                      <Button 
+                        colorScheme='white' 
+                        onClick={() => changeThread('projects')}
+                      >
+                        Projects
+                      </Button>
                     </div>
+                    }
                 </Flex>
             </div>
+            {isThreadSearched && (
+              <Flex className={styles.checkBoxLabel}>
+                <Checkbox
+                  isChecked={isSelectedAllChecked}
+                  onChange={(e) => toggleSelectAllThreads(e.target.checked)}
+                >
+                  Select All
+                </Checkbox>
+              </Flex>
+            )}
+          </Flex>
 
 
             {isLoading && (
