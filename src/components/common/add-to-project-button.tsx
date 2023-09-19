@@ -25,6 +25,8 @@ import {Toaster} from "@/components/common/toaster";
 
 export function AddToProjectButton() {
     const {isOpen, onOpen, onClose} = useDisclosure();
+    const [isDropdownOpen, setDropDownOpen] = useState(false)
+    const [isWindowActive, setWindowActive] = useState<boolean>(true);
     const dispatch = useDispatch();
     const {selectedThread} = useSelector((state: StateType) => state.threads);
 
@@ -113,10 +115,38 @@ export function AddToProjectButton() {
         }
     }
 
+    /**
+     * Detects if the iframe was clicked
+     */
+    const onWindowBlur = useCallback(() => {
+      const message = document.activeElement;
+      setTimeout(() => {
+          if (document.activeElement && document?.activeElement.tagName === 'IFRAME' && message) {
+              message.textContent = 'clicked ' + Date.now();
+              setDropDownOpen(false);
+              setWindowActive(false);
+          }
+      });
+    }, []);
+
+    useEffect(() => {
+      window.addEventListener('blur', onWindowBlur);
+      return () => {
+          window.removeEventListener('blur', onWindowBlur);
+      };
+    }, [isWindowActive, onWindowBlur]);
+
     return (
         <>
-            <Menu onClose={() => setSearchValue('')}>
+            <Menu 
+              isOpen={isDropdownOpen} 
+              onClose={() => {
+                setDropDownOpen(false)
+                setSearchValue('')
+              }} 
+              closeOnBlur={true}>
                 <MenuButton
+                    onClick={() => setDropDownOpen(!isDropdownOpen)}
                     className={styles.addToProject}
                     leftIcon={<FolderIcon/>}
                     borderRadius={'50px'}
