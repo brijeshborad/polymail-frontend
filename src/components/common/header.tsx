@@ -20,7 +20,6 @@ import dynamic from 'next/dynamic'
 const FeedSidebar = dynamic(
     () => import('./feedSidebar').then((mod) => mod.FeedSidebar)
 )
-import {getRedirectionUrl} from "@/utils/common.functions";
 
 export function Header() {
     const dispatch = useDispatch();
