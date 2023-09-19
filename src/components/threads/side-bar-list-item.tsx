@@ -1,4 +1,3 @@
-
 import styles2 from "@/styles/common.module.css";
 import styles from "@/styles/Inbox.module.css";
 import {Flex} from "@chakra-ui/react";

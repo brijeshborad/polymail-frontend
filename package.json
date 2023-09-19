@@ -50,10 +50,10 @@
     "react-draft-wysiwyg": "github:brijeshborad/react-draft-wysiwyg",
     "react-redux": "^8.1.1",
     "react-use-websocket": "^4.3.1",
-    "redux-saga": "^1.2.3",
-    "typescript": "5.1.6"
+    "redux-saga": "^1.2.3"
   },
   "devDependencies": {
-    "husky": "^8.0.0"
+    "husky": "^8.0.0",
+    "typescript": "^5.2.2"
   }
 }

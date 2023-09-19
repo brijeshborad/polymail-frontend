@@ -1,7 +1,7 @@
 import {
     Flex,
     Tooltip,
-    Heading
+    Heading, createStandaloneToast
 } from "@chakra-ui/react";
 
 import {
@@ -15,52 +15,81 @@ import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {updateMembershipState} from "@/redux/memberships/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType, MessageHeaderTypes} from "@/types";
-import {getAllProjects} from "@/redux/projects/action-reducer";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 import {Toaster} from "@/components/common";
 import {Thread} from "@/models";
-import {AddToProjectButton} from "@/components/common";
+
+const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
+import {undoBodyData} from "@/redux/undo-body/action-reducer";
+import dynamic from "next/dynamic";
 
 export function MessagesHeader({headerType}: MessageHeaderTypes) {
     const {selectedThread, threads, updateSuccess} = useSelector((state: StateType) => state.threads);
     let {success: membershipSuccess} = useSelector((state: StateType) => state.memberships);
+    let {undoBody} = useSelector((state: StateType) => state.undoBody);
 
     const dispatch = useDispatch();
-    const [successMessage, setSuccessMessage] = useState<{ desc: string, title: string } | null>(null);
-
-
-    useEffect(() => {
-        dispatch(getAllProjects());
-    }, [dispatch]);
-
+    const [successMessage, setSuccessMessage] = useState<{ desc: string, title: string }[]>([]);
+    const {toast} = createStandaloneToast()
+    const [mailBoxName, setMailBoxName] = useState<string>('');
 
     useEffect(() => {
-        if (updateSuccess && successMessage) {
+        if (updateSuccess && successMessage.length > 0) {
+            let polyToast = `poly-toast-${new Date().getTime().toString()}`;
+            let successToastMessage: any = successMessage[0];
             Toaster({
-                desc: successMessage.desc,
-                title: successMessage.title || '',
-                type: 'success'
+                desc: successToastMessage.desc,
+                title: successToastMessage.title || '',
+                type: undoBody ? 'undo_changes' : 'success',
+                id: polyToast,
+                ...(undoBody ? {
+                    undoUpdateRecordClick: () => {
+                        if (undoBody && undoBody.id) {
+                            let body = {
+                                mailboxes: undoBody.mailboxes || []
+                            }
+                            dispatch(undoBodyData(null));
+                            dispatch(updateThreads({id: undoBody.id, body}));
+                            successMessage.push({
+                                desc: 'Thread was moved from ' + mailBoxName.toLowerCase() + '.',
+                                title: undoBody?.subject || '',
+                            });
+                            setSuccessMessage(successMessage)
+                        }
+                        toast.close(`${polyToast}`);
+                    }
+                } : {})
             })
-            setSuccessMessage(null)
+            successMessage.splice(0, 1);
+            setSuccessMessage(successMessage);
             dispatch(updateThreadState({updateSuccess: false}));
+            if (successMessage.length > 0) {
+                setTimeout(() => {
+                    dispatch(updateThreadState({updateSuccess: true}));
+                }, 100);
+            }
         }
+
     }, [updateSuccess, dispatch, successMessage]);
 
 
     useEffect(() => {
         if (membershipSuccess && successMessage) {
+            let successToastMessage: any = successMessage[0];
             Toaster({
-                desc: successMessage.desc,
-                title: successMessage.title || '',
+                desc: successToastMessage.desc,
+                title: successToastMessage.title || '',
                 type: 'success'
             })
-            setSuccessMessage(null)
+            successMessage.splice(0, 1);
+            setSuccessMessage(successMessage);
             dispatch(updateMembershipState({success: false}));
         }
     }, [membershipSuccess, dispatch, successMessage]);
 
 
     const updateMailBox = (messageBox: string) => {
+        setMailBoxName(messageBox)
         if (selectedThread && selectedThread.id) {
             if (messageBox) {
                 let currentThreads = [...threads || []] as Thread[];
@@ -123,11 +152,13 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                     selectedThread: currentThreads[index1],
                     success: true
                 }));
+                dispatch(undoBodyData(selectedThread))
                 dispatch(updateThreads({id: selectedThread.id, body}));
-                setSuccessMessage({
+                successMessage.push({
                     desc: 'Thread was moved to ' + messageBox.toLowerCase() + '.',
                     title: selectedThread?.subject || '',
                 })
+                setSuccessMessage(successMessage)
             }
         }
     }
@@ -142,7 +173,7 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                 </Flex>
 
                 <Flex gap={3} align={'center'}>
-                    {headerType === 'inbox' && <AddToProjectButton />}
+                    {headerType === 'inbox' && <AddToProjectButton/>}
                     {!(selectedThread?.mailboxes || []).includes("INBOX") && (
                         <Tooltip label='Inbox' placement='bottom' bg='gray.300' color='black'>
                             <div onClick={() => updateMailBox('INBOX')}>

@@ -40,7 +40,7 @@ export default function ForgotPassword() {
                 type: 'success'
             });
             dispatch(updateAuthState({passwordResetSuccess: false}))
-            Router.push(`/auth/login`);
+            Router.push(`/onboarding`);
         }
     }, [passwordResetSuccess, dispatch]);
 
@@ -63,7 +63,7 @@ export default function ForgotPassword() {
 
                 <Button className={styles.loginButton} py={'25px'} mb={12} onClick={() => updatePassword()}>Send Link</Button>
 
-                <Link href={'/auth/login'}> <Flex align={'center'} justify={'center'}> <ArrowBackIcon marginRight={1} /> Back to login </Flex> </Link>
+                <Link href={'/onboarding'}> <Flex align={'center'} justify={'center'}> <ArrowBackIcon marginRight={1} /> Back to login </Flex> </Link>
             </Flex>
 
             {/*{showHtml && <Flex alignItems={'center'} justifyContent={'center'} flexDir={'column'} className={styles.loginBox} >*/}

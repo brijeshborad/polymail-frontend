@@ -1,4 +1,7 @@
-import Index from "@/pages/projects";
+import dynamic from 'next/dynamic'
+const Index = dynamic(
+    () => import('@/pages/projects/index').then((mod) => mod.default)
+)
 
 function CreateProject() {
     return (

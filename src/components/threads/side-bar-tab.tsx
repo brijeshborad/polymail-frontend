@@ -1,21 +1,107 @@
 import {Button, Checkbox, Flex} from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
 import {StateType, TabProps} from "@/types";
-import React, {useState, useEffect} from "react";
-import {ThreadsSideBarList} from "@/components/threads";
+import React, {useState, useEffect, useCallback} from "react";
+
+const ThreadsSideBarList = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarList));
 import {getAllThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import {useRouter} from "next/router";
+import dynamic from "next/dynamic";
+import {getCacheThreads, getCurrentCacheTab, setCacheThreads, setCurrentCacheTab} from "@/utils/common.functions";
+import {updateLastMessage} from "@/redux/socket/action-reducer";
+
+let tab: string = '';
 
 export function ThreadsSideBarTab(props: TabProps) {
-    const {multiSelection, threads, isLoading} = useSelector((state: StateType) => state.threads)
-    const {selectedAccount} = useSelector((state: StateType) => state.accounts);
-
-
+    const {
+        multiSelection,
+        threads,
+        isLoading,
+        success: threadListSuccess,
+        updateSuccess,
+        tabValue
+    } = useSelector((state: StateType) => state.threads)
+    const {selectedAccount, account} = useSelector((state: StateType) => state.accounts);
+    const {newMessage} = useSelector((state: StateType) => state.socket);
     const router = useRouter();
     const dispatch = useDispatch();
     const [tabName, setTabName] = useState<string>('just-mine');
+
+    const getAllThread = useCallback((type: string = '') => {
+        if (selectedAccount) {
+            let resetState = true;
+            if (!tab || tab === 'reset') {
+                return;
+            }
+            if (getCurrentCacheTab() !== tab) {
+                setCurrentCacheTab(tab);
+                if (getCacheThreads()[`${props.cachePrefix}-${tab}-${selectedAccount.id}`]) {
+                    resetState = false
+                }
+                dispatch(updateThreadState({
+                    threads: getCacheThreads()[`${props.cachePrefix}-${tab}-${selectedAccount.id}`],
+                    isLoading: false
+                }));
+            }
+
+            if (router.query.project) {
+                dispatch(getAllThreads({
+                    mailbox: tab,
+                    project: router.query.project as string,
+                    resetState: resetState,
+                    ...(type === 'just-mine' ? {mine: true} : {})
+                }));
+            } else {
+                if (type === 'projects') {
+                    dispatch(getAllThreads({project: "ALL", mailbox: tab}));
+                } else {
+                    dispatch(getAllThreads({mailbox: tab, account: selectedAccount.id, resetState: resetState}));
+                }
+            }
+        }
+    }, [dispatch, props.cachePrefix, router.query.project, selectedAccount]);
+
+    useEffect(() => {
+        if (threadListSuccess && selectedAccount) {
+            setCurrentCacheTab(tab);
+            setCacheThreads({
+                ...getCacheThreads(),
+                [`${props.cachePrefix}-${tab}-${selectedAccount?.id}`]: threads ? [...threads] : []
+            });
+            dispatch(updateThreadState({success: false}));
+        }
+    }, [selectedAccount, threadListSuccess, props.cachePrefix, dispatch, threads])
+
+    useEffect(() => {
+        if (newMessage && newMessage.name === 'new_message') {
+            console.log('---NEW MESSAGE---', newMessage);
+            dispatch(updateLastMessage(null));
+            getAllThread();
+        }
+    }, [getAllThread, newMessage, dispatch])
+
+    useEffect(() => {
+        if (updateSuccess) {
+            dispatch(updateThreadState({updateSuccess: false}));
+            getAllThread();
+        }
+    }, [updateSuccess, getAllThread, dispatch])
+
+    useEffect(() => {
+        if (account && account.success) {
+            getAllThread();
+        }
+    }, [account, dispatch, getAllThread])
+
+    useEffect(() => {
+        if (tabValue) {
+            tab = tabValue;
+            dispatch(updateThreadState({selectedThread: null}));
+            getAllThread();
+        }
+    }, [dispatch, getAllThread, tabValue])
 
     const toggleSelectAllThreads = (checked: boolean) => {
         dispatch(updateThreadState({
@@ -24,7 +110,6 @@ export function ThreadsSideBarTab(props: TabProps) {
         }))
         return
     }
-
 
     useEffect(() => {
         if (isLoading && threads && threads.length >= 1) {
@@ -35,30 +120,19 @@ export function ThreadsSideBarTab(props: TabProps) {
     const isSelectedAllChecked = ((multiSelection && multiSelection.length > 0) && multiSelection.length === (threads || []).length)
 
     useEffect(() => {
-        if (props.tab) {
+        if (tabValue) {
             if (router.query.project) {
                 setTabName('every-thing')
             } else {
                 setTabName('just-mine')
             }
         }
-    }, [props.tab, router.query.project])
+    }, [tabValue, router.query.project])
 
     const changeThread = (type: string) => {
         setTabName(type);
-        if (type === 'every-thing') {
-            dispatch(getAllThreads({mailbox: props.tab, project: router.query.project as string}));
-        } else if (type === 'just-mine') {
-            if (router.query.project) {
-                dispatch(getAllThreads({mailbox: props.tab, project: router.query.project as string, mine: true}));
-            } else {
-                if (selectedAccount && selectedAccount.id) {
-                    dispatch(getAllThreads({mailbox: props.tab, account: selectedAccount.id}));
-                }
-            }
-        } else if (type === 'projects') {
-            dispatch(getAllThreads({project: "ALL", mailbox: props.tab}));
-        }
+        getAllThread(type);
+        dispatch(updateThreadState({threads: []}));
     }
 
     return (
@@ -103,7 +177,7 @@ export function ThreadsSideBarTab(props: TabProps) {
             )}
 
 
-            <ThreadsSideBarList tab={props.tab}/>
+            <ThreadsSideBarList tab={tab}/>
         </>
     )
 }

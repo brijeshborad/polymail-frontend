@@ -67,7 +67,7 @@ export default function ForgotPassword() {
             });
             dispatch(updateAuthState({passwordChangeSuccess: false}));
             LocalStorageService.clearStorage();
-            Router.push(`/auth/login`);
+            Router.push(`/onboarding`);
             if (magicCodeResponse && magicCodeResponse.token) {
                 dispatch(updateAuthState({magicCodeSuccess: false}));
             }

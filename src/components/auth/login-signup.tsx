@@ -32,7 +32,7 @@ export function LoginSignup({type = 'login'}: LoginProps) {
             }
 
             if (router.query.error) {
-                Router.replace('/auth/login', undefined, {shallow: true});
+                Router.replace('/onboarding', undefined, {shallow: true});
                 dispatch(updateAuthState({error: {description: 'Invalid account'}}));
             }
         }
@@ -72,7 +72,7 @@ export function LoginSignup({type = 'login'}: LoginProps) {
     function loginWithGoogle() {
         let body = {
             mode: type === 'login' ? "login" : 'register',
-            redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}/auth/login`,
+            redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}/onboarding`,
             accountType: "google",
             platform: "web"
         }
@@ -121,7 +121,7 @@ export function LoginSignup({type = 'login'}: LoginProps) {
 
                 <Text className={styles.loginInfo}>
                     {type === 'login' ? `Don't have an account?` : 'Already have an account?'}
-                    <Link href={type === 'login' ? '/auth/signup' : '/auth/login'}>
+                    <Link href={type === 'login' ? '/onboarding' : '/onboarding'}>
                         Sign {type === 'login' ? `Up` : 'In'}
                     </Link>
                 </Text>

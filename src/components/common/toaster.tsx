@@ -7,13 +7,13 @@ import React from "react";
 const {toast} = createStandaloneToast()
 
 export function Toaster(props: ToasterProps) {
-
-    if (toast.isActive('poly-toast')) {
+    let polyToasterId = `poly-toast-${new Date().getTime().toString()}`;
+    if (toast.isActive(`${polyToasterId}`)) {
         return null;
     }
     return (
         toast({
-            id: 'poly-toast',
+            id: polyToasterId,
             duration: (props.type !== 'reauth') ? 3000 : null,
             isClosable: props.type !== 'reauth',
             render: () => {
@@ -25,26 +25,17 @@ export function Toaster(props: ToasterProps) {
                         className={styles.mailToaster} padding={'16px'} gap={2}>
                         {(['reauth', 'error']).includes(props.type) ?
                             <div className={`${styles.toastIcon} ${styles.toastCloseIcon}`}>
-                                <SmallCloseIcon onClick={() => toast.close('poly-toast')}/>
+                                <SmallCloseIcon onClick={() => toast.close(`${props.id ? props.id : polyToasterId}`)}/>
                             </div> :
                             <div className={`${styles.toastIcon} ${styles.toastSuccessIcon}`}>
-                                <CheckIcon onClick={() => toast.close('poly-toast')}/>
+                                <CheckIcon onClick={() => toast.close(`${props.id ? props.id : polyToasterId}`)}/>
                             </div>
                         }
 
-                        <Flex direction={'column'} gap={'2px'}>
+                        <Flex direction={'column'} gap={'2px'} overflow={'hidden'} whiteSpace={'nowrap'} textOverflow={'ellipsis'}>
                             <Heading as='h6' fontSize={'15px'} lineHeight={'1.21'}>{props.title}</Heading>
                             <Text fontSize='13px' color={'#6B7280'} lineHeight={'1.21'}>{props.desc}</Text>
                         </Flex>
-
-                        {['success', 'error'].includes(props.type) && (
-                            <Button
-                                className={styles.toasterCloseIcon}
-                                ml={'auto'} height={"auto"}
-                                backgroundColor={'transparent'} padding={'0'}
-                                minWidth={'auto'}><SmallCloseIcon
-                                onClick={() => toast.close('poly-toast')}/></Button>
-                        )}
 
                         {props.type === 'send_confirmation' && (
                             <>
@@ -59,6 +50,23 @@ export function Toaster(props: ToasterProps) {
                                         height={"auto"} padding={'7px 20px'}>Send
                                     Now</Button>
                             </>
+                        )}
+                      {props.type === 'undo_changes' && (
+                        <>
+                          <Button className={styles.toasterUndoButton} backgroundColor={'#1F2937'}
+                                  color={'#FFFFFF'}
+                                  onClick={() => props.undoUpdateRecordClick ? props.undoUpdateRecordClick() : null} ml={3}
+                                  height={"auto"}
+                                  padding={'7px 20px'} borderRadius={'20px'}>Undo</Button>
+                        </>
+                      )}
+                        {['success', 'error', 'undo_changes'].includes(props.type) && (
+                            <Button
+                                className={styles.toasterCloseIcon}
+                                ml={'auto'} height={"auto"}
+                                backgroundColor={'transparent'} padding={'0'}
+                                minWidth={'auto'}><SmallCloseIcon
+                                onClick={() => toast.close(`${props.id ? props.id : polyToasterId}`)}/></Button>
                         )}
                     </Box>
                 )

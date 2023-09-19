@@ -2,8 +2,9 @@ import styles from "@/styles/Inbox.module.css";
 import { StateType } from "@/types";
 import { Box, Button, Image, Text } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
-import { AddToProjectButton } from "../common";
+const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
 import { ArchiveIcon, TimeSnoozeIcon, TrashIcon } from "@/icons";
+import dynamic from "next/dynamic";
 
 export default function SelectedThreads() {
   const { multiSelection } = useSelector((state: StateType) => state.threads)
@@ -17,9 +18,9 @@ export default function SelectedThreads() {
         src={'image/thread-pile.png'}
         alt='threads pile'
       />
-      
+
       <Text className={styles.mailBoxCenteredLabel}>{(multiSelection || []).length} threads selected</Text>
-      
+
 
       <Box className={styles.addToProjectPlusActions}>
         <AddToProjectButton />

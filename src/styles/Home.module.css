@@ -238,7 +238,7 @@
     height: 36px;
     width: 36px;
     border-radius: 50px;
-    background-color: rgba(8, 22, 47, 0.05);
+    /* background-color: rgba(8, 22, 47, 0.05); */
     border: 1px solid rgba(8, 22, 47, 0.2);
     margin-left: 21px;
     margin-right: 160px;
@@ -567,4 +567,33 @@ div:has(> .mailToaster) {
     .mailBg {
         padding: 15px 15px 10px;
     }
+}
+
+
+.drawerBody {
+margin: 0px;
+}
+
+.feedIcon {
+    position: relative;
+    height: 36px;
+    width: 36px;
+    border-radius: 50px;
+    border: 1px solid rgba(8, 22, 47, 0.2);
+    margin-top: 3cap;
+  
+}
+
+.feedIcon span {
+    position: absolute;
+    border-radius: 50px;
+    background-color: #08162F;
+    color: #ffffff;
+    width: 16px;
+    height: 16px;
+    font-size: 10px;
+    line-height: 1.6;
+    text-align: center;
+    right: -5px;
+    top: -5px;
 }

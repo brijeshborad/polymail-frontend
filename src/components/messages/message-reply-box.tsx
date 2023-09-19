@@ -21,7 +21,9 @@ import { ChevronDownIcon, CloseIcon } from "@chakra-ui/icons";
 import { FileIcon, TextIcon } from "@/icons";
 import React, {ChangeEvent, ChangeEventHandler, useCallback, useEffect, useRef, useState} from "react";
 import { debounce, isEmail } from "@/utils/common.functions";
-import { RichTextEditor, Time, Toaster } from "@/components/common";
+import { Toaster } from "@/components/common";
+const RichTextEditor = dynamic(() => import("@/components/common").then(mod => mod.RichTextEditor));
+const Time = dynamic(() => import("@/components/common").then(mod => mod.Time));
 import { createDraft, sendMessage, updateDraftState, updatePartialMessage } from "@/redux/draft/action-reducer";
 import { useDispatch, useSelector } from "react-redux";
 import { StateType } from "@/types";
@@ -31,11 +33,12 @@ import { MessageAttachments, MessageRecipient } from "@/models";
 import { uploadAttachment } from "@/redux/messages/action-reducer";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { MessageBoxType } from "@/types/props-types/message-box.type";
-import MessageRecipients from "./message-recipients";
+const MessageRecipients = dynamic(() => import("./message-recipients").then(mod => mod.default));
+const MessageSchedule = dynamic(() => import("./message-schedule").then(mod => mod.default));
 import { RecipientsType } from "@/types/props-types/message-recipients.type";
 import { useRouter } from "next/router";
-import MessageSchedule from "./message-schedule";
 import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
+import dynamic from "next/dynamic";
 
 dayjs.extend(relativeTime)
 
@@ -57,7 +60,7 @@ export function MessageReplyBox(props: MessageBoxType) {
   const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
   const { isOpen, onClose } = useDisclosure();
   const inputFile = useRef<HTMLInputElement | null>(null)
-  const [scheduledDate, setScheduledDate] = useState<string>();
+  const [scheduledDate, setScheduledDate] = useState<string | undefined>();
   const [hideEditorToolbar, setHideEditorToolbar] = useState<boolean>(false);
   const [isShowText, _setIsShowText] = useState<boolean>(false);
   const [replyBoxHide, setReplyBoxHide] = useState<boolean>(false);
@@ -232,6 +235,10 @@ export function MessageReplyBox(props: MessageBoxType) {
       }
     }
   }, [draft, props.replyType, selectedAccount])
+
+  useEffect(() => {
+    handleEditorScroll();
+  }, []);
 
   useEffect(() => {
     if (props.messageData) {
@@ -426,6 +433,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
     if (draft && draft.id) {
       let params = {};
+      let polyToast = `poly-toast-${new Date().getTime().toString()}`;
 
       // if the user has set a schedule date
       if (scheduledDate) {
@@ -449,6 +457,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
           desc: `Your message has been scheduled`,
           type: 'send_confirmation',
           title: 'Your message has been scheduled',
+          id: polyToast,
           undoClick: (type: string) => {
             let params = {};
 
@@ -462,7 +471,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
               }
             }
             dispatch(sendMessage({ id: draft.id!, ...params }));
-            toast.close('poly-toast');
+            toast.close(`${polyToast}`);
           }
         })
 
@@ -472,6 +481,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             desc: `Your message has been sent to ${draft?.to && draft?.to[0].email}${draft?.to && draft?.to?.length > 1 ? ` and ${draft?.to && draft?.to?.length - 1} other${draft?.to && draft?.to?.length === 2 ? '' : 's'}` : ''}`,
             type: 'send_confirmation',
             title: draft?.subject || '',
+            id: polyToast,
             undoClick: (type: string) => {
               let params = {};
 
@@ -485,7 +495,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 }
               }
               dispatch(sendMessage({ id: draft.id!, ...params }));
-              toast.close('poly-toast');
+              toast.close(`${polyToast}`);
             }
           })
         }
@@ -533,14 +543,19 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   }
 
   useEffect(() => {
-    if (props.replyType === 'reply-all') {
+    if (props.replyType) {
+      setTimeout(() => {
+        handleEditorScroll();
+      }, 500)
+    }
+    if (props.replyType === 'forward') {
       setReplyBoxHide(true)
     } else {
       setReplyBoxHide(false)
     }
   }, [props.replyType])
 
-  const handleSchedule = (date: string) => {
+  const handleSchedule = (date: string | undefined) => {
     setScheduledDate(date);
   }
 
@@ -595,16 +610,16 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
           <Flex align={'center'} justify={'space-between'} gap={4} position={"relative"} zIndex={10}>
             <Flex align={'center'} gap={1}>
               <Menu>
-                <MenuButton color={'#6B7280'} variant='link' size='xs' as={Button} rightIcon={<ChevronDownIcon />}>{props.replyTypeName || 'Reply to'}
+                <MenuButton color={'#6B7280'} variant='link' size='xs' as={Button} rightIcon={<ChevronDownIcon />}>{props.replyTypeName || 'Reply'}
                 </MenuButton>
                 <MenuList className={'drop-down-list reply-dropdown'}>
                   {props.replyType === 'reply-all' ?
-                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply', props.threadDetails) : null}> Reply to </MenuItem> :
-                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply-all', props.threadDetails) : null}> Reply to All </MenuItem>
+                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply', props.threadDetails) : null}> Reply</MenuItem> :
+                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply-all', props.threadDetails) : null}> Reply All</MenuItem>
                   }
                   {props.replyType === 'forward' ?
-                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply', props.threadDetails) : null}> Reply to </MenuItem> :
-                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('forward', props.threadDetails) : null}> Forward </MenuItem>
+                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply', props.threadDetails) : null}> Reply</MenuItem> :
+                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('forward', props.threadDetails) : null}> Forward</MenuItem>
                   }
                 </MenuList>
               </Menu>
@@ -631,8 +646,8 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             </Flex>
             <Text as={'h1'} fontSize='11px' color={'#6B7280'} display={'flex'} gap={'2px'}
               className={styles.mailSaveTime}>Saved {draft ?
-                <Time time={draft?.created || ''} isShowFullTime={false}
-                  showTimeInShortForm={true} /> : '0 s'} ago</Text>
+                <Time time={draft?.updated || ''} isShowFullTime={false}
+                  showTimeInShortForm={true} /> : '0s'} ago</Text>
           </Flex>
           {replyBoxHide &&
             <div ref={divRef}>

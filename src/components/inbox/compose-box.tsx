@@ -15,17 +15,20 @@ import { CloseIcon } from "@chakra-ui/icons";
 import React, { ChangeEvent, ChangeEventHandler, useCallback, useEffect, useRef, useState } from "react";
 import { StateType } from "@/types";
 import { debounce, isEmail } from "@/utils/common.functions";
-import { RichTextEditor, Time, Toaster } from "@/components/common";
 import { createDraft, sendMessage, updateDraftState, updatePartialMessage } from "@/redux/draft/action-reducer";
 import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
 import { uploadAttachment } from "@/redux/messages/action-reducer";
 import { MessageAttachments, MessageRecipient } from "@/models";
-import CreateNewProject from "@/components/project/create-new-project";
-import { AddToProjectButton } from "@/components/common";
-import MessageRecipients from "../messages/message-recipients";
+import { Toaster } from "@/components/common";
 import { RecipientsType } from "@/types/props-types/message-recipients.type";
-import MessageSchedule from "../messages/message-schedule";
+import dynamic from "next/dynamic";
+const CreateNewProject = dynamic(() => import('@/components/project/create-new-project').then(mod => mod.default));
+const RichTextEditor = dynamic(() => import("@/components/common").then(mod => mod.RichTextEditor));
+const Time = dynamic(() => import("@/components/common").then(mod => mod.Time));
+const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
+const MessageRecipients = dynamic(() => import("../messages/message-recipients").then(mod => mod.default));
+const MessageSchedule = dynamic(() => import("../messages/message-schedule").then(mod => mod.default));
 
 export function ComposeBox(props: any) {
   const blankRecipientValue: MessageRecipient = {
@@ -236,6 +239,7 @@ export function ComposeBox(props: any) {
   const sendMessages = () => {
     if (draft && draft.id) {
       let params = {};
+      let polyToast = `poly-toast-${new Date().getTime().toString()}`;
       if (scheduledDate) {
         const targetDate = dayjs(scheduledDate)
         // Get the current date and time
@@ -251,6 +255,7 @@ export function ComposeBox(props: any) {
           desc: `Your message has been scheduled`,
           type: 'send_confirmation',
           title: 'Your message has been scheduled',
+          id: polyToast,
           undoClick: (type: string) => {
             let params = {};
 
@@ -264,7 +269,7 @@ export function ComposeBox(props: any) {
               }
             }
             dispatch(sendMessage({ id: draft.id!, ...params }));
-            toast.close('poly-toast');
+            toast.close(`${polyToast}`);
           }
         })
 
@@ -274,6 +279,7 @@ export function ComposeBox(props: any) {
             desc: `Your message has been sent to ${draft?.to && draft?.to[0]}${draft?.to && draft?.to?.length > 1 ? ` and ${draft?.to && draft?.to?.length - 1} other${draft?.to && draft?.to?.length === 2 ? '' : 's'}` : ''}`,
             type: 'send_confirmation',
             title: draft?.subject || '',
+            id: polyToast,
             undoClick: (type: string) => {
               let params = {};
 
@@ -287,7 +293,7 @@ export function ComposeBox(props: any) {
                 }
               }
               dispatch(sendMessage({ id: draft.id!, ...params }));
-              toast.close('poly-toast');
+              toast.close(`${polyToast}`);
             }
           })
         }
@@ -326,7 +332,7 @@ export function ComposeBox(props: any) {
     }
   }, [selectedAccount])
 
-  const handleSchedule = (date: string) => {
+  const handleSchedule = (date: string | undefined) => {
     setScheduledDate(date);
   }
 

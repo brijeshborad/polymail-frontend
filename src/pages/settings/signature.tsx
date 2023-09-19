@@ -6,12 +6,17 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {RichTextEditor, Toaster} from "@/components/common";
 import {updateAccountDetails, updateAccountState} from "@/redux/accounts/action-reducer";
-import Index from "@/pages/settings/index";
+const Index = dynamic(() => import('@/pages/settings/index').then(mod => mod.default));
 import withAuth from "@/components/auth/withAuth";
+import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
+import dynamic from "next/dynamic";
 
 function Signature() {
 
     const [signature, setSignature] = useState<string>('');
+    const [isSignatureUpdate, setIsSignatureUpdate] = useState<boolean>(false);
+    const [boxUpdatedFirstTime, setBoxUpdatedFirstTime] = useState<boolean>(false);
+
     const {selectedAccount, account, success} = useSelector((state: StateType) => state.accounts);
     const dispatch = useDispatch();
 
@@ -19,26 +24,50 @@ function Signature() {
         // Add signature to email body
         if (selectedAccount && selectedAccount.signature) {
             setSignature(selectedAccount.signature);
+            setBoxUpdatedFirstTime(false);
         }
     }, [selectedAccount])
 
     useEffect(() => {
         if (account && success) {
             dispatch(updateAccountState({selectedAccount: {...account}}));
-            Toaster({desc: 'Signature updated successfully',title: 'Signature updated', type: 'success'})
+            setIsSignatureUpdate(false);
+            setBoxUpdatedFirstTime(false);
+            Toaster({desc: 'Signature updated successfully',title: 'Signature updated', type: 'success'});
         }
     }, [dispatch, account, success])
 
-
     const addSignature = (value: string) => {
+        if (!boxUpdatedFirstTime) {
+            setBoxUpdatedFirstTime(true);
+        }
+        if (selectedAccount && selectedAccount.signature) {
+            let currentEmailBody: string = getPlainTextFromHtml(value);
+            let currentAccountSignature: string = getPlainTextFromHtml(selectedAccount.signature);
+            if (currentEmailBody.trim().length) {
+                if (currentEmailBody.trim() !== currentAccountSignature.trim()) {
+                    setIsSignatureUpdate(true);
+                }
+            }
+        }
+
         setSignature(value)
     }
+
 
     const submit = () => {
         if (signature) {
             if (selectedAccount && selectedAccount.id) {
                 dispatch(updateAccountDetails({signature: signature, id: selectedAccount.id}));
             }
+        }
+    }
+
+    const cancelButtonClick = () => {
+        if (selectedAccount && selectedAccount.signature) {
+            setSignature(selectedAccount.signature);
+            setBoxUpdatedFirstTime(false);
+            setIsSignatureUpdate(false);
         }
     }
 
@@ -62,7 +91,7 @@ function Signature() {
                                 <Flex direction={"column"} gap={2} className={styles.profileAccount}>
                                     <Text fontSize={'14px'}>Email Signature</Text>
 
-                                    <RichTextEditor className={styles.emailSignature} initialUpdated={true} hideToolBar={true}
+                                    <RichTextEditor className={styles.emailSignature} initialUpdated={boxUpdatedFirstTime} hideToolBar={true}
                                                     placeholder='Add Your Email Signature'
                                                     value={signature} onChange={(e) => addSignature(e)}/>
 
@@ -81,12 +110,11 @@ function Signature() {
                                         <span dangerouslySetInnerHTML={{__html: `<p style="margin-bottom: 12px">Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p> ${signature}`}} />
                                     </div>
                                 </Flex>
-
-
-                                <Flex align={'center'} gap={2} mt={10} className={styles.settingButton}>
+                                {isSignatureUpdate && <Flex align={'center'} gap={2} mt={10} className={styles.settingButton}>
                                     <Button className={styles.settingSave} onClick={submit}>Save</Button>
-                                    <Button className={styles.settingCancel}>Cancel</Button>
-                                </Flex>
+                                    <Button className={styles.settingCancel} onClick={cancelButtonClick}>Cancel</Button>
+                                </Flex>}
+
                             </Flex>
                         </Flex>
                     </Flex>

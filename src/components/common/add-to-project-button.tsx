@@ -11,13 +11,17 @@ import {
     useDisclosure,
 } from "@chakra-ui/react";
 import {SearchIcon, SmallAddIcon} from "@chakra-ui/icons";
-import {FolderIcon, DisneyIcon} from "@/icons";
+import {FolderIcon} from "@/icons";
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import {Project} from "@/models";
-import {addItemToGroup} from "@/redux/memberships/action-reducer";
+import {addItemToGroup, updateMembershipState} from "@/redux/memberships/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import CreateNewProjectModal from "@/components/project/create-new-project";
+import dynamic from 'next/dynamic'
+const CreateNewProjectModal = dynamic(
+    () => import('@/components/project/create-new-project').then((mod) => mod.default)
+)
+import {Toaster} from "@/components/common/toaster";
 
 export function AddToProjectButton() {
     const {isOpen, onOpen, onClose} = useDisclosure();
@@ -30,6 +34,8 @@ export function AddToProjectButton() {
 
     const addToProjectRef = useRef<HTMLInputElement | null>(null);
     const searchRef = useRef<HTMLInputElement | null>(null);
+    const {isThreadAddedToProjectSuccess} = useSelector((state: StateType) => state.memberships);
+    const [successMessage, setSuccessMessage] = useState<{ desc: string, title: string } | null>(null);
 
     useEffect(() => {
         const handleShortcutKeyPress = (e: KeyboardEvent | any) => {
@@ -48,6 +54,17 @@ export function AddToProjectButton() {
     }, []);
 
     useEffect(() => {
+        if (isThreadAddedToProjectSuccess && successMessage) {
+            Toaster({
+                desc: successMessage.desc,
+                title: successMessage.title || '',
+                type: 'success'
+            });
+            dispatch(updateMembershipState({isThreadAddedToProjectSuccess: false}))
+        }
+    }, [dispatch, isThreadAddedToProjectSuccess, successMessage])
+
+    useEffect(() => {
         setFilteredProjects((projects || []));
     }, [projects])
 
@@ -63,16 +80,14 @@ export function AddToProjectButton() {
                 groupType: 'project',
                 groupId: item.id
             }
-            dispatch(addItemToGroup(reqBody));
-            if (addToProjectRef.current) {
-                addToProjectRef.current?.click();
-            }
-            /*
             setSuccessMessage({
                 desc: 'Thread was added to ' + item.name?.toLowerCase() + '.',
                 title: selectedThread?.subject || '',
             })
-            */
+            dispatch(addItemToGroup(reqBody));
+            if (addToProjectRef.current) {
+                addToProjectRef.current?.click();
+            }
         }
     }, [dispatch, selectedThread]);
 
@@ -131,7 +146,7 @@ export function AddToProjectButton() {
 
                     {filteredProjects && !!filteredProjects.length && (filteredProjects || []).map((item: Project, index: number) => (
                         <MenuItem gap={2} key={index} onClick={() => addThreadToProject(item)}>
-                            <DisneyIcon/> {item.name}
+                            {item.emoji}   {item.name}
                         </MenuItem>
 
                     ))}

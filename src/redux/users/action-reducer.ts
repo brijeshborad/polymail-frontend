@@ -8,7 +8,8 @@ const initialState: any = {
     error: null,
     profilePicture: {},
     profilePictureUpdated: false,
-    userDetailsUpdateSuccess: false
+    userDetailsUpdateSuccess: false,
+    profilePictureRemoved: false
 } as InitialUserState;
 
 const userSlice = createSlice({
@@ -55,6 +56,16 @@ const userSlice = createSlice({
             return {...state, error, isLoading: false, success: false}
         },
 
+        removeProfilePicture: (state: InitialUserState) => {
+            return {...state, error: null, isLoading: false, success: false, profilePictureRemoved: false}
+        },
+        removeProfilePictureSuccess: (state: InitialUserState, _action: PayloadAction<{}>) => {
+            return {...state,  error: null, isLoading: false, success: true, profilePictureRemoved: true}
+        },
+        removeProfilePictureError: (state: InitialUserState, {payload: error}: PayloadAction<any>) => {
+            return {...state, error, isLoading: false, success: false, profilePictureRemoved: false}
+        },
+
 
         updateUserState: (state: InitialUserState, action: PayloadAction<InitialUserState>) => {
             return {...state, ...action.payload}
@@ -76,6 +87,9 @@ export const {
     getProfilePicture,
     getProfilePictureSuccess,
     getProfilePictureError,
+    removeProfilePicture,
+    removeProfilePictureSuccess,
+    removeProfilePictureError,
     updateUserState
 } = userSlice.actions
 export default userSlice.reducer

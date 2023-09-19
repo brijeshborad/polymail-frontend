@@ -8,6 +8,7 @@ const initialState: any = {
     success: false,
     isOrganizationRemoveSuccess: false,
     isProjectRemoveSuccess: false,
+    isThreadAddedToProjectSuccess: false
 } as InitialMembershipStateType;
 
 const membershipSlice = createSlice({
@@ -16,13 +17,13 @@ const membershipSlice = createSlice({
     reducers: {
         // Adding members to projects
         addItemToGroup: (state: InitialMembershipStateType, _action: PayloadAction<any>) => {
-            return {...state, error: null, isLoading: false, success: false}
+            return {...state, error: null, isLoading: false, success: false, isThreadAddedToProjectSuccess: false}
         },
         addItemToGroupSuccess: (state: InitialMembershipStateType, {payload: membership}: PayloadAction<{}>) => {
-            return {...state, membership, error: null, isLoading: false, success: true}
+            return {...state, membership, error: null, isLoading: false, success: true, isThreadAddedToProjectSuccess: true}
         },
         addItemToGroupError: (state: InitialMembershipStateType, {payload: error}: PayloadAction<any>) => {
-            return {...state, error, isLoading: false}
+            return {...state, error, isLoading: false, isThreadAddedToProjectSuccess: false}
         },
 
         // Delete members from project
