@@ -6,6 +6,7 @@ import {DisneyIcon, DotIcon} from "@/icons";
 import {StateType, ThreadListItemProps} from "@/types";
 import { useSelector } from "react-redux";
 import {useEffect, useState} from "react";
+import { MAILBOX_UNREAD } from "@/utils/constants";
 
 
 export function ThreadsSideBarListItem(props: ThreadListItemProps) {
@@ -24,7 +25,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                   <DisneyIcon/> {props?.thread?.from?.name || props?.thread?.from?.email}
               </Flex>
               <Flex alignItems={'center'} className={styles2.receiveTime} justify={'flex-end'}>
-                  {(props.thread.mailboxes || []).includes('UNREAD') &&
+                  {(props.thread.mailboxes || []).includes(MAILBOX_UNREAD) &&
                   <DotIcon marginRight={'5px'} className={`readThreadIcon`} color={'#9ca3af'}/>}
                   <Time time={props.thread.latestMessage} isShowFullTime={false} showTimeInShortForm={false}/>
               </Flex>

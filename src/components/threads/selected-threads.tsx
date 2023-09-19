@@ -7,6 +7,7 @@ import { ArchiveIcon, TimeSnoozeIcon, TrashIcon } from "@/icons";
 import dynamic from "next/dynamic";
 import { batchUpdateThreads } from "@/redux/threads/action-reducer";
 import { Toaster } from "../common/toaster";
+import { MAILBOX_ARCHIVE, MAILBOX_SNOOZED, MAILBOX_TRASH } from "@/utils/constants";
 
 export default function SelectedThreads() {
   const { multiSelection: selectedThreadIds } = useSelector((state: StateType) => state.threads)
@@ -25,7 +26,7 @@ export default function SelectedThreads() {
     if(selectedThreadIds) {
       dispatch(batchUpdateThreads({
         threadIds: selectedThreadIds,
-        mailboxes: ['ARCHIVE']
+        mailboxes: [MAILBOX_ARCHIVE]
       }))
       notification(`${selectedThreadIds.length} ${messagePlural} has been archived`)
     }
@@ -35,7 +36,7 @@ export default function SelectedThreads() {
     if(selectedThreadIds) {
       dispatch(batchUpdateThreads({
         threadIds: selectedThreadIds,
-        mailboxes: ['TRASH']
+        mailboxes: [MAILBOX_TRASH]
       }))
       notification(`${selectedThreadIds.length} ${messagePlural} has been moved to trash`)
     }
@@ -45,7 +46,7 @@ export default function SelectedThreads() {
     if(selectedThreadIds) {
       dispatch(batchUpdateThreads({
         threadIds: selectedThreadIds,
-        mailboxes: ['SNOOZED']
+        mailboxes: [MAILBOX_SNOOZED]
       }))
       notification(`${selectedThreadIds.length} ${messagePlural} has been snoozed`)
     }
