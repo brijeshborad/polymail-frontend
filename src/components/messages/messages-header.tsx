@@ -22,6 +22,7 @@ import {Thread} from "@/models";
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
 import {undoBodyData} from "@/redux/undo-body/action-reducer";
 import dynamic from "next/dynamic";
+import { MAILBOX_ARCHIVE, MAILBOX_INBOX, MAILBOX_SNOOZED, MAILBOX_STARRED, MAILBOX_TRASH, MAILBOX_UNREAD } from "@/utils/constants";
 
 export function MessagesHeader({headerType}: MessageHeaderTypes) {
     const {selectedThread, threads, updateSuccess} = useSelector((state: StateType) => state.threads);
@@ -109,35 +110,35 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                 };
                 let remove_from_list = false
                 switch (messageBox) {
-                    case "INBOX":
+                    case MAILBOX_INBOX:
                         if (selectedThread.mailboxes?.includes(messageBox)) {
                             return
                         }
-                        body.mailboxes = body.mailboxes.filter((item: string) => !["ARCHIVE", "TRASH"].includes(item))
+                        body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_ARCHIVE, MAILBOX_TRASH].includes(item))
                         body.mailboxes = [...body.mailboxes, messageBox]
                         remove_from_list = true
                         dispatch(updateMessageState({selectedMessage: null}));
                         break;
-                    case "TRASH":
+                    case MAILBOX_TRASH:
                         if (selectedThread.mailboxes?.includes(messageBox)) {
                             return
                         }
-                        body.mailboxes = body.mailboxes.filter((item: string) => !["INBOX", "ARCHIVE"].includes(item))
+                        body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_INBOX, MAILBOX_ARCHIVE].includes(item))
                         body.mailboxes = [...body.mailboxes, messageBox]
                         remove_from_list = true
                         dispatch(updateMessageState({selectedMessage: null}));
                         break;
-                    case "ARCHIVE":
+                    case MAILBOX_ARCHIVE:
                         if (selectedThread.mailboxes?.includes(messageBox)) {
                             return
                         }
-                        body.mailboxes = body.mailboxes.filter((item: string) => !["INBOX", "TRASH"].includes(item))
+                        body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_INBOX, MAILBOX_TRASH].includes(item))
                         body.mailboxes = [...body.mailboxes, messageBox]
                         remove_from_list = true
                         dispatch(updateMessageState({selectedMessage: null}));
                         break;
-                    case "STARRED":
-                    case "UNREAD":
+                    case MAILBOX_STARRED:
+                    case MAILBOX_UNREAD:
                         if (selectedThread.mailboxes?.includes(messageBox)) {
                             body.mailboxes = body.mailboxes.filter((item: string) => item !== messageBox)
                         } else {
@@ -184,29 +185,29 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
 
                 <Flex gap={3} align={'center'}>
                     {headerType === 'inbox' && <AddToProjectButton/>}
-                    {!(selectedThread?.mailboxes || []).includes("INBOX") && (
+                    {!(selectedThread?.mailboxes || []).includes(MAILBOX_INBOX) && (
                         <Tooltip label='Inbox' placement='bottom' bg='gray.300' color='black'>
-                            <div onClick={() => updateMailBox('INBOX')}>
+                            <div onClick={() => updateMailBox(MAILBOX_INBOX)}>
                                 <InboxIcon/>
                             </div>
                         </Tooltip>
                     )}
-                    {!(selectedThread?.mailboxes || []).includes("ARCHIVE") && (
+                    {!(selectedThread?.mailboxes || []).includes(MAILBOX_ARCHIVE) && (
                         <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
-                            <div onClick={() => updateMailBox('ARCHIVE')}>
+                            <div onClick={() => updateMailBox(MAILBOX_ARCHIVE)}>
                                 <ArchiveIcon/>
                             </div>
                         </Tooltip>
                     )}
-                    {!(selectedThread?.mailboxes || []).includes("TRASH") && (
+                    {!(selectedThread?.mailboxes || []).includes(MAILBOX_TRASH) && (
                         <Tooltip label='Trash' placement='bottom' bg='gray.300' color='black'>
-                            <div onClick={() => updateMailBox('TRASH')}>
+                            <div onClick={() => updateMailBox(MAILBOX_TRASH)}>
                                 <TrashIcon/>
                             </div>
                         </Tooltip>
                     )}
                     <Tooltip label='Snooze' placement='bottom' bg='gray.300' color='black'>
-                        <div onClick={() => updateMailBox('SNOOZE')}>
+                        <div onClick={() => updateMailBox(MAILBOX_SNOOZED)}>
                             <TimeSnoozeIcon/>
                         </div>
                     </Tooltip>

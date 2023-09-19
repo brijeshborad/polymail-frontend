@@ -6,6 +6,7 @@ import {
     getAllThreadsError,
     getAllThreadsSuccess,
     getAllThreads,
+    batchUpdateThreads,
     updateThreadsSuccess, updateThreadsError, updateThreads, searchThreadsSuccess, searchThreadsError, searchThreads
 } from "@/redux/threads/action-reducer";
 import {ThreadsRequestBody} from "@/models";
@@ -44,6 +45,19 @@ function* patchThreads({payload: {id, body}}: PayloadAction<{ id: string, body: 
     }
 }
 
+function* batchThreads({payload: {threadIds, mailboxes}}: PayloadAction<{threadIds: string[], mailboxes: string[]}>){
+  try {
+    const response: AxiosResponse = yield ApiService.callPatch(`batch`, {
+      threadIds,
+      mailboxes
+    })
+    yield put(updateThreadsSuccess(response))
+  } catch (error: any) {
+    error = error as AxiosError;
+    yield put(updateThreadsError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
+  }
+}
+
 function* searchAndGetThreads({
                          payload: {
                              query
@@ -70,6 +84,10 @@ export function* watchUpdateThreads() {
 
 export function* watchSearchAndGetThreads() {
     yield takeLatest(searchThreads.type, searchAndGetThreads);
+  }
+  
+  export function* watchBatchUpdateThread() {
+    yield takeLatest(batchUpdateThreads.type, batchThreads);
 }
 
 export default function* rootSaga() {
@@ -77,6 +95,7 @@ export default function* rootSaga() {
         fork(watchGetThreads),
         fork(watchUpdateThreads),
         fork(watchSearchAndGetThreads),
+        fork(watchBatchUpdateThread),
     ]);
 }
 
