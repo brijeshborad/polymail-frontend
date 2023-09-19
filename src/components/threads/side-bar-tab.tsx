@@ -9,7 +9,7 @@ import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import {useRouter} from "next/router";
 
 export function ThreadsSideBarTab(props: TabProps) {
-    const {multiSelection, threads, isLoading} = useSelector((state: StateType) => state.threads)
+    const {multiSelection, threads, isLoading, success} = useSelector((state: StateType) => state.threads)
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
 
 
@@ -25,6 +25,13 @@ export function ThreadsSideBarTab(props: TabProps) {
         return
     }
 
+    useEffect(() => {
+        if (success) {
+            if (threads && threads.length) {
+                dispatch(updateThreadState({threads: threads}));
+            }
+        }
+    }, [success, threads])
 
     useEffect(() => {
         if (isLoading && threads && threads.length >= 1) {
@@ -59,6 +66,9 @@ export function ThreadsSideBarTab(props: TabProps) {
         } else if (type === 'projects') {
             dispatch(getAllThreads({project: "ALL", mailbox: props.tab}));
         }
+        dispatch(updateThreadState({threads: []}));
+
+
     }
 
     return (

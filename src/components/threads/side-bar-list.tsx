@@ -30,10 +30,10 @@ export function ThreadsSideBarList(props: ThreadListProps) {
 
 
   useEffect(() => {
-    if (!isLoading && threads && threads.length) {
+    if (!isLoading) {
       handleEditorScroll();
     }
-  }, [isLoading, threads?.length]);
+  }, [isLoading]);
 
   const handleClick = useCallback((item: Thread) => {
     if (props.tab === 'DRAFT') {
