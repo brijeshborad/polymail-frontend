@@ -116,14 +116,14 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
             "userId": userDetails?.id,
             "name": "SearchCancel",
         });
-        if (selectedAccount && selectedAccount.id) {
+        if (selectedAccount && selectedAccount.id && callAPI) {
             dispatch(getAllThreads({mailbox: tabValue, account: selectedAccount.id}));
         }
     }
 
     const changeEmailTabs = (value: string) => {
         if (getCurrentCacheTab() !== value) {
-            dispatch(updateThreadState({selectedThread: null}));
+            dispatch(updateThreadState({selectedThread: null, isLoading: true}));
             dispatch(updateThreadState({tabValue: tab}));
             searchCancel();
         }

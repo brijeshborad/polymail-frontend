@@ -15,7 +15,7 @@ import dynamic from "next/dynamic";
 
 
 export function ThreadsSideBarList(props: ThreadListProps) {
-  const { selectedThread, threads, isLoading } = useSelector((state: StateType) => state.threads);
+  const { selectedThread, threads } = useSelector((state: StateType) => state.threads);
   const dispatch = useDispatch()
   const listRef = useRef<any>(null);
   const router = useRouter();

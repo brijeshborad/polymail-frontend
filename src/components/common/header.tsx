@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { Button, createStandaloneToast, Flex, Input, InputGroup, InputLeftElement, InputRightElement, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
+import { Button, Flex, Input, InputGroup, InputLeftElement, InputRightElement, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
 import { CheckIcon, ChevronDownIcon, SearchIcon } from '@chakra-ui/icons';
 import { FolderIcon, MailIcon } from '@/icons';
 import styles from '@/styles/Home.module.css';
@@ -14,7 +14,6 @@ import LocalStorageService from '@/utils/localstorage.service';
 import { getAllThreads, updateThreadState } from '@/redux/threads/action-reducer';
 import { useSocket } from '@/hooks/use-socket.hook';
 import { updateUsersDetailsSuccess, updateUserState } from '@/redux/users/action-reducer';
-import { googleAuthLink } from '@/redux/auth/action-reducer';
 import { updateLastMessage } from '@/redux/socket/action-reducer';
 import { updateMessageState } from '@/redux/messages/action-reducer';
 import { Toaster } from '@/components/common';
@@ -41,7 +40,6 @@ export function Header() {
     const router = useRouter();
 
     let currentRoute = router.pathname.split('/');
-    const { toast } = createStandaloneToast();
     const searchInputRef = useRef<HTMLInputElement | null>(null);
     // keyboard shortcuts
     useEffect(() => {
@@ -58,19 +56,6 @@ export function Header() {
             window.removeEventListener('keydown', handleShortcutKeyPress);
         };
     }, []);
-    const connectGoogleAccount = useCallback(
-        (mode: string) => {
-            let body = {
-                mode,
-                redirectUrl: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}/inbox`,
-                accountType: 'google',
-                platform: 'web',
-                withToken: true,
-            };
-            dispatch(googleAuthLink(body));
-        },
-        [dispatch],
-    );
 
     useEffect(() => {
         if (user) {

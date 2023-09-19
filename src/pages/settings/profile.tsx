@@ -82,7 +82,7 @@ function Profile() {
             });
             dispatch(updateUserState({ profilePictureRemoved: false }))
         }
-    }, [userDetailsUpdateSuccess, profilePictureRemoved])
+    }, [userDetailsUpdateSuccess, profilePictureRemoved, dispatch])
 
     useEffect(() => {
         if (profilePictureUpdated || profilePictureRemoved) {

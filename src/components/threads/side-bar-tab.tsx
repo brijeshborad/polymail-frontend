@@ -98,13 +98,13 @@ export function ThreadsSideBarTab(props: TabProps) {
     useEffect(() => {
         if (tabValue) {
             tab = tabValue;
+            dispatch(updateThreadState({selectedThread: null}));
             if (tabValue === 'reset') {
-                dispatch(updateThreadState({selectedThread: null}));
                 setCurrentCacheTab('');
             }
             getAllThread();
         }
-    }, [dispatch, tabValue])
+    }, [dispatch, getAllThread, tabValue])
 
     const toggleSelectAllThreads = (checked: boolean) => {
         dispatch(updateThreadState({
