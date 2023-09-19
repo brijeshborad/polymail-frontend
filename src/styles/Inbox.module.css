@@ -151,10 +151,6 @@
     border-color: #08162F;
 }
 
-.mailOtherOption {
-    margin-left: 20px;
-}
-
 .mailOtherOption button {
     border: 1px solid rgba(93, 95, 98, 0.14);
     border-radius: 50px;
@@ -214,6 +210,7 @@
 
 .mailDetailsSelected {
   border-color: #76A2FF;
+  box-shadow: 0 0 0 3px #e5e7eb;
 }
 
 .mailDetails .SenderIcon svg {
