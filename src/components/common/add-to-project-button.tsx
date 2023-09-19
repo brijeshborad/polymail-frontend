@@ -26,7 +26,7 @@ import {Toaster} from "@/components/common/toaster";
 export function AddToProjectButton() {
     const {isOpen, onOpen, onClose} = useDisclosure();
     const dispatch = useDispatch();
-    const {selectedThread} = useSelector((state: StateType) => state.threads);
+    const {selectedThread, multiSelection} = useSelector((state: StateType) => state.threads);
 
     let {projects} = useSelector((state: StateType) => state.projects);
     const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
@@ -69,27 +69,35 @@ export function AddToProjectButton() {
     }, [projects])
 
     const addThreadToProject = useCallback((item: Project) => {
-        if (selectedThread && selectedThread.id) {
+        const isThreadMultiSelection = (multiSelection !== undefined && multiSelection.length > 0)
+
+        if ((selectedThread && selectedThread.id || (multiSelection !== undefined && multiSelection.length > 0))) {
             let reqBody = {
-                threadIds: [
-                    selectedThread.id,
-                ],
+                threadIds: isThreadMultiSelection ? multiSelection : [selectedThread!.id],
                 roles: [
                     'n/a',
                 ],
                 groupType: 'project',
                 groupId: item.id
             }
-            setSuccessMessage({
-                desc: 'Thread was added to ' + item.name?.toLowerCase() + '.',
-                title: selectedThread?.subject || '',
-            })
+
+            if(isThreadMultiSelection) {
+              setSuccessMessage({
+                title: `${multiSelection.length} threads added to ${item.name?.toLowerCase()}`,
+                desc: ''
+              })
+            } else {
+              setSuccessMessage({
+                  desc: 'Thread was added to ' + item.name?.toLowerCase() + '.',
+                  title: selectedThread?.subject || '',
+              })
+            }
             dispatch(addItemToGroup(reqBody));
             if (addToProjectRef.current) {
                 addToProjectRef.current?.click();
             }
         }
-    }, [dispatch, selectedThread]);
+    }, [dispatch, selectedThread, multiSelection]);
 
     useEffect(() => {
         if (searchValue.length > 0) {
