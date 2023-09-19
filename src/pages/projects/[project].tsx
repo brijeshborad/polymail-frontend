@@ -164,6 +164,10 @@ function ProjectInbox() {
         onDeleteModalClose()
     }
 
+    const capitalizeFLetter = (value: string) => {
+        return value[0].toUpperCase() + value.slice(1)
+    }
+
     useEffect(() => {
         if (success && selectedMember && selectedMember?.id) {
             if (selectedMember && selectedMember?.invite) {
@@ -246,7 +250,7 @@ function ProjectInbox() {
                                                 <MenuButton className={styles.addMemberDropDownButton} minWidth={'65px'}
                                                             color={'#374151'} backgroundColor={'transparent'} h={'auto'}
                                                             padding={0} as={Button}
-                                                            rightIcon={<ChevronDownIcon/>}> Member </MenuButton>
+                                                            rightIcon={<ChevronDownIcon/>}> {capitalizeFLetter(membersInputs.role)} </MenuButton>
                                                 <MenuList className={'drop-down-list'}>
                                                     {PROJECT_ROLES.map((role, roleIndex) => {
                                                         return <MenuItem onClick={() => {
