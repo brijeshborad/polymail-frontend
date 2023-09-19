@@ -3,7 +3,10 @@ import styles from '@/styles/Home.module.css';
 import React from 'react';
 import { EnergyIcon } from '@/icons';
 import { CloseIcon } from '@chakra-ui/icons';
-import { FeedComponent } from './feedComponent';
+import dynamic from 'next/dynamic'
+const FeedComponent = dynamic(
+    () => import('./feedComponent').then((mod) => mod.FeedComponent)
+)
 
 export const FeedSidebar = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();

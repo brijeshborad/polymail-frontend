@@ -6,7 +6,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {Account} from "@/models";
 import {googleAuthLink} from "@/redux/auth/action-reducer";
-import Index from "@/pages/settings/index";
+const Index = dynamic(() => import('@/pages/settings/index').then(mod => mod.default));
 import withAuth from "@/components/auth/withAuth";
 import {CloseIcon} from "@chakra-ui/icons";
 import {removeAccountDetails, updateAccountState} from "@/redux/accounts/action-reducer";
@@ -14,6 +14,7 @@ import LocalStorageService from "@/utils/localstorage.service";
 import RemoveRecordModal from "@/components/common/delete-record-modal";
 import Router, {useRouter} from "next/router";
 import {Toaster} from "@/components/common";
+import dynamic from "next/dynamic";
 
 function EmailAddress() {
     let {accounts, success, selectedAccount} = useSelector((state: StateType) => state.accounts);

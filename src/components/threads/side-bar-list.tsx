@@ -8,10 +8,10 @@ import { updateDraftState } from "@/redux/draft/action-reducer";
 import { useDispatch, useSelector } from "react-redux";
 import { StateType } from "@/types";
 import { ThreadListProps } from "@/types";
-import { ThreadsSideBarListItem } from "./side-bar-list-item";
+const ThreadsSideBarListItem = dynamic(import("./side-bar-list-item").then(mod => mod.ThreadsSideBarListItem));
 import { useRouter } from "next/router";
-import { ComposeBox } from "@/components/inbox";
-//import { useSocket } from '@/hooks/use-socket.hook';
+const ComposeBox = dynamic(() => import("@/components/inbox").then(mod => mod.ComposeBox));
+import dynamic from "next/dynamic";
 
 
 export function ThreadsSideBarList(props: ThreadListProps) {

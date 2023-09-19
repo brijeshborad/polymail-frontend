@@ -14,8 +14,9 @@ import {
 import {CheckCircleIcon} from "@chakra-ui/icons";
 import React from "react";
 import {MasterCardIcon} from "@/icons";
-import Index from "@/pages/settings/index";
+const Index = dynamic(() => import('@/pages/settings/index').then(mod => mod.default));
 import withAuth from "@/components/auth/withAuth";
+import dynamic from "next/dynamic";
 
 function Billing() {
     const {isOpen, onOpen, onClose} = useDisclosure();
@@ -125,7 +126,7 @@ function Billing() {
                                         <Button className={styles.settingSave} variant='ghost'>Add</Button>
                                     </ModalFooter>
                                 </ModalContent>
-                            </Modal>                    
+                            </Modal>
                         </Flex>
                     </Flex>
                 </GridItem>

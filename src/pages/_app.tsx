@@ -6,7 +6,10 @@ import { Provider } from 'react-redux';
 import chakraTheme from '@chakra-ui/theme';
 import { Inter } from 'next/font/google';
 import Head from 'next/head';
-import { Header } from '@/components/common';
+import dynamic from 'next/dynamic'
+const Header = dynamic(
+    () => import('@/components/common').then((mod) => mod.Header)
+)
 import React from 'react';
 import { useRouter } from 'next/router';
 import { HEADER_NOT_ALLOWED_PATHS } from '@/utils/constants';

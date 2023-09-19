@@ -5,8 +5,9 @@ import { Flex, RadioGroup, Radio, Text, Button, Menu, MenuButton, MenuList, Menu
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
-import MessageScheduleCustom from "./message-schedule-custom";
+const MessageScheduleCustom = dynamic(() => import("./message-schedule-custom").then(mod => mod.default));
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 
 dayjs.extend(utc)
 dayjs.extend(timezone)

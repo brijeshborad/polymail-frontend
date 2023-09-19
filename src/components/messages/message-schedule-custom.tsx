@@ -9,8 +9,9 @@ import { MessageScheduleCustomProps } from "@/types/props-types/message-schedule
 import { timezoneList } from "@/utils/timezones";
 import { ChevronDownIcon, SearchIcon } from "@chakra-ui/icons";
 import React from "react";
-import TimePicker from "../common/time-picker";
+const TimePicker = dynamic(() => import("../common/time-picker").then(mod => mod.default));
 import { TimePickerScheduledDateProps } from "@/types/props-types/time-picker.props.type";
+import dynamic from "next/dynamic";
 
 dayjs.extend(utc)
 dayjs.extend(timezone)

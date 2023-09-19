@@ -19,8 +19,9 @@ import {getAllProjects} from "@/redux/projects/action-reducer";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 import {Toaster} from "@/components/common";
 import {Thread} from "@/models";
-import {AddToProjectButton} from "@/components/common";
+const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
 import {undoBodyData} from "@/redux/undo-body/action-reducer";
+import dynamic from "next/dynamic";
 
 export function MessagesHeader({headerType}: MessageHeaderTypes) {
     const {selectedThread, threads, updateSuccess} = useSelector((state: StateType) => state.threads);

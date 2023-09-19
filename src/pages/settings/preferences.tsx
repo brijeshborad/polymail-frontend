@@ -15,7 +15,7 @@ import {
     Button, Input
 } from "@chakra-ui/react";
 import React, {useEffect, useState} from "react";
-import Index from "@/pages/settings/index";
+const Index = dynamic(() => import('@/pages/settings/index').then(mod => mod.default));
 import withAuth from "@/components/auth/withAuth";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
@@ -24,6 +24,7 @@ import {editOrganization, updateOrganizationState} from "@/redux/organizations/a
 import {CloseIcon, CheckIcon} from "@chakra-ui/icons";
 import {TrashIcon, EditIcon} from "@/icons";
 import {isDomain} from "@/utils/common.functions";
+import dynamic from "next/dynamic";
 
 function Preferences() {
     const {

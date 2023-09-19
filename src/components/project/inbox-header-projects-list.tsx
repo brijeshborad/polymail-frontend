@@ -6,9 +6,10 @@ import {StateType} from "@/types";
 import {Project} from "@/models";
 import Router from "next/router";
 import {PlusIcon} from "@/icons/plus.icon";
-import CreateNewProjectModal from "@/components/project/create-new-project";
+const CreateNewProjectModal = dynamic(() => import("@/components/project/create-new-project").then(mod => mod.default));
 import {updateThreadState} from "@/redux/threads/action-reducer";
 import {updateMessageState} from "@/redux/messages/action-reducer";
+import dynamic from "next/dynamic";
 
 export function InboxHeaderProjectsList() {
     const {projects, isLoading} = useSelector((state: StateType) => state.projects);

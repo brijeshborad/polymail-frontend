@@ -6,11 +6,18 @@ import withAuth from "@/components/auth/withAuth";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {User} from "@/models";
-import {InboxHeaderProjectsList} from "@/components/project/inbox-header-projects-list";
-import {Message} from "@/components/messages";
+import dynamic from 'next/dynamic'
+const InboxHeaderProjectsList = dynamic(
+    () => import('@/components/project/inbox-header-projects-list').then((mod) => mod.InboxHeaderProjectsList)
+)
+const Message = dynamic(
+    () => import('@/components/messages').then((mod) => mod.Message)
+)
 import {getAllProjects} from "@/redux/projects/action-reducer";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
-import SelectedThreads from "@/components/threads/selected-threads";
+const SelectedThreads = dynamic(
+    () => import('@/components/threads/selected-threads').then((mod) => mod.default)
+)
 
 function InboxPage() {
     const [size, setSize] = useState<number>(0);
@@ -55,7 +62,7 @@ function InboxPage() {
             <Flex padding={'16px 40px 15px'} backgroundColor={'#FFFFFF'} borderBottom={'1px solid #F3F4F6'} gap={3}
                                  overflowX={'auto'}>
                 {isLoading && <SkeletonLoader height={'36px'} skeletonLength={6} width={'216px'}/>}
-                <InboxHeaderProjectsList/> 
+                <InboxHeaderProjectsList/>
             </Flex>
 
             <div className={styles.mailBg}>

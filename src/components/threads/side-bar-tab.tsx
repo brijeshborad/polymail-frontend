@@ -2,11 +2,12 @@ import {Button, Checkbox, Flex} from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
 import {StateType, TabProps} from "@/types";
 import React, {useState, useEffect} from "react";
-import {ThreadsSideBarList} from "@/components/threads";
+const ThreadsSideBarList = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarList));
 import {getAllThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import {useRouter} from "next/router";
+import dynamic from "next/dynamic";
 
 export function ThreadsSideBarTab(props: TabProps) {
     const {multiSelection, threads, isLoading, success} = useSelector((state: StateType) => state.threads)

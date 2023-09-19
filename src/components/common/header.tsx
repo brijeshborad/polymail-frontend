@@ -18,7 +18,10 @@ import { googleAuthLink } from '@/redux/auth/action-reducer';
 import { updateLastMessage } from '@/redux/socket/action-reducer';
 import { updateMessageState } from '@/redux/messages/action-reducer';
 import { Toaster } from '@/components/common';
-import { FeedSidebar } from './feedSidebar';
+import dynamic from 'next/dynamic'
+const FeedSidebar = dynamic(
+    () => import('./feedSidebar').then((mod) => mod.FeedSidebar)
+)
 
 export function Header() {
     const dispatch = useDispatch();

@@ -24,14 +24,15 @@ import {
   updateMessageState
 } from "@/redux/messages/action-reducer";
 import {Message as MessageModel, MessageDraft, MessagePart, MessageAttachments} from "@/models";
-import {MessagesHeader} from "@/components/messages/messages-header";
+const MessagesHeader = dynamic(() => import('@/components/messages/messages-header').then(mod => mod.MessagesHeader));
+const MessageBox = dynamic(() => import('@/components/messages/message-box').then(mod => mod.MessageBox));
+const MessageReplyBox = dynamic(() => import('@/components/messages/message-reply-box').then(mod => mod.MessageReplyBox));
 import {updateDraftState} from "@/redux/draft/action-reducer";
-import {MessageBox} from "@/components/messages/message-box";
-import {MessageReplyBox} from "@/components/messages/message-reply-box";
 import {debounce} from "@/utils/common.functions";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import {updateThreadState, updateThreads} from "@/redux/threads/action-reducer";
 import {EyeSlashedIcon} from "@/icons/eye-slashed.icon";
+import dynamic from "next/dynamic";
 
 let cacheMessages: { [key: string]: { body: MessagePart, attachments: MessageAttachments[] } } = {};
 

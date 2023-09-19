@@ -15,7 +15,7 @@ import {
     Tr, useDisclosure, Image, Grid, Input
 } from "@chakra-ui/react";
 import React, {ChangeEvent, useEffect, useState} from "react";
-import Index from "@/pages/settings/index";
+const Index = dynamic(() => import('@/pages/settings/index').then(mod => mod.default));
 import {MenuIcon, TextIcon} from "@/icons";
 import withAuth from "@/components/auth/withAuth";
 import {
@@ -32,6 +32,7 @@ import {PROJECT_ROLES} from "@/utils/constants";
 import RemoveRecordModal from "@/components/common/delete-record-modal";
 import {deleteMemberFromOrganization} from "@/redux/memberships/action-reducer";
 import {Toaster} from "@/components/common";
+import dynamic from "next/dynamic";
 
 function Members() {
     const {isOpen: InviteModelIsOpen, onOpen: InviteModelOnOpen, onClose: InviteModelOnClose} = useDisclosure();

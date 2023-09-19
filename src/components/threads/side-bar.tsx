@@ -29,14 +29,15 @@ import {useDispatch, useSelector} from "react-redux";
 import {getAllThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 import {Message, Thread} from "@/models";
-import {ThreadsSideBarTab} from "@/components/threads";
+import dynamic from "next/dynamic";
+const ThreadsSideBarTab = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarTab));
 import {updateDraftState} from "@/redux/draft/action-reducer";
 import {updateLastMessage} from "@/redux/socket/action-reducer";
 import {SmallCloseIcon, TriangleDownIcon} from "@chakra-ui/icons";
 import {useSocket} from "@/hooks/use-socket.hook";
-import {ComposeBox} from "@/components/inbox/compose-box";
+const ComposeBox = dynamic(() => import("@/components/inbox/compose-box").then(mod => mod.ComposeBox));
 import {useRouter} from "next/router";
-import {AddToProjectButton} from "@/components/common";
+const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
 
 let cacheThreads: { [key: string]: Thread[] } = {};
 let currentCacheTab = 'INBOX';

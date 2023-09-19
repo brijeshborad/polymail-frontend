@@ -17,7 +17,10 @@ import {Project} from "@/models";
 import {addItemToGroup, updateMembershipState} from "@/redux/memberships/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import CreateNewProjectModal from "@/components/project/create-new-project";
+import dynamic from 'next/dynamic'
+const CreateNewProjectModal = dynamic(
+    () => import('@/components/project/create-new-project').then((mod) => mod.default)
+)
 import {Toaster} from "@/components/common/toaster";
 
 export function AddToProjectButton() {
