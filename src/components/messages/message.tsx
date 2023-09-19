@@ -250,8 +250,9 @@ export function Message() {
 
         // pin the reply box when there is scroll in message list
         debounce(() => {
-          setHasScrollableContent(messagesWrapperRef.current.scrollHeight > messagesWrapperRef.current.offsetHeight)
-
+          if (messagesWrapperRef.current) {
+            setHasScrollableContent(messagesWrapperRef.current.scrollHeight > messagesWrapperRef.current.offsetHeight)
+          }
         }, 100)
       }
     }, 500)

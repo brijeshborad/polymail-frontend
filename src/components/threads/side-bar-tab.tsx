@@ -3,7 +3,7 @@ import styles from "@/styles/Inbox.module.css";
 import {StateType, TabProps} from "@/types";
 import React, {useState, useEffect, useCallback} from "react";
 
-const ThreadsSideBarList = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarList));
+const ThreadsSideBarList = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarList), {ssr: false});
 import {getAllThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
@@ -118,7 +118,7 @@ export function ThreadsSideBarTab(props: TabProps) {
                 dispatch(updateThreadState({threads: threads}));
             }
         }
-    }, [threadListSuccess, threads])
+    }, [dispatch, threadListSuccess, threads])
 
     useEffect(() => {
         if (threads && threads.length > 0 && !selectedThread && !isLoading) {
@@ -128,7 +128,7 @@ export function ThreadsSideBarTab(props: TabProps) {
 
     useEffect(() => {
         dispatch(updateThreadState({selectedThread: null}));
-    }, [tabName])
+    }, [dispatch, tabName])
 
     useEffect(() => {
         if (isLoading && threads && threads.length >= 1) {

@@ -15,7 +15,7 @@ export function Toaster(props: ToasterProps) {
     return (
         toast({
             id: polyToasterId,
-            duration: (props.type !== 'reauth') ? 3000000 : null,
+            duration: (props.type !== 'reauth') ? 3000 : null,
             isClosable: props.type !== 'reauth',
             render: () => {
                 return (

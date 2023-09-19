@@ -56,7 +56,7 @@ function InboxPage() {
             <Flex padding={'16px 40px 15px'} backgroundColor={'#FFFFFF'} borderBottom={'1px solid #F3F4F6'} gap={3}
                                  overflowX={'auto'}>
                 {isLoading && <SkeletonLoader height={'36px'} skeletonLength={6} width={'216px'}/>}
-                <InboxHeaderProjectsList/>
+                <InboxHeaderProjectsList size={size}/>
             </Flex>
 
             <div className={styles.mailBg}>
