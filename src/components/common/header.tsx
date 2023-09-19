@@ -252,7 +252,6 @@ export function Header() {
                 threads: [],
                 success: false,
                 updateSuccess: false,
-                tabValue: 'reset',
                 selectedThread: null,
             }),
         );

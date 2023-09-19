@@ -123,7 +123,6 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
 
     const changeEmailTabs = (value: string) => {
         if (getCurrentCacheTab() !== value) {
-            dispatch(updateThreadState({selectedThread: null, isLoading: true}));
             dispatch(updateThreadState({tabValue: tab}));
             searchCancel();
         }

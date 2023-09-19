@@ -32,7 +32,7 @@ export function ThreadsSideBarTab(props: TabProps) {
     const getAllThread = useCallback((type: string = '') => {
         if (selectedAccount) {
             let resetState = true;
-            if (!tab) {
+            if (!tab || tab === 'reset') {
                 return;
             }
             if (getCurrentCacheTab() !== tab) {
@@ -99,9 +99,6 @@ export function ThreadsSideBarTab(props: TabProps) {
         if (tabValue) {
             tab = tabValue;
             dispatch(updateThreadState({selectedThread: null}));
-            if (tabValue === 'reset') {
-                setCurrentCacheTab('');
-            }
             getAllThread();
         }
     }, [dispatch, getAllThread, tabValue])
