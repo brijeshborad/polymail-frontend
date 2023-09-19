@@ -12,7 +12,6 @@ import { Account, Message, Organization, User } from '@/models';
 import { updateAccountState } from '@/redux/accounts/action-reducer';
 import LocalStorageService from '@/utils/localstorage.service';
 import { getAllThreads, updateThreadState } from '@/redux/threads/action-reducer';
-import { useSocket } from '@/hooks/use-socket.hook';
 import { updateUsersDetailsSuccess, updateUserState } from '@/redux/users/action-reducer';
 import { updateLastMessage } from '@/redux/socket/action-reducer';
 import { updateMessageState } from '@/redux/messages/action-reducer';
@@ -30,13 +29,12 @@ export function Header() {
     const { googleAuthRedirectionLink } = useSelector((state: StateType) => state.auth);
     const { userDetails, profilePicture } = useSelector((state: StateType) => state.users);
     const [userData, setUserData] = useState<User>();
-    const { newMessage } = useSelector((state: StateType) => state.socket);
+    const { newMessage, sendJsonMessage } = useSelector((state: StateType) => state.socket);
     const [isWindowActive, setWindowActive] = useState<boolean>(true);
     const [showSettingsMenu, setShowSettingsMenu] = useState(false);
 
     const { user } = useSelector((state: StateType) => state.auth);
     const [searchString, setSearchString] = useState<string>('');
-    const { sendJsonMessage } = useSocket();
     const router = useRouter();
 
     let currentRoute = router.pathname.split('/');
@@ -225,19 +223,23 @@ export function Header() {
     const handleKeyPress = (event: KeyboardEvent | any) => {
         if (event.key.toLowerCase() === 'enter') {
             dispatch(updateThreadState({ isThreadSearched: false }));
-            sendJsonMessage({
-                userId: userDetails?.id,
-                name: 'SearchCancel',
-            });
-            if (searchString) {
-                dispatch(updateThreadState({ threads: [], isThreadSearched: true, isLoading: true }));
+            if (sendJsonMessage) {
                 sendJsonMessage({
                     userId: userDetails?.id,
-                    name: 'SearchRequest',
-                    data: {
-                        query: searchString,
-                    },
+                    name: 'SearchCancel',
                 });
+            }
+            if (searchString) {
+                dispatch(updateThreadState({ threads: [], isThreadSearched: true, isLoading: true }));
+                if (sendJsonMessage) {
+                    sendJsonMessage({
+                        userId: userDetails?.id,
+                        name: 'SearchRequest',
+                        data: {
+                            query: searchString,
+                        },
+                    });
+                }
                 return;
             }
             if (selectedAccount && selectedAccount.id) {

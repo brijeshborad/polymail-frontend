@@ -34,7 +34,6 @@ import dynamic from "next/dynamic";
 const ThreadsSideBarTab = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarTab));
 import {updateDraftState} from "@/redux/draft/action-reducer";
 import {SmallCloseIcon, TriangleDownIcon} from "@chakra-ui/icons";
-import {useSocket} from "@/hooks/use-socket.hook";
 
 const ComposeBox = dynamic(() => import("@/components/inbox/compose-box").then(mod => mod.ComposeBox));
 import {getCurrentCacheTab} from "@/utils/common.functions";
@@ -54,7 +53,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     const {success: draftSuccess, updatedDraft} = useSelector((state: StateType) => state.draft);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {userDetails} = useSelector((state: StateType) => state.users);
-    const {sendJsonMessage} = useSocket();
+    const { sendJsonMessage } = useSelector((state: StateType) => state.socket);
     const dispatch = useDispatch();
     const {isOpen, onOpen, onClose} = useDisclosure();
 
@@ -112,10 +111,12 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
 
     const searchCancel = (callAPI: boolean = false) => {
         dispatch(updateThreadState({isThreadSearched: false}));
-        sendJsonMessage({
-            "userId": userDetails?.id,
-            "name": "SearchCancel",
-        });
+        if (sendJsonMessage) {
+            sendJsonMessage({
+                "userId": userDetails?.id,
+                "name": "SearchCancel",
+            });
+        }
         if (selectedAccount && selectedAccount.id && callAPI) {
             dispatch(getAllThreads({mailbox: tabValue, account: selectedAccount.id}));
         }

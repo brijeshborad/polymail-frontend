@@ -57,7 +57,6 @@ function ProjectInbox() {
 
     const router = useRouter();
     const dispatch = useDispatch();
-    //const { sendJsonMessage } = useSocket();
 
     /*
     useEffect(() => {

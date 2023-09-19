@@ -29,7 +29,7 @@ export function InboxHeaderProjectsList(props: { size: number }) {
     }, [projects, maxSize]);
 
     useEffect(() => {
-        setMaxSize(Math.floor(props.size / 216) - 1)
+        setMaxSize(Math.floor(props.size / 216) - 2)
     }, [props.size])
 
     const changePage = () => {

@@ -53,11 +53,11 @@ const projectsSlice = createSlice({
             }
         },
         createProjectsError: (state: InitialProjectState, {payload: error}: PayloadAction<{ error: any }>) => {
-            return {...state, project: null, isLoading: false, error}
+            return {...state, project: null, isLoading: false, error, createProjectSuccess: false}
         },
 
         getProjectMembers: (state: InitialProjectState, _action: PayloadAction<{ projectId: string }>) => {
-            return {...state, members: [], isLoading: true, error: null, createProjectSuccess: false}
+            return {...state, members: [], isLoading: true, error: null}
         },
         getProjectMembersSuccess: (state: InitialProjectState, {payload: members}: PayloadAction<{}>) => {
             return {...state, members, isLoading: false, error: null}
