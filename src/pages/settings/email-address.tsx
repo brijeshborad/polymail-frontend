@@ -137,10 +137,7 @@ function EmailAddress() {
 
                                 </Flex>
                             </Flex>
-                            <Flex align={'center'} gap={2} mt={10} className={styles.settingButton}>
-                                <Button className={styles.settingSave}>Save</Button>
-                                <Button className={styles.settingCancel}>Cancel</Button>
-                            </Flex> </Flex>
+                        </Flex>
                     </Flex>
                 </GridItem>
             </Grid>
