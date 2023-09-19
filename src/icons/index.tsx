@@ -34,3 +34,4 @@ export * from './disney-d.icon';
 export * from './onboarding-logo.icon';
 export * from './upload.icon';
 export * from './disney-d.icon';
+export * from './rep.icon';

@@ -299,7 +299,6 @@ export function Message() {
       setExpandedRow(index);
     }
   };
-console.log({expandedRow})
   return (
     <Box
       className={`${styles.mailBox} ${isThreadFocused ? styles.mailBoxFocused : ''}`}

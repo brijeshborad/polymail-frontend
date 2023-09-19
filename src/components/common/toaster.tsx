@@ -3,6 +3,7 @@ import {ToasterProps} from "@/types/props-types/toaster.type";
 import styles from "@/styles/Home.module.css";
 import {CheckIcon, SmallCloseIcon} from "@chakra-ui/icons";
 import React from "react";
+import {RepIcon} from "@/icons";
 
 const {toast} = createStandaloneToast()
 
@@ -14,7 +15,7 @@ export function Toaster(props: ToasterProps) {
     return (
         toast({
             id: polyToasterId,
-            duration: (props.type !== 'reauth') ? 3000 : null,
+            duration: (props.type !== 'reauth') ? 3000000 : null,
             isClosable: props.type !== 'reauth',
             render: () => {
                 return (
@@ -57,7 +58,7 @@ export function Toaster(props: ToasterProps) {
                                   color={'#FFFFFF'}
                                   onClick={() => props.undoUpdateRecordClick ? props.undoUpdateRecordClick() : null} ml={3}
                                   height={"auto"}
-                                  padding={'7px 20px'} borderRadius={'20px'}>Undo</Button>
+                                  padding={'7px 20px'} borderRadius={'20px'}><RepIcon /></Button>
                         </>
                       )}
                         {['success', 'error', 'undo_changes'].includes(props.type) && (

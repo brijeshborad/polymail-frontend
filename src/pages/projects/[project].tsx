@@ -38,6 +38,7 @@ import {Message} from "@/components/messages";
 import {PROJECT_ROLES} from "@/utils/constants";
 import RemoveRecordModal from "@/components/common/delete-record-modal";
 import {Toaster} from "@/components/common";
+import {updateThreadState} from "@/redux/threads/action-reducer";
 
 function ProjectInbox() {
     const {members, project, invitees} = useSelector((state: StateType) => state.projects);
@@ -56,6 +57,10 @@ function ProjectInbox() {
     const [selectedMember, setSelectedMember] = useState<any>(null);
 
     const router = useRouter();
+
+    useEffect(() => {
+        dispatch(updateThreadState({selectedThread: null}));
+    }, [])
 
     const dispatch = useDispatch();
     //const { sendJsonMessage } = useSocket();
@@ -85,6 +90,9 @@ function ProjectInbox() {
     */
 
     useEffect(() => {
+        console.log('router.w2www.project', router.query.project)
+    }, [router.query.project])
+    useEffect(() => {
         if (router.query.project) {
             let projectId = router.query.project as string;
             dispatch(getProjectById({id: projectId}));
@@ -94,7 +102,7 @@ function ProjectInbox() {
     }, [router.query.project, dispatch])
 
     useEffect(() => {
-        if (membershipSuccess) {
+        if (membershipSuccess && router.query.project) {
             dispatch(updateMembershipState({success: false}));
             let projectId = router.query.project as string;
             dispatch(getProjectMembersInvites({projectId: projectId}));

@@ -29,45 +29,50 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
     let {undoBody} = useSelector((state: StateType) => state.undoBody);
 
     const dispatch = useDispatch();
-    const [successMessage, setSuccessMessage] = useState<{ desc: string, title: string }[]>([]);
-    const {toast} = createStandaloneToast()
+    const [successMessage, setSuccessMessage] = useState<{ desc: string, title: string, id: string, mailBoxes: string[] }[]>([]);
+    const { toast } = createStandaloneToast()
     const [mailBoxName, setMailBoxName] = useState<string>('');
 
     useEffect(() => {
         if (updateSuccess && successMessage.length > 0) {
             let polyToast = `poly-toast-${new Date().getTime().toString()}`;
             let successToastMessage: any = successMessage[0];
-            Toaster({
-                desc: successToastMessage.desc,
-                title: successToastMessage.title || '',
-                type: undoBody ? 'undo_changes' : 'success',
-                id: polyToast,
-                ...(undoBody ? {
-                    undoUpdateRecordClick: () => {
-                        if (undoBody && undoBody.id) {
-                            let body = {
-                                mailboxes: undoBody.mailboxes || []
+            if (successToastMessage) {
+                Toaster({
+                    desc: successToastMessage.desc,
+                    title: successToastMessage.title || '',
+                    type: undoBody ? 'undo_changes': 'success',
+                    id: polyToast,
+                    ...(undoBody ? {
+                        undoUpdateRecordClick: () => {
+                            if (successToastMessage && successToastMessage.id) {
+                                let body = {
+                                    mailboxes: successToastMessage.mailboxes || []
+                                }
+                                dispatch(undoBodyData(null));
+                                dispatch(updateThreads({id: successToastMessage.id, body}));
+                                successMessage.push({
+                                    desc: 'Thread was moved from ' + mailBoxName.toLowerCase() + '.',
+                                    title: successToastMessage?.title || '',
+                                    id: successToastMessage?.id,
+                                    mailBoxes: successToastMessage?.mailBoxes
+                                });
+                                setSuccessMessage(successMessage)
                             }
-                            dispatch(undoBodyData(null));
-                            dispatch(updateThreads({id: undoBody.id, body}));
-                            successMessage.push({
-                                desc: 'Thread was moved from ' + mailBoxName.toLowerCase() + '.',
-                                title: undoBody?.subject || '',
-                            });
-                            setSuccessMessage(successMessage)
+                            toast.close(`${polyToast}`);
                         }
-                        toast.close(`${polyToast}`);
-                    }
-                } : {})
-            })
-            successMessage.splice(0, 1);
-            setSuccessMessage(successMessage);
-            dispatch(updateThreadState({updateSuccess: false}));
-            if (successMessage.length > 0) {
-                setTimeout(() => {
-                    dispatch(updateThreadState({updateSuccess: true}));
-                }, 100);
+                    }: {})
+                })
+                successMessage.splice(0, 1);
+                setSuccessMessage(successMessage);
+                dispatch(updateThreadState({updateSuccess: false}));
+                if (successMessage.length > 0) {
+                    setTimeout(() => {
+                        dispatch(updateThreadState({updateSuccess: true}));
+                    }, 100);
+                }
             }
+
         }
 
     }, [updateSuccess, dispatch, successMessage]);
@@ -76,14 +81,17 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
     useEffect(() => {
         if (membershipSuccess && successMessage) {
             let successToastMessage: any = successMessage[0];
-            Toaster({
-                desc: successToastMessage.desc,
-                title: successToastMessage.title || '',
-                type: 'success'
-            })
-            successMessage.splice(0, 1);
-            setSuccessMessage(successMessage);
-            dispatch(updateMembershipState({success: false}));
+            if (successToastMessage) {
+                Toaster({
+                    desc: successToastMessage.desc,
+                    title: successToastMessage.title || '',
+                    type: 'success'
+                })
+                successMessage.splice(0, 1);
+                setSuccessMessage(successMessage);
+                dispatch(updateMembershipState({success: false}));
+            }
+
         }
     }, [membershipSuccess, dispatch, successMessage]);
 
@@ -157,6 +165,8 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                 successMessage.push({
                     desc: 'Thread was moved to ' + messageBox.toLowerCase() + '.',
                     title: selectedThread?.subject || '',
+                    id: selectedThread?.id,
+                    mailBoxes: selectedThread?.mailboxes || []
                 })
                 setSuccessMessage(successMessage)
             }

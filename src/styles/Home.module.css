@@ -432,6 +432,11 @@
     background-color: #1F2937;
 }
 
+.mailToaster .toasterUndoButton svg {
+    stroke: #FFFFFF;
+    fill: #FFF;
+}
+
 .mailToaster .toasterCloseIcon svg {
     width: 20px;
     height: 20px;
