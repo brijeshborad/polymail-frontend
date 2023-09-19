@@ -15,10 +15,10 @@ import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {updateMembershipState} from "@/redux/memberships/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType, MessageHeaderTypes} from "@/types";
-import {getAllProjects} from "@/redux/projects/action-reducer";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 import {Toaster} from "@/components/common";
 import {Thread} from "@/models";
+
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
 import {undoBodyData} from "@/redux/undo-body/action-reducer";
 import dynamic from "next/dynamic";
@@ -30,14 +30,8 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
 
     const dispatch = useDispatch();
     const [successMessage, setSuccessMessage] = useState<{ desc: string, title: string }[]>([]);
-    const { toast } = createStandaloneToast()
+    const {toast} = createStandaloneToast()
     const [mailBoxName, setMailBoxName] = useState<string>('');
-
-
-    useEffect(() => {
-        dispatch(getAllProjects());
-    }, [dispatch]);
-
 
     useEffect(() => {
         if (updateSuccess && successMessage.length > 0) {
@@ -46,7 +40,7 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
             Toaster({
                 desc: successToastMessage.desc,
                 title: successToastMessage.title || '',
-                type: undoBody ? 'undo_changes': 'success',
+                type: undoBody ? 'undo_changes' : 'success',
                 id: polyToast,
                 ...(undoBody ? {
                     undoUpdateRecordClick: () => {
@@ -64,7 +58,7 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                         }
                         toast.close(`${polyToast}`);
                     }
-                }: {})
+                } : {})
             })
             successMessage.splice(0, 1);
             setSuccessMessage(successMessage);
@@ -179,7 +173,7 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                 </Flex>
 
                 <Flex gap={3} align={'center'}>
-                    {headerType === 'inbox' && <AddToProjectButton />}
+                    {headerType === 'inbox' && <AddToProjectButton/>}
                     {!(selectedThread?.mailboxes || []).includes("INBOX") && (
                         <Tooltip label='Inbox' placement='bottom' bg='gray.300' color='black'>
                             <div onClick={() => updateMailBox('INBOX')}>

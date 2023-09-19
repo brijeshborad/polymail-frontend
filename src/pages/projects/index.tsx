@@ -13,7 +13,7 @@ import Image from "next/image";
 import {BlueStarIcon, DragIcon, LockIcon, StarIcon, MenuIcon} from "@/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {getAllProjects, updateProject, updateOptimisticProject} from "@/redux/projects/action-reducer";
+import {updateProject, updateOptimisticProject} from "@/redux/projects/action-reducer";
 import Router, {useRouter} from "next/router";
 import {Project} from "@/models";
 import dynamic from 'next/dynamic'
@@ -32,10 +32,6 @@ function Index() {
     const [isOpenByRoute, setIsOpenByRoute] = useState<boolean>(false);
 
     const [itemList, setItemList] = useState<Project[]>([]);
-
-    useEffect(() => {
-        dispatch(getAllProjects());
-    }, [dispatch])
 
     useEffect(() => {
         if (projects && projects.length > 0) {

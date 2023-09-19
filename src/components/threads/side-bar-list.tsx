@@ -21,19 +21,10 @@ export function ThreadsSideBarList(props: ThreadListProps) {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [messageDetails, setMessageDetails] = useState<Message | null>(null);
-  //const {selectedAccount} = useSelector((state: StateType) => state.accounts);
   const routePaths = router.pathname.split('/');
-  //const {sendJsonMessage} = useSocket();
   const editorRef = useRef<any>(null);
   const [extraClassNames, setExtraClassNames] = useState<string>('');
   const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
-
-
-  useEffect(() => {
-    if (!isLoading) {
-      handleEditorScroll();
-    }
-  }, [isLoading]);
 
   const handleClick = useCallback((item: Thread) => {
     if (props.tab === 'DRAFT') {
@@ -67,6 +58,12 @@ export function ThreadsSideBarList(props: ThreadListProps) {
       }
     }
   }, [])
+
+  useEffect(() => {
+    if (threads) {
+      handleEditorScroll();
+    }
+  }, [threads, handleEditorScroll]);
 
   /*
   useEffect(() => {

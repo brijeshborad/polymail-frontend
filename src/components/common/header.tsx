@@ -7,13 +7,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import Router, { useRouter } from 'next/router';
 import { StateType } from '@/types';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { getAllOrganizations, updateOrganizationState } from '@/redux/organizations/action-reducer';
+import { updateOrganizationState } from '@/redux/organizations/action-reducer';
 import { Account, Message, Organization, User } from '@/models';
-import { getAllAccount, updateAccountState } from '@/redux/accounts/action-reducer';
+import { updateAccountState } from '@/redux/accounts/action-reducer';
 import LocalStorageService from '@/utils/localstorage.service';
 import { getAllThreads, updateThreadState } from '@/redux/threads/action-reducer';
 import { useSocket } from '@/hooks/use-socket.hook';
-import { getProfilePicture, updateUsersDetailsSuccess, updateUserState } from '@/redux/users/action-reducer';
+import { updateUsersDetailsSuccess, updateUserState } from '@/redux/users/action-reducer';
 import { googleAuthLink } from '@/redux/auth/action-reducer';
 import { updateLastMessage } from '@/redux/socket/action-reducer';
 import { updateMessageState } from '@/redux/messages/action-reducer';
@@ -88,7 +88,7 @@ export function Header() {
 
             Router.push('/settings/email-address');
         },
-        [connectGoogleAccount, toast],
+        [],
     );
 
     useEffect(() => {
@@ -124,16 +124,6 @@ export function Header() {
             window.location.href = googleAuthRedirectionLink.url || '';
         }
     }, [googleAuthRedirectionLink]);
-
-    const getAllAccountAndOrganizationsDetails = useCallback(() => {
-        dispatch(getAllAccount());
-        dispatch(getAllOrganizations());
-        dispatch(getProfilePicture({}));
-    }, [dispatch]);
-
-    useEffect(() => {
-        getAllAccountAndOrganizationsDetails();
-    }, [getAllAccountAndOrganizationsDetails]);
 
     useEffect(() => {
         let timer1 = setTimeout(() => {

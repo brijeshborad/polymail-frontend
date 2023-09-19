@@ -62,7 +62,7 @@ export function AddToProjectButton() {
             });
             dispatch(updateMembershipState({isThreadAddedToProjectSuccess: false}))
         }
-    }, [isThreadAddedToProjectSuccess])
+    }, [dispatch, isThreadAddedToProjectSuccess, successMessage])
 
     useEffect(() => {
         setFilteredProjects((projects || []));

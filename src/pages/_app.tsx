@@ -13,6 +13,7 @@ const Header = dynamic(
 import React from 'react';
 import { useRouter } from 'next/router';
 import { HEADER_NOT_ALLOWED_PATHS } from '@/utils/constants';
+import {CommonApiComponents} from "@/components/common";
 
 const { Button, Input, Menu, Checkbox, Heading, Divider, Alert, Modal, Popover, Tooltip, Textarea, Spinner, List, Select, Table, Progress, Skeleton, Radio, Drawer } =
     chakraTheme.components;
@@ -61,7 +62,11 @@ export default function App({ Component, ...rest }: AppProps) {
                     <link rel="icon" href="/favicon.ico" />
                 </Head>
                 <main className={`main ${inter.className}`}>
-                    {store.getState().auth?.user?.token && !HEADER_NOT_ALLOWED_PATHS.includes(router.pathname) && <Header />}
+                    {store.getState().auth?.user?.token && !HEADER_NOT_ALLOWED_PATHS.includes(router.pathname) &&
+                    <>
+                        <CommonApiComponents/>
+                        <Header/>
+                    </>}
                     <Component {...pageProps} />
                 </main>
             </ChakraBaseProvider>
