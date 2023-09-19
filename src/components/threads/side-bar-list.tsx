@@ -30,10 +30,10 @@ export function ThreadsSideBarList(props: ThreadListProps) {
 
 
   useEffect(() => {
-    if (!isLoading) {
+    if (!isLoading && threads && threads.length) {
       handleEditorScroll();
     }
-  }, [isLoading]);
+  }, [isLoading, threads?.length]);
 
   const handleClick = useCallback((item: Thread) => {
     if (props.tab === 'DRAFT') {
@@ -56,7 +56,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
       setExtraClassNames(prevState => prevState.replace('project-list-top-shadow', ''));
     }
     const container = editorRef.current;
-    if (container && !isLoading) {
+    if (container) {
       const scrollHeight = container?.scrollHeight;
       const containerHeight = container?.clientHeight;
       const scrollBottom = scrollHeight - containerHeight - editorRef.current.scrollTop;
@@ -66,7 +66,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
         setExtraClassNamesForBottom(prevState => prevState.replace('project-list-bottom-shadow', ''));
       }
     }
-  }, [isLoading])
+  }, [])
 
   /*
   useEffect(() => {
