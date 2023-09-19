@@ -25,6 +25,9 @@ export * from './socket/socket-state.type';
 //Draft
 export * from './draft/draft-state.type';
 
+// Key navigation
+export * from './key-navigation/key-navigation-state.type';
+
 // Props
 export * from './props-types/profile-button-props.type';
 export * from './props-types/time.type';
