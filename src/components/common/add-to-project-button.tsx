@@ -138,7 +138,13 @@ export function AddToProjectButton() {
 
     return (
         <>
-            <Menu isOpen={isDropdownOpen} onClose={() => setSearchValue('')}>
+            <Menu 
+              isOpen={isDropdownOpen} 
+              onClose={() => {
+                setDropDownOpen(false)
+                setSearchValue('')
+              }} 
+              closeOnBlur={true}>
                 <MenuButton
                     onClick={() => setDropDownOpen(!isDropdownOpen)}
                     className={styles.addToProject}
