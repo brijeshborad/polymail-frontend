@@ -71,7 +71,7 @@ export function InboxHeaderProjectsList() {
                 ))
                 }
 
-                {projectData && !!projectData.length &&
+                {projectData && projectData.length >= 5 &&
                     <Button alignItems={'center'} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
                             onClick={() => changePage()} padding={'7px'} minWidth={'216px'}
                             border={'1px solid #F3F4F6'} borderRadius={'8px'} h={'fit-content'}
@@ -85,7 +85,7 @@ export function InboxHeaderProjectsList() {
                             projects {projectDataLength.length > 5 && `(${projectDataLength.length - projectData.length})`}</Text>
                     </Button>
                 }
-                {!isLoading && projectData && !projectData.length &&
+                {!isLoading && projectData && projectData.length < 5 &&
                 <Button alignItems={'center'} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
                             onClick={() => { onOpen() }} padding={'7px'} minWidth={'216px'}
                             border={'1px dashed #E5E7EB'} borderRadius={'8px'} h={'fit-content'}
