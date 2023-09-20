@@ -34,6 +34,13 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     }
   }, [dispatch, multiSelection, selectedThread])
 
+  useEffect(() => {
+    // Make isThreadSearched as false when multiSelection is null or blank
+    if (selectedThread) {
+      currentSelectedThreads.push((threads || []).findIndex((thread: Thread) => thread.id === selectedThread.id))
+    }
+  }, [selectedThread, threads])
+
   const handleClick = useCallback((item: Thread, event: KeyboardEvent | any, index: number) => {
     // Check if Control key (or Command key on Mac) is held down
     if (event) {
