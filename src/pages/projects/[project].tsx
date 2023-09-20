@@ -45,6 +45,7 @@ function ProjectInbox() {
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {success: membershipSuccess} = useSelector((state: StateType) => state.memberships);
     const {isProjectRemoveSuccess, success} = useSelector((state: StateType) => state.memberships);
+    const [isManagerMembersOpen, setIsManagerMembersOpen] = useState<boolean>(false)
 
     const [size, setSize] = useState<number>(0);
     const [allowAdd, setAllowAdd] = useState<boolean>(false);
@@ -192,6 +193,22 @@ function ProjectInbox() {
         }
     }, [isProjectRemoveSuccess])
 
+    /**
+     * Detects if the iframe was clicked
+     */
+    const onWindowBlur = useCallback(() => {
+      setTimeout(() => {
+        setIsManagerMembersOpen(false)
+      });
+    }, []);
+
+    useEffect(() => {
+      window.addEventListener('blur', onWindowBlur);
+      return () => {
+          window.removeEventListener('blur', onWindowBlur);
+      };
+    }, [onWindowBlur]);
+
     return (
         <>
             <Flex direction={'column'} className={styles.projectPage}
@@ -218,12 +235,17 @@ function ProjectInbox() {
                         <div className={styles.userImage}>
                             <Image src="/image/user.png" width="36" height="36" alt=""/>
                         </div>
-                        <Menu>
+                        <Menu isOpen={isManagerMembersOpen} onClose={() => setIsManagerMembersOpen(false)}>
                         {({ onClose }) => (
                           <>
-                            <MenuButton as={Button} className={styles.manageMembers} ml={2} backgroundColor={'#000000'}
-                                        color={'#ffffff'} lineHeight={'1'} fontSize={'14px'} borderRadius={'8px'}
-                                        height={'auto'} padding={'11px 16px'}> Manage Members </MenuButton>
+                            <MenuButton
+                              onClick={() => setIsManagerMembersOpen(!isManagerMembersOpen)} 
+                              as={Button} className={styles.manageMembers} ml={2} backgroundColor={'#000000'}
+                              color={'#ffffff'} lineHeight={'1'} fontSize={'14px'} borderRadius={'8px'}
+                              height={'auto'} padding={'11px 16px'}
+                            >
+                              Manage Members
+                            </MenuButton>
                             <MenuList className={`${styles.manageMemberDropDown} drop-down-list`}>
                                 <Flex color={'#374151'} fontWeight={'500'} fontSize={'13px'} padding={'12px'}
                                       justifyContent={'space-between'} alignItems={'center'}

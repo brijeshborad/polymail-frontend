@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 const MessageScheduleCustom = dynamic(() => import("./message-schedule-custom").then(mod => mod.default));
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 
 dayjs.extend(utc)
@@ -50,6 +50,22 @@ export default function MessageSchedule({ date, onChange }: MessageScheduleProps
     closeScheduleDropdown()
     onChange(scheduledDate)
   }
+
+  /**
+   * Detects if the iframe was clicked
+   */
+  const onWindowBlur = useCallback(() => {
+    setTimeout(() => {
+      closeScheduleDropdown()
+    });
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('blur', onWindowBlur);
+    return () => {
+        window.removeEventListener('blur', onWindowBlur);
+    };
+  }, [onWindowBlur]);
 
   return (
     <Menu
