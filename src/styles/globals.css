@@ -552,6 +552,7 @@ div:has(> .mailSendToaster) {
 
 .project-list-shadow {
     position: relative;
+    user-select: none;
 }
 
 .project-list-shadow .project-list-top-shadow:before {

@@ -26,7 +26,7 @@ function CompleteProfile() {
 
     useEffect(() => {
         if (userDetails) {
-            setName(userDetails.firstName + " " + userDetails.lastName)
+            setName((userDetails.firstName ?? '') + " " + (userDetails.lastName ?? ''))
         }
         if (profilePicture && name) {
             router.push('/inbox')

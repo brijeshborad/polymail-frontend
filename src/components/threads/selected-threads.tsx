@@ -1,13 +1,14 @@
 import styles from "@/styles/Inbox.module.css";
 import { StateType } from "@/types";
-import { Box, Button, Image, Text } from "@chakra-ui/react";
+import {Box, Button, Image, Text, Tooltip} from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
 import { ArchiveIcon, TimeSnoozeIcon, TrashIcon } from "@/icons";
 import dynamic from "next/dynamic";
-import { batchUpdateThreads } from "@/redux/threads/action-reducer";
+import {batchUpdateThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import { Toaster } from "../common/toaster";
 import { MAILBOX_ARCHIVE, MAILBOX_SNOOZED, MAILBOX_TRASH } from "@/utils/constants";
+import React from "react";
 
 export default function SelectedThreads() {
   const { multiSelection: selectedThreadIds } = useSelector((state: StateType) => state.threads)
@@ -22,33 +23,18 @@ export default function SelectedThreads() {
     })
   }
 
-  const handleArchive = () => {
-    if(selectedThreadIds) {
-      dispatch(batchUpdateThreads({
+  const moveThreadToMailBoxes = (type: string) => {
+    if(selectedThreadIds && selectedThreadIds.length) {
+      let body = {
         threadIds: selectedThreadIds,
-        mailboxes: [MAILBOX_ARCHIVE]
+        mailboxes: [type]
+      }
+      dispatch(batchUpdateThreads(body))
+      notification(`${selectedThreadIds.length} ${messagePlural} has been ${type.toLowerCase()}`)
+      dispatch(updateThreadState({
+        isThreadSearched: false,
+        multiSelection: []
       }))
-      notification(`${selectedThreadIds.length} ${messagePlural} has been archived`)
-    }
-  }
-
-  const handleTrash = () => {
-    if(selectedThreadIds) {
-      dispatch(batchUpdateThreads({
-        threadIds: selectedThreadIds,
-        mailboxes: [MAILBOX_TRASH]
-      }))
-      notification(`${selectedThreadIds.length} ${messagePlural} has been moved to trash`)
-    }
-  }
-
-  const handleSnooze = () => {
-    if(selectedThreadIds) {
-      dispatch(batchUpdateThreads({
-        threadIds: selectedThreadIds,
-        mailboxes: [MAILBOX_SNOOZED]
-      }))
-      notification(`${selectedThreadIds.length} ${messagePlural} has been snoozed`)
     }
   }
 
@@ -67,9 +53,17 @@ export default function SelectedThreads() {
 
       <Box className={styles.addToProjectPlusActions}>
         <AddToProjectButton />
-        <Button variant='link' size='xs' onClick={handleArchive}><ArchiveIcon /></Button>
-        <Button variant='link' size='xs' onClick={handleTrash}><TrashIcon /></Button>
-        <Button variant='link' size='xs' onClick={handleSnooze}><TimeSnoozeIcon /></Button>
+        <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
+          <Button variant='link' size='xs' onClick={() => moveThreadToMailBoxes(MAILBOX_ARCHIVE)}><ArchiveIcon /></Button>
+        </Tooltip>
+
+        <Tooltip label='Trash' placement='bottom' bg='gray.300' color='black'>
+          <Button variant='link' size='xs' onClick={() => moveThreadToMailBoxes(MAILBOX_TRASH)}><TrashIcon /></Button>
+        </Tooltip>
+
+        <Tooltip label='Snooze' placement='bottom' bg='gray.300' color='black'>
+          <Button variant='link' size='xs' onClick={() => moveThreadToMailBoxes(MAILBOX_SNOOZED)}><TimeSnoozeIcon /></Button>
+        </Tooltip>
       </Box>
     </Box>
   )
