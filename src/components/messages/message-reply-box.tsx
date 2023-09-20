@@ -54,6 +54,7 @@ export function MessageReplyBox(props: MessageBoxType) {
   })
   const [subject, setSubject] = useState<string>('');
   const [emailBody, setEmailBody] = useState<string>('');
+  const { target } = useSelector((state: StateType) => state.keyNavigation);
   const { selectedAccount } = useSelector((state: StateType) => state.accounts);
   const { draft } = useSelector((state: StateType) => state.draft);
   const dispatch = useDispatch();
@@ -88,6 +89,19 @@ export function MessageReplyBox(props: MessageBoxType) {
 
   }, [replyBoxHide, divHeight])
 
+  /**
+   * Detect if key navigation is set to open the reply box
+   */
+  useEffect(() => {
+
+    if(target === 'reply-box') {
+      setHideEditorToolbar(true)
+    }
+
+    if(target !== 'reply-box' && hideEditorToolbar) {
+      setHideEditorToolbar(false)
+    }
+  }, [target, hideEditorToolbar])
 
   const isValid = (email: string, type: string) => {
     let error = null;
