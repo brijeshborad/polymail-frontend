@@ -1,6 +1,6 @@
 import styles from "@/styles/setting.module.css";
 import {
-    Button, Flex, Grid, GridItem, Heading, Input, Text, Modal,
+    Button, Flex, Heading, Input, Text, Modal,
     ModalOverlay,
     ModalContent,
     ModalHeader,
@@ -19,18 +19,23 @@ import {
     uploadProfilePicture
 } from "@/redux/users/action-reducer";
 import {Account, UserDetails} from "@/models";
-const Index = dynamic(() => import('@/pages/settings/index').then(mod => mod.default));
 import withAuth from "@/components/auth/withAuth";
-import { EditIcon, ViewIcon, ViewOffIcon} from "@chakra-ui/icons";
+import {EditIcon, ViewIcon, ViewOffIcon} from "@chakra-ui/icons";
 import {updateAccountState} from "@/redux/accounts/action-reducer";
 import LocalStorageService from "@/utils/localstorage.service";
 import {debounce, encryptData} from "@/utils/common.functions";
 import {changePassword, updateAuthState} from "@/redux/auth/action-reducer";
 import {Toaster} from "@/components/common";
-import dynamic from "next/dynamic";
+import SettingsLayout from "@/pages/settings/settings-layout";
 
 function Profile() {
-    const {userDetails, profilePicture, profilePictureUpdated, userDetailsUpdateSuccess, profilePictureRemoved} = useSelector((state: StateType) => state.users);
+    const {
+        userDetails,
+        profilePicture,
+        profilePictureUpdated,
+        userDetailsUpdateSuccess,
+        profilePictureRemoved
+    } = useSelector((state: StateType) => state.users);
     const dispatch = useDispatch();
     const {isOpen, onOpen, onClose} = useDisclosure()
     const inputFile = useRef<HTMLInputElement | null>(null)
@@ -73,14 +78,14 @@ function Profile() {
                 title: "Account details updated",
                 type: 'success'
             });
-            dispatch(updateUserState({ userDetailsUpdateSuccess: false }))
+            dispatch(updateUserState({userDetailsUpdateSuccess: false}))
         } else if (profilePictureRemoved) {
             Toaster({
                 desc: "Profile picture removed successfully",
                 title: "Successfully",
                 type: 'success'
             });
-            dispatch(updateUserState({ profilePictureRemoved: false }))
+            dispatch(updateUserState({profilePictureRemoved: false}))
         }
     }, [userDetailsUpdateSuccess, profilePictureRemoved, dispatch])
 
@@ -209,77 +214,74 @@ function Profile() {
     }
 
     return (
-        <div className={styles.setting}>
-            <Grid templateColumns='232px auto' gap={6} h={'100%'} minHeight={'calc(100vh - 65px)'}>
-                <GridItem w='100%' className={styles.settingSideBar} padding={'40px 30px 40px 40px'}
-                          borderRight={'1px solid #E1E3E6'}>
-                    <Index/>
-                </GridItem>
-                <GridItem w='100%'>
-                    <Flex direction={'column'} h={'100%'} padding={'50px 40px 40px'}>
-                        <Flex direction={'column'} pb={8} mb={8} borderBottom={'1px solid #D9D9D9'}>
-                            <Heading as='h4' size='lg' gap={1}> Profile </Heading>
-                            <Text fontSize='sm' className={styles.settingSubTitle}>Manage your team and preferences
-                                here.</Text>
-                        </Flex>
+        <>
+            <SettingsLayout>
+                <Flex direction={'column'} h={'100%'} padding={'50px 40px 40px'}>
+                    <Flex direction={'column'} pb={8} mb={8} borderBottom={'1px solid #D9D9D9'}>
+                        <Heading as='h4' size='lg' gap={1}> Profile </Heading>
+                        <Text fontSize='sm' className={styles.settingSubTitle}>Manage your team and preferences
+                            here.</Text>
+                    </Flex>
 
-                        <Flex direction={"column"} className={styles.SettingDetails}>
-                            <div className={styles.settingProfile}>
-                                <div className={styles.profileDetails}>
-                                    <div className={styles.ProfileImage}>
-                                        <Text fontSize='sm' className={styles.ProfileText} mb={3}>Profile Picture</Text>
-                                        <div className={styles.profileImageBox}>
-                                            <div className={styles.userImage} >
-                                                {profilePicture && profilePicture.url &&
-                                                <Image src={profilePicture && profilePicture.url} width="100" height="100"
-                                                       alt=""/>}
-                                            </div>
-                                            <Menu>
-                                                <MenuButton position={'absolute'} width={'72px'} h={'72px'} backgroundColor={'0,0,0, 0.5'} borderRadius={'50px'} color={'#FFFFFF'} bottom={0} left={0} zIndex={1} as={Button} className={styles.userEditIcon}>
-                                                    <EditIcon/>
-                                                </MenuButton>
-                                                <MenuList className={'drop-down-list'}>
-                                                    <MenuItem onClick={() => inputFile.current?.click()}>Change Photo
-                                                        <input type='file' id='file' ref={inputFile} accept={'image/*'}
-                                                               onChange={(e) => handleFileUpload(e)}
-                                                               style={{display: 'none'}}/>
-                                                    </MenuItem>
-                                                    <MenuItem className={'delete-button'} onClick={() => removePhoto()}>Remove Photo</MenuItem>
-                                                </MenuList>
-                                            </Menu>
+                    <Flex direction={"column"} className={styles.SettingDetails}>
+                        <div className={styles.settingProfile}>
+                            <div className={styles.profileDetails}>
+                                <div className={styles.ProfileImage}>
+                                    <Text fontSize='sm' className={styles.ProfileText} mb={3}>Profile Picture</Text>
+                                    <div className={styles.profileImageBox}>
+                                        <div className={styles.userImage}>
+                                            {profilePicture && profilePicture.url &&
+                                            <Image src={profilePicture && profilePicture.url} width="100" height="100"
+                                                   alt=""/>}
                                         </div>
+                                        <Menu>
+                                            <MenuButton position={'absolute'} width={'72px'} h={'72px'}
+                                                        backgroundColor={'0,0,0, 0.5'} borderRadius={'50px'}
+                                                        color={'#FFFFFF'} bottom={0} left={0} zIndex={1} as={Button}
+                                                        className={styles.userEditIcon}>
+                                                <EditIcon/>
+                                            </MenuButton>
+                                            <MenuList className={'drop-down-list'}>
+                                                <MenuItem onClick={() => inputFile.current?.click()}>Change Photo
+                                                    <input type='file' id='file' ref={inputFile} accept={'image/*'}
+                                                           onChange={(e) => handleFileUpload(e)}
+                                                           style={{display: 'none'}}/>
+                                                </MenuItem>
+                                                <MenuItem className={'delete-button'} onClick={() => removePhoto()}>Remove
+                                                    Photo</MenuItem>
+                                            </MenuList>
+                                        </Menu>
                                     </div>
-
-                                    <Flex align={'center'} gap={6} mt={6} mb={6} maxWidth={'320px'}>
-                                        <div className={styles.profileAccount}>
-                                            <Text fontSize={'14px'}>First Name</Text>
-                                            <Input placeholder='Enter First Name' value={profileDetails.firstName}
-                                                   onChange={(event) => setFullName(event, 'firstName')}/>
-
-                                            <Text fontSize={'14px'} mt={2}>Last Name</Text>
-                                            <Input placeholder='Enter Last Name' value={profileDetails.lastName}
-                                                   onChange={(event) => setFullName(event, 'lastName')}/>
-                                        </div>
-                                    </Flex>
                                 </div>
-                                <Flex align={'center'} className={styles.changeProfileButton} gap={5}>
-                                    <Button height={'auto'} padding={'0'} onClick={onOpen}
-                                            variant='ghost'> Change Password </Button>
-                                    <Button height={'auto'} padding={'0'} className={styles.deleteProfile}
-                                            variant='ghost'> Delete
-                                        Profile </Button>
-                                </Flex>
 
-                                <Flex align={'center'} gap={2} mt={10} className={styles.settingButton}>
-                                    <Button className={styles.settingSave} onClick={submit}>Save</Button>
-                                    <Button className={styles.settingCancel}>Cancel</Button>
+                                <Flex align={'center'} gap={6} mt={6} mb={6} maxWidth={'320px'}>
+                                    <div className={styles.profileAccount}>
+                                        <Text fontSize={'14px'}>First Name</Text>
+                                        <Input placeholder='Enter First Name' value={profileDetails.firstName}
+                                               onChange={(event) => setFullName(event, 'firstName')}/>
+
+                                        <Text fontSize={'14px'} mt={2}>Last Name</Text>
+                                        <Input placeholder='Enter Last Name' value={profileDetails.lastName}
+                                               onChange={(event) => setFullName(event, 'lastName')}/>
+                                    </div>
                                 </Flex>
                             </div>
-                        </Flex>
-                    </Flex>
-                </GridItem>
-            </Grid>
+                            <Flex align={'center'} className={styles.changeProfileButton} gap={5}>
+                                <Button height={'auto'} padding={'0'} onClick={onOpen}
+                                        variant='ghost'> Change Password </Button>
+                                <Button height={'auto'} padding={'0'} className={styles.deleteProfile}
+                                        variant='ghost'> Delete
+                                    Profile </Button>
+                            </Flex>
 
+                            <Flex align={'center'} gap={2} mt={10} className={styles.settingButton}>
+                                <Button className={styles.settingSave} onClick={submit}>Save</Button>
+                                <Button className={styles.settingCancel}>Cancel</Button>
+                            </Flex>
+                        </div>
+                    </Flex>
+                </Flex>
+            </SettingsLayout>
             <Modal isOpen={isOpen} onClose={onClose} isCentered closeOnOverlayClick={false}>
                 <ModalOverlay/>
                 <ModalContent className={styles.changePasswordModal}>
@@ -347,7 +349,7 @@ function Profile() {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-        </div>
+        </>
     )
 }
 
