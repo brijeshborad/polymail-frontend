@@ -15,7 +15,7 @@ import {
   DownloadIcon, MenuIcon
 } from "@/icons";
 import { StateType } from "@/types";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getAttachmentDownloadUrl,
