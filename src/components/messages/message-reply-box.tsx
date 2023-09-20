@@ -186,6 +186,10 @@ export function MessageReplyBox(props: MessageBoxType) {
   };
 
   const sendToDraft = (value: string, isValueUpdate: boolean = true) => {
+    let updateValue: string = getPlainTextFromHtml(value);
+    if (!updateValue.trim()) {
+      return;
+    }
     if (isValueUpdate) {
       if (!boxUpdatedFirstTime) {
         setBoxUpdatedFirstTime(true);
@@ -222,7 +226,7 @@ export function MessageReplyBox(props: MessageBoxType) {
     // Add signature and draft to email body
     if (draft && draft.draftInfo) {
       if (draft.draftInfo.body) {
-        setEmailBody(draft?.draftInfo?.body || '');
+        // setEmailBody(draft?.draftInfo?.body || '');
       }
       if (draft?.draftInfo?.attachments?.length) {
         setAttachments([
