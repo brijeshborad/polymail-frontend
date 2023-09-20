@@ -1,6 +1,6 @@
 export declare type InitialKeyNavigationStateType = {
     action: string;
-    target: 'threads' | 'thread';
+    target: 'threads' | 'thread' | 'reply-box';
     currentThreadId?: string | null;
     currentMessageId?: string | null;
 };
