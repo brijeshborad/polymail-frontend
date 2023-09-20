@@ -63,6 +63,7 @@ export function MessageReplyBox(props: MessageBoxType) {
   const [scheduledDate, setScheduledDate] = useState<string | undefined>();
   const [hideEditorToolbar, setHideEditorToolbar] = useState<boolean>(false);
   const [replyBoxHide, setReplyBoxHide] = useState<boolean>(false);
+  const [isReplyDropdownOpen, setIsReplyDropdownOpen] = useState<boolean>(false);
   const [boxUpdatedFirstTime, setBoxUpdatedFirstTime] = useState<boolean>(false);
   const [extraClassNames, setExtraClassNames] = useState<string>('');
   const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
@@ -582,6 +583,22 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     }
   }, [])
 
+  /**
+   * Detects if the iframe was clicked
+   */
+  const onWindowBlur = useCallback(() => {
+    setTimeout(() => {
+      setIsReplyDropdownOpen(false)
+    });
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('blur', onWindowBlur);
+    return () => {
+        window.removeEventListener('blur', onWindowBlur);
+    };
+  }, [onWindowBlur]);
+
   return (
     <Flex backgroundColor={'#FFFFFF'} position={'sticky'} mt={'auto'} bottom={0} boxShadow={'0 20px 0px 0 #fff'}>
       <Flex maxHeight={'450px'} direction={'column'} backgroundColor={'#FFFFFF'} width={'100%'}
@@ -612,8 +629,13 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
           )}
           <Flex align={'center'} justify={'space-between'} gap={4} position={"relative"} zIndex={10}>
             <Flex align={'center'} gap={1}>
-              <Menu>
-                <MenuButton color={'#6B7280'} variant='link' size='xs' as={Button} rightIcon={<ChevronDownIcon />}>{props.replyTypeName || 'Reply'}
+              <Menu isOpen={isReplyDropdownOpen} onClose={() => setIsReplyDropdownOpen(false)}>
+                <MenuButton 
+                  onClick={() => setIsReplyDropdownOpen(true)}
+                  color={'#6B7280'} variant='link' size='xs' 
+                  as={Button} rightIcon={<ChevronDownIcon />}
+                >
+                  {props.replyTypeName || 'Reply'}
                 </MenuButton>
                 <MenuList className={'drop-down-list reply-dropdown'}>
                   {props.replyType === 'reply-all' ?
