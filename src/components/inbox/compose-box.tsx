@@ -64,6 +64,7 @@ export function ComposeBox(props: any) {
   const inputFile = useRef<HTMLInputElement | null>(null);
   const editorRef = useRef<any>(null);
   const { toast } = createStandaloneToast()
+  const [boxUpdatedFirstTime, setBoxUpdatedFirstTime] = useState<boolean>(false);
 
   useEffect(() => {
     if (props.messageDetails) {
@@ -208,6 +209,9 @@ export function ComposeBox(props: any) {
 
   const sendToDraft = (value: string, isValueUpdate: boolean = true) => {
     if (isValueUpdate) {
+      if (!boxUpdatedFirstTime) {
+        setBoxUpdatedFirstTime(true);
+      }
       if (!value.trim()) {
         setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
         setExtraClassNamesForBottom(prevState => prevState.replace('show-shadow-bottom', ''));
@@ -328,9 +332,10 @@ export function ComposeBox(props: any) {
 
   useEffect(() => {
     if (selectedAccount && selectedAccount.signature) {
-      setEmailBody(selectedAccount.signature);
+      setEmailBody(`<p>${selectedAccount.signature}</p>`);
+      setBoxUpdatedFirstTime(false);
     }
-  }, [selectedAccount])
+  }, [selectedAccount, props.isOpen])
 
   const handleSchedule = (date: string | undefined) => {
     setScheduledDate(date);
@@ -416,6 +421,8 @@ export function ComposeBox(props: any) {
     }
     onCloseDraftConformationModal();
     props.onClose();
+    setBoxUpdatedFirstTime(true);
+
   }
 
 
@@ -464,7 +471,7 @@ export function ComposeBox(props: any) {
                     <Flex direction={'column'} ref={editorRef} className={`${styles.replyBoxEditor} editor-bottom-shadow`}
                       onScroll={() => handleEditorScroll()}>
                       <RichTextEditor className={`reply-message-area ${extraClassNames} ${extraClassNamesForBottom}`}
-                        initialUpdated={true}
+                        initialUpdated={boxUpdatedFirstTime}
                         placeholder='Reply with anything you like or @mention someone to share this thread'
                         value={emailBody} onChange={(e) => sendToDraft(e)} />
                       {attachments && attachments.length > 0 ? <div style={{ marginTop: '20px' }}>

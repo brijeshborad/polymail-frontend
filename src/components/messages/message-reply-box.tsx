@@ -62,7 +62,6 @@ export function MessageReplyBox(props: MessageBoxType) {
   const inputFile = useRef<HTMLInputElement | null>(null)
   const [scheduledDate, setScheduledDate] = useState<string | undefined>();
   const [hideEditorToolbar, setHideEditorToolbar] = useState<boolean>(false);
-  const [isShowText, _setIsShowText] = useState<boolean>(false);
   const [replyBoxHide, setReplyBoxHide] = useState<boolean>(false);
   const [boxUpdatedFirstTime, setBoxUpdatedFirstTime] = useState<boolean>(false);
   const [extraClassNames, setExtraClassNames] = useState<string>('');
@@ -533,7 +532,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
       let currentEmailBody: string = getPlainTextFromHtml(emailBody);
       if (selectedAccount && selectedAccount.signature && props.replyType !== 'forward' && !currentEmailBody.trim()) {
         setBoxUpdatedFirstTime(false);
-        setEmailBody(`<p></p><p></p><p>${selectedAccount.signature}</p>`);
+        setEmailBody(`<p>${selectedAccount.signature}</p>`);
       }
     }, 500)
   }
@@ -580,7 +579,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   }, [])
 
   return (
-    <Flex backgroundColor={'#FFFFFF'} position={'sticky'} mt={'auto'} bottom={'-20px'} paddingBottom={props.parentHasScroll ? 5 : 0}>
+    <Flex backgroundColor={'#FFFFFF'} position={'sticky'} mt={'auto'} bottom={0} boxShadow={'0 20px 0px 0 #fff'}>
       <Flex maxHeight={'450px'} direction={'column'} backgroundColor={'#FFFFFF'} width={'100%'}
         onFocus={() => handleFocus()} onBlur={() => handleBlur()}>
         <Flex borderRadius={8} gap={4} border={'1px solid #F3F4F6'} direction={'column'} padding={4}>
@@ -665,7 +664,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             <Flex direction={'column'} maxH={`calc(285px - ${divHeight}px)`} overflow={'auto'} ref={editorRef} className={`${styles.replyBoxEditor} editor-bottom-shadow`}
               onScroll={() => handleEditorScroll()}>
               <RichTextEditor
-                className={`reply-message-area message-reply-box ${hideEditorToolbar ? 'hide-toolbar' : ''} ${isShowText ? 'input-value-shadow' : ''} ${extraClassNames} ${extraClassNamesForBottom}`}
+                className={`reply-message-area message-reply-box ${hideEditorToolbar ? 'hide-toolbar' : ''} ${extraClassNames} ${extraClassNamesForBottom}`}
                 initialUpdated={boxUpdatedFirstTime}
                 placeholder='Reply with anything you like or @mention someone to share this thread'
                 value={emailBody} onChange={(e) => sendToDraft(e)} />

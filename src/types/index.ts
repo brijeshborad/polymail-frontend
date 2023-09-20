@@ -25,6 +25,9 @@ export * from './socket/socket-state.type';
 //Draft
 export * from './draft/draft-state.type';
 
+//Common API
+export * from './common-apis/common-apis.type';
+
 // Props
 export * from './props-types/profile-button-props.type';
 export * from './props-types/time.type';

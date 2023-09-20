@@ -23,7 +23,8 @@ const FeedSidebar = dynamic(
 
 export function Header() {
     const dispatch = useDispatch();
-    const { organizations, isLoading: isOrganizationLoading } = useSelector((state: StateType) => state.organizations);
+    const { organizations } = useSelector((state: StateType) => state.organizations);
+    const { isLoading: isApiLoading } = useSelector((state: StateType) => state.commonApis);
     const { accounts, selectedAccount } = useSelector((state: StateType) => state.accounts);
     const { threads, tabValue, isThreadSearched } = useSelector((state: StateType) => state.threads);
     const { googleAuthRedirectionLink } = useSelector((state: StateType) => state.auth);
@@ -110,7 +111,7 @@ export function Header() {
 
     useEffect(() => {
         let timer1 = setTimeout(() => {
-            if (!isOrganizationLoading) {
+            if (!isApiLoading) {
                 if (!organizations) {
                     Router.push('/organization/add');
                     return;
@@ -123,7 +124,7 @@ export function Header() {
         return () => {
             clearTimeout(timer1);
         };
-    }, [isOrganizationLoading, organizations]);
+    }, [isApiLoading, organizations]);
 
     const setOrganization = useCallback(
         (org: Organization) => {

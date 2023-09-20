@@ -1,8 +1,5 @@
 import {useCallback, useEffect, useRef} from "react";
-import {getAllProjects} from "@/redux/projects/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
-import {getAllAccount} from "@/redux/accounts/action-reducer";
-import {getAllOrganizations} from "@/redux/organizations/action-reducer";
 import {getProfilePicture} from "@/redux/users/action-reducer";
 import {updateLastMessage, updateSendFunction} from "@/redux/socket/action-reducer";
 import {debounce} from "@/utils/common.functions";
@@ -10,6 +7,7 @@ import {User} from "@/models";
 import LocalStorageService from "@/utils/localstorage.service";
 import {StateType} from "@/types";
 import useWebSocket from "react-use-websocket";
+import {getSummary} from "@/redux/common-apis/action-reducer";
 
 // Multiple instances of the hook can exist simultaneously.
 // This stores the timestamp of the last heartbeat for a given socket url,
@@ -108,9 +106,7 @@ export function CommonApiComponents() {
     }, [socketUrl, readyState, sendJsonMessage]);
 
     const getAllCommonApis = useCallback(() => {
-        dispatch(getAllProjects());
-        dispatch(getAllAccount());
-        dispatch(getAllOrganizations());
+        dispatch(getSummary({}));
         dispatch(getProfilePicture({}));
     }, [dispatch]);
 
