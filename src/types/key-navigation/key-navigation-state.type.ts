@@ -3,4 +3,5 @@ export declare type InitialKeyNavigationStateType = {
     target: 'threads' | 'thread' | 'reply-box';
     currentThreadId?: string | null;
     currentMessageId?: string | null;
+    messageIndex?: number
 };

@@ -17,6 +17,7 @@ export default function KeyboardNavigationListener() {
       if (MONITORED_KEYS.map(mk => mk.key).includes(e.keyCode)) {
         // Prevents the scrollbar to scrolling while pressing up/down keys.
         e.preventDefault()
+        e.stopPropagation()
 
         const pressedKey = MONITORED_KEYS.find(mk => mk.key === e.keyCode)
         let target = lastTarget
@@ -95,6 +96,7 @@ export default function KeyboardNavigationListener() {
                 selectedMessage: nextMessage
               }))
 
+              dispatchAction.messageIndex = nextMessageIndex
               dispatchAction.currentMessageId = nextMessage?.id
             }
 
@@ -105,12 +107,13 @@ export default function KeyboardNavigationListener() {
               if (selectedMessage?.id) {
                 lastMessageIndex = currentMessageIndex > 0 ? currentMessageIndex - 1 : currentMessageIndex
               }
-              const nextMessage = messagesArr[lastMessageIndex]
+              const lastMessage = messagesArr[lastMessageIndex]
 
               dispatch(updateMessageState({
-                selectedMessage: nextMessage
+                selectedMessage: lastMessage
               }))
-              dispatchAction.currentMessageId = nextMessage?.id
+              dispatchAction.messageIndex = lastMessageIndex
+              dispatchAction.currentMessageId = lastMessage?.id
             }
           }
 

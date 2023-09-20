@@ -15,7 +15,7 @@ import {
   DownloadIcon, MenuIcon
 } from "@/icons";
 import { StateType } from "@/types";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getAttachmentDownloadUrl,
@@ -33,6 +33,7 @@ import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import {updateThreadState, updateThreads} from "@/redux/threads/action-reducer";
 import {EyeSlashedIcon} from "@/icons/eye-slashed.icon";
 import dynamic from "next/dynamic";
+import { keyPress } from "@/redux/key-navigation/action-reducer";
 
 let cacheMessages: { [key: string]: { body: MessagePart, attachments: MessageAttachments[] } } = {};
 
@@ -61,6 +62,7 @@ export function Message() {
     isThreadLoading: threadLoading,
     isThreadFocused
   } = useSelector((state: StateType) => state.threads);
+  const { target, messageIndex } = useSelector((state: StateType) => state.keyNavigation)
   const { isLoading: accountLoading } = useSelector((state: StateType) => state.accounts);
   const { isLoading: organizationLoading } = useSelector((state: StateType) => state.organizations);
   const { isLoading: usersProfilePictureLoading } = useSelector((state: StateType) => state.users);
@@ -243,6 +245,21 @@ export function Message() {
     }
   }, [dispatch, attachmentUrl])
 
+  useEffect(() => {
+    if(target === 'thread') {
+      const topPos = ((messageIndex || 0)) * 95
+
+      console.log(topPos)
+
+      setTimeout(() => {
+        messagesWrapperRef.current.scrollTo({
+          top: topPos,
+          behavior: 'smooth'
+        })
+      }, 1200)
+    }
+  }, [target, messageIndex])
+
   // Set iframe height once content is loaded within iframe
   const onIframeLoad = () => {
     debounce(() => {
@@ -308,6 +325,8 @@ export function Message() {
       }))
     }
   };
+
+  
   return (
     <Box
       className={`${styles.mailBox} ${isThreadFocused ? styles.mailBoxFocused : ''}`}
@@ -315,6 +334,10 @@ export function Message() {
       onClick={() => {
         if (!isThreadFocused) {
           setThreadFocus(true)
+          dispatch(keyPress({
+            action: 'RIGHT',
+            target: 'thread'
+          }))
         }
       }}
     >
