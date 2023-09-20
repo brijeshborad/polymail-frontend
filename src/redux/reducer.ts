@@ -11,6 +11,7 @@ import draft from './draft/action-reducer'
 import users from './users/action-reducer'
 import memberships from './memberships/action-reducer'
 import undoBody from './undo-body/action-reducer'
+import keyNavigation from './key-navigation/action-reducer'
 
 const combinedReducer = combineReducers({
     auth,
@@ -23,7 +24,8 @@ const combinedReducer = combineReducers({
     draft,
     users,
     memberships,
-    undoBody
+    undoBody,
+    keyNavigation
 });
 
 const reducers = (state: any, action: any) => {

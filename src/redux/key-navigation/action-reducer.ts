@@ -16,5 +16,7 @@ const keyNavigationSlice = createSlice({
     },
 });
 
-export const {} = keyNavigationSlice.actions;
+export const {
+	keyPress
+} = keyNavigationSlice.actions;
 export default keyNavigationSlice.reducer;

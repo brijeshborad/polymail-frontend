@@ -65,7 +65,6 @@ export function Message() {
   const { isLoading: organizationLoading } = useSelector((state: StateType) => state.organizations);
   const { isLoading: usersProfilePictureLoading } = useSelector((state: StateType) => state.users);
   const { isLoading: projectsLoading } = useSelector((state: StateType) => state.projects);
-  const [expandedRow, setExpandedRow] = useState<number|null>(null);
   const [lastMessageDetails, setLastMessageDetails] = useState<MessageModel | null>(null);
   const [messageDetailsForReplyBox, setMessageDetailsForReplyBox] = useState<MessageModel | null>(null);
   const [isLoaderShow, setIsLoaderShow] = useState<boolean>(false);
@@ -177,9 +176,12 @@ export function Message() {
       } else {
         dispatch(getMessageAttachments({ id: lastMessageDetails.id! }));
       }
-      setExpandedRow(inboxMessages?.length)
+
+      dispatch(updateMessageState({
+        selectedMessage: lastMessageDetails
+      }))
     }
-  }, [dispatch, lastMessageDetails])
+  }, [dispatch, lastMessageDetails, inboxMessages])
 
   useEffect(() => {
     if (index !== null && inboxMessages && inboxMessages.length > 0) {
@@ -292,12 +294,18 @@ export function Message() {
     }
   }
   const handleRowClick = (index: any) => {
-    if (expandedRow === index) {
+    const selectedMessageIndex = inboxMessages.findIndex(msg => msg.id === selectedMessage?.id)
+    if (selectedMessageIndex === index) {
       // Clicking on an already expanded row, so close it
-      setExpandedRow(null);
+      dispatch(updateMessageState({
+        selectedMessage: null
+      }))
     } else {
       // Clicking on a new row, expand it
-      setExpandedRow(index);
+      const targetMessage = inboxMessages[index]
+      dispatch(updateMessageState({
+        selectedMessage: targetMessage
+      }))
     }
   };
   return (
@@ -329,10 +337,11 @@ export function Message() {
               <Flex gap={2} direction={'column'} height={'100%'}>
                 {inboxMessages && !!inboxMessages.length && inboxMessages.map((item: any, index: number) => (
                   <div key={index}>
-                    <MessageBox item={item} index={index} threadDetails={item}
+                    <MessageBox 
+                      item={item} index={index} threadDetails={item}
                       isLoading={messageLoading} emailPart={emailPart}
                       messageAttachments={messageAttachments} hideAndShowReplayBox={hideAndShowReplayBox}
-                      isExpanded={index === expandedRow}
+                      isExpanded={selectedMessage?.id === item.id}
                       onClick={() => handleRowClick(index)}
                     />
                   </div>
@@ -340,7 +349,7 @@ export function Message() {
                 ))}
 
 
-                {lastMessageDetails && (expandedRow===inboxMessages?.length) ?
+                {lastMessageDetails && (selectedMessage?.id === lastMessageDetails.id) ?
                  <Flex direction={'column'} onClick={() => handleRowClick(inboxMessages?.length)}  className={`${styles.oldMail} ${styles.lastOpenMail}`} gap={4}
                   padding={4} border={'1px solid #E5E7EB'} borderRadius={12} align={'center'}>
                   <Flex align={'center'} w={'100%'} gap={2}>

@@ -10,10 +10,11 @@ import dynamic from 'next/dynamic'
 const Header = dynamic(
     () => import('@/components/common').then((mod) => mod.Header)
 )
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useRouter } from 'next/router';
-import { HEADER_NOT_ALLOWED_PATHS, MONITORED_KEYS } from '@/utils/constants';
+import { HEADER_NOT_ALLOWED_PATHS } from '@/utils/constants';
 import {CommonApiComponents} from "@/components/common";
+import KeyboardNavigationListener from '@/components/common/keyboard-navigation';
 
 const { Button, Input, Menu, Checkbox, Heading, Divider, Alert, Modal, Popover, Tooltip, Textarea, Spinner, List, Select, Table, Progress, Skeleton, Radio, Drawer } =
     chakraTheme.components;
@@ -52,20 +53,6 @@ export default function App({ Component, ...rest }: AppProps) {
     const { store, props } = wrapper.useWrappedStore(rest);
     const { pageProps } = props;
     const router = useRouter();
-
-    // keyboard shortcuts
-    useEffect(() => {
-      const handleShortcutKeyPress = (e: KeyboardEvent | any) => {
-          if(MONITORED_KEYS.includes(e.keyCode)) {
-            console.log('PRESS', e.keyCode) 
-          }
-      };
-      window.addEventListener('keydown', handleShortcutKeyPress);
-      return () => {
-          window.removeEventListener('keydown', handleShortcutKeyPress);
-      };
-  }, []);
-
     return (
         <Provider store={store}>
             <ChakraBaseProvider theme={theme}>
@@ -78,6 +65,7 @@ export default function App({ Component, ...rest }: AppProps) {
                 <main className={`main ${inter.className}`}>
                     {store.getState().auth?.user?.token && !HEADER_NOT_ALLOWED_PATHS.includes(router.pathname) &&
                     <>
+                        <KeyboardNavigationListener />
                         <CommonApiComponents/>
                         <Header/>
                     </>}
