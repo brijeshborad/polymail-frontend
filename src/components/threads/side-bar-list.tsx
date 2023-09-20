@@ -13,8 +13,7 @@ import { useRouter } from "next/router";
 const ComposeBox = dynamic(() => import("@/components/inbox").then(mod => mod.ComposeBox));
 import dynamic from "next/dynamic";
 
-let threadData: any = [];
-let selectedDivs: any = []
+let currentSelectedThreads: any = []
 
 export function ThreadsSideBarList(props: ThreadListProps) {
   const { selectedThread, threads, multiSelection, isThreadSearched} = useSelector((state: StateType) => state.threads);
@@ -28,78 +27,48 @@ export function ThreadsSideBarList(props: ThreadListProps) {
   const [extraClassNames, setExtraClassNames] = useState<string>('');
   const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
 
-  const [threadsData, setThreadsData] = useState<Thread[]>([]);
-
-  useEffect(() => {
-    if (threads && threads.length) {
-      setThreadsData((threads || []))
-    }
-  }, [threads])
-
   useEffect(() => {
     // Make isThreadSearched as false when multiSelection is null or blank
     if (multiSelection && !multiSelection.length) {
       dispatch(updateThreadState({isThreadSearched: false}));
     }
-  }, [multiSelection, selectedThread])
+  }, [dispatch, multiSelection, selectedThread])
 
   const handleClick = useCallback((item: Thread, event: KeyboardEvent | any, index: number) => {
     // Check if Control key (or Command key on Mac) is held down
     if (event) {
       if (event.ctrlKey || event.metaKey || event.shiftKey) {
         event.preventDefault();
-        dispatch(updateThreadState({selectedThread: null}));
-
         if (event.ctrlKey || event.metaKey) {
-          if (selectedDivs.includes(index)) {
+          if (currentSelectedThreads.includes(index)) {
             // Deselect if already selected
-            selectedDivs.push(...selectedDivs.filter((id: number) => id !== index));
+            currentSelectedThreads.push(...currentSelectedThreads.filter((id: number) => id !== index));
           } else {
             // Select if not selected
-            selectedDivs.push(index);
+            currentSelectedThreads.push(index);
           }
-        } else if (event.shiftKey && selectedDivs.length > 0) {
+        } else if (event.shiftKey) {
           event.preventDefault();
 
           // Check if Shift key is held down
-          const firstSelectedIndex = selectedDivs[0];
+          const firstSelectedIndex = (threads || []).findIndex((item: Thread) => item.id === selectedThread!.id);
           const clickedIndex = index;
 
           // Determine the range of divs to select based on Shift + Click
           const minIndex = Math.min(firstSelectedIndex, clickedIndex);
           const maxIndex = Math.max(firstSelectedIndex, clickedIndex);
           const rangeToSelect = Array.from({ length: maxIndex - minIndex + 1 }, (_, i) => minIndex + i);
-          selectedDivs = [];
-          selectedDivs.push(...rangeToSelect);
+          currentSelectedThreads = [];
+          currentSelectedThreads.push(...rangeToSelect);
         } else {
           // If no modifiers are held down, clear the selection and select the clicked div
-          selectedDivs = []
-          selectedDivs.push(index);
+          currentSelectedThreads = []
+          currentSelectedThreads.push(index);
         }
-        if (threadsData && threadsData.length) {
-          if (event.ctrlKey || event.metaKey) {
-            if (threadData.some((i: Thread) => i.id === threadsData[index].id)) {
-              let indexData = threadData.findIndex((i: Thread) => i.id === threadsData[index].id)
-              threadData.splice(indexData, 1)
-            } else {
-              threadData.push(threadsData[index])
-            }
-          } else if (event.shiftKey) {
-            selectedDivs.forEach((item: any) => {
-              if (threadData.some((i: Thread) => i.id === threadsData[item].id)) {
-                let indexData = threadData.findIndex((i: Thread) => i.id === threadsData[item].id)
-                threadData.splice(indexData)
-              }
-              threadData.push(threadsData[item])
-            })
-          }
-
-
-          dispatch(updateThreadState({
-            isThreadSearched: true,
-            multiSelection: threadData?.map((thread: Thread) => thread.id!)
-          }))
-        }
+        dispatch(updateThreadState({
+          isThreadSearched: true,
+          multiSelection: threads?.map((thread: Thread, index: number) => currentSelectedThreads.includes(index) && thread.id!).filter(t => t)
+        }))
 
       } else {
         if (props.tab === 'DRAFT') {
@@ -109,12 +78,13 @@ export function ThreadsSideBarList(props: ThreadListProps) {
             return;
           }
         }
-        dispatch(updateThreadState({ selectedThread: item, isThreadFocused: false }));
+        currentSelectedThreads = [];
+        dispatch(updateThreadState({ selectedThread: item, isThreadFocused: false, multiSelection: [] }));
         dispatch(updateMessageState({ selectedMessage: null, messages: [] }));
         dispatch(updateDraftState({ draft: null }));
       }
     }
-  }, [dispatch, onOpen, props.tab, threadsData]);
+  }, [dispatch, onOpen, props.tab, selectedThread, threads]);
 
 
   const handleEditorScroll = useCallback(() => {
