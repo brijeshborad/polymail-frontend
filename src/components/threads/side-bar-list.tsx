@@ -26,6 +26,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
   const editorRef = useRef<any>(null);
   const [extraClassNames, setExtraClassNames] = useState<string>('');
   const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
+  const { target, threadIndex } = useSelector((state: StateType) => state.keyNavigation)
 
   useEffect(() => {
     // Make isThreadSearched as false when multiSelection is null or blank
@@ -40,6 +41,19 @@ export function ThreadsSideBarList(props: ThreadListProps) {
       currentSelectedThreads.push((threads || []).findIndex((thread: Thread) => thread.id === selectedThread.id))
     }
   }, [selectedThread, threads])
+
+  useEffect(() => {
+    if(target === 'threads') {
+      const topPos = ((threadIndex || 0)) * 50
+
+      setTimeout(() => {
+        editorRef.current.scrollTo({
+          top: topPos,
+          behavior: 'smooth'
+        })
+      }, 50)
+    }
+  }, [target, threadIndex])
 
   const handleClick = useCallback((item: Thread, event: KeyboardEvent | any, index: number) => {
     // Check if Control key (or Command key on Mac) is held down

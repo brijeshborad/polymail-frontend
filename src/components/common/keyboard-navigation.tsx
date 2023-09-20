@@ -59,6 +59,7 @@ export default function KeyboardNavigationListener() {
                 dispatch(updateThreadState({
                   selectedThread: nextThread
                 }))
+                dispatchAction.threadIndex = nextThreadIndex
                 dispatchAction.currentThreadId = nextThread.id
               }
             } else if (pressedKey?.value === 'UP') {
@@ -70,6 +71,7 @@ export default function KeyboardNavigationListener() {
                 dispatch(updateThreadState({
                   selectedThread: lastThread
                 }))
+                dispatchAction.threadIndex = lastThreadIndex
                 dispatchAction.currentThreadId = lastThread.id
               }
             }
