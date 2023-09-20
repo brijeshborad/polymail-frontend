@@ -8,7 +8,9 @@ import {
     InitialSocketType,
     InitialDraftStateType,
     InitialUserState, InitialMembershipStateType,
-    InitialUndoBodyType, InitialCommonApisStateType
+    InitialUndoBodyType, 
+    InitialCommonApisStateType,
+    InitialKeyNavigationStateType
 } from "./";
 
 export declare type StateType = {
@@ -23,5 +25,6 @@ export declare type StateType = {
     users: InitialUserState,
     memberships: InitialMembershipStateType,
     undoBody: InitialUndoBodyType,
-    commonApis: InitialCommonApisStateType
+    commonApis: InitialCommonApisStateType,
+    keyNavigation: InitialKeyNavigationStateType
 }

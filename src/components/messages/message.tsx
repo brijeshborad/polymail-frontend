@@ -15,7 +15,7 @@ import {
   DownloadIcon, MenuIcon
 } from "@/icons";
 import { StateType } from "@/types";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getAttachmentDownloadUrl,
@@ -33,11 +33,13 @@ import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import {updateThreadState, updateThreads} from "@/redux/threads/action-reducer";
 import {EyeSlashedIcon} from "@/icons/eye-slashed.icon";
 import dynamic from "next/dynamic";
+import { keyPress } from "@/redux/key-navigation/action-reducer";
 
 let cacheMessages: { [key: string]: { body: MessagePart, attachments: MessageAttachments[] } } = {};
 
 export function Message() {
   const iframeRef = React.useRef<HTMLIFrameElement | null | any>(null);
+  const messagesWrapperRef = React.useRef<HTMLDivElement | null | any>(null);
   const [iframeHeight, setIframeHeight] = React.useState("0px");
 
   const [index, setIndex] = useState<number | null>(null);
@@ -59,11 +61,11 @@ export function Message() {
     isThreadLoading: threadLoading,
     isThreadFocused
   } = useSelector((state: StateType) => state.threads);
+  const { target, messageIndex } = useSelector((state: StateType) => state.keyNavigation)
   const { isLoading: accountLoading } = useSelector((state: StateType) => state.accounts);
   const { isLoading: organizationLoading } = useSelector((state: StateType) => state.organizations);
   const { isLoading: usersProfilePictureLoading } = useSelector((state: StateType) => state.users);
   const { isLoading: projectsLoading } = useSelector((state: StateType) => state.projects);
-  const [expandedRow, setExpandedRow] = useState<number|null>(null);
   const [lastMessageDetails, setLastMessageDetails] = useState<MessageModel | null>(null);
   const [messageDetailsForReplyBox, setMessageDetailsForReplyBox] = useState<MessageModel | null>(null);
   const [isLoaderShow, setIsLoaderShow] = useState<boolean>(false);
@@ -175,9 +177,12 @@ export function Message() {
       } else {
         dispatch(getMessageAttachments({ id: lastMessageDetails.id! }));
       }
-      setExpandedRow(inboxMessages?.length)
+
+      dispatch(updateMessageState({
+        selectedMessage: lastMessageDetails
+      }))
     }
-  }, [dispatch, lastMessageDetails])
+  }, [dispatch, lastMessageDetails, inboxMessages])
 
   useEffect(() => {
     if (index !== null && inboxMessages && inboxMessages.length > 0) {
@@ -239,6 +244,19 @@ export function Message() {
     }
   }, [dispatch, attachmentUrl])
 
+  useEffect(() => {
+    if(target === 'thread') {
+      const topPos = ((messageIndex || 0)) * 95
+
+      setTimeout(() => {
+        messagesWrapperRef.current.scrollTo({
+          top: topPos,
+          behavior: 'smooth'
+        })
+      }, 1200)
+    }
+  }, [target, messageIndex])
+
   // Set iframe height once content is loaded within iframe
   const onIframeLoad = () => {
     debounce(() => {
@@ -283,14 +301,22 @@ export function Message() {
     }
   }
   const handleRowClick = (index: any) => {
-    if (expandedRow === index) {
+    const selectedMessageIndex = inboxMessages.findIndex(msg => msg.id === selectedMessage?.id)
+    if (selectedMessageIndex === index) {
       // Clicking on an already expanded row, so close it
-      setExpandedRow(null);
+      dispatch(updateMessageState({
+        selectedMessage: null
+      }))
     } else {
       // Clicking on a new row, expand it
-      setExpandedRow(index);
+      const targetMessage = inboxMessages[index]
+      dispatch(updateMessageState({
+        selectedMessage: targetMessage
+      }))
     }
   };
+
+  
   return (
     <Box
       className={`${styles.mailBox} ${isThreadFocused ? styles.mailBoxFocused : ''}`}
@@ -298,6 +324,10 @@ export function Message() {
       onClick={() => {
         if (!isThreadFocused) {
           setThreadFocus(true)
+          dispatch(keyPress({
+            action: 'RIGHT',
+            target: 'thread'
+          }))
         }
       }}
     >
@@ -316,14 +346,15 @@ export function Message() {
             <MessagesHeader inboxMessages={inboxMessages} index={index} closeCompose={closeCompose}
               headerType={'inbox'} />
 
-            <Flex padding={'20px'} gap={5} direction={'column'} flex={1} overflow={'auto'}>
+            <Flex ref={messagesWrapperRef} padding={'20px'} gap={5} direction={'column'} flex={1} overflow={'auto'}>
               <Flex gap={2} direction={'column'} height={'100%'}>
                 {inboxMessages && !!inboxMessages.length && inboxMessages.map((item: any, index: number) => (
                   <div key={index}>
-                    <MessageBox item={item} index={index} threadDetails={item}
+                    <MessageBox 
+                      item={item} index={index} threadDetails={item}
                       isLoading={messageLoading} emailPart={emailPart}
                       messageAttachments={messageAttachments} hideAndShowReplayBox={hideAndShowReplayBox}
-                      isExpanded={index === expandedRow}
+                      isExpanded={selectedMessage?.id === item.id}
                       onClick={() => handleRowClick(index)}
                     />
                   </div>
@@ -331,7 +362,7 @@ export function Message() {
                 ))}
 
 
-                {lastMessageDetails && (expandedRow===inboxMessages?.length) ?
+                {lastMessageDetails && (selectedMessage?.id === lastMessageDetails.id) ?
                  <Flex direction={'column'} onClick={() => handleRowClick(inboxMessages?.length)}  className={`${styles.oldMail} ${styles.lastOpenMail}`} gap={4}
                   padding={4} border={'1px solid #E5E7EB'} borderRadius={12} align={'center'}>
                   <Flex align={'center'} w={'100%'} gap={2}>

@@ -8,3 +8,9 @@ export const MAILBOX_ARCHIVE = 'ARCHIVE'
 export const MAILBOX_TRASH = 'TRASH'
 export const MAILBOX_SNOOZED = 'SNOOZED'
 export const MAILBOX_STARRED = 'STARRED'
+export const MONITORED_KEYS = [
+    { key: 37, value: 'LEFT' },
+    { key: 38, value: 'UP' },
+    { key: 39, value: 'RIGHT' },
+    { key: 40, value: 'DOWN' },
+];
