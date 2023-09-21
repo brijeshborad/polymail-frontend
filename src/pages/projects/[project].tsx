@@ -244,12 +244,12 @@ function ProjectInbox() {
                               color={'#ffffff'} lineHeight={'1'} fontSize={'14px'} borderRadius={'8px'}
                               height={'auto'} padding={'11px 16px'}
                             >
-                              Manage Members
+                              Share
                             </MenuButton>
                             <MenuList className={`${styles.manageMemberDropDown} drop-down-list`}>
                                 <Flex color={'#374151'} fontWeight={'500'} fontSize={'13px'} padding={'12px'}
                                       justifyContent={'space-between'} alignItems={'center'}
-                                      borderBottom={'1px solid #F3F4F6'}>Manage members
+                                      borderBottom={'1px solid #F3F4F6'}>Share {project && project?.name}
                                   <IconButton className={styles.closeIcon} onClick={onClose}
                                                     cursor={'pointer'} backgroundColor={'#FFFFFF'} padding={0}
                                                     minWidth={'1px'} aria-label='Add to friends'
