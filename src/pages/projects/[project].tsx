@@ -366,7 +366,7 @@ function ProjectInbox() {
                     </Flex>
                 </Flex>
 
-                <Grid className={styles.mailGrid} templateColumns='30% auto' padding={'32px 32px 16px'} gap={6}
+                <Grid className={styles.mailGrid} templateColumns='30% auto' padding={'16px 20px 16px'} gap={4}
                       flex={1}>
                     <GridItem w='100%' flex={1}>
                         {((size < 991 && !selectedThread) || size > 991) &&

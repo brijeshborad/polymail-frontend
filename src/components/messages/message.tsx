@@ -256,6 +256,10 @@ export function Message() {
     }
   };
 
+  useEffect(() => {
+    console.log('selectedThread', selectedThread)
+  }, [selectedThread])
+
   return (
     <>
       {(!isCompose && !isConfirmModal)? <Box
@@ -318,7 +322,7 @@ export function Message() {
            height={'calc(100vh - 180px)'} overflow={'hidden'} borderRadius={'15px'}>
         <Flex justifyContent={'center'} alignItems={'center'} flexDir={'column'}
               height={'100%'}>
-          {!isLoaderShow && <Heading as='h3' size='md'>Click on a threadsdsd from list to view messages!</Heading>}
+          {!isLoaderShow && <Heading as='h3' size='md'>Click on a thread from list to view messages!</Heading>}
           {isLoaderShow && <Flex direction={'column'} gap={2} flex={1} w={'100%'}>
               <SkeletonLoader skeletonLength={1} height={'100%'}/>
           </Flex>}
