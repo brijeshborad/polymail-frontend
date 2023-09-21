@@ -301,7 +301,8 @@ export function Message() {
     }
   }
   const handleRowClick = (index: any) => {
-    const selectedMessageIndex = inboxMessages.findIndex(msg => msg.id === selectedMessage?.id)
+    const selectedMessageIndex = (messages || []).findIndex(msg => msg.id === selectedMessage?.id)
+
     if (selectedMessageIndex === index) {
       // Clicking on an already expanded row, so close it
       dispatch(updateMessageState({
@@ -309,7 +310,8 @@ export function Message() {
       }))
     } else {
       // Clicking on a new row, expand it
-      const targetMessage = inboxMessages[index]
+      const targetMessage = (messages || [])[index]
+
       dispatch(updateMessageState({
         selectedMessage: targetMessage
       }))
