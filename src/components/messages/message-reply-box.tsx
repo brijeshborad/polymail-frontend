@@ -54,7 +54,7 @@ export function MessageReplyBox(props: MessageBoxType) {
   })
   const [subject, setSubject] = useState<string>('');
   const [emailBody, setEmailBody] = useState<string>('');
-  const { target } = useSelector((state: StateType) => state.keyNavigation);
+  // const { target } = useSelector((state: StateType) => state.keyNavigation);
   const { selectedAccount } = useSelector((state: StateType) => state.accounts);
   const { draft } = useSelector((state: StateType) => state.draft);
   const dispatch = useDispatch();
@@ -65,7 +65,6 @@ export function MessageReplyBox(props: MessageBoxType) {
   const [hideEditorToolbar, setHideEditorToolbar] = useState<boolean>(false);
   const [replyBoxHide, setReplyBoxHide] = useState<boolean>(false);
   const [isReplyDropdownOpen, setIsReplyDropdownOpen] = useState<boolean>(false);
-  const [boxUpdatedFirstTime, setBoxUpdatedFirstTime] = useState<boolean>(false);
   const [extraClassNames, setExtraClassNames] = useState<string>('');
   const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
 
@@ -83,7 +82,7 @@ export function MessageReplyBox(props: MessageBoxType) {
   }, [replyBoxHide, emailRecipients]);
 
   useEffect(() => {
-    if(!replyBoxHide) {
+    if (!replyBoxHide) {
       setDivHeight(0)
     }
 
@@ -92,16 +91,16 @@ export function MessageReplyBox(props: MessageBoxType) {
   /**
    * Detect if key navigation is set to open the reply box
    */
-  useEffect(() => {
-
-    if(target === 'reply-box') {
-      setHideEditorToolbar(true)
-    }
-
-    if(target !== 'reply-box' && hideEditorToolbar) {
-      setHideEditorToolbar(false)
-    }
-  }, [target, hideEditorToolbar])
+  // useEffect(() => {
+  //
+  //   if(target === 'reply-box') {
+  //     setHideEditorToolbar(true)
+  //   }
+  //
+  //   if(target !== 'reply-box' && hideEditorToolbar) {
+  //     setHideEditorToolbar(false)
+  //   }
+  // }, [target, hideEditorToolbar])
 
   const isValid = (email: string, type: string) => {
     let error = null;
@@ -206,9 +205,6 @@ export function MessageReplyBox(props: MessageBoxType) {
       return;
     }
     if (isValueUpdate) {
-      if (!boxUpdatedFirstTime) {
-        setBoxUpdatedFirstTime(true);
-      }
       if (!value.trim()) {
         setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
         setExtraClassNamesForBottom(prevState => prevState.replace('show-shadow-bottom', ''));
@@ -241,7 +237,7 @@ export function MessageReplyBox(props: MessageBoxType) {
     // Add signature and draft to email body
     if (draft && draft.draftInfo) {
       if (draft.draftInfo.body) {
-        // setEmailBody(draft?.draftInfo?.body || '');
+        setEmailBody(draft?.draftInfo?.body || '');
       }
       if (draft?.draftInfo?.attachments?.length) {
         setAttachments([
@@ -264,7 +260,6 @@ export function MessageReplyBox(props: MessageBoxType) {
       if (props.replyType === 'forward') {
         emailSubject = `Fwd: ${props.messageData.subject}`;
         let decoded = Buffer.from(props.emailPart || '', 'base64').toString('ascii');
-        setBoxUpdatedFirstTime(false);
         setEmailBody(getForwardContent() + (decoded || '') + (selectedAccount?.signature || ''));
         debounce(() => {
           handleEditorScroll();
@@ -350,12 +345,6 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
       }
     }));
   }, [props?.threadDetails?.id])
-
-  useEffect(() => {
-    if (!draft) {
-      setBoxUpdatedFirstTime(false);
-    }
-  }, [draft])
 
   useEffect(() => {
     if (props.replyType === 'forward') {
@@ -565,8 +554,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
       setHideEditorToolbar(true);
       let currentEmailBody: string = getPlainTextFromHtml(emailBody);
       if (selectedAccount && selectedAccount.signature && props.replyType !== 'forward' && !currentEmailBody.trim()) {
-        setBoxUpdatedFirstTime(false);
-        setEmailBody(`<p>${selectedAccount.signature}</p>`);
+        setEmailBody(`<p></p><p>${selectedAccount.signature}</p>`);
       }
     }, 500)
   }
@@ -659,9 +647,9 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
           <Flex align={'center'} justify={'space-between'} gap={4} position={"relative"} zIndex={10}>
             <Flex align={'center'} gap={1}>
               <Menu isOpen={isReplyDropdownOpen} onClose={() => setIsReplyDropdownOpen(false)}>
-                <MenuButton 
+                <MenuButton
                   onClick={() => setIsReplyDropdownOpen(true)}
-                  color={'#6B7280'} variant='link' size='xs' 
+                  color={'#6B7280'} variant='link' size='xs'
                   as={Button} rightIcon={<ChevronDownIcon />}
                 >
                   {props.replyTypeName || 'Reply'}
@@ -720,7 +708,6 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
               onScroll={() => handleEditorScroll()}>
               <RichTextEditor
                 className={`reply-message-area message-reply-box ${hideEditorToolbar ? 'hide-toolbar' : ''} ${extraClassNames} ${extraClassNamesForBottom}`}
-                initialUpdated={boxUpdatedFirstTime}
                 placeholder='Reply with anything you like or @mention someone to share this thread'
                 value={emailBody} onChange={(e) => sendToDraft(e)} />
               {attachments && attachments.length > 0 ? <div style={{ marginTop: '20px' }}>
