@@ -159,7 +159,7 @@ export function ThreadsSideBarTab(props: TabProps) {
 
     return (
         <>
-          <Flex overflowX={'auto'} align={'center'} alignItems={'center'} alignContent={'center'} gap={2}>
+          <Flex overflowX={'auto'} align={'center'} alignItems={'center'} alignContent={'center'} gap={2} padding={"0 6px"}>
             <div className={styles.mailOtherOption}>
                 <Flex align={'center'} gap={2}>
                     {router.query.project && (
@@ -196,7 +196,7 @@ export function ThreadsSideBarTab(props: TabProps) {
 
 
             {(isLoading || summaryIsLoading) && (
-                <Flex direction="column" gap={2} mt={5}>
+                <Flex direction="column" gap={2} mt={5} padding={"0 6px"}>
                     <SkeletonLoader skeletonLength={15}/>
                 </Flex>
             )}
