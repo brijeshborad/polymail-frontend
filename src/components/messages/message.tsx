@@ -1,26 +1,15 @@
 import styles from "@/styles/Inbox.module.css";
 import {
   Box,
-  Button,
   Flex,
   Heading,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Text
 } from "@chakra-ui/react";
-import { Time } from "@/components/common";
-import {
-  DownloadIcon, MenuIcon
-} from "@/icons";
 import { StateType } from "@/types";
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  getAttachmentDownloadUrl,
   getMessageAttachments,
-  getMessageParts, updateMessage,
+  getMessageParts,
   updateMessageState
 } from "@/redux/messages/action-reducer";
 import {Message as MessageModel, MessageDraft, MessagePart, MessageAttachments} from "@/models";
@@ -28,19 +17,15 @@ const MessagesHeader = dynamic(() => import('@/components/messages/messages-head
 const MessageBox = dynamic(() => import('@/components/messages/message-box').then(mod => mod.MessageBox));
 const MessageReplyBox = dynamic(() => import('@/components/messages/message-reply-box').then(mod => mod.MessageReplyBox));
 import {updateDraftState} from "@/redux/draft/action-reducer";
-import {debounce} from "@/utils/common.functions";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import {updateThreadState, updateThreads} from "@/redux/threads/action-reducer";
-import {EyeSlashedIcon} from "@/icons/eye-slashed.icon";
 import dynamic from "next/dynamic";
 import { keyPress } from "@/redux/key-navigation/action-reducer";
 
 let cacheMessages: { [key: string]: { body: MessagePart, attachments: MessageAttachments[] } } = {};
 
 export function Message() {
-  const iframeRef = React.useRef<HTMLIFrameElement | null | any>(null);
   const messagesWrapperRef = React.useRef<HTMLDivElement | null | any>(null);
-  const [iframeHeight, setIframeHeight] = React.useState("0px");
 
   const [index, setIndex] = useState<number | null>(null);
   const [emailPart, setEmailPart] = useState<string>("");
@@ -86,7 +71,6 @@ export function Message() {
     if (selectedThread && selectedThread?.id) {
       setShowReplyBox(false)
       setIndex(null);
-      setIframeHeight('0px');
       setMessageDetailsForReplyBox(null);
       dispatch(updateMessageState({ messages: selectedThread.messages }));
       setTimeout(() => {
@@ -237,16 +221,6 @@ export function Message() {
     }
   }, [target, messageIndex])
 
-  // Set iframe height once content is loaded within iframe
-  const onIframeLoad = () => {
-    debounce(() => {
-      if (iframeRef.current && iframeRef.current.contentWindow) {
-        iframeRef.current.contentWindow.document.body.style = "margin: 0; overflow: hidden;";
-        setIframeHeight((iframeRef.current.contentWindow.document.body.scrollHeight + 20) + "px");
-      }
-    }, 500)
-  };
-
 
   const closeCompose = () => {
     setReplyType('');
@@ -266,20 +240,6 @@ export function Message() {
     setMessageDetailsForReplyBox(messageData)
   }
 
-  const downloadImage = (item: MessageAttachments) => {
-    if (selectedMessage && selectedMessage.id) {
-      dispatch(getAttachmentDownloadUrl({ id: selectedMessage.id, attachment: item.id }));
-    }
-  }
-
-  const setScope = (type: string, item: any) => {
-    if (item && item.id) {
-      let body = {
-        scope: type
-      }
-      dispatch(updateMessage({ id: item.id, body }))
-    }
-  }
   const handleRowClick = (index: any) => {
     const selectedMessageIndex = inboxMessages.findIndex(msg => msg.id === selectedMessage?.id)
     if (selectedMessageIndex === index) {
