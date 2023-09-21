@@ -23,7 +23,6 @@ const ThreadsSideBar = dynamic(
     () => import('@/components/threads').then((mod) => mod.ThreadsSideBar)
 )
 import {
-    getProjectById,
     getProjectMembers,
     getProjectMembersInvites,
     updateProjectMemberRole, updateProjectState
@@ -85,7 +84,6 @@ function ProjectInbox() {
     useEffect(() => {
         if (router.query.project) {
             let projectId = router.query.project as string;
-            dispatch(getProjectById({id: projectId}));
             dispatch(getProjectMembers({projectId: projectId}));
             dispatch(getProjectMembersInvites({projectId: projectId}));
         }
@@ -135,6 +133,8 @@ function ProjectInbox() {
             dispatch(addItemToGroup(reqBody))
         }
     }, [dispatch, membersInputs, selectedAccount]);
+
+
 
     const updateProjectMemberRoleData = (role: string) => {
         if (project && project.id && selectedAccount && selectedAccount.id) {

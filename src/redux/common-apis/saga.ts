@@ -7,7 +7,7 @@ import {
   getSummary,
   getSummaryError
 } from "@/redux/common-apis/action-reducer";
-import {getAllProjectsSuccess} from "@/redux/projects/action-reducer";
+import {getAllProjectsSuccess, getProjectByIdSuccess} from "@/redux/projects/action-reducer";
 import {getAllAccountSuccess} from "@/redux/accounts/action-reducer";
 import {getAllOrganizationsSuccess} from "@/redux/organizations/action-reducer";
 import {updateUsersDetailsSuccess} from "@/redux/users/action-reducer";
@@ -33,6 +33,8 @@ function* getProjectSummaryData({payload: {id, mailbox}}: PayloadAction<{id: str
     const response: Summary = yield ApiService.callGet(`summary/project/${id}`, {...(mailbox ? {mailbox}: {}),});
     yield put(getAllThreadsSuccess(response.threads || []));
     yield put(getProjectSummarySuccess(response));
+    yield put(getProjectByIdSuccess(response.project || {}));
+
   } catch (error: any) {
     error = error as AxiosError;
     yield put(getProjectSummaryError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
