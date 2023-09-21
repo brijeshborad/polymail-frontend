@@ -150,7 +150,6 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
 
     useEffect(() => {
       if(incomingEvent === 'iframe.clicked') {
-        console.log(incomingEvent, 'RIGHT!')
         setIsMoreDropdownOpen(false)
       }
     }, [incomingEvent])
