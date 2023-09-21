@@ -10,7 +10,7 @@ import {Summary} from "@/models/summary";
 
 function* getSummaryData() {
   try {
-    const response: Summary = yield ApiService.callGet(`summary`, {});
+    const response: Summary = yield ApiService.callGet(`summary/inbox`, {});
     yield put(getAllProjectsSuccess(response.projects || []));
     yield put(getAllAccountSuccess(response.accounts || []));
     yield put(getAllOrganizationsSuccess(response.organizations || []));
