@@ -358,22 +358,37 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   }, [draft])
 
   useEffect(() => {
-    if (props.threadDetails) {
-      if ( props.threadDetails?.to?.length) {
+    if (props.replyType === 'forward') {
+      setEmailRecipients({
+        cc: { items: [], value: blankRecipientValue },
+        bcc: { items: [], value: blankRecipientValue },
+        recipients: { items: [], value: blankRecipientValue }
+      });
+    } else if (props.threadDetails) {
+      if (props.threadDetails?.from!) {
         setEmailRecipients((prevState: RecipientsType) => ({
           ...prevState,
           recipients: {
-            items: props.threadDetails.to,
+            items: [props.threadDetails?.from!],
             value: prevState.recipients.value
           }
         }));
       }
 
     if (props.threadDetails?.cc?.length) {
+      let items: MessageRecipient[] = []
+      if (props.replyType === 'reply-all') {
+        items.push(props.threadDetails?.from!)
+        if (props.threadDetails?.cc) {
+          items.push(...props.threadDetails?.cc)
+        } else if (props.threadDetails?.bcc) {
+          items.push(...props.threadDetails?.bcc)
+        }
+      }
         setEmailRecipients((prevState: RecipientsType) => ({
           ...prevState,
           cc: {
-            items: props.threadDetails.cc,
+            items: items,
             value: prevState.cc.value
           }
         }));
@@ -383,14 +398,14 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         setEmailRecipients((prevState: RecipientsType) => ({
           ...prevState,
           bcc: {
-            items: props.threadDetails.bcc,
+            items: props.threadDetails?.bcc,
             value: prevState.bcc.value
           }
         }));
       }
 
     }
-  }, [props.threadDetails])
+  }, [props.threadDetails, props.replyType])
 
   useEffect(() => {
     const propertiesToCheck: (keyof RecipientsType)[] = ['recipients', 'bcc', 'cc'];
