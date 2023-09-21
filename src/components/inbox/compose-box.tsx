@@ -407,7 +407,12 @@ export function ComposeBox(props: any) {
   }, []);
 
   const overlayClick = () => {
-    onOpenDraftConformationModal()
+    if (!draft) {
+      dispatch(updateMessageState({ isCompose: false, isConfirmModal: false}));
+    } else {
+      onOpenDraftConformationModal()
+
+    }
 
   }
 
@@ -416,7 +421,7 @@ export function ComposeBox(props: any) {
       sendToDraft('', false)
     }
     onCloseDraftConformationModal();
-    dispatch(updateMessageState({ isCompose: false, isConfirmModal: true, selectedMessage: null }));
+    dispatch(updateMessageState({ isCompose: false, isConfirmModal: false}));
   }
 
 

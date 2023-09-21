@@ -150,13 +150,13 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
               threads[0].messages &&
               threads[0].messages[0] &&
               !isConfirmModal) {
-                dispatch(updateMessageState({isCompose: true}));
+                dispatch(updateMessageState({isCompose: true, isConfirmModal: false}));
             }
         }
     }, [tabValue, threads])
 
     const openComposeModel = () => {
-        dispatch(updateMessageState({isCompose: true, selectedMessage: null}));
+        dispatch(updateMessageState({isCompose: true, isConfirmModal: false}));
     }
 
     return (

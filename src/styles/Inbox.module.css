@@ -280,6 +280,8 @@
     border-radius: 16px;
     height: 100%;
     background-color: white;
+    box-shadow: 0 0 12px 0 #00000014;
+
 }
 
 .mailBox.mailBoxFocused {
