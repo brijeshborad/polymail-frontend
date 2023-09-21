@@ -19,12 +19,32 @@ const commonApisSlice = createSlice({
     getSummaryError: (state: InitialCommonApisStateType, {payload: error}: PayloadAction<{ error: any }>) => {
       return {...state, isLoading: false, error}
     },
+
+    getProjectSummary: (state: InitialCommonApisStateType, _action: PayloadAction<{ mailbox?: string, id?: string, account?: string, mine?: boolean, resetState?: boolean, query?: string }>) => {
+      return {...state, isLoading: true, error: null}
+    },
+    getProjectSummarySuccess: (state: InitialCommonApisStateType, _action: PayloadAction<{}>) => {
+      return {...state, isLoading: false, error: null}
+    },
+    getProjectSummaryError: (state: InitialCommonApisStateType, {payload: error}: PayloadAction<{ error: any }>) => {
+      return {...state, isLoading: false, error}
+    },
+
+    updateSummaryState: (state: InitialCommonApisStateType, action: PayloadAction<InitialCommonApisStateType>) => {
+      return {...state, ...action.payload}
+    },
+
   }
 })
 
 export const {
   getSummary,
   getSummarySuccess,
-  getSummaryError
+  getSummaryError,
+  getProjectSummary,
+  getProjectSummarySuccess,
+  getProjectSummaryError,
+  updateSummaryState
+
 } = commonApisSlice.actions
 export default commonApisSlice.reducer

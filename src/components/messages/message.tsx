@@ -66,6 +66,7 @@ export function Message() {
   const { isLoading: organizationLoading } = useSelector((state: StateType) => state.organizations);
   const { isLoading: usersProfilePictureLoading } = useSelector((state: StateType) => state.users);
   const { isLoading: projectsLoading } = useSelector((state: StateType) => state.projects);
+  const { isLoading: summaryLoading } = useSelector((state: StateType) => state.commonApis);
   const [lastMessageDetails, setLastMessageDetails] = useState<MessageModel | null>(null);
   const [messageDetailsForReplyBox, setMessageDetailsForReplyBox] = useState<MessageModel | null>(null);
   const [isLoaderShow, setIsLoaderShow] = useState<boolean>(false);
@@ -75,12 +76,12 @@ export function Message() {
 
 
   useEffect(() => {
-    if (!threadLoading && !accountLoading && !organizationLoading && !usersProfilePictureLoading && !projectsLoading) {
+    if (!threadLoading && !accountLoading && !organizationLoading && !usersProfilePictureLoading && !projectsLoading && !summaryLoading) {
       setIsLoaderShow(false)
     } else {
       setIsLoaderShow(true)
     }
-  }, [threadLoading, accountLoading, organizationLoading, usersProfilePictureLoading, projectsLoading])
+  }, [threadLoading, accountLoading, organizationLoading, usersProfilePictureLoading, projectsLoading, summaryLoading])
 
   useEffect(() => {
     if (selectedThread && selectedThread?.id) {
