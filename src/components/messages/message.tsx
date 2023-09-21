@@ -30,10 +30,11 @@ const MessageReplyBox = dynamic(() => import('@/components/messages/message-repl
 import {updateDraftState} from "@/redux/draft/action-reducer";
 import {debounce} from "@/utils/common.functions";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
-import {updateThreadState, updateThreads} from "@/redux/threads/action-reducer";
+import {updateThreadState} from "@/redux/threads/action-reducer";
 import {EyeSlashedIcon} from "@/icons/eye-slashed.icon";
 import dynamic from "next/dynamic";
 import { keyPress } from "@/redux/key-navigation/action-reducer";
+import { markThreadAsRead } from "@/utils/threads-common-functions";
 
 let cacheMessages: { [key: string]: { body: MessagePart, attachments: MessageAttachments[] } } = {};
 
@@ -117,17 +118,7 @@ export function Message() {
       dispatch(updateThreadState({
         isThreadFocused: focused
       }))
-
-      const isUnread = (selectedThread.mailboxes || []).includes('UNREAD')
-
-      if (isUnread) {
-        dispatch(updateThreads({
-          id: selectedThread.id,
-          body: {
-            mailboxes: (selectedThread.mailboxes || []).filter(i => i !== 'UNREAD')
-          }
-        }))
-      }
+      markThreadAsRead(selectedThread, dispatch)
     }
   }, [dispatch, selectedThread])
 
@@ -449,7 +440,7 @@ export function Message() {
                         src={emailPart}
                         onLoad={onIframeLoad}
                         height={iframeHeight}
-                        frameBorder="0"
+                        style={{ border: 0}}
                         className={styles.mailBody}
                       />
                     </div>}
