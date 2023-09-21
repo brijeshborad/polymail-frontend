@@ -608,7 +608,6 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     if(incomingEvent === 'iframe.clicked') {
       setIsReplyDropdownOpen(false)
     }
-
   }, [incomingEvent, setIsReplyDropdownOpen]);
 
   return (
