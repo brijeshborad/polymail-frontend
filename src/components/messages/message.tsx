@@ -20,7 +20,8 @@ const MessageReplyBox = dynamic(() => import('@/components/messages/message-repl
 const ComposeBox = dynamic(() => import('@/components/inbox/compose-box').then(mod => mod.ComposeBox));
 import {updateDraftState} from "@/redux/draft/action-reducer";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
-import {updateThreadState, updateThreads} from "@/redux/threads/action-reducer";
+import { markThreadAsRead } from "@/utils/threads-common-functions";
+import {updateThreadState} from "@/redux/threads/action-reducer";
 import dynamic from "next/dynamic";
 import {keyPress} from "@/redux/key-navigation/action-reducer";
 import {getCacheMessages, setCacheMessages} from "@/utils/cache.functions";
@@ -100,17 +101,7 @@ export function Message() {
       dispatch(updateThreadState({
         isThreadFocused: focused
       }))
-
-      const isUnread = (selectedThread.mailboxes || []).includes('UNREAD')
-
-      if (isUnread) {
-        dispatch(updateThreads({
-          id: selectedThread.id,
-          body: {
-            mailboxes: (selectedThread.mailboxes || []).filter(i => i !== 'UNREAD')
-          }
-        }))
-      }
+      markThreadAsRead(selectedThread, dispatch)
     }
   }, [dispatch, selectedThread])
 
@@ -242,7 +233,8 @@ export function Message() {
   }
 
   const handleRowClick = (index: any) => {
-    const selectedMessageIndex = inboxMessages.findIndex(msg => msg.id === selectedMessage?.id)
+    const selectedMessageIndex = (messages || []).findIndex(msg => msg.id === selectedMessage?.id)
+
     if (selectedMessageIndex === index) {
       // Clicking on an already expanded row, so close it
       dispatch(updateMessageState({
@@ -250,7 +242,8 @@ export function Message() {
       }))
     } else {
       // Clicking on a new row, expand it
-      const targetMessage = inboxMessages[index]
+      const targetMessage = (messages || [])[index]
+
       dispatch(updateMessageState({
         selectedMessage: targetMessage
       }))

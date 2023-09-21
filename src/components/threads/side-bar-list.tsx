@@ -100,7 +100,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
         currentSelectedThreads = [];
 
         dispatch(updateThreadState({ selectedThread: item, isThreadFocused: false, multiSelection: [] }));
-        dispatch(updateMessageState({ selectedMessage: null, messages: [],  isConfirmModal: false }));
+        dispatch(updateMessageState({ selectedMessage: (item.messages || [])[0], messages: [] }));
         dispatch(updateDraftState({ draft: null }));
       }
     }

@@ -3,6 +3,7 @@ import { updateMessageState } from "@/redux/messages/action-reducer";
 import { updateThreadState } from "@/redux/threads/action-reducer";
 import { InitialKeyNavigationStateType, StateType } from "@/types";
 import { MONITORED_KEYS } from "@/utils/constants";
+import { markThreadAsRead } from "@/utils/threads-common-functions";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -28,7 +29,7 @@ export default function KeyboardNavigationListener() {
             target
           }
 
-          if(pressedKey?.value === 'UP' && lastTarget === 'reply-box') {
+          if (pressedKey?.value === 'UP' && lastTarget === 'reply-box') {
             dispatchAction.target = 'thread'
           }
 
@@ -68,9 +69,13 @@ export default function KeyboardNavigationListener() {
               const lastThread = threads && threads[lastThreadIndex as keyof object]
 
               if (lastThread) {
+
                 dispatch(updateThreadState({
                   selectedThread: lastThread
                 }))
+
+                markThreadAsRead(lastThread, dispatch)
+
                 dispatchAction.threadIndex = lastThreadIndex
                 dispatchAction.currentThreadId = lastThread.id
               }
