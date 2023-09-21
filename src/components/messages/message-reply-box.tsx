@@ -258,10 +258,11 @@ export function MessageReplyBox(props: MessageBoxType) {
   }, []);
 
   useEffect(() => {
-    if (props.messageData) {
-      let emailSubject = `${props.messageData.subject}`;
+    let messagesData = props.messageData || props.threadDetails
+    if (messagesData) {
+      let emailSubject = `${messagesData.subject}`;
       if (props.replyType === 'forward') {
-        emailSubject = `Fwd: ${props.messageData.subject}`;
+        emailSubject = `Fwd: ${messagesData.subject}`;
         let decoded = Buffer.from(props.emailPart || '', 'base64').toString('ascii');
         setEmailBody(getForwardContent() + (decoded || '') + (selectedAccount?.signature || ''));
         debounce(() => {
@@ -279,13 +280,13 @@ export function MessageReplyBox(props: MessageBoxType) {
         setEmailRecipients((prevState: RecipientsType) => ({
           ...prevState,
           recipients: {
-            items: draft ? (draft.to || [{ name: '', email: '' }]) : [props.messageData?.from!],
+            items: draft ? (draft.to || [{ name: '', email: '' }]) : [messagesData?.from!],
             value: prevState.recipients.value
           }
         }));
 
-        if (props.replyType === 'reply-all' && props.messageData.cc) {
-          let items: MessageRecipient[] = (draft ? (draft.cc || []) : props.messageData.cc)!.filter(t => t);
+        if (props.replyType === 'reply-all' && messagesData.cc) {
+          let items: MessageRecipient[] = (draft ? (draft.cc || []) : messagesData.cc)!.filter((t: any) => t);
           if (items.length > 0) {
             setEmailRecipients((prevState: RecipientsType) => ({
               ...prevState,
@@ -298,12 +299,10 @@ export function MessageReplyBox(props: MessageBoxType) {
           }
         }
       }
-
       // set subject when email is replied or forwarded.
       setSubject(emailSubject || '');
-
     }
-  }, [props.messageData, props.replyType, props.emailPart])
+  }, [props.messageData, props.threadDetails, props.replyType, props.emailPart])
 
   function formatEmailString(emailArray: any) {
     if (Array.isArray(emailArray)) {
@@ -376,10 +375,11 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
           items.push(...props.threadDetails?.bcc)
         }
       }
+     const filteredArray = (items || []).filter(obj => obj.email !== '');
         setEmailRecipients((prevState: RecipientsType) => ({
           ...prevState,
           cc: {
-            items: items,
+            items: filteredArray,
             value: prevState.cc.value
           }
         }));

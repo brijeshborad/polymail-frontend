@@ -256,10 +256,6 @@ export function Message() {
     }
   };
 
-  useEffect(() => {
-    console.log('selectedThread', selectedThread)
-  }, [selectedThread])
-
   return (
     <>
       {(!isCompose && !isConfirmModal)? <Box
