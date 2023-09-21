@@ -137,22 +137,6 @@ export default function KeyboardNavigationListener() {
     };
   }, [dispatch, lastTarget, threads, selectedThread, currentMessageId, messages, selectedMessage?.id]);
 
-  // /**
-  //  * Brings back the focus to the window
-  //  * when an iframe is clicked.
-  //  */
-  // useEffect(() => {
-  //   const handleWindowBlur = () => {
-  //     setTimeout(() => {
-  //       window.focus()
-  //     }, 500)
-  //   }
-  //   window.addEventListener('blur', handleWindowBlur);
-  //   return () => {
-  //     window.removeEventListener('blur', handleWindowBlur);
-  //   };
-  // }, [])
-
   useEffect(() => {
     if(incomingEvent === 'iframe.clicked') {
       setTimeout(() => {
