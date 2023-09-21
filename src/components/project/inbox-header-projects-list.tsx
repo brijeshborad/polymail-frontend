@@ -48,11 +48,10 @@ export function InboxHeaderProjectsList(props: { size: number }) {
                 threads: [],
                 success: false,
                 updateSuccess: false,
-                tabValue: 'reset',
                 selectedThread: null,
             }),
         );
-        dispatch(updateMessageState({selectedMessage: null}));
+        dispatch(updateMessageState({selectedMessage: null, messages: []}));
     }
 
     return (

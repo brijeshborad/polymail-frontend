@@ -37,7 +37,7 @@ import {updateDraftState} from "@/redux/draft/action-reducer";
 import {SmallCloseIcon, TriangleDownIcon} from "@chakra-ui/icons";
 
 const ComposeBox = dynamic(() => import("@/components/inbox/compose-box").then(mod => mod.ComposeBox));
-import {getCurrentCacheTab} from "@/utils/common.functions";
+import {getCurrentCacheTab} from "@/utils/cache.functions";
 
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
 
@@ -147,21 +147,21 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                 <Tabs>
                     {isThreadSearched ? (
                       <>
-                        <Flex 
-                          overflow={'auto'} 
-                          backgroundColor={'#FFFFFF'} 
+                        <Flex
+                          overflow={'auto'}
+                          backgroundColor={'#FFFFFF'}
                           border={'1px solid #F3F4F6'}
-                          borderRadius={16} padding={'10px 14px'} 
+                          borderRadius={16} padding={'10px 14px'}
                           gap={2} align={'center'}
                           justify={'space-between'}
                         >
-                          <Flex 
-                            align={'center'} fontSize={'13px'} fontWeight={'400'} 
+                          <Flex
+                            align={'center'} fontSize={'13px'} fontWeight={'400'}
                             color={'#374151'} gap={2} letterSpacing={'-0.13px'} whiteSpace={'nowrap'}
                           >
                             <span>Search Results {countUnreadMessages > 0 && (
-                                <Badge 
-                                  backgroundColor={'#F3F4F6'} fontSize={'12px'} color={'#6B7280'} 
+                                <Badge
+                                  backgroundColor={'#F3F4F6'} fontSize={'12px'} color={'#6B7280'}
                                   padding={'1px 4px'} borderRadius={4} fontWeight={500}
                                 >
                                   {countUnreadMessages}
@@ -180,7 +180,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                           <Flex gap={2}>
                               <AddToProjectButton/>
                               <Menu>
-                                  <MenuButton 
+                                  <MenuButton
                                     className={styles.tabListMoreButton} minWidth={'60px'} height={'auto'}
                                     backgroundColor={'transparent'} border={'1px solid #D1D5DB'} lineHeight={1}
                                     fontSize={'12px'} color={'#374151'} as={Button} borderRadius={'50px'}
@@ -208,13 +208,13 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                     </>
                     ) : (
                     <Flex align={'center'} gap={'3'}>
-                        <TabList 
+                        <TabList
                           justifyContent={'space-between'} flex={1} alignItems={'center'}
                           className={styles.mailTabList} overflowX={"auto"}
                         >
                             <Tab className={styles.emailTabs}>
                                 <Tooltip label='Inbox' placement='bottom' bg='gray.300' color='black'>
-                                    <div 
+                                    <div
                                       className={`${tab === 'INBOX' ? styles.active : ''}`}
                                       onClick={() => changeEmailTabs('INBOX')}
                                     >
@@ -226,7 +226,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                             </Tab>
                             <Tab className={styles.emailTabs}>
                                 <Tooltip label='Sent' placement='bottom' bg='gray.300' color='black'>
-                                    <div 
+                                    <div
                                       className={`${tab === 'SENT' ? styles.active : ''}`}
                                       onClick={() => changeEmailTabs('SENT')}
                                     >
@@ -239,7 +239,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                             {!['TRASH', 'STARRED', 'ARCHIVE', 'DRAFT'].includes(tab) &&
                             <Tab className={styles.emailTabs}>
                                 <Tooltip label='Snoozed' placement='bottom' bg='gray.300' color='black'>
-                                    <div 
+                                    <div
                                       className={`${tab === 'SNOOZED' ? styles.active : ''}`}
                                       onClick={() => changeEmailTabs('SNOOZED')}
                                     >
@@ -253,7 +253,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                             {tab === 'STARRED' &&
                             <Tab className={styles.emailTabs}>
                                 <Tooltip label='Starred' placement='bottom' bg='gray.300' color='black'>
-                                    <div 
+                                    <div
                                       className={`${tab === 'STARRED' ? styles.active : ''}`}
                                       onClick={() => changeEmailTabs('STARRED')}
                                     >
@@ -268,7 +268,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
 
                             <Tab className={styles.emailTabs}>
                                 <Tooltip label='Trash' placement='bottom' bg='gray.300' color='black'>
-                                    <div 
+                                    <div
                                       className={`${tab === 'TRASH' ? styles.active : ''}`}
                                       onClick={() => changeEmailTabs('TRASH')}
                                     >
@@ -282,7 +282,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
 
                             <Tab className={styles.emailTabs}>
                                 <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
-                                    <div 
+                                    <div
                                       className={`${tab === 'ARCHIVE' ? styles.active : ''}`}
                                       onClick={() => changeEmailTabs('ARCHIVE')}
                                     >
@@ -297,7 +297,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
 
                             <Tab className={styles.emailTabs}>
                                 <Tooltip label='Draft' placement='bottom' bg='gray.300' color='black'>
-                                    <div 
+                                    <div
                                       className={`${tab === 'DRAFT' ? styles.active : ''}`}
                                       onClick={() => changeEmailTabs('DRAFT')}
                                     >
@@ -309,7 +309,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                             }
 
                             <Menu>
-                                <MenuButton 
+                                <MenuButton
                                   className={styles.tabListMoreButton} minWidth={'80px'}
                                   borderLeft={'1px solid #D1D5DB'}
                                   borderRadius={0} backgroundColor={'transparent'} height={'auto'}
@@ -338,7 +338,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                 </MenuList>
                             </Menu>
                         </TabList>
-                        <Button 
+                        <Button
                           className={styles.composeButton} borderRadius={8} height={'auto'} padding={'10px'}
                           minWidth={'101px'} backgroundColor={'#FFFFFF'} color={'#374151'} borderColor={'#E5E7EB'}
                           leftIcon={<EditIcon/>} colorScheme='blue' variant='outline'

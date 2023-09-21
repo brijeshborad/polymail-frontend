@@ -250,16 +250,18 @@ export function Header() {
     };
 
     const changePage = (page: string) => {
-        dispatch(
-            updateThreadState({
-                threads: [],
-                success: false,
-                updateSuccess: false,
-                selectedThread: null,
-            }),
-        );
-        dispatch(updateMessageState({ selectedMessage: null }));
-        Router.push(`/${page}`);
+        if (!router.pathname.includes(page)) {
+            dispatch(
+                updateThreadState({
+                    threads: [],
+                    success: false,
+                    updateSuccess: false,
+                    selectedThread: null,
+                }),
+            );
+            dispatch(updateMessageState({ selectedMessage: null, messages: [] }));
+            Router.push(`/${page}`);
+        }
     };
 
     return (

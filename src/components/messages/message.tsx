@@ -12,7 +12,7 @@ import {
   getMessageParts,
   updateMessageState
 } from "@/redux/messages/action-reducer";
-import {Message as MessageModel, MessageDraft, MessagePart, MessageAttachments} from "@/models";
+import {Message as MessageModel, MessageDraft} from "@/models";
 const MessagesHeader = dynamic(() => import('@/components/messages/messages-header').then(mod => mod.MessagesHeader));
 const MessageBox = dynamic(() => import('@/components/messages/message-box').then(mod => mod.MessageBox));
 const MessageReplyBox = dynamic(() => import('@/components/messages/message-reply-box').then(mod => mod.MessageReplyBox));
@@ -21,8 +21,7 @@ import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import {updateThreadState, updateThreads} from "@/redux/threads/action-reducer";
 import dynamic from "next/dynamic";
 import { keyPress } from "@/redux/key-navigation/action-reducer";
-
-let cacheMessages: { [key: string]: { body: MessagePart, attachments: MessageAttachments[] } } = {};
+import {getCacheMessages, setCacheMessages} from "@/utils/cache.functions";
 
 export function Message() {
   const messagesWrapperRef = React.useRef<HTMLDivElement | null | any>(null);
@@ -138,13 +137,14 @@ export function Message() {
     }
     let messageId = inboxMessages[index].id;
     if (messageId) {
-      cacheMessages = {
+      let cacheMessages = getCacheMessages();
+      setCacheMessages({
         ...cacheMessages,
         [messageId]: {
           ...cacheMessages[messageId],
           ...body
         }
-      }
+      })
     }
   }, [inboxMessages, index])
 
@@ -153,8 +153,9 @@ export function Message() {
       if (inboxMessages[index]) {
         dispatch(updateMessageState({ selectedMessage: inboxMessages[index] }));
         // We already set index to last inbox message
-        if (cacheMessages[inboxMessages[index].id!] && cacheMessages[inboxMessages[index].id!].body) {
-          dispatch(updateMessageState({ messagePart: cacheMessages[inboxMessages[index].id!].body }));
+        let cacheMessages: any = getCacheMessages();
+        if (cacheMessages[inboxMessages[index].id!] && cacheMessages[inboxMessages[index].id!].data) {
+          dispatch(updateMessageState({ messagePart: {data: cacheMessages[inboxMessages[index].id!].data} }));
         } else {
           dispatch(getMessageParts({ id: inboxMessages[index].id! }));
         }

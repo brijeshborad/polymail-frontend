@@ -1,8 +1,6 @@
-import {Thread} from "@/models";
+import {MessageAttachments, MessagePart, Thread} from "@/models";
 
 let timeout: any = null;
-let cacheThreads: { [key: string]: Thread[] } = {};
-let currentCacheTab = 'INBOX';
 
 export function debounce(fun: () => void, timeOut: number = 1500) {
     if (timeout)
@@ -28,24 +26,6 @@ export const getFileSize = (size: number) => {
 }
 
 export const emojiArray = ["😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇", "🙂", "🙃", "😉", "😌", "😍", "🥰", "😘", "😗", "😙", "😚", "😋", "😛", "😝", "😜", "🤪", "👶", "👧", "🧒", "👦", "👩", "🧑", "👨", "👵", "🧓", "👴", "👮", "👷", "💂", "🕵️‍♂️", "👩‍⚕️", "👨‍⚕️", "👩‍🌾", "👨‍🌾", "👩‍🍳", "👨‍🍳", "👩‍🎓", "👨‍🎓", "👩‍🎤", "👨‍🎤", "👩‍🏫", "👨‍🏫", "🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🦝", "🐻", "🐨", "🐼", "🦁", "🐯", "🐮", "🐷", "🐽", "🐸", "🐵", "🙈", "🙉", "🙊", "🐒", "🦍", "🦧", "🐔", "🍔", "🍟", "🍕", "🌭", "🍿", "🧂", "🍞", "🥖", "🥐", "🥨", "🥯", "🥞", "🧇", "🍳", "🍗", "🍖", "🥩", "🍔", "🍟", "🍕", "🌭", "🍿", "🧂", "🚗", "🚕", "🚆", "🚇", "🚈", "🚂", "🚊", "🚝", "🚄", "🚅", "🚈", "🚞", "🚋", "🚲", "🛴", "🛵", "🏍️", "🚨", "🚍", "🚌", "🚒", "🚑", "🚓", "⚽", "🏀", "🏈", "⚾", "🥎", "🎾", "🏐", "🏉", "🎱", "🏓", "🏸", "🥏", "🥅", "🏒", "🏑", "🏏", "🥋", "🥊", "🥇", "🥈", "🥉", "🏆"]
-
-export function getCurrentCacheTab() {
-    return currentCacheTab;
-}
-
-export function setCurrentCacheTab(value: string) {
-    currentCacheTab = value;
-    return currentCacheTab;
-}
-
-export function getCacheThreads() {
-    return cacheThreads;
-}
-
-export function setCacheThreads(threads: Thread[] | any) {
-    cacheThreads = threads;
-    return cacheThreads;
-}
 
 export function isElectron() {
     if (process.env.NEXT_PUBLIC_ELECTRON_RUN) {
