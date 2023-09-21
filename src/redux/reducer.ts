@@ -13,6 +13,7 @@ import memberships from './memberships/action-reducer'
 import undoBody from './undo-body/action-reducer'
 import commonApis from './common-apis/action-reducer'
 import keyNavigation from './key-navigation/action-reducer'
+import globalEvents from './global-events/action-reducer'
 
 const combinedReducer = combineReducers({
     auth,
@@ -27,7 +28,8 @@ const combinedReducer = combineReducers({
     memberships,
     undoBody,
     commonApis,
-    keyNavigation
+    keyNavigation,
+    globalEvents
 });
 
 const reducers = (state: any, action: any) => {

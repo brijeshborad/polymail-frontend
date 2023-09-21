@@ -21,7 +21,6 @@ import {updateCommonState} from "@/redux/common-apis/action-reducer";
 
 export function AddToProjectButton() {
     const [isDropdownOpen, setDropDownOpen] = useState(false)
-    const [isWindowActive, setWindowActive] = useState<boolean>(true);
     const dispatch = useDispatch();
     const {selectedThread, multiSelection} = useSelector((state: StateType) => state.threads);
 
@@ -32,6 +31,7 @@ export function AddToProjectButton() {
     const addToProjectRef = useRef<HTMLInputElement | null>(null);
     const searchRef = useRef<HTMLInputElement | null>(null);
     const {isThreadAddedToProjectSuccess} = useSelector((state: StateType) => state.memberships);
+    const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const [successMessage, setSuccessMessage] = useState<{ desc: string, title: string } | null>(null);
 
     useEffect(() => {
@@ -118,26 +118,11 @@ export function AddToProjectButton() {
         }
     }
 
-    /**
-     * Detects if the iframe was clicked
-     */
-    const onWindowBlur = useCallback(() => {
-        const message = document.activeElement;
-        setTimeout(() => {
-            if (document.activeElement && document?.activeElement.tagName === 'IFRAME' && message) {
-                message.textContent = 'clicked ' + Date.now();
-                setDropDownOpen(false);
-                setWindowActive(false);
-            }
-        });
-    }, []);
-
     useEffect(() => {
-        window.addEventListener('blur', onWindowBlur);
-        return () => {
-            window.removeEventListener('blur', onWindowBlur);
-        };
-    }, [isWindowActive, onWindowBlur]);
+      if(incomingEvent === 'iframe.clicked') {
+        setDropDownOpen(false);
+      }
+    }, [incomingEvent, setDropDownOpen]);
 
     return (
         <>
