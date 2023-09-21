@@ -71,8 +71,6 @@ export function ComposeBox(props: any) {
 
       if (subject) {
         setSubject(subject)
-      } else {
-        setSubject('')
       }
 
       if (to && to.length) {

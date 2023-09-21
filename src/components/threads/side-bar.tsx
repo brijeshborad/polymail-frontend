@@ -134,7 +134,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     const changeEmailTabs = (value: string) => {
         if (getCurrentCacheTab() !== value) {
             if (value !== 'DRAFT') {
-                dispatch(updateMessageState({isCompose: false, isConfirmModal: true}));
+                dispatch(updateMessageState({isCompose: false, isConfirmModal: false}));
             }
 
             dispatch(updateThreadState({tabValue: tab, threads: []}));
