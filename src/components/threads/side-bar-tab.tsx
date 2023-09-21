@@ -9,8 +9,9 @@ import {useDispatch, useSelector} from "react-redux";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import {useRouter} from "next/router";
 import dynamic from "next/dynamic";
-import {getCacheThreads, getCurrentCacheTab, setCacheThreads, setCurrentCacheTab} from "@/utils/common.functions";
+import {getCacheThreads, getCurrentCacheTab, setCacheThreads, setCurrentCacheTab} from "@/utils/cache.functions";
 import {updateLastMessage} from "@/redux/socket/action-reducer";
+import {getProjectSummary, getProjectSummarySuccess} from "@/redux/common-apis/action-reducer";
 
 let tab: string = '';
 
@@ -24,6 +25,7 @@ export function ThreadsSideBarTab(props: TabProps) {
         selectedThread
     } = useSelector((state: StateType) => state.threads)
     const {selectedAccount, account} = useSelector((state: StateType) => state.accounts);
+    const {isLoading: summaryIsLoading} = useSelector((state: StateType) => state.commonApis);
     const {newMessage} = useSelector((state: StateType) => state.socket);
     const router = useRouter();
     const dispatch = useDispatch();
@@ -32,36 +34,44 @@ export function ThreadsSideBarTab(props: TabProps) {
     const getAllThread = useCallback((type: string = '') => {
         if (selectedAccount) {
             let resetState = true;
-            if (!tab || tab === 'reset') {
+            if (!tab) {
                 return;
             }
             if (getCurrentCacheTab() !== tab) {
                 setCurrentCacheTab(tab);
-                if (getCacheThreads()[`${props.cachePrefix}-${tab}-${selectedAccount.id}`]) {
-                    resetState = false
-                }
+            }
+            if (getCacheThreads()[`${props.cachePrefix}-${tab}-${selectedAccount.id}`]) {
+                resetState = false
                 dispatch(updateThreadState({
                     threads: getCacheThreads()[`${props.cachePrefix}-${tab}-${selectedAccount.id}`],
                     isLoading: false
                 }));
             }
+            const routePaths = router.pathname.split('/');
+            if (routePaths.includes('projects')) {
+                if (router.query.project) {
+                    dispatch(updateThreadState({
+                        threads: [],
+                    }));
+                    let projectId = router.query.project as string;
 
-            if (router.query.project) {
-                dispatch(getAllThreads({
-                    mailbox: tab,
-                    project: router.query.project as string,
-                    resetState: resetState,
-                    ...(type === 'just-mine' ? {mine: true} : {})
-                }));
+                    dispatch(getProjectSummary({
+                        id: projectId,
+                        mailbox: tab,
+                    }))
+                }
+
             } else {
                 if (type === 'projects') {
                     dispatch(getAllThreads({project: "ALL", mailbox: tab}));
                 } else {
-                    dispatch(getAllThreads({mailbox: tab, account: selectedAccount.id, resetState: resetState}));
+                    if (!router.query.project) {
+                        dispatch(getAllThreads({mailbox: tab, account: selectedAccount.id, resetState: resetState}));
+                    }
                 }
             }
         }
-    }, [dispatch, props.cachePrefix, router.query.project, selectedAccount]);
+    }, [dispatch, props.cachePrefix, router.pathname, router.query.project, selectedAccount]);
 
     useEffect(() => {
         if (threadListSuccess && selectedAccount) {
@@ -122,8 +132,11 @@ export function ThreadsSideBarTab(props: TabProps) {
     }, [dispatch, tabName])
 
     useEffect(() => {
-        if (isLoading && threads && threads.length >= 1) {
+        if ((isLoading || summaryIsLoading) && threads && threads.length >= 1) {
             dispatch(updateThreadState({isLoading: false}));
+            dispatch(getProjectSummarySuccess({
+                isLoading: false
+            }));
         }
     }, [dispatch, isLoading, threads])
 
@@ -151,7 +164,7 @@ export function ThreadsSideBarTab(props: TabProps) {
                 <Flex align={'center'} gap={2}>
                     {router.query.project && (
                       <div className={tabName === 'every-thing' ? styles.active : ''}>
-                        <Button 
+                        <Button
                           colorScheme='white'
                           onClick={() => changeThread('every-thing')}
                         >
@@ -160,8 +173,8 @@ export function ThreadsSideBarTab(props: TabProps) {
                       </div>
                     )}
                     <div className={tabName === 'just-mine' ? styles.active : ''}>
-                      <Button 
-                        colorScheme='white' 
+                      <Button
+                        colorScheme='white'
                         onClick={() => changeThread('just-mine')}
                       >
                         Just mine
@@ -169,8 +182,8 @@ export function ThreadsSideBarTab(props: TabProps) {
                     </div>
                     {!router.query.project &&
                     <div className={tabName === 'projects' ? styles.active : ''}>
-                      <Button 
-                        colorScheme='white' 
+                      <Button
+                        colorScheme='white'
                         onClick={() => changeThread('projects')}
                       >
                         Projects
@@ -182,7 +195,7 @@ export function ThreadsSideBarTab(props: TabProps) {
           </Flex>
 
 
-            {isLoading && (
+            {(isLoading || summaryIsLoading) && (
                 <Flex direction="column" gap={2} mt={5}>
                     <SkeletonLoader skeletonLength={15}/>
                 </Flex>

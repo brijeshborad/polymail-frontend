@@ -8,7 +8,7 @@ import {RepIcon} from "@/icons";
 const {toast} = createStandaloneToast()
 
 export function Toaster(props: ToasterProps) {
-    let polyToasterId = `poly-toast-${new Date().getTime().toString()}`;
+    let polyToasterId = `poly-toast-${new Date().getMilliseconds()}`;
     if (toast.isActive(`${polyToasterId}`)) {
         return null;
     }

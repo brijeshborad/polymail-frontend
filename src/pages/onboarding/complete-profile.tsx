@@ -25,13 +25,16 @@ function CompleteProfile() {
     const [showLoader, setShowLoader] = useState<boolean>(false);
 
     useEffect(() => {
-        if (userDetails) {
-            setName((userDetails.firstName ?? '') + " " + (userDetails.lastName ?? ''))
-        }
         if (profilePicture && name) {
             router.push('/inbox')
         }
-    }, [userDetails, profilePicture]);
+    }, [profilePicture, router, name]);
+
+    useEffect(() => {
+        if (userDetails) {
+            setName((userDetails.firstName ?? '') + " " + (userDetails.lastName ?? ''))
+        }
+    }, [userDetails]);
 
     useEffect(() => {
         dispatch(getUsersDetails({}));

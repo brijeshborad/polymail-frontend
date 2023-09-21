@@ -23,7 +23,6 @@ const ThreadsSideBar = dynamic(
     () => import('@/components/threads').then((mod) => mod.ThreadsSideBar)
 )
 import {
-    getProjectById,
     getProjectMembers,
     getProjectMembersInvites,
     updateProjectMemberRole, updateProjectState
@@ -85,7 +84,6 @@ function ProjectInbox() {
     useEffect(() => {
         if (router.query.project) {
             let projectId = router.query.project as string;
-            dispatch(getProjectById({id: projectId}));
             dispatch(getProjectMembers({projectId: projectId}));
             dispatch(getProjectMembersInvites({projectId: projectId}));
         }
@@ -135,6 +133,8 @@ function ProjectInbox() {
             dispatch(addItemToGroup(reqBody))
         }
     }, [dispatch, membersInputs, selectedAccount]);
+
+
 
     const updateProjectMemberRoleData = (role: string) => {
         if (project && project.id && selectedAccount && selectedAccount.id) {
@@ -244,12 +244,12 @@ function ProjectInbox() {
                               color={'#ffffff'} lineHeight={'1'} fontSize={'14px'} borderRadius={'8px'}
                               height={'auto'} padding={'11px 16px'}
                             >
-                              Manage Members
+                              Share
                             </MenuButton>
                             <MenuList className={`${styles.manageMemberDropDown} drop-down-list`}>
                                 <Flex color={'#374151'} fontWeight={'500'} fontSize={'13px'} padding={'12px'}
                                       justifyContent={'space-between'} alignItems={'center'}
-                                      borderBottom={'1px solid #F3F4F6'}>Manage members
+                                      borderBottom={'1px solid #F3F4F6'}>Share {project && project?.name}
                                   <IconButton className={styles.closeIcon} onClick={onClose}
                                                     cursor={'pointer'} backgroundColor={'#FFFFFF'} padding={0}
                                                     minWidth={'1px'} aria-label='Add to friends'
@@ -366,7 +366,7 @@ function ProjectInbox() {
                     </Flex>
                 </Flex>
 
-                <Grid className={styles.mailGrid} templateColumns='30% auto' padding={'32px 32px 16px'} gap={6}
+                <Grid className={styles.mailGrid} templateColumns='30% auto' padding={'16px 20px 16px'} gap={4}
                       flex={1}>
                     <GridItem w='100%' flex={1}>
                         {((size < 991 && !selectedThread) || size > 991) &&

@@ -48,11 +48,10 @@ export function InboxHeaderProjectsList(props: { size: number }) {
                 threads: [],
                 success: false,
                 updateSuccess: false,
-                tabValue: 'reset',
                 selectedThread: null,
             }),
         );
-        dispatch(updateMessageState({selectedMessage: null}));
+        dispatch(updateMessageState({selectedMessage: null, messages: []}));
     }
 
     return (
@@ -95,9 +94,7 @@ export function InboxHeaderProjectsList(props: { size: number }) {
                 }
                 {!isLoading && projectData && projectData.length < maxSize &&
                 <Button alignItems={'center'} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
-                        onClick={() => {
-                            onOpen()
-                        }} padding={'7px'} minWidth={'216px'}
+                        onClick={() => Router.push('/projects/create-project')} padding={'7px'} minWidth={'216px'}
                         border={'1px dashed #E5E7EB'} borderRadius={'8px'} h={'fit-content'}
                         maxWidth={'216px'} className={'create-project-button'}>
                     <div className={'folder-icon'}>

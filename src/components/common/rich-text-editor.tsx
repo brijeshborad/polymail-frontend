@@ -20,26 +20,44 @@ if (typeof window === 'object') {
     htmlToDraft = require('html-to-draftjs').default;
 }
 
-export function RichTextEditor({onChange, placeholder, className, value, initialUpdated, hideToolBar}: RichTextEditorProps) {
+export function RichTextEditor({onChange, placeholder, className, value, hideToolBar}: RichTextEditorProps) {
     const [editorState, setEditorState] = useState<EditorState>(EditorState.createEmpty());
+    const [isContentEdited, setIsContentEdited] = useState<boolean>(false);
+    const [editorRef, setEditorRef] = useState<any | null>(null);
     const updateParentComponent = useCallback(() => {
-        if (onChange) { // editorState?.getCurrentContent().getPlainText().trim()
+        if (onChange && isContentEdited) { // editorState?.getCurrentContent().getPlainText().trim()
             onChange(draftToHtml(convertToRaw(editorState?.getCurrentContent() as ContentState)));
         }
         // eslint-disable-next-line
     }, [editorState])
+
+    const setEditorReference = (ref: any) => {
+        if (!editorRef) {
+            setEditorRef(ref);
+        }
+    }
+
+    useEffect(() => {
+        if (editorRef) {
+            if (editorRef.addEventListener) {
+                editorRef.addEventListener('keyup', () => {
+                    if (!isContentEdited) {
+                        setIsContentEdited(true);
+                    }
+                })
+            }
+        }
+    }, [editorRef, isContentEdited])
 
     useEffect(() => {
         updateParentComponent();
     }, [updateParentComponent])
 
     useEffect(() => {
-        if (value) {
-            if (!initialUpdated) {
-                setEditorState(EditorState.createWithContent(ContentState.createFromBlockArray(htmlToDraft(value))));
-            }
+        if (value && !isContentEdited) {
+            setEditorState(EditorState.moveSelectionToEnd(EditorState.createWithContent(ContentState.createFromBlockArray(htmlToDraft(value)))));
         }
-    }, [value, initialUpdated])
+    }, [value, isContentEdited])
 
 
     return (
@@ -47,6 +65,7 @@ export function RichTextEditor({onChange, placeholder, className, value, initial
             placeholder={placeholder}
             editorState={editorState}
             wrapperClassName={className}
+            editorRef={setEditorReference}
             editorClassName={'default-editor-css'}
             onEditorStateChange={setEditorState}
             toolbarHidden={hideToolBar ? hideToolBar : false}
@@ -80,7 +99,7 @@ export function RichTextEditor({onChange, placeholder, className, value, initial
                     showOpenOptionOnHover: true,
                     defaultTargetOption: '_self',
                     options: ['link'],
-                    link: {icon: "/image/icon/link.svg", className: undefined },
+                    link: {icon: "/image/icon/link.svg", className: undefined},
                     linkCallback: undefined
                 },
             }}

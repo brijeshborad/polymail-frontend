@@ -5,7 +5,6 @@ import {
   Modal,
   ModalBody,
   ModalContent, ModalFooter,
-  ModalHeader,
   ModalOverlay,
   Text, useDisclosure
 } from "@chakra-ui/react";
@@ -18,7 +17,7 @@ import { debounce, isEmail } from "@/utils/common.functions";
 import { createDraft, sendMessage, updateDraftState, updatePartialMessage } from "@/redux/draft/action-reducer";
 import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
-import { uploadAttachment } from "@/redux/messages/action-reducer";
+import {updateMessageState, uploadAttachment} from "@/redux/messages/action-reducer";
 import { MessageAttachments, MessageRecipient } from "@/models";
 import { Toaster } from "@/components/common";
 import { RecipientsType } from "@/types/props-types/message-recipients.type";
@@ -30,11 +29,12 @@ const AddToProjectButton = dynamic(() => import("@/components/common").then(mod 
 const MessageRecipients = dynamic(() => import("../messages/message-recipients").then(mod => mod.default));
 const MessageSchedule = dynamic(() => import("../messages/message-schedule").then(mod => mod.default));
 
+const blankRecipientValue: MessageRecipient = {
+  name: '',
+  email: ''
+}
+
 export function ComposeBox(props: any) {
-  const blankRecipientValue: MessageRecipient = {
-    name: '',
-    email: ''
-  }
   const [emailRecipients, setEmailRecipients] = useState<RecipientsType>({
     cc: {
       items: [],
@@ -64,7 +64,6 @@ export function ComposeBox(props: any) {
   const inputFile = useRef<HTMLInputElement | null>(null);
   const editorRef = useRef<any>(null);
   const { toast } = createStandaloneToast()
-  const [boxUpdatedFirstTime, setBoxUpdatedFirstTime] = useState<boolean>(false);
 
   useEffect(() => {
     if (props.messageDetails) {
@@ -209,9 +208,6 @@ export function ComposeBox(props: any) {
 
   const sendToDraft = (value: string, isValueUpdate: boolean = true) => {
     if (isValueUpdate) {
-      if (!boxUpdatedFirstTime) {
-        setBoxUpdatedFirstTime(true);
-      }
       if (!value.trim()) {
         setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
         setExtraClassNamesForBottom(prevState => prevState.replace('show-shadow-bottom', ''));
@@ -333,7 +329,6 @@ export function ComposeBox(props: any) {
   useEffect(() => {
     if (selectedAccount && selectedAccount.signature) {
       setEmailBody(`<p>${selectedAccount.signature}</p>`);
-      setBoxUpdatedFirstTime(false);
     }
   }, [selectedAccount, props.isOpen])
 
@@ -412,7 +407,13 @@ export function ComposeBox(props: any) {
   }, []);
 
   const overlayClick = () => {
-    onOpenDraftConformationModal()
+    if (!draft) {
+      dispatch(updateMessageState({ isCompose: false, isConfirmModal: false}));
+    } else {
+      onOpenDraftConformationModal()
+
+    }
+
   }
 
   const modalCloseConfirmation = (type: string) => {
@@ -420,119 +421,93 @@ export function ComposeBox(props: any) {
       sendToDraft('', false)
     }
     onCloseDraftConformationModal();
-    props.onClose();
-    setBoxUpdatedFirstTime(true);
-
+    dispatch(updateMessageState({ isCompose: false, isConfirmModal: false}));
   }
 
 
   return (
     <>
-      <Modal isOpen={props.isOpen} onClose={props.onClose} isCentered onOverlayClick={() => overlayClick()} closeOnOverlayClick={false} onEsc={() => overlayClick()} closeOnEsc={false}>
-        <ModalOverlay backgroundColor={'rgba(229, 231, 235, 0.50)'} backdropFilter={'blur(16px)'} />
-        <ModalContent className={styles.composeModal} maxWidth={'893px'} height={'708px'} maxHeight={'708px'}
-          borderRadius={16} border={'1px solid #E5E7EB'}>
-          <ModalHeader display={'flex'} borderBottom={'1px solid #E5E7EB'} color={'#0A101D'}
-            fontWeight={'500'} fontSize={'12px'} padding={'18px 20px'}>Draft&nbsp;<Text
-              display={'flex'} gap={'2px'} className={styles.mailSaveTime}
-              color={'#6B7280'} fontWeight={'400'}> (Saved to drafts {props.messageDetails ?
-                <Time time={props.messageDetails?.created || ''} isShowFullTime={false}
-                  showTimeInShortForm={true} /> : '0 s'} ago)</Text></ModalHeader>
-          <Flex color={'#6B7280'} fontSize={'13px'} top={'21px'} right={'20px'} position={'absolute'} cursor={'pointer'} onClick={() => overlayClick()}>
-            <CloseIcon/>
+      <Box className={`${styles.mailBox} ${styles.composeBox}`}
+           height={'calc(100vh - 165px)'} overflow={'hidden'} borderRadius={'15px'} >
+
+        <Flex padding={'16px 20px'} align={'center'} justify={'space-between'} gap={3} className={styles.composeHeader} borderBottom={'1px solid #E5E7EB'}>
+          <Flex gap={1} align={'center'}>
+            <Heading as='h6' fontSize={'12px'} color={'#0A101D'} fontWeight={500} lineHeight={1}>Draft </Heading>
+            <Text fontSize='xs' lineHeight={1} color={'#6B7280'} display={'flex'} alignItems={'center'} fontWeight={400}>(Saved to drafts&nbsp;
+              {(props.messageDetails && props.messageDetails?.created) ? <Time time={props.messageDetails?.created || ''} isShowFullTime={false} showTimeInShortForm={true} /> : '0s'}&nbsp;ago)</Text>
           </Flex>
-          <ModalBody padding={0}>
-            <Flex direction={'column'} h={'100%'}>
-              <Flex align={'center'} justify={'space-between'} gap={3} padding={'16px 20px'}
+          <Flex color={'#6B7280'} fontSize={'13px'} h={'20px'} w={'20px'} align={'center'} justify={'center'} cursor={'pointer'} onClick={() => overlayClick()}> <CloseIcon/> </Flex>
+        </Flex>
+
+        <Flex direction={'column'} flex={1}>
+          <Flex align={'center'} justify={'space-between'} gap={3} padding={'16px 20px'}
                 borderBottom={'1px solid #E5E7EB'}>
-                <Input className={styles.subjectInput} placeholder='Enter subject title' size='lg'
-                  onChange={(e) => addSubject(e)}
-                  flex={1} fontWeight={'700'} padding={'0'} border={'0'} h={'auto'}
-                  defaultValue={subject || ''}
-                  borderRadius={'0'} lineHeight={1} color={'#0A101D'} />
-                <div>
-                  <AddToProjectButton />
-                </div>
+            <Input className={styles.subjectInput} placeholder='Enter subject title' fontSize={'15px'}
+                   flex={1} fontWeight={'600'} padding={'0'} border={'0'} h={'auto'}
+                   borderRadius={'0'} lineHeight={1} color={'#0A101D'}
+                   onChange={(e) => addSubject(e)} value={subject || ''} />
+            <div>
+              <AddToProjectButton />
+            </div>
 
-              </Flex>
-              <Box flex={'1'} p={5}>
-                <Flex direction={"column"} border={'1px solid #F3F4F6'} borderRadius={8} h={'100%'}
-                  padding={'16px'} gap={4}>
+          </Flex>
 
-                  <MessageRecipients
-                    emailRecipients={emailRecipients}
-                    handleKeyDown={handleKeyDown}
-                    handleChange={handleChange}
-                    handlePaste={handlePaste}
-                    handleItemDelete={handleItemDelete}
-                  />
-
-                  <Flex flex={1} direction={'column'} position={'relative'}>
-                    <Flex direction={'column'} ref={editorRef} className={`${styles.replyBoxEditor} editor-bottom-shadow`}
+          <Flex padding={5} flex={1}>
+            <Flex w={'100%'} gap={4} padding={4} direction={'column'} border={'1px solid #F3F4F6'} borderRadius={8}>
+              <MessageRecipients
+                  emailRecipients={emailRecipients}
+                  handleKeyDown={handleKeyDown}
+                  handleChange={handleChange}
+                  handlePaste={handlePaste}
+                  handleItemDelete={handleItemDelete}
+              />
+              <Flex flex={1} direction={'column'} position={'relative'}>
+                <Flex flex={1} direction={'column'} ref={editorRef} className={`${styles.replyBoxEditor} editor-bottom-shadow`}
                       onScroll={() => handleEditorScroll()}>
-                      <RichTextEditor className={`reply-message-area ${extraClassNames} ${extraClassNamesForBottom}`}
-                        initialUpdated={boxUpdatedFirstTime}
-                        placeholder='Reply with anything you like or @mention someone to share this thread'
-                        value={emailBody} onChange={(e) => sendToDraft(e)} />
-                      {attachments && attachments.length > 0 ? <div style={{ marginTop: '20px' }}>
-                        {attachments.map((item, index: number) => (
-                          <Flex align={'center'} key={index}
-                            className={styles.attachmentsFile}>
+                  <RichTextEditor className={`reply-message-area ${extraClassNames} ${extraClassNamesForBottom}`}
+                                  placeholder='Reply with anything you like or @mention someone to share this thread'
+                                  value={emailBody} onChange={(e) => sendToDraft(e)} />
+                  {attachments && attachments.length > 0 ?
+                    <div style={{ marginTop: '20px' }}>
+                      {attachments.map((item, index: number) => (
+                          <Flex align={'center'} key={index} className={styles.attachmentsFile}>
                             {item.filename}
-                            <div className={styles.closeIcon}
-                              onClick={() => removeAttachment(index)}><CloseIcon />
-                            </div>
+                            <div className={styles.closeIcon} onClick={() => removeAttachment(index)}><CloseIcon /> </div>
                           </Flex>
-                        ))}
-                      </div> : null}
-                    </Flex>
-                    <Flex align={'flex-end'} justify={'space-between'} gap={2}>
-                      <Flex gap={2} className={styles.replyBoxIcon} mb={'-3px'}
-                        position={'relative'} zIndex={5} ml={'170px'}>
-                        <Flex align={'center'} gap={2}>
-                          <Flex width={'20px'} h={'20px'} align={'center'} justify={'center'}
-                            cursor={'pointer'} className={styles.replyIcon}>
-                            <FileIcon click={() => inputFile.current?.click()} />
-                          </Flex>
-
-                          <input type='file' id='file' ref={inputFile}
-                            onChange={(e) => handleFileUpload(e)}
-                            style={{ display: 'none' }} />
-                          <Flex width={'20px'} h={'20px'} align={'center'} justify={'center'}
-                            cursor={'pointer'} className={styles.replyIcon}>
-                            <TextIcon />
-                          </Flex>
-                        </Flex>
+                      ))}
+                  </div> : null}
+                </Flex>
+                <Flex align={'flex-end'} justify={'space-between'} gap={2}>
+                  <Flex gap={2} className={styles.replyBoxIcon} mb={'-3px'} position={'relative'} zIndex={5} ml={'170px'}>
+                    <Flex align={'center'} gap={2}>
+                      <Flex width={'20px'} h={'20px'} align={'center'} justify={'center'} cursor={'pointer'} className={styles.replyIcon}>
+                        <FileIcon click={() => inputFile.current?.click()} />
                       </Flex>
-                      <Flex align={'center'} className={styles.replyButton}>
-                        <Button
-                          className={styles.replyTextButton}
-                          colorScheme='blue'
-                          onClick={() => sendMessages()}
-                        >
-                          {scheduledDate ? (
-                            <>Send {dayjs(scheduledDate).from(dayjs())} @ {dayjs(scheduledDate).format('hh:mmA')}</>
-                          ) : (
-                            <>Send</>
-                          )}
-                        </Button>
 
+                      <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e)}
+                             style={{ display: 'none' }} />
 
-                        <MessageSchedule
-                          date={scheduledDate}
-                          sendMessages={sendMessages}
-                          onChange={handleSchedule}
-                        />
+                      <Flex width={'20px'} h={'20px'} align={'center'} justify={'center'} cursor={'pointer'} className={styles.replyIcon}>
+                        <TextIcon />
                       </Flex>
                     </Flex>
-
+                  </Flex>
+                  <Flex align={'center'} className={styles.replyButton}>
+                    <Button className={styles.replyTextButton} colorScheme='blue' onClick={() => sendMessages()}>
+                      {scheduledDate ? (
+                          <>Send {dayjs(scheduledDate).from(dayjs())} @ {dayjs(scheduledDate).format('hh:mmA')}</>
+                      ) : (
+                          <>Send</>
+                      )}
+                    </Button>
+                    <MessageSchedule date={scheduledDate} sendMessages={sendMessages} onChange={handleSchedule} />
                   </Flex>
                 </Flex>
-              </Box>
+              </Flex>
             </Flex>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+          </Flex>
+        </Flex>
+      </Box>
 
       <CreateNewProject onOpen={onOpenProject} isOpen={isOpenProject} onClose={onCloseProject} />
 

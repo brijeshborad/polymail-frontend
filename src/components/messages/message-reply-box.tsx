@@ -42,11 +42,12 @@ import dynamic from "next/dynamic";
 
 dayjs.extend(relativeTime)
 
+const blankRecipientValue: MessageRecipient = {
+  name: '',
+  email: ''
+}
+
 export function MessageReplyBox(props: MessageBoxType) {
-  const blankRecipientValue: MessageRecipient = {
-    name: '',
-    email: ''
-  }
   const [emailRecipients, setEmailRecipients] = useState<RecipientsType | any>({
     cc: { items: [], value: blankRecipientValue },
     bcc: { items: [], value: blankRecipientValue },
@@ -54,7 +55,7 @@ export function MessageReplyBox(props: MessageBoxType) {
   })
   const [subject, setSubject] = useState<string>('');
   const [emailBody, setEmailBody] = useState<string>('');
-  const { target } = useSelector((state: StateType) => state.keyNavigation);
+  // const { target } = useSelector((state: StateType) => state.keyNavigation);
   const { selectedAccount } = useSelector((state: StateType) => state.accounts);
   const { draft } = useSelector((state: StateType) => state.draft);
   const dispatch = useDispatch();
@@ -65,9 +66,11 @@ export function MessageReplyBox(props: MessageBoxType) {
   const [hideEditorToolbar, setHideEditorToolbar] = useState<boolean>(false);
   const [replyBoxHide, setReplyBoxHide] = useState<boolean>(false);
   const [isReplyDropdownOpen, setIsReplyDropdownOpen] = useState<boolean>(false);
-  const [boxUpdatedFirstTime, setBoxUpdatedFirstTime] = useState<boolean>(false);
   const [extraClassNames, setExtraClassNames] = useState<string>('');
   const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
+  const [waitForDraft, setWaitForDraft] = useState<boolean>(false);
+  const [isPendingUpdate, setIsPendingUpdate] = useState<boolean>(false);
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
 
   const editorRef = useRef<any>(null);
   const { toast } = createStandaloneToast()
@@ -77,13 +80,16 @@ export function MessageReplyBox(props: MessageBoxType) {
 
   useEffect(() => {
     if (divRef.current) {
-      const height = divRef.current?.offsetHeight || 0;
-      setDivHeight(height);
+      setTimeout(() => {
+        const height = divRef.current?.offsetHeight || 0;
+        setDivHeight(height);
+      }, 100)
+
     }
   }, [replyBoxHide, emailRecipients]);
 
   useEffect(() => {
-    if(!replyBoxHide) {
+    if (!replyBoxHide) {
       setDivHeight(0)
     }
 
@@ -92,16 +98,16 @@ export function MessageReplyBox(props: MessageBoxType) {
   /**
    * Detect if key navigation is set to open the reply box
    */
-  useEffect(() => {
-
-    if(target === 'reply-box') {
-      setHideEditorToolbar(true)
-    }
-
-    if(target !== 'reply-box' && hideEditorToolbar) {
-      setHideEditorToolbar(false)
-    }
-  }, [target, hideEditorToolbar])
+  // useEffect(() => {
+  //
+  //   if(target === 'reply-box') {
+  //     setHideEditorToolbar(true)
+  //   }
+  //
+  //   if(target !== 'reply-box' && hideEditorToolbar) {
+  //     setHideEditorToolbar(false)
+  //   }
+  // }, [target, hideEditorToolbar])
 
   const isValid = (email: string, type: string) => {
     let error = null;
@@ -206,9 +212,6 @@ export function MessageReplyBox(props: MessageBoxType) {
       return;
     }
     if (isValueUpdate) {
-      if (!boxUpdatedFirstTime) {
-        setBoxUpdatedFirstTime(true);
-      }
       if (!value.trim()) {
         setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
         setExtraClassNamesForBottom(prevState => prevState.replace('show-shadow-bottom', ''));
@@ -228,9 +231,13 @@ export function MessageReplyBox(props: MessageBoxType) {
 
     debounce(() => {
       if (selectedAccount && selectedAccount.id) {
+        if (waitForDraft) {
+          return;
+        }
         if (draft && draft.id) {
           dispatch(updatePartialMessage({ id: draft.id, body }));
         } else {
+          setWaitForDraft(true);
           dispatch(createDraft({ accountId: selectedAccount.id, body }));
         }
       }
@@ -238,10 +245,18 @@ export function MessageReplyBox(props: MessageBoxType) {
   }
 
   useEffect(() => {
+    if (waitForDraft && isPendingUpdate) {
+      setWaitForDraft(false);
+      setIsPendingUpdate(false);
+      sendToDraft('', false);
+    }
+  }, [waitForDraft, isPendingUpdate])
+
+  useEffect(() => {
     // Add signature and draft to email body
     if (draft && draft.draftInfo) {
       if (draft.draftInfo.body) {
-        // setEmailBody(draft?.draftInfo?.body || '');
+        setEmailBody(draft?.draftInfo?.body || '');
       }
       if (draft?.draftInfo?.attachments?.length) {
         setAttachments([
@@ -252,19 +267,15 @@ export function MessageReplyBox(props: MessageBoxType) {
         ]);
       }
     }
-  }, [draft, props.replyType, selectedAccount])
+  }, [draft, props.replyType])
 
   useEffect(() => {
-    handleEditorScroll();
-  }, []);
-
-  useEffect(() => {
-    if (props.messageData) {
-      let emailSubject = `${props.messageData.subject}`;
+    let messagesData = props.messageData
+    if (messagesData) {
+      let emailSubject = `${messagesData.subject}`;
       if (props.replyType === 'forward') {
-        emailSubject = `Fwd: ${props.messageData.subject}`;
+        emailSubject = `Fwd: ${messagesData.subject}`;
         let decoded = Buffer.from(props.emailPart || '', 'base64').toString('ascii');
-        setBoxUpdatedFirstTime(false);
         setEmailBody(getForwardContent() + (decoded || '') + (selectedAccount?.signature || ''));
         debounce(() => {
           handleEditorScroll();
@@ -278,32 +289,14 @@ export function MessageReplyBox(props: MessageBoxType) {
           ]);
         }
       } else {
-        setEmailRecipients((prevState: RecipientsType) => ({
-          ...prevState,
-          recipients: {
-            items: draft ? (draft.to || [{ name: '', email: '' }]) : [props.messageData?.from!],
-            value: prevState.recipients.value
-          }
-        }));
-
-        if (props.replyType === 'reply-all' && props.messageData.cc) {
-          let items: MessageRecipient[] = (draft ? (draft.cc || []) : props.messageData.cc)!.filter(t => t);
-          if (items.length > 0) {
-            setEmailRecipients((prevState: RecipientsType) => ({
-              ...prevState,
-              cc: {
-                items: items,
-                value: blankRecipientValue
-              }
-            }));
-            // setHideShowCCBccFields(prev => ({...prev, cc: true}));
+        if (isInitialized) {
+          if (selectedAccount && selectedAccount.signature) {
+            setEmailBody(`<p></p><p>${selectedAccount.signature}</p>`);
           }
         }
       }
-
       // set subject when email is replied or forwarded.
       setSubject(emailSubject || '');
-
     }
   }, [props.messageData, props.replyType, props.emailPart])
 
@@ -352,28 +345,37 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   }, [props?.threadDetails?.id])
 
   useEffect(() => {
-    if (!draft) {
-      setBoxUpdatedFirstTime(false);
-    }
-  }, [draft])
-
-  useEffect(() => {
-    if (props.threadDetails) {
-      if ( props.threadDetails?.to?.length) {
+    if (props.replyType === 'forward') {
+      setEmailRecipients({
+        cc: { items: [], value: blankRecipientValue },
+        bcc: { items: [], value: blankRecipientValue },
+        recipients: { items: [], value: blankRecipientValue }
+      });
+    } else if (props.threadDetails) {
+      if (props.threadDetails?.from!) {
         setEmailRecipients((prevState: RecipientsType) => ({
           ...prevState,
           recipients: {
-            items: props.threadDetails.to,
+            items: [props.threadDetails?.from!],
             value: prevState.recipients.value
           }
         }));
       }
-
     if (props.threadDetails?.cc?.length) {
+      let items: MessageRecipient[] = []
+      if (props.replyType === 'reply-all') {
+        items.push(props.threadDetails?.from!)
+        if (props.threadDetails?.cc && props.threadDetails?.cc.length) {
+          items.push(...props.threadDetails?.cc)
+        } else if (props.threadDetails?.bcc && props.threadDetails?.bcc.length) {
+          items.push(...props.threadDetails?.bcc)
+        }
+      }
+     const filteredArray = (items || []).filter(obj => obj.email !== '');
         setEmailRecipients((prevState: RecipientsType) => ({
           ...prevState,
           cc: {
-            items: props.threadDetails.cc,
+            items: filteredArray,
             value: prevState.cc.value
           }
         }));
@@ -383,14 +385,14 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         setEmailRecipients((prevState: RecipientsType) => ({
           ...prevState,
           bcc: {
-            items: props.threadDetails.bcc,
+            items: props.threadDetails?.bcc,
             value: prevState.bcc.value
           }
         }));
       }
 
     }
-  }, [props.threadDetails])
+  }, [props.threadDetails, props.replyType])
 
   useEffect(() => {
     const propertiesToCheck: (keyof RecipientsType)[] = ['recipients', 'bcc', 'cc'];
@@ -546,12 +548,12 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   }
 
   const handleFocus = () => {
+    setIsInitialized(true);
     setTimeout(() => {
       setHideEditorToolbar(true);
       let currentEmailBody: string = getPlainTextFromHtml(emailBody);
       if (selectedAccount && selectedAccount.signature && props.replyType !== 'forward' && !currentEmailBody.trim()) {
-        setBoxUpdatedFirstTime(false);
-        setEmailBody(`<p>${selectedAccount.signature}</p>`);
+        setEmailBody(`<p></p><p>${selectedAccount.signature}</p>`);
       }
     }, 500)
   }
@@ -559,19 +561,6 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   const showRecipientsBox = () => {
     setReplyBoxHide((current) => !current);
   }
-
-  useEffect(() => {
-    if (props.replyType) {
-      setTimeout(() => {
-        handleEditorScroll();
-      }, 500)
-    }
-    if (props.replyType === 'forward') {
-      setReplyBoxHide(true)
-    } else {
-      setReplyBoxHide(false)
-    }
-  }, [props.replyType])
 
   const handleSchedule = (date: string | undefined) => {
     setScheduledDate(date);
@@ -597,6 +586,22 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     }
   }, [])
 
+  useEffect(() => {
+    if (props.replyType) {
+      setTimeout(() => {
+        handleEditorScroll();
+      }, 500)
+    }
+    if (props.replyType === 'forward') {
+      setReplyBoxHide(true)
+    } else {
+      setReplyBoxHide(false)
+    }
+  }, [props.replyType, handleEditorScroll])
+
+  useEffect(() => {
+    handleEditorScroll();
+  }, [handleEditorScroll]);
   /**
    * Detects if the iframe was clicked
    */
@@ -644,9 +649,9 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
           <Flex align={'center'} justify={'space-between'} gap={4} position={"relative"} zIndex={10}>
             <Flex align={'center'} gap={1}>
               <Menu isOpen={isReplyDropdownOpen} onClose={() => setIsReplyDropdownOpen(false)}>
-                <MenuButton 
+                <MenuButton
                   onClick={() => setIsReplyDropdownOpen(true)}
-                  color={'#6B7280'} variant='link' size='xs' 
+                  color={'#6B7280'} variant='link' size='xs'
                   as={Button} rightIcon={<ChevronDownIcon />}
                 >
                   {props.replyTypeName || 'Reply'}
@@ -705,7 +710,6 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
               onScroll={() => handleEditorScroll()}>
               <RichTextEditor
                 className={`reply-message-area message-reply-box ${hideEditorToolbar ? 'hide-toolbar' : ''} ${extraClassNames} ${extraClassNamesForBottom}`}
-                initialUpdated={boxUpdatedFirstTime}
                 placeholder='Reply with anything you like or @mention someone to share this thread'
                 value={emailBody} onChange={(e) => sendToDraft(e)} />
               {attachments && attachments.length > 0 ? <div style={{ marginTop: '20px' }}>
@@ -720,7 +724,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
               </div> : null}
             </Flex>
             {hideEditorToolbar &&
-              <Flex direction={'column'} className={styles.composeModal}>
+              <Flex direction={'column'} className={styles.composeBox}>
                 <Flex align={'flex-end'} justify={'space-between'} gap={2}>
                   <Flex gap={2} className={styles.replyBoxIcon} mb={'-3px'} position={'relative'} zIndex={5} ml={'170px'}>
                     <Flex width={'20px'} h={'20px'} align={'center'} justify={'center'} cursor={'pointer'} className={styles.replyIcon}>

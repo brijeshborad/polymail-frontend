@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
+import advancedFormat from 'dayjs/plugin/advancedFormat'
 import { MessageScheduleCustomProps } from "@/types/props-types/message-schedule-custom.props.type";
 import { timezoneList } from "@/utils/timezones";
 import { ChevronDownIcon, SearchIcon } from "@chakra-ui/icons";
@@ -16,6 +17,7 @@ import dynamic from "next/dynamic";
 dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.extend(customParseFormat)
+dayjs.extend(advancedFormat)
 
 export default function MessageScheduleCustom({ date, onChange, onCancel }: MessageScheduleCustomProps) {
   const [timezoneSearch, setTimezoneSearch] = useState<string>('')
@@ -85,6 +87,18 @@ export default function MessageScheduleCustom({ date, onChange, onCancel }: Mess
       `${scheduleDate.year}-${scheduleDate.month}-${scheduleDate.day} ${scheduleDate.time.hour}:${scheduleDate.time.minute}:00 ${scheduleDate.amPm}`,
       'YYYY-MMM-D hh:mm:ss A'
     )
+  }
+
+  const showDate = () => {
+    let abbrivation = timezoneList.find(tl => tl.utc.includes(scheduleDate.timezone))?.abbr;
+    let date = dayjs(
+        `${scheduleDate.year}-${scheduleDate.month}-${scheduleDate.day} ${scheduleDate.time.hour}:${scheduleDate.time.minute}:00 ${scheduleDate.amPm}`,
+    );
+    if (abbrivation) {
+      return date.format('D/MM/YYYY hh:mm A') + ' ' + abbrivation
+    } else {
+      return date.tz(scheduleDate.timezone).format('D/MM/YYYY hh:mm A z');
+    }
   }
 
   const filteredTimezoneList = timezoneSearch.length ? (
@@ -209,22 +223,24 @@ export default function MessageScheduleCustom({ date, onChange, onCancel }: Mess
                   rightIcon={<ChevronDownIcon style={{ color: '#374151' }} />}>
                   {scheduleDate.month}
                 </MenuButton>
-                <MenuList className={`drop-down-list`} zIndex={'overlay'}>
-                  {monthArray && monthArray.map((month: string, index: number) => {
-                    const currentDate = dayjs(`${scheduleDate.year}-${month}-${scheduleDate.day}`, 'YYYY-MMM-D')
-                    const isPastDate = today.isAfter(currentDate, 'day')
-                    return (
-                      <MenuItem
-                        key={index}
-                        onClick={() => handleChange(month, 'month')}
-                        backgroundColor={'transparent'} w={'100%'} borderRadius={0}
-                        justifyContent={'flex-start'}
-                        isDisabled={isPastDate}
-                      >
-                        {month}
-                      </MenuItem>
-                    )
-                  })}
+                <MenuList className={`drop-down-list month-dropdown`} zIndex={'overlay'}>
+                  <div className={'month-dropdown-scrollbar'}>
+                    {monthArray && monthArray.map((month: string, index: number) => {
+                      const currentDate = dayjs(`${scheduleDate.year}-${month}-${scheduleDate.day}`, 'YYYY-MMM-D')
+                      const isPastDate = today.isAfter(currentDate, 'day')
+                      return (
+                          <MenuItem
+                              key={index}
+                              onClick={() => handleChange(month, 'month')}
+                              backgroundColor={'transparent'} w={'100%'} borderRadius={0}
+                              justifyContent={'flex-start'}
+                              isDisabled={isPastDate}
+                          >
+                            {month}
+                          </MenuItem>
+                      )
+                    })}
+                  </div>
                 </MenuList>
               </Menu>
             </GridItem>
@@ -292,6 +308,7 @@ export default function MessageScheduleCustom({ date, onChange, onCancel }: Mess
               </Menu>
             </GridItem>
           </Grid>
+          <Text fontSize={'xs'} marginTop={'10px'} float={'right'}>{showDate()}</Text>
         </Flex>
 
         <Flex w={'100%'} pt={4} pb={0} gap={3}

@@ -344,6 +344,7 @@ div:has(> .mailSendToaster) {
 
 .reply-message-area.rdw-editor-wrapper {
     flex: 1;
+    max-height: calc(100vh - 504px);
 }
 
 .reply-message-area.rdw-editor-wrapper .rdw-editor-main {
@@ -559,7 +560,7 @@ div:has(> .mailSendToaster) {
     position: absolute;
     content: '';
     width: calc(100% - 12px);
-    height: 80px;
+    height: 50px;
     left: 6px;
     top: 0;
     background: linear-gradient(180deg, #F9FAFB 0%, rgba(249, 250, 251, 0.00) 100%);
@@ -569,8 +570,17 @@ div:has(> .mailSendToaster) {
     position: absolute;
     content: '';
     width: calc(100% - 12px);
-    height: 80px;
+    height: 50px;
     left: 6px;
     bottom: 0;
     background: linear-gradient(0deg, #F9FAFB 0%, rgba(249, 250, 251, 0.00) 100%);
+}
+
+.drop-down-list.month-dropdown .month-dropdown-scrollbar {
+    max-height: 200px;
+    overflow: auto;
+}
+
+.drop-down-list.month-dropdown {
+    overflow: hidden;
 }

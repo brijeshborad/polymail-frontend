@@ -103,7 +103,7 @@ export function CommonApiComponents() {
         return () => {
             clearInterval(heartbeatIntervalRef.current);
         };
-    }, [socketUrl, readyState, sendJsonMessage]);
+    }, [socketUrl, readyState, sendJsonMessage, dispatch]);
 
     const getAllCommonApis = useCallback(() => {
         dispatch(getSummary({}));

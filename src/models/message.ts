@@ -20,6 +20,7 @@ export interface Message {
     from?: MessageRecipient,
     to?: MessageRecipient[],
     cc?: MessageRecipient[],
+    bcc?: MessageRecipient[],
     headers?: MessageHeaders[],
     contentRoot?: string,
     draftInfo?: MessageDraftInfo,
