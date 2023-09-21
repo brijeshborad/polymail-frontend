@@ -4,7 +4,7 @@ import { updateThreadState } from "@/redux/threads/action-reducer";
 import { InitialKeyNavigationStateType, StateType } from "@/types";
 import { MONITORED_KEYS } from "@/utils/constants";
 import { markThreadAsRead } from "@/utils/threads-common-functions";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function KeyboardNavigationListener() {
@@ -12,9 +12,12 @@ export default function KeyboardNavigationListener() {
   const { threads, selectedThread } = useSelector((state: StateType) => state.threads);
   const { messages, selectedMessage } = useSelector((state: StateType) => state.messages);
   const { target: lastTarget, currentMessageId } = useSelector((state: StateType) => state.keyNavigation);
+  const [isKeyDown, setIsKeyDown] = useState(false)
 
   useEffect(() => {
     const handleShortcutKeyPress = (e: KeyboardEvent | any) => {
+      if(isKeyDown) return
+
       if (MONITORED_KEYS.map(mk => mk.key).includes(e.keyCode)) {
         // Prevents the scrollbar to scrolling while pressing up/down keys.
         e.preventDefault()
@@ -125,6 +128,7 @@ export default function KeyboardNavigationListener() {
           }
 
           dispatch(keyPress(dispatchAction))
+          setIsKeyDown(true)
         }
       }
     };
@@ -132,7 +136,18 @@ export default function KeyboardNavigationListener() {
     return () => {
       window.removeEventListener('keydown', handleShortcutKeyPress);
     };
-  }, [dispatch, lastTarget, threads, selectedThread, currentMessageId, messages, selectedMessage?.id]);
+  }, [dispatch, lastTarget, threads, selectedThread, currentMessageId, messages, selectedMessage?.id, isKeyDown]);
+
+  useEffect(() => {
+    const handlKeyUp = () => {
+      setIsKeyDown(false)
+    }
+
+    window.addEventListener('keyup', handlKeyUp);
+    return () => {
+      window.removeEventListener('keyup', handlKeyUp);
+    };
+  }, [])
 
   /**
    * Brings back the focus to the window
