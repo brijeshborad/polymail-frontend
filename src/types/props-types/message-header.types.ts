@@ -1,7 +1,7 @@
 import {Message} from "@/models";
 
 export declare type MessageHeaderTypes = {
-    closeCompose: () => void,
+    closeCompose?: () => void,
     index: number | null,
     inboxMessages: Message[],
     headerType: string

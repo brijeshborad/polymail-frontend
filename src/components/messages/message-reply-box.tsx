@@ -366,14 +366,13 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
           }
         }));
       }
-
     if (props.threadDetails?.cc?.length) {
       let items: MessageRecipient[] = []
       if (props.replyType === 'reply-all') {
         items.push(props.threadDetails?.from!)
-        if (props.threadDetails?.cc) {
+        if (props.threadDetails?.cc && props.threadDetails?.cc.length) {
           items.push(...props.threadDetails?.cc)
-        } else if (props.threadDetails?.bcc) {
+        } else if (props.threadDetails?.bcc && props.threadDetails?.bcc.length) {
           items.push(...props.threadDetails?.bcc)
         }
       }

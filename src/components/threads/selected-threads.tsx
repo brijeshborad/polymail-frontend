@@ -41,7 +41,7 @@ export default function SelectedThreads() {
   return (
     <Box
       className={`${styles.mailBox} ${styles.mailBoxCentered}`}
-      height={'calc(100vh - 180px)'} overflow={'hidden'} borderRadius={'15px'}
+      height={'calc(100vh - 165px)'} overflow={'hidden'} borderRadius={'15px'}
     >
       <Image
         src={'image/thread-pile.png'}

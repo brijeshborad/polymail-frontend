@@ -228,12 +228,6 @@ export function Message() {
   }, [target, messageIndex])
 
 
-  const closeCompose = () => {
-    setReplyType('');
-    dispatch(updateMessageState({isCompose: false}));
-  }
-
-
   const hideAndShowReplayBox = (type: string = '', messageData: MessageModel) => {
     if (type === 'reply') {
       setReplyTypeName('Reply')
@@ -262,12 +256,11 @@ export function Message() {
     }
   };
 
-
   return (
     <>
       {(!isCompose && !isConfirmModal)? <Box
         className={`${styles.mailBox} ${isThreadFocused ? styles.mailBoxFocused : ''}`}
-        height={'calc(100vh - 180px)'} overflow={'hidden'} borderRadius={'15px'}
+        height={'calc(100vh - 165px)'} overflow={'hidden'} borderRadius={'15px'}
         onClick={() => {
           if (!isThreadFocused) {
             setThreadFocus(true)
@@ -290,7 +283,7 @@ export function Message() {
         {selectedThread && !isCompose &&
         <Flex flexDir={'column'} height={'100%'}>
             <>
-                <MessagesHeader inboxMessages={inboxMessages} index={index} closeCompose={closeCompose}
+                <MessagesHeader inboxMessages={inboxMessages} index={index}
                                 headerType={'inbox'}/>
 
                 <Flex ref={messagesWrapperRef} padding={'20px'} gap={5} direction={'column'} flex={1} overflow={'auto'}>
@@ -325,7 +318,7 @@ export function Message() {
            height={'calc(100vh - 180px)'} overflow={'hidden'} borderRadius={'15px'}>
         <Flex justifyContent={'center'} alignItems={'center'} flexDir={'column'}
               height={'100%'}>
-          {!isLoaderShow && <Heading as='h3' size='md'>Click on a thread from list to view messages!</Heading>}
+          {!isLoaderShow && <Heading as='h3' size='md'>Click on a threadsdsd from list to view messages!</Heading>}
           {isLoaderShow && <Flex direction={'column'} gap={2} flex={1} w={'100%'}>
               <SkeletonLoader skeletonLength={1} height={'100%'}/>
           </Flex>}

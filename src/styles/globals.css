@@ -344,7 +344,7 @@ div:has(> .mailSendToaster) {
 
 .reply-message-area.rdw-editor-wrapper {
     flex: 1;
-    max-height: calc(100vh - 518px);
+    max-height: calc(100vh - 504px);
 }
 
 .reply-message-area.rdw-editor-wrapper .rdw-editor-main {

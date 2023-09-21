@@ -133,6 +133,10 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
 
     const changeEmailTabs = (value: string) => {
         if (getCurrentCacheTab() !== value) {
+            if (value !== 'DRAFT') {
+                dispatch(updateMessageState({isCompose: false, isConfirmModal: true}));
+            }
+
             dispatch(updateThreadState({tabValue: tab, threads: []}));
             searchCancel();
         }
@@ -148,9 +152,6 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
               !isConfirmModal) {
                 dispatch(updateMessageState({isCompose: true}));
             }
-        } else {
-            dispatch(updateMessageState({isCompose: false}));
-
         }
     }, [tabValue, threads])
 

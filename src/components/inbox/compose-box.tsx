@@ -430,14 +430,13 @@ export function ComposeBox(props: any) {
   return (
     <>
       <Box className={`${styles.mailBox} ${styles.composeBox}`}
-           height={'calc(100vh - 180px)'} overflow={'hidden'} borderRadius={'15px'} >
+           height={'calc(100vh - 165px)'} overflow={'hidden'} borderRadius={'15px'} >
 
         <Flex padding={'16px 20px'} align={'center'} justify={'space-between'} gap={3} className={styles.composeHeader} borderBottom={'1px solid #E5E7EB'}>
           <Flex gap={1} align={'center'}>
             <Heading as='h6' fontSize={'12px'} color={'#0A101D'} fontWeight={500} lineHeight={1}>Draft </Heading>
-            <Text fontSize='xs' lineHeight={1} color={'#6B7280'} display={'flex'} alignItems={'center'} fontWeight={400}>(Saved to drafts&nbsp; {props.messageDetails ?
-                <Time time={props.messageDetails?.created || ''} isShowFullTime={false}
-                      showTimeInShortForm={true} /> : '0s'}&nbsp;ago)</Text>
+            <Text fontSize='xs' lineHeight={1} color={'#6B7280'} display={'flex'} alignItems={'center'} fontWeight={400}>(Saved to drafts&nbsp;
+              {(props.messageDetails && props.messageDetails?.created) ? <Time time={props.messageDetails?.created || ''} isShowFullTime={false} showTimeInShortForm={true} /> : '0s'}&nbsp;ago)</Text>
           </Flex>
           <Flex color={'#6B7280'} fontSize={'13px'} h={'20px'} w={'20px'} align={'center'} justify={'center'} cursor={'pointer'} onClick={() => overlayClick()}> <CloseIcon/> </Flex>
         </Flex>
