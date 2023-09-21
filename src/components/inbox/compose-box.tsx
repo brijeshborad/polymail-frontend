@@ -29,11 +29,12 @@ const AddToProjectButton = dynamic(() => import("@/components/common").then(mod 
 const MessageRecipients = dynamic(() => import("../messages/message-recipients").then(mod => mod.default));
 const MessageSchedule = dynamic(() => import("../messages/message-schedule").then(mod => mod.default));
 
+const blankRecipientValue: MessageRecipient = {
+  name: '',
+  email: ''
+}
+
 export function ComposeBox(props: any) {
-  const blankRecipientValue: MessageRecipient = {
-    name: '',
-    email: ''
-  }
   const [emailRecipients, setEmailRecipients] = useState<RecipientsType>({
     cc: {
       items: [],
@@ -63,7 +64,6 @@ export function ComposeBox(props: any) {
   const inputFile = useRef<HTMLInputElement | null>(null);
   const editorRef = useRef<any>(null);
   const { toast } = createStandaloneToast()
-  const [boxUpdatedFirstTime, setBoxUpdatedFirstTime] = useState<boolean>(false);
 
   useEffect(() => {
     if (props.messageDetails) {
@@ -210,9 +210,6 @@ export function ComposeBox(props: any) {
 
   const sendToDraft = (value: string, isValueUpdate: boolean = true) => {
     if (isValueUpdate) {
-      if (!boxUpdatedFirstTime) {
-        setBoxUpdatedFirstTime(true);
-      }
       if (!value.trim()) {
         setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
         setExtraClassNamesForBottom(prevState => prevState.replace('show-shadow-bottom', ''));
@@ -334,7 +331,6 @@ export function ComposeBox(props: any) {
   useEffect(() => {
     if (selectedAccount && selectedAccount.signature) {
       setEmailBody(`<p>${selectedAccount.signature}</p>`);
-      setBoxUpdatedFirstTime(false);
     }
   }, [selectedAccount, props.isOpen])
 
@@ -423,7 +419,6 @@ export function ComposeBox(props: any) {
     }
     onCloseDraftConformationModal();
     dispatch(updateMessageState({ isCompose: false, isConfirmModal: true, selectedMessage: null }));
-    setBoxUpdatedFirstTime(true);
   }
 
 
@@ -467,7 +462,6 @@ export function ComposeBox(props: any) {
                 <Flex flex={1} direction={'column'} ref={editorRef} className={`${styles.replyBoxEditor} editor-bottom-shadow`}
                       onScroll={() => handleEditorScroll()}>
                   <RichTextEditor className={`reply-message-area ${extraClassNames} ${extraClassNamesForBottom}`}
-                                  initialUpdated={boxUpdatedFirstTime}
                                   placeholder='Reply with anything you like or @mention someone to share this thread'
                                   value={emailBody} onChange={(e) => sendToDraft(e)} />
                   {attachments && attachments.length > 0 ?

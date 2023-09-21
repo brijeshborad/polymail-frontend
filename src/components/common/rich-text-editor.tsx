@@ -41,21 +41,21 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
         if (editorRef) {
             if (editorRef.addEventListener) {
                 editorRef.addEventListener('keyup', () => {
-                    setIsContentEdited(true);
+                    if (!isContentEdited) {
+                        setIsContentEdited(true);
+                    }
                 })
             }
         }
-    }, [editorRef])
+    }, [editorRef, isContentEdited])
 
     useEffect(() => {
         updateParentComponent();
     }, [updateParentComponent])
 
     useEffect(() => {
-        if (value) {
-            if (!isContentEdited) {
-                setEditorState(EditorState.createWithContent(ContentState.createFromBlockArray(htmlToDraft(value))));
-            }
+        if (value && !isContentEdited) {
+            setEditorState(EditorState.moveSelectionToEnd(EditorState.createWithContent(ContentState.createFromBlockArray(htmlToDraft(value)))));
         }
     }, [value, isContentEdited])
 
@@ -99,7 +99,7 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
                     showOpenOptionOnHover: true,
                     defaultTargetOption: '_self',
                     options: ['link'],
-                    link: {icon: "/image/icon/link.svg", className: undefined },
+                    link: {icon: "/image/icon/link.svg", className: undefined},
                     linkCallback: undefined
                 },
             }}

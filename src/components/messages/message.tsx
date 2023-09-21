@@ -91,6 +91,7 @@ export function Message() {
         dispatch(updateDraftState({draft: draftMessage as MessageDraft}));
       }
       setIndex(currentInboxMessages.length - 1);
+      setMessageDetailsForReplyBox(currentInboxMessages[currentInboxMessages.length - 1]);
     }
   }, [messages, dispatch])
 
@@ -315,7 +316,7 @@ export function Message() {
         }
       </Box> : (isConfirmModal ?
       <Box className={styles.mailBox}
-           height={'calc(100vh - 180px)'} overflow={'hidden'} borderRadius={'15px'}>
+           height={'calc(100vh - 165px)'} overflow={'hidden'} borderRadius={'15px'}>
         <Flex justifyContent={'center'} alignItems={'center'} flexDir={'column'}
               height={'100%'}>
           {!isLoaderShow && <Heading as='h3' size='md'>Click on a thread from list to view messages!</Heading>}

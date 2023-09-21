@@ -42,11 +42,12 @@ import dynamic from "next/dynamic";
 
 dayjs.extend(relativeTime)
 
+const blankRecipientValue: MessageRecipient = {
+  name: '',
+  email: ''
+}
+
 export function MessageReplyBox(props: MessageBoxType) {
-  const blankRecipientValue: MessageRecipient = {
-    name: '',
-    email: ''
-  }
   const [emailRecipients, setEmailRecipients] = useState<RecipientsType | any>({
     cc: { items: [], value: blankRecipientValue },
     bcc: { items: [], value: blankRecipientValue },
@@ -67,6 +68,9 @@ export function MessageReplyBox(props: MessageBoxType) {
   const [isReplyDropdownOpen, setIsReplyDropdownOpen] = useState<boolean>(false);
   const [extraClassNames, setExtraClassNames] = useState<string>('');
   const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
+  const [waitForDraft, setWaitForDraft] = useState<boolean>(false);
+  const [isPendingUpdate, setIsPendingUpdate] = useState<boolean>(false);
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
 
   const editorRef = useRef<any>(null);
   const { toast } = createStandaloneToast()
@@ -227,14 +231,26 @@ export function MessageReplyBox(props: MessageBoxType) {
 
     debounce(() => {
       if (selectedAccount && selectedAccount.id) {
+        if (waitForDraft) {
+          return;
+        }
         if (draft && draft.id) {
           dispatch(updatePartialMessage({ id: draft.id, body }));
         } else {
+          setWaitForDraft(true);
           dispatch(createDraft({ accountId: selectedAccount.id, body }));
         }
       }
     }, 500);
   }
+
+  useEffect(() => {
+    if (waitForDraft && isPendingUpdate) {
+      setWaitForDraft(false);
+      setIsPendingUpdate(false);
+      sendToDraft('', false);
+    }
+  }, [waitForDraft, isPendingUpdate])
 
   useEffect(() => {
     // Add signature and draft to email body
@@ -251,14 +267,10 @@ export function MessageReplyBox(props: MessageBoxType) {
         ]);
       }
     }
-  }, [draft, props.replyType, selectedAccount])
+  }, [draft, props.replyType])
 
   useEffect(() => {
-    handleEditorScroll();
-  }, []);
-
-  useEffect(() => {
-    let messagesData = props.messageData || props.threadDetails
+    let messagesData = props.messageData
     if (messagesData) {
       let emailSubject = `${messagesData.subject}`;
       if (props.replyType === 'forward') {
@@ -277,32 +289,16 @@ export function MessageReplyBox(props: MessageBoxType) {
           ]);
         }
       } else {
-        setEmailRecipients((prevState: RecipientsType) => ({
-          ...prevState,
-          recipients: {
-            items: draft ? (draft.to || [{ name: '', email: '' }]) : [messagesData?.from!],
-            value: prevState.recipients.value
-          }
-        }));
-
-        if (props.replyType === 'reply-all' && messagesData.cc) {
-          let items: MessageRecipient[] = (draft ? (draft.cc || []) : messagesData.cc)!.filter((t: any) => t);
-          if (items.length > 0) {
-            setEmailRecipients((prevState: RecipientsType) => ({
-              ...prevState,
-              cc: {
-                items: items,
-                value: blankRecipientValue
-              }
-            }));
-            // setHideShowCCBccFields(prev => ({...prev, cc: true}));
+        if (isInitialized) {
+          if (selectedAccount && selectedAccount.signature) {
+            setEmailBody(`<p></p><p>${selectedAccount.signature}</p>`);
           }
         }
       }
       // set subject when email is replied or forwarded.
       setSubject(emailSubject || '');
     }
-  }, [props.messageData, props.threadDetails, props.replyType, props.emailPart])
+  }, [props.messageData, props.replyType, props.emailPart])
 
   function formatEmailString(emailArray: any) {
     if (Array.isArray(emailArray)) {
@@ -552,6 +548,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   }
 
   const handleFocus = () => {
+    setIsInitialized(true);
     setTimeout(() => {
       setHideEditorToolbar(true);
       let currentEmailBody: string = getPlainTextFromHtml(emailBody);
@@ -564,19 +561,6 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   const showRecipientsBox = () => {
     setReplyBoxHide((current) => !current);
   }
-
-  useEffect(() => {
-    if (props.replyType) {
-      setTimeout(() => {
-        handleEditorScroll();
-      }, 500)
-    }
-    if (props.replyType === 'forward') {
-      setReplyBoxHide(true)
-    } else {
-      setReplyBoxHide(false)
-    }
-  }, [props.replyType])
 
   const handleSchedule = (date: string | undefined) => {
     setScheduledDate(date);
@@ -602,6 +586,22 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     }
   }, [])
 
+  useEffect(() => {
+    if (props.replyType) {
+      setTimeout(() => {
+        handleEditorScroll();
+      }, 500)
+    }
+    if (props.replyType === 'forward') {
+      setReplyBoxHide(true)
+    } else {
+      setReplyBoxHide(false)
+    }
+  }, [props.replyType, handleEditorScroll])
+
+  useEffect(() => {
+    handleEditorScroll();
+  }, [handleEditorScroll]);
   /**
    * Detects if the iframe was clicked
    */

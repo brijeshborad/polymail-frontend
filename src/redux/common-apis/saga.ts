@@ -10,7 +10,7 @@ import {
 import {getAllProjectsSuccess, getProjectByIdSuccess} from "@/redux/projects/action-reducer";
 import {getAllAccountSuccess} from "@/redux/accounts/action-reducer";
 import {getAllOrganizationsSuccess} from "@/redux/organizations/action-reducer";
-import {updateUsersDetailsSuccess} from "@/redux/users/action-reducer";
+import {updateUserState} from "@/redux/users/action-reducer";
 import {Summary} from "@/models/summary";
 import {PayloadAction} from "@reduxjs/toolkit";
 import {getAllThreadsSuccess} from "@/redux/threads/action-reducer";
@@ -21,7 +21,7 @@ function* getSummaryData() {
     yield put(getAllProjectsSuccess(response.projects || []));
     yield put(getAllAccountSuccess(response.accounts || []));
     yield put(getAllOrganizationsSuccess(response.organizations || []));
-    yield put(updateUsersDetailsSuccess(response.user || {}));
+    yield put(updateUserState({userDetails: response.user || {}}));
   } catch (error: any) {
     error = error as AxiosError;
     yield put(getSummaryError(error?.response?.data || {code: '400', description: 'Something went wrong'}));

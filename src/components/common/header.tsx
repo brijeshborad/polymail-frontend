@@ -12,7 +12,7 @@ import { Account, Message, Organization, User } from '@/models';
 import { updateAccountState } from '@/redux/accounts/action-reducer';
 import LocalStorageService from '@/utils/localstorage.service';
 import { getAllThreads, updateThreadState } from '@/redux/threads/action-reducer';
-import { updateUsersDetailsSuccess, updateUserState } from '@/redux/users/action-reducer';
+import { updateUserState } from '@/redux/users/action-reducer';
 import { updateLastMessage } from '@/redux/socket/action-reducer';
 import { updateMessageState } from '@/redux/messages/action-reducer';
 import { Toaster } from '@/components/common';
@@ -155,22 +155,26 @@ export function Header() {
             if (!LocalStorageService.updateAccount('get')) {
                 setAccounts(accounts[0]);
             }
-
-            if (!(userDetails && userDetails.id)) {
-                dispatch(
-                    updateUsersDetailsSuccess({
-                        ...(userDetails
-                            ? {
-                                  ...userDetails,
-                                  id: accounts[0].userId,
-                              }
-                            : userDetails),
-                    }),
-                );
-                dispatch(updateUserState({ userDetailsUpdateSuccess: false }));
-            }
         }
     }, [accounts, dispatch, setAccounts]);
+
+    useEffect(() => {
+        if (selectedAccount && !userDetails?.id) {
+            dispatch(
+                updateUserState({
+                    userDetailsUpdateSuccess: false,
+                    ...(userDetails ? {
+                            userDetails: {
+                                ...userDetails,
+                                id: selectedAccount.userId,
+                            }
+                        }
+                        : {userDetails})
+                })
+            );
+
+        }
+    }, [dispatch, selectedAccount, userDetails])
 
     function logout() {
         Router.push(`/auth/logout`);
