@@ -20,6 +20,9 @@ import dynamic from 'next/dynamic'
 const FeedSidebar = dynamic(
     () => import('./feedSidebar').then((mod) => mod.FeedSidebar)
 )
+const CreateNewProjectModal = dynamic(
+    () => import('@/components/project/create-new-project').then((mod) => mod.default)
+)
 
 export function Header() {
     const dispatch = useDispatch();
@@ -254,7 +257,7 @@ export function Header() {
     };
 
     const changePage = (page: string) => {
-        if (!router.pathname.includes(page)) {
+        if (router.pathname.replace('/', '') !== page) {
             dispatch(
                 updateThreadState({
                     threads: [],
@@ -349,6 +352,7 @@ export function Header() {
                     </MenuList>
                 </Menu>
             </div>
+            <CreateNewProjectModal/>
         </Flex>
     );
 }

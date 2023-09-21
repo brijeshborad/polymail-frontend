@@ -7,8 +7,7 @@ import {
     MenuList,
     Input,
     InputGroup,
-    InputLeftElement,
-    useDisclosure,
+    InputLeftElement
 } from "@chakra-ui/react";
 import {SearchIcon, SmallAddIcon} from "@chakra-ui/icons";
 import {FolderIcon} from "@/icons";
@@ -17,14 +16,10 @@ import {Project} from "@/models";
 import {addItemToGroup, updateMembershipState} from "@/redux/memberships/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import dynamic from 'next/dynamic'
-const CreateNewProjectModal = dynamic(
-    () => import('@/components/project/create-new-project').then((mod) => mod.default)
-)
 import {Toaster} from "@/components/common/toaster";
+import {updateCommonState} from "@/redux/common-apis/action-reducer";
 
 export function AddToProjectButton() {
-    const {isOpen, onOpen, onClose} = useDisclosure();
     const [isDropdownOpen, setDropDownOpen] = useState(false)
     const [isWindowActive, setWindowActive] = useState<boolean>(true);
     const dispatch = useDispatch();
@@ -83,16 +78,16 @@ export function AddToProjectButton() {
                 groupId: item.id
             }
 
-            if(isThreadMultiSelection) {
-              setSuccessMessage({
-                title: `${multiSelection.length} threads added to ${item.name?.toLowerCase()}`,
-                desc: ''
-              })
+            if (isThreadMultiSelection) {
+                setSuccessMessage({
+                    title: `${multiSelection.length} threads added to ${item.name?.toLowerCase()}`,
+                    desc: ''
+                })
             } else {
-              setSuccessMessage({
-                  desc: 'Thread was added to ' + item.name?.toLowerCase() + '.',
-                  title: selectedThread?.subject || '',
-              })
+                setSuccessMessage({
+                    desc: 'Thread was added to ' + item.name?.toLowerCase() + '.',
+                    title: selectedThread?.subject || '',
+                })
             }
             dispatch(addItemToGroup(reqBody));
             if (addToProjectRef.current) {
@@ -127,32 +122,32 @@ export function AddToProjectButton() {
      * Detects if the iframe was clicked
      */
     const onWindowBlur = useCallback(() => {
-      const message = document.activeElement;
-      setTimeout(() => {
-          if (document.activeElement && document?.activeElement.tagName === 'IFRAME' && message) {
-              message.textContent = 'clicked ' + Date.now();
-              setDropDownOpen(false);
-              setWindowActive(false);
-          }
-      });
+        const message = document.activeElement;
+        setTimeout(() => {
+            if (document.activeElement && document?.activeElement.tagName === 'IFRAME' && message) {
+                message.textContent = 'clicked ' + Date.now();
+                setDropDownOpen(false);
+                setWindowActive(false);
+            }
+        });
     }, []);
 
     useEffect(() => {
-      window.addEventListener('blur', onWindowBlur);
-      return () => {
-          window.removeEventListener('blur', onWindowBlur);
-      };
+        window.addEventListener('blur', onWindowBlur);
+        return () => {
+            window.removeEventListener('blur', onWindowBlur);
+        };
     }, [isWindowActive, onWindowBlur]);
 
     return (
         <>
-            <Menu 
-              isOpen={isDropdownOpen} 
-              onClose={() => {
-                setDropDownOpen(false)
-                setSearchValue('')
-              }} 
-              closeOnBlur={true}>
+            <Menu
+                isOpen={isDropdownOpen}
+                onClose={() => {
+                    setDropDownOpen(false)
+                    setSearchValue('')
+                }}
+                closeOnBlur={true}>
                 <MenuButton
                     onClick={() => setDropDownOpen(!isDropdownOpen)}
                     className={styles.addToProject}
@@ -177,21 +172,25 @@ export function AddToProjectButton() {
                             <InputLeftElement h={'27px'} pointerEvents='none'>
                                 <SearchIcon/>
                             </InputLeftElement>
-                            <Input ref={searchRef} autoFocus value={searchValue} onKeyDown={(e) => checkProjects(e)} onChange={(e) => setSearchValue(e.target.value)}
+                            <Input ref={searchRef} autoFocus value={searchValue} onKeyDown={(e) => checkProjects(e)}
+                                   onChange={(e) => setSearchValue(e.target.value)}
                                    placeholder='Search project'/>
                         </InputGroup>
                     </div>
 
                     {filteredProjects && !!filteredProjects.length && (filteredProjects || []).map((item: Project, index: number) => (
                         <MenuItem gap={2} key={index} onClick={() => addThreadToProject(item)}>
-                            {item.emoji}   {item.name}
+                            {item.emoji} {item.name}
                         </MenuItem>
 
                     ))}
 
                     <div className={styles.addNewProject}>
                         <Button backgroundColor={'transparent'} w={'100%'} borderRadius={0}
-                                justifyContent={'flex-start'} onClick={onOpen}>
+                                justifyContent={'flex-start'} onClick={() => dispatch(updateCommonState({
+                            showCreateProjectModal: true,
+                            shouldRedirectOnCreateProject: false
+                        }))}>
                             <div className={styles.plusIcon}>
                                 <SmallAddIcon/>
                             </div>
@@ -200,8 +199,6 @@ export function AddToProjectButton() {
                     </div>
                 </MenuList>
             </Menu>
-
-            <CreateNewProjectModal onOpen={onOpen} isOpen={isOpen} onClose={onClose}/>
         </>
     )
 }

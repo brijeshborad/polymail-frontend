@@ -3,7 +3,9 @@ import {InitialCommonApisStateType} from "@/types/common-apis/common-apis.type";
 
 const initialState: any = {
   summary: null,
-  isLoading: false
+  isLoading: false,
+  showCreateProjectModal: false,
+  shouldRedirectOnCreateProject: false
 } as InitialCommonApisStateType
 
 const commonApisSlice = createSlice({
@@ -30,7 +32,7 @@ const commonApisSlice = createSlice({
       return {...state, isLoading: false, error}
     },
 
-    updateSummaryState: (state: InitialCommonApisStateType, action: PayloadAction<InitialCommonApisStateType>) => {
+    updateCommonState: (state: InitialCommonApisStateType, action: PayloadAction<InitialCommonApisStateType>) => {
       return {...state, ...action.payload}
     },
 
@@ -44,7 +46,6 @@ export const {
   getProjectSummary,
   getProjectSummarySuccess,
   getProjectSummaryError,
-  updateSummaryState
-
+  updateCommonState
 } = commonApisSlice.actions
 export default commonApisSlice.reducer
