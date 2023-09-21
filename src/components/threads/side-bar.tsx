@@ -12,7 +12,7 @@ import {
     TabList,
     TabPanels,
     Tabs,
-    Tooltip, useDisclosure
+    Tooltip
 } from "@chakra-ui/react";
 import {
     ArchiveIcon,
@@ -35,8 +35,6 @@ import dynamic from "next/dynamic";
 const ThreadsSideBarTab = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarTab));
 import {updateDraftState} from "@/redux/draft/action-reducer";
 import {SmallCloseIcon, TriangleDownIcon} from "@chakra-ui/icons";
-
-const ComposeBox = dynamic(() => import("@/components/inbox/compose-box").then(mod => mod.ComposeBox));
 import {getCurrentCacheTab} from "@/utils/cache.functions";
 
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
@@ -56,8 +54,8 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {userDetails} = useSelector((state: StateType) => state.users);
     const { sendJsonMessage } = useSelector((state: StateType) => state.socket);
+    const { isConfirmModal } = useSelector((state: StateType) => state.messages);
     const dispatch = useDispatch();
-    const {isOpen, onOpen, onClose} = useDisclosure();
 
 
     useEffect(() => {
@@ -135,10 +133,29 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
 
     const changeEmailTabs = (value: string) => {
         if (getCurrentCacheTab() !== value) {
-            dispatch(updateThreadState({tabValue: tab}));
+            dispatch(updateThreadState({tabValue: tab, threads: []}));
             searchCancel();
         }
         setTab(value);
+    }
+
+    useEffect(() => {
+        if (tabValue === 'DRAFT') {
+            if ( threads &&
+              threads[0] &&
+              threads[0].messages &&
+              threads[0].messages[0] &&
+              !isConfirmModal) {
+                dispatch(updateMessageState({isCompose: true}));
+            }
+        } else {
+            dispatch(updateMessageState({isCompose: false}));
+
+        }
+    }, [tabValue, threads])
+
+    const openComposeModel = () => {
+        dispatch(updateMessageState({isCompose: true, selectedMessage: null}));
     }
 
     return (
@@ -342,7 +359,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                           className={styles.composeButton} borderRadius={8} height={'auto'} padding={'10px'}
                           minWidth={'101px'} backgroundColor={'#FFFFFF'} color={'#374151'} borderColor={'#E5E7EB'}
                           leftIcon={<EditIcon/>} colorScheme='blue' variant='outline'
-                          onClick={onOpen}
+                          onClick={() => openComposeModel()}
                         >
                           Compose
                         </Button>
@@ -354,8 +371,6 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                   </TabPanels>
                 </Tabs>
             </Flex>
-
-            <ComposeBox onOpen={onOpen} isOpen={isOpen} onClose={onClose}/>
         </>
     )
 }

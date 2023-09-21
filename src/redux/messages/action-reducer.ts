@@ -12,7 +12,8 @@ const initialState: any = {
     error: null,
     isCompose: false,
     success: false,
-    attachmentUrl: null
+    attachmentUrl: null,
+    isConfirmModal: false
 } as InitialMessageStateType
 
 const messagesSlice = createSlice({

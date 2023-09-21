@@ -1,6 +1,6 @@
-import { Message, Thread } from "@/models";
+import { Thread } from "@/models";
 import styles from "@/styles/Inbox.module.css";
-import { Flex, Input, useDisclosure } from "@chakra-ui/react";
+import { Flex, Input } from "@chakra-ui/react";
 import React, {useEffect, useCallback, useRef, useState} from "react";
 import { updateMessageState } from "@/redux/messages/action-reducer";
 import { updateThreadState } from "@/redux/threads/action-reducer";
@@ -10,7 +10,6 @@ import { StateType } from "@/types";
 import { ThreadListProps } from "@/types";
 const ThreadsSideBarListItem = dynamic(() => import("./side-bar-list-item").then(mod => mod.ThreadsSideBarListItem));
 import { useRouter } from "next/router";
-const ComposeBox = dynamic(() => import("@/components/inbox").then(mod => mod.ComposeBox));
 import dynamic from "next/dynamic";
 
 let currentSelectedThreads: any = []
@@ -20,14 +19,11 @@ export function ThreadsSideBarList(props: ThreadListProps) {
   const dispatch = useDispatch()
   const listRef = useRef<any>(null);
   const router = useRouter();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [messageDetails, setMessageDetails] = useState<Message | null>(null);
   const routePaths = router.pathname.split('/');
   const editorRef = useRef<any>(null);
   const [extraClassNames, setExtraClassNames] = useState<string>('');
   const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
   const { target, threadIndex } = useSelector((state: StateType) => state.keyNavigation)
-
   useEffect(() => {
     // Make isThreadSearched as false when multiSelection is null or blank
     if (multiSelection && !multiSelection.length) {
@@ -93,11 +89,13 @@ export function ThreadsSideBarList(props: ThreadListProps) {
 
       } else {
         if (props.tab === 'DRAFT') {
-          if (item && item.messages && item.messages.length === 1) {
-            setMessageDetails(item.messages[0])
-            onOpen();
+          if (item && item.messages && item.messages[0]) {
+            dispatch(updateMessageState({isCompose: true, isConfirmModal: false}));
+            dispatch(updateThreadState({ selectedThread: item, isThreadFocused: false, multiSelection: [] }));
             return;
           }
+        } else {
+          dispatch(updateMessageState({isCompose: false}));
         }
         currentSelectedThreads = [];
         dispatch(updateThreadState({ selectedThread: item, isThreadFocused: false, multiSelection: [] }));
@@ -105,7 +103,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
         dispatch(updateDraftState({ draft: null }));
       }
     }
-  }, [dispatch, onOpen, props.tab, selectedThread, threads]);
+  }, [dispatch, props.tab, selectedThread, threads]);
 
 
   const handleEditorScroll = useCallback(() => {
@@ -169,8 +167,6 @@ export function ThreadsSideBarList(props: ThreadListProps) {
             ))}
         </Flex>
       </div>
-
-      <ComposeBox onOpen={onOpen} isOpen={isOpen} onClose={onClose} messageDetails={messageDetails} />
     </>
   )
 }

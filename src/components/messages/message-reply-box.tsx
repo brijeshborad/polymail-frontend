@@ -76,8 +76,11 @@ export function MessageReplyBox(props: MessageBoxType) {
 
   useEffect(() => {
     if (divRef.current) {
-      const height = divRef.current?.offsetHeight || 0;
-      setDivHeight(height);
+      setTimeout(() => {
+        const height = divRef.current?.offsetHeight || 0;
+        setDivHeight(height);
+      }, 100)
+
     }
   }, [replyBoxHide, emailRecipients]);
 
@@ -722,7 +725,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
               </div> : null}
             </Flex>
             {hideEditorToolbar &&
-              <Flex direction={'column'} className={styles.composeModal}>
+              <Flex direction={'column'} className={styles.composeBox}>
                 <Flex align={'flex-end'} justify={'space-between'} gap={2}>
                   <Flex gap={2} className={styles.replyBoxIcon} mb={'-3px'} position={'relative'} zIndex={5} ml={'170px'}>
                     <Flex width={'20px'} h={'20px'} align={'center'} justify={'center'} cursor={'pointer'} className={styles.replyIcon}>

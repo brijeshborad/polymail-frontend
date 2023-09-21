@@ -223,22 +223,24 @@ export default function MessageScheduleCustom({ date, onChange, onCancel }: Mess
                   rightIcon={<ChevronDownIcon style={{ color: '#374151' }} />}>
                   {scheduleDate.month}
                 </MenuButton>
-                <MenuList className={`drop-down-list`} zIndex={'overlay'}>
-                  {monthArray && monthArray.map((month: string, index: number) => {
-                    const currentDate = dayjs(`${scheduleDate.year}-${month}-${scheduleDate.day}`, 'YYYY-MMM-D')
-                    const isPastDate = today.isAfter(currentDate, 'day')
-                    return (
-                      <MenuItem
-                        key={index}
-                        onClick={() => handleChange(month, 'month')}
-                        backgroundColor={'transparent'} w={'100%'} borderRadius={0}
-                        justifyContent={'flex-start'}
-                        isDisabled={isPastDate}
-                      >
-                        {month}
-                      </MenuItem>
-                    )
-                  })}
+                <MenuList className={`drop-down-list month-dropdown`} zIndex={'overlay'}>
+                  <div className={'month-dropdown-scrollbar'}>
+                    {monthArray && monthArray.map((month: string, index: number) => {
+                      const currentDate = dayjs(`${scheduleDate.year}-${month}-${scheduleDate.day}`, 'YYYY-MMM-D')
+                      const isPastDate = today.isAfter(currentDate, 'day')
+                      return (
+                          <MenuItem
+                              key={index}
+                              onClick={() => handleChange(month, 'month')}
+                              backgroundColor={'transparent'} w={'100%'} borderRadius={0}
+                              justifyContent={'flex-start'}
+                              isDisabled={isPastDate}
+                          >
+                            {month}
+                          </MenuItem>
+                      )
+                    })}
+                  </div>
                 </MenuList>
               </Menu>
             </GridItem>

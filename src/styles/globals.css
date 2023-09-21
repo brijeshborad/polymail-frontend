@@ -344,6 +344,7 @@ div:has(> .mailSendToaster) {
 
 .reply-message-area.rdw-editor-wrapper {
     flex: 1;
+    max-height: calc(100vh - 518px);
 }
 
 .reply-message-area.rdw-editor-wrapper .rdw-editor-main {
@@ -573,4 +574,13 @@ div:has(> .mailSendToaster) {
     left: 6px;
     bottom: 0;
     background: linear-gradient(0deg, #F9FAFB 0%, rgba(249, 250, 251, 0.00) 100%);
+}
+
+.drop-down-list.month-dropdown .month-dropdown-scrollbar {
+    max-height: 200px;
+    overflow: auto;
+}
+
+.drop-down-list.month-dropdown {
+    overflow: hidden;
 }

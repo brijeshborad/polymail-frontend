@@ -4,23 +4,25 @@ import {
   Flex,
   Heading,
 } from "@chakra-ui/react";
-import { StateType } from "@/types";
-import React, { useCallback, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import {StateType} from "@/types";
+import React, {useCallback, useEffect, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
 import {
   getMessageAttachments,
   getMessageParts,
   updateMessageState
 } from "@/redux/messages/action-reducer";
 import {Message as MessageModel, MessageDraft} from "@/models";
+
 const MessagesHeader = dynamic(() => import('@/components/messages/messages-header').then(mod => mod.MessagesHeader));
 const MessageBox = dynamic(() => import('@/components/messages/message-box').then(mod => mod.MessageBox));
 const MessageReplyBox = dynamic(() => import('@/components/messages/message-reply-box').then(mod => mod.MessageReplyBox));
+const ComposeBox = dynamic(() => import('@/components/inbox/compose-box').then(mod => mod.ComposeBox));
 import {updateDraftState} from "@/redux/draft/action-reducer";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import {updateThreadState, updateThreads} from "@/redux/threads/action-reducer";
 import dynamic from "next/dynamic";
-import { keyPress } from "@/redux/key-navigation/action-reducer";
+import {keyPress} from "@/redux/key-navigation/action-reducer";
 import {getCacheMessages, setCacheMessages} from "@/utils/cache.functions";
 
 export function Message() {
@@ -38,25 +40,26 @@ export function Message() {
     isLoading: messageLoading,
     messageAttachments,
     selectedMessage,
-    attachmentUrl
+    attachmentUrl,
+    isConfirmModal
   } = useSelector((state: StateType) => state.messages);
   const {
     selectedThread,
     isThreadLoading: threadLoading,
-    isThreadFocused
+    isThreadFocused,
+    tabValue
   } = useSelector((state: StateType) => state.threads);
-  const { target, messageIndex } = useSelector((state: StateType) => state.keyNavigation)
-  const { isLoading: accountLoading } = useSelector((state: StateType) => state.accounts);
-  const { isLoading: organizationLoading } = useSelector((state: StateType) => state.organizations);
-  const { isLoading: usersProfilePictureLoading } = useSelector((state: StateType) => state.users);
-  const { isLoading: projectsLoading } = useSelector((state: StateType) => state.projects);
-  const { isLoading: summaryLoading } = useSelector((state: StateType) => state.commonApis);
+  const {target, messageIndex} = useSelector((state: StateType) => state.keyNavigation)
+  const {isLoading: accountLoading} = useSelector((state: StateType) => state.accounts);
+  const {isLoading: organizationLoading} = useSelector((state: StateType) => state.organizations);
+  const {isLoading: usersProfilePictureLoading} = useSelector((state: StateType) => state.users);
+  const {isLoading: projectsLoading} = useSelector((state: StateType) => state.projects);
+  const {isLoading: summaryLoading} = useSelector((state: StateType) => state.commonApis);
   const [messageDetailsForReplyBox, setMessageDetailsForReplyBox] = useState<MessageModel | null>(null);
   const [isLoaderShow, setIsLoaderShow] = useState<boolean>(false);
   const [showReplyBox, setShowReplyBox] = useState<boolean>(false);
 
   const dispatch = useDispatch();
-
 
   useEffect(() => {
     if (!threadLoading && !accountLoading && !organizationLoading && !usersProfilePictureLoading && !projectsLoading && !summaryLoading) {
@@ -71,7 +74,7 @@ export function Message() {
       setShowReplyBox(false)
       setIndex(null);
       setMessageDetailsForReplyBox(null);
-      dispatch(updateMessageState({ messages: selectedThread.messages }));
+      dispatch(updateMessageState({messages: selectedThread.messages}));
       setTimeout(() => {
         setShowReplyBox(true)
       }, 200);
@@ -85,7 +88,7 @@ export function Message() {
       setInboxMessages([...currentInboxMessages]);
       const draftMessage = messages.findLast((msg: MessageModel) => (msg.mailboxes || []).includes('DRAFT'));
       if (draftMessage) {
-        dispatch(updateDraftState({ draft: draftMessage as MessageDraft }));
+        dispatch(updateDraftState({draft: draftMessage as MessageDraft}));
       }
       setIndex(currentInboxMessages.length - 1);
     }
@@ -135,7 +138,7 @@ export function Message() {
     if (index === null) {
       return;
     }
-    let messageId = inboxMessages[index].id;
+    let messageId = inboxMessages[index]?.id;
     if (messageId) {
       let cacheMessages = getCacheMessages();
       setCacheMessages({
@@ -151,18 +154,18 @@ export function Message() {
   useEffect(() => {
     if (index !== null && inboxMessages && inboxMessages.length > 0) {
       if (inboxMessages[index]) {
-        dispatch(updateMessageState({ selectedMessage: inboxMessages[index] }));
+        dispatch(updateMessageState({selectedMessage: inboxMessages[index]}));
         // We already set index to last inbox message
         let cacheMessages: any = getCacheMessages();
         if (cacheMessages[inboxMessages[index].id!] && cacheMessages[inboxMessages[index].id!].data) {
-          dispatch(updateMessageState({ messagePart: {data: cacheMessages[inboxMessages[index].id!].data} }));
+          dispatch(updateMessageState({messagePart: {data: cacheMessages[inboxMessages[index].id!].data}}));
         } else {
-          dispatch(getMessageParts({ id: inboxMessages[index].id! }));
+          dispatch(getMessageParts({id: inboxMessages[index].id!}));
         }
         if (cacheMessages[inboxMessages[index].id!] && cacheMessages[inboxMessages[index].id!].attachments) {
-          dispatch(updateMessageState({ messageAttachments: cacheMessages[inboxMessages[index].id!].attachments }));
+          dispatch(updateMessageState({messageAttachments: cacheMessages[inboxMessages[index].id!].attachments}));
         } else {
-          dispatch(getMessageAttachments({ id: inboxMessages[index].id! }));
+          dispatch(getMessageAttachments({id: inboxMessages[index].id!}));
         }
 
       }
@@ -172,14 +175,14 @@ export function Message() {
 
   useEffect(() => {
     if (messagePart && messagePart.data) {
-      cacheMessage({ data: messagePart.data });
+      cacheMessage({data: messagePart.data});
       let decoded = Buffer.from(messagePart.data || '', 'base64').toString('ascii');
       let addTargetBlank = decoded.replace(/<a/g, '<a target="_blank"');
-      const blob = new Blob([addTargetBlank], { type: "text/html" });
+      const blob = new Blob([addTargetBlank], {type: "text/html"});
       const blobUrl = window.URL.createObjectURL(blob);
       setEmailPart(blobUrl);
     } else {
-      cacheMessage({ data: '' });
+      cacheMessage({data: ''});
       setEmailPart('')
     }
   }, [cacheMessage, messagePart])
@@ -187,9 +190,9 @@ export function Message() {
   useEffect(() => {
     // convert blob url to image url
     if (messageAttachments && messageAttachments.length) {
-      cacheMessage({ attachments: messageAttachments });
+      cacheMessage({attachments: messageAttachments});
     } else {
-      cacheMessage({ attachments: [] });
+      cacheMessage({attachments: []});
     }
   }, [cacheMessage, messageAttachments])
 
@@ -205,19 +208,21 @@ export function Message() {
       if (link.parentNode) {
         link.parentNode.removeChild(link);
       }
-      dispatch(updateMessageState({ attachmentUrl: null }));
+      dispatch(updateMessageState({attachmentUrl: null}));
     }
   }, [dispatch, attachmentUrl])
 
   useEffect(() => {
-    if(target === 'thread') {
+    if (target === 'thread') {
       const topPos = ((messageIndex || 0)) * 95
 
       setTimeout(() => {
-        messagesWrapperRef.current.scrollTo({
-          top: topPos,
-          behavior: 'smooth'
-        })
+        if (messagesWrapperRef && messagesWrapperRef.current && messagesWrapperRef.current.scrollTop) {
+          messagesWrapperRef.current.scrollTo({
+            top: topPos,
+            behavior: 'smooth'
+          })
+        }
       }, 1200)
     }
   }, [target, messageIndex])
@@ -225,7 +230,7 @@ export function Message() {
 
   const closeCompose = () => {
     setReplyType('');
-    dispatch(updateMessageState({ isCompose: false }));
+    dispatch(updateMessageState({isCompose: false}));
   }
 
 
@@ -259,61 +264,75 @@ export function Message() {
 
 
   return (
-    <Box
-      className={`${styles.mailBox} ${isThreadFocused ? styles.mailBoxFocused : ''}`}
-      height={'calc(100vh - 180px)'} overflow={'hidden'} borderRadius={'15px'}
-      onClick={() => {
-        if (!isThreadFocused) {
-          setThreadFocus(true)
-          dispatch(keyPress({
-            action: 'RIGHT',
-            target: 'thread'
-          }))
-        }
-      }}
-    >
-      {!selectedThread && !isCompose &&
+    <>
+      {(!isCompose && !isConfirmModal)? <Box
+        className={`${styles.mailBox} ${isThreadFocused ? styles.mailBoxFocused : ''}`}
+        height={'calc(100vh - 180px)'} overflow={'hidden'} borderRadius={'15px'}
+        onClick={() => {
+          if (!isThreadFocused) {
+            setThreadFocus(true)
+            dispatch(keyPress({
+              action: 'RIGHT',
+              target: 'thread'
+            }))
+          }
+        }}
+      >
+        {!selectedThread && !isCompose &&
         <Flex justifyContent={'center'} alignItems={'center'} flexDir={'column'}
-          height={'100%'}>
+              height={'100%'}>
           {!isLoaderShow && <Heading as='h3' size='md'>Click on a thread from list to view messages!</Heading>}
           {isLoaderShow && <Flex direction={'column'} gap={2} flex={1} w={'100%'}>
-            <SkeletonLoader skeletonLength={1} height={'100%'} />
+              <SkeletonLoader skeletonLength={1} height={'100%'}/>
           </Flex>}
 
         </Flex>}
-      {selectedThread && !isCompose &&
+        {selectedThread && !isCompose &&
         <Flex flexDir={'column'} height={'100%'}>
-          <>
-            <MessagesHeader inboxMessages={inboxMessages} index={index} closeCompose={closeCompose}
-              headerType={'inbox'} />
+            <>
+                <MessagesHeader inboxMessages={inboxMessages} index={index} closeCompose={closeCompose}
+                                headerType={'inbox'}/>
 
-            <Flex ref={messagesWrapperRef} padding={'20px'} gap={5} direction={'column'} flex={1} overflow={'auto'}>
-              <Flex gap={2} direction={'column'} height={'100%'}>
-                {inboxMessages && !!inboxMessages.length && inboxMessages.map((item: any, index: number) => (
-                  <div key={index}>
-                    <MessageBox
-                      item={item} index={index} threadDetails={item}
-                      isLoading={messageLoading} emailPart={emailPart}
-                      messageAttachments={messageAttachments} hideAndShowReplayBox={hideAndShowReplayBox}
-                      isExpanded={selectedMessage?.id === item.id}
-                      onClick={() => handleRowClick(index)}
-                    />
-                  </div>
+                <Flex ref={messagesWrapperRef} padding={'20px'} gap={5} direction={'column'} flex={1} overflow={'auto'}>
+                    <Flex gap={2} direction={'column'} height={'100%'}>
+                      {inboxMessages && !!inboxMessages.length && inboxMessages.map((item: any, index: number) => (
+                        <div key={index}>
+                          <MessageBox
+                            item={item} index={index} threadDetails={item}
+                            isLoading={messageLoading} emailPart={emailPart}
+                            messageAttachments={messageAttachments} hideAndShowReplayBox={hideAndShowReplayBox}
+                            isExpanded={selectedMessage?.id === item.id}
+                            onClick={() => handleRowClick(index)}
+                          />
+                        </div>
 
-                ))}
+                      ))}
 
-                {showReplyBox &&
-                  <MessageReplyBox
-                    emailPart={(messagePart?.data || '')} messageData={messageDetailsForReplyBox}
-                    threadDetails={index !== null && inboxMessages[index]}
-                    replyType={replyType}
-                    hideAndShowReplayBox={hideAndShowReplayBox} replyTypeName={replyTypeName} />
-                }
-              </Flex>
-            </Flex>
-          </>
+                      {showReplyBox &&
+                      <MessageReplyBox
+                          emailPart={(messagePart?.data || '')} messageData={messageDetailsForReplyBox}
+                          threadDetails={index !== null && inboxMessages[index]}
+                          replyType={replyType}
+                          hideAndShowReplayBox={hideAndShowReplayBox} replyTypeName={replyTypeName}/>
+                      }
+                    </Flex>
+                </Flex>
+            </>
         </Flex>
-      }
-    </Box>
+        }
+      </Box> : (isConfirmModal ?
+      <Box className={styles.mailBox}
+           height={'calc(100vh - 180px)'} overflow={'hidden'} borderRadius={'15px'}>
+        <Flex justifyContent={'center'} alignItems={'center'} flexDir={'column'}
+              height={'100%'}>
+          {!isLoaderShow && <Heading as='h3' size='md'>Click on a thread from list to view messages!</Heading>}
+          {isLoaderShow && <Flex direction={'column'} gap={2} flex={1} w={'100%'}>
+              <SkeletonLoader skeletonLength={1} height={'100%'}/>
+          </Flex>}
+        </Flex>
+      </Box> : <ComposeBox
+        messageDetails={(tabValue === 'DRAFT' && selectedThread?.messages && selectedThread?.messages.length) ? selectedThread?.messages[0] : {}}/>
+      )}
+    </>
   )
 }
