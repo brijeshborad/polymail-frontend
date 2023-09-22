@@ -44,6 +44,7 @@ function ProjectInbox() {
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {success: membershipSuccess} = useSelector((state: StateType) => state.memberships);
     const {isProjectRemoveSuccess, success} = useSelector((state: StateType) => state.memberships);
+    const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const [isManagerMembersOpen, setIsManagerMembersOpen] = useState<boolean>(false)
 
     const [size, setSize] = useState<number>(0);
@@ -193,21 +194,13 @@ function ProjectInbox() {
         }
     }, [isProjectRemoveSuccess])
 
-    /**
-     * Detects if the iframe was clicked
-     */
-    const onWindowBlur = useCallback(() => {
-      setTimeout(() => {
-        setIsManagerMembersOpen(false)
-      });
-    }, []);
+
 
     useEffect(() => {
-      window.addEventListener('blur', onWindowBlur);
-      return () => {
-          window.removeEventListener('blur', onWindowBlur);
-      };
-    }, [onWindowBlur]);
+      if(incomingEvent === 'iframe.clicked') {
+        setIsManagerMembersOpen(false)
+      }
+    }, [incomingEvent]);
 
     return (
         <>

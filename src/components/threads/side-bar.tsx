@@ -32,6 +32,7 @@ const AddToProjectButton = dynamic(() => import("@/components/common").then(mod 
 
 export function ThreadsSideBar(props: { cachePrefix: string }) {
     const [tab, setTab] = useState<string>('INBOX');
+    const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false)
     const [countUnreadMessages, setCountUnreadMessages] = useState<number>(0);
     const {
         threads,
@@ -42,6 +43,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
         multiSelection
     } = useSelector((state: StateType) => state.threads);
     const {success: draftSuccess, updatedDraft} = useSelector((state: StateType) => state.draft);
+    const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {userDetails} = useSelector((state: StateType) => state.users);
     const {sendJsonMessage} = useSelector((state: StateType) => state.socket);
@@ -146,6 +148,12 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
         }
     }, [tabValue, threads])
 
+    useEffect(() => {
+      if(incomingEvent === 'iframe.clicked') {
+        setIsMoreDropdownOpen(false)
+      }
+    }, [incomingEvent])
+
     const openComposeModel = () => {
         dispatch(updateMessageState({isCompose: true, isConfirmModal: false}));
     }
@@ -189,8 +197,9 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                     </Flex>
                                     <Flex gap={2}>
                                         <AddToProjectButton/>
-                                        <Menu>
+                                        <Menu isOpen={isMoreDropdownOpen} onClose={() => setIsMoreDropdownOpen(false)}>
                                             <MenuButton
+                                                onClick={() => setIsMoreDropdownOpen(!isMoreDropdownOpen)}
                                                 className={styles.tabListMoreButton} minWidth={'60px'} height={'auto'}
                                                 backgroundColor={'transparent'} border={'1px solid #D1D5DB'}
                                                 lineHeight={1}
@@ -326,8 +335,9 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                 </Tab>
                                 }
 
-                                <Menu>
+                                <Menu isOpen={isMoreDropdownOpen} onClose={() => setIsMoreDropdownOpen(false)}>
                                     <MenuButton
+                                        onClick={() => setIsMoreDropdownOpen(!isMoreDropdownOpen)}
                                         className={styles.tabListMoreButton} minWidth={'80px'}
                                         borderLeft={'1px solid #D1D5DB'}
                                         borderRadius={0} backgroundColor={'transparent'} height={'auto'}

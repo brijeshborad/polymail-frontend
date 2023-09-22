@@ -12,6 +12,7 @@ export default function KeyboardNavigationListener() {
   const { threads, selectedThread } = useSelector((state: StateType) => state.threads);
   const { messages, selectedMessage } = useSelector((state: StateType) => state.messages);
   const { target: lastTarget, currentMessageId } = useSelector((state: StateType) => state.keyNavigation);
+  const { event: incomingEvent } = useSelector((state: StateType) => state.globalEvents);
 
   useEffect(() => {
     const handleShortcutKeyPress = (e: KeyboardEvent | any) => {
@@ -39,6 +40,10 @@ export default function KeyboardNavigationListener() {
             dispatch(updateThreadState({
               isThreadFocused: true
             }))
+
+            if(selectedThread) {
+              markThreadAsRead(selectedThread, dispatch)
+            }
           }
 
           if (pressedKey?.value === 'LEFT') {
@@ -73,8 +78,6 @@ export default function KeyboardNavigationListener() {
                 dispatch(updateThreadState({
                   selectedThread: lastThread
                 }))
-
-                markThreadAsRead(lastThread, dispatch)
 
                 dispatchAction.threadIndex = lastThreadIndex
                 dispatchAction.currentThreadId = lastThread.id
@@ -134,21 +137,13 @@ export default function KeyboardNavigationListener() {
     };
   }, [dispatch, lastTarget, threads, selectedThread, currentMessageId, messages, selectedMessage?.id]);
 
-  /**
-   * Brings back the focus to the window
-   * when an iframe is clicked.
-   */
   useEffect(() => {
-    const handleWindowBlur = () => {
+    if(incomingEvent === 'iframe.clicked') {
       setTimeout(() => {
         window.focus()
-      }, 500)
+      }, 100)
     }
-    window.addEventListener('blur', handleWindowBlur);
-    return () => {
-      window.removeEventListener('blur', handleWindowBlur);
-    };
-  }, [])
+  }, [incomingEvent])
 
   return (
     <></>

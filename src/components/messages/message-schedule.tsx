@@ -6,8 +6,10 @@ import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 const MessageScheduleCustom = dynamic(() => import("./message-schedule-custom").then(mod => mod.default));
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import { StateType } from "@/types";
+import { useSelector } from "react-redux";
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -17,6 +19,7 @@ export default function MessageSchedule({ date, onChange }: MessageScheduleProps
   const [scheduleDate, setScheduleDate] = useState(date)
   const [customSchedule, setCustomSchedule] = useState(false)
   const [showScheduleMenu, setShowScheduleMenu] = useState(false)
+  const { event: incomingEvent } = useSelector((state: StateType) => state.globalEvents);
   const dateFormat = 'YYYY-MM-D HH:mm:ss'
 
   const quickOptions = [
@@ -51,21 +54,11 @@ export default function MessageSchedule({ date, onChange }: MessageScheduleProps
     onChange(scheduledDate)
   }
 
-  /**
-   * Detects if the iframe was clicked
-   */
-  const onWindowBlur = useCallback(() => {
-    setTimeout(() => {
-      closeScheduleDropdown()
-    });
-  }, []);
-
   useEffect(() => {
-    window.addEventListener('blur', onWindowBlur);
-    return () => {
-        window.removeEventListener('blur', onWindowBlur);
-    };
-  }, [onWindowBlur]);
+    if(incomingEvent === 'iframe.clicked') {
+      closeScheduleDropdown()
+    }
+  }, [incomingEvent]);
 
   return (
     <Menu

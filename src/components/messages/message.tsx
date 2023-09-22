@@ -54,6 +54,7 @@ export function Message() {
   const {isLoading: accountLoading} = useSelector((state: StateType) => state.accounts);
   const {isLoading: organizationLoading} = useSelector((state: StateType) => state.organizations);
   const {isLoading: usersProfilePictureLoading} = useSelector((state: StateType) => state.users);
+  const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
   const {isLoading: projectsLoading} = useSelector((state: StateType) => state.projects);
   const {isLoading: summaryLoading} = useSelector((state: StateType) => state.commonApis);
   const [messageDetailsForReplyBox, setMessageDetailsForReplyBox] = useState<MessageModel | null>(null);
@@ -105,26 +106,11 @@ export function Message() {
     }
   }, [dispatch, selectedThread])
 
-  /**
-   * Detects if the iframe was clicked
-   */
-  const onWindowBlur = useCallback(() => {
-    const message = document.getElementById('message-content')
-    setTimeout(() => {
-      if (document && document.activeElement && document?.activeElement.tagName === "IFRAME" && message) {
-        message.textContent = "clicked " + Date.now();
-        setThreadFocus(true)
-      }
-    })
-  }, [setThreadFocus])
-
-
   useEffect(() => {
-    window.addEventListener("blur", onWindowBlur);
-    return () => {
-      window.removeEventListener("blur", onWindowBlur);
-    };
-  }, [onWindowBlur]);
+    if(incomingEvent === 'iframe.clicked') {
+      setThreadFocus(true)
+    }
+  }, [incomingEvent, setThreadFocus]);
 
   const cacheMessage = useCallback((body: Object | any) => {
     if (index === null) {

@@ -58,6 +58,7 @@ export function MessageReplyBox(props: MessageBoxType) {
   // const { target } = useSelector((state: StateType) => state.keyNavigation);
   const { selectedAccount } = useSelector((state: StateType) => state.accounts);
   const { draft } = useSelector((state: StateType) => state.draft);
+  const { event: incomingEvent } = useSelector((state: StateType) => state.globalEvents);
   const dispatch = useDispatch();
   const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
   const { isOpen, onClose } = useDisclosure();
@@ -602,21 +603,12 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   useEffect(() => {
     handleEditorScroll();
   }, [handleEditorScroll]);
-  /**
-   * Detects if the iframe was clicked
-   */
-  const onWindowBlur = useCallback(() => {
-    setTimeout(() => {
-      setIsReplyDropdownOpen(false)
-    });
-  }, []);
 
   useEffect(() => {
-    window.addEventListener('blur', onWindowBlur);
-    return () => {
-        window.removeEventListener('blur', onWindowBlur);
-    };
-  }, [onWindowBlur]);
+    if(incomingEvent === 'iframe.clicked') {
+      setIsReplyDropdownOpen(false)
+    }
+  }, [incomingEvent, setIsReplyDropdownOpen]);
 
   return (
     <Flex backgroundColor={'#FFFFFF'} position={'sticky'} mt={'auto'} bottom={0} boxShadow={'0 20px 0px 0 #fff'}>

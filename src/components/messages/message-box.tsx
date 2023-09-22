@@ -2,7 +2,7 @@ import styles from "@/styles/Inbox.module.css";
 import {Button, Flex, Heading, Menu, MenuButton, MenuItem, MenuList, Text} from "@chakra-ui/react";
 import {Time} from "@/components/common";
 import {DownloadIcon, MenuIcon} from "@/icons";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {getAttachmentDownloadUrl, updateMessage} from "@/redux/messages/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {MessageAttachments} from "@/models";
@@ -12,6 +12,8 @@ import {EyeSlashedIcon} from "@/icons/eye-slashed.icon";
 
 
 export function MessageBox(props: any) {
+  const { event: incomingEvent } = useSelector((state: StateType) => state.globalEvents);
+  const [isContextMenuOpen, setIsContextMenuOpen] = useState(false)
     const ref = React.useRef(null)
     const iframeRef = React.useRef<HTMLIFrameElement | null | any>(null);
     const [iframeHeight, setIframeHeight] = React.useState("0px");
@@ -49,6 +51,12 @@ export function MessageBox(props: any) {
             dispatch(getAttachmentDownloadUrl({id: selectedMessage.id, attachment: item.id}));
         }
     }
+
+    useEffect(() => {
+      if(incomingEvent === 'iframe.clicked') {
+        setIsContextMenuOpen(false)
+      }
+    }, [incomingEvent]);
 
     return (
       <Flex ref={ref} position={'relative'} direction={'column'}
@@ -138,10 +146,12 @@ export function MessageBox(props: any) {
                           }
                       </Flex>
                   </Flex>
-                  <Menu>
-                      <MenuButton position={'absolute'} right={'10px'} top={'20px'} className={styles.menuIcon}
-                                  transition={'all 0.5s'} backgroundColor={'transparent'} fontSize={'12px'}
-                                  h={'auto'} minWidth={'24px'} padding={'0'} as={Button} rightIcon={<MenuIcon/>}>
+                  <Menu isOpen={isContextMenuOpen} onClose={() => setIsContextMenuOpen(false)}>
+                      <MenuButton
+                        onClick={() => setIsContextMenuOpen(true)}
+                        position={'absolute'} right={'10px'} top={'20px'} className={styles.menuIcon}
+                        transition={'all 0.5s'} backgroundColor={'transparent'} fontSize={'12px'}
+                        h={'auto'} minWidth={'24px'} padding={'0'} as={Button} rightIcon={<MenuIcon/>}>
                       </MenuButton>
                       <MenuList className={'drop-down-list'}>
                           {props.threadDetails && (

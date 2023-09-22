@@ -27,8 +27,12 @@ export * from './draft/draft-state.type';
 
 //Common API
 export * from './common-apis/common-apis.type';
+
 // Key navigation
 export * from './key-navigation/key-navigation-state.type';
+
+// Key navigation
+export * from './global-events/global-events-state.type';
 
 // Props
 export * from './props-types/profile-button-props.type';
