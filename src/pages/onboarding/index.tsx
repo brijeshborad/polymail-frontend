@@ -65,7 +65,7 @@ function OnBoarding() {
                         <Flex backgroundColor={'#FFFFFF'} padding={'2px'} borderRadius={'6px'}>
                             <Image src={'/image/google-logo.png'} alt={''} width={'24px'} height={'24px'}/>
                         </Flex>
-                        Continue with Google
+                        Onboard with Google
                     </Button>
                     <Text fontSize='13px' letterSpacing={'-0.13px'} color={'#6B7280'}>If you already have an account, login here.</Text>
                 </Flex>
