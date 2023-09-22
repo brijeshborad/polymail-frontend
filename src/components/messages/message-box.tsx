@@ -29,7 +29,6 @@ export function MessageBox(props: any) {
     const onIframeLoad = () => {
         debounce(() => {
             if (iframeRef.current && iframeRef.current.contentWindow) {
-                iframeRef.current.contentWindow.document.body.style = "margin: 0; overflow: hidden;";
                 setIframeHeight((iframeRef.current.contentWindow.document.body.scrollHeight + 20 ) + "px");
             }
         }, 500);
@@ -95,8 +94,8 @@ export function MessageBox(props: any) {
                       <Flex w={'100%'} direction={'column'} pr={'20px'}>
                           <Flex align={'center'} justify={'space-between'} mb={1}>
                               <Flex align={'flex-end'} gap={1}>
-                                  <Heading 
-                                    as='h6' fontSize={'13px'} color={'#0A101D'} 
+                                  <Heading
+                                    as='h6' fontSize={'13px'} color={'#0A101D'}
                                     fontWeight={400} letterSpacing={'-0.13px'} lineHeight={1}
                                   >
                                     {message.from?.name || message.from.email}
@@ -104,8 +103,8 @@ export function MessageBox(props: any) {
                                   {message.from?.name && (
                                     <>
                                       <span className={'dot'} />
-                                      <Text 
-                                        fontSize='12px' letterSpacing={'-0.13px'} 
+                                      <Text
+                                        fontSize='12px' letterSpacing={'-0.13px'}
                                         color={'#6B7280'} lineHeight={1}
                                         fontWeight={400}
                                       >
@@ -171,6 +170,7 @@ export function MessageBox(props: any) {
               <div className={styles.mailBodyContent}>
                   <iframe
                       ref={iframeRef}
+                      scrolling="no"
                       onLoad={onIframeLoad}
                       height={iframeHeight}
                       src={props.emailPart}

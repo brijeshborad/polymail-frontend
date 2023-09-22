@@ -11,7 +11,7 @@ import {useRouter} from "next/router";
 import dynamic from "next/dynamic";
 import {getCacheThreads, getCurrentCacheTab, setCacheThreads, setCurrentCacheTab} from "@/utils/cache.functions";
 import {updateLastMessage} from "@/redux/socket/action-reducer";
-import {getProjectSummary, getProjectSummarySuccess} from "@/redux/common-apis/action-reducer";
+import {getProjectSummary} from "@/redux/common-apis/action-reducer";
 
 let tab: string = '';
 
@@ -25,14 +25,14 @@ export function ThreadsSideBarTab(props: TabProps) {
         selectedThread
     } = useSelector((state: StateType) => state.threads)
     const {selectedAccount, account} = useSelector((state: StateType) => state.accounts);
-    const {isLoading: summaryIsLoading} = useSelector((state: StateType) => state.commonApis);
+    const {isLoading: summaryIsLoading, syncingEmails} = useSelector((state: StateType) => state.commonApis);
     const {newMessage} = useSelector((state: StateType) => state.socket);
     const router = useRouter();
     const dispatch = useDispatch();
     const [tabName, setTabName] = useState<string>('just-mine');
 
     const getAllThread = useCallback((type: string = '') => {
-        if (selectedAccount) {
+        if (selectedAccount && selectedAccount.syncHistory?.mailInitSynced) {
             let resetState = true;
             if (!tab) {
                 return;
@@ -132,11 +132,8 @@ export function ThreadsSideBarTab(props: TabProps) {
     }, [dispatch, tabName])
 
     useEffect(() => {
-        if ((isLoading || summaryIsLoading) && threads && threads.length >= 1) {
+        if (isLoading && threads && threads.length >= 1) {
             dispatch(updateThreadState({isLoading: false}));
-            dispatch(getProjectSummarySuccess({
-                isLoading: false
-            }));
         }
     }, [dispatch, isLoading, threads])
 
@@ -195,7 +192,7 @@ export function ThreadsSideBarTab(props: TabProps) {
           </Flex>
 
 
-            {(isLoading || summaryIsLoading) && (
+            {(isLoading || summaryIsLoading || syncingEmails) && (
                 <Flex direction="column" gap={2} mt={5} padding={"0 6px"}>
                     <SkeletonLoader skeletonLength={15}/>
                 </Flex>

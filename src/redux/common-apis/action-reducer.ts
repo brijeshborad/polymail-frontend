@@ -5,7 +5,9 @@ const initialState: any = {
   summary: null,
   isLoading: false,
   showCreateProjectModal: false,
-  shouldRedirectOnCreateProject: false
+  shouldRedirectOnCreateProject: false,
+  syncingEmails: null,
+  isComposing: false
 } as InitialCommonApisStateType
 
 const commonApisSlice = createSlice({

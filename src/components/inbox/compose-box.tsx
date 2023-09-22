@@ -17,11 +17,13 @@ import { debounce, isEmail } from "@/utils/common.functions";
 import { createDraft, sendMessage, updateDraftState, updatePartialMessage } from "@/redux/draft/action-reducer";
 import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
-import {updateMessageState, uploadAttachment} from "@/redux/messages/action-reducer";
+import {uploadAttachment} from "@/redux/messages/action-reducer";
 import { MessageAttachments, MessageRecipient } from "@/models";
 import { Toaster } from "@/components/common";
 import { RecipientsType } from "@/types/props-types/message-recipients.type";
 import dynamic from "next/dynamic";
+import {updateCommonState} from "@/redux/common-apis/action-reducer";
+import {updateThreadState} from "@/redux/threads/action-reducer";
 const CreateNewProject = dynamic(() => import('@/components/project/create-new-project').then(mod => mod.default));
 const RichTextEditor = dynamic(() => import("@/components/common").then(mod => mod.RichTextEditor));
 const Time = dynamic(() => import("@/components/common").then(mod => mod.Time));
@@ -53,6 +55,7 @@ export function ComposeBox(props: any) {
   const [emailBody, setEmailBody] = useState<string>('');
   const { selectedAccount } = useSelector((state: StateType) => state.accounts);
   const { draft } = useSelector((state: StateType) => state.draft);
+  const { tabValue } = useSelector((state: StateType) => state.threads);
   const dispatch = useDispatch();
   const { onClose } = useDisclosure();
   const { isOpen: isOpenProject, onOpen: onOpenProject, onClose: onCloseProject } = useDisclosure();
@@ -323,6 +326,7 @@ export function ComposeBox(props: any) {
       dispatch(updateDraftState({
         draft: null,
       }));
+      dispatch(updateCommonState({ isComposing: false}));
     }
   }
 
@@ -406,12 +410,11 @@ export function ComposeBox(props: any) {
 
   }, []);
 
-  const overlayClick = () => {
+  const onCloseClick = () => {
     if (!draft) {
-      dispatch(updateMessageState({ isCompose: false, isConfirmModal: false}));
+      dispatch(updateCommonState({ isComposing: false}));
     } else {
       onOpenDraftConformationModal()
-
     }
 
   }
@@ -421,7 +424,7 @@ export function ComposeBox(props: any) {
       sendToDraft('', false)
     }
     onCloseDraftConformationModal();
-    dispatch(updateMessageState({ isCompose: false, isConfirmModal: false}));
+    dispatch(updateCommonState({ isComposing: false}));
   }
 
 
@@ -436,7 +439,7 @@ export function ComposeBox(props: any) {
             <Text fontSize='xs' lineHeight={1} color={'#6B7280'} display={'flex'} alignItems={'center'} fontWeight={400}>(Saved to drafts&nbsp;
               {(props.messageDetails && props.messageDetails?.created) ? <Time time={props.messageDetails?.created || ''} isShowFullTime={false} showTimeInShortForm={true} /> : '0s'}&nbsp;ago)</Text>
           </Flex>
-          <Flex color={'#6B7280'} fontSize={'13px'} h={'20px'} w={'20px'} align={'center'} justify={'center'} cursor={'pointer'} onClick={() => overlayClick()}> <CloseIcon/> </Flex>
+          {tabValue !== 'DRAFT' && <Flex color={'#6B7280'} fontSize={'13px'} h={'20px'} w={'20px'} align={'center'} justify={'center'} cursor={'pointer'} onClick={() => onCloseClick()}> <CloseIcon/> </Flex>}
         </Flex>
 
         <Flex direction={'column'} flex={1}>
@@ -462,7 +465,7 @@ export function ComposeBox(props: any) {
                   handleItemDelete={handleItemDelete}
               />
               <Flex flex={1} direction={'column'} position={'relative'}>
-                <Flex flex={1} direction={'column'} ref={editorRef} className={`${styles.replyBoxEditor} editor-bottom-shadow`}
+                <Flex flex={1} direction={'column'} ref={editorRef} className={`editor-bottom-shadow`}
                       onScroll={() => handleEditorScroll()}>
                   <RichTextEditor className={`reply-message-area ${extraClassNames} ${extraClassNamesForBottom}`}
                                   placeholder='Reply with anything you like or @mention someone to share this thread'

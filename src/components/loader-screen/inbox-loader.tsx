@@ -1,5 +1,6 @@
 import React from "react";
 import {Flex, Heading, Text, Progress} from "@chakra-ui/react";
+import Router from "next/router";
 
 
 export function InboxLoader(props: any) {
@@ -30,7 +31,7 @@ export function InboxLoader(props: any) {
                 <Heading as='h4' fontSize={'24px'} color={'#374151'} fontWeight={'700'}>We are organizing your email</Heading>
                 <Flex>
                     <Text color={'#6B7280'} fontWeight={500} lineHeight={'16px'} fontSize='sm'>
-                        Feel free to grab a coffee or <Text as='u'>customize</Text> the perfect email signature.
+                        Feel free to grab a coffee or <Text cursor={'pointer'} as='u' onClick={() => Router.push('/settings/signature')}>craft</Text> the perfect email signature.
                         We’ll send you an email when your inbox is ready.</Text>
                 </Flex>
             </Flex>

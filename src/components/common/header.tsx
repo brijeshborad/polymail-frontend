@@ -140,7 +140,9 @@ export function Header() {
 
     const setAccounts = useCallback(
         (account: Account) => {
-            LocalStorageService.updateAccount('store', account);
+            if (account.syncHistory?.mailInitSynced) {
+                LocalStorageService.updateAccount('store', account);
+            }
             dispatch(updateAccountState({ selectedAccount: account }));
         },
         [dispatch],

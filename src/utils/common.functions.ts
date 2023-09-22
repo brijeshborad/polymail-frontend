@@ -1,9 +1,16 @@
 let timeout: any = null;
+let timeoutInterval: any = null;
 
 export function debounce(fun: () => void, timeOut: number = 1500) {
     if (timeout)
         clearTimeout(timeout);
     timeout = setTimeout(fun, timeOut);
+}
+
+export function debounceInterval(fun: () => void, timeOut: number = 1500) {
+    if (timeoutInterval)
+        clearTimeout(timeout);
+    timeoutInterval = setInterval(fun, timeOut);
 }
 
 export const isEmail = (email: string) => {

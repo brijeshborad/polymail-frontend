@@ -164,7 +164,7 @@ function CreateNewProjectModal() {
     }
 
     return (
-        <Modal isOpen={showCreateProjectModal} onClose={() => dispatch(updateCommonState({
+        <Modal isOpen={!!showCreateProjectModal} onClose={() => dispatch(updateCommonState({
             showCreateProjectModal: false,
             shouldRedirectOnCreateProject: false
         }))} isCentered>

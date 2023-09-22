@@ -58,27 +58,28 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
 
     useEffect(() => {
         if (value && !isContentEdited) {
-            setEditorState(EditorState.moveSelectionToEnd(EditorState.createWithContent(ContentState.createFromBlockArray(htmlToDraft(value)))));
+            let finalHtmlValue = htmlToDraft(decodeURIComponent(value));
+            setEditorState(EditorState.moveSelectionToEnd(EditorState.createWithContent(ContentState.createFromBlockArray(finalHtmlValue))));
         }
     }, [value, isContentEdited])
 
     const closeEditorDropDowns = () => {
       const emojiWrapper = (containerRef && containerRef.current) ? containerRef.current.getElementsByClassName('rdw-emoji-wrapper') : null
-      if(emojiWrapper) {
+      if (emojiWrapper && emojiWrapper[0]) {
         const emojiButton = emojiWrapper[0].getElementsByClassName('rdw-option-wrapper')[0]
         const isEmojiModalOpen = emojiWrapper[0].getElementsByClassName('emoji-picker')[0]
 
-        if(isEmojiModalOpen) { 
+        if(isEmojiModalOpen) {
           if(emojiButton) emojiButton.click()
         }
       }
 
       const linkWrapper = (containerRef && containerRef.current) ? containerRef.current.getElementsByClassName('rdw-link-wrapper') : null
-      if(linkWrapper) {
+      if (linkWrapper && linkWrapper[0]) {
         const linkButton = linkWrapper[0].getElementsByClassName('rdw-option-wrapper')[0]
         const isLinkModalOpen = linkWrapper[0].getElementsByClassName('emoji-picker')[0]
 
-        if(isLinkModalOpen) { 
+        if(isLinkModalOpen) {
           if(linkButton) linkButton.click()
         }
       }
@@ -96,7 +97,7 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
     useEffect(() => {
       function handleClickOutside(event: any) {
         const current:any = containerRef.current
-  
+
         if (current && !current.contains(event.target)) {
           closeEditorDropDowns()
         }
@@ -106,7 +107,7 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
         document.removeEventListener("mousedown", handleClickOutside);
       };
     }, [containerRef]);
-    
+
 
     return (
       <div ref={containerRef}>

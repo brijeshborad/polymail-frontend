@@ -25,6 +25,7 @@ import dynamic from "next/dynamic";
 import {updateDraftState} from "@/redux/draft/action-reducer";
 import {SmallCloseIcon, TriangleDownIcon} from "@chakra-ui/icons";
 import {getCurrentCacheTab} from "@/utils/cache.functions";
+import {updateCommonState} from "@/redux/common-apis/action-reducer";
 
 const ThreadsSideBarTab = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarTab));
 
@@ -47,7 +48,6 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {userDetails} = useSelector((state: StateType) => state.users);
     const {sendJsonMessage} = useSelector((state: StateType) => state.socket);
-    const {isConfirmModal} = useSelector((state: StateType) => state.messages);
     const dispatch = useDispatch();
 
 
@@ -94,8 +94,11 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     useEffect(() => {
         if (threads && threads.length > 0 && !selectedThread && !isLoading) {
             dispatch(updateThreadState({selectedThread: threads[0]}));
+            if (tabValue === 'DRAFT') {
+                dispatch(updateCommonState({isComposing: true}));
+            }
         }
-    }, [threads, dispatch, selectedThread, isLoading])
+    }, [threads, dispatch, selectedThread, isLoading, tabValue])
 
     useEffect(() => {
         if (tab !== '' && getCurrentCacheTab() !== '') {
@@ -127,7 +130,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     const changeEmailTabs = (value: string) => {
         if (getCurrentCacheTab() !== value) {
             if (value !== 'DRAFT') {
-                dispatch(updateMessageState({isCompose: false, isConfirmModal: false}));
+                dispatch(updateCommonState({isComposing: false}));
             }
 
             dispatch(updateThreadState({tabValue: tab, threads: []}));
@@ -137,46 +140,30 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     }
 
     useEffect(() => {
-        if (tabValue === 'DRAFT') {
-            if (threads &&
-                threads[0] &&
-                threads[0].messages &&
-                threads[0].messages[0] &&
-                !isConfirmModal) {
-                dispatch(updateMessageState({isCompose: true, isConfirmModal: false}));
-            }
-        }
-    }, [tabValue, threads])
-
-    useEffect(() => {
       if(incomingEvent === 'iframe.clicked') {
         setIsMoreDropdownOpen(false)
       }
     }, [incomingEvent])
 
     const openComposeModel = () => {
-        dispatch(updateMessageState({isCompose: true, isConfirmModal: false}));
+        dispatch(updateCommonState({isComposing: true}));
     }
 
-    return (
-        <>
-            <Flex direction={'column'} gap={5} className={styles.mailListTabs}>
-                <Tabs>
-                    {isThreadSearched ? (
-                        <>
-                            <Flex padding={"0 6px"}>
-                                <Flex
-                                    overflow={'auto'}
-                                    backgroundColor={'#FFFFFF'}
-                                    border={'1px solid #F3F4F6'}
-                                    borderRadius={16} padding={'10px 14px'}
-                                    gap={2} align={'center'} w={"100%"}
-                                    justify={'space-between'}
-                                >
-                                    <Flex
-                                        align={'center'} fontSize={'13px'} fontWeight={'400'}
-                                        color={'#374151'} gap={2} letterSpacing={'-0.13px'} whiteSpace={'nowrap'}
-                                    >
+    function getHeaderForSearched() {
+        return (
+            <Flex padding={"0 6px"}>
+                <Flex
+                    overflow={'auto'}
+                    backgroundColor={'#FFFFFF'}
+                    border={'1px solid #F3F4F6'}
+                    borderRadius={16} padding={'10px 14px'}
+                    gap={2} align={'center'} w={"100%"}
+                    justify={'space-between'}
+                >
+                    <Flex
+                        align={'center'} fontSize={'13px'} fontWeight={'400'}
+                        color={'#374151'} gap={2} letterSpacing={'-0.13px'} whiteSpace={'nowrap'}
+                    >
                             <span>Search Results {countUnreadMessages > 0 && (
                                 <Badge
                                     backgroundColor={'#F3F4F6'} fontSize={'12px'} color={'#6B7280'}
@@ -186,202 +173,212 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                 </Badge>
                             )}
                             </span>
-                                    </Flex>
-                                    <Flex className={styles.checkBoxLabel}>
-                                        <Checkbox
-                                            isChecked={isSelectedAllChecked}
-                                            onChange={(e) => toggleSelectAllThreads(e.target.checked)}
-                                        >
-                                            Select All
-                                        </Checkbox>
-                                    </Flex>
-                                    <Flex gap={2}>
-                                        <AddToProjectButton/>
-                                        <Menu isOpen={isMoreDropdownOpen} onClose={() => setIsMoreDropdownOpen(false)}>
-                                            <MenuButton
-                                                onClick={() => setIsMoreDropdownOpen(!isMoreDropdownOpen)}
-                                                className={styles.tabListMoreButton} minWidth={'60px'} height={'auto'}
-                                                backgroundColor={'transparent'} border={'1px solid #D1D5DB'}
-                                                lineHeight={1}
-                                                fontSize={'12px'} color={'#374151'} as={Button} borderRadius={'50px'}
-                                                rightIcon={<TriangleDownIcon color={'#374151'}/>}
-                                                p={'0 8px 0 10px'}
-                                            >
-                                                More
-                                            </MenuButton>
-                                            <MenuList className={`${styles.tabListDropDown} drop-down-list`}>
-                                                <MenuItem
-                                                    onClick={() => changeEmailTabs('INBOX')}><InboxIcon/> Inbox</MenuItem>
-                                                <MenuItem
-                                                    onClick={() => changeEmailTabs('SENT')}><SendIcon/> Sent</MenuItem>
-                                                <MenuItem
-                                                    onClick={() => changeEmailTabs('SNOOZED')}><TimeSnoozeIcon/> Snoozed</MenuItem>
-                                                <MenuItem
-                                                    onClick={() => changeEmailTabs('TRASH')}><TrashIcon/> Trash</MenuItem>
-                                                <MenuItem onClick={() => changeEmailTabs('STARRED')}><StarIcon/> Starred</MenuItem>
-                                                <MenuItem
-                                                    onClick={() => changeEmailTabs('ARCHIVE')}><ArchiveIcon/> Archive</MenuItem>
-                                                <MenuItem
-                                                    onClick={() => changeEmailTabs('DRAFT')}><DraftIcon/> Draft</MenuItem>
-                                            </MenuList>
-                                        </Menu>
-
-                                        <div className={styles.searchCloseIcon} onClick={() => searchCancel(true)}>
-                                            <SmallCloseIcon/>
-                                        </div>
-                                    </Flex>
-                                </Flex>
-                            </Flex>
-                        </>
-                    ) : (
-                        <Flex align={'center'} gap={'3'} padding={"0 6px"}>
-                            <TabList
-                                justifyContent={'space-between'} flex={1} alignItems={'center'}
-                                className={styles.mailTabList} overflowX={"auto"}
+                    </Flex>
+                    <Flex className={styles.checkBoxLabel}>
+                        <Checkbox
+                            isChecked={isSelectedAllChecked}
+                            onChange={(e) => toggleSelectAllThreads(e.target.checked)}
+                        >
+                            Select All
+                        </Checkbox>
+                    </Flex>
+                    <Flex gap={2}>
+                        <AddToProjectButton/>
+                        <Menu isOpen={isMoreDropdownOpen} onClose={() => setIsMoreDropdownOpen(false)}>
+                            <MenuButton
+                                onClick={() => setIsMoreDropdownOpen(!isMoreDropdownOpen)}
+                                className={styles.tabListMoreButton} minWidth={'60px'} height={'auto'}
+                                backgroundColor={'transparent'} border={'1px solid #D1D5DB'}
+                                lineHeight={1}
+                                fontSize={'12px'} color={'#374151'} as={Button} borderRadius={'50px'}
+                                rightIcon={<TriangleDownIcon color={'#374151'}/>}
+                                p={'0 8px 0 10px'}
                             >
-                                <Tab className={styles.emailTabs}>
-                                    <Tooltip label='Inbox' placement='bottom' bg='gray.300' color='black'>
-                                        <div
-                                            className={`${tab === 'INBOX' ? styles.active : ''}`}
-                                            onClick={() => changeEmailTabs('INBOX')}
-                                        >
-                                            <InboxIcon/>
-                                            <span>Inbox {countUnreadMessages > 0 &&
-                                            <Badge>{countUnreadMessages}</Badge>}</span>
-                                        </div>
-                                    </Tooltip>
-                                </Tab>
-                                <Tab className={styles.emailTabs}>
-                                    <Tooltip label='Sent' placement='bottom' bg='gray.300' color='black'>
-                                        <div
-                                            className={`${tab === 'SENT' ? styles.active : ''}`}
-                                            onClick={() => changeEmailTabs('SENT')}
-                                        >
-                                            <SendIcon/>
-                                            <span>Sent</span>
-                                        </div>
-                                    </Tooltip>
-                                </Tab>
+                                More
+                            </MenuButton>
+                            <MenuList className={`${styles.tabListDropDown} drop-down-list`}>
+                                <MenuItem
+                                    onClick={() => changeEmailTabs('INBOX')}><InboxIcon/> Inbox</MenuItem>
+                                <MenuItem
+                                    onClick={() => changeEmailTabs('SENT')}><SendIcon/> Sent</MenuItem>
+                                <MenuItem
+                                    onClick={() => changeEmailTabs('SNOOZED')}><TimeSnoozeIcon/> Snoozed</MenuItem>
+                                <MenuItem
+                                    onClick={() => changeEmailTabs('TRASH')}><TrashIcon/> Trash</MenuItem>
+                                <MenuItem onClick={() => changeEmailTabs('STARRED')}><StarIcon/> Starred</MenuItem>
+                                <MenuItem
+                                    onClick={() => changeEmailTabs('ARCHIVE')}><ArchiveIcon/> Archive</MenuItem>
+                                <MenuItem
+                                    onClick={() => changeEmailTabs('DRAFT')}><DraftIcon/> Draft</MenuItem>
+                            </MenuList>
+                        </Menu>
 
-                                {!['TRASH', 'STARRED', 'ARCHIVE', 'DRAFT'].includes(tab) &&
-                                <Tab className={styles.emailTabs}>
-                                    <Tooltip label='Snoozed' placement='bottom' bg='gray.300' color='black'>
-                                        <div
-                                            className={`${tab === 'SNOOZED' ? styles.active : ''}`}
-                                            onClick={() => changeEmailTabs('SNOOZED')}
-                                        >
-                                            <TimeSnoozeIcon/>
-                                            <span>Snoozed</span>
-                                        </div>
-                                    </Tooltip>
-                                </Tab>
-                                }
+                        <div className={styles.searchCloseIcon} onClick={() => searchCancel(true)}>
+                            <SmallCloseIcon/>
+                        </div>
+                    </Flex>
+                </Flex>
+            </Flex>
+        )
+    }
 
-                                {tab === 'STARRED' &&
-                                <Tab className={styles.emailTabs}>
-                                    <Tooltip label='Starred' placement='bottom' bg='gray.300' color='black'>
-                                        <div
-                                            className={`${tab === 'STARRED' ? styles.active : ''}`}
-                                            onClick={() => changeEmailTabs('STARRED')}
-                                        >
-                                            <StarIcon/>
-                                            <span>Starred</span>
-                                        </div>
-                                    </Tooltip>
-                                </Tab>
-                                }
+    function getHeaderForNotSearched() {
+         return (
+             <Flex align={'center'} gap={'3'} padding={"0 6px"}>
+                 <TabList
+                     justifyContent={'space-between'} flex={1} alignItems={'center'}
+                     className={styles.mailTabList} overflowX={"auto"}
+                 >
+                     <Tab className={styles.emailTabs}>
+                         <Tooltip label='Inbox' placement='bottom' bg='gray.300' color='black'>
+                             <div
+                                 className={`${tab === 'INBOX' ? styles.active : ''}`}
+                                 onClick={() => changeEmailTabs('INBOX')}
+                             >
+                                 <InboxIcon/>
+                                 <span>Inbox {countUnreadMessages > 0 &&
+                                 <Badge>{countUnreadMessages}</Badge>}</span>
+                             </div>
+                         </Tooltip>
+                     </Tab>
+                     <Tab className={styles.emailTabs}>
+                         <Tooltip label='Sent' placement='bottom' bg='gray.300' color='black'>
+                             <div
+                                 className={`${tab === 'SENT' ? styles.active : ''}`}
+                                 onClick={() => changeEmailTabs('SENT')}
+                             >
+                                 <SendIcon/>
+                                 <span>Sent</span>
+                             </div>
+                         </Tooltip>
+                     </Tab>
 
-                                {tab === 'TRASH' &&
+                     {!['TRASH', 'STARRED', 'ARCHIVE', 'DRAFT'].includes(tab) &&
+                     <Tab className={styles.emailTabs}>
+                         <Tooltip label='Snoozed' placement='bottom' bg='gray.300' color='black'>
+                             <div
+                                 className={`${tab === 'SNOOZED' ? styles.active : ''}`}
+                                 onClick={() => changeEmailTabs('SNOOZED')}
+                             >
+                                 <TimeSnoozeIcon/>
+                                 <span>Snoozed</span>
+                             </div>
+                         </Tooltip>
+                     </Tab>
+                     }
 
-                                <Tab className={styles.emailTabs}>
-                                    <Tooltip label='Trash' placement='bottom' bg='gray.300' color='black'>
-                                        <div
-                                            className={`${tab === 'TRASH' ? styles.active : ''}`}
-                                            onClick={() => changeEmailTabs('TRASH')}
-                                        >
-                                            <TrashIcon/>
-                                            <span>Trash</span>
-                                        </div>
-                                    </Tooltip>
-                                </Tab>
-                                }
-                                {tab === 'ARCHIVE' &&
+                     {tab === 'STARRED' &&
+                     <Tab className={styles.emailTabs}>
+                         <Tooltip label='Starred' placement='bottom' bg='gray.300' color='black'>
+                             <div
+                                 className={`${tab === 'STARRED' ? styles.active : ''}`}
+                                 onClick={() => changeEmailTabs('STARRED')}
+                             >
+                                 <StarIcon/>
+                                 <span>Starred</span>
+                             </div>
+                         </Tooltip>
+                     </Tab>
+                     }
 
-                                <Tab className={styles.emailTabs}>
-                                    <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
-                                        <div
-                                            className={`${tab === 'ARCHIVE' ? styles.active : ''}`}
-                                            onClick={() => changeEmailTabs('ARCHIVE')}
-                                        >
-                                            <ArchiveIcon/>
-                                            <span>Archive</span>
-                                        </div>
-                                    </Tooltip>
-                                </Tab>
-                                }
+                     {tab === 'TRASH' &&
 
-                                {tab === 'DRAFT' &&
+                     <Tab className={styles.emailTabs}>
+                         <Tooltip label='Trash' placement='bottom' bg='gray.300' color='black'>
+                             <div
+                                 className={`${tab === 'TRASH' ? styles.active : ''}`}
+                                 onClick={() => changeEmailTabs('TRASH')}
+                             >
+                                 <TrashIcon/>
+                                 <span>Trash</span>
+                             </div>
+                         </Tooltip>
+                     </Tab>
+                     }
+                     {tab === 'ARCHIVE' &&
 
-                                <Tab className={styles.emailTabs}>
-                                    <Tooltip label='Draft' placement='bottom' bg='gray.300' color='black'>
-                                        <div
-                                            className={`${tab === 'DRAFT' ? styles.active : ''}`}
-                                            onClick={() => changeEmailTabs('DRAFT')}
-                                        >
-                                            <DraftIcon/>
-                                            <span>Draft</span>
-                                        </div>
-                                    </Tooltip>
-                                </Tab>
-                                }
+                     <Tab className={styles.emailTabs}>
+                         <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
+                             <div
+                                 className={`${tab === 'ARCHIVE' ? styles.active : ''}`}
+                                 onClick={() => changeEmailTabs('ARCHIVE')}
+                             >
+                                 <ArchiveIcon/>
+                                 <span>Archive</span>
+                             </div>
+                         </Tooltip>
+                     </Tab>
+                     }
 
-                                <Menu isOpen={isMoreDropdownOpen} onClose={() => setIsMoreDropdownOpen(false)}>
-                                    <MenuButton
-                                        onClick={() => setIsMoreDropdownOpen(!isMoreDropdownOpen)}
-                                        className={styles.tabListMoreButton} minWidth={'80px'}
-                                        borderLeft={'1px solid #D1D5DB'}
-                                        borderRadius={0} backgroundColor={'transparent'} height={'auto'}
-                                        fontSize={'13px'} color={'#6B7280'} as={Button} marginLeft={1}
-                                        rightIcon={<TriangleDownIcon/>}
-                                    >
-                                        More
-                                    </MenuButton>
-                                    <MenuList className={`${styles.tabListDropDown} drop-down-list`}>
-                                        {['TRASH', 'STARRED', 'ARCHIVE', 'DRAFT'].includes(tab) &&
-                                        <MenuItem
-                                            onClick={() => changeEmailTabs('SNOOZED')}><TimeSnoozeIcon/> Snoozed</MenuItem>
-                                        }
+                     {tab === 'DRAFT' &&
 
-                                        {tab !== 'TRASH' &&
-                                        <MenuItem onClick={() => changeEmailTabs('TRASH')}><TrashIcon/> Trash</MenuItem>
-                                        }
-                                        {tab !== 'STARRED' &&
-                                        <MenuItem
-                                            onClick={() => changeEmailTabs('STARRED')}><StarIcon/> Starred</MenuItem>
-                                        }
-                                        {tab !== 'ARCHIVE' &&
-                                        <MenuItem
-                                            onClick={() => changeEmailTabs('ARCHIVE')}><ArchiveIcon/> Archive</MenuItem>
-                                        }
-                                        {tab !== 'DRAFT' &&
-                                        <MenuItem onClick={() => changeEmailTabs('DRAFT')}><DraftIcon/> Draft</MenuItem>
-                                        }
-                                    </MenuList>
-                                </Menu>
-                            </TabList>
-                            <Button
-                                className={styles.composeButton} borderRadius={8} height={'auto'} padding={'10px'}
-                                minWidth={'101px'} backgroundColor={'#FFFFFF'} color={'#374151'} borderColor={'#E5E7EB'}
-                                leftIcon={<EditIcon/>} colorScheme='blue' variant='outline'
-                                onClick={() => openComposeModel()}
-                            >
-                                Compose
-                            </Button>
-                        </Flex>
-                    )}
+                     <Tab className={styles.emailTabs}>
+                         <Tooltip label='Draft' placement='bottom' bg='gray.300' color='black'>
+                             <div
+                                 className={`${tab === 'DRAFT' ? styles.active : ''}`}
+                                 onClick={() => changeEmailTabs('DRAFT')}
+                             >
+                                 <DraftIcon/>
+                                 <span>Draft</span>
+                             </div>
+                         </Tooltip>
+                     </Tab>
+                     }
+
+                     <Menu isOpen={isMoreDropdownOpen} onClose={() => setIsMoreDropdownOpen(false)}>
+                         <MenuButton
+                             onClick={() => setIsMoreDropdownOpen(!isMoreDropdownOpen)}
+                             className={styles.tabListMoreButton} minWidth={'80px'}
+                             borderLeft={'1px solid #D1D5DB'}
+                             borderRadius={0} backgroundColor={'transparent'} height={'auto'}
+                             fontSize={'13px'} color={'#6B7280'} as={Button} marginLeft={1}
+                             rightIcon={<TriangleDownIcon/>}
+                         >
+                             More
+                         </MenuButton>
+                         <MenuList className={`${styles.tabListDropDown} drop-down-list`}>
+                             {['TRASH', 'STARRED', 'ARCHIVE', 'DRAFT'].includes(tab) &&
+                             <MenuItem
+                                 onClick={() => changeEmailTabs('SNOOZED')}><TimeSnoozeIcon/> Snoozed</MenuItem>
+                             }
+
+                             {tab !== 'TRASH' &&
+                             <MenuItem onClick={() => changeEmailTabs('TRASH')}><TrashIcon/> Trash</MenuItem>
+                             }
+                             {tab !== 'STARRED' &&
+                             <MenuItem
+                                 onClick={() => changeEmailTabs('STARRED')}><StarIcon/> Starred</MenuItem>
+                             }
+                             {tab !== 'ARCHIVE' &&
+                             <MenuItem
+                                 onClick={() => changeEmailTabs('ARCHIVE')}><ArchiveIcon/> Archive</MenuItem>
+                             }
+                             {tab !== 'DRAFT' &&
+                             <MenuItem onClick={() => changeEmailTabs('DRAFT')}><DraftIcon/> Draft</MenuItem>
+                             }
+                         </MenuList>
+                     </Menu>
+                 </TabList>
+                 <Button
+                     className={styles.composeButton} borderRadius={8} height={'auto'} padding={'10px'}
+                     minWidth={'101px'} backgroundColor={'#FFFFFF'} color={'#374151'} borderColor={'#E5E7EB'}
+                     leftIcon={<EditIcon/>} colorScheme='blue' variant='outline'
+                     onClick={() => openComposeModel()}
+                 >
+                     Compose
+                 </Button>
+             </Flex>
+         )
+    }
+
+    return (
+        <>
+            <Flex direction={'column'} gap={5} className={styles.mailListTabs}>
+                <Tabs>
+                    {isThreadSearched ? getHeaderForSearched() : getHeaderForNotSearched()}
 
                     <TabPanels marginTop={5}>
-                        <ThreadsSideBarTab showLoader={isLoading} cachePrefix={props.cachePrefix}/>
+                        <ThreadsSideBarTab cachePrefix={props.cachePrefix}/>
                     </TabPanels>
                 </Tabs>
             </Flex>
