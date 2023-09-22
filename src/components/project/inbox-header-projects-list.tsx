@@ -1,4 +1,4 @@
-import {Flex, Text, Image, Button, useDisclosure} from "@chakra-ui/react";
+import {Flex, Text, Image, Button} from "@chakra-ui/react";
 import {DisneyDIcon, FolderIcon} from "@/icons";
 import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
@@ -6,17 +6,14 @@ import {StateType} from "@/types";
 import {Project} from "@/models";
 import Router from "next/router";
 import {PlusIcon} from "@/icons/plus.icon";
-
-const CreateNewProjectModal = dynamic(() => import("@/components/project/create-new-project").then(mod => mod.default));
 import {updateThreadState} from "@/redux/threads/action-reducer";
 import {updateMessageState} from "@/redux/messages/action-reducer";
-import dynamic from "next/dynamic";
+import {updateCommonState} from "@/redux/common-apis/action-reducer";
 
 export function InboxHeaderProjectsList(props: { size: number }) {
     const {projects, isLoading} = useSelector((state: StateType) => state.projects);
     const [projectData, setProjectData] = useState<Project[]>([]);
     const [projectDataLength, setProjectDataLength] = useState<Project[]>([]);
-    const {isOpen, onOpen, onClose} = useDisclosure();
     const dispatch = useDispatch();
     const projectButtonRef = React.useRef<HTMLDivElement | null | any>(null);
     const [maxSize, setMaxSize] = useState<number>(5);
@@ -94,7 +91,10 @@ export function InboxHeaderProjectsList(props: { size: number }) {
                 }
                 {!isLoading && projectData && projectData.length < maxSize &&
                 <Button alignItems={'center'} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
-                        onClick={() => Router.push('/projects/create-project')} padding={'7px'} minWidth={'216px'}
+                        onClick={() => dispatch(updateCommonState({
+                            showCreateProjectModal: true,
+                            shouldRedirectOnCreateProject: true
+                        }))} padding={'7px'} minWidth={'216px'}
                         border={'1px dashed #E5E7EB'} borderRadius={'8px'} h={'fit-content'}
                         maxWidth={'216px'} className={'create-project-button'}>
                     <div className={'folder-icon'}>
@@ -105,11 +105,7 @@ export function InboxHeaderProjectsList(props: { size: number }) {
                           color={'#374151'} flex={'1'}>{isLoading}Create Project</Text>
                 </Button>
                 }
-
-
             </>
-
-            <CreateNewProjectModal onOpen={onOpen} isOpen={isOpen} onClose={onClose}/>
         </>
     )
 }

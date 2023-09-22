@@ -44,6 +44,7 @@ function ProjectInbox() {
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {success: membershipSuccess} = useSelector((state: StateType) => state.memberships);
     const {isProjectRemoveSuccess, success} = useSelector((state: StateType) => state.memberships);
+    const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const [isManagerMembersOpen, setIsManagerMembersOpen] = useState<boolean>(false)
 
     const [size, setSize] = useState<number>(0);
@@ -193,21 +194,13 @@ function ProjectInbox() {
         }
     }, [isProjectRemoveSuccess])
 
-    /**
-     * Detects if the iframe was clicked
-     */
-    const onWindowBlur = useCallback(() => {
-      setTimeout(() => {
-        setIsManagerMembersOpen(false)
-      });
-    }, []);
+
 
     useEffect(() => {
-      window.addEventListener('blur', onWindowBlur);
-      return () => {
-          window.removeEventListener('blur', onWindowBlur);
-      };
-    }, [onWindowBlur]);
+      if(incomingEvent === 'iframe.clicked') {
+        setIsManagerMembersOpen(false)
+      }
+    }, [incomingEvent]);
 
     return (
         <>
@@ -223,7 +216,7 @@ function ProjectInbox() {
                         <Heading as='h4' fontSize={'24px'} color={'#08162F'}>{project && project.name}</Heading>
                         <Badge color={'#000000'} fontSize={'14px'} fontWeight={'600'} backgroundColor={'#E9E9E9'}
                                padding={'3px 6px'} borderRadius={'4px'}
-                               lineHeight={'1.19'}>{members && members?.length || 0} members</Badge>
+                               lineHeight={'1.19'}>{members && members.length === 1 ? `1 member`:`${members && members.length} members`}</Badge>
                     </Flex>
                     <Flex align={'center'} gap={1}>
                         <div className={styles.userImage}>

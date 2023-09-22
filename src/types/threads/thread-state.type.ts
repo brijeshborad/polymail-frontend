@@ -9,8 +9,7 @@ export declare type InitialThreadStateType = {
     updateSuccess?: boolean
     success?: boolean
     isThreadSearched?: boolean
-    tabValue?: string
-    isThreadLoading?: boolean
+    tabValue?: string,
     isThreadFocused?: boolean
 }
 

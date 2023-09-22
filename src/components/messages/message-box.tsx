@@ -2,7 +2,7 @@ import styles from "@/styles/Inbox.module.css";
 import {Button, Flex, Heading, Menu, MenuButton, MenuItem, MenuList, Text} from "@chakra-ui/react";
 import {Time} from "@/components/common";
 import {DownloadIcon, MenuIcon} from "@/icons";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {getAttachmentDownloadUrl, updateMessage} from "@/redux/messages/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {MessageAttachments} from "@/models";
@@ -12,11 +12,23 @@ import {EyeSlashedIcon} from "@/icons/eye-slashed.icon";
 
 
 export function MessageBox(props: any) {
+  const { event: incomingEvent } = useSelector((state: StateType) => state.globalEvents);
+  const [isContextMenuOpen, setIsContextMenuOpen] = useState(false)
     const ref = React.useRef(null)
     const iframeRef = React.useRef<HTMLIFrameElement | null | any>(null);
     const [iframeHeight, setIframeHeight] = React.useState("0px");
     const message = props.item
     const {isExpanded}=props
+    const [emailList, setEmailList] = useState<any>([]);
+
+    useEffect(() => {
+      props.threadDetails.to[0].email
+      if (props.threadDetails.to && props.threadDetails.to.length > 1) {
+        let myArray = [...props.threadDetails.to]
+        myArray.shift();
+        setEmailList(myArray)
+      }
+    }, [props.threadDetails])
 
     const dispatch = useDispatch();
     const {
@@ -27,7 +39,6 @@ export function MessageBox(props: any) {
     const onIframeLoad = () => {
         debounce(() => {
             if (iframeRef.current && iframeRef.current.contentWindow) {
-                iframeRef.current.contentWindow.document.body.style = "margin: 0; overflow: hidden;";
                 setIframeHeight((iframeRef.current.contentWindow.document.body.scrollHeight + 20 ) + "px");
             }
         }, 500);
@@ -49,6 +60,12 @@ export function MessageBox(props: any) {
             dispatch(getAttachmentDownloadUrl({id: selectedMessage.id, attachment: item.id}));
         }
     }
+
+    useEffect(() => {
+      if(incomingEvent === 'iframe.clicked') {
+        setIsContextMenuOpen(false)
+      }
+    }, [incomingEvent]);
 
     return (
       <Flex ref={ref} position={'relative'} direction={'column'}
@@ -87,8 +104,8 @@ export function MessageBox(props: any) {
                       <Flex w={'100%'} direction={'column'} pr={'20px'}>
                           <Flex align={'center'} justify={'space-between'} mb={1}>
                               <Flex align={'flex-end'} gap={1}>
-                                  <Heading 
-                                    as='h6' fontSize={'13px'} color={'#0A101D'} 
+                                  <Heading
+                                    as='h6' fontSize={'13px'} color={'#0A101D'}
                                     fontWeight={400} letterSpacing={'-0.13px'} lineHeight={1}
                                   >
                                     {message.from?.name || message.from.email}
@@ -96,8 +113,8 @@ export function MessageBox(props: any) {
                                   {message.from?.name && (
                                     <>
                                       <span className={'dot'} />
-                                      <Text 
-                                        fontSize='12px' letterSpacing={'-0.13px'} 
+                                      <Text
+                                        fontSize='12px' letterSpacing={'-0.13px'}
                                         color={'#6B7280'} lineHeight={1}
                                         fontWeight={400}
                                       >
@@ -132,16 +149,27 @@ export function MessageBox(props: any) {
                           {props.threadDetails && props.threadDetails.to && props.threadDetails.to.length > 0 &&
                           <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
                                 fontWeight={400}>to:&nbsp;
-                              {props.threadDetails.to[0].email}&nbsp; <Text
-                                  as='u'>{props.threadDetails.to.length - 1 > 0 && `and ${props.threadDetails.to.length - 1} others`} </Text>
+                              {props.threadDetails.to[0].email}&nbsp;
+
+                              <div className={styles.otherMail}>
+                                  <Text
+                                      as='u'>{props.threadDetails.to.length - 1 > 0 && `and ${props.threadDetails.to.length - 1} others`} </Text>
+                                  <div className={styles.otherMailList}>
+                                    {(emailList || []).map((item: any, index: number) => (
+                                      <p key={index}>{item.email}</p>
+                                    ))}
+                                  </div>
+                              </div>
                           </Flex>
                           }
                       </Flex>
                   </Flex>
-                  <Menu>
-                      <MenuButton position={'absolute'} right={'10px'} top={'20px'} className={styles.menuIcon}
-                                  transition={'all 0.5s'} backgroundColor={'transparent'} fontSize={'12px'}
-                                  h={'auto'} minWidth={'24px'} padding={'0'} as={Button} rightIcon={<MenuIcon/>}>
+                  <Menu isOpen={isContextMenuOpen} onClose={() => setIsContextMenuOpen(false)}>
+                      <MenuButton
+                        onClick={() => setIsContextMenuOpen(true)}
+                        position={'absolute'} right={'10px'} top={'20px'} className={styles.menuIcon}
+                        transition={'all 0.5s'} backgroundColor={'transparent'} fontSize={'12px'}
+                        h={'auto'} minWidth={'24px'} padding={'0'} as={Button} rightIcon={<MenuIcon/>}>
                       </MenuButton>
                       <MenuList className={'drop-down-list'}>
                           {props.threadDetails && (
@@ -161,6 +189,7 @@ export function MessageBox(props: any) {
               <div className={styles.mailBodyContent}>
                   <iframe
                       ref={iframeRef}
+                      scrolling="no"
                       onLoad={onIframeLoad}
                       height={iframeHeight}
                       src={props.emailPart}

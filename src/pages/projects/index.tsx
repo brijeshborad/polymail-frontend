@@ -5,8 +5,7 @@ import {
     Button,
     Flex,
     Heading, Menu, MenuButton, MenuItem, MenuList,
-    Text,
-    useDisclosure
+    Text
 } from "@chakra-ui/react";
 import styles from "@/styles/project.module.css";
 import Image from "next/image";
@@ -16,17 +15,14 @@ import {StateType} from "@/types";
 import {updateProject, updateOptimisticProject} from "@/redux/projects/action-reducer";
 import Router, {useRouter} from "next/router";
 import {Project} from "@/models";
-import dynamic from 'next/dynamic'
-const CreateNewProjectModal = dynamic(
-    () => import('@/components/project/create-new-project').then((mod) => mod.default)
-)
 import {POSITION_GAP} from "@/utils/constants";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
+import {updateCommonState} from "@/redux/common-apis/action-reducer";
 
 
 function Index() {
     const {isLoading, projects} = useSelector((state: StateType) => state.projects);
-    const {isOpen, onOpen, onClose} = useDisclosure();
+    const {showCreateProjectModal} = useSelector((state: StateType) => state.commonApis);
     const router = useRouter();
     const dispatch = useDispatch();
     const [isOpenByRoute, setIsOpenByRoute] = useState<boolean>(false);
@@ -114,16 +110,16 @@ function Index() {
         const routePaths = router.pathname.split('/');
         if (routePaths.includes('create-project')) {
             setIsOpenByRoute(true);
-            onOpen()
+            dispatch(updateCommonState({showCreateProjectModal: true, shouldRedirectOnCreateProject: true}));
         }
-    }, [onOpen, router.pathname])
+    }, [dispatch, router.pathname])
 
     useEffect(() => {
-        if (!isOpen && isOpenByRoute) {
+        if (!showCreateProjectModal && isOpenByRoute) {
             setIsOpenByRoute(false);
             Router.replace('/projects', undefined, {shallow: true});
         }
-    }, [isOpen, isOpenByRoute])
+    }, [showCreateProjectModal, isOpenByRoute])
 
     return (
         <>
@@ -135,7 +131,7 @@ function Index() {
                             <Badge backgroundColor={'#EBF2FF'} fontSize={'14px'} lineHeight={'16px'} color={'#0556FF'}
                             padding={'3px 6px'} borderRadius={'4px'} marginLeft={2}>{itemList && itemList.length}</Badge></Heading>
                         <Button className={styles.createProjectButton} color={'#ffffff'} backgroundColor={'#1F2937'}
-                                onClick={() => { Router.replace('/projects/create-project'); onOpen() }}
+                                onClick={() => { Router.replace('/projects/create-project'); }}
                                 h={'auto'} borderRadius={'8px'} fontSize={'14px'} fontWeight={'500'}
                                 padding={'10px 12px'} lineHeight={'16px'}>Create Project</Button>
                     </Flex>
@@ -225,7 +221,6 @@ function Index() {
                     </Flex>
                 </Flex>
             </Flex>
-            <CreateNewProjectModal onOpen={onOpen} isOpen={isOpen} onClose={onClose}/>
         </>
     )
 }

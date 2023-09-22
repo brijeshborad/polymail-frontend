@@ -9,6 +9,9 @@ const {toast} = createStandaloneToast()
 
 export function Toaster(props: ToasterProps) {
     let polyToasterId = `poly-toast-${new Date().getMilliseconds()}`;
+    if (props.id) {
+        polyToasterId = props.id;
+    }
     if (toast.isActive(`${polyToasterId}`)) {
         return null;
     }

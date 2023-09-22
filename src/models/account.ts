@@ -8,4 +8,8 @@ export interface Account {
     signature?: string
     userId?: string
     status?: string
+    syncHistory?: {
+        mailInitSynced?: string | null,
+        mailSynced?: string | null
+    }
 }

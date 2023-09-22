@@ -12,7 +12,6 @@ const initialState: any = {
     success: false,
     isThreadSearched: false,
     tabValue: '',
-    isThreadLoading: false,
     isThreadFocused: false
 } as InitialThreadStateType
 
@@ -26,17 +25,16 @@ const threadsSlice = createSlice({
                 ...(_action.payload.hasOwnProperty('resetState') && _action.payload.resetState ? {threads: []} : {}),
                 isLoading: _action.payload.hasOwnProperty('resetState') ? _action.payload.resetState : true,
                 error: null,
-                success: false,
-                isThreadLoading: true
+                success: false
             }
         },
         getAllThreadsSuccess: (state: InitialThreadStateType, {payload: threads}: PayloadAction<any>) => {
             // Sort threads by latestMessage DESC
             threads = (threads || []).sort((a: Thread, b: Thread) => (new Date(b.latestMessage as string).valueOf() - new Date(a.latestMessage as string).valueOf()));
-            return {...state, threads, isLoading: false, error: null, success: true, isThreadLoading: false}
+            return {...state, threads, isLoading: false, error: null, success: true}
         },
         getAllThreadsError: (state: InitialThreadStateType, {payload: error}: PayloadAction<{ error: any }>) => {
-            return {...state, threads: [], isLoading: false, error, success: false, isThreadLoading: false}
+            return {...state, threads: [], isLoading: false, error, success: false}
         },
 
         updateThreads: (state: InitialThreadStateType, _action: PayloadAction<{ id?: string, body?: Thread }>) => {

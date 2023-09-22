@@ -17,8 +17,12 @@ import { updateLastMessage } from '@/redux/socket/action-reducer';
 import { updateMessageState } from '@/redux/messages/action-reducer';
 import { Toaster } from '@/components/common';
 import dynamic from 'next/dynamic'
+
 const FeedSidebar = dynamic(
     () => import('./feedSidebar').then((mod) => mod.FeedSidebar)
+)
+const CreateNewProjectModal = dynamic(
+    () => import('@/components/project/create-new-project').then((mod) => mod.default)
 )
 
 export function Header() {
@@ -29,9 +33,9 @@ export function Header() {
     const { threads, tabValue, isThreadSearched } = useSelector((state: StateType) => state.threads);
     const { googleAuthRedirectionLink } = useSelector((state: StateType) => state.auth);
     const { userDetails, profilePicture } = useSelector((state: StateType) => state.users);
+    const { event: incomingEvent } = useSelector((state: StateType) => state.globalEvents);
     const [userData, setUserData] = useState<User>();
     const { newMessage, sendJsonMessage } = useSelector((state: StateType) => state.socket);
-    const [isWindowActive, setWindowActive] = useState<boolean>(true);
     const [showSettingsMenu, setShowSettingsMenu] = useState(false);
 
     const { user } = useSelector((state: StateType) => state.auth);
@@ -120,7 +124,7 @@ export function Header() {
                     Router.push('/organization/add');
                 }
             }
-        }, 500);
+        }, 1000);
         return () => {
             clearTimeout(timer1);
         };
@@ -136,7 +140,9 @@ export function Header() {
 
     const setAccounts = useCallback(
         (account: Account) => {
-            LocalStorageService.updateAccount('store', account);
+            if (account.syncHistory?.mailInitSynced) {
+                LocalStorageService.updateAccount('store', account);
+            }
             dispatch(updateAccountState({ selectedAccount: account }));
         },
         [dispatch],
@@ -200,26 +206,12 @@ export function Header() {
         setShowSettingsMenu(false);
     }, []);
 
-    /**
-     * Detects if the iframe was clicked
-     */
-    const onWindowBlur = useCallback(() => {
-        const message = document.activeElement;
-        setTimeout(() => {
-            if (document.activeElement && document?.activeElement.tagName === 'IFRAME' && message) {
-                message.textContent = 'clicked ' + Date.now();
-                closeMenu();
-                setWindowActive(false);
-            }
-        });
-    }, [closeMenu]);
 
     useEffect(() => {
-        window.addEventListener('blur', onWindowBlur);
-        return () => {
-            window.removeEventListener('blur', onWindowBlur);
-        };
-    }, [isWindowActive, onWindowBlur]);
+      if(incomingEvent === 'iframe.clicked') {
+        closeMenu();
+      }
+    }, [incomingEvent, closeMenu]);
 
     if (!userData) {
         return <></>;
@@ -254,7 +246,7 @@ export function Header() {
     };
 
     const changePage = (page: string) => {
-        if (!router.pathname.includes(page)) {
+        if (router.pathname.replace('/', '') !== page) {
             dispatch(
                 updateThreadState({
                     threads: [],
@@ -349,6 +341,7 @@ export function Header() {
                     </MenuList>
                 </Menu>
             </div>
+            <CreateNewProjectModal/>
         </Flex>
     );
 }

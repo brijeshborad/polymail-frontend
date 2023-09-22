@@ -11,6 +11,7 @@ import { ThreadListProps } from "@/types";
 const ThreadsSideBarListItem = dynamic(() => import("./side-bar-list-item").then(mod => mod.ThreadsSideBarListItem));
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
+import {updateCommonState} from "@/redux/common-apis/action-reducer";
 
 let currentSelectedThreads: any = []
 
@@ -43,10 +44,12 @@ export function ThreadsSideBarList(props: ThreadListProps) {
       const topPos = ((threadIndex || 0)) * 50
 
       setTimeout(() => {
-        editorRef.current.scrollTo({
-          top: topPos,
-          behavior: 'smooth'
-        })
+        if (editorRef.current) {
+          editorRef.current.scrollTo({
+            top: topPos,
+            behavior: 'smooth'
+          })
+        }
       }, 50)
     }
   }, [target, threadIndex])
@@ -88,14 +91,15 @@ export function ThreadsSideBarList(props: ThreadListProps) {
         }))
 
       } else {
+        dispatch(updateCommonState({isComposing: false}));
         if (props.tab === 'DRAFT') {
           if (item && item.messages && item.messages[0]) {
-            dispatch(updateMessageState({isCompose: true, isConfirmModal: false}));
+            setTimeout(() => {
+              dispatch(updateCommonState({isComposing: true}));
+            }, 50)
             dispatch(updateThreadState({ selectedThread: item, isThreadFocused: false, multiSelection: [] }));
             return;
           }
-        } else {
-          dispatch(updateMessageState({isCompose: false}));
         }
         currentSelectedThreads = [];
 

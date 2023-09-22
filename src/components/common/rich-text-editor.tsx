@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import dynamic from 'next/dynamic'
 
 const Editor = dynamic(
@@ -6,7 +6,7 @@ const Editor = dynamic(
     {ssr: false}
 )
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import {RichTextEditorProps} from "@/types";
+import {RichTextEditorProps, StateType} from "@/types";
 import {
     EditorState,
     convertToRaw,
@@ -14,6 +14,7 @@ import {
 } from 'draft-js';
 import draftToHtml from "draftjs-to-html";
 import {emojiArray} from "@/utils/common.functions";
+import { useSelector } from "react-redux";
 
 let htmlToDraft: any = null;
 if (typeof window === 'object') {
@@ -21,7 +22,9 @@ if (typeof window === 'object') {
 }
 
 export function RichTextEditor({onChange, placeholder, className, value, hideToolBar}: RichTextEditorProps) {
-    const [editorState, setEditorState] = useState<EditorState>(EditorState.createEmpty());
+  const containerRef: any = useRef(null)
+  const { event: incomingEvent } = useSelector((state: StateType) => state.globalEvents);
+  const [editorState, setEditorState] = useState<EditorState>(EditorState.createEmpty());
     const [isContentEdited, setIsContentEdited] = useState<boolean>(false);
     const [editorRef, setEditorRef] = useState<any | null>(null);
     const updateParentComponent = useCallback(() => {
@@ -55,12 +58,59 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
 
     useEffect(() => {
         if (value && !isContentEdited) {
-            setEditorState(EditorState.moveSelectionToEnd(EditorState.createWithContent(ContentState.createFromBlockArray(htmlToDraft(value)))));
+            let finalHtmlValue = htmlToDraft(value);
+            setEditorState(EditorState.moveSelectionToEnd(EditorState.createWithContent(ContentState.createFromBlockArray(finalHtmlValue))));
         }
     }, [value, isContentEdited])
 
+    const closeEditorDropDowns = () => {
+      const emojiWrapper = (containerRef && containerRef.current) ? containerRef.current.getElementsByClassName('rdw-emoji-wrapper') : null
+      if (emojiWrapper && emojiWrapper[0]) {
+        const emojiButton = emojiWrapper[0].getElementsByClassName('rdw-option-wrapper')[0]
+        const isEmojiModalOpen = emojiWrapper[0].getElementsByClassName('emoji-picker')[0]
+
+        if(isEmojiModalOpen) {
+          if(emojiButton) emojiButton.click()
+        }
+      }
+
+      const linkWrapper = (containerRef && containerRef.current) ? containerRef.current.getElementsByClassName('rdw-link-wrapper') : null
+      if (linkWrapper && linkWrapper[0]) {
+        const linkButton = linkWrapper[0].getElementsByClassName('rdw-option-wrapper')[0]
+        const isLinkModalOpen = linkWrapper[0].getElementsByClassName('emoji-picker')[0]
+
+        if(isLinkModalOpen) {
+          if(linkButton) linkButton.click()
+        }
+      }
+    }
+
+    useEffect(() => {
+      if (incomingEvent === 'iframe.clicked') {
+        closeEditorDropDowns()
+      }
+    }, [incomingEvent])
+
+    /**
+     * Detects clicks outside of the component and closes it (if open)
+     */
+    useEffect(() => {
+      function handleClickOutside(event: any) {
+        const current:any = containerRef.current
+
+        if (current && !current.contains(event.target)) {
+          closeEditorDropDowns()
+        }
+      }
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, [containerRef]);
+
 
     return (
+      <div ref={containerRef}>
         <Editor
             placeholder={placeholder}
             editorState={editorState}
@@ -85,9 +135,10 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
                     ordered: {icon: "/image/icon/ordered.svg"},
                 },
                 emoji: {
+                    // component: EmojiMenu,
                     icon: "/image/icon/emoji.svg",
                     popupClassName: 'emoji-picker',
-                    emojis: emojiArray,
+                    emojis: emojiArray
                 },
 
                 link: {
@@ -100,9 +151,9 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
                     defaultTargetOption: '_self',
                     options: ['link'],
                     link: {icon: "/image/icon/link.svg", className: undefined},
-                    linkCallback: undefined
                 },
             }}
         />
+      </div>
     )
 }

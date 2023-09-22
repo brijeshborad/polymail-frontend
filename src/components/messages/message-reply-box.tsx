@@ -29,7 +29,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { StateType } from "@/types";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { MessageAttachments, MessageRecipient } from "@/models";
+import {MessageAttachments, MessageRecipient} from "@/models";
 import { uploadAttachment } from "@/redux/messages/action-reducer";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { MessageBoxType } from "@/types/props-types/message-box.type";
@@ -58,6 +58,7 @@ export function MessageReplyBox(props: MessageBoxType) {
   // const { target } = useSelector((state: StateType) => state.keyNavigation);
   const { selectedAccount } = useSelector((state: StateType) => state.accounts);
   const { draft } = useSelector((state: StateType) => state.draft);
+  const { event: incomingEvent } = useSelector((state: StateType) => state.globalEvents);
   const dispatch = useDispatch();
   const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
   const { isOpen, onClose } = useDisclosure();
@@ -69,7 +70,6 @@ export function MessageReplyBox(props: MessageBoxType) {
   const [extraClassNames, setExtraClassNames] = useState<string>('');
   const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
   const [waitForDraft, setWaitForDraft] = useState<boolean>(false);
-  const [isPendingUpdate, setIsPendingUpdate] = useState<boolean>(false);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
 
   const editorRef = useRef<any>(null);
@@ -77,6 +77,16 @@ export function MessageReplyBox(props: MessageBoxType) {
   const router = useRouter();
   const divRef = useRef<HTMLDivElement | null>(null);
   const [divHeight, setDivHeight] = useState<number>(0);
+  const [emailList, setEmailList] = useState<any>([]);
+
+  useEffect(() => {
+    if (emailRecipients?.recipients?.items && emailRecipients?.recipients?.items.length > 1) {
+      let myArray = [...emailRecipients?.recipients?.items]
+      myArray.shift();
+      setEmailList(myArray)
+    }
+  }, [emailRecipients])
+
 
   useEffect(() => {
     if (divRef.current) {
@@ -196,11 +206,26 @@ export function MessageReplyBox(props: MessageBoxType) {
     }
   };
 
+  const handleAutoCompleteSelect = (value: any, type: string) => {
+    if (value.email && isValid(value.email, type)) {
+      setEmailRecipients((prevState: RecipientsType) => ({
+        ...prevState,
+        [type as keyof RecipientsType]: {
+          items: [...prevState[type as keyof RecipientsType].items, {
+            name: value.name,
+            email: value.email
+          }],
+          value: blankRecipientValue
+        }
+      }));
+    }
+  };
+
   const handleItemDelete = (item: string, type: string) => {
     setEmailRecipients((prevState: RecipientsType) => ({
       ...prevState,
       [type as keyof RecipientsType]: {
-        items: prevState[type as keyof RecipientsType].items.map(i => i.email).filter(i => i !== item),
+        items: prevState[type as keyof RecipientsType].items.filter(i => i.email !== item),
         value: blankRecipientValue
       }
     }));
@@ -226,7 +251,8 @@ export function MessageReplyBox(props: MessageBoxType) {
       bcc: emailRecipients.bcc?.items && emailRecipients.bcc?.items.length > 0 ? emailRecipients.bcc?.items : [],
       draftInfo: {
         body: value || emailBody
-      }
+      },
+      messageId: props.messageData?.id
     }
 
     debounce(() => {
@@ -245,12 +271,11 @@ export function MessageReplyBox(props: MessageBoxType) {
   }
 
   useEffect(() => {
-    if (waitForDraft && isPendingUpdate) {
+    if (waitForDraft && draft && draft.id) {
       setWaitForDraft(false);
-      setIsPendingUpdate(false);
       sendToDraft('', false);
     }
-  }, [waitForDraft, isPendingUpdate])
+  }, [waitForDraft, draft])
 
   useEffect(() => {
     // Add signature and draft to email body
@@ -453,7 +478,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
     if (draft && draft.id) {
       let params = {};
-      let polyToast = `poly-toast-${new Date().getTime().toString()}`;
+      let polyToast = `poly-toast-${new Date().getMilliseconds()}`;
 
       // if the user has set a schedule date
       if (scheduledDate) {
@@ -602,21 +627,12 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   useEffect(() => {
     handleEditorScroll();
   }, [handleEditorScroll]);
-  /**
-   * Detects if the iframe was clicked
-   */
-  const onWindowBlur = useCallback(() => {
-    setTimeout(() => {
-      setIsReplyDropdownOpen(false)
-    });
-  }, []);
 
   useEffect(() => {
-    window.addEventListener('blur', onWindowBlur);
-    return () => {
-        window.removeEventListener('blur', onWindowBlur);
-    };
-  }, [onWindowBlur]);
+    if(incomingEvent === 'iframe.clicked') {
+      setIsReplyDropdownOpen(false)
+    }
+  }, [incomingEvent, setIsReplyDropdownOpen]);
 
   return (
     <Flex backgroundColor={'#FFFFFF'} position={'sticky'} mt={'auto'} bottom={0} boxShadow={'0 20px 0px 0 #fff'}>
@@ -668,15 +684,23 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 </MenuList>
               </Menu>
               <Flex align={'center'} gap={1}>
-                <div className={styles.mailUserImage}>
+                {/*<div className={styles.mailUserImage}>*/}
 
-                </div>
+                {/*</div>*/}
 
                 {!!emailRecipients?.recipients?.items?.length &&
                   <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
                     fontWeight={400}>
-                    {emailRecipients?.recipients?.items[0].email}&nbsp; <Text
-                      as='u'>{emailRecipients?.recipients?.items?.length - 1 > 0 && `and ${emailRecipients?.recipients?.items?.length - 1} others`} </Text>
+                    {emailRecipients?.recipients?.items[0].email}&nbsp;
+                    <div className={styles.otherMail}>
+                      <Text as='u'>{emailRecipients?.recipients?.items?.length - 1 > 0 && `and ${emailRecipients?.recipients?.items?.length - 1} others`} </Text>
+                      <div className={styles.otherMailList}>
+                          {(emailList || []).map((item: any, index: number) => (
+                              <p key={index}>{item.email}</p>
+                          ))}
+
+                      </div>
+                    </div>
                   </Flex>
                 }
               </Flex>
@@ -698,6 +722,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
               <MessageRecipients
                 emailRecipients={emailRecipients}
                 handleKeyDown={handleKeyDown}
+                handleAutoCompleteSelect={handleAutoCompleteSelect}
                 handleChange={handleChange}
                 handlePaste={handlePaste}
                 handleItemDelete={handleItemDelete}

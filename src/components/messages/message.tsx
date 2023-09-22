@@ -25,6 +25,7 @@ import {updateThreadState} from "@/redux/threads/action-reducer";
 import dynamic from "next/dynamic";
 import {keyPress} from "@/redux/key-navigation/action-reducer";
 import {getCacheMessages, setCacheMessages} from "@/utils/cache.functions";
+import {InboxLoader} from "@/components/loader-screen/inbox-loader";
 
 export function Message() {
   const messagesWrapperRef = React.useRef<HTMLDivElement | null | any>(null);
@@ -37,16 +38,14 @@ export function Message() {
   const {
     messages,
     messagePart,
-    isCompose,
     isLoading: messageLoading,
     messageAttachments,
     selectedMessage,
-    attachmentUrl,
-    isConfirmModal
+    attachmentUrl
   } = useSelector((state: StateType) => state.messages);
   const {
     selectedThread,
-    isThreadLoading: threadLoading,
+    isLoading: threadLoading,
     isThreadFocused,
     tabValue
   } = useSelector((state: StateType) => state.threads);
@@ -54,8 +53,9 @@ export function Message() {
   const {isLoading: accountLoading} = useSelector((state: StateType) => state.accounts);
   const {isLoading: organizationLoading} = useSelector((state: StateType) => state.organizations);
   const {isLoading: usersProfilePictureLoading} = useSelector((state: StateType) => state.users);
+  const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
   const {isLoading: projectsLoading} = useSelector((state: StateType) => state.projects);
-  const {isLoading: summaryLoading} = useSelector((state: StateType) => state.commonApis);
+  const {isLoading: summaryLoading, syncingEmails, isComposing} = useSelector((state: StateType) => state.commonApis);
   const [messageDetailsForReplyBox, setMessageDetailsForReplyBox] = useState<MessageModel | null>(null);
   const [isLoaderShow, setIsLoaderShow] = useState<boolean>(false);
   const [showReplyBox, setShowReplyBox] = useState<boolean>(false);
@@ -63,12 +63,12 @@ export function Message() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!threadLoading && !accountLoading && !organizationLoading && !usersProfilePictureLoading && !projectsLoading && !summaryLoading) {
+    if (!threadLoading && !accountLoading && !organizationLoading && !usersProfilePictureLoading && !projectsLoading && !summaryLoading && !syncingEmails) {
       setIsLoaderShow(false)
     } else {
       setIsLoaderShow(true)
     }
-  }, [threadLoading, accountLoading, organizationLoading, usersProfilePictureLoading, projectsLoading, summaryLoading])
+  }, [threadLoading, accountLoading, organizationLoading, usersProfilePictureLoading, projectsLoading, summaryLoading, syncingEmails])
 
   useEffect(() => {
     if (selectedThread && selectedThread?.id) {
@@ -105,26 +105,11 @@ export function Message() {
     }
   }, [dispatch, selectedThread])
 
-  /**
-   * Detects if the iframe was clicked
-   */
-  const onWindowBlur = useCallback(() => {
-    const message = document.getElementById('message-content')
-    setTimeout(() => {
-      if (document && document.activeElement && document?.activeElement.tagName === "IFRAME" && message) {
-        message.textContent = "clicked " + Date.now();
-        setThreadFocus(true)
-      }
-    })
-  }, [setThreadFocus])
-
-
   useEffect(() => {
-    window.addEventListener("blur", onWindowBlur);
-    return () => {
-      window.removeEventListener("blur", onWindowBlur);
-    };
-  }, [onWindowBlur]);
+    if(incomingEvent === 'iframe.clicked') {
+      setThreadFocus(true)
+    }
+  }, [incomingEvent, setThreadFocus]);
 
   const cacheMessage = useCallback((body: Object | any) => {
     if (index === null) {
@@ -250,76 +235,93 @@ export function Message() {
     }
   };
 
-  return (
-    <>
-      {(!isCompose && !isConfirmModal)? <Box
-        className={`${styles.mailBox} ${isThreadFocused ? styles.mailBoxFocused : ''}`}
-        height={'calc(100vh - 165px)'} overflow={'hidden'} borderRadius={'15px'}
-        onClick={() => {
-          if (!isThreadFocused) {
-            setThreadFocus(true)
-            dispatch(keyPress({
-              action: 'RIGHT',
-              target: 'thread'
-            }))
-          }
-        }}
-      >
-        {!selectedThread && !isCompose &&
+  function showBlankPage() {
+    return (
         <Flex justifyContent={'center'} alignItems={'center'} flexDir={'column'}
               height={'100%'}>
-          {!isLoaderShow && <Heading as='h3' size='md'>Click on a thread from list to view messages!</Heading>}
-          {isLoaderShow && <Flex direction={'column'} gap={2} flex={1} w={'100%'}>
-              <SkeletonLoader skeletonLength={1} height={'100%'}/>
+          <Heading as='h3' size='md'>Click on a thread from list to view messages!</Heading>
+        </Flex>
+    )
+  }
+
+  function showLoader() {
+    return (
+        <Flex justifyContent={'center'} alignItems={'center'} flexDir={'column'}
+              height={'100%'}>
+          {!syncingEmails && <Flex direction={'column'} gap={2} flex={1} w={'100%'}>
+            <SkeletonLoader skeletonLength={1} height={'100%'}/>
           </Flex>}
+          {syncingEmails && <InboxLoader loaderPercentage={syncingEmails}/>}
+        </Flex>
+    );
+  }
 
-        </Flex>}
-        {selectedThread && !isCompose &&
-        <Flex flexDir={'column'} height={'100%'}>
+  function showMessageBox() {
+    return (
+        <Box
+            className={`${styles.mailBox} ${isThreadFocused ? styles.mailBoxFocused : ''}`}
+            height={'calc(100vh - 165px)'} overflow={'hidden'} borderRadius={'15px'}
+            onClick={() => {
+              if (!isThreadFocused) {
+                setThreadFocus(true)
+                dispatch(keyPress({
+                  action: 'RIGHT',
+                  target: 'thread'
+                }))
+              }
+            }}>
+          {isLoaderShow && showLoader()}
+          {!isLoaderShow && showMessage()}
+        </Box>
+    )
+  }
+
+  function showMessage() {
+    return (
+        <>
+          {!selectedThread && showBlankPage()}
+          {selectedThread && <Flex flexDir={'column'} height={'100%'}>
             <>
-                <MessagesHeader inboxMessages={inboxMessages} index={index}
-                                headerType={'inbox'}/>
+              <MessagesHeader inboxMessages={inboxMessages} index={index}
+                              headerType={'inbox'}/>
 
-                <Flex ref={messagesWrapperRef} padding={'20px'} gap={5} direction={'column'} flex={1} overflow={'auto'}>
-                    <Flex gap={2} direction={'column'} height={'100%'}>
-                      {inboxMessages && !!inboxMessages.length && inboxMessages.map((item: any, index: number) => (
-                        <div key={index}>
-                          <MessageBox
+              <Flex ref={messagesWrapperRef} padding={'20px'} gap={5} direction={'column'} flex={1} overflow={'auto'}>
+                <Flex gap={2} direction={'column'} height={'100%'}>
+                  {inboxMessages && !!inboxMessages.length && inboxMessages.map((item: any, index: number) => (
+                      <div key={index}>
+                        <MessageBox
                             item={item} index={index} threadDetails={item}
                             isLoading={messageLoading} emailPart={emailPart}
                             messageAttachments={messageAttachments} hideAndShowReplayBox={hideAndShowReplayBox}
                             isExpanded={selectedMessage?.id === item.id}
                             onClick={() => handleRowClick(index)}
-                          />
-                        </div>
+                        />
+                      </div>
 
-                      ))}
+                  ))}
 
-                      {showReplyBox &&
-                      <MessageReplyBox
-                          emailPart={(messagePart?.data || '')} messageData={messageDetailsForReplyBox}
-                          threadDetails={index !== null && inboxMessages[index]}
-                          replyType={replyType}
-                          hideAndShowReplayBox={hideAndShowReplayBox} replyTypeName={replyTypeName}/>
-                      }
-                    </Flex>
+                  {showReplyBox &&
+                  <MessageReplyBox
+                      emailPart={(messagePart?.data || '')} messageData={messageDetailsForReplyBox}
+                      threadDetails={index !== null && inboxMessages[index]}
+                      replyType={replyType}
+                      hideAndShowReplayBox={hideAndShowReplayBox} replyTypeName={replyTypeName}/>
+                  }
                 </Flex>
+              </Flex>
             </>
-        </Flex>
-        }
-      </Box> : (isConfirmModal ?
-      <Box className={styles.mailBox}
-           height={'calc(100vh - 165px)'} overflow={'hidden'} borderRadius={'15px'}>
-        <Flex justifyContent={'center'} alignItems={'center'} flexDir={'column'}
-              height={'100%'}>
-          {!isLoaderShow && <Heading as='h3' size='md'>Click on a thread from list to view messages!</Heading>}
-          {isLoaderShow && <Flex direction={'column'} gap={2} flex={1} w={'100%'}>
-              <SkeletonLoader skeletonLength={1} height={'100%'}/>
-          </Flex>}
-        </Flex>
-      </Box> : <ComposeBox
-        messageDetails={(tabValue === 'DRAFT' && selectedThread?.messages && selectedThread?.messages.length) ? selectedThread?.messages[0] : {}}/>
-      )}
+          </Flex>
+          }
+        </>
+    )
+  }
+
+  return (
+    <>
+      {!isComposing && showMessageBox()}
+      {isComposing && <ComposeBox tabValue={tabValue}
+          messageDetails={(tabValue === 'DRAFT' && selectedThread?.messages && selectedThread?.messages.length) ? selectedThread?.messages[0] : {}}/>
+      }
     </>
   )
 }

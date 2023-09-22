@@ -10,7 +10,8 @@ import {
     InitialUserState, InitialMembershipStateType,
     InitialUndoBodyType, 
     InitialCommonApisStateType,
-    InitialKeyNavigationStateType
+    InitialKeyNavigationStateType,
+    InitialGlobalEventsStateType,
 } from "./";
 
 export declare type StateType = {
@@ -26,5 +27,6 @@ export declare type StateType = {
     memberships: InitialMembershipStateType,
     undoBody: InitialUndoBodyType,
     commonApis: InitialCommonApisStateType,
-    keyNavigation: InitialKeyNavigationStateType
+    keyNavigation: InitialKeyNavigationStateType,
+    globalEvents: InitialGlobalEventsStateType
 }

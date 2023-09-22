@@ -3,7 +3,13 @@ import {InitialCommonApisStateType} from "@/types/common-apis/common-apis.type";
 
 const initialState: any = {
   summary: null,
-  isLoading: false
+  isLoading: false,
+  showCreateProjectModal: false,
+  shouldRedirectOnCreateProject: false,
+  syncingEmails: null,
+  isComposing: false,
+  contacts: [],
+  allowThreadSelection: true
 } as InitialCommonApisStateType
 
 const commonApisSlice = createSlice({
@@ -30,7 +36,17 @@ const commonApisSlice = createSlice({
       return {...state, isLoading: false, error}
     },
 
-    updateSummaryState: (state: InitialCommonApisStateType, action: PayloadAction<InitialCommonApisStateType>) => {
+    getContacts: (state: InitialCommonApisStateType, _action: PayloadAction<{ }>) => {
+      return {...state, contacts: [], isLoading: true, error: null}
+    },
+    getContactsSuccess: (state: InitialCommonApisStateType, {payload: contacts}: PayloadAction<any>) => {
+      return {...state, contacts, isLoading: false, error: null}
+    },
+    getContactsError: (state: InitialCommonApisStateType, {payload: error}: PayloadAction<{ error: any }>) => {
+      return {...state, contacts: [], isLoading: false, error}
+    },
+
+    updateCommonState: (state: InitialCommonApisStateType, action: PayloadAction<InitialCommonApisStateType>) => {
       return {...state, ...action.payload}
     },
 
@@ -44,7 +60,9 @@ export const {
   getProjectSummary,
   getProjectSummarySuccess,
   getProjectSummaryError,
-  updateSummaryState
-
+  getContacts,
+  getContactsSuccess,
+  getContactsError,
+  updateCommonState
 } = commonApisSlice.actions
 export default commonApisSlice.reducer
