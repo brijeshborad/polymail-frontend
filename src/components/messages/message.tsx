@@ -63,7 +63,6 @@ export function Message() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log(threadLoading , accountLoading , organizationLoading , usersProfilePictureLoading , projectsLoading , summaryLoading , syncingEmails)
     if (!threadLoading && !accountLoading && !organizationLoading && !usersProfilePictureLoading && !projectsLoading && !summaryLoading && !syncingEmails) {
       setIsLoaderShow(false)
     } else {
