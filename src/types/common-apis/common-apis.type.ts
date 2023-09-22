@@ -1,4 +1,4 @@
-import {Summary} from "@/models/summary";
+import {Summary, Contacts} from "@/models";
 
 export declare type InitialCommonApisStateType = {
   summary?: Summary | null,
@@ -8,4 +8,5 @@ export declare type InitialCommonApisStateType = {
   shouldRedirectOnCreateProject?: boolean,
   syncingEmails?: number | null,
   isComposing?: boolean,
+  contacts?: Contacts[] | []
 }

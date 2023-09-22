@@ -1,7 +1,8 @@
-import {AxiosError} from "axios";
+import {AxiosError, AxiosResponse} from "axios";
 import ApiService from "@/utils/api.service";
 import {all, fork, put, takeLatest} from "@redux-saga/core/effects";
 import {
+  getContacts, getContactsError, getContactsSuccess,
   getProjectSummary,
   getProjectSummaryError, getProjectSummarySuccess,
   getSummary,
@@ -42,6 +43,16 @@ function* getProjectSummaryData({payload: {id, mailbox}}: PayloadAction<{id: str
   }
 }
 
+function* getAllContacts() {
+  try {
+    const response: AxiosResponse = yield ApiService.callGet(`contacts`, null);
+    yield put(getContactsSuccess(response));
+  } catch (error: any) {
+    error = error as AxiosError;
+    yield put(getContactsError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
+  }
+}
+
 
 export function* watchGetSummary() {
   yield takeLatest(getSummary.type, getSummaryData);
@@ -51,9 +62,14 @@ export function* watchGetProjectsSummary() {
   yield takeLatest(getProjectSummary.type, getProjectSummaryData);
 }
 
+export function* watchGetAllContacts() {
+  yield takeLatest(getContacts.type, getAllContacts);
+}
+
 export default function* rootSaga() {
   yield all([
     fork(watchGetSummary),
     fork(watchGetProjectsSummary),
+    fork(watchGetAllContacts),
   ]);
 }

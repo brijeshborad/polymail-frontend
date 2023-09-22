@@ -90,14 +90,12 @@ export default function MessageScheduleCustom({ date, onChange, onCancel }: Mess
   }
 
   const showDate = () => {
-    let abbrivation = timezoneList.find(tl => tl.utc.includes(scheduleDate.timezone))?.abbr;
-    let date = dayjs(
-        `${scheduleDate.year}-${scheduleDate.month}-${scheduleDate.day} ${scheduleDate.time.hour}:${scheduleDate.time.minute}:00 ${scheduleDate.amPm}`,
-    );
+    let abbrivation = timezoneList.find(tl => tl.utc.includes(dayjs.tz.guess()))?.abbr;
+    let date = dayjs();
     if (abbrivation) {
-      return date.format('D/MM/YYYY hh:mm A') + ' ' + abbrivation
+      return date.format('MM/DD/YYYY hh:mm A') + ' ' + abbrivation
     } else {
-      return date.tz(scheduleDate.timezone).format('D/MM/YYYY hh:mm A z');
+      return date.tz(dayjs.tz.guess()).format('MM/DD/YYYY hh:mm A z');
     }
   }
 
@@ -308,7 +306,7 @@ export default function MessageScheduleCustom({ date, onChange, onCancel }: Mess
               </Menu>
             </GridItem>
           </Grid>
-          <Text fontSize={'xs'} marginTop={'10px'} float={'right'}>{showDate()}</Text>
+          <Text fontSize={'xs'} marginTop={'10px'}>Now: {showDate()}</Text>
         </Flex>
 
         <Flex w={'100%'} pt={4} pb={0} gap={3}

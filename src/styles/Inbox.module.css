@@ -298,7 +298,7 @@
 }
 
 .mailBoxCenteredLabel {
-  font-size: 14px; 
+  font-size: 14px;
   line-height: 16px;
 }
 
@@ -563,6 +563,14 @@
 
 .replyBoxCC .ccInput {
     flex: 1 0 auto;
+}
+
+.replyBoxCC .ccInput::placeholder {
+    text-transform: capitalize;
+}
+
+.emailRecipientsAutoComplete:hover {
+    background: #F3F4F6;
 }
 
 .replyBoxCC .ccInput:hover,

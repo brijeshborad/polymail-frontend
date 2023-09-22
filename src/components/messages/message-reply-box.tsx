@@ -29,7 +29,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { StateType } from "@/types";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { MessageAttachments, MessageRecipient } from "@/models";
+import {MessageAttachments, MessageRecipient} from "@/models";
 import { uploadAttachment } from "@/redux/messages/action-reducer";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { MessageBoxType } from "@/types/props-types/message-box.type";
@@ -197,11 +197,26 @@ export function MessageReplyBox(props: MessageBoxType) {
     }
   };
 
+  const handleAutoCompleteSelect = (value: any, type: string) => {
+    if (value.email && isValid(value.email, type)) {
+      setEmailRecipients((prevState: RecipientsType) => ({
+        ...prevState,
+        [type as keyof RecipientsType]: {
+          items: [...prevState[type as keyof RecipientsType].items, {
+            name: value.name,
+            email: value.email
+          }],
+          value: blankRecipientValue
+        }
+      }));
+    }
+  };
+
   const handleItemDelete = (item: string, type: string) => {
     setEmailRecipients((prevState: RecipientsType) => ({
       ...prevState,
       [type as keyof RecipientsType]: {
-        items: prevState[type as keyof RecipientsType].items.map(i => i.email).filter(i => i !== item),
+        items: prevState[type as keyof RecipientsType].items.filter(i => i.email !== item),
         value: blankRecipientValue
       }
     }));
@@ -237,7 +252,6 @@ export function MessageReplyBox(props: MessageBoxType) {
           return;
         }
         if (draft && draft.id) {
-          delete body.messageId;
           dispatch(updatePartialMessage({ id: draft.id, body }));
         } else {
           setWaitForDraft(true);
@@ -692,6 +706,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
               <MessageRecipients
                 emailRecipients={emailRecipients}
                 handleKeyDown={handleKeyDown}
+                handleAutoCompleteSelect={handleAutoCompleteSelect}
                 handleChange={handleChange}
                 handlePaste={handlePaste}
                 handleItemDelete={handleItemDelete}

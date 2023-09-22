@@ -10,4 +10,5 @@ export declare type MessageRecipientsType = {
   handleChange: (_e: ChangeEvent, _type: string) => void,
   handlePaste: (_e: ClipboardEvent, _type: string) => void,
   handleItemDelete: (_item: string, _type: string) => void
+  handleAutoCompleteSelect: (_item: any, _type: string) => void
 }

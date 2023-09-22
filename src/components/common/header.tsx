@@ -124,7 +124,7 @@ export function Header() {
                     Router.push('/organization/add');
                 }
             }
-        }, 500);
+        }, 1000);
         return () => {
             clearTimeout(timer1);
         };

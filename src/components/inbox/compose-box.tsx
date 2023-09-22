@@ -151,6 +151,21 @@ export function ComposeBox(props: any) {
     }));
   };
 
+  const handleAutoCompleteSelect = (value: any, type: string) => {
+    if (value.email && isValid(value.email, type)) {
+      setEmailRecipients((prevState: RecipientsType) => ({
+        ...prevState,
+        [type as keyof RecipientsType]: {
+          items: [...prevState[type as keyof RecipientsType].items, {
+            name: value.name,
+            email: value.email
+          }],
+          value: blankRecipientValue
+        }
+      }));
+    }
+  };
+
   const handlePaste = (evt: ClipboardEvent | any, type: string) => {
     evt.preventDefault();
 
@@ -461,6 +476,7 @@ export function ComposeBox(props: any) {
                   handleKeyDown={handleKeyDown}
                   handleChange={handleChange}
                   handlePaste={handlePaste}
+                  handleAutoCompleteSelect={handleAutoCompleteSelect}
                   handleItemDelete={handleItemDelete}
               />
               <Flex flex={1} direction={'column'} position={'relative'}>
