@@ -58,7 +58,7 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
 
     useEffect(() => {
         if (value && !isContentEdited) {
-            let finalHtmlValue = htmlToDraft(decodeURIComponent(value));
+            let finalHtmlValue = htmlToDraft(value);
             setEditorState(EditorState.moveSelectionToEnd(EditorState.createWithContent(ContentState.createFromBlockArray(finalHtmlValue))));
         }
     }, [value, isContentEdited])

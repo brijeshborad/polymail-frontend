@@ -45,7 +45,7 @@ export function Message() {
   } = useSelector((state: StateType) => state.messages);
   const {
     selectedThread,
-    isThreadLoading: threadLoading,
+    isLoading: threadLoading,
     isThreadFocused,
     tabValue
   } = useSelector((state: StateType) => state.threads);
@@ -63,6 +63,7 @@ export function Message() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    console.log(threadLoading , accountLoading , organizationLoading , usersProfilePictureLoading , projectsLoading , summaryLoading , syncingEmails)
     if (!threadLoading && !accountLoading && !organizationLoading && !usersProfilePictureLoading && !projectsLoading && !summaryLoading && !syncingEmails) {
       setIsLoaderShow(false)
     } else {
@@ -319,7 +320,7 @@ export function Message() {
   return (
     <>
       {!isComposing && showMessageBox()}
-      {isComposing && <ComposeBox
+      {isComposing && <ComposeBox tabValue={tabValue}
           messageDetails={(tabValue === 'DRAFT' && selectedThread?.messages && selectedThread?.messages.length) ? selectedThread?.messages[0] : {}}/>
       }
     </>

@@ -8,7 +8,8 @@ const initialState: any = {
   shouldRedirectOnCreateProject: false,
   syncingEmails: null,
   isComposing: false,
-  contacts: []
+  contacts: [],
+  allowThreadSelection: true
 } as InitialCommonApisStateType
 
 const commonApisSlice = createSlice({

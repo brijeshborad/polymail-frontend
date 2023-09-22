@@ -91,9 +91,12 @@ export function ThreadsSideBarList(props: ThreadListProps) {
         }))
 
       } else {
-        dispatch(updateCommonState({isComposing: props.tab === 'DRAFT'}));
+        dispatch(updateCommonState({isComposing: false}));
         if (props.tab === 'DRAFT') {
           if (item && item.messages && item.messages[0]) {
+            setTimeout(() => {
+              dispatch(updateCommonState({isComposing: true}));
+            }, 50)
             dispatch(updateThreadState({ selectedThread: item, isThreadFocused: false, multiSelection: [] }));
             return;
           }

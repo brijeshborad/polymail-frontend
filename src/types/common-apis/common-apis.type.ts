@@ -8,5 +8,6 @@ export declare type InitialCommonApisStateType = {
   shouldRedirectOnCreateProject?: boolean,
   syncingEmails?: number | null,
   isComposing?: boolean,
+  allowThreadSelection?: boolean,
   contacts?: Contacts[] | []
 }

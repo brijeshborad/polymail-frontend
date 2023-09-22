@@ -22,7 +22,6 @@ export function ThreadsSideBarTab(props: TabProps) {
         success: threadListSuccess,
         updateSuccess,
         tabValue,
-        selectedThread
     } = useSelector((state: StateType) => state.threads)
     const {selectedAccount, account} = useSelector((state: StateType) => state.accounts);
     const {isLoading: summaryIsLoading, syncingEmails} = useSelector((state: StateType) => state.commonApis);
@@ -120,12 +119,6 @@ export function ThreadsSideBarTab(props: TabProps) {
             }
         }
     }, [dispatch, threadListSuccess, threads])
-
-    useEffect(() => {
-        if (threads && threads.length > 0 && !selectedThread && !isLoading) {
-            dispatch(updateThreadState({selectedThread: threads[0]}));
-        }
-    }, [threads, dispatch, isLoading, selectedThread])
 
     useEffect(() => {
         dispatch(updateThreadState({selectedThread: null}));

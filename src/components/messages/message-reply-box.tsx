@@ -70,7 +70,6 @@ export function MessageReplyBox(props: MessageBoxType) {
   const [extraClassNames, setExtraClassNames] = useState<string>('');
   const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
   const [waitForDraft, setWaitForDraft] = useState<boolean>(false);
-  const [isPendingUpdate, setIsPendingUpdate] = useState<boolean>(false);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
 
   const editorRef = useRef<any>(null);
@@ -78,6 +77,16 @@ export function MessageReplyBox(props: MessageBoxType) {
   const router = useRouter();
   const divRef = useRef<HTMLDivElement | null>(null);
   const [divHeight, setDivHeight] = useState<number>(0);
+  const [emailList, setEmailList] = useState<any>([]);
+
+  useEffect(() => {
+    if (emailRecipients?.recipients?.items && emailRecipients?.recipients?.items.length > 1) {
+      let myArray = [...emailRecipients?.recipients?.items]
+      myArray.shift();
+      setEmailList(emailRecipients?.recipients?.items)
+    }
+  }, [emailRecipients])
+
 
   useEffect(() => {
     if (divRef.current) {
@@ -262,12 +271,11 @@ export function MessageReplyBox(props: MessageBoxType) {
   }
 
   useEffect(() => {
-    if (waitForDraft && isPendingUpdate) {
+    if (waitForDraft) {
       setWaitForDraft(false);
-      setIsPendingUpdate(false);
       sendToDraft('', false);
     }
-  }, [waitForDraft, isPendingUpdate])
+  }, [waitForDraft])
 
   useEffect(() => {
     // Add signature and draft to email body
@@ -683,8 +691,16 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 {!!emailRecipients?.recipients?.items?.length &&
                   <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
                     fontWeight={400}>
-                    {emailRecipients?.recipients?.items[0].email}&nbsp; <Text
-                      as='u'>{emailRecipients?.recipients?.items?.length - 1 > 0 && `and ${emailRecipients?.recipients?.items?.length - 1} others`} </Text>
+                    {emailRecipients?.recipients?.items[0].email}&nbsp;
+                    <div className={styles.otherMail}>
+                      <Text as='u'>{emailRecipients?.recipients?.items?.length - 1 > 0 && `and ${emailRecipients?.recipients?.items?.length - 1} others`} </Text>
+                      <div className={styles.otherMailList}>
+                          {(emailList || []).map((item: any, index: number) => (
+                              <p key={index}>{item.email}</p>
+                          ))}
+
+                      </div>
+                    </div>
                   </Flex>
                 }
               </Flex>

@@ -19,6 +19,16 @@ export function MessageBox(props: any) {
     const [iframeHeight, setIframeHeight] = React.useState("0px");
     const message = props.item
     const {isExpanded}=props
+    const [emailList, setEmailList] = useState<any>([]);
+
+    useEffect(() => {
+      props.threadDetails.to[0].email
+      if (props.threadDetails.to && props.threadDetails.to.length > 1) {
+        let myArray = [...props.threadDetails.to]
+        myArray.shift();
+        setEmailList(myArray)
+      }
+    }, [props.threadDetails])
 
     const dispatch = useDispatch();
     const {
@@ -139,8 +149,17 @@ export function MessageBox(props: any) {
                           {props.threadDetails && props.threadDetails.to && props.threadDetails.to.length > 0 &&
                           <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
                                 fontWeight={400}>to:&nbsp;
-                              {props.threadDetails.to[0].email}&nbsp; <Text
-                                  as='u'>{props.threadDetails.to.length - 1 > 0 && `and ${props.threadDetails.to.length - 1} others`} </Text>
+                              {props.threadDetails.to[0].email}&nbsp;
+
+                              <div className={styles.otherMail}>
+                                  <Text
+                                      as='u'>{props.threadDetails.to.length - 1 > 0 && `and ${props.threadDetails.to.length - 1} others`} </Text>
+                                  <div className={styles.otherMailList}>
+                                    {(emailList || []).map((item: any, index: number) => (
+                                      <p key={index}>{item.email}</p>
+                                    ))}
+                                  </div>
+                              </div>
                           </Flex>
                           }
                       </Flex>

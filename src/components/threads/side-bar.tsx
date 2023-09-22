@@ -48,6 +48,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {userDetails} = useSelector((state: StateType) => state.users);
     const {sendJsonMessage} = useSelector((state: StateType) => state.socket);
+    const {allowThreadSelection} = useSelector((state: StateType) => state.commonApis);
     const dispatch = useDispatch();
 
 
@@ -93,12 +94,14 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
 
     useEffect(() => {
         if (threads && threads.length > 0 && !selectedThread && !isLoading) {
-            dispatch(updateThreadState({selectedThread: threads[0]}));
-            if (tabValue === 'DRAFT') {
-                dispatch(updateCommonState({isComposing: true}));
+            if (allowThreadSelection) {
+                dispatch(updateThreadState({selectedThread: threads[0]}));
+                if (tabValue === 'DRAFT') {
+                    dispatch(updateCommonState({isComposing: true}));
+                }
             }
         }
-    }, [threads, dispatch, selectedThread, isLoading, tabValue])
+    }, [threads, dispatch, selectedThread, isLoading, tabValue, allowThreadSelection])
 
     useEffect(() => {
         if (tab !== '' && getCurrentCacheTab() !== '') {
@@ -130,7 +133,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     const changeEmailTabs = (value: string) => {
         if (getCurrentCacheTab() !== value) {
             if (value !== 'DRAFT') {
-                dispatch(updateCommonState({isComposing: false}));
+                dispatch(updateCommonState({isComposing: false, allowThreadSelection: true}));
             }
 
             dispatch(updateThreadState({tabValue: tab, threads: []}));
