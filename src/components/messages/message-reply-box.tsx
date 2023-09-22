@@ -227,7 +227,8 @@ export function MessageReplyBox(props: MessageBoxType) {
       bcc: emailRecipients.bcc?.items && emailRecipients.bcc?.items.length > 0 ? emailRecipients.bcc?.items : [],
       draftInfo: {
         body: value || emailBody
-      }
+      },
+      messageId: props.messageData?.id
     }
 
     debounce(() => {
@@ -236,6 +237,7 @@ export function MessageReplyBox(props: MessageBoxType) {
           return;
         }
         if (draft && draft.id) {
+          delete body.messageId;
           dispatch(updatePartialMessage({ id: draft.id, body }));
         } else {
           setWaitForDraft(true);
