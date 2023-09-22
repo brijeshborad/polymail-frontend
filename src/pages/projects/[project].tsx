@@ -216,7 +216,7 @@ function ProjectInbox() {
                         <Heading as='h4' fontSize={'24px'} color={'#08162F'}>{project && project.name}</Heading>
                         <Badge color={'#000000'} fontSize={'14px'} fontWeight={'600'} backgroundColor={'#E9E9E9'}
                                padding={'3px 6px'} borderRadius={'4px'}
-                               lineHeight={'1.19'}>{members && members?.length || 0} members</Badge>
+                               lineHeight={'1.19'}>{members && members.length === 1 ? `1 member`:`${members && members.length} members`}</Badge>
                     </Flex>
                     <Flex align={'center'} gap={1}>
                         <div className={styles.userImage}>
