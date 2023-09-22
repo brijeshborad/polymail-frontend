@@ -60,14 +60,13 @@ export default function MessageRecipients({
                     </PopoverAnchor>
                 </HStack>
                 <PopoverContent>
-                    <PopoverBody px={0}>
+                    <PopoverBody p={0}>
                         {finalContacts.map((contact, index) => (
                             <Box onClick={() => handleAutoCompleteSelect(contact, type)}
-                                 className={styles.emailRecipientsAutoComplete} key={index} cursor={'pointer'} px={4}
-                                 py={1}>
-                                {contact.name && <Text fontSize={'md'} fontWeight={700}>{contact.name}</Text>}
-                                {!contact.name && <Text fontSize={'md'} fontWeight={700}>{contact.email}</Text>}
-                                <Text fontSize={'sm'}>{contact.email}</Text>
+                                 className={styles.emailRecipientsAutoComplete} key={index} cursor={'pointer'} px={4}>
+                                {contact.name && <Text title={`${contact.name} <${contact.email}>`}>{contact.name} &#60;{contact.email}&gt;</Text>}
+                                {!contact.name && <Text title={`${contact.email} <${contact.email}>`}>{contact.email} &#60;{contact.email}&gt;</Text>}
+
                             </Box>
                         ))}
                     </PopoverBody>

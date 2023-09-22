@@ -577,6 +577,18 @@
     background: #F3F4F6;
 }
 
+.emailRecipientsAutoComplete p {
+    color: #374151;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 12px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 100%;
+
+}
+
 .replyBoxCC .ccInput:hover,
 .replyBoxCC .ccInput:focus-visible,
 .subject .subjectInput:hover,
@@ -1121,37 +1133,6 @@
     overflow: auto;
 }
 
-
 .mailBox .otherMail:hover .otherMailList {
     display: block;
-}
-
-.mailBox .otherMail .otherMailList p {
-    padding: 5px 10px;
-}
-
-.mailBox .otherMail {
-    position: relative;
-}
-
-.mailBox .otherMail .otherMailList {
-    display: none;
-    position: absolute;
-    background: #FFFFFF;
-    border-radius: 10px;
-    bottom: 100%;
-    border: 1px solid #E5E7EB;
-    z-index: 1;
-    padding: 5px 0;
-    max-height: 200px;
-    overflow: auto;
-}
-
-
-.mailBox .otherMail:hover .otherMailList {
-    display: block;
-}
-
-.mailBox .otherMail .otherMailList p {
-    padding: 5px 10px;
 }

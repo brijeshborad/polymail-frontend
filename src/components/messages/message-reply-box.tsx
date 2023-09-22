@@ -83,7 +83,7 @@ export function MessageReplyBox(props: MessageBoxType) {
     if (emailRecipients?.recipients?.items && emailRecipients?.recipients?.items.length > 1) {
       let myArray = [...emailRecipients?.recipients?.items]
       myArray.shift();
-      setEmailList(emailRecipients?.recipients?.items)
+      setEmailList(myArray)
     }
   }, [emailRecipients])
 
@@ -684,9 +684,9 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 </MenuList>
               </Menu>
               <Flex align={'center'} gap={1}>
-                <div className={styles.mailUserImage}>
+                {/*<div className={styles.mailUserImage}>*/}
 
-                </div>
+                {/*</div>*/}
 
                 {!!emailRecipients?.recipients?.items?.length &&
                   <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
