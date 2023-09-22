@@ -13,10 +13,14 @@ const keyNavigationSlice = createSlice({
         keyPress: (state: InitialKeyNavigationStateType, action: PayloadAction<InitialKeyNavigationStateType>) => {
             return {...state, ...action.payload}
         },
+        updateKeyNavigation: (state: InitialKeyNavigationStateType, action: PayloadAction<InitialKeyNavigationStateType>) => {
+          return {...state, ...action.payload}
+      }
     },
 });
 
 export const {
-	keyPress
+	keyPress,
+  updateKeyNavigation
 } = keyNavigationSlice.actions;
 export default keyNavigationSlice.reducer;

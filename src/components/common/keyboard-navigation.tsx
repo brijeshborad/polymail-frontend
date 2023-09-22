@@ -40,6 +40,9 @@ export default function KeyboardNavigationListener() {
 
           if (pressedKey?.value === 'RIGHT') {
             dispatchAction.target = 'thread'
+            dispatchAction.threadIndex = 0
+            dispatchAction.messageIndex = 0
+
             dispatch(updateThreadState({
               isThreadFocused: true
             }))
@@ -52,6 +55,9 @@ export default function KeyboardNavigationListener() {
           if (pressedKey?.value === 'LEFT') {
             dispatchAction.target = 'threads'
             dispatchAction.currentMessageId = undefined
+            dispatchAction.threadIndex = 0
+            dispatchAction.messageIndex = 0
+            
             dispatch(updateThreadState({
               isThreadFocused: false
             }))

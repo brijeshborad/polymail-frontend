@@ -23,7 +23,7 @@ import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import { markThreadAsRead } from "@/utils/threads-common-functions";
 import {updateThreadState} from "@/redux/threads/action-reducer";
 import dynamic from "next/dynamic";
-import {keyPress} from "@/redux/key-navigation/action-reducer";
+import {updateKeyNavigation} from "@/redux/key-navigation/action-reducer";
 import {getCacheMessages, setCacheMessages} from "@/utils/cache.functions";
 import {InboxLoader} from "@/components/loader-screen/inbox-loader";
 
@@ -264,7 +264,7 @@ export function Message() {
             onClick={() => {
               if (!isThreadFocused) {
                 setThreadFocus(true)
-                dispatch(keyPress({
+                dispatch(updateKeyNavigation({
                   action: 'RIGHT',
                   target: 'thread'
                 }))
