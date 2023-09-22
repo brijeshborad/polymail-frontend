@@ -11,12 +11,13 @@ export default function KeyboardNavigationListener() {
   const dispatch = useDispatch();
   const { threads, selectedThread } = useSelector((state: StateType) => state.threads);
   const { messages, selectedMessage } = useSelector((state: StateType) => state.messages);
-  const { target: lastTarget, currentMessageId } = useSelector((state: StateType) => state.keyNavigation);
-  const [isKeyDown, setIsKeyDown] = useState(false)
+  const { target: lastTarget, currentMessageId, isEnabled } = useSelector((state: StateType) => state.keyNavigation);
   const { event: incomingEvent } = useSelector((state: StateType) => state.globalEvents);
+  const [isKeyDown, setIsKeyDown] = useState(false)
 
   useEffect(() => {
     const handleShortcutKeyPress = (e: KeyboardEvent | any) => {
+      if(!isEnabled) return
       if(isKeyDown) return
 
       if (MONITORED_KEYS.map(mk => mk.key).includes(e.keyCode)) {
@@ -29,8 +30,9 @@ export default function KeyboardNavigationListener() {
 
         if (pressedKey) {
           let dispatchAction: InitialKeyNavigationStateType = {
+            isEnabled,
+            target,
             action: pressedKey.value,
-            target
           }
 
           if (pressedKey?.value === 'UP' && lastTarget === 'reply-box') {
@@ -145,7 +147,7 @@ export default function KeyboardNavigationListener() {
     return () => {
       window.removeEventListener('keydown', handleShortcutKeyPress);
     };
-  }, [dispatch, lastTarget, threads, selectedThread, currentMessageId, messages, selectedMessage?.id, isKeyDown]);
+  }, [dispatch, lastTarget, threads, selectedThread, currentMessageId, messages, selectedMessage?.id, isKeyDown, isEnabled]);
 
   useEffect(() => {
     const handlKeyUp = () => {
