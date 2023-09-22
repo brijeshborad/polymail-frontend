@@ -589,3 +589,8 @@ div:has(> .mailSendToaster) {
 .drop-down-list.month-dropdown {
     overflow: hidden;
 }
+
+.add-to-project-list {
+    max-height: 60vh;
+    overflow: auto;
+}

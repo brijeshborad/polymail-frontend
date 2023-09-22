@@ -271,11 +271,11 @@ export function MessageReplyBox(props: MessageBoxType) {
   }
 
   useEffect(() => {
-    if (waitForDraft) {
+    if (waitForDraft && draft && draft.id) {
       setWaitForDraft(false);
       sendToDraft('', false);
     }
-  }, [waitForDraft])
+  }, [waitForDraft, draft])
 
   useEffect(() => {
     // Add signature and draft to email body
@@ -478,7 +478,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
     if (draft && draft.id) {
       let params = {};
-      let polyToast = `poly-toast-${new Date().getTime().toString()}`;
+      let polyToast = `poly-toast-${new Date().getMilliseconds()}`;
 
       // if the user has set a schedule date
       if (scheduledDate) {

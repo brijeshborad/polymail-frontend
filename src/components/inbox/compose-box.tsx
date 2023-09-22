@@ -158,11 +158,11 @@ export function ComposeBox(props: any) {
   };
 
   useEffect(() => {
-    if (waitForDraft) {
+    if (waitForDraft && draft && draft.id) {
       setWaitForDraft(false);
       sendToDraft('', false);
     }
-  }, [waitForDraft])
+  }, [waitForDraft, draft])
 
   const handleAutoCompleteSelect = (value: any, type: string) => {
     if (value.email && isValid(value.email, type)) {

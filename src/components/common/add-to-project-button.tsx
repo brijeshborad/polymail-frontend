@@ -119,9 +119,9 @@ export function AddToProjectButton() {
     }
 
     useEffect(() => {
-      if(incomingEvent === 'iframe.clicked') {
-        setDropDownOpen(false);
-      }
+        if (incomingEvent === 'iframe.clicked') {
+            setDropDownOpen(false);
+        }
     }, [incomingEvent, setDropDownOpen]);
 
     return (
@@ -163,12 +163,14 @@ export function AddToProjectButton() {
                         </InputGroup>
                     </div>
 
-                    {filteredProjects && !!filteredProjects.length && (filteredProjects || []).map((item: Project, index: number) => (
-                        <MenuItem gap={2} key={index} onClick={() => addThreadToProject(item)}>
-                            {item.emoji} {item.name}
-                        </MenuItem>
+                    <div className={'add-to-project-list'}>
+                        {filteredProjects && !!filteredProjects.length && (filteredProjects || []).map((item: Project, index: number) => (
+                            <MenuItem gap={2} key={index} onClick={() => addThreadToProject(item)}>
+                                {item.emoji} {item.name}
+                            </MenuItem>
 
-                    ))}
+                        ))}
+                    </div>
 
                     <div className={styles.addNewProject}>
                         <Button backgroundColor={'transparent'} w={'100%'} borderRadius={0}

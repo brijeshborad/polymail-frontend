@@ -375,10 +375,6 @@
     height: 20px;
 }
 
-.addToProjectList {
-    max-height: 70vh;
-}
-
 .addToProjectList .addNewProject {
     width: calc(100% - 24px);
     margin: 0 auto;
