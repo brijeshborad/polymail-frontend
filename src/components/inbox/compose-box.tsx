@@ -23,7 +23,6 @@ import { Toaster } from "@/components/common";
 import { RecipientsType } from "@/types/props-types/message-recipients.type";
 import dynamic from "next/dynamic";
 import {updateCommonState} from "@/redux/common-apis/action-reducer";
-import {updateThreadState} from "@/redux/threads/action-reducer";
 const CreateNewProject = dynamic(() => import('@/components/project/create-new-project').then(mod => mod.default));
 const RichTextEditor = dynamic(() => import("@/components/common").then(mod => mod.RichTextEditor));
 const Time = dynamic(() => import("@/components/common").then(mod => mod.Time));
