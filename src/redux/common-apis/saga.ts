@@ -47,10 +47,8 @@ function* getAllContacts() {
   try {
     const response: AxiosResponse = yield ApiService.callGet(`contacts`, null);
     let finalContacts = [...(response as any).filter((obj: any, index: number) => {
-      console.log(obj.email)
       return index === (response as any).findIndex((o: any) => obj.email.email === o.email.email);
     })];
-    console.log(finalContacts);
     yield put(getContactsSuccess(finalContacts));
   } catch (error: any) {
     error = error as AxiosError;

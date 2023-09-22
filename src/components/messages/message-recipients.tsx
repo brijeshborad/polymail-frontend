@@ -33,7 +33,6 @@ export default function MessageRecipients({
         }
         let finalContacts: Contacts[] = matchSorter((contacts || []), value, {keys: ['email.email', 'email.name']});
         finalContacts = finalContacts.slice(0, finalContacts.length > 5 ? 5 : finalContacts.length);
-        console.log(finalContacts);
         return finalContacts.map((contact: Contacts) => ({email: contact.email.email, name: contact.email.name}));
     }
 
