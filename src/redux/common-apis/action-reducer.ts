@@ -1,6 +1,5 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {InitialCommonApisStateType} from "@/types/common-apis/common-apis.type";
-import {Contacts} from "@/models";
 
 const initialState: any = {
   summary: null,
