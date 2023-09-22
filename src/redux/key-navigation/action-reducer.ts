@@ -2,6 +2,7 @@ import { InitialKeyNavigationStateType } from '@/types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: InitialKeyNavigationStateType = {
+    isEnabled: true,
     action: 'idle',
     target: 'threads',
 };
@@ -13,7 +14,7 @@ const keyNavigationSlice = createSlice({
         keyPress: (state: InitialKeyNavigationStateType, action: PayloadAction<InitialKeyNavigationStateType>) => {
             return {...state, ...action.payload}
         },
-        updateKeyNavigation: (state: InitialKeyNavigationStateType, action: PayloadAction<InitialKeyNavigationStateType>) => {
+        updateKeyNavigation: (state: InitialKeyNavigationStateType, action: PayloadAction<Partial<InitialKeyNavigationStateType>>) => {
           return {...state, ...action.payload}
       }
     },

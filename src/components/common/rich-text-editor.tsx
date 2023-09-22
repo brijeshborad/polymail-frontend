@@ -14,7 +14,8 @@ import {
 } from 'draft-js';
 import draftToHtml from "draftjs-to-html";
 import {emojiArray} from "@/utils/common.functions";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { updateKeyNavigation } from "@/redux/key-navigation/action-reducer";
 
 let htmlToDraft: any = null;
 if (typeof window === 'object') {
@@ -23,6 +24,7 @@ if (typeof window === 'object') {
 
 export function RichTextEditor({onChange, placeholder, className, value, hideToolBar}: RichTextEditorProps) {
   const containerRef: any = useRef(null)
+  const dispatch = useDispatch()
   const { event: incomingEvent } = useSelector((state: StateType) => state.globalEvents);
   const [editorState, setEditorState] = useState<EditorState>(EditorState.createEmpty());
     const [isContentEdited, setIsContentEdited] = useState<boolean>(false);
@@ -119,6 +121,8 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
             editorClassName={'default-editor-css'}
             onEditorStateChange={setEditorState}
             toolbarHidden={hideToolBar ? hideToolBar : false}
+            onFocus={() => dispatch(updateKeyNavigation({ isEnabled: false }))}
+            onBlur={() => dispatch(updateKeyNavigation({ isEnabled: true }))}
             toolbar={{
                 options: ['inline', 'list', 'emoji', 'link'],
                 inline: {
