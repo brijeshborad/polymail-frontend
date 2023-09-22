@@ -1,6 +1,6 @@
 import OnboardingLayout from "@/pages/onboarding/onboarding-layout";
 import styles from "@/styles/Login.module.css";
-import {Button, Flex, Heading, Image} from "@chakra-ui/react";
+import {Button, Flex, Heading, Image, Text} from "@chakra-ui/react";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {useEffect} from "react";
@@ -67,8 +67,7 @@ function OnBoarding() {
                         </Flex>
                         Continue with Google
                     </Button>
-                    {/*<Text fontSize='13px' letterSpacing={'-0.13px'} color={'#6B7280'}>or use another email
-                        address</Text>*/}
+                    <Text fontSize='13px' letterSpacing={'-0.13px'} color={'#6B7280'}>If you already have an account, login here.</Text>
                 </Flex>
             </OnboardingLayout>
         </>
