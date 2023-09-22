@@ -18,7 +18,11 @@ export default function KeyboardNavigationListener() {
   useEffect(() => {
     const handleShortcutKeyPress = (e: KeyboardEvent | any) => {
       if(!isEnabled) return
-      if(isKeyDown) return
+      if(isKeyDown) {
+        e.preventDefault()
+        e.stopPropagation()
+        return
+      }
 
       if (MONITORED_KEYS.map(mk => mk.key).includes(e.keyCode)) {
         // Prevents the scrollbar to scrolling while pressing up/down keys.
