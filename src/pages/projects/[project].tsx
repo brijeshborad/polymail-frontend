@@ -46,6 +46,7 @@ function ProjectInbox() {
     const {isProjectRemoveSuccess, success} = useSelector((state: StateType) => state.memberships);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const [isManagerMembersOpen, setIsManagerMembersOpen] = useState<boolean>(false)
+    const {sendJsonMessage} = useSelector((state: StateType) => state.socket);
 
     const [size, setSize] = useState<number>(0);
     const [allowAdd, setAllowAdd] = useState<boolean>(false);
@@ -59,9 +60,9 @@ function ProjectInbox() {
     const router = useRouter();
     const dispatch = useDispatch();
 
-    /*
+    
     useEffect(() => {
-      if (router.query.project) {
+      if (router.query.project && sendJsonMessage) {
 
         const interval = setInterval(() => {
           console.log('Sending activity event');
@@ -81,7 +82,7 @@ function ProjectInbox() {
 
       return undefined
     }, []);
-    */
+    
     useEffect(() => {
         if (router.query.project) {
             let projectId = router.query.project as string;
