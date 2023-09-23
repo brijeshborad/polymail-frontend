@@ -1,5 +1,5 @@
 import {app, BrowserWindow} from 'electron';
-import serve from 'electron-serve';
+// import serve from 'electron-serve';
 import {createWindow} from './helpers';
 import path from "path";
 
@@ -7,7 +7,7 @@ const isProd: boolean = process.env.NODE_ENV === 'production';
 let mainWindow: BrowserWindow | any;
 
 if (isProd) {
-    serve({directory: process.env.BUILD_DIR || 'out', scheme: 'app'});
+    app.setPath('userData', `${app.getPath('userData')}`);
 } else {
     app.setPath('userData', `${app.getPath('userData')} (development)`);
 }
@@ -19,7 +19,7 @@ if (isProd) {
     mainWindow = createWindow('main', getDefaultWindowConfig());
 
     if (isProd) {
-        await mainWindow.loadURL(`app://-`);
+        await mainWindow.loadURL(`https://devapp.polymail.io`);
     } else {
         const port = process.argv[2];
         await mainWindow.loadURL(`http://localhost:${port}`);
@@ -27,7 +27,7 @@ if (isProd) {
     }
     mainWindow.maximize();
     if (isProd) {
-        updateSession();
+        // updateSession();
     }
 })();
 

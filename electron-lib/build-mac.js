@@ -15,11 +15,11 @@ async function build() {
         let buildParams = [
             '-r',
             'dotenv/config',
-            path.join(cwd, 'electron-lib/build.js'),
+            path.join(cwd, 'build.js'),
             '--config',
-            path.join(cwd, 'electron-lib/electron-builder-config.js'),
+            path.join(cwd, 'electron-builder-config.js'),
             '--mac',
-            `dotenv_config_path=${path.join(cwd, 'electron-lib/.env')}`
+            `dotenv_config_path=${path.join(cwd, '.env')}`
         ];
         await execa('node', buildParams, execaOptions);
     } catch (err) {

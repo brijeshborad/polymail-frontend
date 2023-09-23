@@ -5,7 +5,7 @@ const webpack = require('webpack');
 
 const cwd = process.cwd();
 const externals = require(path.join(cwd, 'package.json')).dependencies;
-const ext = fs.existsSync(path.join(cwd, 'tsconfig.json')) ? '.ts' : '.js';
+const ext = fs.existsSync(path.join(cwd, '../tsconfig.json')) ? '.ts' : '.js';
 
 // ENV = 'development' | 'production'
 const configure = (env) => {
@@ -34,19 +34,11 @@ const configure = (env) => {
                         loader: require.resolve("babel-loader"),
                         options: {
                             cacheDirectory: false,
-                            extends: path.join(cwd, 'electron-lib/babel.js')
+                            extends: path.join(cwd, 'babel.js')
                         },
                     },
                     exclude: [
-                        /node_modules/,
-                        path.join(cwd, 'src'),
-                        path.join(cwd, 'next.config.js'),
-                        path.join(cwd, 'next-env.d.ts'),
-                        path.join(cwd, '.env.local'),
-                        path.join(cwd, '.env.example'),
-                        path.join(cwd, '.eslintrc.json'),
-                        path.join(cwd, '.gitignore'),
-                        path.join(cwd, '.gitlab-ci.yml')
+                        /node_modules/
                     ],
                 },
             ],
@@ -67,7 +59,7 @@ const configure = (env) => {
 };
 
 const getElectronConfig = () => {
-    const electronConfigPath = path.join(cwd, 'electron-lib/electron.config.js');
+    const electronConfigPath = path.join(cwd, 'electron.config.js');
     if (fs.existsSync(electronConfigPath)) {
         return require(electronConfigPath);
     } else {

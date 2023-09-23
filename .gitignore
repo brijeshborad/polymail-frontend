@@ -35,6 +35,9 @@ yarn-error.log*
 next-env.d.ts
 
 .idea
-dist
-electron-build
+
+# electron
+electron-lib/dist
+electron-lib/electron-build
 electron-lib/.env
+electron-lib/node_modules

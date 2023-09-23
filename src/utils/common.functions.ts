@@ -55,8 +55,8 @@ export function isElectron() {
 }
 
 export function getRedirectionUrl(path: string) {
-    if (isElectron()) {
-        return `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}${path}.html`;
-    }
+    // if (isElectron()) {
+    //     return `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}${path}.html`;
+    // }
     return `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}${path}`;
 }

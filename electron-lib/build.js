@@ -45,10 +45,6 @@ async function build() {
         fs.removeSync(appDir);
         fs.removeSync(distDir);
 
-        console.log('Building renderer process');
-        await execa('env-cmd', ['-f', '.env.electron-build', 'next', 'build'], execaOptions);
-        await execa('next', ['export', '-o', appDir], execaOptions);
-
         console.log('Building main process');
         await execa('node', [path.join(__dirname, 'webpack.config.js')], execaOptions);
 
