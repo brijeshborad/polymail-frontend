@@ -17,11 +17,13 @@ let currentSelectedThreads: any = []
 
 export function ThreadsSideBarList(props: ThreadListProps) {
   const { selectedThread, threads, multiSelection, isThreadSearched} = useSelector((state: StateType) => state.threads);
+  const {selectedAccount} = useSelector((state: StateType) => state.accounts);
   const dispatch = useDispatch()
   const listRef = useRef<any>(null);
   const router = useRouter();
   const routePaths = router.pathname.split('/');
   const editorRef = useRef<any>(null);
+  const { sendJsonMessage } = useSelector((state: StateType) => state.socket);
   const [extraClassNames, setExtraClassNames] = useState<string>('');
   const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
   const { target, threadIndex } = useSelector((state: StateType) => state.keyNavigation)
@@ -136,26 +138,26 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     }
   }, [threads, handleEditorScroll]);
 
-  /*
+  
   useEffect(() => {
-    if (selectedThread) {
+    if (selectedThread && selectedAccount && sendJsonMessage) {
       const interval = setInterval(() => {
         console.log('Sending activity event');
-            sendJsonMessage({
-                userId: selectedAccount?.userId,
-                name: 'Activity',
-                data: {
-                    type: "ViewingThread",
-                    id: selectedThread.id,
-                },
-            });
+        sendJsonMessage({
+            userId: selectedAccount?.userId,
+            name: 'Activity',
+            data: {
+                type: "ViewingThread",
+                id: selectedThread.id,
+            },
+        });
       }, 1000);
 
       return () => clearInterval(interval);
     }
     return undefined
   }, [selectedThread]);
-  */
+  
   return (
     <>
       <div className={'project-list-shadow'}>
