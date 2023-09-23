@@ -1,5 +1,4 @@
 import {app, BrowserWindow} from 'electron';
-// import serve from 'electron-serve';
 import {createWindow} from './helpers';
 import path from "path";
 

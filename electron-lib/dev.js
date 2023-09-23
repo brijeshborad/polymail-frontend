@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 "use strict";
 const arg = require('arg');
+const path = require('path');
 const execa = require('execa');
 const webpack = require('webpack');
 const {
@@ -46,7 +47,7 @@ const execaOptions = {
     };
 
     const startRendererProcess = () => {
-        const child = execa('next', ['-p', rendererPort], execaOptions);
+        const child = execa('npm', ['run', 'dev', '--prefix', path.join(__dirname, '../')], execaOptions);
         child.on('close', () => {
             process.exit(0);
         });
