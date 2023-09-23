@@ -37,7 +37,7 @@ export function isElectron() {
         return false;
     }
     // Renderer process
-    if (typeof window !== 'undefined' && typeof window.process === 'object' && window.process.type === 'renderer') {
+    if (typeof window !== 'undefined' && typeof window.process === 'object' && window.process.type !== undefined && window.process.type === 'renderer') {
         return true;
     }
 
