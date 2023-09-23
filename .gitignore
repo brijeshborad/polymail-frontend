@@ -37,6 +37,8 @@ next-env.d.ts
 .idea
 
 # electron
+dist
+electron-build
 electron-lib/dist
 electron-lib/electron-build
 electron-lib/.env
