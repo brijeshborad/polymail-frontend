@@ -32,7 +32,7 @@ export function Message({isProjectView = false}: {isProjectView?: boolean}) {
 
   const [index, setIndex] = useState<number | null>(null);
   const [emailPart, setEmailPart] = useState<string>("");
-  const [replyType, setReplyType] = useState<string>('');
+  const [replyType, setReplyType] = useState<string>('reply');
   const [replyTypeName, setReplyTypeName] = useState<string>('');
   const [inboxMessages, setInboxMessages] = useState<MessageModel[]>([]);
   const {

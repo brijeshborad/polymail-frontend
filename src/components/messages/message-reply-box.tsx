@@ -382,7 +382,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         setEmailRecipients((prevState: RecipientsType) => ({
           ...prevState,
           recipients: {
-            items: [props.threadDetails?.from!],
+            items: (props.threadDetails?.from.email === selectedAccount?.email && props.replyType === 'reply') ? props.threadDetails?.to! : [props.threadDetails?.from!],
             value: prevState.recipients.value
           }
         }));
