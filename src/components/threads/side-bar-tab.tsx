@@ -14,7 +14,7 @@ import {updateLastMessage} from "@/redux/socket/action-reducer";
 import {getProjectSummary} from "@/redux/common-apis/action-reducer";
 
 let tab: string = '';
-
+// let isSummarySuccess: boolean = false
 export function ThreadsSideBarTab(props: TabProps) {
     const {
         threads,
@@ -29,6 +29,7 @@ export function ThreadsSideBarTab(props: TabProps) {
     const router = useRouter();
     const dispatch = useDispatch();
     const [tabName, setTabName] = useState<string>('just-mine');
+    const [isSummarySuccess, setIsSummarySuccess] = useState<boolean>(false);
 
     const getAllThread = useCallback((type: string = '') => {
         if (selectedAccount && selectedAccount.syncHistory?.mailInitSynced) {
@@ -46,25 +47,33 @@ export function ThreadsSideBarTab(props: TabProps) {
                     isLoading: false
                 }));
             }
-            const routePaths = router.pathname.split('/');
-            if (routePaths.includes('projects')) {
-                if (router.query.project) {
+            const routePaths = window.location.pathname.split('/');
+            if (routePaths.includes('projects') && !isSummarySuccess) {
+                setIsSummarySuccess(true);
+
+                if (routePaths[2]) {
                     dispatch(updateThreadState({
                         threads: [],
                     }));
-                    let projectId = router.query.project as string;
+                    let projectId = routePaths[2] as string;
 
                     dispatch(getProjectSummary({
                         id: projectId,
                         mailbox: tab,
                     }))
                 }
-
             } else {
-                if (type === 'projects') {
-                    dispatch(getAllThreads({project: "ALL", mailbox: tab}));
+                if (routePaths[2]) {
+                    dispatch(getAllThreads({
+                        mailbox: tab,
+                        project: routePaths[2] as string,
+                        resetState: resetState,
+                        ...(type === 'just-mine' ? {mine: true} : {})
+                    }));
                 } else {
-                    if (!router.query.project) {
+                    if (type === 'projects') {
+                        dispatch(getAllThreads({project: "ALL", mailbox: tab}));
+                    } else {
                         dispatch(getAllThreads({mailbox: tab, account: selectedAccount.id, resetState: resetState}));
                     }
                 }
@@ -110,7 +119,7 @@ export function ThreadsSideBarTab(props: TabProps) {
             dispatch(updateThreadState({selectedThread: null}));
             getAllThread();
         }
-    }, [dispatch, getAllThread, tabValue])
+    }, [dispatch, tabValue])
 
     useEffect(() => {
         if (threadListSuccess) {

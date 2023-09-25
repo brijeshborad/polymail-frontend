@@ -42,6 +42,7 @@ export interface MessageDraft {
     created?: string,
     updated?: string,
     subject?: string,
+    projectId?: string
 }
 
 export interface MessageHeaders {
@@ -65,5 +66,6 @@ export interface MessageRequestBody {
     body?: string,
     draftInfo?: MessageDraftInfo,
     mailboxes?: string[] | undefined,
-    scope?: string
+    scope?: string,
+    projectId?: string
 }
