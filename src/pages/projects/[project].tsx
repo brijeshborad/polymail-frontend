@@ -60,7 +60,7 @@ function ProjectInbox() {
     const router = useRouter();
     const dispatch = useDispatch();
 
-    
+
     useEffect(() => {
       if (router.query.project && sendJsonMessage) {
 
@@ -82,7 +82,7 @@ function ProjectInbox() {
 
       return undefined
     }, []);
-    
+
     useEffect(() => {
         if (router.query.project) {
             let projectId = router.query.project as string;
@@ -233,7 +233,7 @@ function ProjectInbox() {
                         {({ onClose }) => (
                           <>
                             <MenuButton
-                              onClick={() => setIsManagerMembersOpen(!isManagerMembersOpen)} 
+                              onClick={() => setIsManagerMembersOpen(!isManagerMembersOpen)}
                               as={Button} className={styles.manageMembers} ml={2} backgroundColor={'#000000'}
                               color={'#ffffff'} lineHeight={'1'} fontSize={'14px'} borderRadius={'8px'}
                               height={'auto'} padding={'11px 16px'}
@@ -368,7 +368,7 @@ function ProjectInbox() {
                         }
                     </GridItem>
                     <GridItem w='100%' flex={1}>
-                        {((size < 991 && selectedThread) || size > 991) && <Message/>}
+                        {((size < 991 && selectedThread) || size > 991) && <Message isProjectView={true}/>}
                     </GridItem>
                 </Grid>
             </Flex>

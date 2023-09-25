@@ -7,4 +7,5 @@ export declare type MessageBoxType = {
     hideAndShowReplayBox?: (_type: string, _messageData: any) => void,
     threadDetails?: any,
     replyTypeName?: string
+    isProjectView?: boolean
 }

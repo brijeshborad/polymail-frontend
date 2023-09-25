@@ -27,7 +27,7 @@ import {SmallCloseIcon, TriangleDownIcon} from "@chakra-ui/icons";
 import {getCurrentCacheTab} from "@/utils/cache.functions";
 import {updateCommonState} from "@/redux/common-apis/action-reducer";
 
-const ThreadsSideBarTab = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarTab));
+const ThreadsSideBarTab = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarTab), {ssr: false});
 
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
 

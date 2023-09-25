@@ -27,7 +27,7 @@ import {updateKeyNavigation} from "@/redux/key-navigation/action-reducer";
 import {getCacheMessages, setCacheMessages} from "@/utils/cache.functions";
 import {InboxLoader} from "@/components/loader-screen/inbox-loader";
 
-export function Message() {
+export function Message({isProjectView = false}: {isProjectView?: boolean}) {
   const messagesWrapperRef = React.useRef<HTMLDivElement | null | any>(null);
 
   const [index, setIndex] = useState<number | null>(null);
@@ -307,6 +307,7 @@ export function Message() {
 
                   {showReplyBox &&
                   <MessageReplyBox
+                      isProjectView={isProjectView}
                       emailPart={(messagePart?.data || '')} messageData={messageDetailsForReplyBox}
                       threadDetails={index !== null && inboxMessages[index]}
                       replyType={replyType}

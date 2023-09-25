@@ -243,7 +243,6 @@ export function MessageReplyBox(props: MessageBoxType) {
       }
       setEmailBody(value);
     }
-    const routePaths = window.location.pathname.split('/');
 
     let body = {
       subject: subject,
@@ -254,7 +253,7 @@ export function MessageReplyBox(props: MessageBoxType) {
         body: value || emailBody
       },
       messageId: props.messageData?.id,
-      ...(routePaths.includes('projects') ? {projectId: routePaths[2] as string} : {}),
+      ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
     }
 
     debounce(() => {
