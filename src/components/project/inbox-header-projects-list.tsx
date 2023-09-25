@@ -46,6 +46,7 @@ export function InboxHeaderProjectsList(props: { size: number }) {
                 success: false,
                 updateSuccess: false,
                 selectedThread: null,
+                tabValue: ''
             }),
         );
         dispatch(updateMessageState({selectedMessage: null, messages: []}));

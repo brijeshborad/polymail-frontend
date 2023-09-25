@@ -13,8 +13,6 @@ import {getCacheThreads, getCurrentCacheTab, setCacheThreads, setCurrentCacheTab
 import {updateLastMessage} from "@/redux/socket/action-reducer";
 import {getProjectSummary} from "@/redux/common-apis/action-reducer";
 
-let tab: string = '';
-let isSummaryApiCalled: boolean = false;
 export function ThreadsSideBarTab(props: TabProps) {
     const {
         threads,
@@ -28,66 +26,81 @@ export function ThreadsSideBarTab(props: TabProps) {
     const {newMessage} = useSelector((state: StateType) => state.socket);
     const router = useRouter();
     const dispatch = useDispatch();
-    const [tabName, setTabName] = useState<string>('just-mine');
+    const [tabName, setTabName] = useState<string>(() => {
+        let defaultTab = 'just-mine';
+        if (router.asPath === "/projects/[project]") {
+            defaultTab = 'every-thing';
+        } else if (router.query.project) {
+            defaultTab = 'every-thing';
+        }
+        return defaultTab;
+    });
+    const [isSummaryApiCalled, setIsSummaryApiCalled] = useState<boolean>(false);
+    const [currentTab, setCurrentTab] = useState<string>('');
 
-    const getAllThread = useCallback((type: string = '') => {
+    const getProjectId = useCallback(() => {
+        const routePaths = window.location.pathname.split('/');
+        let projectId: string = '';
+        if (router.query.project) {
+            projectId = router.query.project as string;
+        } else if (router.asPath === "/projects/[project]") {
+            projectId = routePaths[2] as string;
+        }
+        return projectId;
+    }, [router.asPath, router.query.project])
+
+    const getAllThread = useCallback((type: string = tabName) => {
         if (selectedAccount && selectedAccount.syncHistory?.mailInitSynced) {
             let resetState = true;
-            if (!tab) {
+            if (!tabValue) {
                 return;
             }
-            if (getCurrentCacheTab() !== tab) {
-                setCurrentCacheTab(tab);
+            if (getCurrentCacheTab() !== tabValue) {
+                setCurrentCacheTab(tabValue);
             }
-            if (getCacheThreads()[`${props.cachePrefix}-${tab}-${selectedAccount.id}`]) {
+            if (getCacheThreads()[`${props.cachePrefix}-${tabValue}-${selectedAccount.id}-${type}`]) {
                 resetState = false
                 dispatch(updateThreadState({
-                    threads: getCacheThreads()[`${props.cachePrefix}-${tab}-${selectedAccount.id}`],
+                    threads: getCacheThreads()[`${props.cachePrefix}-${tabValue}-${selectedAccount.id}-${type}`],
                     isLoading: false
                 }));
             }
-            const routePaths = window.location.pathname.split('/');
-            let projectId: string = '';
-            if (router.query.project) {
-                projectId = router.query.project as string;
-            } else if (router.asPath === "/projects/[project]") {
-                projectId = routePaths[2] as string;
-            }
+            let projectId = getProjectId();
             if (projectId && !isSummaryApiCalled) {
-                isSummaryApiCalled = true;
+                setIsSummaryApiCalled(true);
                 dispatch(getProjectSummary({
                     id: projectId as string,
-                    mailbox: tab,
+                    mailbox: tabValue,
                 }))
             } else {
                 if (projectId) {
                     dispatch(getAllThreads({
-                        mailbox: tab,
+                        mailbox: tabValue,
                         project: projectId as string,
                         resetState: resetState,
                         ...(type === 'just-mine' ? {mine: true} : {})
                     }));
                 } else {
                     if (type === 'projects') {
-                        dispatch(getAllThreads({project: "ALL", mailbox: tab}));
+                        dispatch(getAllThreads({project: "ALL", mailbox: tabValue}));
                     } else {
-                        dispatch(getAllThreads({mailbox: tab, account: selectedAccount.id, resetState: resetState}));
+                        dispatch(getAllThreads({mailbox: tabValue, account: selectedAccount.id, resetState: resetState}));
                     }
                 }
             }
         }
-    }, [dispatch, props.cachePrefix, router.query.project, selectedAccount]);
+    }, [dispatch, getProjectId, isSummaryApiCalled, props.cachePrefix, selectedAccount, tabName, tabValue]);
 
     useEffect(() => {
         if (threadListSuccess && selectedAccount) {
-            setCurrentCacheTab(tab);
+            setCurrentCacheTab(tabValue!);
             setCacheThreads({
                 ...getCacheThreads(),
-                [`${props.cachePrefix}-${tab}-${selectedAccount?.id}`]: threads ? [...threads] : []
+                [`${props.cachePrefix}-${tabValue!}-${selectedAccount?.id}-${tabName}`]: threads ? [...threads] : []
             });
             dispatch(updateThreadState({success: false}));
         }
-    }, [selectedAccount, threadListSuccess, props.cachePrefix, dispatch, threads])
+    }, [selectedAccount, threadListSuccess, props.cachePrefix, dispatch, threads, tabName, tabValue])
 
     useEffect(() => {
         if (newMessage && newMessage.name === 'new_message') {
@@ -111,12 +124,12 @@ export function ThreadsSideBarTab(props: TabProps) {
     }, [account, dispatch, getAllThread])
 
     useEffect(() => {
-        if (tabValue) {
-            tab = tabValue;
+        if (tabValue && currentTab !== tabValue) {
+            setCurrentTab(tabValue)
             dispatch(updateThreadState({selectedThread: null}));
             getAllThread();
         }
-    }, [dispatch, tabValue])
+    }, [dispatch, getAllThread, tabValue, currentTab])
 
     useEffect(() => {
         if (threadListSuccess) {
@@ -127,30 +140,16 @@ export function ThreadsSideBarTab(props: TabProps) {
     }, [dispatch, threadListSuccess, threads])
 
     useEffect(() => {
-        dispatch(updateThreadState({selectedThread: null}));
-    }, [dispatch, tabName])
-
-    useEffect(() => {
         if (isLoading && threads && threads.length >= 1) {
             dispatch(updateThreadState({isLoading: false}));
         }
     }, [dispatch, isLoading, threads])
 
-
-    useEffect(() => {
-        if (tabValue) {
-            if (router.query.project) {
-                setTabName('every-thing')
-            } else {
-                setTabName('just-mine')
-            }
-        }
-    }, [tabValue, router.query.project])
-
     const changeThread = (type: string) => {
         setTabName(type);
         getAllThread(type);
         dispatch(updateThreadState({threads: []}));
+        dispatch(updateThreadState({selectedThread: null}));
     }
 
     return (
@@ -198,7 +197,7 @@ export function ThreadsSideBarTab(props: TabProps) {
             )}
 
 
-            <ThreadsSideBarList tab={tab}/>
+            <ThreadsSideBarList tab={tabValue!}/>
         </>
     )
 }
