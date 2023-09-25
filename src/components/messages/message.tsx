@@ -106,6 +106,12 @@ export function Message() {
   }, [dispatch, selectedThread])
 
   useEffect(() => {
+    if (selectedThread) {
+      setThreadFocus(true);
+    }
+  }, [selectedThread, setThreadFocus])
+
+  useEffect(() => {
     if(incomingEvent === 'iframe.clicked') {
       setThreadFocus(true)
     }
@@ -263,7 +269,6 @@ export function Message() {
             height={'calc(100vh - 165px)'} overflow={'hidden'} borderRadius={'15px'}
             onClick={() => {
               if (!isThreadFocused) {
-                setThreadFocus(true)
                 dispatch(updateKeyNavigation({
                   action: 'RIGHT',
                   target: 'thread'
