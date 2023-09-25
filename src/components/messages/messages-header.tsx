@@ -30,7 +30,7 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
     let {undoBody} = useSelector((state: StateType) => state.undoBody);
 
     const dispatch = useDispatch();
-    const [successMessage, setSuccessMessage] = useState<{ desc: string, title: string, id: string, mailboxes: string[] }[]>([]);
+    const [successMessage, setSuccessMessage] = useState<{ desc: string, title: string, id: string, mailboxes: string[], threads: Thread[], thread: Thread | null}[]>([]);
     const { toast } = createStandaloneToast()
     const [mailBoxName, setMailBoxName] = useState<string>('');
 
@@ -52,11 +52,25 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                                 }
                                 dispatch(undoBodyData(null));
                                 dispatch(updateThreads({id: successToastMessage.id, body}));
+
+                                let currentThreads = [...successToastMessage.threads || []] as Thread[];
+                                let threadData = {...(successToastMessage.thread) || {}} as Thread;
+                                let index1 = currentThreads.findIndex((item: Thread) => item.id === threadData?.id);
+
+                                dispatch(updateThreadState({
+                                    threads: currentThreads,
+                                    selectedThread: currentThreads[index1],
+                                    success: true,
+                                    updateSuccess: true
+                                }));
+
                                 successMessage.push({
                                     desc: 'Thread was moved from ' + mailBoxName.toLowerCase() + '.',
                                     title: successToastMessage?.title || '',
                                     id: successToastMessage?.id,
-                                    mailboxes: successToastMessage?.mailboxes
+                                    mailboxes: successToastMessage?.mailboxes,
+                                    threads: successToastMessage?.threads,
+                                    thread: successToastMessage?.thread
                                 });
                                 setSuccessMessage(successMessage)
                             }
@@ -167,7 +181,9 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                     desc: 'Thread was moved to ' + messageBox.toLowerCase() + '.',
                     title: threadData?.subject || '',
                     id: threadData?.id!,
-                    mailboxes: threadData?.mailboxes || []
+                    mailboxes: threadData?.mailboxes || [],
+                    threads: threads || [],
+                    thread: selectedThread
                 })
                 setSuccessMessage(successMessage)
             }

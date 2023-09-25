@@ -9,9 +9,10 @@ import {batchUpdateThreads, updateThreadState} from "@/redux/threads/action-redu
 import { Toaster } from "../common/toaster";
 import { MAILBOX_ARCHIVE, MAILBOX_SNOOZED, MAILBOX_TRASH } from "@/utils/constants";
 import React from "react";
+import {Thread} from "@/models";
 
 export default function SelectedThreads() {
-  const { multiSelection: selectedThreadIds } = useSelector((state: StateType) => state.threads)
+  const { multiSelection: selectedThreadIds, threads } = useSelector((state: StateType) => state.threads)
   const dispatch = useDispatch();
   const messagePlural = (selectedThreadIds || []).length === 1 ? 'message' : 'messages'
   
@@ -31,7 +32,10 @@ export default function SelectedThreads() {
       }
       dispatch(batchUpdateThreads(body))
       notification(`${selectedThreadIds.length} ${messagePlural} has been ${type.toLowerCase()}`)
+      let threadsData = (threads || []).filter((item: Thread) => !selectedThreadIds.includes(item.id!));
       dispatch(updateThreadState({
+        threads: threadsData,
+        selectedThread: threadsData[0],
         isThreadSearched: false,
         multiSelection: []
       }))
