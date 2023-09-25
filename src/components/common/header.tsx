@@ -124,7 +124,7 @@ export function Header() {
                     Router.push('/organization/add');
                 }
             }
-        }, 1000);
+        }, 2000);
         return () => {
             clearTimeout(timer1);
         };
@@ -253,6 +253,7 @@ export function Header() {
                     success: false,
                     updateSuccess: false,
                     selectedThread: null,
+                    tabValue: ''
                 }),
             );
             dispatch(updateMessageState({ selectedMessage: null, messages: [] }));
