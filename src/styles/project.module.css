@@ -24,7 +24,9 @@
     overflow: hidden;
 }
 
-.projectPage .manageMembers:hover {
+.projectPage .manageMembers:hover,
+.projectPage .manageMembers:active,
+.projectPage .manageMembers[data-active]{
     background-color: #000000;
 }
 
