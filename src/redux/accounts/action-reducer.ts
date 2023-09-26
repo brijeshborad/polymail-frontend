@@ -24,7 +24,7 @@ const accountSlice = createSlice({
             return {...state, accounts: [], isLoading: true, error: null}
         },
         getAllAccountSuccess: (state: InitialAccountStateType, {payload: accounts}: PayloadAction<{}>) => {
-            return {...state, accounts, isLoading: false, error: null}
+            return {...state, accounts, isLoading: false, error: null, success: true}
         },
         getAllAccountError: (state: InitialAccountStateType, {payload: error}: PayloadAction<any>) => {
             return {...state, accounts: [], isLoading: false, error}

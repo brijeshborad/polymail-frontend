@@ -12,6 +12,7 @@ import dynamic from "next/dynamic";
 import {getCacheThreads, getCurrentCacheTab, setCacheThreads, setCurrentCacheTab} from "@/utils/cache.functions";
 import {updateLastMessage} from "@/redux/socket/action-reducer";
 import {getProjectSummary} from "@/redux/common-apis/action-reducer";
+import {updateAccountState} from "@/redux/accounts/action-reducer";
 
 export function ThreadsSideBarTab(props: TabProps) {
     const {
@@ -21,7 +22,7 @@ export function ThreadsSideBarTab(props: TabProps) {
         updateSuccess,
         tabValue,
     } = useSelector((state: StateType) => state.threads)
-    const {selectedAccount, account} = useSelector((state: StateType) => state.accounts);
+    const {selectedAccount, account, success} = useSelector((state: StateType) => state.accounts);
     const {isLoading: summaryIsLoading, syncingEmails} = useSelector((state: StateType) => state.commonApis);
     const {newMessage} = useSelector((state: StateType) => state.socket);
     const router = useRouter();
@@ -82,7 +83,7 @@ export function ThreadsSideBarTab(props: TabProps) {
                     }));
                 } else {
                     if (type === 'projects') {
-                        dispatch(getAllThreads({project: "ALL", mailbox: tabValue}));
+                        dispatch(getAllThreads({project: "ALL", mailbox: tabValue, resetState: resetState}));
                     } else {
                         dispatch(getAllThreads({mailbox: tabValue, account: selectedAccount.id, resetState: resetState}));
                     }
@@ -109,6 +110,13 @@ export function ThreadsSideBarTab(props: TabProps) {
             getAllThread();
         }
     }, [getAllThread, newMessage, dispatch])
+
+    useEffect(() => {
+        if (selectedAccount && success) {
+            dispatch(updateAccountState({success: false}));
+            getAllThread();
+        }
+    }, [getAllThread, selectedAccount, success, dispatch])
 
     useEffect(() => {
         if (updateSuccess) {
@@ -147,9 +155,9 @@ export function ThreadsSideBarTab(props: TabProps) {
 
     const changeThread = (type: string) => {
         setTabName(type);
-        getAllThread(type);
         dispatch(updateThreadState({threads: []}));
         dispatch(updateThreadState({selectedThread: null}));
+        getAllThread(type);
     }
 
     return (
