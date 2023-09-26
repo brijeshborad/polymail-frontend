@@ -23,6 +23,7 @@ import Image from "next/image";
 import {emojiArray} from "@/utils/common.functions";
 import Router from "next/router";
 import {updateCommonState} from "@/redux/common-apis/action-reducer";
+import {addThreadToProject} from "@/utils/threads-common-functions";
 
 
 function CreateNewProjectModal() {
@@ -40,6 +41,9 @@ function CreateNewProjectModal() {
 
     const {success: membershipSuccess} = useSelector((state: StateType) => state.memberships);
     const {createProjectSuccess, project} = useSelector((state: StateType) => state.projects);
+    const {selectedThread, multiSelection} = useSelector((state: StateType) => state.threads);
+    const [successMessage, setSuccessMessage] = useState<{ desc: string, title: string } | null>(null);
+    const {isThreadAddedToProjectSuccess} = useSelector((state: StateType) => state.memberships);
 
 
     const handleChange = (event: ChangeEvent | any) => {
@@ -58,6 +62,9 @@ function CreateNewProjectModal() {
                 type: 'success'
             });
             dispatch(updateProjectState({createProjectSuccess: false}))
+            if (project && selectedThread && multiSelection?.length) {
+                addThreadToProject(project, multiSelection, selectedThread, dispatch, setSuccessMessage);
+            }
             if (selectedAccount && selectedAccount.email && membersInputs.memberArray && membersInputs.memberArray?.length > 0 && project && project.id) {
                 let reqBody = {
                     fromEmail: selectedAccount.email,
@@ -75,6 +82,19 @@ function CreateNewProjectModal() {
             dispatch(updateCommonState({showCreateProjectModal: false, shouldRedirectOnCreateProject: false}))
         }
     }, [dispatch, createProjectSuccess, selectedAccount, membersInputs.memberArray, project, shouldRedirectOnCreateProject])
+
+    useEffect(() => {
+        if (isThreadAddedToProjectSuccess && successMessage) {
+            Toaster({
+                desc: successMessage.desc,
+                title: successMessage.title || '',
+                type: 'success'
+            });
+            dispatch(updateMembershipState({isThreadAddedToProjectSuccess: false}));
+        }
+    }, [dispatch, isThreadAddedToProjectSuccess, successMessage])
+
+
 
     useEffect(() => {
         if (membershipSuccess) {

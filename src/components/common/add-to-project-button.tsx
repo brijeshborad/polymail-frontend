@@ -11,13 +11,14 @@ import {
 } from "@chakra-ui/react";
 import {SearchIcon, SmallAddIcon} from "@chakra-ui/icons";
 import {FolderIcon} from "@/icons";
-import React, {useCallback, useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState} from "react";
 import {Project} from "@/models";
-import {addItemToGroup, updateMembershipState} from "@/redux/memberships/action-reducer";
+import { updateMembershipState} from "@/redux/memberships/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {Toaster} from "@/components/common/toaster";
 import {updateCommonState} from "@/redux/common-apis/action-reducer";
+import {addThreadToProject} from "@/utils/threads-common-functions";
 
 export function AddToProjectButton() {
     const [isDropdownOpen, setDropDownOpen] = useState(false)
@@ -65,36 +66,36 @@ export function AddToProjectButton() {
         setFilteredProjects((projects || []));
     }, [projects])
 
-    const addThreadToProject = useCallback((item: Project) => {
-        const isThreadMultiSelection = (multiSelection !== undefined && multiSelection.length > 0)
-
-        if ((selectedThread && selectedThread.id || (multiSelection !== undefined && multiSelection.length > 0))) {
-            let reqBody = {
-                threadIds: isThreadMultiSelection ? multiSelection : [selectedThread!.id],
-                roles: [
-                    'n/a',
-                ],
-                groupType: 'project',
-                groupId: item.id
-            }
-
-            if (isThreadMultiSelection) {
-                setSuccessMessage({
-                    title: `${multiSelection.length} threads added to ${item.name?.toLowerCase()}`,
-                    desc: ''
-                })
-            } else {
-                setSuccessMessage({
-                    desc: 'Thread was added to ' + item.name?.toLowerCase() + '.',
-                    title: selectedThread?.subject || '',
-                })
-            }
-            dispatch(addItemToGroup(reqBody));
-            if (addToProjectRef.current) {
-                addToProjectRef.current?.click();
-            }
-        }
-    }, [dispatch, selectedThread, multiSelection]);
+    // const addThreadToProject = useCallback((item: Project) => {
+    //     const isThreadMultiSelection = (multiSelection !== undefined && multiSelection.length > 0)
+    //
+    //     if ((selectedThread && selectedThread.id || (multiSelection !== undefined && multiSelection.length > 0))) {
+    //         let reqBody = {
+    //             threadIds: isThreadMultiSelection ? multiSelection : [selectedThread!.id],
+    //             roles: [
+    //                 'n/a',
+    //             ],
+    //             groupType: 'project',
+    //             groupId: item.id
+    //         }
+    //
+    //         if (isThreadMultiSelection) {
+    //             setSuccessMessage({
+    //                 title: `${multiSelection.length} threads added to ${item.name?.toLowerCase()}`,
+    //                 desc: ''
+    //             })
+    //         } else {
+    //             setSuccessMessage({
+    //                 desc: 'Thread was added to ' + item.name?.toLowerCase() + '.',
+    //                 title: selectedThread?.subject || '',
+    //             })
+    //         }
+    //         dispatch(addItemToGroup(reqBody));
+    //         if (addToProjectRef.current) {
+    //             addToProjectRef.current?.click();
+    //         }
+    //     }
+    // }, [dispatch, selectedThread, multiSelection]);
 
     useEffect(() => {
         if (searchValue.length > 0) {
@@ -113,8 +114,9 @@ export function AddToProjectButton() {
     }
 
     function checkProjects(e: MouseEvent | any) {
-        if (e.key.toLowerCase() === 'enter' && filteredProjects.length === 1) {
-            addThreadToProject(filteredProjects[0]);
+        if (e.key.toLowerCase() === 'enter' && filteredProjects.length === 1 && multiSelection?.length && selectedThread) {
+            addThreadToProject(filteredProjects[0], multiSelection, selectedThread, dispatch, setSuccessMessage, addToProjectRef);
+
         }
     }
 
@@ -165,10 +167,13 @@ export function AddToProjectButton() {
 
                     <div className={'add-to-project-list'}>
                         {filteredProjects && !!filteredProjects.length && (filteredProjects || []).map((item: Project, index: number) => (
-                            <MenuItem gap={2} key={index} onClick={() => addThreadToProject(item)}>
+                            <MenuItem gap={2} key={index} onClick={() => {
+                                if (selectedThread) {
+                                    addThreadToProject(item, multiSelection, selectedThread, dispatch, setSuccessMessage)
+                                }
+                            }}>
                                 {item.emoji} {item.name}
                             </MenuItem>
-
                         ))}
                     </div>
 

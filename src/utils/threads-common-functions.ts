@@ -1,6 +1,7 @@
-import { Thread } from '@/models';
+import {Project, Thread} from '@/models';
 import { updateThreads } from '@/redux/threads/action-reducer';
 import { Dispatch } from '@reduxjs/toolkit';
+import {addItemToGroup} from "@/redux/memberships/action-reducer";
 
 export function markThreadAsRead(thread: Thread, dispatch: Dispatch) {
     if (!thread) return;
@@ -18,4 +19,36 @@ export function markThreadAsRead(thread: Thread, dispatch: Dispatch) {
             }),
         );
     }
+}
+
+export function addThreadToProject(item: Project, multiSelection: any, selectedThread: Thread, dispatch: Dispatch, setSuccessMessage: any, addToProjectRef?: any) {
+  const isThreadMultiSelection = (multiSelection !== undefined && multiSelection.length > 0)
+
+  if ((selectedThread && selectedThread.id || (multiSelection !== undefined && multiSelection.length > 0))) {
+    let reqBody = {
+      threadIds: isThreadMultiSelection ? multiSelection : [selectedThread!.id],
+      roles: [
+        'n/a',
+      ],
+      groupType: 'project',
+      groupId: item.id
+    }
+
+    if (isThreadMultiSelection) {
+      setSuccessMessage({
+        title: `${multiSelection.length} threads added to ${item.name?.toLowerCase()}`,
+        desc: ''
+      })
+    } else {
+      setSuccessMessage({
+        desc: 'Thread was added to ' + item.name?.toLowerCase() + '.',
+        title: selectedThread?.subject || '',
+      })
+    }
+    dispatch(addItemToGroup(reqBody));
+
+    if (addToProjectRef && addToProjectRef.current) {
+      addToProjectRef.current?.click();
+    }
+  }
 }
