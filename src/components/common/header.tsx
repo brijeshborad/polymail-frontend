@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { Button, Flex, Input, InputGroup, InputLeftElement, InputRightElement, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
-import { CheckIcon, ChevronDownIcon, SearchIcon } from '@chakra-ui/icons';
+import {CheckIcon, ChevronDownIcon, SearchIcon, SmallCloseIcon} from '@chakra-ui/icons';
 import { FolderIcon, MailIcon } from '@/icons';
 import styles from '@/styles/Home.module.css';
 import { useDispatch, useSelector } from 'react-redux';
@@ -44,6 +44,8 @@ export function Header() {
 
     let currentRoute = router.pathname.split('/');
     const searchInputRef = useRef<HTMLInputElement | null>(null);
+    const [showCloseIcon, setShowCloseIcon] = useState(false);
+
     // keyboard shortcuts
     useEffect(() => {
         const handleShortcutKeyPress = (e: KeyboardEvent | any) => {
@@ -200,7 +202,7 @@ export function Header() {
         if (!isThreadSearched) {
             setSearchString('');
         }
-    }, [isThreadSearched]);
+    }, [isThreadSearched, showCloseIcon]);
 
     const closeMenu = useCallback(() => {
         setShowSettingsMenu(false);
@@ -217,15 +219,22 @@ export function Header() {
         return <></>;
     }
 
+    const searchCancel = (callAPI: boolean = false) => {
+        dispatch(updateThreadState({isThreadSearched: false}));
+        if (sendJsonMessage) {
+            sendJsonMessage({
+                "userId": userDetails?.id,
+                "name": "SearchCancel",
+            });
+        }
+        if (selectedAccount && selectedAccount.id && callAPI) {
+            dispatch(getAllThreads({mailbox: tabValue, account: selectedAccount.id}));
+        }
+    }
+
     const handleKeyPress = (event: KeyboardEvent | any) => {
         if (event.key.toLowerCase() === 'enter') {
-            dispatch(updateThreadState({ isThreadSearched: false }));
-            if (sendJsonMessage) {
-                sendJsonMessage({
-                    userId: userDetails?.id,
-                    name: 'SearchCancel',
-                });
-            }
+            searchCancel(false);
             if (searchString) {
                 dispatch(updateThreadState({ threads: [], isThreadSearched: true, isLoading: true }));
                 if (sendJsonMessage) {
@@ -261,6 +270,18 @@ export function Header() {
         }
     };
 
+    const handleFocus = () => {
+        setTimeout(() => {
+            setShowCloseIcon(true)
+        }, 500)
+    }
+
+    const handleBlur = () => {
+        setTimeout(() => {
+            setShowCloseIcon(false);
+        }, 500)
+    };
+
     return (
         <Flex className={styles.header} w="100%" align={'center'} flex={'none'}>
             <div>
@@ -287,12 +308,17 @@ export function Header() {
                         onChange={event => {
                             setSearchString(event.target.value);
                         }}
+                        onFocus={() => handleFocus()}
+                        onBlur={() => handleBlur()}
                         ref={searchInputRef}
                         value={searchString}
                         onKeyPress={e => handleKeyPress(e)}
                     />
                     <InputRightElement>
-                        <div className={styles.inputRight}>⌘K</div>
+                        {showCloseIcon ? <div className={styles.inputRight} onClick={() => searchCancel(true)}>
+                            <SmallCloseIcon/>
+                        </div> : <div className={styles.inputRight}>⌘K</div>
+                        }
                     </InputRightElement>
                 </InputGroup>
             </div>

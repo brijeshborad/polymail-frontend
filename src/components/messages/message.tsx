@@ -325,7 +325,7 @@ export function Message({isProjectView = false}: {isProjectView?: boolean}) {
   return (
     <>
       {!isComposing && showMessageBox()}
-      {isComposing && <ComposeBox tabValue={tabValue}
+      {isComposing && <ComposeBox tabValue={tabValue} isProjectView={isProjectView}
           messageDetails={(tabValue === 'DRAFT' && selectedThread?.messages && selectedThread?.messages.length) ? selectedThread?.messages[0] : {}}/>
       }
     </>

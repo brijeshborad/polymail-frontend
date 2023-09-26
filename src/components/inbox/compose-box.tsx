@@ -24,6 +24,7 @@ import { RecipientsType } from "@/types/props-types/message-recipients.type";
 import dynamic from "next/dynamic";
 import {updateCommonState} from "@/redux/common-apis/action-reducer";
 import {updateThreadState} from "@/redux/threads/action-reducer";
+import {useRouter} from "next/router";
 const CreateNewProject = dynamic(() => import('@/components/project/create-new-project').then(mod => mod.default));
 const RichTextEditor = dynamic(() => import("@/components/common").then(mod => mod.RichTextEditor));
 const Time = dynamic(() => import("@/components/common").then(mod => mod.Time));
@@ -69,6 +70,7 @@ export function ComposeBox(props: any) {
   const { toast } = createStandaloneToast();
   const [isDraftUpdated, setIsDraftUpdated] = useState<boolean>(false);
   const [waitForDraft, setWaitForDraft] = useState<boolean>(false);
+  const router = useRouter();
 
   useEffect(() => {
     if (props.messageDetails) {
@@ -258,7 +260,8 @@ export function ComposeBox(props: any) {
       bcc: emailRecipients.bcc?.items && emailRecipients.bcc?.items.length > 0 ? emailRecipients.bcc?.items : [],
       draftInfo: {
         body: value
-      }
+      },
+      ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
     }
 
     debounce(() => {
