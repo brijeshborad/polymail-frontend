@@ -64,7 +64,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
         if (event.ctrlKey || event.metaKey) {
           if (currentSelectedThreads.includes(index)) {
             // Deselect if already selected
-            currentSelectedThreads.push(...currentSelectedThreads.filter((id: number) => id !== index));
+            currentSelectedThreads = currentSelectedThreads.filter((id: number) => id !== index);
           } else {
             // Select if not selected
             currentSelectedThreads.push(index);
@@ -138,7 +138,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     }
   }, [threads, handleEditorScroll]);
 
-  
+
   useEffect(() => {
     if (selectedThread && selectedAccount && sendJsonMessage) {
       const interval = setInterval(() => {
@@ -157,7 +157,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     }
     return undefined
   }, [selectedThread]);
-  
+
   return (
     <>
       <div className={'project-list-shadow'}>
@@ -168,7 +168,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
 
             {threads && threads.length > 0 && threads.map((item: Thread, index: number) => (
               <div onClick={(e) => handleClick(item, e, index)} key={index}
-                   className={`${(selectedThread && selectedThread.id === item.id && !isThreadSearched) ? styles.selectedThread : ''}`}>
+                   className={`${(selectedThread && selectedThread.id === item.id) ? styles.selectedThread : ''}`}>
                 <ThreadsSideBarListItem thread={item} tab={props.tab} />
               </div>
             ))}

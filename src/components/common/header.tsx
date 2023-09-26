@@ -1,21 +1,32 @@
 import Image from 'next/image';
-import { Button, Flex, Input, InputGroup, InputLeftElement, InputRightElement, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
+import {
+    Button,
+    Flex,
+    Input,
+    InputGroup,
+    InputLeftElement,
+    InputRightElement,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList
+} from '@chakra-ui/react';
 import {CheckIcon, ChevronDownIcon, SearchIcon, SmallCloseIcon} from '@chakra-ui/icons';
-import { FolderIcon, MailIcon } from '@/icons';
+import {FolderIcon, MailIcon} from '@/icons';
 import styles from '@/styles/Home.module.css';
-import { useDispatch, useSelector } from 'react-redux';
-import Router, { useRouter } from 'next/router';
-import { StateType } from '@/types';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { updateOrganizationState } from '@/redux/organizations/action-reducer';
-import { Account, Message, Organization, User } from '@/models';
-import { updateAccountState } from '@/redux/accounts/action-reducer';
+import {useDispatch, useSelector} from 'react-redux';
+import Router, {useRouter} from 'next/router';
+import {StateType} from '@/types';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {updateOrganizationState} from '@/redux/organizations/action-reducer';
+import {Account, Message, Organization, User} from '@/models';
+import {updateAccountState} from '@/redux/accounts/action-reducer';
 import LocalStorageService from '@/utils/localstorage.service';
-import { getAllThreads, updateThreadState } from '@/redux/threads/action-reducer';
-import { updateUserState } from '@/redux/users/action-reducer';
-import { updateLastMessage } from '@/redux/socket/action-reducer';
-import { updateMessageState } from '@/redux/messages/action-reducer';
-import { Toaster } from '@/components/common';
+import {getAllThreads, updateThreadState} from '@/redux/threads/action-reducer';
+import {updateUserState} from '@/redux/users/action-reducer';
+import {updateLastMessage} from '@/redux/socket/action-reducer';
+import {updateMessageState} from '@/redux/messages/action-reducer';
+import {Toaster} from '@/components/common';
 import dynamic from 'next/dynamic'
 
 const FeedSidebar = dynamic(
@@ -27,18 +38,18 @@ const CreateNewProjectModal = dynamic(
 
 export function Header() {
     const dispatch = useDispatch();
-    const { organizations } = useSelector((state: StateType) => state.organizations);
-    const { isLoading: isApiLoading } = useSelector((state: StateType) => state.commonApis);
-    const { accounts, selectedAccount } = useSelector((state: StateType) => state.accounts);
-    const { threads, tabValue, isThreadSearched } = useSelector((state: StateType) => state.threads);
-    const { googleAuthRedirectionLink } = useSelector((state: StateType) => state.auth);
-    const { userDetails, profilePicture } = useSelector((state: StateType) => state.users);
-    const { event: incomingEvent } = useSelector((state: StateType) => state.globalEvents);
+    const {organizations} = useSelector((state: StateType) => state.organizations);
+    const {isLoading: isApiLoading} = useSelector((state: StateType) => state.commonApis);
+    const {accounts, selectedAccount} = useSelector((state: StateType) => state.accounts);
+    const {threads, tabValue, isThreadSearched} = useSelector((state: StateType) => state.threads);
+    const {googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
+    const {userDetails, profilePicture} = useSelector((state: StateType) => state.users);
+    const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const [userData, setUserData] = useState<User>();
-    const { newMessage, sendJsonMessage } = useSelector((state: StateType) => state.socket);
+    const {newMessage, sendJsonMessage} = useSelector((state: StateType) => state.socket);
     const [showSettingsMenu, setShowSettingsMenu] = useState(false);
 
-    const { user } = useSelector((state: StateType) => state.auth);
+    const {user} = useSelector((state: StateType) => state.auth);
     const [searchString, setSearchString] = useState<string>('');
     const router = useRouter();
 
@@ -91,10 +102,10 @@ export function Header() {
                         id: newMessage.data[id]._id,
                     };
                     if (newThread.messages && newThread.messages.length > 0) {
-                        newThread.messages = newThread.messages.map((t: Message) => ({ ...t, id: t._id }));
+                        newThread.messages = newThread.messages.map((t: Message) => ({...t, id: t._id}));
                         newThread.messages = newThread.messages.sort((a: Message, b: Message) => new Date(b.created as string).valueOf() - new Date(a.created as string).valueOf());
                     }
-                    dispatch(updateThreadState({ threads: [...(threads || []), newThread] }));
+                    dispatch(updateThreadState({threads: [...(threads || []), newThread]}));
                 });
             }
             if (newMessage.name === 'authenticate' && newMessage?.data && accounts!.length > 0) {
@@ -135,7 +146,7 @@ export function Header() {
     const setOrganization = useCallback(
         (org: Organization) => {
             LocalStorageService.updateOrg('store', org);
-            dispatch(updateOrganizationState({ selectedOrganization: org }));
+            dispatch(updateOrganizationState({selectedOrganization: org}));
         },
         [dispatch],
     );
@@ -145,7 +156,7 @@ export function Header() {
             if (account.syncHistory?.mailInitSynced) {
                 LocalStorageService.updateAccount('store', account);
             }
-            dispatch(updateAccountState({ selectedAccount: account }));
+            dispatch(updateAccountState({selectedAccount: account}));
         },
         [dispatch],
     );
@@ -210,9 +221,9 @@ export function Header() {
 
 
     useEffect(() => {
-      if(incomingEvent === 'iframe.clicked') {
-        closeMenu();
-      }
+        if (incomingEvent === 'iframe.clicked') {
+            closeMenu();
+        }
     }, [incomingEvent, closeMenu]);
 
     if (!userData) {
@@ -220,7 +231,7 @@ export function Header() {
     }
 
     const searchCancel = (callAPI: boolean = false) => {
-        dispatch(updateThreadState({isThreadSearched: false}));
+        dispatch(updateThreadState({isThreadSearched: false, multiSelection: []}));
         if (callAPI) {
             setSearchString('');
         }
@@ -231,6 +242,7 @@ export function Header() {
             });
         }
         if (selectedAccount && selectedAccount.id && callAPI) {
+            dispatch(updateThreadState({threads: [], isLoading: true, selectedThread: null}));
             dispatch(getAllThreads({mailbox: tabValue, account: selectedAccount.id}));
         }
     }
@@ -239,7 +251,7 @@ export function Header() {
         if (event.key.toLowerCase() === 'enter') {
             searchCancel(false);
             if (searchString) {
-                dispatch(updateThreadState({ threads: [], isThreadSearched: true, isLoading: true }));
+                dispatch(updateThreadState({threads: [], isThreadSearched: true, isLoading: true, selectedThread: null}));
                 if (sendJsonMessage) {
                     sendJsonMessage({
                         userId: userDetails?.id,
@@ -250,9 +262,6 @@ export function Header() {
                     });
                 }
                 return;
-            }
-            if (selectedAccount && selectedAccount.id) {
-                dispatch(getAllThreads({ mailbox: tabValue, account: selectedAccount.id }));
             }
         }
     };
@@ -268,15 +277,13 @@ export function Header() {
                     tabValue: ''
                 }),
             );
-            dispatch(updateMessageState({ selectedMessage: null, messages: [] }));
+            dispatch(updateMessageState({selectedMessage: null, messages: []}));
             Router.push(`/${page}`);
         }
     };
 
     const handleFocus = () => {
-        setTimeout(() => {
-            setShowCloseIcon(true)
-        }, 300)
+        setShowCloseIcon(true);
     }
 
     const handleBlur = () => {
@@ -288,22 +295,24 @@ export function Header() {
     return (
         <Flex className={styles.header} w="100%" align={'center'} flex={'none'}>
             <div>
-                <Image width="30" height="30" src="/image/logo.png" alt="" className={styles.logo} />
+                <Image width="30" height="30" src="/image/logo.png" alt="" className={styles.logo}/>
             </div>
             <Flex className={styles.headerTabs} align={'center'}>
-                <Flex align={'center'} className={currentRoute[1] === 'inbox' ? styles.tabsActive : ''} onClick={() => changePage('inbox')}>
-                    <MailIcon />
+                <Flex align={'center'} className={currentRoute[1] === 'inbox' ? styles.tabsActive : ''}
+                      onClick={() => changePage('inbox')}>
+                    <MailIcon/>
                     Inbox
                 </Flex>
-                <Flex align={'center'} className={currentRoute[1] === 'projects' ? styles.tabsActive : ''} onClick={() => changePage('projects')}>
-                    <FolderIcon />
+                <Flex align={'center'} className={currentRoute[1] === 'projects' ? styles.tabsActive : ''}
+                      onClick={() => changePage('projects')}>
+                    <FolderIcon/>
                     Projects
                 </Flex>
             </Flex>
             <div className={styles.headerSearch}>
                 <InputGroup className={styles.inputGroup}>
                     <InputLeftElement pointerEvents="none">
-                        <SearchIcon />
+                        <SearchIcon/>
                     </InputLeftElement>
                     <Input
                         type="text"
@@ -318,7 +327,8 @@ export function Header() {
                         onKeyPress={e => handleKeyPress(e)}
                     />
                     <InputRightElement>
-                        {showCloseIcon ? <div className={styles.inputRight} onClick={() => searchCancel(true)}>
+                        {showCloseIcon ? <div className={styles.inputRight} style={{cursor: 'pointer'}}
+                                              onClick={() => searchCancel(true)}>
                             <SmallCloseIcon/>
                         </div> : <div className={styles.inputRight}>⌘K</div>
                         }
@@ -327,7 +337,7 @@ export function Header() {
             </div>
 
             <div>
-                <FeedSidebar />
+                <FeedSidebar/>
             </div>
             {/*<div className={styles.Workspace}>*/}
             {/*    <Menu>*/}
@@ -352,20 +362,24 @@ export function Header() {
             {/*</Button>*/}
 
             <div className={styles.profile}>
-                <Menu isOpen={showSettingsMenu} onOpen={() => setShowSettingsMenu(true)} onClose={() => setShowSettingsMenu(false)}>
-                    <MenuButton as={Button} rightIcon={<ChevronDownIcon />} className={styles.profileButton}>
+                <Menu isOpen={showSettingsMenu} onOpen={() => setShowSettingsMenu(true)}
+                      onClose={() => setShowSettingsMenu(false)}>
+                    <MenuButton as={Button} rightIcon={<ChevronDownIcon/>} className={styles.profileButton}>
                         <div className={styles.profileImage}>
-                            {profilePicture && profilePicture.url && <Image src={profilePicture && profilePicture.url} width="36" height="36" alt="" />}
+                            {profilePicture && profilePicture.url &&
+                            <Image src={profilePicture && profilePicture.url} width="36" height="36" alt=""/>}
                         </div>
                     </MenuButton>
                     <MenuList className={'drop-down-list'}>
                         {accounts &&
-                            !!accounts.length &&
-                            accounts?.map((acc, i) => (
-                                <MenuItem justifyContent={'space-between'} gap={1} w="100%" key={i + 1} onClick={() => setAccounts(acc)}>
-                                    {acc.email} {selectedAccount?.email === acc.email && <CheckIcon ml={8} bg={'green'} p={1} borderRadius={50} w={4} h={4} color={'white'} />}
-                                </MenuItem>
-                            ))}
+                        !!accounts.length &&
+                        accounts?.map((acc, i) => (
+                            <MenuItem justifyContent={'space-between'} gap={1} w="100%" key={i + 1}
+                                      onClick={() => setAccounts(acc)}>
+                                {acc.email} {selectedAccount?.email === acc.email &&
+                            <CheckIcon ml={8} bg={'green'} p={1} borderRadius={50} w={4} h={4} color={'white'}/>}
+                            </MenuItem>
+                        ))}
                         <MenuItem onClick={() => openSetting()}>Settings</MenuItem>
                         <MenuItem onClick={() => logout()}>Logout</MenuItem>
                     </MenuList>

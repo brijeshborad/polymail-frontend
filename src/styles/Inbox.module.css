@@ -788,6 +788,11 @@
   box-shadow: 0 0 0 3px #e5e7eb;
 }
 
+.selectedThread .mailDetailsSelected {
+    border-color: #76A2FF;
+    box-shadow: 0 0 0 3px #e5e7eb;
+}
+
 .mailMessageOption button {
     min-width: 10px;
     height: auto;

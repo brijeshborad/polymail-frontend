@@ -24,7 +24,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
           setIsClicked(false)
         }
       }
-    }, [isThreadFocused])
+    }, [isThreadFocused, props.thread.id, selectedThread?.id])
 
     useEffect(() => {
       setIsClicked((props.thread.mailboxes || []).includes(MAILBOX_UNREAD));
