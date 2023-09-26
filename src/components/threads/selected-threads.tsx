@@ -8,22 +8,21 @@ import dynamic from "next/dynamic";
 import {batchUpdateThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import { Toaster } from "../common/toaster";
 import { MAILBOX_ARCHIVE, MAILBOX_SNOOZED, MAILBOX_TRASH } from "@/utils/constants";
-import React, {useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {Thread} from "@/models";
 
 export default function SelectedThreads() {
-  const { multiSelection: selectedThreadIds, threads } = useSelector((state: StateType) => state.threads)
+  const { multiSelection: selectedThreadIds, threads, moveToMailBox } = useSelector((state: StateType) => state.threads)
   const dispatch = useDispatch();
   const messagePlural = (selectedThreadIds || []).length === 1 ? 'message' : 'messages'
-  const [mailBoxName, setMailBoxName] = useState<string>('');
   const { toast } = createStandaloneToast()
 
-  const notification = (title: string, thread: Thread = {}) => {
+  const notification = useCallback((title: string, thread: Thread = {}, type: string) => {
     let polyToast = `poly-toast-${new Date().getTime().toString()}`;
     Toaster({
       type: thread.hasOwnProperty('mailboxes') ? 'undo_changes': 'success',
       title,
-      desc: `Your message has been scheduled`,
+      desc: `Your message has been moved to ${type.toLowerCase()}`,
       id: polyToast,
       ...(thread.hasOwnProperty('mailboxes') ? {
         undoUpdateRecordClick: () => {
@@ -35,7 +34,7 @@ export default function SelectedThreads() {
             mailboxes: thread.mailboxes || []
           }
           dispatch(batchUpdateThreads(body))
-          notification('Thread was moved from ' + mailBoxName.toLowerCase() + '.');
+          notification('Thread was moved from ' + type.toLowerCase() + '.', {}, type);
           dispatch(updateThreadState({
             isThreadSearched: false,
             multiSelection: [],
@@ -48,10 +47,9 @@ export default function SelectedThreads() {
         }
       }: {})
     })
-  }
+  }, [dispatch, selectedThreadIds, threads, toast])
 
-  const moveThreadToMailBoxes = (type: string) => {
-    setMailBoxName(type);
+  const moveThreadToMailBoxes = useCallback((type: string) => {
     if(selectedThreadIds && selectedThreadIds.length) {
       let body = {
         threadIds: selectedThreadIds,
@@ -61,7 +59,7 @@ export default function SelectedThreads() {
       let threadData = (threads || []).filter((item : Thread) => selectedThreadIds.includes(item.id!));
 
       let threadsData = (threads || []).filter((item: Thread) => !selectedThreadIds.includes(item.id!));
-      notification(`${selectedThreadIds.length} ${messagePlural} has been ${type.toLowerCase()}`, threadData[0])
+      notification(`${selectedThreadIds.length} ${messagePlural} has been ${type.toLowerCase()}`, threadData[0], type)
       dispatch(updateThreadState({
         threads: threadsData,
         selectedThread: threadsData[0],
@@ -69,7 +67,14 @@ export default function SelectedThreads() {
         multiSelection: [],
       }))
     }
-  }
+  }, [dispatch, messagePlural, notification, selectedThreadIds, threads])
+
+  useEffect(() => {
+    if (moveToMailBox) {
+      moveThreadToMailBoxes(moveToMailBox);
+      dispatch(updateThreadState({moveToMailBox: null}));
+    }
+  }, [dispatch, moveThreadToMailBoxes, moveToMailBox])
 
   return (
     <Box

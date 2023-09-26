@@ -11,6 +11,7 @@ export declare type InitialThreadStateType = {
     isThreadSearched?: boolean
     tabValue?: string,
     isThreadFocused?: boolean
+    moveToMailBox?: string | null
 }
 
 export declare type InitialMembershipStateType = {

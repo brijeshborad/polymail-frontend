@@ -25,6 +25,7 @@ import {updateDraftState} from "@/redux/draft/action-reducer";
 import {SmallCloseIcon, TriangleDownIcon} from "@chakra-ui/icons";
 import {getCurrentCacheTab, setCurrentSelectedThreads} from "@/utils/cache.functions";
 import {updateCommonState} from "@/redux/common-apis/action-reducer";
+import {MAILBOX_ARCHIVE, MAILBOX_INBOX, MAILBOX_SNOOZED, MAILBOX_STARRED, MAILBOX_TRASH} from "@/utils/constants";
 
 const ThreadsSideBarTab = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarTab), {ssr: false});
 
@@ -150,6 +151,10 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
         dispatch(updateCommonState({isComposing: true}));
     }
 
+    const moveThreadToMailBoxes = (type: string) => {
+        dispatch(updateThreadState({moveToMailBox: type}));
+    }
+
     function getHeaderForSearched() {
         return (
             <Flex padding={"0 6px"}>
@@ -197,14 +202,14 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                             </MenuButton>
                             <MenuList className={`${styles.tabListDropDown} drop-down-list`}>
                                 <MenuItem
-                                    onClick={() => changeEmailTabs('INBOX')}><InboxIcon/> Move to Inbox</MenuItem>
+                                    onClick={() => moveThreadToMailBoxes(MAILBOX_INBOX)}><InboxIcon/> Move to Inbox</MenuItem>
                                 <MenuItem
-                                    onClick={() => changeEmailTabs('ARCHIVE')}><ArchiveIcon/> Move to Archive</MenuItem>
+                                    onClick={() => moveThreadToMailBoxes(MAILBOX_ARCHIVE)}><ArchiveIcon/> Move to Archive</MenuItem>
                                 <MenuItem
-                                    onClick={() => changeEmailTabs('SNOOZED')}><TimeSnoozeIcon/> Snooze</MenuItem>
-                                <MenuItem onClick={() => changeEmailTabs('STARRED')}><StarIcon/> Toggle Star</MenuItem>
+                                    onClick={() => moveThreadToMailBoxes(MAILBOX_SNOOZED)}><TimeSnoozeIcon/> Snooze</MenuItem>
+                                <MenuItem onClick={() => moveThreadToMailBoxes(MAILBOX_STARRED)}><StarIcon/> Toggle Star</MenuItem>
                                 <MenuItem
-                                    onClick={() => changeEmailTabs('TRASH')}><TrashIcon/> Move to Trash</MenuItem>
+                                    onClick={() => moveThreadToMailBoxes(MAILBOX_TRASH)}><TrashIcon/> Move to Trash</MenuItem>
                             </MenuList>
                         </Menu>
 
