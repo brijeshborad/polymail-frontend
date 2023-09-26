@@ -66,37 +66,6 @@ export function AddToProjectButton() {
         setFilteredProjects((projects || []));
     }, [projects])
 
-    // const addThreadToProject = useCallback((item: Project) => {
-    //     const isThreadMultiSelection = (multiSelection !== undefined && multiSelection.length > 0)
-    //
-    //     if ((selectedThread && selectedThread.id || (multiSelection !== undefined && multiSelection.length > 0))) {
-    //         let reqBody = {
-    //             threadIds: isThreadMultiSelection ? multiSelection : [selectedThread!.id],
-    //             roles: [
-    //                 'n/a',
-    //             ],
-    //             groupType: 'project',
-    //             groupId: item.id
-    //         }
-    //
-    //         if (isThreadMultiSelection) {
-    //             setSuccessMessage({
-    //                 title: `${multiSelection.length} threads added to ${item.name?.toLowerCase()}`,
-    //                 desc: ''
-    //             })
-    //         } else {
-    //             setSuccessMessage({
-    //                 desc: 'Thread was added to ' + item.name?.toLowerCase() + '.',
-    //                 title: selectedThread?.subject || '',
-    //             })
-    //         }
-    //         dispatch(addItemToGroup(reqBody));
-    //         if (addToProjectRef.current) {
-    //             addToProjectRef.current?.click();
-    //         }
-    //     }
-    // }, [dispatch, selectedThread, multiSelection]);
-
     useEffect(() => {
         if (searchValue.length > 0) {
             setFilteredProjects((projects || []).filter((item: Project) => item.name?.toLowerCase().includes(searchValue.toLowerCase())));
@@ -114,9 +83,8 @@ export function AddToProjectButton() {
     }
 
     function checkProjects(e: MouseEvent | any) {
-        if (e.key.toLowerCase() === 'enter' && filteredProjects.length === 1 && multiSelection?.length && selectedThread) {
+        if (e.key.toLowerCase() === 'enter' && filteredProjects.length === 1 && selectedThread) {
             addThreadToProject(filteredProjects[0], multiSelection, selectedThread, dispatch, setSuccessMessage, addToProjectRef);
-
         }
     }
 

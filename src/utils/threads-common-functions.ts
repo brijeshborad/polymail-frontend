@@ -23,7 +23,6 @@ export function markThreadAsRead(thread: Thread, dispatch: Dispatch) {
 
 export function addThreadToProject(item: Project, multiSelection: any, selectedThread: Thread, dispatch: Dispatch, setSuccessMessage: any, addToProjectRef?: any) {
   const isThreadMultiSelection = (multiSelection !== undefined && multiSelection.length > 0)
-
   if ((selectedThread && selectedThread.id || (multiSelection !== undefined && multiSelection.length > 0))) {
     let reqBody = {
       threadIds: isThreadMultiSelection ? multiSelection : [selectedThread!.id],
