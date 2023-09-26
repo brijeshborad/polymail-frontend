@@ -40,6 +40,7 @@ function Profile() {
     const {isOpen, onOpen, onClose} = useDisclosure()
     const inputFile = useRef<HTMLInputElement | null>(null)
     let {accounts, success} = useSelector((state: StateType) => state.accounts);
+    const [isDataUpdate, setIsDataUpdate] = useState<boolean>(false);
     let {passwordChangeSuccess} = useSelector((state: StateType) => state.auth);
 
     const [profileDetails, setProfileDetails] = useState<UserDetails>({
@@ -68,6 +69,7 @@ function Profile() {
                     ...prevState, [type]: event.target.value
                 }
             });
+            setIsDataUpdate(true)
         }
     }
 
@@ -136,7 +138,29 @@ function Profile() {
     const submit = () => {
         if (profileDetails) {
             dispatch(updateUsersDetails(profileDetails));
+            setIsDataUpdate(false);
         }
+    }
+
+    const cancelButtonClick = () => {
+        if (userDetails) {
+            if (userDetails.firstName) {
+                setProfileDetails((prevState) => {
+                    return {
+                        ...prevState, firstName: userDetails.firstName
+                    }
+                });
+            }
+
+            if (userDetails.lastName) {
+                setProfileDetails((prevState) => {
+                    return {
+                        ...prevState, lastName: userDetails.lastName
+                    }
+                });
+            }
+        }
+        setIsDataUpdate(false);
     }
     const [accountData] = useState<Account>();
 
@@ -261,7 +285,7 @@ function Profile() {
                                     <div className={styles.profileAccount}>
                                         <Text fontSize={'14px'}>First Name</Text>
                                         <Input placeholder='Enter First Name' value={profileDetails.firstName}
-                                               onChange={(event) => setFullName(event, 'firstName')}/>
+                                              onChange={(event) => setFullName(event, 'firstName')}/>
 
                                         <Text fontSize={'14px'} mt={2}>Last Name</Text>
                                         <Input placeholder='Enter Last Name' value={profileDetails.lastName}
@@ -276,11 +300,14 @@ function Profile() {
                                         variant='ghost'> Delete
                                     Profile </Button>
                             </Flex>
-
-                            <Flex align={'center'} gap={2} mt={10} className={styles.settingButton}>
-                                <Button className={styles.settingSave} onClick={submit}>Save</Button>
-                                <Button className={styles.settingCancel}>Cancel</Button>
-                            </Flex>
+                            {isDataUpdate &&
+                             <>
+                                <Flex align={'center'} gap={2} mt={10} className={styles.settingButton}>
+                                    <Button className={styles.settingSave} onClick={submit}>Save</Button>
+                                    <Button className={styles.settingCancel} onClick={cancelButtonClick}>Cancel</Button>
+                                </Flex>
+                            </>
+                            }
                         </div>
                     </Flex>
                 </Flex>
