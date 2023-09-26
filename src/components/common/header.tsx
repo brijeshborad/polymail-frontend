@@ -41,7 +41,7 @@ export function Header() {
     const {organizations} = useSelector((state: StateType) => state.organizations);
     const {isLoading: isApiLoading} = useSelector((state: StateType) => state.commonApis);
     const {accounts, selectedAccount} = useSelector((state: StateType) => state.accounts);
-    const {threads, tabValue, isThreadSearched} = useSelector((state: StateType) => state.threads);
+    const {threads, tabValue} = useSelector((state: StateType) => state.threads);
     const {googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
     const {userDetails, profilePicture} = useSelector((state: StateType) => state.users);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
@@ -209,12 +209,6 @@ export function Header() {
         }
     }, [reAuthToast, selectedAccount]);
 
-    useEffect(() => {
-        if (!isThreadSearched) {
-            setSearchString('');
-        }
-    }, [isThreadSearched]);
-
     const closeMenu = useCallback(() => {
         setShowSettingsMenu(false);
     }, []);
@@ -232,9 +226,6 @@ export function Header() {
 
     const searchCancel = (callAPI: boolean = false) => {
         dispatch(updateThreadState({isThreadSearched: false, multiSelection: []}));
-        if (callAPI) {
-            setSearchString('');
-        }
         if (sendJsonMessage) {
             sendJsonMessage({
                 "userId": userDetails?.id,
@@ -242,7 +233,10 @@ export function Header() {
             });
         }
         if (selectedAccount && selectedAccount.id && callAPI) {
-            dispatch(updateThreadState({threads: [], isLoading: true, selectedThread: null}));
+            if (searchString) {
+                dispatch(updateThreadState({threads: [], isLoading: true, selectedThread: null}));
+            }
+            setSearchString('');
             dispatch(getAllThreads({mailbox: tabValue, account: selectedAccount.id}));
         }
     }

@@ -22,10 +22,10 @@ function InboxPage() {
     const [size, setSize] = useState<number>(0);
     const [userData, setUserData] = useState<User | null | undefined>(null);
     const {user} = useSelector((state: StateType) => state.auth);
-    const {selectedThread, isThreadSearched, multiSelection} = useSelector((state: StateType) => state.threads);
+    const {selectedThread, multiSelection} = useSelector((state: StateType) => state.threads);
     const {isLoading} = useSelector((state: StateType) => state.projects);
 
-    const isMultiItemsSelected = isThreadSearched && multiSelection && multiSelection.length > 0
+    const isMultiItemsSelected = multiSelection && multiSelection.length > 0
 
     useEffect(() => {
         setUserData(user);

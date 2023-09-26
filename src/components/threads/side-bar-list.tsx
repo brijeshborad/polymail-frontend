@@ -12,11 +12,10 @@ const ThreadsSideBarListItem = dynamic(() => import("./side-bar-list-item").then
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import {updateCommonState} from "@/redux/common-apis/action-reducer";
-
-let currentSelectedThreads: any = []
+import {getCurrentSelectedThreads, setCurrentSelectedThreads} from "@/utils/cache.functions";
 
 export function ThreadsSideBarList(props: ThreadListProps) {
-  const { selectedThread, threads, multiSelection} = useSelector((state: StateType) => state.threads);
+  const { selectedThread, threads} = useSelector((state: StateType) => state.threads);
   const {selectedAccount} = useSelector((state: StateType) => state.accounts);
   const dispatch = useDispatch()
   const listRef = useRef<any>(null);
@@ -27,17 +26,13 @@ export function ThreadsSideBarList(props: ThreadListProps) {
   const [extraClassNames, setExtraClassNames] = useState<string>('');
   const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
   const { target, threadIndex } = useSelector((state: StateType) => state.keyNavigation)
-  useEffect(() => {
-    // Make isThreadSearched as false when multiSelection is null or blank
-    if (multiSelection && !multiSelection.length) {
-      dispatch(updateThreadState({isThreadSearched: false}));
-    }
-  }, [dispatch, multiSelection, selectedThread])
 
   useEffect(() => {
     // Make isThreadSearched as false when multiSelection is null or blank
     if (selectedThread) {
+      let currentSelectedThreads = getCurrentSelectedThreads();
       currentSelectedThreads.push((threads || []).findIndex((thread: Thread) => thread.id === selectedThread.id))
+      setCurrentSelectedThreads(currentSelectedThreads);
     }
   }, [selectedThread, threads])
 
@@ -62,12 +57,14 @@ export function ThreadsSideBarList(props: ThreadListProps) {
       if (event.ctrlKey || event.metaKey || event.shiftKey) {
         event.preventDefault();
         if (event.ctrlKey || event.metaKey) {
-          if (currentSelectedThreads.includes(index)) {
+          if (getCurrentSelectedThreads().includes(index)) {
             // Deselect if already selected
-            currentSelectedThreads = currentSelectedThreads.filter((id: number) => id !== index);
+            setCurrentSelectedThreads(getCurrentSelectedThreads().filter((id: number) => id !== index));
           } else {
             // Select if not selected
+            let currentSelectedThreads = getCurrentSelectedThreads();
             currentSelectedThreads.push(index);
+            setCurrentSelectedThreads(currentSelectedThreads);
           }
         } else if (event.shiftKey) {
           event.preventDefault();
@@ -80,16 +77,15 @@ export function ThreadsSideBarList(props: ThreadListProps) {
           const minIndex = Math.min(firstSelectedIndex, clickedIndex);
           const maxIndex = Math.max(firstSelectedIndex, clickedIndex);
           const rangeToSelect = Array.from({ length: maxIndex - minIndex + 1 }, (_, i) => minIndex + i);
-          currentSelectedThreads = [];
-          currentSelectedThreads.push(...rangeToSelect);
+          setCurrentSelectedThreads([]);
+          setCurrentSelectedThreads([...rangeToSelect]);
         } else {
           // If no modifiers are held down, clear the selection and select the clicked div
-          currentSelectedThreads = []
-          currentSelectedThreads.push(index);
+          setCurrentSelectedThreads([]);
+          setCurrentSelectedThreads([index]);
         }
         dispatch(updateThreadState({
-          isThreadSearched: true,
-          multiSelection: threads?.map((thread: Thread, index: number) => currentSelectedThreads.includes(index) && thread.id!).filter(t => t)
+          multiSelection: threads?.map((thread: Thread, index: number) => getCurrentSelectedThreads().includes(index) && thread.id!).filter(t => t) as any
         }))
 
       } else {
@@ -103,7 +99,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
             return;
           }
         }
-        currentSelectedThreads = [];
+        setCurrentSelectedThreads([]);
 
         dispatch(updateThreadState({ selectedThread: item, isThreadFocused: false, multiSelection: [] }));
         dispatch(updateMessageState({ selectedMessage: (item.messages || [])[0], messages: [] }));

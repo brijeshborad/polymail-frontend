@@ -19,12 +19,11 @@ import {StateType} from "@/types";
 import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {getAllThreads, updateThreadState} from "@/redux/threads/action-reducer";
-import {updateMessageState} from "@/redux/messages/action-reducer";
 import {Message, Thread} from "@/models";
 import dynamic from "next/dynamic";
 import {updateDraftState} from "@/redux/draft/action-reducer";
 import {SmallCloseIcon, TriangleDownIcon} from "@chakra-ui/icons";
-import {getCurrentCacheTab} from "@/utils/cache.functions";
+import {getCurrentCacheTab, setCurrentSelectedThreads} from "@/utils/cache.functions";
 import {updateCommonState} from "@/redux/common-apis/action-reducer";
 
 const ThreadsSideBarTab = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarTab), {ssr: false});
@@ -83,14 +82,12 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     }, [updatedDraft, draftSuccess, selectedThread, threads, dispatch, tab])
 
     useEffect(() => {
+        if (isThreadSearched) {
+            setCountUnreadMessages((threads || []).length);
+        } else {
             setCountUnreadMessages((threads || []).filter(item => (item.mailboxes || [])?.includes('UNREAD')).length);
-    }, [threads])
-
-    useEffect(() => {
-        if (threads && threads.length > 0 && !selectedThread) {
-            dispatch(updateMessageState({selectedMessage: null}));
         }
-    }, [threads, dispatch, selectedThread])
+    }, [threads, isThreadSearched])
 
     useEffect(() => {
         if (threads && threads.length > 0 && !selectedThread && !isLoading) {
@@ -126,6 +123,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
         dispatch(updateThreadState({
             multiSelection: !checked ? [] : threads?.map((thread) => thread.id!)
         }))
+        setCurrentSelectedThreads(!checked ? [] : (threads || []).map((thread, index) => index));
         return
     }
     const isSelectedAllChecked = ((multiSelection && multiSelection.length > 0) && multiSelection.length === (threads || []).length)
@@ -163,10 +161,8 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                     gap={2} align={'center'} w={"100%"}
                     justify={'space-between'}
                 >
-                    <Flex
-                        align={'center'} fontSize={'13px'} fontWeight={'400'}
-                        color={'#374151'} gap={2} letterSpacing={'-0.13px'} whiteSpace={'nowrap'}
-                    >
+                    {isThreadSearched && <Flex align={'center'} fontSize={'13px'} fontWeight={'400'}
+                          color={'#374151'} gap={2} letterSpacing={'-0.13px'} whiteSpace={'nowrap'}>
                             <span>Search Results {countUnreadMessages > 0 && (
                                 <Badge
                                     backgroundColor={'#F3F4F6'} fontSize={'12px'} color={'#6B7280'}
@@ -176,7 +172,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                 </Badge>
                             )}
                             </span>
-                    </Flex>
+                    </Flex> }
                     <Flex className={styles.checkBoxLabel}>
                         <Checkbox
                             isChecked={isSelectedAllChecked}
@@ -197,22 +193,18 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                 rightIcon={<TriangleDownIcon color={'#374151'}/>}
                                 p={'0 8px 0 10px'}
                             >
-                                More
+                                Actions
                             </MenuButton>
                             <MenuList className={`${styles.tabListDropDown} drop-down-list`}>
                                 <MenuItem
-                                    onClick={() => changeEmailTabs('INBOX')}><InboxIcon/> Inbox</MenuItem>
+                                    onClick={() => changeEmailTabs('INBOX')}><InboxIcon/> Move to Inbox</MenuItem>
                                 <MenuItem
-                                    onClick={() => changeEmailTabs('SENT')}><SendIcon/> Sent</MenuItem>
+                                    onClick={() => changeEmailTabs('ARCHIVE')}><ArchiveIcon/> Move to Archive</MenuItem>
                                 <MenuItem
-                                    onClick={() => changeEmailTabs('SNOOZED')}><TimeSnoozeIcon/> Snoozed</MenuItem>
+                                    onClick={() => changeEmailTabs('SNOOZED')}><TimeSnoozeIcon/> Snooze</MenuItem>
+                                <MenuItem onClick={() => changeEmailTabs('STARRED')}><StarIcon/> Toggle Star</MenuItem>
                                 <MenuItem
-                                    onClick={() => changeEmailTabs('TRASH')}><TrashIcon/> Trash</MenuItem>
-                                <MenuItem onClick={() => changeEmailTabs('STARRED')}><StarIcon/> Starred</MenuItem>
-                                <MenuItem
-                                    onClick={() => changeEmailTabs('ARCHIVE')}><ArchiveIcon/> Archive</MenuItem>
-                                <MenuItem
-                                    onClick={() => changeEmailTabs('DRAFT')}><DraftIcon/> Draft</MenuItem>
+                                    onClick={() => changeEmailTabs('TRASH')}><TrashIcon/> Move to Trash</MenuItem>
                             </MenuList>
                         </Menu>
 
@@ -378,7 +370,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
         <>
             <Flex direction={'column'} gap={5} className={styles.mailListTabs}>
                 <Tabs>
-                    {isThreadSearched ? getHeaderForSearched() : getHeaderForNotSearched()}
+                    {(isThreadSearched || (multiSelection && multiSelection.length > 0)) ? getHeaderForSearched() : getHeaderForNotSearched()}
 
                     <TabPanels marginTop={5}>
                         <ThreadsSideBarTab cachePrefix={props.cachePrefix}/>
