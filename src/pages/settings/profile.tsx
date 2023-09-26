@@ -247,8 +247,11 @@ function Profile() {
                                                            onChange={(e) => handleFileUpload(e)}
                                                            style={{display: 'none'}}/>
                                                 </MenuItem>
+                                                {profilePicture &&
                                                 <MenuItem className={'delete-button'} onClick={() => removePhoto()}>Remove
-                                                    Photo</MenuItem>
+                                                    Photo
+                                                </MenuItem>
+                                                }
                                             </MenuList>
                                         </Menu>
                                     </div>

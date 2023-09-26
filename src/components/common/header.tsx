@@ -202,7 +202,7 @@ export function Header() {
         if (!isThreadSearched) {
             setSearchString('');
         }
-    }, [isThreadSearched, showCloseIcon]);
+    }, [isThreadSearched]);
 
     const closeMenu = useCallback(() => {
         setShowSettingsMenu(false);
@@ -273,13 +273,13 @@ export function Header() {
     const handleFocus = () => {
         setTimeout(() => {
             setShowCloseIcon(true)
-        }, 500)
+        }, 300)
     }
 
     const handleBlur = () => {
         setTimeout(() => {
             setShowCloseIcon(false);
-        }, 500)
+        }, 300)
     };
 
     return (
@@ -307,6 +307,7 @@ export function Header() {
                         placeholder="Search"
                         onChange={event => {
                             setSearchString(event.target.value);
+                            dispatch(updateThreadState({ isThreadSearched: true }));
                         }}
                         onFocus={() => handleFocus()}
                         onBlur={() => handleBlur()}

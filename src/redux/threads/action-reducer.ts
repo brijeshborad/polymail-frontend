@@ -48,7 +48,7 @@ const threadsSlice = createSlice({
                 ...currentThreads[index1],
                 mailboxes: [...(threadData.mailboxes ?? [])]
             };
-            return {...state, threads: [...currentThreads], selectedThread: thread, error: null, isLoading: false, updateSuccess: true, success: true}
+            return {...state, threads: [...currentThreads], error: null, isLoading: false, updateSuccess: true, success: true}
         },
         updateThreadsError: (state: InitialThreadStateType, {payload: error}: PayloadAction<any>) => {
             return {...state, error, isLoading: false, updateSuccess: false, success: false}
