@@ -8,7 +8,7 @@ import dynamic from "next/dynamic";
 import {batchUpdateThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import { Toaster } from "../common/toaster";
 import { MAILBOX_ARCHIVE, MAILBOX_SNOOZED, MAILBOX_TRASH } from "@/utils/constants";
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect} from "react";
 import {Thread} from "@/models";
 
 export default function SelectedThreads() {
