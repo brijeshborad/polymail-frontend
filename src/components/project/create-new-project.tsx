@@ -102,11 +102,7 @@ function CreateNewProjectModal() {
             setMembersInput({
                 input: '',
                 role: 'member',
-                memberArray: [{
-                    item: '',
-                    memberRole: ''
-                }]
-
+                memberArray: []
             });
             if (shouldRedirectOnCreateProject && project) {
                 Router.push(`/projects/${project.id!}`)
