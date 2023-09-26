@@ -16,7 +16,7 @@ import {updateCommonState} from "@/redux/common-apis/action-reducer";
 let currentSelectedThreads: any = []
 
 export function ThreadsSideBarList(props: ThreadListProps) {
-  const { selectedThread, threads, multiSelection, isThreadSearched} = useSelector((state: StateType) => state.threads);
+  const { selectedThread, threads, multiSelection} = useSelector((state: StateType) => state.threads);
   const {selectedAccount} = useSelector((state: StateType) => state.accounts);
   const dispatch = useDispatch()
   const listRef = useRef<any>(null);
