@@ -73,8 +73,8 @@ function OnBoardingType() {
                         {router.query.type === 'login' ? 'Log in' : 'Sign Up'} with Google
                     </Button>
                     <Text fontSize='13px' letterSpacing={'-0.13px'}
-                          color={'#6B7280'}>{router.query.type === 'login' ? 'If you don\'t have an account' : 'If you already have an account'}, 
-                        <button
+                          color={'#6B7280'}>{router.query.type === 'login' ? 'If you don\'t have an account' : 'If you already have an account'},&nbsp;
+                        <button style={{textDecoration: 'underline'}}
                             onClick={() => Router.push(`/onboarding/${router.query.type === 'login' ? 'signup' : 'login'}`, undefined, {shallow: true})}>
                             {router.query.type === 'login' ? ' sign up ' : ' log in '} here.</button>
                     </Text>
