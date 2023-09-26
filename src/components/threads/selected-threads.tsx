@@ -36,7 +36,6 @@ export default function SelectedThreads() {
           }
           dispatch(batchUpdateThreads(body))
           notification('Thread was moved from ' + mailBoxName.toLowerCase() + '.');
-          console.log('thread', thread)
           dispatch(updateThreadState({
             isThreadSearched: false,
             multiSelection: [],
@@ -63,7 +62,6 @@ export default function SelectedThreads() {
 
       let threadsData = (threads || []).filter((item: Thread) => !selectedThreadIds.includes(item.id!));
       notification(`${selectedThreadIds.length} ${messagePlural} has been ${type.toLowerCase()}`, threadData[0])
-      console.log('threadsData', threadsData)
       dispatch(updateThreadState({
         threads: threadsData,
         selectedThread: threadsData[0],

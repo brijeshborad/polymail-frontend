@@ -199,7 +199,6 @@ export function Header() {
     }, [reAuthToast, selectedAccount]);
 
     useEffect(() => {
-        console.log('isThreadSearched', isThreadSearched)
         if (!isThreadSearched) {
             setSearchString('');
         }
@@ -221,7 +220,6 @@ export function Header() {
     }
 
     const searchCancel = (callAPI: boolean = false) => {
-        console.log('GERERE')
         dispatch(updateThreadState({isThreadSearched: false}));
         if (sendJsonMessage) {
             sendJsonMessage({
