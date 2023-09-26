@@ -11,7 +11,7 @@ import {
     MenuItem,
     MenuList
 } from '@chakra-ui/react';
-import {CheckIcon, ChevronDownIcon, SearchIcon, SmallCloseIcon} from '@chakra-ui/icons';
+import {CheckIcon, ChevronDownIcon, SearchIcon, CloseIcon} from '@chakra-ui/icons';
 import {FolderIcon, MailIcon} from '@/icons';
 import styles from '@/styles/Home.module.css';
 import {useDispatch, useSelector} from 'react-redux';
@@ -286,9 +286,9 @@ export function Header() {
     }
 
     const handleBlur = () => {
-        setTimeout(() => {
-            setShowCloseIcon(false);
-        }, 300)
+        // setTimeout(() => {
+        //     setShowCloseIcon(false);
+        // }, 300)
     };
 
     return (
@@ -326,9 +326,9 @@ export function Header() {
                         onKeyPress={e => handleKeyPress(e)}
                     />
                     <InputRightElement>
-                        {showCloseIcon ? <div className={styles.inputRight} style={{cursor: 'pointer'}}
+                        {showCloseIcon ? <div className={styles.inputRight} style={{background: "transparent"}}
                                               onClick={() => searchCancel(true)}>
-                            <SmallCloseIcon/>
+                            <CloseIcon cursor={'pointer'} fontSize={'10'}/>
                         </div> : <div className={styles.inputRight}>⌘K</div>
                         }
                     </InputRightElement>
