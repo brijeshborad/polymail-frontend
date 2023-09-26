@@ -107,7 +107,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     }, [dispatch, tab])
 
     const searchCancel = (callAPI: boolean = false) => {
-        dispatch(updateThreadState({isThreadSearched: false}));
+        dispatch(updateThreadState({isThreadSearched: false, multiSelection: []}));
         if (sendJsonMessage) {
             sendJsonMessage({
                 "userId": userDetails?.id,
