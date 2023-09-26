@@ -41,7 +41,7 @@ export function Header() {
     const {organizations} = useSelector((state: StateType) => state.organizations);
     const {isLoading: isApiLoading} = useSelector((state: StateType) => state.commonApis);
     const {accounts, selectedAccount} = useSelector((state: StateType) => state.accounts);
-    const {threads, tabValue} = useSelector((state: StateType) => state.threads);
+    const {threads, tabValue, isThreadSearched} = useSelector((state: StateType) => state.threads);
     const {googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
     const {userDetails, profilePicture} = useSelector((state: StateType) => state.users);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
@@ -213,6 +213,12 @@ export function Header() {
         setShowSettingsMenu(false);
     }, []);
 
+    useEffect(() => {
+        if (!isThreadSearched) {
+            setSearchString('');
+        }
+    }, [isThreadSearched]);
+
 
     useEffect(() => {
         if (incomingEvent === 'iframe.clicked') {
@@ -225,7 +231,6 @@ export function Header() {
     }
 
     const searchCancel = (callAPI: boolean = false) => {
-        dispatch(updateThreadState({isThreadSearched: false, multiSelection: []}));
         if (sendJsonMessage) {
             sendJsonMessage({
                 "userId": userDetails?.id,
@@ -234,7 +239,7 @@ export function Header() {
         }
         if (selectedAccount && selectedAccount.id && callAPI) {
             if (searchString) {
-                dispatch(updateThreadState({threads: [], isLoading: true, selectedThread: null}));
+                dispatch(updateThreadState({threads: [], isLoading: true, selectedThread: null, isThreadSearched: false, multiSelection: []}));
             }
             setSearchString('');
             dispatch(getAllThreads({mailbox: tabValue, account: selectedAccount.id}));
@@ -245,7 +250,7 @@ export function Header() {
         if (event.key.toLowerCase() === 'enter') {
             searchCancel(false);
             if (searchString) {
-                dispatch(updateThreadState({threads: [], isThreadSearched: true, isLoading: true, selectedThread: null}));
+                dispatch(updateThreadState({threads: [], isThreadSearched: true, isLoading: true, selectedThread: null, multiSelection: []}));
                 if (sendJsonMessage) {
                     sendJsonMessage({
                         userId: userDetails?.id,
