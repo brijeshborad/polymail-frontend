@@ -221,6 +221,9 @@ export function Header() {
 
     const searchCancel = (callAPI: boolean = false) => {
         dispatch(updateThreadState({isThreadSearched: false}));
+        if (callAPI) {
+            setSearchString('');
+        }
         if (sendJsonMessage) {
             sendJsonMessage({
                 "userId": userDetails?.id,
@@ -307,7 +310,6 @@ export function Header() {
                         placeholder="Search"
                         onChange={event => {
                             setSearchString(event.target.value);
-                            dispatch(updateThreadState({ isThreadSearched: true }));
                         }}
                         onFocus={() => handleFocus()}
                         onBlur={() => handleBlur()}

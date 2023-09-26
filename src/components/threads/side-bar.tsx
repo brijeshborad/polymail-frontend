@@ -83,7 +83,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     }, [updatedDraft, draftSuccess, selectedThread, threads, dispatch, tab])
 
     useEffect(() => {
-        setCountUnreadMessages((threads || []).filter(item => (item.mailboxes || [])?.includes('UNREAD')).length);
+            setCountUnreadMessages((threads || []).filter(item => (item.mailboxes || [])?.includes('UNREAD')).length);
     }, [threads])
 
     useEffect(() => {
