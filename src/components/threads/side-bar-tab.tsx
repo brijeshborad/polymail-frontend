@@ -134,7 +134,7 @@ export function ThreadsSideBarTab(props: TabProps) {
     useEffect(() => {
         if (threadListSuccess) {
             if (threads && threads.length) {
-                dispatch(updateThreadState({threads: threads, selectedThread: threads[0]}));
+                dispatch(updateThreadState({threads: threads}));
             }
         }
     }, [dispatch, threadListSuccess, threads])

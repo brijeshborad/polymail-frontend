@@ -10,7 +10,7 @@ import { MAILBOX_UNREAD } from "@/utils/constants";
 
 
 export function ThreadsSideBarListItem(props: ThreadListItemProps) {
-  const { multiSelection, updateSuccess, error } = useSelector((state: StateType) => state.threads);
+  const { multiSelection, updateSuccess, error, isThreadFocused, selectedThread } = useSelector((state: StateType) => state.threads);
   const [isSelected, setIsSelected] = useState<boolean>(false);
   const [isClicked, setIsClicked] = useState<boolean>(false);
 
@@ -18,9 +18,13 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
         setIsSelected((multiSelection || [])?.includes(props.thread.id!));
     }, [multiSelection, props.thread.id]);
 
-    const removeDotIcon = () => {
-      setIsClicked(false)
-    }
+    useEffect(() => {
+      if (isThreadFocused) {
+        if (props.thread.id === selectedThread?.id) {
+          setIsClicked(false)
+        }
+      }
+    }, [isThreadFocused])
 
     useEffect(() => {
       setIsClicked((props.thread.mailboxes || []).includes(MAILBOX_UNREAD));
@@ -28,7 +32,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
 
   return (
     <>
-      <div className={`${styles.mailDetails} ${isSelected ? styles.mailDetailsSelected : ''}`} onClick={() => removeDotIcon()}>
+      <div className={`${styles.mailDetails} ${isSelected ? styles.mailDetailsSelected : ''}`}>
           <Flex align={"center"} justify={'space-between'}>
               <Flex align={"center"} className={styles.senderDetails} gap={1}>
                   <DisneyIcon/> {props?.thread?.from?.name || props?.thread?.from?.email}
