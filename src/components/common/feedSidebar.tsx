@@ -14,7 +14,7 @@ export const FeedSidebar = () => {
     const btnRef = React.useRef(null);
     return (
         <>
-            <Flex align={'center'} justify={'center'} className={styles.notificationIcon} onClick={onOpen}>
+            <Flex align={'center'} cursor={'pointer'} justify={'center'} className={styles.notificationIcon} onClick={onOpen}>
                 <EnergyIcon />
                 <Badge>3</Badge>
             </Flex>

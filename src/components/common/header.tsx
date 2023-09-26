@@ -338,27 +338,6 @@ export function Header() {
             <div>
                 <FeedSidebar/>
             </div>
-            {/*<div className={styles.Workspace}>*/}
-            {/*    <Menu>*/}
-            {/*        <MenuButton as={Button} rightIcon={<ChevronDownIcon/>} className={styles.profileButton}>*/}
-            {/*            {workspace && workspace.name || 'Organization'}*/}
-            {/*        </MenuButton>*/}
-            {/*        <MenuList>*/}
-            {/*            <MenuItem w='100%' onClick={() => Router.push('/organization/add')}>Add New</MenuItem>*/}
-            {/*            {organizations && organizations.length && organizations?.map((org, i) => (*/}
-            {/*                <MenuItem w='100%' key={i + 1} onClick={() => setOrganization(org)}>*/}
-            {/*                    {org.name}  <CheckIcon ml={8} bg={"green"} p={1} borderRadius={50} w={4} h={4} color={"white"} />*/}
-            {/*                </MenuItem>*/}
-            {/*            ))}*/}
-            {/*        </MenuList>*/}
-            {/*    </Menu>*/}
-            {/*</div>*/}
-
-            {/*<Button className={styles.composeButton} color={'#000000'} leftIcon={<ComposeIcon/>} colorScheme='blue'*/}
-            {/*        variant='outline'*/}
-            {/*        onClick={() => openComposeBox()}>*/}
-            {/*    Compose*/}
-            {/*</Button>*/}
 
             <div className={styles.profile}>
                 <Menu isOpen={showSettingsMenu} onOpen={() => setShowSettingsMenu(true)}
