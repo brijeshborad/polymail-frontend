@@ -284,9 +284,9 @@ export function Header() {
     }
 
     const handleBlur = () => {
-        // setTimeout(() => {
-        //     setShowCloseIcon(false);
-        // }, 300)
+        setTimeout(() => {
+            setShowCloseIcon(false);
+        }, 300)
     };
 
     return (
