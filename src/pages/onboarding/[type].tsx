@@ -62,7 +62,7 @@ function OnBoardingType() {
             <OnboardingLayout>
                 <Flex direction={'column'}>
                     <Heading as='h4' size='md' fontWeight={700} color={'#0A101D'}
-                             mb={4}>{router.query.type === 'login' ? 'Login into' : 'Create'} your account</Heading>
+                             mb={4}>{router.query.type === 'login' ? 'Log into' : 'Create'} your account</Heading>
                     <Button onClick={() => oauthWithGoogle()} className={styles.continueButton}
                             mb={3} colorScheme='blue' padding={'4px'} height={'auto'}
                             minWidth={'327px'} justifyContent={'flex-start'} gap={3} backgroundColor={'#2A6FFF'}
@@ -70,13 +70,13 @@ function OnBoardingType() {
                         <Flex backgroundColor={'#FFFFFF'} padding={'2px'} borderRadius={'6px'}>
                             <Image src={'/image/google-logo.png'} alt={''} width={'24px'} height={'24px'}/>
                         </Flex>
-                        {router.query.type === 'login' ? 'Login' : 'Sign Up'} with Google
+                        {router.query.type === 'login' ? 'Log in' : 'Sign Up'} with Google
                     </Button>
                     <Text fontSize='13px' letterSpacing={'-0.13px'}
-                          color={'#6B7280'}>{router.query.type === 'login' ? 'If you don\'t have an account' : 'If you already have an account'},
+                          color={'#6B7280'}>{router.query.type === 'login' ? 'If you don\'t have an account' : 'If you already have an account'}, 
                         <button
                             onClick={() => Router.push(`/onboarding/${router.query.type === 'login' ? 'signup' : 'login'}`, undefined, {shallow: true})}>
-                            {router.query.type === 'login' ? ' signup ' : ' login '} here.</button>
+                            {router.query.type === 'login' ? ' sign up ' : ' log in '} here.</button>
                     </Text>
                 </Flex>
             </OnboardingLayout>
