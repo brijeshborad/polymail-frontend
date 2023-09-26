@@ -22,22 +22,24 @@ function OnBoardingType() {
                 if (router.query.type === 'login') {
                     Router.push('/inbox');
                 } else {
-                    Router.push('/onboarding/account');
+                    Router.push('/onboarding/connect-account');
                 }
+                return;
             }
 
             if (router.query.error) {
                 Router.replace(`/onboarding/${router.query.type}`, undefined, {shallow: true});
                 dispatch(updateAuthState({error: {description: 'Invalid account'}}));
+                return;
             }
         }
     }, [dispatch, router.query]);
 
     useEffect(() => {
-        if (user && user?.token) {
+        if (user && user?.token && !(router.query.hasOwnProperty('access_token') || router.query.hasOwnProperty('error'))) {
             Router.push('/inbox');
         }
-    }, [user])
+    }, [user, router.query])
 
     function oauthWithGoogle() {
         let body = {
