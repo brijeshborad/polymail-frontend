@@ -52,8 +52,6 @@ export function Header() {
     const {user} = useSelector((state: StateType) => state.auth);
     const [searchString, setSearchString] = useState<string>('');
     const router = useRouter();
-
-    let currentRoute = router.pathname.split('/');
     const searchInputRef = useRef<HTMLInputElement | null>(null);
     const [showCloseIcon, setShowCloseIcon] = useState(false);
 
@@ -297,12 +295,12 @@ export function Header() {
                 <Image width="30" height="30" src="/image/logo.png" alt="" className={styles.logo}/>
             </div>
             <Flex className={styles.headerTabs} align={'center'}>
-                <Flex align={'center'} className={currentRoute[1] === 'inbox' ? styles.tabsActive : ''}
+                <Flex align={'center'} className={router.pathname === '/inbox' ? styles.tabsActive : ''}
                       onClick={() => changePage('inbox')}>
                     <MailIcon/>
                     Inbox
                 </Flex>
-                <Flex align={'center'} className={currentRoute[1] === 'projects' ? styles.tabsActive : ''}
+                <Flex align={'center'} className={router.pathname === '/projects' ? styles.tabsActive : ''}
                       onClick={() => changePage('projects')}>
                     <FolderIcon/>
                     Projects
