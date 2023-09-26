@@ -317,6 +317,9 @@
     background-color: #eeeeee;
 }
 
+.manageMemberDropDown {
+    padding-bottom: 16px !important;
+}
 
 .manageMemberDropDown .dropDownSearchBar {
     margin: 16px 12px;

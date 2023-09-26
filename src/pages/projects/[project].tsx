@@ -286,7 +286,7 @@ function ProjectInbox() {
                                 </div>
 
                                 {members && !!members.length && members.map((member, index) => (
-                                    <Flex align={'center'} pr={3} key={index}>
+                                    <Flex align={'center'} gap={2} pr={3} key={index}>
                                         <MenuItem>
                                             <div className={styles.imgWrapper}>
                                                 <Image src="/image/user.png" width="36" height="36" alt=""/>
@@ -320,7 +320,7 @@ function ProjectInbox() {
                                     </Flex>
                                 ))}
                                 {invitees && !!invitees.length && invitees.map((invite, index) => (
-                                    <Flex align={'center'} pr={3} key={index}>
+                                    <Flex align={'center'} pr={3} gap={3} key={index}>
                                         <MenuItem>
                                             <div className={styles.imgWrapper}>
                                                 <Image src="/image/user.png" width="36" height="36" alt=""/>
