@@ -250,7 +250,8 @@ function CreateNewProjectModal() {
                                                     fontSize={'12px'} lineHeight={1}
                                                     color={'#374151'} backgroundColor={'transparent'} h={'auto'}
                                                     padding={0} as={Button}
-                                                    rightIcon={<TriangleDownIcon/>}> Member </MenuButton>
+                                                    textTransform={'capitalize'}
+                                                    rightIcon={<TriangleDownIcon/>}> {membersInputs.role} </MenuButton>
                                         <MenuList className={'drop-down-list'}>
                                             {PROJECT_ROLES.map((role, roleIndex) => {
                                                 return <MenuItem onClick={() => {
