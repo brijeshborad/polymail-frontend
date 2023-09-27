@@ -32,7 +32,7 @@ export interface Message {
 export interface MessageDraft {
     id?: string,
     from?: MessageRecipient,
-    to: MessageRecipient[],
+    to?: MessageRecipient[],
     cc?: MessageRecipient[],
     threadId?: string,
     mailboxes?: string[],

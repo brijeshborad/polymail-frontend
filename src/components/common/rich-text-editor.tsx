@@ -16,6 +16,7 @@ import draftToHtml from "draftjs-to-html";
 import {emojiArray} from "@/utils/common.functions";
 import {useDispatch, useSelector} from "react-redux";
 import {updateKeyNavigation} from "@/redux/key-navigation/action-reducer";
+import {Flex} from "@chakra-ui/react";
 
 let htmlToDraft: any = null;
 if (typeof window === 'object') {
@@ -120,7 +121,7 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
 
 
     return (
-        <div ref={containerRef}>
+        <Flex ref={containerRef}>
             <Editor
                 placeholder={placeholder}
                 editorState={editorState}
@@ -166,6 +167,6 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
                     },
                 }}
             />
-        </div>
+        </Flex>
     )
 }

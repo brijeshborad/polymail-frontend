@@ -218,6 +218,7 @@ export function Message({isProjectView = false}: {isProjectView?: boolean}) {
   }
 
   const handleRowClick = (index: any) => {
+    setIndex(index);
     const selectedMessageIndex = (messages || []).findIndex(msg => msg.id === selectedMessage?.id)
 
     if (selectedMessageIndex === index) {

@@ -29,7 +29,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { StateType } from "@/types";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import {MessageAttachments, MessageRecipient} from "@/models";
+import {Message, MessageAttachments, MessageRecipient} from "@/models";
 import { uploadAttachment } from "@/redux/messages/action-reducer";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { MessageBoxType } from "@/types/props-types/message-box.type";
@@ -40,6 +40,8 @@ import { useRouter } from "next/router";
 import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
 import dynamic from "next/dynamic";
 import {fireEvent} from "@/redux/global-events/action-reducer";
+import {updateThreadState} from "@/redux/threads/action-reducer";
+import {getCacheMessages, setCacheMessages} from "@/utils/cache.functions";
 
 dayjs.extend(relativeTime)
 
@@ -59,6 +61,7 @@ export function MessageReplyBox(props: MessageBoxType) {
   // const { target } = useSelector((state: StateType) => state.keyNavigation);
   const { selectedAccount } = useSelector((state: StateType) => state.accounts);
   const { draft } = useSelector((state: StateType) => state.draft);
+  const { selectedThread, tabValue } = useSelector((state: StateType) => state.threads);
   const { event: incomingEvent } = useSelector((state: StateType) => state.globalEvents);
   const dispatch = useDispatch();
   const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
@@ -483,7 +486,6 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   }
 
   const sendMessages = () => {
-
     if (draft && draft.id) {
       let params = {};
       let polyToast = `poly-toast-${new Date().getMilliseconds()}`;
@@ -554,11 +556,36 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         }
       }
 
+      if (selectedThread) {
+        let draftData = {
+          ...draft,
+          mailboxes: [tabValue],
+          snippet: draft.subject
+        }
+        let threadData = {...selectedThread};
+        let messages = [...(threadData?.messages || [])];
+        let findDraftId = messages.findIndex(item => item.id === draft.id);
+        messages.splice(findDraftId, 1);
+        messages.push(draftData as Message);
+        threadData = {
+          ...threadData,
+          messages: messages
+        };
 
+        dispatch(updateThreadState({
+          selectedThread: threadData
+        }))
+        let cacheMessages = getCacheMessages();
+        setCacheMessages({
+          ...cacheMessages,
+          [draftData.id!]: {
+            ...cacheMessages[draftData.id!],
+            data: Buffer.from(draft.draftInfo!.body || '').toString('base64'),
+            attachments: draft?.draftInfo?.attachments || []
+          }
+        })
+      }
       onClose();
-      // if (props.onClose) {
-      //     props.onClose();
-      // }
 
       setEmailRecipients({
         cc: { items: [], value: blankRecipientValue },
