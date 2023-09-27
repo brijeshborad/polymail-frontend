@@ -17,7 +17,7 @@ import {getRedirectionUrl} from "@/utils/common.functions";
 function ConnectAccount() {
     const dispatch = useDispatch();
     const {googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
-    let {accounts, success} = useSelector((state: StateType) => state.accounts);
+    let {accounts} = useSelector((state: StateType) => state.accounts);
     const [accountData, setAccountData] = useState<Account>();
     const router = useRouter();
 
@@ -55,16 +55,27 @@ function ConnectAccount() {
     const removeAccount = useCallback((item: Account) => {
         if (item && item.id) {
             setAccountData(item)
-            dispatch(removeAccountDetails({id: item.id}));
+            dispatch(removeAccountDetails({
+                toaster: {
+                    success: {
+                        desc: 'Account removed successfully',
+                        title: 'Account removed',
+                        type: 'success'
+                    },
+                },
+                body: {
+                    id: item.id
+                }
+            }));
         }
     }, [dispatch])
 
     useEffect(() => {
-        if (success && accountData && accountData.id) {
+        if (accountData && accountData.id) {
             let data = (accounts || []).filter((item: Account) => item.id !== accountData.id)
             dispatch(updateAccountState({accounts: data}));
         }
-    }, [success, accountData, dispatch])
+    }, [accountData, dispatch])
 
     const getAllAccounts = useCallback(() => {
         dispatch(getAllAccount({}));

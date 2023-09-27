@@ -4,7 +4,7 @@ import {TextIcon} from "@/icons";
 import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {RichTextEditor, Toaster} from "@/components/common";
+import {RichTextEditor} from "@/components/common";
 import {updateAccountDetails, updateAccountState} from "@/redux/accounts/action-reducer";
 import withAuth from "@/components/auth/withAuth";
 import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
@@ -16,7 +16,7 @@ function Signature() {
     const [signature, setSignature] = useState<string>('');
     const [isSignatureUpdate, setIsSignatureUpdate] = useState<boolean>(false);
 
-    const {selectedAccount, account, success} = useSelector((state: StateType) => state.accounts);
+    const {selectedAccount, account} = useSelector((state: StateType) => state.accounts);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -27,16 +27,14 @@ function Signature() {
     }, [selectedAccount])
 
     useEffect(() => {
-        if (account && success) {
+        if (account) {
             dispatch(updateAccountState({selectedAccount: {...account}}));
             setIsSignatureUpdate(false);
-            Toaster({desc: 'Signature updated successfully', title: 'Signature updated', type: 'success'});
         }
-    }, [dispatch, account, success])
+    }, [dispatch, account])
 
     const addSignature = (value: string) => {
         if (selectedAccount && selectedAccount.signature) {
-            console.log('COMES HERE', value);
             let currentEmailBody: string = getPlainTextFromHtml(value);
             let currentAccountSignature: string = getPlainTextFromHtml(selectedAccount.signature);
             if (currentEmailBody.trim().length) {
@@ -52,7 +50,19 @@ function Signature() {
     const submit = () => {
         if (signature) {
             if (selectedAccount && selectedAccount.id) {
-                dispatch(updateAccountDetails({signature: signature, id: selectedAccount.id}));
+                dispatch(updateAccountDetails({
+                    toaster: {
+                        success: {
+                            desc: 'Signature updated successfully',
+                            title: 'Signature updated',
+                            type: 'success'
+                        },
+                    },
+                    body: {
+                        signature: signature,
+                        id: selectedAccount.id
+                    }
+                }));
             }
         }
     }

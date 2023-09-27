@@ -9,10 +9,6 @@ const initialState: any = {
     selectedAccount: LocalStorageService.updateAccount('get') || null,
     accountLoading: false
 } as InitialAccountStateType
-interface SuccessData {
-    success: boolean;
-    // Add other properties if there are any
-}
 
 const accountSlice = createSlice({
     name: 'accounts',
@@ -32,30 +28,28 @@ const accountSlice = createSlice({
             return {...state, ...action.payload}
         },
 
-        updateAccountDetails: (state: InitialAccountStateType, _action: PayloadAction<{ signature: string, id: string }>) => {
-            return {...state, error: null, isLoading: false, success: false}
+        updateAccountDetails: (state: InitialAccountStateType, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, isLoading: false}
         },
         updateAccountDetailsSuccess: (state: InitialAccountStateType, {payload: account}: PayloadAction<{}>) => {
             LocalStorageService.updateAccount('store', account);
-            return {...state, account, error: null, isLoading: false, success: true}
+            return {...state, account, isLoading: false}
         },
-        updateAccountDetailsError: (state: InitialAccountStateType, {payload: error}: PayloadAction<any>) => {
-            return {...state, error, isLoading: false, success: false}
+        updateAccountDetailsError: (state: InitialAccountStateType, _action: PayloadAction<any>) => {
+            return {...state, isLoading: false}
         },
 
-        removeAccountDetails: (state: InitialAccountStateType, _action: PayloadAction<{ id: string }>) => {
-            return {...state, error: null, isLoading: false}
+        removeAccountDetails: (state: InitialAccountStateType, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, isLoading: false}
         },
-        removeAccountDetailsSuccess: (state: InitialAccountStateType, {payload: success}: PayloadAction<{}>) => {
+        removeAccountDetailsSuccess: (state: InitialAccountStateType, _action: PayloadAction<any>) => {
             return {
                 ...state,
-                success: success && 'success' in success ? (success as SuccessData).success : false,
-                error: null,
                 isLoading: false
             };
         },
-        removeAccountDetailsError: (state: InitialAccountStateType, {payload: error}: PayloadAction<any>) => {
-            return {...state, error, isLoading: false}
+        removeAccountDetailsError: (state: InitialAccountStateType, _action: PayloadAction<any>) => {
+            return {...state, isLoading: false}
         },
     }
 })

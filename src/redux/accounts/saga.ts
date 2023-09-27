@@ -26,24 +26,31 @@ function* getAccountDetails({payload}: PayloadAction<ReducerActionType>) {
     }
 }
 
-function* updateAccountDetail({payload: {signature, id}}: PayloadAction<{ signature?: string,  id: string }>) {
+function* updateAccountDetail({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callPatch(`accounts/${id}`, {
+        let signature = payload.body.signature;
+        const response: AxiosResponse = yield ApiService.callPatch(`accounts/${payload.body.id}`, {
             ...(signature ? {signature} : {}),
         });
         yield put(updateAccountDetailsSuccess(response));
+        performSuccessActions(payload);
+
     } catch (error: any) {
         error = error as AxiosError;
+        performSuccessActions(payload);
         yield put(updateAccountDetailsError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
-function* removeAccount({payload: {id}}: PayloadAction<{ id: string }>) {
+function* removeAccount({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callDelete(`accounts/${id}`, {});
+        const response: AxiosResponse = yield ApiService.callDelete(`accounts/${payload.body.id}`, {});
         yield put(removeAccountDetailsSuccess(response));
+        performSuccessActions(payload);
+
     } catch (error: any) {
         error = error as AxiosError;
+        performSuccessActions(payload);
         yield put(removeAccountDetailsError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }

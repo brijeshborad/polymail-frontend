@@ -69,10 +69,22 @@ function EmailAddress() {
 
     const removeAccount = useCallback(() => {
         if (accountData && accountData.id) {
-            dispatch(removeAccountDetails({id: accountData.id}));
+            dispatch(removeAccountDetails({
+                toaster: {
+                    success: {
+                        desc: 'Account removed successfully',
+                        title: 'Account removed',
+                        type: 'success'
+                    },
+                },
+                body: {
+                    id: accountData.id
+                }
+            }));
             setAccountData(null)
+            onDeleteModalClose()
         }
-    }, [dispatch])
+    }, [dispatch, accountData])
 
 
     const openModel = (item: Account) => {
