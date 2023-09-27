@@ -548,6 +548,14 @@ export function ComposeBox(props: any) {
                       ))}
                   </div> : null}
                 </Flex>
+
+                <Flex backgroundColor={'#EBF83E'} width={'fit-content'} borderRadius={'4px'} color={'#0A101D'} fontWeight={'500'} lineHeight={1} padding={'5px 10px'}>
+                  <Text fontSize='xs'> {selectedAccount?.name || ''} is sharing this email thread (and future replies) with&nbsp;</Text>
+                  <Text fontSize='xs' as='u'>1 person</Text>
+                  <Text fontSize='xs'>&nbsp;at chiat.com on&nbsp;</Text>
+                  <Text fontSize='xs' as='u'> Polymail</Text>
+                </Flex>
+
                 <Flex align={'flex-end'} justify={'space-between'} gap={2}>
                   <Flex gap={2} className={styles.replyBoxIcon} mb={'-3px'} position={'relative'} zIndex={5} ml={'170px'}>
                     <Flex align={'center'} gap={2}>

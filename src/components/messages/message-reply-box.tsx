@@ -739,7 +739,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
 
           <Flex direction={'column'} position={"relative"} flex={1} >
-            <Flex direction={'column'} maxH={`calc(285px - ${divHeight}px)`} overflow={'auto'} ref={editorRef} className={`${styles.replyBoxEditor} editor-bottom-shadow`}
+            <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} overflow={'auto'} ref={editorRef} className={`${styles.replyBoxEditor} editor-bottom-shadow`}
               onScroll={() => handleEditorScroll()}>
               <RichTextEditor
                 className={`reply-message-area message-reply-box ${hideEditorToolbar ? 'hide-toolbar' : ''} ${extraClassNames} ${extraClassNamesForBottom}`}
@@ -756,6 +756,14 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 ))}
               </div> : null}
             </Flex>
+
+            <Flex backgroundColor={'#EBF83E'} width={'fit-content'} borderRadius={'4px'} color={'#0A101D'} fontWeight={'500'} lineHeight={1} padding={'5px 10px'}>
+              <Text fontSize='xs'> {selectedAccount?.name || ''} is sharing this email thread (and future replies) with&nbsp;</Text>
+              <Text fontSize='xs' as='u'>1 person</Text>
+              <Text fontSize='xs'>&nbsp;at chiat.com on&nbsp;</Text>
+              <Text fontSize='xs' as='u'> Polymail</Text>
+            </Flex>
+
             {hideEditorToolbar &&
               <Flex direction={'column'} className={styles.composeBox}>
                 <Flex align={'flex-end'} justify={'space-between'} gap={2}>
