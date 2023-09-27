@@ -21,7 +21,7 @@ import {updateCommonState} from "@/redux/common-apis/action-reducer";
 
 
 function Index() {
-    const {isLoading, projects} = useSelector((state: StateType) => state.projects);
+    const {isLoading, projects, projectSearchedString} = useSelector((state: StateType) => state.projects);
     const {showCreateProjectModal} = useSelector((state: StateType) => state.commonApis);
     const router = useRouter();
     const dispatch = useDispatch();
@@ -31,8 +31,10 @@ function Index() {
 
     useEffect(() => {
         if (projects && projects.length > 0) {
-
-            const sortedList = [...projects].sort((a: Project, b: Project) => (a.projectMeta?.order || 0) - (b.projectMeta?.order || 0));
+            let sortedList = [...projects].sort((a: Project, b: Project) => (a.projectMeta?.order || 0) - (b.projectMeta?.order || 0));
+            if (projectSearchedString) {
+                sortedList = sortedList.filter((item: Project) => item.name?.toLowerCase().includes(projectSearchedString.toLowerCase().trim()));
+            }
             if (router.query.favorite === 'true') {
                 let favoriteData = sortedList.filter((item: Project) => item.projectMeta?.favorite);
                 setItemList(favoriteData)
@@ -40,7 +42,7 @@ function Index() {
                 setItemList(sortedList)
             }
         }
-    }, [router.query.favorite, projects])
+    }, [router.query.favorite, projects, projectSearchedString])
 
 
     const handleDragStart = (index: number, e: ChangeEvent | any) => {

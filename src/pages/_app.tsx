@@ -16,7 +16,7 @@ import { HEADER_NOT_ALLOWED_PATHS } from '@/utils/constants';
 import {CommonApiComponents} from "@/components/common";
 import GlobalEvents from '@/components/common/global-events';
 
-const { Button, Input, Menu, Checkbox, Heading, Divider, Alert, Modal, Popover, Tooltip, Textarea, Spinner, List, Select, Table, Progress, Skeleton, Radio, Drawer } =
+const { Button, Input, Menu, Checkbox, Heading, Divider, Alert, Modal, Popover, Tooltip, Textarea, Spinner, List, Select, Table, Progress, Skeleton, Radio, Drawer, Badge } =
     chakraTheme.components;
 const config: ThemeConfig = {
     initialColorMode: 'light',
@@ -44,6 +44,7 @@ const theme = extendBaseTheme({
         Skeleton,
         Radio,
         Drawer,
+        Badge
     },
 });
 

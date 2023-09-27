@@ -11,7 +11,8 @@ const initialState: any = {
     members: [],
     invitees: [],
     isProjectUpdateSuccess: false,
-    createProjectSuccess: false
+    createProjectSuccess: false,
+    projectSearchedString: ''
 } as InitialProjectState
 
 const projectsSlice = createSlice({

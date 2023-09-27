@@ -9,12 +9,12 @@ import {updateAccountDetails, updateAccountState} from "@/redux/accounts/action-
 import withAuth from "@/components/auth/withAuth";
 import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
 import SettingsLayout from "@/pages/settings/settings-layout";
+import {fireEvent} from "@/redux/global-events/action-reducer";
 
 function Signature() {
 
     const [signature, setSignature] = useState<string>('');
     const [isSignatureUpdate, setIsSignatureUpdate] = useState<boolean>(false);
-    const [boxUpdatedFirstTime, setBoxUpdatedFirstTime] = useState<boolean>(false);
 
     const {selectedAccount, account, success} = useSelector((state: StateType) => state.accounts);
     const dispatch = useDispatch();
@@ -23,7 +23,6 @@ function Signature() {
         // Add signature to email body
         if (selectedAccount && selectedAccount.signature) {
             setSignature(selectedAccount.signature);
-            setBoxUpdatedFirstTime(false);
         }
     }, [selectedAccount])
 
@@ -31,16 +30,13 @@ function Signature() {
         if (account && success) {
             dispatch(updateAccountState({selectedAccount: {...account}}));
             setIsSignatureUpdate(false);
-            setBoxUpdatedFirstTime(false);
             Toaster({desc: 'Signature updated successfully', title: 'Signature updated', type: 'success'});
         }
     }, [dispatch, account, success])
 
     const addSignature = (value: string) => {
-        if (!boxUpdatedFirstTime) {
-            setBoxUpdatedFirstTime(true);
-        }
         if (selectedAccount && selectedAccount.signature) {
+            console.log('COMES HERE', value);
             let currentEmailBody: string = getPlainTextFromHtml(value);
             let currentAccountSignature: string = getPlainTextFromHtml(selectedAccount.signature);
             if (currentEmailBody.trim().length) {
@@ -49,7 +45,6 @@ function Signature() {
                 }
             }
         }
-
         setSignature(value)
     }
 
@@ -64,8 +59,8 @@ function Signature() {
 
     const cancelButtonClick = () => {
         if (selectedAccount && selectedAccount.signature) {
+            dispatch(fireEvent({event: {data: selectedAccount.signature, type: 'richtexteditor.forceUpdate'}}));
             setSignature(selectedAccount.signature);
-            setBoxUpdatedFirstTime(false);
             setIsSignatureUpdate(false);
         }
     }
@@ -84,7 +79,7 @@ function Signature() {
                         <Flex direction={"column"} gap={2} className={styles.profileAccount}>
                             <Text fontSize={'14px'}>Email Signature</Text>
 
-                            <RichTextEditor className={styles.emailSignature} initialUpdated={boxUpdatedFirstTime}
+                            <RichTextEditor className={styles.emailSignature}
                                             hideToolBar={true}
                                             placeholder='Add Your Email Signature'
                                             value={signature} onChange={(e) => addSignature(e)}/>
