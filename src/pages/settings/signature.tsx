@@ -36,11 +36,10 @@ function Signature() {
 
     const addSignature = (value: string) => {
         if (selectedAccount && selectedAccount.signature) {
-            console.log('COMES HERE', value);
             let currentEmailBody: string = getPlainTextFromHtml(value);
             let currentAccountSignature: string = getPlainTextFromHtml(selectedAccount.signature);
             if (currentEmailBody.trim().length) {
-                if (currentEmailBody.trim() !== currentAccountSignature.trim()) {
+                if (value.trim() !== currentAccountSignature.trim()) {
                     setIsSignatureUpdate(true);
                 }
             }
