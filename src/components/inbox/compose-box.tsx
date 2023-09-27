@@ -25,6 +25,7 @@ import dynamic from "next/dynamic";
 import {updateCommonState} from "@/redux/common-apis/action-reducer";
 import {updateThreadState} from "@/redux/threads/action-reducer";
 import {useRouter} from "next/router";
+import {fireEvent} from "@/redux/global-events/action-reducer";
 const CreateNewProject = dynamic(() => import('@/components/project/create-new-project').then(mod => mod.default));
 const RichTextEditor = dynamic(() => import("@/components/common").then(mod => mod.RichTextEditor));
 const Time = dynamic(() => import("@/components/common").then(mod => mod.Time));
@@ -278,6 +279,13 @@ export function ComposeBox(props: any) {
         }
       }
     }, 500);
+  }
+
+  const discardMessage = () => {
+    if (selectedAccount && selectedAccount.signature) {
+      setEmailBody(`<p></p><p>${selectedAccount.signature}</p>`);
+      dispatch(fireEvent({event: {data: `<p></p><p>${selectedAccount.signature}</p>`, type: 'richtexteditor.forceUpdate'}}));
+    }
   }
 
   const sendMessages = () => {
@@ -556,6 +564,13 @@ export function ComposeBox(props: any) {
                     </Flex>
                   </Flex>
                   <Flex align={'center'} className={styles.replyButton}>
+                    <Button
+                        className={styles.replyTextDiscardButton}
+                        fontSize={14} lineHeight={16}
+                        onClick={() => discardMessage()}
+                    >
+                      Discard
+                    </Button>
                     <Button className={styles.replyTextButton} colorScheme='blue' onClick={() => sendMessages()}>
                       {scheduledDate ? (
                           <>Send {dayjs(scheduledDate).from(dayjs())} @ {dayjs(scheduledDate).format('hh:mmA')}</>

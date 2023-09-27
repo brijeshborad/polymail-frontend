@@ -39,6 +39,7 @@ import { RecipientsType } from "@/types/props-types/message-recipients.type";
 import { useRouter } from "next/router";
 import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
 import dynamic from "next/dynamic";
+import {fireEvent} from "@/redux/global-events/action-reducer";
 
 dayjs.extend(relativeTime)
 
@@ -474,6 +475,12 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   //     setScheduledDate(today);
   // }
 
+  const discardMessage = () => {
+    if (selectedAccount && selectedAccount.signature) {
+      setEmailBody(`<p></p><p>${selectedAccount.signature}</p>`);
+      dispatch(fireEvent({event: {data: `<p></p><p>${selectedAccount.signature}</p>`, type: 'richtexteditor.forceUpdate'}}));
+    }
+  }
 
   const sendMessages = () => {
 
@@ -765,6 +772,13 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                     {/*<EmojiIcon/>*/}
                   </Flex>
                   <Flex align={'center'} className={styles.replyButton}>
+                    <Button
+                        className={styles.replyTextDiscardButton}
+                        fontSize={14} lineHeight={16}
+                        onClick={() => discardMessage()}
+                    >
+                      Discard
+                    </Button>
                     <Button
                       className={styles.replyTextButton}
                       colorScheme='blue'
