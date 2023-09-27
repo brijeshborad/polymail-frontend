@@ -39,7 +39,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
 
   useEffect(() => {
     if(target === 'threads') {
-      const topPos = (currentThreadRef?.current?.offsetTop - 20) || ((threadIndex || 0)) * 50
+      const topPos = (currentThreadRef?.current?.offsetTop - 50) || ((threadIndex || 0)) * 50
 
       setTimeout(() => {
         if (editorRef.current) {
@@ -48,7 +48,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
             behavior: 'smooth'
           })
         }
-      }, 50)
+      }, 1)
     }
   }, [target, threadIndex, currentThreadRef])
 
