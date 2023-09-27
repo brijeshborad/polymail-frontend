@@ -55,6 +55,12 @@ export function HeaderSearch() {
         }
     }, [router.pathname]);
 
+    useEffect(() => {
+        if (isProjectRoute) {
+            dispatch(updateProjectState({projectSearchedString: searchString}));
+        }
+    }, [searchString, isProjectRoute, dispatch])
+
     const searchCancel = (callAPI: boolean = false) => {
         if (isProjectRoute) {
             if (callAPI) {
@@ -87,10 +93,6 @@ export function HeaderSearch() {
     const handleKeyPress = (event: KeyboardEvent | any) => {
         if (event.key.toLowerCase() === 'enter') {
             searchCancel(false);
-            if (isProjectRoute) {
-                dispatch(updateProjectState({projectSearchedString: searchString}));
-                return;
-            }
             if (searchString) {
                 dispatch(updateThreadState({
                     threads: [],

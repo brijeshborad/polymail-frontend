@@ -161,7 +161,7 @@ function Index() {
                                         <Text fontSize='sm' lineHeight={'16px'} color={'#0A101D'} fontWeight={'500'}>{project.name}</Text>
                                         <Badge textTransform={'none'} backgroundColor={'#F3F4F6'} fontSize={'11px'} fontWeight={400}
                                                color={'#374151'} lineHeight={'1'} borderRadius={50}
-                                               padding={'3px 6px'}>{project.numThreads} thread(s)</Badge>
+                                               padding={'3px 6px'}>{project.numThreads} thread{(project.numThreads || 0) > 1 ? 's': ''}</Badge>
                                         {/*<Badge backgroundColor={'rgba(0, 0, 0, 0.03)'} fontSize={'12px'} color={'#000000'}
                                        lineHeight={'1'} borderRadius={50} padding={'4px 6px'}>2 updates</Badge>*/}
                                     </Flex>
