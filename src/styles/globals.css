@@ -594,3 +594,26 @@ div:has(> .mailSendToaster) {
     max-height: 60vh;
     overflow: auto;
 }
+
+
+/**
+  * Collab Rich Text Editor
+  */
+
+  .tiptap {
+    padding: 8px;
+  }
+
+  .tiptap:focus {
+    outline: none;
+  }
+
+  .tiptap ul, 
+  .tiptap ol {
+    margin-left: 20px;
+  }
+
+  .tiptap-toolbar button {
+    width: 16px;
+    height: 16px;
+  }
