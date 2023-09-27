@@ -1,15 +1,16 @@
 import styles2 from "@/styles/common.module.css";
 import styles from "@/styles/Inbox.module.css";
-import {Flex} from "@chakra-ui/react";
+import {Box, Flex} from "@chakra-ui/react";
 import {Time} from "@/components/common";
 import {DisneyIcon, DotIcon} from "@/icons";
 import {StateType, ThreadListItemProps} from "@/types";
 import { useSelector } from "react-redux";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import { MAILBOX_UNREAD } from "@/utils/constants";
 
 
 export function ThreadsSideBarListItem(props: ThreadListItemProps) {
+  const ref = useRef(null);
   const { multiSelection, updateSuccess, error, isThreadFocused, selectedThread } = useSelector((state: StateType) => state.threads);
   const [isSelected, setIsSelected] = useState<boolean>(false);
   const [isClicked, setIsClicked] = useState<boolean>(false);
@@ -30,9 +31,15 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
       setIsClicked((props.thread.mailboxes || []).includes(MAILBOX_UNREAD));
     }, [props.thread, updateSuccess, error])
 
+    useEffect(() => {
+      if(selectedThread && selectedThread.id === props.thread.id) {
+        props.onSelect(ref)
+      }
+    }, [selectedThread, props])
+
   return (
     <>
-      <div className={`${styles.mailDetails} ${isSelected ? styles.mailDetailsSelected : ''}`}>
+      <Box ref={ref} onClick={(e) => props.onClick(e)} className={`${styles.mailDetails} ${isSelected ? styles.mailDetailsSelected : ''}`}>
           <Flex align={"center"} justify={'space-between'}>
               <Flex align={"center"} className={styles.senderDetails} gap={1}>
                   <DisneyIcon/> {props?.thread?.from?.name || props?.thread?.from?.email}
@@ -46,7 +53,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
           <div className={styles.mailMessage}>
               {props.thread.subject || "(no subject)"}
           </div>
-      </div>
+      </Box>
     </>
   )
 }
