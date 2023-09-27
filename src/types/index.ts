@@ -27,6 +27,7 @@ export * from './draft/draft-state.type';
 
 //Common API
 export * from './common-apis/common-apis.type';
+export * from './common-apis/reducer-action.type';
 
 // Key navigation
 export * from './key-navigation/key-navigation-state.type';

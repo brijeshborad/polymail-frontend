@@ -67,7 +67,7 @@ function ConnectAccount() {
     }, [success, accountData, dispatch])
 
     const getAllAccounts = useCallback(() => {
-        dispatch(getAllAccount());
+        dispatch(getAllAccount({}));
     }, [dispatch])
 
     useEffect(() => {

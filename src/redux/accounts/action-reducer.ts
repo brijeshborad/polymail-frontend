@@ -1,14 +1,12 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {InitialAccountStateType} from "@/types";
+import {InitialAccountStateType, ReducerActionType} from "@/types";
 import LocalStorageService from "@/utils/localstorage.service";
 
 const initialState: any = {
     accounts: [],
     account: null,
     isLoading: false,
-    error: null,
     selectedAccount: LocalStorageService.updateAccount('get') || null,
-    success: false,
     accountLoading: false
 } as InitialAccountStateType
 interface SuccessData {
@@ -20,14 +18,14 @@ const accountSlice = createSlice({
     name: 'accounts',
     initialState,
     reducers: {
-        getAllAccount: (state: InitialAccountStateType) => {
-            return {...state, accounts: [], isLoading: true, error: null}
+        getAllAccount: (state: InitialAccountStateType, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, accounts: [], isLoading: true}
         },
         getAllAccountSuccess: (state: InitialAccountStateType, {payload: accounts}: PayloadAction<{}>) => {
-            return {...state, accounts, isLoading: false, error: null, success: true}
+            return {...state, accounts, isLoading: false}
         },
-        getAllAccountError: (state: InitialAccountStateType, {payload: error}: PayloadAction<any>) => {
-            return {...state, accounts: [], isLoading: false, error}
+        getAllAccountError: (state: InitialAccountStateType, _action: PayloadAction<any>) => {
+            return {...state, accounts: [], isLoading: false}
         },
 
         updateAccountState: (state: InitialAccountStateType, action: PayloadAction<InitialAccountStateType>) => {

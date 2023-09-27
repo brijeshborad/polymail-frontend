@@ -118,7 +118,7 @@ export function CommonApiComponents() {
                     if (loaderPercentage < 100) {
                         loaderPercentage += 10;
                     }
-                    dispatch(getAllAccount());
+                    dispatch(getAllAccount({}));
                 }, ACCOUNT_MAIL_INIT_SYNC_TIMEOUT)
             } else {
                 if (selectedAccount.syncHistory?.mailInitSynced) {
@@ -130,6 +130,17 @@ export function CommonApiComponents() {
     }, [dispatch, selectedAccount])
 
     const getAllCommonApis = useCallback(() => {
+        dispatch(getAllAccount({
+            toaster: {
+                success: {desc: 'YEY GOT THE asdasdsa', title: 'KAI PAN', type: 'success'},
+                error: {desc: 'JJJJJ', title: 'asdasdsa', type: 'error'}
+            },
+            undoAction: {
+                showUndoButton: true,
+                dispatch,
+                action: getAllAccount
+            }
+        }));
         dispatch(getSummary({}));
         dispatch(getProfilePicture({}));
         dispatch(getContacts({}));

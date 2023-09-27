@@ -11,13 +11,17 @@ import {
 } from "@/redux/accounts/action-reducer";
 import ApiService from "@/utils/api.service";
 import {AxiosError, AxiosResponse} from "axios";
+import {performErrorActions, performSuccessActions} from "@/utils/common-redux.functions";
+import {ReducerActionType} from "@/types";
 
-function* getAccountDetails() {
+function* getAccountDetails({payload}: PayloadAction<ReducerActionType>) {
     try {
         const response: AxiosResponse = yield ApiService.callGet(`accounts`, {});
+        performSuccessActions(payload);
         yield put(getAllAccountSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
+        performErrorActions(payload);
         yield put(getAllAccountError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
