@@ -411,7 +411,8 @@ div:has(> .mailSendToaster) {
     transform: rotate(-3deg);
 }
 
-.rdw-editor-wrapper .emoji-picker {
+.rdw-editor-wrapper .emoji-picker,
+.rdw-editor-wrapper .rdw-image-modal {
     top: unset;
     bottom: 30px;
     border-radius: 10px;
@@ -429,7 +430,8 @@ div:has(> .mailSendToaster) {
     font-weight: 500;
 }
 
-.rdw-editor-wrapper .emoji-picker .rdw-link-modal-btn {
+.rdw-editor-wrapper .emoji-picker .rdw-link-modal-btn,
+.rdw-editor-wrapper .rdw-image-modal .rdw-image-modal-btn {
     background-color: #1F2937;
     color: #FFFFFF;
     padding: 10px;
@@ -441,12 +443,14 @@ div:has(> .mailSendToaster) {
     border: 1px solid #1F2937;
 }
 
-.rdw-editor-wrapper .emoji-picker .rdw-link-modal-btn + .rdw-link-modal-btn {
+.rdw-editor-wrapper .emoji-picker .rdw-link-modal-btn + .rdw-link-modal-btn,
+.rdw-editor-wrapper .rdw-image-modal .rdw-image-modal-btn + .rdw-image-modal-btn {
     background-color: #FFFFFF;
     color: #1F2937;
 }
 
-.rdw-editor-wrapper .emoji-picker .rdw-link-modal-btn:hover {
+.rdw-editor-wrapper .emoji-picker .rdw-link-modal-btn:hover,
+.rdw-editor-wrapper .rdw-image-modal .rdw-image-modal-btn:hover {
     box-shadow: none;
 }
 
@@ -606,4 +610,64 @@ div:has(> .mailSendToaster) {
 .add-to-project-list {
     max-height: 60vh;
     overflow: auto;
+}
+
+.email-signature.rdw-editor-wrapper .rdw-editor-toolbar .rdw-option-wrapper {
+    width: 24px;
+    height: 24px;
+}
+
+.email-signature.rdw-editor-wrapper .rdw-editor-toolbar .rdw-option-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.email-signature.rdw-editor-wrapper .link-class {
+    margin-bottom: 0;
+    margin-left: 27px;
+}
+
+.email-signature.rdw-editor-wrapper .rdw-image-wrapper {
+    margin-bottom: 0;
+}
+
+.email-signature.rdw-editor-wrapper .rdw-image-wrapper .rdw-option-wrapper {
+    padding: 2px;
+}
+
+.rdw-editor-wrapper .rdw-image-modal .rdw-image-modal-upload-option {
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    outline: none;
+    border: 1px solid #E5E7EB;
+    padding: 0;
+}
+
+.rdw-editor-wrapper .rdw-image-modal .rdw-image-modal-upload-option .rdw-image-modal-upload-option-label img {
+    max-height: 100px;
+    object-fit: contain;
+}
+
+.rdw-editor-wrapper .rdw-image-modal .rdw-image-modal-url-section {
+    position: relative;
+}
+
+.rdw-editor-wrapper .rdw-image-modal .rdw-image-modal-url-section::before {
+    position: absolute;
+    content: 'Add Image URL';
+    font-size: 12px;
+    font-weight: 500;
+    color: #374151;
+    top: -3px;
+    left: 0;
+}
+
+.rdw-editor-wrapper .rdw-image-modal .rdw-image-modal-header {
+    margin-top: 0;
+}
+
+.rdw-editor-wrapper .rdw-image-modal .rdw-image-modal-alt-input,
+.rdw-editor-wrapper .rdw-image-modal .rdw-image-modal-size-input {
+    height: 30px;
 }

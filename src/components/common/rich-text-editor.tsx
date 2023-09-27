@@ -133,7 +133,8 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
                 onFocus={() => dispatch(updateKeyNavigation({isEnabled: false}))}
                 onBlur={() => dispatch(updateKeyNavigation({isEnabled: true}))}
                 toolbar={{
-                    options: ['inline', 'list', 'emoji', 'link'],
+                    // options: showImageOption ? ['inline', 'list', 'emoji', 'link', 'image'] : ['inline', 'list', 'emoji', 'link'],
+                options: ['inline', 'list', 'emoji', 'link'],
                     inline: {
                         inDropdown: false,
                         options: ['bold', 'italic', 'strikethrough'],
@@ -141,7 +142,26 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
                         italic: {icon: "/image/icon/italic.svg"},
                         strikethrough: {icon: "/image/icon/strikethrough.svg"},
                     },
-                    list: {
+                    // image: {
+                //     previewImage: true,
+                //     // icon: "/image/icon/picture.svg",
+                //     uploadCallback: (file: File) => {
+                //       return new Promise((resolve, reject) => {
+                //         const reader = new FileReader();
+                //         reader.onloadend = () => {
+                //           resolve({
+                //             data: {
+                //               url: reader.result,
+                //             },
+                //           });
+                //         };
+                //         reader.onerror = (reason) => reject(reason);
+                //         reader.readAsDataURL(file);
+                //       });
+                //     },
+                //     alt: { present: true, mandatory: false },
+                // },
+                list: {
                         inDropdown: false,
                         options: ['ordered', 'unordered'],
                         unordered: {icon: "/image/icon/unordered.svg"},

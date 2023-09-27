@@ -1,6 +1,6 @@
 import styles from "@/styles/setting.module.css";
 import {Button, Flex, Heading, Text} from "@chakra-ui/react";
-import {EmojiIcon, FileIcon, LinkIcon, TextIcon} from "@/icons";
+import {TextIcon} from "@/icons";
 import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
@@ -79,16 +79,12 @@ function Signature() {
                         <Flex direction={"column"} gap={2} className={styles.profileAccount}>
                             <Text fontSize={'14px'}>Email Signature</Text>
 
-                            <RichTextEditor className={styles.emailSignature}
-                                            hideToolBar={true}
+                            <RichTextEditor className={`${styles.emailSignature} email-signature`}
                                             placeholder='Add Your Email Signature'
                                             value={signature} onChange={(e) => addSignature(e)}/>
 
-                            <Flex align={'center'} gap={3} className={styles.settingSignatureIcon}>
-                                <FileIcon/>
-                                <LinkIcon/>
+                            <Flex align={'center'} gap={2} className={styles.settingSignatureIcon}>
                                 <TextIcon/>
-                                <EmojiIcon/>
                             </Flex>
                         </Flex>
 

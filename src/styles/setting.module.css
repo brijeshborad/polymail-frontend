@@ -102,6 +102,7 @@
 .profileAccount {
     text-align: left;
     width: 100%;
+    position: relative;
 }
 
 .profileAccount p {
@@ -184,9 +185,16 @@
     box-shadow: none;
 }
 
+.settingSignatureIcon {
+    position: relative;
+    width: fit-content;
+    margin-left: 196px;
+    z-index: 5;
+}
+
 .settingSignatureIcon svg {
-    width: 24px;
-    height: 24px;
+    width: 19px;
+    height: 19px;
     cursor: pointer;
 }
 
@@ -426,6 +434,7 @@
     background-color: #FFFFFF;
     padding: 8px 16px;
     border-radius: 8px;
+    width: 100%;
 }
 
 .copyLinkDetails svg {
@@ -435,6 +444,10 @@
 
 .signaturePreview {
     position: relative;
+}
+
+.signaturePreview img {
+    max-height: 200px;
 }
 
 .signaturePreview:before {
