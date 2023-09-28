@@ -7,7 +7,8 @@ import {
     MenuList,
     Input,
     InputGroup,
-    InputLeftElement
+    InputLeftElement,
+    Box,
 } from "@chakra-ui/react";
 import {SearchIcon, SmallAddIcon} from "@chakra-ui/icons";
 import {FolderIcon} from "@/icons";
@@ -101,22 +102,27 @@ export function AddToProjectButton() {
                 onClose={() => {
                     setDropDownOpen(false)
                     setSearchValue('')
+                    window.focus()
                 }}
-                closeOnBlur={true}>
+                closeOnBlur={true}
+              >
                 <MenuButton
-                    onClick={() => setDropDownOpen(!isDropdownOpen)}
+                    onClick={() => {
+                      setDropDownOpen(!isDropdownOpen)
+                      focusSearch();
+                    }}
                     className={styles.addToProject}
-                    leftIcon={<FolderIcon/>}
                     borderRadius={'50px'}
                     backgroundColor={'#2A6FFF'}
                     color={'#FFFFFF'}
-                    as={Button}
+                    as={Box}
                     boxShadow={'0 0 3px 0 rgba(38, 109, 240, 0.12)'}
                     padding={'4px 4px 4px 8px'}
                     fontSize={'12px'} fontWeight={500}
                     h={'fit-content'}
                     ref={addToProjectRef}
                 >
+                    <span style={{ marginRight: 4 }}><FolderIcon/></span>
                     Add to Project
                     <span className={styles.RightContent}>⌘P</span>
                 </MenuButton>

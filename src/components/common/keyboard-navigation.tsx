@@ -32,6 +32,7 @@ export default function KeyboardNavigationListener() {
         const pressedKey = MONITORED_KEYS.find(mk => mk.key === e.keyCode)
         let target = lastTarget
 
+
         if (pressedKey) {
           let dispatchAction: InitialKeyNavigationStateType = {
             isEnabled,
@@ -46,7 +47,6 @@ export default function KeyboardNavigationListener() {
 
           if (pressedKey?.value === 'RIGHT') {
             dispatchAction.target = 'thread'
-            dispatchAction.threadIndex = 0
             dispatchAction.messageIndex = 0
 
             dispatch(updateThreadState({
@@ -154,13 +154,13 @@ export default function KeyboardNavigationListener() {
   }, [dispatch, lastTarget, threads, selectedThread, currentMessageId, messages, selectedMessage?.id, isKeyDown, isEnabled]);
 
   useEffect(() => {
-    const handlKeyUp = () => {
+    const handleKeyUp = () => {
       setIsKeyDown(false)
     }
 
-    window.addEventListener('keyup', handlKeyUp);
+    window.addEventListener('keyup', handleKeyUp);
     return () => {
-      window.removeEventListener('keyup', handlKeyUp);
+      window.removeEventListener('keyup', handleKeyUp);
     };
   }, [])
 
