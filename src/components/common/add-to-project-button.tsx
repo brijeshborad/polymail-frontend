@@ -112,7 +112,6 @@ export function AddToProjectButton() {
                       focusSearch();
                     }}
                     className={styles.addToProject}
-                    // leftIcon={<FolderIcon/>}
                     borderRadius={'50px'}
                     backgroundColor={'#2A6FFF'}
                     color={'#FFFFFF'}
