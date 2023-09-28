@@ -62,7 +62,7 @@ function CreateNewProjectModal() {
                 type: 'success'
             });
             dispatch(updateProjectState({createProjectSuccess: false}))
-            if (project && selectedThread && multiSelection?.length) {
+            if (project && selectedThread) {
                 addThreadToProject(project, multiSelection, selectedThread, dispatch, setSuccessMessage);
             }
             if (selectedAccount && selectedAccount.email && membersInputs.memberArray && membersInputs.memberArray?.length > 0 && project && project.id) {
@@ -93,7 +93,6 @@ function CreateNewProjectModal() {
             dispatch(updateMembershipState({isThreadAddedToProjectSuccess: false}));
         }
     }, [dispatch, isThreadAddedToProjectSuccess, successMessage])
-
 
 
     useEffect(() => {

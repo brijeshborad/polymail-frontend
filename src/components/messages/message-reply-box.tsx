@@ -29,7 +29,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { StateType } from "@/types";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import {MessageAttachments, MessageRecipient} from "@/models";
+import {Message, MessageAttachments, MessageRecipient} from "@/models";
 import { uploadAttachment } from "@/redux/messages/action-reducer";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { MessageBoxType } from "@/types/props-types/message-box.type";
@@ -39,6 +39,9 @@ import { RecipientsType } from "@/types/props-types/message-recipients.type";
 import { useRouter } from "next/router";
 import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
 import dynamic from "next/dynamic";
+import {fireEvent} from "@/redux/global-events/action-reducer";
+import {updateThreadState} from "@/redux/threads/action-reducer";
+import {getCacheMessages, setCacheMessages} from "@/utils/cache.functions";
 
 dayjs.extend(relativeTime)
 
@@ -58,6 +61,7 @@ export function MessageReplyBox(props: MessageBoxType) {
   // const { target } = useSelector((state: StateType) => state.keyNavigation);
   const { selectedAccount } = useSelector((state: StateType) => state.accounts);
   const { draft } = useSelector((state: StateType) => state.draft);
+  const { selectedThread, tabValue } = useSelector((state: StateType) => state.threads);
   const { event: incomingEvent } = useSelector((state: StateType) => state.globalEvents);
   const dispatch = useDispatch();
   const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
@@ -474,9 +478,14 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   //     setScheduledDate(today);
   // }
 
+  const discardMessage = () => {
+    if (selectedAccount && selectedAccount.signature) {
+      setEmailBody(`<p></p><p>${selectedAccount.signature}</p>`);
+      dispatch(fireEvent({event: {data: `<p></p><p>${selectedAccount.signature}</p>`, type: 'richtexteditor.forceUpdate'}}));
+    }
+  }
 
   const sendMessages = () => {
-
     if (draft && draft.id) {
       let params = {};
       let polyToast = `poly-toast-${new Date().getMilliseconds()}`;
@@ -547,11 +556,36 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         }
       }
 
+      if (selectedThread) {
+        let draftData = {
+          ...draft,
+          mailboxes: [tabValue],
+          snippet: draft.subject
+        }
+        let threadData = {...selectedThread};
+        let messages = [...(threadData?.messages || [])];
+        let findDraftId = messages.findIndex(item => item.id === draft.id);
+        messages.splice(findDraftId, 1);
+        messages.push(draftData as Message);
+        threadData = {
+          ...threadData,
+          messages: messages
+        };
 
+        dispatch(updateThreadState({
+          selectedThread: threadData
+        }))
+        let cacheMessages = getCacheMessages();
+        setCacheMessages({
+          ...cacheMessages,
+          [draftData.id!]: {
+            ...cacheMessages[draftData.id!],
+            data: Buffer.from(draft.draftInfo!.body || '').toString('base64'),
+            attachments: draft?.draftInfo?.attachments || []
+          }
+        })
+      }
       onClose();
-      // if (props.onClose) {
-      //     props.onClose();
-      // }
 
       setEmailRecipients({
         cc: { items: [], value: blankRecipientValue },
@@ -732,7 +766,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
 
           <Flex direction={'column'} position={"relative"} flex={1} >
-            <Flex direction={'column'} maxH={`calc(285px - ${divHeight}px)`} overflow={'auto'} ref={editorRef} className={`${styles.replyBoxEditor} editor-bottom-shadow`}
+            <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} overflow={'auto'} ref={editorRef} className={`${styles.replyBoxEditor} editor-bottom-shadow`}
               onScroll={() => handleEditorScroll()}>
               <RichTextEditor
                 className={`reply-message-area message-reply-box ${hideEditorToolbar ? 'hide-toolbar' : ''} ${extraClassNames} ${extraClassNamesForBottom}`}
@@ -749,6 +783,14 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 ))}
               </div> : null}
             </Flex>
+
+            <Flex backgroundColor={'#EBF83E'} width={'fit-content'} borderRadius={'4px'} color={'#0A101D'} fontWeight={'500'} lineHeight={1} padding={'5px 10px'}>
+              <Text fontSize='xs'> {selectedAccount?.name || ''} is sharing this email thread (and future replies) with&nbsp;</Text>
+              <Text fontSize='xs' as='u'>1 person</Text>
+              <Text fontSize='xs'>&nbsp;at chiat.com on&nbsp;</Text>
+              <Text fontSize='xs' as='u'> Polymail</Text>
+            </Flex>
+
             {hideEditorToolbar &&
               <Flex direction={'column'} className={styles.composeBox}>
                 <Flex align={'flex-end'} justify={'space-between'} gap={2}>
@@ -765,6 +807,13 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                     {/*<EmojiIcon/>*/}
                   </Flex>
                   <Flex align={'center'} className={styles.replyButton}>
+                    <Button
+                        className={styles.replyTextDiscardButton}
+                        fontSize={14} lineHeight={16}
+                        onClick={() => discardMessage()}
+                    >
+                      Discard
+                    </Button>
                     <Button
                       className={styles.replyTextButton}
                       colorScheme='blue'

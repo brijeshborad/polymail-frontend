@@ -21,7 +21,7 @@ import {updateCommonState} from "@/redux/common-apis/action-reducer";
 
 
 function Index() {
-    const {isLoading, projects} = useSelector((state: StateType) => state.projects);
+    const {isLoading, projects, projectSearchedString} = useSelector((state: StateType) => state.projects);
     const {showCreateProjectModal} = useSelector((state: StateType) => state.commonApis);
     const router = useRouter();
     const dispatch = useDispatch();
@@ -31,8 +31,10 @@ function Index() {
 
     useEffect(() => {
         if (projects && projects.length > 0) {
-
-            const sortedList = [...projects].sort((a: Project, b: Project) => (a.projectMeta?.order || 0) - (b.projectMeta?.order || 0));
+            let sortedList = [...projects].sort((a: Project, b: Project) => (a.projectMeta?.order || 0) - (b.projectMeta?.order || 0));
+            if (projectSearchedString) {
+                sortedList = sortedList.filter((item: Project) => item.name?.toLowerCase().includes(projectSearchedString.toLowerCase().trim()));
+            }
             if (router.query.favorite === 'true') {
                 let favoriteData = sortedList.filter((item: Project) => item.projectMeta?.favorite);
                 setItemList(favoriteData)
@@ -40,7 +42,7 @@ function Index() {
                 setItemList(sortedList)
             }
         }
-    }, [router.query.favorite, projects])
+    }, [router.query.favorite, projects, projectSearchedString])
 
 
     const handleDragStart = (index: number, e: ChangeEvent | any) => {
@@ -157,9 +159,9 @@ function Index() {
                                             { project?.emoji ? project.emoji : <Image src="/image/handcraft.png" width="24" height="24" alt=""/> }
                                         </div>
                                         <Text fontSize='sm' lineHeight={'16px'} color={'#0A101D'} fontWeight={'500'}>{project.name}</Text>
-                                        <Badge backgroundColor={'#F3F4F6'} fontSize={'11px'} fontWeight={400}
+                                        <Badge textTransform={'none'} backgroundColor={'#F3F4F6'} fontSize={'11px'} fontWeight={400}
                                                color={'#374151'} lineHeight={'1'} borderRadius={50}
-                                               padding={'3px 6px'}>{project.numThreads} thread(s)</Badge>
+                                               padding={'3px 6px'}>{project.numThreads} thread{(project.numThreads || 0) !== 1 ? 's': ''}</Badge>
                                         {/*<Badge backgroundColor={'rgba(0, 0, 0, 0.03)'} fontSize={'12px'} color={'#000000'}
                                        lineHeight={'1'} borderRadius={50} padding={'4px 6px'}>2 updates</Badge>*/}
                                     </Flex>

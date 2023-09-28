@@ -102,7 +102,7 @@
 /*Header CSS start*/
 
 .header {
-    padding: 12px 40px;
+    /*padding: 12px 40px;*/
     border-bottom: 1px solid rgba(8, 22, 47, 0.12);
     background-color: #FFFFFF;
 }
@@ -130,14 +130,17 @@
     cursor: pointer;
     width: 30px;
 }
+
 .logoContainer:hover .logo {
     display: none;
 }
+
 .logoContainer:hover .refreshIcon {
     display: block;
     width: 20px;
     height: 20px;
 }
+
 .logoContainer .refreshIcon {
     display: none;
 }
@@ -180,6 +183,66 @@
 
 .headerSearch {
     width: 100%;
+    padding: 12px;
+    z-index: 1;
+}
+
+.headerSearch.headerSearchPopup {
+    position: relative;
+    z-index: 1;
+}
+
+.headerSearch.headerSearchPopup .headerSearchPopupBox {
+    position: absolute;
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 30px;
+    padding: 70px 24px 16px 24px;
+    width: 100%;
+    top: 0;
+    left: 0;
+    height: auto;
+    z-index: 0;
+}
+
+
+.headerSearch.headerSearchPopup .headerSearchPopupBox .headerSearchPopupBoxButton {
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    letter-spacing: -0.13px;
+    line-height: 1;
+    border: 1px solid #E5E7EB;
+    border-radius: 50px;
+    height: auto;
+    width: auto;
+    padding: 4px 12px 3px 8px;
+}
+
+
+.headerSearch.headerSearchPopup .headerSearchPopupBox .headerSearchPopupBoxButton:hover {
+    background: #FFFFFF;
+}
+
+.headerSearch.headerSearchPopup .headerSearchPopupBoxButton svg {
+    width: 20px;
+    height: 20px;
+    stroke: #374151;
+}
+
+.headerSearch.headerSearchPopup .headerSearchInput {
+    border-color: rgb(49, 130, 206);
+    box-shadow: rgb(49, 130, 206) 0 0 0 1px;
+}
+
+.headerSearch .headerSearchInput {
+    align-items: center;
+    border: 1px solid #cbd5e0;
+    padding: 8px;
+    width: 100%;
+    gap: 12px;
+    background-color: #F5F5F5;
+    border-radius: 50px;
 }
 
 .headerSearch svg {
@@ -188,6 +251,7 @@
 
 .headerSearch div {
     height: 100%;
+    z-index: 1;
 }
 
 .headerSearch input {
@@ -195,11 +259,15 @@
     font-weight: 500;
     line-height: normal;
     color: #08162F;
-    border-radius: 50px;
-    background-color: #F5F5F5;
+    background-color: transparent;
+    border: 0;
+    border-radius: 0;
     height: auto;
-    padding-top: 8px;
-    padding-bottom: 8px;
+    padding: 0 30px 0 0;
+}
+
+.headerSearch input:focus-visible {
+    box-shadow: none;
 }
 
 .headerSearch input::placeholder {
@@ -233,6 +301,7 @@
     width: 20px;
     height: 20px;
 }
+
 .notificationIcon {
     position: relative;
     height: 36px;
@@ -576,7 +645,7 @@ div:has(> .mailToaster) {
 
 
 .drawerBody {
-margin: 0px;
+    margin: 0px;
 }
 
 .feedIcon {
@@ -585,8 +654,8 @@ margin: 0px;
     width: 36px;
     border-radius: 50px;
     border: 1px solid rgba(8, 22, 47, 0.2);
-    margin-top: 3cap;
-  
+    margin-top: 3 cap;
+
 }
 
 .feedIcon span {

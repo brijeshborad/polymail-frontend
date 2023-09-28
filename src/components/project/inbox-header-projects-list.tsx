@@ -26,7 +26,7 @@ export function InboxHeaderProjectsList(props: { size: number }) {
     }, [projects, maxSize]);
 
     useEffect(() => {
-        setMaxSize(Math.floor(props.size / 216) - 2)
+        setMaxSize(Math.floor(props.size / 216) - 3)
     }, [props.size])
 
     const changePage = () => {
@@ -55,6 +55,20 @@ export function InboxHeaderProjectsList(props: { size: number }) {
     return (
         <>
             <>
+                <Button alignItems={'center'} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
+                        onClick={() => dispatch(updateCommonState({
+                            showCreateProjectModal: true,
+                            shouldRedirectOnCreateProject: true
+                        }))} padding={'7px'} minWidth={'216px'}
+                        border={'1px dashed #E5E7EB'} borderRadius={'8px'} h={'fit-content'}
+                        maxWidth={'216px'} className={'create-project-button'}>
+                    <div className={'folder-icon'}>
+                        <PlusIcon/>
+                    </div>
+
+                    <Text whiteSpace={'nowrap'} overflow={'hidden'} textOverflow={'ellipsis'} fontSize='13px'
+                          color={'#374151'} flex={'1'}>{isLoading}Create Project</Text>
+                </Button>
                 {projectData && !!projectData.length && (projectData || []).map((project: Project, index: number) => (
                     <Button onClick={() => gotoProject(project.id!)} ref={projectButtonRef}
                             key={index} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
@@ -72,9 +86,7 @@ export function InboxHeaderProjectsList(props: { size: number }) {
                             </div>
                         </Flex>
                     </Button>
-
-                ))
-                }
+                ))}
 
                 {projectData && projectData.length >= maxSize &&
                 <Button alignItems={'center'} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
@@ -88,22 +100,6 @@ export function InboxHeaderProjectsList(props: { size: number }) {
                     <Text whiteSpace={'nowrap'} overflow={'hidden'} textOverflow={'ellipsis'} fontSize='13px'
                           color={'#374151'} flex={'1'}>Show all
                         projects {projectDataLength.length > maxSize && `(${projectDataLength.length - projectData.length})`}</Text>
-                </Button>
-                }
-                {!isLoading && projectData && projectData.length < maxSize &&
-                <Button alignItems={'center'} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
-                        onClick={() => dispatch(updateCommonState({
-                            showCreateProjectModal: true,
-                            shouldRedirectOnCreateProject: true
-                        }))} padding={'7px'} minWidth={'216px'}
-                        border={'1px dashed #E5E7EB'} borderRadius={'8px'} h={'fit-content'}
-                        maxWidth={'216px'} className={'create-project-button'}>
-                    <div className={'folder-icon'}>
-                        <PlusIcon/>
-                    </div>
-
-                    <Text whiteSpace={'nowrap'} overflow={'hidden'} textOverflow={'ellipsis'} fontSize='13px'
-                          color={'#374151'} flex={'1'}>{isLoading}Create Project</Text>
                 </Button>
                 }
             </>

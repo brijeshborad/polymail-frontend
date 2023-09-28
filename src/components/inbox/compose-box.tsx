@@ -25,6 +25,7 @@ import dynamic from "next/dynamic";
 import {updateCommonState} from "@/redux/common-apis/action-reducer";
 import {updateThreadState} from "@/redux/threads/action-reducer";
 import {useRouter} from "next/router";
+import {fireEvent} from "@/redux/global-events/action-reducer";
 const CreateNewProject = dynamic(() => import('@/components/project/create-new-project').then(mod => mod.default));
 const RichTextEditor = dynamic(() => import("@/components/common").then(mod => mod.RichTextEditor));
 const Time = dynamic(() => import("@/components/common").then(mod => mod.Time));
@@ -278,6 +279,13 @@ export function ComposeBox(props: any) {
         }
       }
     }, 500);
+  }
+
+  const discardMessage = () => {
+    if (selectedAccount && selectedAccount.signature) {
+      setEmailBody(`<p></p><p>${selectedAccount.signature}</p>`);
+      dispatch(fireEvent({event: {data: `<p></p><p>${selectedAccount.signature}</p>`, type: 'richtexteditor.forceUpdate'}}));
+    }
   }
 
   const sendMessages = () => {
@@ -540,6 +548,14 @@ export function ComposeBox(props: any) {
                       ))}
                   </div> : null}
                 </Flex>
+
+                <Flex backgroundColor={'#EBF83E'} width={'fit-content'} borderRadius={'4px'} color={'#0A101D'} fontWeight={'500'} lineHeight={1} padding={'5px 10px'}>
+                  <Text fontSize='xs'> {selectedAccount?.name || ''} is sharing this email thread (and future replies) with&nbsp;</Text>
+                  <Text fontSize='xs' as='u'>1 person</Text>
+                  <Text fontSize='xs'>&nbsp;at chiat.com on&nbsp;</Text>
+                  <Text fontSize='xs' as='u'> Polymail</Text>
+                </Flex>
+
                 <Flex align={'flex-end'} justify={'space-between'} gap={2}>
                   <Flex gap={2} className={styles.replyBoxIcon} mb={'-3px'} position={'relative'} zIndex={5} ml={'170px'}>
                     <Flex align={'center'} gap={2}>
@@ -556,6 +572,13 @@ export function ComposeBox(props: any) {
                     </Flex>
                   </Flex>
                   <Flex align={'center'} className={styles.replyButton}>
+                    <Button
+                        className={styles.replyTextDiscardButton}
+                        fontSize={14} lineHeight={16}
+                        onClick={() => discardMessage()}
+                    >
+                      Discard
+                    </Button>
                     <Button className={styles.replyTextButton} colorScheme='blue' onClick={() => sendMessages()}>
                       {scheduledDate ? (
                           <>Send {dayjs(scheduledDate).from(dayjs())} @ {dayjs(scheduledDate).format('hh:mmA')}</>

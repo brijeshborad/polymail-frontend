@@ -1,7 +1,7 @@
 import { Thread } from "@/models";
 import styles from "@/styles/Inbox.module.css";
 import { Flex, Input } from "@chakra-ui/react";
-import React, {useEffect, useCallback, useRef, useState} from "react";
+import React, {useEffect, useCallback, useRef, useState, RefObject} from "react";
 import { updateMessageState } from "@/redux/messages/action-reducer";
 import { updateThreadState } from "@/redux/threads/action-reducer";
 import { updateDraftState } from "@/redux/draft/action-reducer";
@@ -17,6 +17,7 @@ import {getCurrentSelectedThreads, setCurrentSelectedThreads} from "@/utils/cach
 export function ThreadsSideBarList(props: ThreadListProps) {
   const { selectedThread, threads} = useSelector((state: StateType) => state.threads);
   const {selectedAccount} = useSelector((state: StateType) => state.accounts);
+  const [currentThreadRef, setCurrentThreadRef] = useState<RefObject<HTMLDivElement> | null>(null);
   const dispatch = useDispatch()
   const listRef = useRef<any>(null);
   const router = useRouter();
@@ -38,18 +39,21 @@ export function ThreadsSideBarList(props: ThreadListProps) {
 
   useEffect(() => {
     if(target === 'threads') {
-      const topPos = ((threadIndex || 0)) * 50
-
-      setTimeout(() => {
-        if (editorRef.current) {
-          editorRef.current.scrollTo({
-            top: topPos,
-            behavior: 'smooth'
-          })
-        }
-      }, 50)
+      const node = currentThreadRef ? currentThreadRef.current : null
+      if(node) {
+        const topPos = (node.offsetTop - 50) || ((threadIndex || 0)) * 50
+  
+        setTimeout(() => {
+          if (editorRef.current) {
+            editorRef.current.scrollTo({
+              top: topPos,
+              behavior: 'smooth'
+            })
+          }
+        }, 1)
+      }
     }
-  }, [target, threadIndex])
+  }, [target, threadIndex, currentThreadRef])
 
   const handleClick = useCallback((item: Thread, event: KeyboardEvent | any, index: number) => {
     // Check if Control key (or Command key on Mac) is held down
@@ -152,7 +156,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
       return () => clearInterval(interval);
     }
     return undefined
-  }, [selectedThread]);
+  }, [selectedThread, selectedAccount, sendJsonMessage]);
 
   return (
     <>
@@ -163,9 +167,16 @@ export function ThreadsSideBarList(props: ThreadListProps) {
             ref={listRef} />
 
             {threads && threads.length > 0 && threads.map((item: Thread, index: number) => (
-              <div onClick={(e) => handleClick(item, e, index)} key={index}
-                   className={`${(selectedThread && selectedThread.id === item.id) ? styles.selectedThread : ''}`}>
-                <ThreadsSideBarListItem thread={item} tab={props.tab} />
+              <div 
+                key={index}
+                className={`${(selectedThread && selectedThread.id === item.id) ? styles.selectedThread : ''}`}
+              >
+                <ThreadsSideBarListItem 
+                  thread={item} 
+                  tab={props.tab} 
+                  onClick={(e) => handleClick(item, e, index)}
+                  onSelect={(ref) => setCurrentThreadRef(ref)}
+                />
               </div>
             ))}
         </Flex>

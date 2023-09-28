@@ -192,6 +192,8 @@ a {
     z-index: 5;
 }
 
+
+
 .rdw-editor-wrapper .rdw-editor-toolbar .rdw-emoji-wrapper {
     border-left: 1px solid rgba(8, 22, 47, 0.1);
     margin-bottom: 0;
@@ -349,11 +351,12 @@ div:has(> .mailSendToaster) {
 
 .reply-message-area.rdw-editor-wrapper {
     flex: 1;
-    max-height: calc(100vh - 504px);
+    max-height: calc(100vh - 520px);
 }
 
 .reply-message-area.rdw-editor-wrapper .rdw-editor-main {
     max-height: 100%;
+    overflow: unset;
 }
 
 .message-reply-box.rdw-editor-wrapper .rdw-editor-toolbar {
@@ -408,7 +411,8 @@ div:has(> .mailSendToaster) {
     transform: rotate(-3deg);
 }
 
-.rdw-editor-wrapper .emoji-picker {
+.rdw-editor-wrapper .emoji-picker,
+.rdw-editor-wrapper .rdw-image-modal {
     top: unset;
     bottom: 30px;
     border-radius: 10px;
@@ -426,7 +430,8 @@ div:has(> .mailSendToaster) {
     font-weight: 500;
 }
 
-.rdw-editor-wrapper .emoji-picker .rdw-link-modal-btn {
+.rdw-editor-wrapper .emoji-picker .rdw-link-modal-btn,
+.rdw-editor-wrapper .rdw-image-modal .rdw-image-modal-btn {
     background-color: #1F2937;
     color: #FFFFFF;
     padding: 10px;
@@ -438,12 +443,14 @@ div:has(> .mailSendToaster) {
     border: 1px solid #1F2937;
 }
 
-.rdw-editor-wrapper .emoji-picker .rdw-link-modal-btn + .rdw-link-modal-btn {
+.rdw-editor-wrapper .emoji-picker .rdw-link-modal-btn + .rdw-link-modal-btn,
+.rdw-editor-wrapper .rdw-image-modal .rdw-image-modal-btn + .rdw-image-modal-btn {
     background-color: #FFFFFF;
     color: #1F2937;
 }
 
-.rdw-editor-wrapper .emoji-picker .rdw-link-modal-btn:hover {
+.rdw-editor-wrapper .emoji-picker .rdw-link-modal-btn:hover,
+.rdw-editor-wrapper .rdw-image-modal .rdw-image-modal-btn:hover {
     box-shadow: none;
 }
 
@@ -536,7 +543,7 @@ div:has(> .mailSendToaster) {
     width: 25px;
 }
 
-.editor-bottom-shadow:has(> .show-shadow-bottom):after {
+.editor-bottom-shadow .show-shadow-bottom:after {
     position: absolute;
     content: '';
     width: 100%;
@@ -547,9 +554,19 @@ div:has(> .mailSendToaster) {
     z-index: 5;
 }
 
+.editor-bottom-shadow .show-shadow-bottom:after {
+    position: absolute;
+    content: '';
+    width: 100%;
+    height: 72px;
+    background: linear-gradient(0deg, #FFF 0%, rgba(255, 255, 255, 0.00) 100%);
+    bottom: 0;
+    left: 0;
+    z-index: 5;
+}
 
-.editor-bottom-shadow:has(> .hide-toolbar.show-shadow-bottom):after {
-    bottom: 38px;
+.editor-bottom-shadow .hide-toolbar.show-shadow-bottom:after {
+    bottom: 60px;
 }
 
 ::-webkit-datetime-edit-ampm-field {
@@ -617,3 +634,62 @@ div:has(> .mailSendToaster) {
     width: 16px;
     height: 16px;
   }
+.email-signature.rdw-editor-wrapper .rdw-editor-toolbar .rdw-option-wrapper {
+    width: 24px;
+    height: 24px;
+}
+
+.email-signature.rdw-editor-wrapper .rdw-editor-toolbar .rdw-option-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.email-signature.rdw-editor-wrapper .link-class {
+    margin-bottom: 0;
+    margin-left: 27px;
+}
+
+.email-signature.rdw-editor-wrapper .rdw-image-wrapper {
+    margin-bottom: 0;
+}
+
+.email-signature.rdw-editor-wrapper .rdw-image-wrapper .rdw-option-wrapper {
+    padding: 2px;
+}
+
+.rdw-editor-wrapper .rdw-image-modal .rdw-image-modal-upload-option {
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    outline: none;
+    border: 1px solid #E5E7EB;
+    padding: 0;
+}
+
+.rdw-editor-wrapper .rdw-image-modal .rdw-image-modal-upload-option .rdw-image-modal-upload-option-label img {
+    max-height: 100px;
+    object-fit: contain;
+}
+
+.rdw-editor-wrapper .rdw-image-modal .rdw-image-modal-url-section {
+    position: relative;
+}
+
+.rdw-editor-wrapper .rdw-image-modal .rdw-image-modal-url-section::before {
+    position: absolute;
+    content: 'Add Image URL';
+    font-size: 12px;
+    font-weight: 500;
+    color: #374151;
+    top: -3px;
+    left: 0;
+}
+
+.rdw-editor-wrapper .rdw-image-modal .rdw-image-modal-header {
+    margin-top: 0;
+}
+
+.rdw-editor-wrapper .rdw-image-modal .rdw-image-modal-alt-input,
+.rdw-editor-wrapper .rdw-image-modal .rdw-image-modal-size-input {
+    height: 30px;
+}
