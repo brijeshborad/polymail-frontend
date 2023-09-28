@@ -1,7 +1,7 @@
 import { Thread } from "@/models";
 import styles from "@/styles/Inbox.module.css";
 import { Flex, Input } from "@chakra-ui/react";
-import React, {useEffect, useCallback, useRef, useState} from "react";
+import React, {useEffect, useCallback, useRef, useState, RefObject} from "react";
 import { updateMessageState } from "@/redux/messages/action-reducer";
 import { updateThreadState } from "@/redux/threads/action-reducer";
 import { updateDraftState } from "@/redux/draft/action-reducer";
@@ -17,7 +17,7 @@ import {getCurrentSelectedThreads, setCurrentSelectedThreads} from "@/utils/cach
 export function ThreadsSideBarList(props: ThreadListProps) {
   const { selectedThread, threads} = useSelector((state: StateType) => state.threads);
   const {selectedAccount} = useSelector((state: StateType) => state.accounts);
-  const [currentThreadRef, setCurrentThreadRef] = useState();
+  const [currentThreadRef, setCurrentThreadRef] = useState<RefObject<HTMLDivElement> | null>(null);
   const dispatch = useDispatch()
   const listRef = useRef<any>(null);
   const router = useRouter();
@@ -39,16 +39,19 @@ export function ThreadsSideBarList(props: ThreadListProps) {
 
   useEffect(() => {
     if(target === 'threads') {
-      const topPos = (currentThreadRef?.current?.offsetTop - 50) || ((threadIndex || 0)) * 50
-
-      setTimeout(() => {
-        if (editorRef.current) {
-          editorRef.current.scrollTo({
-            top: topPos,
-            behavior: 'smooth'
-          })
-        }
-      }, 1)
+      const node = currentThreadRef ? currentThreadRef.current : null
+      if(node) {
+        const topPos = (node.offsetTop - 50) || ((threadIndex || 0)) * 50
+  
+        setTimeout(() => {
+          if (editorRef.current) {
+            editorRef.current.scrollTo({
+              top: topPos,
+              behavior: 'smooth'
+            })
+          }
+        }, 1)
+      }
     }
   }, [target, threadIndex, currentThreadRef])
 
