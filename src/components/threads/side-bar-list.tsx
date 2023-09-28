@@ -17,6 +17,7 @@ import {getCurrentSelectedThreads, setCurrentSelectedThreads} from "@/utils/cach
 export function ThreadsSideBarList(props: ThreadListProps) {
   const { selectedThread, threads} = useSelector((state: StateType) => state.threads);
   const {selectedAccount} = useSelector((state: StateType) => state.accounts);
+  const [currentThreadRef, setCurrentThreadRef] = useState();
   const dispatch = useDispatch()
   const listRef = useRef<any>(null);
   const router = useRouter();
@@ -38,7 +39,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
 
   useEffect(() => {
     if(target === 'threads') {
-      const topPos = ((threadIndex || 0)) * 50
+      const topPos = (currentThreadRef?.current?.offsetTop - 50) || ((threadIndex || 0)) * 50
 
       setTimeout(() => {
         if (editorRef.current) {
@@ -47,9 +48,9 @@ export function ThreadsSideBarList(props: ThreadListProps) {
             behavior: 'smooth'
           })
         }
-      }, 50)
+      }, 1)
     }
-  }, [target, threadIndex])
+  }, [target, threadIndex, currentThreadRef])
 
   const handleClick = useCallback((item: Thread, event: KeyboardEvent | any, index: number) => {
     // Check if Control key (or Command key on Mac) is held down
@@ -152,7 +153,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
       return () => clearInterval(interval);
     }
     return undefined
-  }, [selectedThread]);
+  }, [selectedThread, selectedAccount, sendJsonMessage]);
 
   return (
     <>
@@ -163,9 +164,16 @@ export function ThreadsSideBarList(props: ThreadListProps) {
             ref={listRef} />
 
             {threads && threads.length > 0 && threads.map((item: Thread, index: number) => (
-              <div onClick={(e) => handleClick(item, e, index)} key={index}
-                   className={`${(selectedThread && selectedThread.id === item.id) ? styles.selectedThread : ''}`}>
-                <ThreadsSideBarListItem thread={item} tab={props.tab} />
+              <div 
+                key={index}
+                className={`${(selectedThread && selectedThread.id === item.id) ? styles.selectedThread : ''}`}
+              >
+                <ThreadsSideBarListItem 
+                  thread={item} 
+                  tab={props.tab} 
+                  onClick={(e) => handleClick(item, e, index)}
+                  onSelect={(ref) => setCurrentThreadRef(ref)}
+                />
               </div>
             ))}
         </Flex>
