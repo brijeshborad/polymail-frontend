@@ -4,9 +4,10 @@ import {Box, Flex} from "@chakra-ui/react";
 import {Time} from "@/components/common";
 import {DisneyIcon, DotIcon} from "@/icons";
 import {StateType, ThreadListItemProps} from "@/types";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {useEffect, useRef, useState} from "react";
 import { MAILBOX_UNREAD } from "@/utils/constants";
+import { updateKeyNavigation } from "@/redux/key-navigation/action-reducer";
 
 
 export function ThreadsSideBarListItem(props: ThreadListItemProps) {
@@ -14,6 +15,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
   const { multiSelection, updateSuccess, error, isThreadFocused, selectedThread } = useSelector((state: StateType) => state.threads);
   const [isSelected, setIsSelected] = useState<boolean>(false);
   const [isClicked, setIsClicked] = useState<boolean>(false);
+  const dispatch = useDispatch()
 
     useEffect(() => {
         setIsSelected((multiSelection || [])?.includes(props.thread.id!));
@@ -39,7 +41,16 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
 
   return (
     <>
-      <Box ref={ref} onClick={(e) => props.onClick(e)} className={`${styles.mailDetails} ${isSelected ? styles.mailDetailsSelected : ''}`}>
+      <Box 
+        ref={ref} 
+        onClick={(e) => {
+          props.onClick(e)
+          dispatch(updateKeyNavigation({
+            target: 'threads'
+          }))
+        }} 
+        className={`${styles.mailDetails} ${isSelected ? styles.mailDetailsSelected : ''}`}
+      >
           <Flex align={"center"} justify={'space-between'}>
               <Flex align={"center"} className={styles.senderDetails} gap={1}>
                   <DisneyIcon/> {props?.thread?.from?.name || props?.thread?.from?.email}
