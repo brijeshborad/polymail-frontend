@@ -35,6 +35,7 @@ export function AddToProjectButton() {
     const {isThreadAddedToProjectSuccess} = useSelector((state: StateType) => state.memberships);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const [successMessage, setSuccessMessage] = useState<{ desc: string, title: string } | null>(null);
+    const { draft } = useSelector((state: StateType) => state.draft);
 
     useEffect(() => {
         const handleShortcutKeyPress = (e: KeyboardEvent | any) => {
@@ -85,7 +86,7 @@ export function AddToProjectButton() {
 
     function checkProjects(e: MouseEvent | any) {
         if (e.key.toLowerCase() === 'enter' && filteredProjects.length === 1 && selectedThread) {
-            addThreadToProject(filteredProjects[0], multiSelection, selectedThread, dispatch, setSuccessMessage, addToProjectRef);
+            addThreadToProject(filteredProjects[0], multiSelection, selectedThread || draft, dispatch, setSuccessMessage, addToProjectRef);
         }
     }
 
@@ -142,8 +143,8 @@ export function AddToProjectButton() {
                     <div className={'add-to-project-list'}>
                         {filteredProjects && !!filteredProjects.length && (filteredProjects || []).map((item: Project, index: number) => (
                             <MenuItem gap={2} key={index} onClick={() => {
-                                if (selectedThread) {
-                                    addThreadToProject(item, multiSelection, selectedThread, dispatch, setSuccessMessage)
+                                if (selectedThread || draft) {
+                                    addThreadToProject(item, multiSelection, selectedThread || draft, dispatch, setSuccessMessage)
                                 }
                             }}>
                                 {item.emoji} {item.name}

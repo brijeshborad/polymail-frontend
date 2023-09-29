@@ -442,10 +442,10 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
       }
     }
 
-    if ((allValues.length > 0 && emailRecipients && emailRecipients['recipients'] && emailRecipients['recipients'].items.length > 0) || subject) {
+    if ((allValues.length > 0 && emailRecipients && emailRecipients['recipients'] && emailRecipients['recipients'].items.length > 0) || subject || emailBody) {
       sendToDraft('', false);
     }
-  }, [emailRecipients.recipients.items, emailRecipients.cc.items, emailRecipients.bcc.items, subject]);
+  }, [emailRecipients.recipients.items, emailRecipients.cc.items, emailRecipients.bcc.items, subject, emailBody]);
 
   function handleFileUpload(event: ChangeEventHandler | any) {
     const file = event.target.files[0];

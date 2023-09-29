@@ -50,6 +50,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     const {sendJsonMessage} = useSelector((state: StateType) => state.socket);
     const {allowThreadSelection} = useSelector((state: StateType) => state.commonApis);
     const dispatch = useDispatch();
+    const {isComposing} = useSelector((state: StateType) => state.commonApis);
 
 
     useEffect(() => {
@@ -93,13 +94,16 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     useEffect(() => {
         if (threads && threads.length > 0 && !selectedThread && !isLoading) {
             if (allowThreadSelection) {
-                dispatch(updateThreadState({selectedThread: threads[0]}));
+                if (!isComposing) {
+                    dispatch(updateThreadState({selectedThread: threads[0]}));
+                }
                 if (tabValue === 'DRAFT') {
                     dispatch(updateCommonState({isComposing: true}));
+                    dispatch(updateThreadState({selectedThread: threads[0]}));
                 }
             }
         }
-    }, [threads, dispatch, selectedThread, isLoading, tabValue, allowThreadSelection])
+    }, [threads, dispatch, selectedThread, isLoading, tabValue, allowThreadSelection, isComposing])
 
     useEffect(() => {
         if (tab !== '' && getCurrentCacheTab() !== '') {
@@ -149,6 +153,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
 
     const openComposeModel = () => {
         dispatch(updateCommonState({isComposing: true}));
+        dispatch(updateThreadState({selectedThread: null}));
     }
 
     const moveThreadToMailBoxes = (type: string) => {
