@@ -45,9 +45,11 @@ export function addThreadToProject(item: Project, multiSelection: any, selectedT
       })
     }
     dispatch(addItemToGroup(reqBody));
+    const projects = selectedThread?.projects || [];
+
     let addProject = {
       ...selectedThread,
-      projects: [item]
+      projects: [...projects, item]
     }
     dispatch(updateThreadState({ selectedThread: addProject }));
 

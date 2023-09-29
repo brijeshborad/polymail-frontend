@@ -566,7 +566,7 @@ div:has(> .mailSendToaster) {
 }
 
 .editor-bottom-shadow .hide-toolbar.show-shadow-bottom:after {
-    bottom: 60px;
+    bottom: 38px;
 }
 
 ::-webkit-datetime-edit-ampm-field {
