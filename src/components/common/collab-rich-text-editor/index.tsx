@@ -12,58 +12,63 @@ import Collaboration from '@tiptap/extension-collaboration'
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
 import { TiptapCollabProvider } from '@hocuspocus/provider'
 import { CollabRichTextEditorType } from '@/types/props-types/collab-rich-text-editor.types'
-import * as Y from 'yjs'
 import { StateType } from '@/types'
+import { useEffect, useState } from 'react'
 
 export default function CollabRichTextEditor({
-  id, content = '', isToolbarVisible = false, onChange,
+  id, isToolbarVisible = false, onChange,
   beforeToolbar, afterToolbar, extendToolbar,
   placeholder }: CollabRichTextEditorType) {
   const dispatch = useDispatch()
-  const {selectedAccount} = useSelector((state: StateType) => state.accounts);
+  const { selectedAccount } = useSelector((state: StateType) => state.accounts);
+  const [provider, setProvider] = useState<any>()
+  const [extensions, setExtensions] = useState<any>([])
 
-  console.log('ID', id)
-  
-  const provider = new TiptapCollabProvider({
-    appId: '09XY1YK1', // get this at collab.tiptap.dev
-    name: id, // e.g. a uuid uuidv4();
-    token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2OTYwMTI5NDMsIm5iZiI6MTY5NjAxMjk0MywiZXhwIjoxNjk2MDk5MzQzLCJpc3MiOiJodHRwczovL2NvbGxhYi50aXB0YXAuZGV2IiwiYXVkIjoibHVpekBwb2x5bWFpbC5jb20ifQ.eiAUVv-nW6rD-l8YeitTZn2SVgzacDRDaSkYegie800',
-    // document: new Y.Doc() // pass your existing doc, or leave this out and use provider.document
-  })
+  useEffect(() => {
+    if(!id) return 
+    
+    const prov = new TiptapCollabProvider({
+      appId: '09XY1YK1', // get this at collab.tiptap.dev
+      name: id, // e.g. a uuid uuidv4();
+      token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2OTYwMTI5NDMsIm5iZiI6MTY5NjAxMjk0MywiZXhwIjoxNjk2MDk5MzQzLCJpc3MiOiJodHRwczovL2NvbGxhYi50aXB0YXAuZGV2IiwiYXVkIjoibHVpekBwb2x5bWFpbC5jb20ifQ.eiAUVv-nW6rD-l8YeitTZn2SVgzacDRDaSkYegie800',
+      // document: new Y.Doc() // pass your existing doc, or leave this out and use provider.document
+    })
+    setProvider(prov)
 
-  const extensions = [
-    Collaboration.configure({
-      document: provider.document,
-    }),
-    Placeholder.configure({
-      placeholder: placeholder,
-    }),
-    Color.configure({ types: [TextStyle.name, ListItem.name] }),
-    // TextStyle.configure({ types: [ListItem.name] }),
-    Link.configure({
-      openOnClick: false,
-      linkOnPaste: true
-    }),
-    StarterKit.configure({
-      bulletList: {
-        keepMarks: true,
-        keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
-      },
-      orderedList: {
-        keepMarks: true,
-        keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
-      },
-    }),
-    CollaborationCursor.configure({
-      provider: provider,
-      user: {
-        name: selectedAccount ? selectedAccount.name : 'Uknown',
-        color: '#f783ac',
-      },
-    }),
-  ]
+    setExtensions([
+      Collaboration.configure({
+        document: prov.document,
+      }),
+      Placeholder.configure({
+        placeholder: placeholder,
+      }),
+      Color.configure({ types: [TextStyle.name, ListItem.name] }),
+      // TextStyle.configure({ types: [ListItem.name] }),
+      Link.configure({
+        openOnClick: false,
+        linkOnPaste: true
+      }),
+      StarterKit.configure({
+        bulletList: {
+          keepMarks: true,
+          keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
+        },
+        orderedList: {
+          keepMarks: true,
+          keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
+        },
+      }),
+      CollaborationCursor.configure({
+        provider: prov,
+        user: {
+          name: selectedAccount ? selectedAccount.name : 'Uknown',
+          color: '#f783ac',
+        },
+      }),
+    ])
+  }, [id, selectedAccount, placeholder])
 
-
+  if(!provider) return
 
   return (
     <div>
@@ -81,7 +86,6 @@ export default function CollabRichTextEditor({
           />
         )}
         extensions={extensions}
-        content={content}
       >
       </EditorProvider>
     </div>
