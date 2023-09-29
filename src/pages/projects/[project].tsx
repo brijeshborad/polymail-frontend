@@ -287,7 +287,7 @@ function ProjectInbox() {
                     <Flex align={'center'} gap={1}>
                         {onlineMembersData.filter(t => t.isOnline).slice(0, 5)
                             .map((item, index) => (
-                                <div className={styles.userImage} style={{border: `1px solid #${item.color}`}} key={index}>
+                                <div className={styles.userImage} style={{border: `2px solid #${item.color}`}} key={index}>
                                     {item.avatar && <Image src={item.avatar} width="36" height="36" alt=""/>}
                                 </div>
                             ))}

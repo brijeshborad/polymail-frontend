@@ -165,7 +165,7 @@ export function InboxHeaderProjectsList(props: { size: number }) {
                                 .filter(t => t.isOnline).slice(0, 5)
                                 .map((item, index) => (
                                         <div className={'member-photo'}
-                                             style={{background: '#000', border: `1px solid #${item.color}`}} key={index}>
+                                             style={{background: '#000', border: `2px solid #${item.color}`}} key={index}>
                                             {item.avatar && <Image src={item.avatar} width="24" height="24"
                                                                    alt=""/>}
                                         </div>
