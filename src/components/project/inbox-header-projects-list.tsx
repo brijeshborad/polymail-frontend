@@ -50,14 +50,14 @@ export function InboxHeaderProjectsList(props: { size: number }) {
                             }
                         }
 
-                        if (updateUserData) {
+                        if (updateUserData && newMessage.data.userId) {
                             let userAlreadyExists = finalItem.userProjectOnlineStatus.findIndex((item) => item.userId === newMessage.userId);
                             if (userAlreadyExists !== -1) {
                                 finalItem.userProjectOnlineStatus[userAlreadyExists].isOnline = true;
                                 finalItem.userProjectOnlineStatus[userAlreadyExists].lastOnlineStatusCheck = dayjs().format('DD/MM/YYYY hh:mm:ss a');
                             } else {
                                 finalItem.userProjectOnlineStatus.push({
-                                    userId: newMessage.userId,
+                                    userId: newMessage.data.userId,
                                     isOnline: true,
                                     lastOnlineStatusCheck: new Date(),
                                     avatar: newMessage.data.avatar,
