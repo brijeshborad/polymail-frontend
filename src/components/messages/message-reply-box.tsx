@@ -266,10 +266,10 @@ export function MessageReplyBox(props: MessageBoxType) {
           return;
         }
         if (draft && draft.id) {
-          dispatch(updatePartialMessage({ id: draft.id, body }));
+          dispatch(updatePartialMessage({body:{ id: draft.id, body: body }}));
         } else {
           setWaitForDraft(true);
-          dispatch(createDraft({ accountId: selectedAccount.id, body }));
+          dispatch(createDraft({body:{ accountId: selectedAccount.id, body: body }}));
         }
       }
     }, 500);
@@ -521,7 +521,31 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
           delay: secondsDifference
         }
 
-        dispatch(sendMessage({ id: draft.id, ...params }));
+        dispatch(sendMessage({body:{id: draft.id, ...params },
+          // toaster:{
+          //   success:{
+          //     desc: `Your message has been scheduled`,
+          //     type: 'send_confirmation',
+          //     title: 'Your message has been scheduled',
+          //     id: polyToast,
+          //     undoClick: (type: string) => {
+          //       let params = {};
+    
+          //       if (type === 'undo') {
+          //         params = {
+          //           undo: true
+          //         }
+          //       } else if (type === 'send-now') {
+          //         params = {
+          //           now: true
+          //         }
+          //       }
+          //       dispatch(sendMessage({body:{id: draft.id!, ...params }}));
+          //       toast.close(`${polyToast}`);
+          //     }
+          //   }
+          // },
+      }));
 
         Toaster({
           desc: `Your message has been scheduled`,
@@ -540,7 +564,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 now: true
               }
             }
-            dispatch(sendMessage({ id: draft.id!, ...params }));
+            dispatch(sendMessage({body:{id: draft.id!, ...params }}));
             toast.close(`${polyToast}`);
           }
         })
@@ -564,7 +588,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                   now: true
                 }
               }
-              dispatch(sendMessage({ id: draft.id!, ...params }));
+              dispatch(sendMessage({body:{ id: draft.id!, ...params }}));
               toast.close(`${polyToast}`);
             }
           })

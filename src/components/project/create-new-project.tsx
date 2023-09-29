@@ -1,3 +1,14 @@
+import withAuth from "@/components/auth/withAuth";
+import { Toaster } from "@/components/common";
+import { updateCommonState } from "@/redux/common-apis/action-reducer";
+import { addItemToGroup } from "@/redux/memberships/action-reducer";
+import { createProjects, updateProjectState } from "@/redux/projects/action-reducer";
+import styles from "@/styles/project.module.css";
+import { StateType } from "@/types";
+import { emojiArray } from "@/utils/common.functions";
+import { PROJECT_ROLES } from "@/utils/constants";
+import { addThreadToProject } from "@/utils/threads-common-functions";
+import { CloseIcon, SmallAddIcon, TriangleDownIcon } from "@chakra-ui/icons";
 import {
     Button,
     Flex, Grid, GridItem,
@@ -9,21 +20,10 @@ import {
     ModalHeader,
     ModalOverlay
 } from "@chakra-ui/react";
-import styles from "@/styles/project.module.css";
-import React, {ChangeEvent, useEffect, useState} from "react";
-import {Toaster} from "@/components/common";
-import {createProjects, updateProjectState} from "@/redux/projects/action-reducer";
-import {useDispatch, useSelector} from "react-redux";
-import {StateType} from "@/types";
-import withAuth from "@/components/auth/withAuth";
-import {CloseIcon, SmallAddIcon, TriangleDownIcon} from "@chakra-ui/icons";
-import {PROJECT_ROLES} from "@/utils/constants";
-import {addItemToGroup, updateMembershipState} from "@/redux/memberships/action-reducer";
 import Image from "next/image";
-import {emojiArray} from "@/utils/common.functions";
 import Router from "next/router";
-import {updateCommonState} from "@/redux/common-apis/action-reducer";
-import {addThreadToProject} from "@/utils/threads-common-functions";
+import { ChangeEvent, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 
 function CreateNewProjectModal() {
@@ -39,11 +39,9 @@ function CreateNewProjectModal() {
     });
     const [projectEmoji, setProjectEmoji] = useState<string>('');
 
-    const {success: membershipSuccess} = useSelector((state: StateType) => state.memberships);
     const {createProjectSuccess, project} = useSelector((state: StateType) => state.projects);
     const {selectedThread, multiSelection} = useSelector((state: StateType) => state.threads);
     const [successMessage, setSuccessMessage] = useState<{ desc: string, title: string } | null>(null);
-    const {isThreadAddedToProjectSuccess} = useSelector((state: StateType) => state.memberships);
     const { draft } = useSelector((state: StateType) => state.draft);
 
     const handleChange = (event: ChangeEvent | any) => {
@@ -56,11 +54,6 @@ function CreateNewProjectModal() {
 
     useEffect(() => {
         if (createProjectSuccess) {
-            Toaster({
-                desc: "New project added successfully",
-                title: "Success",
-                type: 'success'
-            });
             dispatch(updateProjectState({createProjectSuccess: false}))
             if (project && selectedThread) {
                 addThreadToProject(project, multiSelection, selectedThread || draft, dispatch, setSuccessMessage);
@@ -73,7 +66,26 @@ function CreateNewProjectModal() {
                     groupType: 'project',
                     groupId: project?.id
                 }
-                dispatch(addItemToGroup(reqBody))
+                console.log('successMessage', successMessage);
+                dispatch(addItemToGroup({
+                    toaster: {
+                        success: {
+                            desc: successMessage?.desc || 'Thread was added to ' + project.name?.toLowerCase() + '.',
+                            title: successMessage?.title ||  selectedThread?.subject || '',
+                            type: 'success'
+                        }
+                    },
+                    body: reqBody
+                }))
+
+                setMembersInput({
+                    input: '',
+                    role: 'member',
+                    memberArray: []
+                });
+                if (shouldRedirectOnCreateProject && project) {
+                    Router.push(`/projects/${project.id!}`)
+                }
             } else {
                 if (shouldRedirectOnCreateProject && project) {
                     Router.push(`/projects/${project.id!}`);
@@ -81,33 +93,33 @@ function CreateNewProjectModal() {
             }
             dispatch(updateCommonState({showCreateProjectModal: false, shouldRedirectOnCreateProject: false}))
         }
-    }, [dispatch, createProjectSuccess, selectedAccount, membersInputs.memberArray, project, shouldRedirectOnCreateProject])
+    }, [dispatch, createProjectSuccess, selectedAccount, membersInputs.memberArray, project, shouldRedirectOnCreateProject, successMessage])
 
-    useEffect(() => {
-        if (isThreadAddedToProjectSuccess && successMessage) {
-            Toaster({
-                desc: successMessage.desc,
-                title: successMessage.title || '',
-                type: 'success'
-            });
-            dispatch(updateMembershipState({isThreadAddedToProjectSuccess: false}));
-        }
-    }, [dispatch, isThreadAddedToProjectSuccess, successMessage])
+    // useEffect(() => {
+    //     if (isThreadAddedToProjectSuccess && successMessage) {
+    //         Toaster({
+    //             desc: successMessage.desc,
+    //             title: successMessage.title || '',
+    //             type: 'success'
+    //         });
+    //         dispatch(updateMembershipState({isThreadAddedToProjectSuccess: false}));
+    //     }
+    // }, [dispatch, isThreadAddedToProjectSuccess, successMessage])
 
 
-    useEffect(() => {
-        if (membershipSuccess) {
-            dispatch(updateMembershipState({success: false}));
-            setMembersInput({
-                input: '',
-                role: 'member',
-                memberArray: []
-            });
-            if (shouldRedirectOnCreateProject && project) {
-                Router.push(`/projects/${project.id!}`)
-            }
-        }
-    }, [dispatch, membershipSuccess, project, shouldRedirectOnCreateProject])
+    // useEffect(() => {
+    //     if (membershipSuccess) {
+    //         dispatch(updateMembershipState({success: false}));
+    //         setMembersInput({
+    //             input: '',
+    //             role: 'member',
+    //             memberArray: []
+    //         });
+    //         if (shouldRedirectOnCreateProject && project) {
+    //             Router.push(`/projects/${project.id!}`)
+    //         }
+    //     }
+    // }, [dispatch, membershipSuccess, project, shouldRedirectOnCreateProject])
 
     const addNewProject = () => {
         if (projectName.length === 0) {
@@ -125,13 +137,20 @@ function CreateNewProjectModal() {
         }
 
         if (selectedAccount && selectedOrganization) {
-            let body = {
-                name: projectName,
-                accountId: selectedAccount.id,
-                organizationId: selectedOrganization.id,
-                emoji: projectEmoji
-            }
-            dispatch(createProjects(body));
+            dispatch(createProjects({
+                body: {
+                    name: projectName,
+                    accountId: selectedAccount.id,
+                    organizationId: selectedOrganization.id,
+                    emoji: projectEmoji,
+                },
+                toaster: {
+                    success: {
+                    desc: "New project added successfully",
+                    title: "Success",
+                    type: 'success'},
+                },
+            }));
         }
         setProjectName('');
         setProjectEmoji('');

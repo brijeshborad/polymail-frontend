@@ -1,5 +1,6 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {InitialCommonApisStateType} from "@/types/common-apis/common-apis.type";
+import { ReducerActionType } from "@/types";
 
 const initialState: any = {
   summary: null,
@@ -16,34 +17,34 @@ const commonApisSlice = createSlice({
   name: 'common-apis',
   initialState,
   reducers: {
-    getSummary: (state: InitialCommonApisStateType, _action: PayloadAction<{}>) => {
-      return {...state, isLoading: true, error: null}
+    getSummary: (state: InitialCommonApisStateType, _action: PayloadAction<ReducerActionType>) => {
+      return {...state, isLoading: true}
     },
     getSummarySuccess: (state: InitialCommonApisStateType, _action: PayloadAction<{}>) => {
       return {...state, isLoading: false, error: null}
     },
-    getSummaryError: (state: InitialCommonApisStateType, {payload: error}: PayloadAction<{ error: any }>) => {
-      return {...state, isLoading: false, error}
+    getSummaryError: (state: InitialCommonApisStateType, _action: PayloadAction<any>) => {
+      return {...state, isLoading: false}
     },
 
-    getProjectSummary: (state: InitialCommonApisStateType, _action: PayloadAction<{ mailbox?: string, id?: string, account?: string, mine?: boolean, resetState?: boolean, query?: string }>) => {
-      return {...state, isLoading: true, error: null}
+    getProjectSummary: (state: InitialCommonApisStateType, _action: PayloadAction<ReducerActionType>) => {
+      return {...state, isLoading: true}
     },
     getProjectSummarySuccess: (state: InitialCommonApisStateType, _action: PayloadAction<{}>) => {
-      return {...state, isLoading: false, error: null}
+      return {...state, isLoading: false}
     },
-    getProjectSummaryError: (state: InitialCommonApisStateType, {payload: error}: PayloadAction<{ error: any }>) => {
-      return {...state, isLoading: false, error}
+    getProjectSummaryError: (state: InitialCommonApisStateType, _action: PayloadAction<any>) => {
+      return {...state, isLoading: false}
     },
 
-    getContacts: (state: InitialCommonApisStateType, _action: PayloadAction<{ }>) => {
-      return {...state, contacts: [], isLoading: true, error: null}
+    getContacts: (state: InitialCommonApisStateType, _action: PayloadAction<ReducerActionType>) => {
+      return {...state, contacts: [], isLoading: true}
     },
     getContactsSuccess: (state: InitialCommonApisStateType, {payload: contacts}: PayloadAction<any>) => {
       return {...state, contacts, isLoading: false, error: null}
     },
-    getContactsError: (state: InitialCommonApisStateType, {payload: error}: PayloadAction<{ error: any }>) => {
-      return {...state, contacts: [], isLoading: false, error}
+    getContactsError: (state: InitialCommonApisStateType, _action: PayloadAction<any>) => {
+      return {...state, contacts: [], isLoading: false}
     },
 
     updateCommonState: (state: InitialCommonApisStateType, action: PayloadAction<InitialCommonApisStateType>) => {

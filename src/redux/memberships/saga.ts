@@ -14,12 +14,14 @@ import {
     deleteMemberFromOrganizationError,
     deleteMemberShipFromProjectError, deleteMemberShipFromProjectSuccess, deleteMemberShipFromProject
 } from "@/redux/memberships/action-reducer";
-import {MembershipsRequestBody} from "@/models/memberships";
+import { ReducerActionType } from "@/types";
+import { performSuccessActions } from "@/utils/common-redux.functions";
 
 // Add members to Projects
-function* addItemToGroupService({payload}: PayloadAction<MembershipsRequestBody>) {
+function* addItemToGroupService({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callPost(`memberships`, payload);
+        const response: AxiosResponse = yield ApiService.callPost(`memberships`, payload.body);
+        performSuccessActions(payload);
         yield put(addItemToGroupSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
@@ -28,9 +30,10 @@ function* addItemToGroupService({payload}: PayloadAction<MembershipsRequestBody>
 }
 
 // Add Threads to Projects
-function* removeMemberFromProject({payload: {id, accountId}}: PayloadAction<{id: string, accountId: string}>) {
+function* removeMemberFromProject({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callDelete(`projects/${id}/accounts/${accountId}`, {});
+        const response: AxiosResponse = yield ApiService.callDelete(`projects/${payload.body.id}/accounts/${payload.body.accountId}`, {});
+        performSuccessActions(payload);
         yield put(deleteMemberFromProjectSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
@@ -38,9 +41,10 @@ function* removeMemberFromProject({payload: {id, accountId}}: PayloadAction<{id:
     }
 }
 
-function* removeMemberShipFromProject({payload: {id}}: PayloadAction<{id: string}>) {
+function* removeMemberShipFromProject({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callDelete(`memberships/${id}`, {});
+        const response: AxiosResponse = yield ApiService.callDelete(`memberships/${payload.body.id}`, {});
+        performSuccessActions(payload);
         yield put(deleteMemberShipFromProjectSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
@@ -48,9 +52,10 @@ function* removeMemberShipFromProject({payload: {id}}: PayloadAction<{id: string
     }
 }
 
-function* removeMemberFromOrganization({payload: {id, accountId}}: PayloadAction<{id: string, accountId: string}>) {
+function* removeMemberFromOrganization({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callDelete(`organizations/${id}/accounts/${accountId}`, {});
+        const response: AxiosResponse = yield ApiService.callDelete(`organizations/${payload.body.id}/accounts/${payload.body.accountId}`, {});
+        performSuccessActions(payload);
         yield put(deleteMemberFromOrganizationSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;

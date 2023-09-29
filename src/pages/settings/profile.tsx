@@ -1,32 +1,41 @@
-import styles from "@/styles/setting.module.css";
-import {
-    Button, Flex, Heading, Input, Text, Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalFooter,
-    ModalBody,
-    ModalCloseButton, useDisclosure, InputRightElement, InputGroup, Menu, MenuItem, MenuList, MenuButton,
-} from "@chakra-ui/react";
-import Image from "next/image";
-import React, {ChangeEvent, ChangeEventHandler, useCallback, useEffect, useRef, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
-import {StateType} from "@/types";
+import withAuth from "@/components/auth/withAuth";
+import { Toaster } from "@/components/common";
+import { Account, UserDetails } from "@/models";
+import SettingsLayout from "@/pages/settings/settings-layout";
+import { updateAccountState } from "@/redux/accounts/action-reducer";
+import { changePassword } from "@/redux/auth/action-reducer";
 import {
     getProfilePicture,
     getUsersDetails, removeProfilePicture,
-    updateUsersDetails, updateUserState,
+    updateUserState,
+    updateUsersDetails,
     uploadProfilePicture
 } from "@/redux/users/action-reducer";
-import {Account, UserDetails} from "@/models";
-import withAuth from "@/components/auth/withAuth";
-import {EditIcon, ViewIcon, ViewOffIcon} from "@chakra-ui/icons";
-import {updateAccountState} from "@/redux/accounts/action-reducer";
+import styles from "@/styles/setting.module.css";
+import { StateType } from "@/types";
+import { debounce, encryptData } from "@/utils/common.functions";
 import LocalStorageService from "@/utils/localstorage.service";
-import {debounce, encryptData} from "@/utils/common.functions";
-import {changePassword, updateAuthState} from "@/redux/auth/action-reducer";
-import {Toaster} from "@/components/common";
-import SettingsLayout from "@/pages/settings/settings-layout";
+import { EditIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import {
+    Button, Flex, Heading, Input,
+    InputGroup,
+    InputRightElement,
+    Menu,
+    MenuButton,
+    MenuItem, MenuList,
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
+    Text,
+    useDisclosure,
+} from "@chakra-ui/react";
+import Image from "next/image";
+import { ChangeEvent, ChangeEventHandler, useCallback, useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 function Profile() {
     const {
@@ -41,7 +50,7 @@ function Profile() {
     const inputFile = useRef<HTMLInputElement | null>(null)
     let {accounts, success} = useSelector((state: StateType) => state.accounts);
     const [isDataUpdate, setIsDataUpdate] = useState<boolean>(false);
-    let {passwordChangeSuccess} = useSelector((state: StateType) => state.auth);
+    // let {passwordChangeSuccess} = useSelector((state: StateType) => state.auth);
 
     const [profileDetails, setProfileDetails] = useState<UserDetails>({
         firstName: '',
@@ -97,17 +106,17 @@ function Profile() {
         }
     }, [dispatch, profilePictureUpdated, profilePictureRemoved]);
 
-    useEffect(() => {
-        if (passwordChangeSuccess) {
-            onClose();
-            Toaster({
-                desc: "Password changed successfully",
-                title: "Password changed",
-                type: 'success'
-            });
-            dispatch(updateAuthState({passwordChangeSuccess: false}));
-        }
-    }, [dispatch, passwordChangeSuccess, onClose]);
+    // useEffect(() => {
+    //     if (passwordChangeSuccess) {
+    //         onClose();
+    //         Toaster({
+    //             desc: "Password changed successfully",
+    //             title: "Password changed",
+    //             type: 'success'
+    //         });
+    //         dispatch(updateAuthState({passwordChangeSuccess: false}));
+    //     }
+    // }, [dispatch, passwordChangeSuccess, onClose]);
 
     useEffect(() => {
         if (userDetails) {
@@ -230,7 +239,16 @@ function Profile() {
 
     function updatePassword() {
         let newPHash = encryptData(passwordUpdate.newP);
-        dispatch(changePassword({password: passwordUpdate.old, newPasswordOne: newPHash, newPasswordTwo: newPHash}));
+        dispatch(changePassword({body: {password: passwordUpdate.old, newPasswordOne: newPHash, newPasswordTwo: newPHash},
+            toaster: {
+                success: {
+                    desc: "Password changed successfully",
+                    title: "Password changed",
+                    type: 'success'
+                }
+            },
+        }));
+        onClose();
     }
 
     const removePhoto = () => {

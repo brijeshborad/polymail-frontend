@@ -1,6 +1,6 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {InitialAuthState} from "@/types";
+import { InitialAuthState, ReducerActionType } from "@/types";
 import LocalStorageService from "@/utils/localstorage.service";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const initialState = {
     user: LocalStorageService.updateUser('get') || null,
@@ -38,31 +38,26 @@ const authSlice = createSlice({
         logoutUser: (state: InitialAuthState) => {
             return {...state, user: undefined, error: null, isLoading: false}
         },
-        googleAuthLink: (state: InitialAuthState, _action: PayloadAction<{
-            mode: string,
-            redirectUrl: string,
-            accountType: string,
-            platform: string
-        }>) => {
+        googleAuthLink: (state: InitialAuthState, _action: PayloadAction<ReducerActionType>) => {
             return {...state, error: null, googleAuthRedirectionLink: null, isLoading: false}
         },
         googleAuthLinkSuccess: (state: InitialAuthState, {payload: googleAuthRedirectionLink}: PayloadAction<{}>) => {
-            return {...state, error: null, googleAuthRedirectionLink, isLoading: false}
+            return {...state, googleAuthRedirectionLink, isLoading: false}
         },
-        googleAuthLinkError: (state: InitialAuthState, {payload: error}: PayloadAction<any>) => {
-            return {...state, error, googleAuthRedirectionLink: null, isLoading: false}
+        googleAuthLinkError: (state: InitialAuthState, _action: PayloadAction<any>) => {
+            return {...state, googleAuthRedirectionLink: null, isLoading: false}
         },
         updateAuthState: (state: InitialAuthState, action: PayloadAction<InitialAuthState>) => {
             return {...state, ...action.payload}
         },
-        changePassword: (state: InitialAuthState, _action: PayloadAction<{ password?: string, newPasswordOne: string, newPasswordTwo: string }>) => {
-            return {...state, error: null, isLoading: true, passwordChangeSuccess: false}
+        changePassword: (state: InitialAuthState, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, isLoading: true}
         },
         changePasswordSuccess: (state: InitialAuthState) => {
-            return {...state, error: null, isLoading: false, passwordChangeSuccess: true}
+            return {...state, isLoading: false}
         },
-        changePasswordError: (state: InitialAuthState, {payload: error}: PayloadAction<any>) => {
-            return {...state, error, isLoading: false, passwordChangeSuccess: false}
+        changePasswordError: (state: InitialAuthState, _action: PayloadAction<any>) => {
+            return {...state, isLoading: false}
         },
 
         forgotPassword: (state: InitialAuthState, _action: PayloadAction<{ email: string, url: string }>) => {

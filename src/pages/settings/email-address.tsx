@@ -31,7 +31,9 @@ function EmailAddress() {
             platform: "web",
             withToken: true
         }
-        dispatch(googleAuthLink(body));
+        dispatch(googleAuthLink({
+            body: body
+        }));
     }
 
     useEffect(() => {

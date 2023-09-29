@@ -15,6 +15,8 @@ import {updateUserState} from "@/redux/users/action-reducer";
 import {Summary} from "@/models/summary";
 import {PayloadAction} from "@reduxjs/toolkit";
 import {getAllThreadsSuccess} from "@/redux/threads/action-reducer";
+import { ReducerActionType } from "@/types";
+import { performSuccessActions } from "@/utils/common-redux.functions";
 
 function* getSummaryData() {
   try {
@@ -30,9 +32,10 @@ function* getSummaryData() {
   }
 }
 
-function* getProjectSummaryData({payload: {id, mailbox}}: PayloadAction<{id: string, mailbox?: string}>) {
+function* getProjectSummaryData({payload}: PayloadAction<ReducerActionType>) {
   try {
-    const response: Summary = yield ApiService.callGet(`summary/project/${id}`, {...(mailbox ? {mailbox}: {}),});
+    const response: Summary = yield ApiService.callGet(`summary/project/${payload.body.id}`, {...(payload.body.mailbox ? {mailbox: payload.body.mailbox}: {}),});
+    performSuccessActions(payload);
     yield put(getAllThreadsSuccess(response.threads || []));
     yield put(getProjectSummarySuccess(response));
     yield put(getProjectByIdSuccess(response.project || {}));

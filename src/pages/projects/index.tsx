@@ -84,7 +84,7 @@ function Index() {
         let body = {
             order: nextPosition(itemList, dropIndex, draggedItem.id)
         }
-        dispatch(updateProject({id: draggedItem.id!, body}))
+        dispatch(updateProject({body:{id: draggedItem.id!, body:body}}))
 
         const newItems = (itemList || []).filter((_, index) => index !== draggedIndex);
         newItems.splice(dropIndex, 0, draggedItem);
@@ -102,9 +102,10 @@ function Index() {
                 undo: {
                     favorite: !isProjectFavorite,
                     order: item.projectMeta?.order
-                }
+                },
+                id: item.id
             }
-            dispatch(updateOptimisticProject({id: item.id, body}))
+            dispatch(updateOptimisticProject({body: body}))
         }
     }
 

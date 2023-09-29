@@ -1,3 +1,20 @@
+import { Toaster } from "@/components/common";
+import RemoveRecordModal from "@/components/common/delete-record-modal";
+import { Message } from "@/components/messages";
+import { InviteMember, Project, TeamMember } from "@/models";
+import {
+    addItemToGroup, deleteMemberFromProject, deleteMemberShipFromProject
+} from "@/redux/memberships/action-reducer";
+import {
+    getProjectMembers,
+    getProjectMembersInvites,
+    updateProjectMemberRole, updateProjectState
+} from "@/redux/projects/action-reducer";
+import styles from "@/styles/project.module.css";
+import { StateType } from "@/types";
+import { isEmail } from "@/utils/common.functions";
+import { PROJECT_ROLES } from "@/utils/constants";
+import { ChevronDownIcon, CloseIcon, TriangleDownIcon } from "@chakra-ui/icons";
 import {
     Badge,
     Button,
@@ -11,38 +28,20 @@ import {
     MenuList,
     Text, useDisclosure
 } from "@chakra-ui/react";
-import React, {useCallback, useEffect, useState} from "react";
+import dynamic from 'next/dynamic';
 import Image from "next/image";
-import {useDispatch, useSelector} from "react-redux";
-import {useRouter} from "next/router";
-import {StateType} from "@/types";
-import {ChevronDownIcon, CloseIcon, TriangleDownIcon} from "@chakra-ui/icons";
-import styles from "@/styles/project.module.css";
-import dynamic from 'next/dynamic'
+import { useRouter } from "next/router";
+import { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 const ThreadsSideBar = dynamic(
     () => import('@/components/threads').then((mod) => mod.ThreadsSideBar)
 )
-import {
-    getProjectMembers,
-    getProjectMembersInvites,
-    updateProjectMemberRole, updateProjectState
-} from "@/redux/projects/action-reducer";
-import {
-    addItemToGroup, deleteMemberFromProject, deleteMemberShipFromProject,
-    updateMembershipState
-} from "@/redux/memberships/action-reducer";
-import {InviteMember, Project, TeamMember} from "@/models";
-import {isEmail} from "@/utils/common.functions";
-import {Message} from "@/components/messages";
-import {PROJECT_ROLES} from "@/utils/constants";
-import RemoveRecordModal from "@/components/common/delete-record-modal";
-import {Toaster} from "@/components/common";
 
 function ProjectInbox() {
     const {members, project, invitees} = useSelector((state: StateType) => state.projects);
     const {selectedThread} = useSelector((state: StateType) => state.threads);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
-    const {success: membershipSuccess} = useSelector((state: StateType) => state.memberships);
+    // const {success: membershipSuccess} = useSelector((state: StateType) => state.memberships);
     const {isProjectRemoveSuccess, success} = useSelector((state: StateType) => state.memberships);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const [isManagerMembersOpen, setIsManagerMembersOpen] = useState<boolean>(false)
@@ -86,19 +85,21 @@ function ProjectInbox() {
     useEffect(() => {
         if (router.query.project) {
             let projectId = router.query.project as string;
-            dispatch(getProjectMembers({projectId: projectId}));
-            dispatch(getProjectMembersInvites({projectId: projectId}));
+            dispatch(getProjectMembers({
+                body: {
+                        projectId: projectId
+                      }
+                }));
+            dispatch(getProjectMembersInvites({body:{projectId: projectId}}));
         }
     }, [router.query.project, dispatch])
 
-    useEffect(() => {
-        if (membershipSuccess && router.query.project) {
-            dispatch(updateMembershipState({success: false}));
-            let projectId = router.query.project as string;
-            dispatch(getProjectMembersInvites({projectId: projectId}));
-            setMembersInput({input: '', role: 'member'});
-        }
-    }, [dispatch, membershipSuccess, router.query.project])
+    // useEffect(() => {
+    //     if (membershipSuccess && router.query.project) {
+    //         dispatch(updateMembershipState({success: false}));
+            
+    //     }
+    // }, [dispatch, membershipSuccess, router.query.project])
 
     function updateSize() {
         setSize(window.innerWidth);
@@ -132,9 +133,13 @@ function ProjectInbox() {
                 groupType: 'project',
                 groupId: item?.id
             }
-            dispatch(addItemToGroup(reqBody))
+            dispatch(addItemToGroup({body:reqBody}))
+
+            let projectId = router.query.project as string;
+            dispatch(getProjectMembersInvites({body:{projectId: projectId}}));
+            setMembersInput({input: '', role: 'member'});
         }
-    }, [dispatch, membersInputs, selectedAccount]);
+    }, [dispatch, membersInputs, selectedAccount, router.query.project]);
 
 
 
@@ -143,7 +148,7 @@ function ProjectInbox() {
             let body = {
                 role: role
             }
-            dispatch(updateProjectMemberRole({projectId: project.id, accountId: selectedAccount.id, body}))
+            dispatch(updateProjectMemberRole({body:{projectId: project.id, accountId: selectedAccount.id, body:body}}))
         }
 
     };
@@ -156,10 +161,10 @@ function ProjectInbox() {
     const removeMemberFromProject = () => {
         if (selectedMember) {
             if (selectedMember?.invite) {
-                dispatch(deleteMemberShipFromProject({id: selectedMember.id}));
+                dispatch(deleteMemberShipFromProject({body:{id: selectedMember.id}}));
             } else {
                 if (project && project.id && selectedMember?.id) {
-                    dispatch(deleteMemberFromProject({id: project.id, accountId: selectedMember.id}));
+                    dispatch(deleteMemberFromProject({body:{id: project.id, accountId: selectedMember.id}}));
                 }
             }
         }

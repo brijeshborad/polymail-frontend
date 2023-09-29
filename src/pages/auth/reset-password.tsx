@@ -1,22 +1,21 @@
-import {Button, Flex, Heading, Input, InputGroup, InputRightElement, Text} from "@chakra-ui/react";
+import { changePassword, magicCode, updateAuthState } from "@/redux/auth/action-reducer";
 import styles from "@/styles/Login.module.css";
-import Image from "next/image";
-import {ArrowBackIcon, ViewIcon, ViewOffIcon} from "@chakra-ui/icons";
-import Link from "next/link";
-import {changePassword, magicCode, updateAuthState} from "@/redux/auth/action-reducer";
-import {useDispatch, useSelector} from "react-redux";
-import React, {useCallback, useEffect, useState} from "react";
-import {debounce, encryptData} from "@/utils/common.functions";
-import Router, {useRouter} from "next/router";
-import {StateType} from "@/types";
-import {Toaster} from "@/components/common";
+import { StateType } from "@/types";
+import { debounce, encryptData } from "@/utils/common.functions";
 import LocalStorageService from "@/utils/localstorage.service";
+import { ArrowBackIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import { Button, Flex, Heading, Input, InputGroup, InputRightElement, Text } from "@chakra-ui/react";
+import Image from "next/image";
+import Link from "next/link";
+import Router, { useRouter } from "next/router";
+import { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 
 export default function ForgotPassword() {
     const dispatch = useDispatch();
     const router = useRouter();
-    const {magicCodeSuccess, magicCodeResponse, passwordChangeSuccess} = useSelector((state: StateType) => state.auth);
+    const {magicCodeSuccess, magicCodeResponse} = useSelector((state: StateType) => state.auth);
 
     const [newPassword, setNewPassword] = useState<{ newP: string, confirmP: string }>({
         newP: '',
@@ -58,21 +57,21 @@ export default function ForgotPassword() {
         }))
     }
 
-    useEffect(() => {
-        if (passwordChangeSuccess) {
-            Toaster({
-                desc: "Password changed successfully",
-                title: "Password changed",
-                type: 'success'
-            });
-            dispatch(updateAuthState({passwordChangeSuccess: false}));
-            LocalStorageService.clearStorage();
-            Router.push(`/onboarding`);
-            if (magicCodeResponse && magicCodeResponse.token) {
-                dispatch(updateAuthState({magicCodeSuccess: false}));
-            }
-        }
-    })
+    // useEffect(() => {
+    //     if (passwordChangeSuccess) {
+    //         Toaster({
+    //             desc: "Password changed successfully",
+    //             title: "Password changed",
+    //             type: 'success'
+    //         });
+    //         dispatch(updateAuthState({passwordChangeSuccess: false}));
+    //         LocalStorageService.clearStorage();
+    //         Router.push(`/onboarding`);
+    //         if (magicCodeResponse && magicCodeResponse.token) {
+    //             dispatch(updateAuthState({magicCodeSuccess: false}));
+    //         }
+    //     }
+    // })
 
     useEffect(() => {
         if (router.query) {
@@ -88,8 +87,23 @@ export default function ForgotPassword() {
     const updatePassword = () => {
         if (magicCodeSuccess) {
             let newPHash = encryptData(newPassword.newP);
-            dispatch(changePassword({newPasswordTwo: newPHash, newPasswordOne: newPHash}));
-
+            dispatch(changePassword({body: {
+                newPasswordTwo: newPHash, newPasswordOne: newPHash
+            },
+             toaster: {
+                        success: {
+                            desc: "Password changed successfully",
+                            title: "Password changed",
+                            type: 'success'
+                        }
+                    },
+        }
+            ));
+            LocalStorageService.clearStorage();
+            Router.push(`/onboarding`);
+            if (magicCodeResponse && magicCodeResponse.token) {
+                dispatch(updateAuthState({magicCodeSuccess: false}));
+            }
         }
 
     }

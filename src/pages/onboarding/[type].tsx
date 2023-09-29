@@ -50,7 +50,9 @@ function OnBoardingType() {
             accountType: "google",
             platform: "web"
         }
-        dispatch(googleAuthLink(body));
+        dispatch(googleAuthLink({
+            body: body
+        }));
     }
 
     useEffect(() => {

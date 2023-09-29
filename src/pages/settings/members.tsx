@@ -119,7 +119,7 @@ function Members() {
 
         } else {
             if (organizations && organizations[0] && organizations[0].id && selectedMember && selectedMember.id) {
-                dispatch(deleteMemberFromOrganization({id: organizations[0].id, accountId: selectedMember?.id}))
+                dispatch(deleteMemberFromOrganization({body:{id: organizations[0].id, accountId: selectedMember?.id}}))
             }
             onDeleteModalClose()
         }

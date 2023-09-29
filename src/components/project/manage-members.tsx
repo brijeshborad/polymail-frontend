@@ -57,9 +57,16 @@ function ManageMembersModal() {
   useEffect(() => {
       if (router.query.project) {
           let projectId = router.query.project as string;
-          dispatch(getProjectById({id: projectId}));
-          dispatch(getProjectMembers({projectId: projectId}));
-          dispatch(getProjectMembersInvites({projectId: projectId}));
+          dispatch(getProjectById({
+            body: {
+                id: projectId
+        }}));
+          dispatch(getProjectMembers({
+            body: {
+                    projectId: projectId
+                  }
+            }));
+          dispatch(getProjectMembersInvites({body:{projectId: projectId}}));
       }
   }, [router.query.project, dispatch])
 
@@ -67,7 +74,7 @@ function ManageMembersModal() {
       if (membershipSuccess) {
           dispatch(updateMembershipState({success: false}));
           let projectId = router.query.project as string;
-          dispatch(getProjectMembersInvites({projectId: projectId}));
+          dispatch(getProjectMembersInvites({body:{projectId: projectId}}));
           setMembersInput({input: '', role: 'member'});
       }
   }, [dispatch, membershipSuccess, router.query.project])
@@ -81,6 +88,7 @@ function ManageMembersModal() {
 
   const inviteAccountToProject = useCallback((item: Project | null) => {
       if (selectedAccount && selectedAccount.email && membersInputs.input.length > 0) {
+        debugger;
           let reqBody = {
               fromEmail: selectedAccount.email,
               toEmails: [membersInputs.input],
@@ -88,7 +96,11 @@ function ManageMembersModal() {
               groupType: 'project',
               groupId: item?.id
           }
-          dispatch(addItemToGroup(reqBody))
+          dispatch(addItemToGroup({body: reqBody}))
+
+          let projectId = router.query.project as string;
+          dispatch(getProjectMembersInvites({body:{projectId: projectId}}));
+          setMembersInput({input: '', role: 'member'});
       }
   }, [dispatch, membersInputs, selectedAccount]);
 
@@ -97,7 +109,12 @@ function ManageMembersModal() {
           let body = {
               role: role
           }
-          dispatch(updateProjectMemberRole({projectId: project.id, accountId: selectedAccount.id, body}))
+          dispatch(updateProjectMemberRole({
+            body:{
+                projectId: project.id, 
+                accountId: selectedAccount.id,
+                body:body
+            }}))
       }
 
   };

@@ -271,11 +271,11 @@ export function ComposeBox(props: any) {
           return;
         }
         if (draft && draft.id) {
-          dispatch(updatePartialMessage({ id: draft.id, body }));
+          dispatch(updatePartialMessage({body:{id: draft.id, body:body }}));
         } else {
           setIsDraftUpdated(true);
           setWaitForDraft(true);
-          dispatch(createDraft({ accountId: selectedAccount.id, body }));
+          dispatch(createDraft({body:{ accountId: selectedAccount.id, body:body }}));
         }
       }
     }, 500);
@@ -306,7 +306,7 @@ export function ComposeBox(props: any) {
           delay: secondsDifference
         }
 
-        dispatch(sendMessage({ id: draft.id, ...params }));
+        dispatch(sendMessage({body:{ id: draft.id, ...params }}));
 
         Toaster({
           desc: `Your message has been scheduled`,
@@ -325,7 +325,7 @@ export function ComposeBox(props: any) {
                 now: true
               }
             }
-            dispatch(sendMessage({ id: draft.id!, ...params }));
+            dispatch(sendMessage({body:{id: draft.id!, ...params }}));
             toast.close(`${polyToast}`);
           }
         })
@@ -349,7 +349,7 @@ export function ComposeBox(props: any) {
                   now: true
                 }
               }
-              dispatch(sendMessage({ id: draft.id!, ...params }));
+              dispatch(sendMessage({body:{id: draft.id!, ...params }}));
               toast.close(`${polyToast}`);
             }
           })

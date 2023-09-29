@@ -69,10 +69,10 @@ export function ThreadsSideBarTab(props: TabProps) {
             let projectId = getProjectId();
             if (projectId && !isSummaryApiCalled) {
                 setIsSummaryApiCalled(true);
-                dispatch(getProjectSummary({
+                dispatch(getProjectSummary({body:{
                     id: projectId as string,
                     mailbox: tabValue,
-                }))
+                }}))
             } else {
                 if (projectId) {
                     dispatch(getAllThreads({

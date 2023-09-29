@@ -1,6 +1,3 @@
-import {all, fork, put, takeLatest} from "@redux-saga/core/effects";
-import ApiService from "@/utils/api.service";
-import {AxiosError, AxiosResponse} from "axios";
 import {
     createProjects,
     createProjectsError,
@@ -8,26 +5,30 @@ import {
     getAllProjects,
     getAllProjectsError,
     getAllProjectsSuccess,
-    getProjectMembers,
-    getProjectMembersSuccess,
-    getProjectMembersError,
     getProjectById,
-    getProjectByIdSuccess,
     getProjectByIdError,
+    getProjectByIdSuccess,
+    getProjectMembers,
+    getProjectMembersError,
     getProjectMembersInvites,
-    getProjectMembersInvitesSuccess,
     getProjectMembersInvitesError,
+    getProjectMembersInvitesSuccess,
+    getProjectMembersSuccess,
+    undoProjectUpdate,
+    updateOptimisticProject,
+    updateProject,
+    updateProjectError,
+    updateProjectMemberRole,
     updateProjectMemberRoleError,
     updateProjectMemberRoleSuccess,
-    updateProjectMemberRole,
-    updateProjectSuccess,
-    updateProjectError,
-    updateProject,
-    updateOptimisticProject,
-    undoProjectUpdate
+    updateProjectSuccess
 } from "@/redux/projects/action-reducer";
-import {PayloadAction} from "@reduxjs/toolkit";
-import {ProjectRequestBody, ProjectRequestBodyWithUndo} from "@/models";
+import { ReducerActionType } from "@/types";
+import ApiService from "@/utils/api.service";
+import { performSuccessActions } from "@/utils/common-redux.functions";
+import { all, fork, put, takeLatest } from "@redux-saga/core/effects";
+import { PayloadAction } from "@reduxjs/toolkit";
+import { AxiosError, AxiosResponse } from "axios";
 
 
 function* getProjects() {
@@ -40,9 +41,10 @@ function* getProjects() {
     }
 }
 
-function* getProject({payload: {id}}: PayloadAction<{id: string}>) {
+function* getProject({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callGet(`projects/${id}`, null);
+        const response: AxiosResponse = yield ApiService.callGet(`projects/${payload.body.id}`, null);
+        performSuccessActions(payload);
         yield put(getProjectByIdSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
@@ -50,20 +52,24 @@ function* getProject({payload: {id}}: PayloadAction<{id: string}>) {
     }
 }
 
-function* addProjects({payload: {name, accountId, organizationId, emoji}}: PayloadAction<{name: string, accountId: string, organizationId: string, emoji?: string}>) {
+function* addProjects({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callPost(`projects`, {name, accountId, organizationId, emoji});
+        const response: AxiosResponse = yield ApiService.callPost(`projects`, {name : payload.body.name,
+             accountId : payload.body.accountId, organizationId : payload.body.organizationId, emoji : payload.body.emoji});
+             performSuccessActions(payload);
         yield put(createProjectsSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
+        performSuccessActions(payload);
         yield put(createProjectsError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
 
-function* getProjectMembersService({payload: {projectId}}: PayloadAction<{ projectId: string }>) {
+function* getProjectMembersService({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callGet(`projects/${projectId}/accounts`, {});
+        const response: AxiosResponse = yield ApiService.callGet(`projects/${payload.body.projectId}/accounts`, {});
+        performSuccessActions(payload);
         yield put(getProjectMembersSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
@@ -72,9 +78,10 @@ function* getProjectMembersService({payload: {projectId}}: PayloadAction<{ proje
 }
 
 
-function* getProjectMembersInvitees({payload: {projectId}}: PayloadAction<{ projectId: string }>) {
+function* getProjectMembersInvitees({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callGet(`projects/${projectId}/invites`, {});
+        const response: AxiosResponse = yield ApiService.callGet(`projects/${payload.body.projectId}/invites`, {});
+        performSuccessActions(payload);
         yield put(getProjectMembersInvitesSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
@@ -82,9 +89,10 @@ function* getProjectMembersInvitees({payload: {projectId}}: PayloadAction<{ proj
     }
 }
 
-function* updateProjectMembersData({payload: {projectId, accountId, body}}: PayloadAction<{projectId: string, accountId: string, body: {role: string}}>) {
+function* updateProjectMembersData({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callPatch(`projects/${projectId}/accounts/${accountId}`, body);
+        const response: AxiosResponse = yield ApiService.callPatch(`projects/${payload.body.projectId}/accounts/${payload.body.accountId}`, payload.body.body);
+        performSuccessActions(payload);
         yield put(updateProjectMemberRoleSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
@@ -92,9 +100,10 @@ function* updateProjectMembersData({payload: {projectId, accountId, body}}: Payl
     }
 }
 
-function* updateProjectData({payload: {id, body}}: PayloadAction<{ id: string, body: ProjectRequestBody }>) {
+function* updateProjectData({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callPatch(`projects/${id}`, body);
+        const response: AxiosResponse = yield ApiService.callPatch(`projects/${payload.body.id}`, payload.body.body);
+        performSuccessActions(payload);
         yield put(updateProjectSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
@@ -102,16 +111,21 @@ function* updateProjectData({payload: {id, body}}: PayloadAction<{ id: string, b
     }
 }
 
-function* updateProjectDataWithUndo({payload: {id, body}}: PayloadAction<{ id: string, body: ProjectRequestBodyWithUndo }>) {
+function* updateProjectDataWithUndo({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callPatch(`projects/${id}`, body.do);
+        const response: AxiosResponse = yield ApiService.callPatch(`projects/${payload.body.id}`, payload.body.do);
         yield put(updateProjectSuccess(response));
+        performSuccessActions(payload);
+
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(undoProjectUpdate({
+        yield put(undoProjectUpdate({body:{
           error: error?.response?.data || {code: '400', description: 'Something went wrong'},
-          project: {id, body}
+          project: {id: payload.body.id, body: payload.body}
+        }
         }));
+        performSuccessActions(payload);
+
     }
 }
 

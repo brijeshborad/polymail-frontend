@@ -1,6 +1,5 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {InitialDraftStateType} from "@/types";
-import {MessageDraft} from "@/models";
+import {InitialDraftStateType, ReducerActionType} from "@/types";
 
 const initialState: any = {
     draft: null,
@@ -15,34 +14,34 @@ const draftSlice = createSlice({
     name: 'draft',
     initialState,
     reducers: {
-        createDraft: (state: InitialDraftStateType, _action: PayloadAction<{ accountId: string, body: MessageDraft }>) => {
-            return {...state, draft: null, error: null, isLoading: false, success: false}
+        createDraft: (state: InitialDraftStateType, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, draft: null, isLoading: false}
         },
         createDraftSuccess: (state: InitialDraftStateType, {payload: draft}: PayloadAction<{}>) => {
-            return {...state, draft, updatedDraft: draft, error: null, isLoading: false, success: true}
+            return {...state, draft, updatedDraft: draft, isLoading: false}
         },
-        createDraftError: (state: InitialDraftStateType, {payload: error}: PayloadAction<any>) => {
-            return {...state, draft: null, error, isLoading: false, success: false}
+        createDraftError: (state: InitialDraftStateType, _action: PayloadAction<any>) => {
+            return {...state, draft: null, isLoading: false}
         },
 
-        sendMessage: (state: InitialDraftStateType, _action: PayloadAction<{ id: string, now?: boolean, delay?: number, undo?: boolean }>) => {
-            return {...state, sendMessage: null, error: null, isLoading: true}
+        sendMessage: (state: InitialDraftStateType, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, sendMessage: null, isLoading: true}
         },
         sendMessageSuccess: (state: InitialDraftStateType, {payload: sendMessage}: PayloadAction<{}>) => {
-            return {...state, sendMessage, error: null, isLoading: false}
+            return {...state, sendMessage, isLoading: false}
         },
-        sendMessageError: (state: InitialDraftStateType, {payload: error}: PayloadAction<any>) => {
-            return {...state, sendMessage: null, error, isLoading: false}
+        sendMessageError: (state: InitialDraftStateType, _action: PayloadAction<any>) => {
+            return {...state, sendMessage: null, isLoading: false}
         },
 
-        updatePartialMessage: (state: InitialDraftStateType, _action: PayloadAction<{ id: string, body: MessageDraft }>) => {
-            return {...state, error: null, isLoading: false, success: false}
+        updatePartialMessage: (state: InitialDraftStateType, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, isLoading: false}
         },
         updatePartialMessageSuccess: (state: InitialDraftStateType, {payload: updatedDraft}: PayloadAction<{}>) => {
-            return {...state, updatedDraft, draft: updatedDraft, error: null, isLoading: false, success: true}
+            return {...state, updatedDraft, draft: updatedDraft, isLoading: false}
         },
-        updatePartialMessageError: (state: InitialDraftStateType, {payload: error}: PayloadAction<any>) => {
-            return {...state, error, isLoading: false, success: false}
+        updatePartialMessageError: (state: InitialDraftStateType, _action: PayloadAction<any>) => {
+            return {...state, isLoading: false}
         },
 
         updateDraftState: (state: InitialDraftStateType, action: PayloadAction<InitialDraftStateType>) => {

@@ -1,5 +1,3 @@
-import {PayloadAction} from "@reduxjs/toolkit";
-import {all, fork, put, takeLatest} from "@redux-saga/core/effects";
 import {
     changePassword,
     changePasswordError,
@@ -17,9 +15,13 @@ import {
     registerError,
     registerUser, resetPassword, resetPasswordError, resetPasswordSuccess
 } from "@/redux/auth/action-reducer";
+import { ReducerActionType } from "@/types";
 import ApiService from "@/utils/api.service";
-import {AxiosError, AxiosResponse} from "axios";
+import { performSuccessActions } from "@/utils/common-redux.functions";
 import LocalStorageService from "@/utils/localstorage.service";
+import { all, fork, put, takeLatest } from "@redux-saga/core/effects";
+import { PayloadAction } from "@reduxjs/toolkit";
+import { AxiosError, AxiosResponse } from "axios";
 
 function* login({payload: {email, password}}: PayloadAction<{ email: string, password: string }>) {
     try {
@@ -56,26 +58,23 @@ function* register({
     }
 }
 
-function* getGoogleAuthLink({payload}: PayloadAction<{
-    mode?: string,
-    redirectUrl?: string
-    accountType?: string
-    platform?: string,
-    withToken?: boolean
-}>) {
+function* getGoogleAuthLink({payload}: PayloadAction<ReducerActionType>) {
     try {
         let headers = {};
-        if (!payload.withToken) {
+        if (!payload.body.withToken) {
             headers = {
                 'Skip-Headers': true
             }
         }
-        delete payload.withToken;
+        delete payload.body.withToken;
 
-        const response: AxiosResponse = yield ApiService.callPost(`auth/oauth2link`, payload, headers);
+        const response: AxiosResponse = yield ApiService.callPost(`auth/oauth2link`, payload.body, headers);
         yield put(googleAuthLinkSuccess(response));
+        performSuccessActions(payload);
+
     } catch (error: any) {
         error = error as AxiosError;
+        performSuccessActions(payload);
         yield put(googleAuthLinkError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
@@ -84,17 +83,12 @@ function* logout() {
     yield ApiService.callGet(`auth/logout`, null);
 }
 
-function* passwordChange({
-                             payload: {
-                                 password,
-                                 newPasswordTwo,
-                                 newPasswordOne
-                             }
-                         }: PayloadAction<{ password?: string, newPasswordOne: string, newPasswordTwo: string }>) {
+function* passwordChange({payload}: PayloadAction<ReducerActionType>) {
     try {
         yield ApiService.callPost(`auth/change`, {
-            password, newPasswordTwo, newPasswordOne
+            password: payload.body.password, newPasswordTwo: payload.body.newPasswordTwo, newPasswordOne: payload.body.newPasswordOne
         });
+        performSuccessActions(payload);
         yield put(changePasswordSuccess());
     } catch (error: any) {
         error = error as AxiosError;

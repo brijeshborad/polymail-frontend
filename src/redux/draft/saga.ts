@@ -13,11 +13,12 @@ import {
     updatePartialMessageError,
     updatePartialMessage
 } from "@/redux/draft/action-reducer";
-import {MessageDraft, MessageRequestBody} from "@/models";
+import { ReducerActionType } from "@/types";
+import { performSuccessActions } from "@/utils/common-redux.functions";
 
-function* createNewDraft({payload: {accountId, body}}: PayloadAction<{ accountId: string, body: MessageDraft }>) {
+function* createNewDraft({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callPost(`messages`, {accountId, ...body});
+        const response: AxiosResponse = yield ApiService.callPost(`messages`, {accountId: payload.body.accountId, ...payload.body.body});
         yield put(createDraftSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
@@ -25,21 +26,15 @@ function* createNewDraft({payload: {accountId, body}}: PayloadAction<{ accountId
     }
 }
 
-function* sendDraftMessage({
-                               payload: {
-                                   id,
-                                   now,
-                                   delay,
-                                   undo
-                               }
-                           }: PayloadAction<{ id: string, now?: boolean, delay?: number, undo?: boolean }>) {
+function* sendDraftMessage({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callGet(`messages/${id}/send`,
+        const response: AxiosResponse = yield ApiService.callGet(`messages/${payload.body.id}/send`,
             {
-                ...(now ? {now} : {}),
-                ...(delay ? {delay} : {}),
-                ...(undo ? {undo} : {})
+                ...(payload.body.now ? {now: payload.body.now} : {}),
+                ...(payload.body.delay ? {delay: payload.body.delay} : {}),
+                ...(payload.body.undo ? {undo: payload.body.undo} : {})
             });
+        performSuccessActions(payload);
         yield put(sendMessageSuccess(response || {}));
     } catch (error: any) {
         error = error as AxiosError;
@@ -47,9 +42,10 @@ function* sendDraftMessage({
     }
 }
 
-function* patchPartialMessage({payload: {id, body}}: PayloadAction<{ id: string, body: MessageRequestBody }>) {
+function* patchPartialMessage({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callPatch(`messages/${id}`, body);
+        const response: AxiosResponse = yield ApiService.callPatch(`messages/${payload.body.id}`, payload.body.body);
+        performSuccessActions(payload);
         yield put(updatePartialMessageSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;

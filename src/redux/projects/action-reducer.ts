@@ -1,6 +1,6 @@
-import {createSlice, current, PayloadAction} from "@reduxjs/toolkit";
-import {InitialProjectState} from "@/types";
-import {Project, ProjectMetaData, ProjectRequestBodyWithUndo, TeamMember} from "@/models";
+import { Project, TeamMember } from "@/models";
+import { InitialProjectState, ReducerActionType } from "@/types";
+import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
 
 const initialState: any = {
     projects: [],
@@ -23,24 +23,24 @@ const projectsSlice = createSlice({
             return {...state, projects: [], isLoading: true, error: null}
         },
         getAllProjectsSuccess: (state: InitialProjectState, {payload: projects}: PayloadAction<{}>) => {
-            return {...state, projects, isLoading: false, error: null}
+            return {...state, projects, isLoading: false}
         },
         getAllProjectsError: (state: InitialProjectState, {payload: error}: PayloadAction<{ error: any }>) => {
             return {...state, projects: [], isLoading: false, error}
         },
 
-        getProjectById: (state: InitialProjectState, _action: PayloadAction<{ id?: string }>) => {
-            return {...state, project: {}, isLoading: true, error: null}
+        getProjectById: (state: InitialProjectState, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, project: {}, isLoading: true}
         },
         getProjectByIdSuccess: (state: InitialProjectState, {payload: project}: PayloadAction<{}>) => {
-            return {...state, project, isLoading: false, error: null}
+            return {...state, project, isLoading: false}
         },
-        getProjectByIdError: (state: InitialProjectState, {payload: error}: PayloadAction<{ error: any }>) => {
-            return {...state, project: {}, isLoading: false, error}
+        getProjectByIdError: (state: InitialProjectState,  _action: PayloadAction<any>) => {
+            return {...state, project: {}, isLoading: false}
         },
 
-        createProjects: (state: InitialProjectState, _action: PayloadAction<{ name?: string, accountId?: string, organizationId?: string, emoji?: string }>) => {
-            return {...state, project: null, isLoading: true, error: null, createProjectSuccess: false}
+        createProjects: (state: InitialProjectState, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, project: null, isLoading: true, createProjectSuccess: false}
         },
         createProjectsSuccess: (state: InitialProjectState, {payload: project}: PayloadAction<{}>) => {
             let currentProjects = [...(current(state).projects || [])] as Project[];
@@ -49,37 +49,36 @@ const projectsSlice = createSlice({
                 projects: [project, ...currentProjects],
                 project,
                 isLoading: false,
-                error: null,
-                createProjectSuccess: true
+                createProjectSuccess:true
             }
         },
-        createProjectsError: (state: InitialProjectState, {payload: error}: PayloadAction<{ error: any }>) => {
-            return {...state, project: null, isLoading: false, error, createProjectSuccess: false}
+        createProjectsError: (state: InitialProjectState, _action: PayloadAction<any>) => {
+            return {...state, project: null, isLoading: false, createProjectSuccess: false}
         },
 
-        getProjectMembers: (state: InitialProjectState, _action: PayloadAction<{ projectId: string }>) => {
-            return {...state, members: [], isLoading: true, error: null}
+        getProjectMembers: (state: InitialProjectState, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, members: [], isLoading: true}
         },
         getProjectMembersSuccess: (state: InitialProjectState, {payload: members}: PayloadAction<{}>) => {
-            return {...state, members, isLoading: false, error: null}
+            return {...state, members, isLoading: false}
         },
-        getProjectMembersError: (state: InitialProjectState, {payload: error}: PayloadAction<{ error: any }>) => {
-            return {...state, members: [], isLoading: false, error}
+        getProjectMembersError: (state: InitialProjectState,  _action: PayloadAction<any>) => {
+            return {...state, members: [], isLoading: false}
         },
 
-        getProjectMembersInvites: (state: InitialProjectState, _action: PayloadAction<{ projectId: string }>) => {
-            return {...state, invitees: [], isLoading: true, error: null}
+        getProjectMembersInvites: (state: InitialProjectState, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, invitees: [], isLoading: true}
         },
         getProjectMembersInvitesSuccess: (state: InitialProjectState, {payload: invitees}: PayloadAction<{}>) => {
-            return {...state, invitees, isLoading: false, error: null}
+            return {...state, invitees, isLoading: false}
         },
-        getProjectMembersInvitesError: (state: InitialProjectState, {payload: error}: PayloadAction<{ error: any }>) => {
-            return {...state, invitees: [], isLoading: false, error}
+        getProjectMembersInvitesError: (state: InitialProjectState,  _action: PayloadAction<any>) => {
+            return {...state, invitees: [], isLoading: false}
         },
 
         // change role from project members
-        updateProjectMemberRole: (state: InitialProjectState, _action: PayloadAction<{ projectId?: string, accountId?: string, body?: { role: string } }>) => {
-            return {...state, member: null, error: null, isLoading: false, updateSuccess: false, success: false}
+        updateProjectMemberRole: (state: InitialProjectState, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, member: null, isLoading: false}
         },
         updateProjectMemberRoleSuccess: (state: InitialProjectState, {payload: member}: PayloadAction<{}>) => {
             let currentMembers = [...(current(state).members || [])] as TeamMember[];
@@ -95,20 +94,19 @@ const projectsSlice = createSlice({
                 error: null,
                 isLoading: false,
                 updateSuccess: true,
-                success: true
             }
         },
-        updateProjectMemberRoleError: (state: InitialProjectState, {payload: error}: PayloadAction<any>) => {
-            return {...state, member: null, error, isLoading: false, updateSuccess: false, success: false}
+        updateProjectMemberRoleError: (state: InitialProjectState, _action: PayloadAction<any> ) => {
+            return {...state, member: null, updateSuccess: false, isLoading: false}
         },
 
-        updateProject: (state: InitialProjectState, _action: PayloadAction<{ id: string, body?: { favorite?: boolean, order?: number } }>) => {
-            return {...state, isProjectUpdateSuccess: false, error: null}
+        updateProject: (state: InitialProjectState, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, isProjectUpdateSuccess: false}
         },
 
-        updateOptimisticProject: (state: InitialProjectState, {payload: project}: PayloadAction<{ id: string, body: { do: ProjectMetaData, undo: ProjectMetaData } }>) => {
+        updateOptimisticProject: (state: InitialProjectState, {payload}: PayloadAction<ReducerActionType>) => {
             let currentProjects = [...(current(state).projects || [])] as Project[];
-            let projectData = {...({...project, projectMeta: project.body.do}) || {}} as Project;
+            let projectData = {...({...payload.body, projectMeta: payload.body.do}) || {}} as Project;
             let targetIndex = currentProjects.findIndex((item: Project) => item.id === projectData?.id);
 
 
@@ -140,14 +138,14 @@ const projectsSlice = createSlice({
             const sortedList = [...currentProjects].sort((a: Project, b: Project) => (a.projectMeta?.order || 0) - (b.projectMeta?.order || 0));
             return {...state, projects: [...sortedList], isProjectUpdateSuccess: true, error: null}
         },
-        updateProjectError: (state: InitialProjectState, {payload: error}: PayloadAction<{ error: any }>) => {
-            return {...state, isProjectUpdateSuccess: false, error}
+        updateProjectError: (state: InitialProjectState, _action: PayloadAction<any>) => {
+            return {...state, isProjectUpdateSuccess: false}
         },
-        undoProjectUpdate: (state: InitialProjectState, {payload: error}: PayloadAction<{ error: any, project: { id: string, body: ProjectRequestBodyWithUndo } }>) => {
+        undoProjectUpdate: (state: InitialProjectState, {payload}: PayloadAction<ReducerActionType>) => {
 
 
             let currentProjects = [...(current(state).projects || [])] as Project[];
-            let projectData = {...({...error.project, projectMeta: error.project.body.undo}) || {}} as Project;
+            let projectData = {...({...payload.body.error.project, projectMeta: payload.body.error.project.body.undo}) || {}} as Project;
             let index1 = currentProjects.findIndex((item: Project) => item.id === projectData?.id);
             currentProjects[index1] = {
                 ...currentProjects[index1],
@@ -159,7 +157,7 @@ const projectsSlice = createSlice({
             };
 
             const sortedList = [...currentProjects].sort((a: Project, b: Project) => (a.projectMeta?.order || 0) - (b.projectMeta?.order || 0));
-            return {...state, projects: [...sortedList], isProjectUpdateSuccess: false, error}
+            return {...state, projects: [...sortedList], isProjectUpdateSuccess: false}
         },
         updateProjectState: (state: InitialProjectState, action: PayloadAction<InitialProjectState>) => {
             return {...state, ...action.payload}

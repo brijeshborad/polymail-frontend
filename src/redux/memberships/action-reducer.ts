@@ -1,5 +1,5 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {InitialMembershipStateType} from "@/types";
+import {InitialMembershipStateType, ReducerActionType} from "@/types";
 
 const initialState: any = {
     membership: {},
@@ -16,46 +16,46 @@ const membershipSlice = createSlice({
     initialState,
     reducers: {
         // Adding members to projects
-        addItemToGroup: (state: InitialMembershipStateType, _action: PayloadAction<any>) => {
-            return {...state, error: null, isLoading: false, success: false, isThreadAddedToProjectSuccess: false}
+        addItemToGroup: (state: InitialMembershipStateType, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, isLoading: false, isThreadAddedToProjectSuccess: false}
         },
         addItemToGroupSuccess: (state: InitialMembershipStateType, {payload: membership}: PayloadAction<{}>) => {
-            return {...state, membership, error: null, isLoading: false, success: true, isThreadAddedToProjectSuccess: true}
+            return {...state, membership, isLoading: false, isThreadAddedToProjectSuccess: true}
         },
-        addItemToGroupError: (state: InitialMembershipStateType, {payload: error}: PayloadAction<any>) => {
-            return {...state, error, isLoading: false, isThreadAddedToProjectSuccess: false}
+        addItemToGroupError: (state: InitialMembershipStateType, _action: PayloadAction<any>) => {
+            return {...state, isLoading: false, isThreadAddedToProjectSuccess: false}
         },
 
         // Delete members from project
-        deleteMemberFromProject: (state: InitialMembershipStateType, _action: PayloadAction<{ id?: string, accountId?: string }>) => {
-            return {...state, error: null, isLoading: false, success: false, isProjectRemoveSuccess: false}
+        deleteMemberFromProject: (state: InitialMembershipStateType, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, isLoading: false, isProjectRemoveSuccess: false}
         },
         deleteMemberFromProjectSuccess: (state: InitialMembershipStateType, _action: PayloadAction<{}>) => {
-            return {...state, error: null, isLoading: false, success: true, isProjectRemoveSuccess: true}
+            return {...state, isLoading: false, isProjectRemoveSuccess: true}
         },
-        deleteMemberFromProjectError: (state: InitialMembershipStateType, {payload: error}: PayloadAction<{ error: any }>) => {
-            return {...state, error, isLoading: false, isProjectRemoveSuccess: false}
+        deleteMemberFromProjectError: (state: InitialMembershipStateType, _action: PayloadAction<any>) => {
+            return {...state, isLoading: false, isProjectRemoveSuccess: false}
         },
 
-        deleteMemberShipFromProject: (state: InitialMembershipStateType, _action: PayloadAction<{ id?: string}>) => {
-            return {...state, error: null, isLoading: false, success: false, isProjectRemoveSuccess: false}
+        deleteMemberShipFromProject: (state: InitialMembershipStateType, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, isLoading: false, isProjectRemoveSuccess: false}
         },
         deleteMemberShipFromProjectSuccess: (state: InitialMembershipStateType, _action: PayloadAction<{}>) => {
-            return {...state, error: null, isLoading: false, success: true, isProjectRemoveSuccess: true}
+            return {...state, isLoading: false, isProjectRemoveSuccess: true}
         },
-        deleteMemberShipFromProjectError: (state: InitialMembershipStateType, {payload: error}: PayloadAction<{ error: any }>) => {
-            return {...state, error, isLoading: false, isProjectRemoveSuccess: false}
+        deleteMemberShipFromProjectError: (state: InitialMembershipStateType, _action: PayloadAction<any>) => {
+            return {...state, isLoading: false, isProjectRemoveSuccess: false}
         },
 
         // Delete members from organization
-        deleteMemberFromOrganization: (state: InitialMembershipStateType, _action: PayloadAction<{ id?: string, accountId?: string }>) => {
-            return {...state, error: null, isLoading: false, success: false, isOrganizationRemoveSuccess: false}
+        deleteMemberFromOrganization: (state: InitialMembershipStateType, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, isLoading: false, isOrganizationRemoveSuccess: false}
         },
         deleteMemberFromOrganizationSuccess: (state: InitialMembershipStateType, _action: PayloadAction<{}>) => {
             return {...state, error: null, isLoading: false, success: true, isOrganizationRemoveSuccess: true}
         },
-        deleteMemberFromOrganizationError: (state: InitialMembershipStateType, {payload: error}: PayloadAction<{ error: any }>) => {
-            return {...state, error, isLoading: false, isOrganizationRemoveSuccess: false}
+        deleteMemberFromOrganizationError: (state: InitialMembershipStateType, _action: PayloadAction<any>) => {
+            return {...state, isLoading: false, isOrganizationRemoveSuccess: false}
         },
         updateMembershipState: (state: InitialMembershipStateType, action: PayloadAction<InitialMembershipStateType>) => {
             return {...state, ...action.payload}
