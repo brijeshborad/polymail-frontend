@@ -136,7 +136,7 @@ function ProjectInbox() {
                     id: projectId,
                 },
             });
-        }, 2000);
+        }, 5000);
 
         return () => clearInterval(interval);
       }

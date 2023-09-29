@@ -42,7 +42,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
       const node = currentThreadRef ? currentThreadRef.current : null
       if(node) {
         const topPos = (node.offsetTop - 50) || ((threadIndex || 0)) * 50
-  
+
         setTimeout(() => {
           if (editorRef.current) {
             editorRef.current.scrollTo({
@@ -151,7 +151,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
                 id: selectedThread.id,
             },
         });
-      }, 1000);
+      }, 2000);
 
       return () => clearInterval(interval);
     }
@@ -167,13 +167,13 @@ export function ThreadsSideBarList(props: ThreadListProps) {
             ref={listRef} />
 
             {threads && threads.length > 0 && threads.map((item: Thread, index: number) => (
-              <div 
+              <div
                 key={index}
                 className={`${(selectedThread && selectedThread.id === item.id) ? styles.selectedThread : ''}`}
               >
-                <ThreadsSideBarListItem 
-                  thread={item} 
-                  tab={props.tab} 
+                <ThreadsSideBarListItem
+                  thread={item}
+                  tab={props.tab}
                   onClick={(e) => handleClick(item, e, index)}
                   onSelect={(ref) => setCurrentThreadRef(ref)}
                 />
