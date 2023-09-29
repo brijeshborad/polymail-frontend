@@ -1,31 +1,38 @@
-import { Box } from "@chakra-ui/react"
+import { Box, Button, FormControl, FormLabel, Input, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger } from "@chakra-ui/react"
 import { useCurrentEditor } from "@tiptap/react"
 import Image from "next/image"
-import { useCallback } from "react"
+import { useCallback, useState } from "react"
 
 export default function CollabRichTextEditorToolbar() {
+  const [linkUrl, setLinkUrl] = useState('')
   const { editor } = useCurrentEditor()
+  const [isLinkMenuOpen, setIsLinkMenuOpen] = useState(false);
 
-  const setLink = useCallback(() => {
-    const previousUrl = editor?.getAttributes('link').href
-    const url = window.prompt('URL', previousUrl)
-
+  const setLink = useCallback((url?: string) => {
+    if(!editor) return
+    const previousUrl = editor.getAttributes('link').href
+    
+    if(!url) {
+      url = previousUrl
+    }
     // cancelled
     if (url === null) {
       return
     }
 
-    // empty
-    if (url === '') {
-      editor.chain().focus().extendMarkRange('link').unsetLink()
-        .run()
+    if (editor) {
+      if (url === '') {
+        editor.chain().focus().extendMarkRange('link').unsetLink().run()
 
-      return
+        return
+      }
+
+      // update link
+      if(url) {
+        editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
+      }
     }
-
-    // update link
-    editor.chain().focus().extendMarkRange('link').setLink({ href: url })
-      .run()
+    // empty
   }, [editor])
 
 
@@ -88,17 +95,73 @@ export default function CollabRichTextEditorToolbar() {
       </button>
       <div style={{ width: 1, backgroundColor: '#E5E7EB' }}></div>
       <button
-        onClick={setLink}
+        onClick={() => { }}
         className={editor.isActive('emoji') ? 'is-active' : ''}
       >
         <Image src="/image/icon/emoji.svg" alt="emoji" width={16} height={16} />
       </button>
-      <button
-        onClick={setLink}
-        className={editor.isActive('link') ? 'is-active' : ''}
+      <Popover
+        isOpen={isLinkMenuOpen}
+        onClose={() => {
+          setIsLinkMenuOpen(false)
+          setLinkUrl('')
+        }}
       >
-        <Image src="/image/icon/link.svg" alt="Link" width={16} height={16} />
-      </button>
+        <PopoverTrigger>
+          <button
+            onClick={() => {
+              setIsLinkMenuOpen(!isLinkMenuOpen)
+              setLinkUrl(editor.getAttributes('link').href)
+            }}
+            className={editor.isActive('link') ? 'is-active' : ''}
+          >
+            <Image src="/image/icon/link.svg" alt="Link" width={16} height={16} />
+          </button>
+        </PopoverTrigger>
+        <PopoverContent width={250}>
+          <PopoverArrow />
+          <PopoverBody padding={4}>
+            <Box display={'flex'} flexDirection={'column'} gap={4}>
+              <FormControl>
+                <FormLabel fontSize={13} fontWeight={'semibold'}>Url</FormLabel>
+                <Input
+                  type="url"
+                  value={linkUrl}
+                  onChange={(e) => setLinkUrl(e.target.value)}
+                />
+              </FormControl>
+              <Box display={'flex'} gap={2}>
+                <Button
+                  width={'auto'}
+                  backgroundColor={'#000'}
+                  border={'1px solid #000'}
+                  color={'#fff'}
+                  fontSize={13}
+                  paddingX={8} paddingY={4}
+                  className='button'
+                  onClick={() => setLink(linkUrl)}
+                >
+                  Add
+                </Button>
+                <Button
+                  width={'auto'}
+                  backgroundColor={'#fff'}
+                  border={'1px solid #000'}
+                  color={'#000'}
+                  fontSize={13}
+                  paddingX={8} paddingY={4}
+                  className='button'
+                  onClick={() => {
+                    setIsLinkMenuOpen(false)
+                  }}
+                >
+                  Cancel
+                </Button>
+              </Box>
+            </Box>
+          </PopoverBody>
+        </PopoverContent>
+      </Popover>
     </Box>
   )
 }

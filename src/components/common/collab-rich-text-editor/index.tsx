@@ -38,6 +38,7 @@ export default function CollabRichTextEditor() {
     // TextStyle.configure({ types: [ListItem.name] }),
     Link.configure({
       openOnClick: false,
+      linkOnPaste: true
     }),
     StarterKit.configure({
       bulletList: {

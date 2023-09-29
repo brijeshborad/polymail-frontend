@@ -634,6 +634,12 @@ div:has(> .mailSendToaster) {
     width: 16px;
     height: 16px;
   }
+
+  .tiptap a {
+    color: #000;
+    text-decoration: underline;
+  }
+
 .email-signature.rdw-editor-wrapper .rdw-editor-toolbar .rdw-option-wrapper {
     width: 24px;
     height: 24px;
