@@ -3,20 +3,99 @@ import {DisneyDIcon, FolderIcon} from "@/icons";
 import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {Project} from "@/models";
+import {Project, Thread} from "@/models";
 import Router from "next/router";
 import {PlusIcon} from "@/icons/plus.icon";
 import {updateThreadState} from "@/redux/threads/action-reducer";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 import {updateCommonState} from "@/redux/common-apis/action-reducer";
+import {updateLastMessage} from "@/redux/socket/action-reducer";
+import dayjs from "dayjs";
+import {debounceInterval} from "@/utils/common.functions";
+
+let displayProjectsData: Project[] = [];
 
 export function InboxHeaderProjectsList(props: { size: number }) {
     const {projects, isLoading} = useSelector((state: StateType) => state.projects);
+    const {newMessage} = useSelector((state: StateType) => state.socket);
+    const {threads} = useSelector((state: StateType) => state.threads);
+    const {userDetails} = useSelector((state: StateType) => state.users);
     const [projectData, setProjectData] = useState<Project[]>([]);
     const [projectDataLength, setProjectDataLength] = useState<Project[]>([]);
     const dispatch = useDispatch();
     const projectButtonRef = React.useRef<HTMLDivElement | null | any>(null);
     const [maxSize, setMaxSize] = useState<number>(5);
+
+    useEffect(() => {
+        if (newMessage) {
+            dispatch(updateLastMessage(null));
+            if (newMessage.name === 'Activity') {
+                let displayedProjects = [...displayProjectsData];
+                if (userDetails && userDetails.id !== newMessage.userId) {
+                    let findThread: Thread | any = (threads || []).find((item: Thread) => item.id === newMessage.data.threadId);
+                    displayedProjects = displayedProjects.map((projectItem: Project) => {
+                        let updateUserData = false;
+                        let finalItem: Project = {...projectItem};
+                        if (!finalItem.userProjectOnlineStatus) {
+                            finalItem.userProjectOnlineStatus = [];
+                        }
+                        if (newMessage.data.type === 'ViewingThread') {
+                            if (findThread && (findThread.projects || []).some((value: Project) => value.id === projectItem!.id)) {
+                                updateUserData = true;
+                            }
+                        }
+                        if (newMessage.data.type === 'ViewingProject') {
+                            if (projectItem.id === newMessage.data.projectId) {
+                                updateUserData = true;
+                            }
+                        }
+
+                        if (updateUserData) {
+                            let userAlreadyExists = finalItem.userProjectOnlineStatus.findIndex((item) => item.userId === newMessage.userId);
+                            if (userAlreadyExists !== -1) {
+                                finalItem.userProjectOnlineStatus[userAlreadyExists].isOnline = true;
+                                finalItem.userProjectOnlineStatus[userAlreadyExists].lastOnlineStatusCheck = dayjs().format('DD/MM/YYYY hh:mm:ss a');
+                            } else {
+                                finalItem.userProjectOnlineStatus.push({
+                                    userId: newMessage.userId,
+                                    isOnline: true,
+                                    lastOnlineStatusCheck: new Date(),
+                                    avatar: newMessage.data.avatar,
+                                })
+                            }
+                        }
+                        return {...finalItem};
+                    })
+                    setProjectData(displayedProjects);
+                }
+            }
+        }
+    }, [newMessage, dispatch, threads, userDetails]);
+
+    useEffect(() => {
+        displayProjectsData = projectData;
+    }, [projectData])
+
+    useEffect(() => {
+        debounceInterval(() => {
+            let displayedProjects = [...displayProjectsData];
+            displayedProjects = displayedProjects.map((item: Project) => {
+                let finalItem = {...item};
+                if (!finalItem.userProjectOnlineStatus) {
+                    finalItem.userProjectOnlineStatus = [];
+                }
+                finalItem.userProjectOnlineStatus = finalItem.userProjectOnlineStatus.map((data) => {
+                    let finalData = {...data};
+                    if (finalData.isOnline && dayjs(finalData.lastOnlineStatusCheck, 'DD/MM/YYYY hh:mm:ss a').diff(dayjs(), 'seconds') > 10) {
+                        finalData.isOnline = false;
+                    }
+                    return finalData;
+                })
+                return {...finalItem}
+            })
+            setProjectData([...displayedProjects]);
+        }, 1000 * 10);
+    }, [])
 
     useEffect(() => {
         if (projects && projects.length > 0) {
@@ -81,9 +160,16 @@ export function InboxHeaderProjectsList(props: { size: number }) {
                         <Text whiteSpace={'nowrap'} overflow={'hidden'} textOverflow={'ellipsis'} fontSize='13px'
                               color={'#0A101D'} flex={'1'}>{project.name}</Text>
                         <Flex className={'member-images subheader-images'}>
-                            <div className={'member-photo'}>
-                                <Image src="/image/user.png" width="24" height="24" alt=""/>
-                            </div>
+                            {(project.userProjectOnlineStatus || [])
+                                .filter(t => t.isOnline).slice(0, 5)
+                                .map((item, index) => (
+                                        <div className={'member-photo'} key={index}>
+                                            <Image src={item.avatar || "/image/user.png"} width="24" height="24"
+                                                   alt=""/>
+                                        </div>
+                                    )
+                                )
+                            }
                         </Flex>
                     </Button>
                 ))}

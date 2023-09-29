@@ -31,24 +31,31 @@ import {
     addItemToGroup, deleteMemberFromProject, deleteMemberShipFromProject,
     updateMembershipState
 } from "@/redux/memberships/action-reducer";
-import {InviteMember, Project, TeamMember} from "@/models";
-import {isEmail} from "@/utils/common.functions";
+import {InviteMember, Project, TeamMember, Thread, UserProjectOnlineStatus} from "@/models";
+import {debounceInterval, isEmail} from "@/utils/common.functions";
 import {Message} from "@/components/messages";
 import {PROJECT_ROLES} from "@/utils/constants";
 import RemoveRecordModal from "@/components/common/delete-record-modal";
 import {Toaster} from "@/components/common";
+import {updateLastMessage} from "@/redux/socket/action-reducer";
+import dayjs from "dayjs";
+
+
+let displayOnlineMembersData: UserProjectOnlineStatus[] = [];
 
 function ProjectInbox() {
     const {members, project, invitees} = useSelector((state: StateType) => state.projects);
-    const {selectedThread} = useSelector((state: StateType) => state.threads);
+    const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {success: membershipSuccess} = useSelector((state: StateType) => state.memberships);
     const {isProjectRemoveSuccess, success} = useSelector((state: StateType) => state.memberships);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const [isManagerMembersOpen, setIsManagerMembersOpen] = useState<boolean>(false)
-    const {sendJsonMessage} = useSelector((state: StateType) => state.socket);
+    const {sendJsonMessage, newMessage} = useSelector((state: StateType) => state.socket);
+    const {userDetails} = useSelector((state: StateType) => state.users);
 
     const [size, setSize] = useState<number>(0);
+    const [onlineMembersData, setOnlineMemberData] = useState<UserProjectOnlineStatus[]>([]);
     const [allowAdd, setAllowAdd] = useState<boolean>(false);
     const [membersInputs, setMembersInput] = useState<{ input: string, role: string }>({
         input: '',
@@ -59,6 +66,60 @@ function ProjectInbox() {
 
     const router = useRouter();
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (newMessage) {
+            dispatch(updateLastMessage(null));
+            if (newMessage.name === 'Activity') {
+                if (userDetails && userDetails.id !== newMessage.userId) {
+                    let findThread: Thread | any = (threads || []).find((item: Thread) => item.id === newMessage.data.threadId);
+                    let updateUserData = false;
+                    if (newMessage.data.type === 'ViewingThread') {
+                        if (findThread && (findThread.projects || []).some((value: Project) => value.id === project!.id)) {
+                            updateUserData = true;
+                        }
+                    }
+                    if (newMessage.data.type === 'ViewingProject') {
+                        if (project && project.id === newMessage.data.projectId) {
+                            updateUserData = true;
+                        }
+                    }
+
+                    if (updateUserData) {
+                        let userAlreadyExists = onlineMembersData.findIndex((item) => item.userId === newMessage.userId);
+                        if (userAlreadyExists !== -1) {
+                            onlineMembersData[userAlreadyExists].isOnline = true;
+                            onlineMembersData[userAlreadyExists].lastOnlineStatusCheck = dayjs().format('DD/MM/YYYY hh:mm:ss a');
+                        } else {
+                            onlineMembersData.push({
+                                userId: newMessage.userId,
+                                isOnline: true,
+                                lastOnlineStatusCheck: new Date(),
+                                avatar: newMessage.data.avatar,
+                            })
+                        }
+                        setOnlineMemberData([...onlineMembersData])
+                    }
+                }
+            }
+        }
+    }, [newMessage, dispatch, userDetails, threads, project, onlineMembersData]);
+
+    useEffect(() => {
+        displayOnlineMembersData = onlineMembersData;
+    }, [onlineMembersData])
+
+    useEffect(() => {
+        debounceInterval(() => {
+            setOnlineMemberData([...displayOnlineMembersData.map((data) => {
+                let finalData = {...data};
+                if (finalData.isOnline && dayjs(finalData.lastOnlineStatusCheck, 'DD/MM/YYYY hh:mm:ss a').diff(dayjs(), 'seconds') > 10) {
+                    finalData.isOnline = false;
+                }
+                return finalData;
+            })]);
+        }, 1000 * 10);
+    }, [])
 
 
     useEffect(() => {
@@ -220,15 +281,12 @@ function ProjectInbox() {
                                lineHeight={'1.19'}>{members && members.length === 1 ? `1 member`:`${members && members.length} members`}</Badge>
                     </Flex>
                     <Flex align={'center'} gap={1}>
-                        <div className={styles.userImage}>
-                            <Image src="/image/user.png" width="36" height="36" alt=""/>
-                        </div>
-                        <div className={styles.userImage}>
-                            <Image src="/image/user.png" width="36" height="36" alt=""/>
-                        </div>
-                        <div className={styles.userImage}>
-                            <Image src="/image/user.png" width="36" height="36" alt=""/>
-                        </div>
+                        {onlineMembersData.filter(t => t.isOnline).slice(0, 5)
+                            .map((item, index) => (
+                                <div className={styles.userImage} key={index}>
+                                    <Image src={item.avatar || "/image/user.png"} width="36" height="36" alt=""/>
+                                </div>
+                            ))}
                         <Menu isOpen={isManagerMembersOpen} onClose={() => setIsManagerMembersOpen(false)}>
                         {({ onClose }) => (
                           <>

@@ -9,10 +9,18 @@ export interface Project {
     numThreads?: number,
     scope?: string,
     projectMeta?: ProjectMetaData
+    userProjectOnlineStatus?: UserProjectOnlineStatus[]
 }
 
 export interface ProjectRequestBody {
     projectMeta?: ProjectMetaData
+}
+
+export interface UserProjectOnlineStatus {
+    userId?: string;
+    isOnline?: boolean;
+    lastOnlineStatusCheck?: Date | string
+    avatar?: string
 }
 
 

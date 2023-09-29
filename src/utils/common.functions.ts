@@ -9,7 +9,7 @@ export function debounce(fun: () => void, timeOut: number = 1500) {
 
 export function debounceInterval(fun: () => void, timeOut: number = 1500) {
     if (timeoutInterval)
-        clearTimeout(timeout);
+        clearInterval(timeout);
     timeoutInterval = setInterval(fun, timeOut);
 }
 
