@@ -7,32 +7,28 @@ import { Color } from '@tiptap/extension-color'
 import ListItem from '@tiptap/extension-list-item'
 import TextStyle from '@tiptap/extension-text-style'
 import Link from '@tiptap/extension-link'
-import Collaboration from '@tiptap/extension-collaboration'
-import { HocuspocusProvider } from '@hocuspocus/provider'
+import Placeholder from '@tiptap/extension-placeholder'
+// import Collaboration from '@tiptap/extension-collaboration'
+// import { HocuspocusProvider } from '@hocuspocus/provider'
+import { CollabRichTextEditorType } from '@/types/props-types/collab-rich-text-editor.types'
 
-export default function CollabRichTextEditor() {
+export default function CollabRichTextEditor({
+  content = '', isToolbarVisible = false, onChange,
+  beforeToolbar, afterToolbar, extendToolbar,
+  placeholder }: CollabRichTextEditorType) {
   const dispatch = useDispatch()
 
-  const provider = new HocuspocusProvider({
-    url: 'ws://127.0.0.1:1234',
-    name: 'example-document',
-  })
-
-  const content = `
-    <p>Hello, world!</p>
-    <ul>
-      <li>
-        That’s a bullet list with one …
-      </li>
-      <li>
-        … or two list items.
-      </li>
-    </ul>
-  `
+  // const provider = new HocuspocusProvider({
+  //   url: 'ws://127.0.0.1:1234',
+  //   name: 'example-document',
+  // })
 
   const extensions = [
-    Collaboration.configure({
-      document: provider.document,
+    // Collaboration.configure({
+    //   document: provider.document,
+    // }),
+    Placeholder.configure({
+      placeholder: placeholder,
     }),
     Color.configure({ types: [TextStyle.name, ListItem.name] }),
     // TextStyle.configure({ types: [ListItem.name] }),
@@ -52,17 +48,26 @@ export default function CollabRichTextEditor() {
     }),
   ]
 
+
+
   return (
     <div>
       <EditorProvider
         onFocus={() => dispatch(updateKeyNavigation({ isEnabled: false }))}
         onBlur={() => dispatch(updateKeyNavigation({ isEnabled: true }))}
-        slotAfter={<CollabRichTextEditorToolbar />}
+        onUpdate={({ editor }) => onChange(editor.getHTML())}
+        slotAfter={(
+          <CollabRichTextEditorToolbar
+            isToolbarVisible={isToolbarVisible}
+            beforeToolbar={beforeToolbar}
+            afterToolbar={afterToolbar}
+            extendToolbar={extendToolbar}
+          />
+        )}
         extensions={extensions}
         content={content}
       >
       </EditorProvider>
-
     </div>
   )
 }

@@ -618,7 +618,9 @@ div:has(> .mailSendToaster) {
   */
 
   .tiptap {
-    padding: 8px;
+    padding-bottom: 16px;
+    font-size: 13px;
+    font-weight: 500;
   }
 
   .tiptap:focus {
@@ -638,6 +640,14 @@ div:has(> .mailSendToaster) {
   .tiptap a {
     color: #000;
     text-decoration: underline;
+  }
+
+  .tiptap p.is-editor-empty:first-child::before {
+    color: #adb5bd;
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
   }
 
 .email-signature.rdw-editor-wrapper .rdw-editor-toolbar .rdw-option-wrapper {
