@@ -82,6 +82,7 @@ export function MessageReplyBox(props: MessageBoxType) {
   const divRef = useRef<HTMLDivElement | null>(null);
   const [divHeight, setDivHeight] = useState<number>(0);
   const [emailList, setEmailList] = useState<any>([]);
+  const {membership} = useSelector((state: StateType) => state.memberships);
 
   useEffect(() => {
     if (emailRecipients?.recipients?.items && emailRecipients?.recipients?.items.length > 1) {
@@ -306,7 +307,10 @@ export function MessageReplyBox(props: MessageBoxType) {
       if (props.replyType === 'forward') {
         emailSubject = `Fwd: ${messagesData.subject}`;
         let decoded = Buffer.from(props.emailPart || '', 'base64').toString('ascii');
-        const sentence = `${selectedAccount?.name || ''} is sharing this email thread (and future replies) <u>with others</u> ${selectedThread?.projects?.length > 0 ? `<u>at ${selectedThread.projects[0].name}</u> on Polymail` : 'on Polymail'}`;
+        let sentence = '';
+        if (selectedThread?.projects && selectedThread?.projects?.length) {
+          sentence = `${selectedAccount?.name || ''} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length > 0 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}`;
+        }
         setEmailBody(getForwardContent() + (decoded || '') + (selectedAccount?.signature || '') + (`<p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;>${sentence}</p>`));
         debounce(() => {
           handleEditorScroll();
@@ -322,8 +326,10 @@ export function MessageReplyBox(props: MessageBoxType) {
       } else {
         if (isInitialized) {
           if (selectedAccount && selectedAccount.signature) {
-            const sentence = `${selectedAccount?.name || ''} is sharing this email thread (and future replies) <u>with others</u> ${selectedThread?.projects?.length > 0 ? `<u>at ${selectedThread.projects[0].name}</u> on Polymail` : 'on Polymail'}`;
-            setEmailBody(`<p></p><p>${selectedAccount.signature}</p><p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`);
+            let sentence = '';
+            if (selectedThread?.projects && selectedThread?.projects?.length) {
+              sentence = `${selectedAccount?.name || ''} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length > 0 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}`;
+            }            setEmailBody(`<p></p><p>${selectedAccount.signature}</p><p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`);
           }
         }
       }
@@ -482,7 +488,10 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
   const discardMessage = () => {
     if (selectedAccount && selectedAccount.signature) {
-      const sentence = `${selectedAccount?.name || ''} is sharing this email thread (and future replies) <u>with others</u> ${selectedThread?.projects?.length > 0 ? `<u>at ${selectedThread.projects[0].name}</u> on Polymail` : 'on Polymail'}`;
+      let sentence = '';
+        if (selectedThread?.projects && selectedThread?.projects?.length) {
+          sentence = `${selectedAccount?.name || ''} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length > 0 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}`;
+        }
 
       setEmailBody(`<p></p><p>${selectedAccount.signature}</p><p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`);
       dispatch(fireEvent({event: {
@@ -619,8 +628,10 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
       setHideEditorToolbar(true);
       let currentEmailBody: string = getPlainTextFromHtml(emailBody);
       if (selectedAccount && selectedAccount.signature && props.replyType !== 'forward' && !currentEmailBody.trim()) {
-        debugger;
-        const sentence = `${selectedAccount?.name || ''} is sharing this email thread (and future replies) <b>with others</b> ${selectedThread?.projects?.length > 0 ? `<b>at ${selectedThread.projects[0].name}</b> on Polymail` : 'on Polymail'}`;
+        let sentence = '';
+        if (selectedThread?.projects && selectedThread?.projects.length) {
+           sentence = `${selectedAccount?.name || ''} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length > 0 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}`;
+        }
 
         setEmailBody(`<p></p><p>${selectedAccount.signature}</p><p></p><p style="padding: 5px 10px; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`);
       }
