@@ -5,15 +5,7 @@ import {
   Menu,
   MenuButton, MenuItem,
   MenuList,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Text,
-  useDisclosure
+  Text
 } from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
 import Image from "next/image";
@@ -31,7 +23,6 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import {Message, MessageAttachments, MessageRecipient} from "@/models";
 import { uploadAttachment } from "@/redux/messages/action-reducer";
-import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { MessageBoxType } from "@/types/props-types/message-box.type";
 const MessageRecipients = dynamic(() => import("./message-recipients").then(mod => mod.default));
 const MessageSchedule = dynamic(() => import("./message-schedule").then(mod => mod.default));
