@@ -21,6 +21,7 @@ export interface UserProjectOnlineStatus {
     isOnline?: boolean;
     lastOnlineStatusCheck?: Date | string
     avatar?: string
+    color?: string
 }
 
 

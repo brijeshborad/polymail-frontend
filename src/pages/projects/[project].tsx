@@ -71,15 +71,19 @@ function ProjectInbox() {
         if (newMessage) {
             dispatch(updateLastMessage(null));
             if (newMessage.name === 'Activity') {
-                if (userDetails && userDetails.id !== newMessage.userId) {
+                // if (userDetails && userDetails.id !== newMessage.userId) {
+
+                    console.log('----', newMessage);
                     let findThread: Thread | any = (threads || []).find((item: Thread) => item.id === newMessage.data.threadId);
                     let updateUserData = false;
                     if (newMessage.data.type === 'ViewingThread') {
+                        console.log('THREDS', findThread);
                         if (findThread && (findThread.projects || []).some((value: Project) => value.id === project!.id)) {
                             updateUserData = true;
                         }
                     }
                     if (newMessage.data.type === 'ViewingProject') {
+                        console.log('PROJECT', findThread, newMessage.data.projectId, project);
                         if (project && project.id === newMessage.data.projectId) {
                             updateUserData = true;
                         }
@@ -96,11 +100,12 @@ function ProjectInbox() {
                                 isOnline: true,
                                 lastOnlineStatusCheck: new Date(),
                                 avatar: newMessage.data.avatar,
+                                color: Math.floor(Math.random()*16777215).toString(16),
                             })
                         }
                         setOnlineMemberData([...onlineMembersData])
                     }
-                }
+                // }
             }
         }
     }, [newMessage, dispatch, userDetails, threads, project, onlineMembersData]);
@@ -124,9 +129,8 @@ function ProjectInbox() {
 
     useEffect(() => {
       if (router.query.project && sendJsonMessage) {
-
-        const interval = setInterval(() => {
-          console.log('Sending activity event');
+        const interval = debounceInterval(() => {
+          console.log('Sending activity event PROJECT');
           let projectId = router.query.project as string;
             sendJsonMessage({
                 userId: selectedAccount?.userId,
@@ -142,7 +146,7 @@ function ProjectInbox() {
       }
 
       return undefined
-    }, []);
+    }, [router.query.project, selectedAccount?.userId, sendJsonMessage]);
 
     useEffect(() => {
         if (router.query.project) {
@@ -283,8 +287,8 @@ function ProjectInbox() {
                     <Flex align={'center'} gap={1}>
                         {onlineMembersData.filter(t => t.isOnline).slice(0, 5)
                             .map((item, index) => (
-                                <div className={styles.userImage} key={index}>
-                                    <Image src={item.avatar || "/image/user.png"} width="36" height="36" alt=""/>
+                                <div className={styles.userImage} style={{border: `1px solid #${item.color}`}} key={index}>
+                                    {item.avatar && <Image src={item.avatar} width="36" height="36" alt=""/>}
                                 </div>
                             ))}
                         <Menu isOpen={isManagerMembersOpen} onClose={() => setIsManagerMembersOpen(false)}>

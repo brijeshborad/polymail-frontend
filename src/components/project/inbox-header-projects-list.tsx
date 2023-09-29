@@ -61,6 +61,7 @@ export function InboxHeaderProjectsList(props: { size: number }) {
                                     isOnline: true,
                                     lastOnlineStatusCheck: new Date(),
                                     avatar: newMessage.data.avatar,
+                                    color: Math.floor(Math.random()*16777215).toString(16),
                                 })
                             }
                         }
@@ -163,9 +164,10 @@ export function InboxHeaderProjectsList(props: { size: number }) {
                             {(project.userProjectOnlineStatus || [])
                                 .filter(t => t.isOnline).slice(0, 5)
                                 .map((item, index) => (
-                                        <div className={'member-photo'} key={index}>
-                                            <Image src={item.avatar || "/image/user.png"} width="24" height="24"
-                                                   alt=""/>
+                                        <div className={'member-photo'}
+                                             style={{background: '#000', border: `1px solid #${item.color}`}} key={index}>
+                                            {item.avatar && <Image src={item.avatar} width="24" height="24"
+                                                                   alt=""/>}
                                         </div>
                                     )
                                 )

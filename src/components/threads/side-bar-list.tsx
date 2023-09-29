@@ -13,6 +13,7 @@ import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import {updateCommonState} from "@/redux/common-apis/action-reducer";
 import {getCurrentSelectedThreads, setCurrentSelectedThreads} from "@/utils/cache.functions";
+import {debounceInterval} from "@/utils/common.functions";
 
 export function ThreadsSideBarList(props: ThreadListProps) {
   const { selectedThread, threads} = useSelector((state: StateType) => state.threads);
@@ -141,8 +142,8 @@ export function ThreadsSideBarList(props: ThreadListProps) {
 
   useEffect(() => {
     if (selectedThread && selectedAccount && sendJsonMessage) {
-      const interval = setInterval(() => {
-        console.log('Sending activity event');
+      const interval = debounceInterval(() => {
+        console.log('Sending activity event THREAD');
         sendJsonMessage({
             userId: selectedAccount?.userId,
             name: 'Activity',
