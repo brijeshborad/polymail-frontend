@@ -35,6 +35,7 @@ function OnBoardingType() {
 
     useEffect(() => {
         if (userDetails && user && user?.token) {
+            console.log(userDetails);
             if (userDetails.onboarded) {
                 Router.push('/inbox');
             } else {

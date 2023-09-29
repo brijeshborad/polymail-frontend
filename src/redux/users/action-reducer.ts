@@ -3,7 +3,7 @@ import {InitialUserState} from "@/types";
 import {UserDetails} from "@/models";
 
 const initialState: any = {
-    userDetails: {},
+    userDetails: null,
     isLoading: false,
     error: null,
     profilePicture: {},
@@ -27,7 +27,7 @@ const userSlice = createSlice({
         },
 
         getUsersDetails: (state: InitialUserState, _action: PayloadAction<UserDetails>) => {
-            return {...state, userDetails: {}, profilePictureUpdated: false, error: null, isLoading: false}
+            return {...state, userDetails: null, profilePictureUpdated: false, error: null, isLoading: false}
         },
         getUsersDetailsSuccess: (state: InitialUserState, {payload: userDetails}: PayloadAction<{}>) => {
             return {...state, userDetails, error: null, isLoading: false}
