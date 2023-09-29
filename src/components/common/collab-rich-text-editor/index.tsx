@@ -1,32 +1,40 @@
 import { updateKeyNavigation } from '@/redux/key-navigation/action-reducer'
 import { EditorProvider } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import CollabRichTextEditorToolbar from './toolbar'
 import { Color } from '@tiptap/extension-color'
 import ListItem from '@tiptap/extension-list-item'
 import TextStyle from '@tiptap/extension-text-style'
 import Link from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
-// import Collaboration from '@tiptap/extension-collaboration'
-// import { HocuspocusProvider } from '@hocuspocus/provider'
+import Collaboration from '@tiptap/extension-collaboration'
+import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
+import { TiptapCollabProvider } from '@hocuspocus/provider'
 import { CollabRichTextEditorType } from '@/types/props-types/collab-rich-text-editor.types'
+import * as Y from 'yjs'
+import { StateType } from '@/types'
 
 export default function CollabRichTextEditor({
-  content = '', isToolbarVisible = false, onChange,
+  id, content = '', isToolbarVisible = false, onChange,
   beforeToolbar, afterToolbar, extendToolbar,
   placeholder }: CollabRichTextEditorType) {
   const dispatch = useDispatch()
+  const {selectedAccount} = useSelector((state: StateType) => state.accounts);
 
-  // const provider = new HocuspocusProvider({
-  //   url: 'ws://127.0.0.1:1234',
-  //   name: 'example-document',
-  // })
+  console.log('ID', id)
+  
+  const provider = new TiptapCollabProvider({
+    appId: '09XY1YK1', // get this at collab.tiptap.dev
+    name: id, // e.g. a uuid uuidv4();
+    token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2OTYwMTI5NDMsIm5iZiI6MTY5NjAxMjk0MywiZXhwIjoxNjk2MDk5MzQzLCJpc3MiOiJodHRwczovL2NvbGxhYi50aXB0YXAuZGV2IiwiYXVkIjoibHVpekBwb2x5bWFpbC5jb20ifQ.eiAUVv-nW6rD-l8YeitTZn2SVgzacDRDaSkYegie800',
+    // document: new Y.Doc() // pass your existing doc, or leave this out and use provider.document
+  })
 
   const extensions = [
-    // Collaboration.configure({
-    //   document: provider.document,
-    // }),
+    Collaboration.configure({
+      document: provider.document,
+    }),
     Placeholder.configure({
       placeholder: placeholder,
     }),
@@ -46,6 +54,13 @@ export default function CollabRichTextEditor({
         keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
       },
     }),
+    CollaborationCursor.configure({
+      provider: provider,
+      user: {
+        name: selectedAccount ? selectedAccount.name : 'Uknown',
+        color: '#f783ac',
+      },
+    }),
   ]
 
 
@@ -53,6 +68,7 @@ export default function CollabRichTextEditor({
   return (
     <div>
       <EditorProvider
+        autofocus
         onFocus={() => dispatch(updateKeyNavigation({ isEnabled: false }))}
         onBlur={() => dispatch(updateKeyNavigation({ isEnabled: true }))}
         onUpdate={({ editor }) => onChange(editor.getHTML())}

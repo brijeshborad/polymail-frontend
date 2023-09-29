@@ -18,11 +18,10 @@ import {
 import styles from "@/styles/Inbox.module.css";
 import Image from "next/image";
 import { ChevronDownIcon, CloseIcon } from "@chakra-ui/icons";
-import { FileIcon, TextIcon } from "@/icons";
 import React, { ChangeEvent, ChangeEventHandler, useCallback, useEffect, useRef, useState } from "react";
 import { debounce, isEmail } from "@/utils/common.functions";
 import { Toaster } from "@/components/common";
-const RichTextEditor = dynamic(() => import("@/components/common").then(mod => mod.RichTextEditor));
+// const RichTextEditor = dynamic(() => import("@/components/common").then(mod => mod.RichTextEditor));
 const Time = dynamic(() => import("@/components/common").then(mod => mod.Time));
 import { createDraft, sendMessage, updateDraftState, updatePartialMessage } from "@/redux/draft/action-reducer";
 import { useDispatch, useSelector } from "react-redux";
@@ -236,17 +235,20 @@ export function MessageReplyBox(props: MessageBoxType) {
     }));
   };
 
-  const sendToDraft = (value: string, isValueUpdate: boolean = true) => {
+  const sendToDraft = (value: string, isValueUpdate: boolean = true, isForceCreate: boolean = false) => {
     let updateValue: string = getPlainTextFromHtml(value);
-    if (!updateValue.trim()) {
-      return;
-    }
-    if (isValueUpdate) {
-      if (!value.trim()) {
-        setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
-        setExtraClassNamesForBottom(prevState => prevState.replace('show-shadow-bottom', ''));
+
+    if(!isForceCreate) {
+      if (!updateValue.trim()) {
+        return;
       }
-      setEmailBody(value);
+      if (isValueUpdate) {
+        if (!value.trim()) {
+          setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
+          setExtraClassNamesForBottom(prevState => prevState.replace('show-shadow-bottom', ''));
+        }
+        setEmailBody(value);
+      }
     }
 
     let body = {
@@ -770,31 +772,32 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
           <Flex direction={'column'} position={"relative"} flex={1} >
             <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} overflow={'auto'} ref={editorRef} className={`${styles.replyBoxEditor} editor-bottom-shadow`}
               onScroll={() => handleEditorScroll()}>
-              <CollabRichTextEditor
-                content={emailBody}
-                onChange={(content) => sendToDraft(content)}
-                placeholder='Reply with anything you like or @mention someone to share this thread'
-                isToolbarVisible={hideEditorToolbar}
-                beforeToolbar={(
-                  <Flex backgroundColor={'#EBF83E'} width={'fit-content'} borderRadius={'4px'} color={'#0A101D'} fontWeight={'500'} lineHeight={1} padding={'5px 10px'}>
-                    <Text fontSize='xs'> {selectedAccount?.name || ''} is sharing this email thread (and future replies) with&nbsp;</Text>
-                    <Text fontSize='xs' as='u'>1 person</Text>
-                    <Text fontSize='xs'>&nbsp;at chiat.com on&nbsp;</Text>
-                    <Text fontSize='xs' as='u'> Polymail</Text>
-                  </Flex>
-                )}
-                extendToolbar={(
-                  <>
-                    <Flex
-                      onClick={() => inputFile.current?.click()}
-                      width={'16px'} h={'16px'} align={'center'} justify={'center'} cursor={'pointer'} className={styles.replyIcon}
-                    >
-                      <Image src="/image/icon/attach.svg" alt="emoji" width={13} height={13} />
-                      <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e)} style={{ display: 'none' }} />
+                <CollabRichTextEditor
+                  id={`${selectedThread?.id}-${(selectedThread?.messages || []).length}`}
+                  content={emailBody}
+                  onChange={(content) => sendToDraft(content)}
+                  placeholder='Reply with anything you like or @mention someone to share this thread'
+                  isToolbarVisible={hideEditorToolbar}
+                  beforeToolbar={(
+                    <Flex backgroundColor={'#EBF83E'} width={'fit-content'} borderRadius={'4px'} color={'#0A101D'} fontWeight={'500'} lineHeight={1} padding={'5px 10px'}>
+                      <Text fontSize='xs'> {selectedAccount?.name || ''} is sharing this email thread (and future replies) with&nbsp;</Text>
+                      <Text fontSize='xs' as='u'>1 person</Text>
+                      <Text fontSize='xs'>&nbsp;at chiat.com on&nbsp;</Text>
+                      <Text fontSize='xs' as='u'> Polymail</Text>
                     </Flex>
-                  </>
-                )}
-              />
+                  )}
+                  extendToolbar={(
+                    <>
+                      <Flex
+                        onClick={() => inputFile.current?.click()}
+                        width={'16px'} h={'16px'} align={'center'} justify={'center'} cursor={'pointer'} className={styles.replyIcon}
+                      >
+                        <Image src="/image/icon/attach.svg" alt="emoji" width={13} height={13} />
+                        <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e)} style={{ display: 'none' }} />
+                      </Flex>
+                    </>
+                  )}
+                />
               {/* <RichTextEditor
                 className={`reply-message-area message-reply-box ${hideEditorToolbar ? 'hide-toolbar' : ''} ${extraClassNames} ${extraClassNamesForBottom}`}
                 placeholder='Reply with anything you like or @mention someone to share this thread'
