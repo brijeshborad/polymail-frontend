@@ -566,7 +566,7 @@ div:has(> .mailSendToaster) {
 }
 
 .editor-bottom-shadow .hide-toolbar.show-shadow-bottom:after {
-    bottom: 38px;
+    bottom: 60px;
 }
 
 ::-webkit-datetime-edit-ampm-field {
@@ -670,4 +670,8 @@ div:has(> .mailSendToaster) {
 .rdw-editor-wrapper .rdw-image-modal .rdw-image-modal-alt-input,
 .rdw-editor-wrapper .rdw-image-modal .rdw-image-modal-size-input {
     height: 30px;
+}
+
+#chakra-toast-manager-bottom {
+    align-items: start;
 }
