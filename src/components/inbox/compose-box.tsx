@@ -597,7 +597,7 @@ export function ComposeBox(props: any) {
                           <>Send</>
                       )}
                     </Button>
-                    <MessageSchedule date={scheduledDate} sendMessages={sendMessages} onChange={handleSchedule} />
+                    <MessageSchedule date={scheduledDate} onChange={handleSchedule} />
                   </Flex>
                 </Flex>
               </Flex>

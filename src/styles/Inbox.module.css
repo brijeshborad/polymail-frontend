@@ -1020,6 +1020,10 @@
     margin-right: 0;
 }
 
+.dropDownCloseIcon:hover {
+    background: transparent !important;
+}
+
 .addToProjectPlusActions {
   display: flex;
   align-items: center;

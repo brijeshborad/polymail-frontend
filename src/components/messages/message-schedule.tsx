@@ -10,11 +10,12 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { StateType } from "@/types";
 import { useSelector } from "react-redux";
+import {TimeSnoozeIcon} from "@/icons";
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
-export default function MessageSchedule({ date, onChange }: MessageScheduleProps) {
+export default function MessageSchedule({ date, onChange, isSnooze = false }: MessageScheduleProps) {
   const [isOpen, setOpen] = useState(false)
   const [scheduleDate, setScheduleDate] = useState(date)
   const [customSchedule, setCustomSchedule] = useState(false)
@@ -43,9 +44,15 @@ export default function MessageSchedule({ date, onChange }: MessageScheduleProps
     }
   }, [date])
 
+  useEffect(() => {
+    if (isSnooze) {
+      setShowScheduleMenu(true);
+    }
+  }, [isSnooze])
+
   const closeScheduleDropdown = () => {
     setOpen(false)
-    setShowScheduleMenu(false)
+    setShowScheduleMenu(isSnooze)
     setCustomSchedule(false)
   }
 
@@ -78,10 +85,11 @@ export default function MessageSchedule({ date, onChange }: MessageScheduleProps
             }
           }
         }}
-        className={styles.replyArrowIcon} as={Button}
+        className={styles.replyArrowIcon} as={isSnooze ? "div" : Button}
         aria-label='Options'
-        variant='outline'>
-        <ChevronDownIcon />
+        {...(!isSnooze ? {variant: 'outline'} : {})}
+      >
+        {isSnooze ? <TimeSnoozeIcon/> : <ChevronDownIcon />}
       </MenuButton>
 
       {!showScheduleMenu && (
@@ -128,7 +136,9 @@ export default function MessageSchedule({ date, onChange }: MessageScheduleProps
                 justifyContent={'space-between'} borderBottom={'1px solid #F3F4F6'}
               >
                 <Text
-                  fontSize='13px' color={'#374151'} letterSpacing={'-0.13px'} lineHeight={'normal'}>Schedule send ({dayjs.tz.guess()})</Text>
+                  fontSize='13px' color={'#374151'} letterSpacing={'-0.13px'} lineHeight={'normal'}>
+                  {isSnooze ? 'Snooze' : 'Schedule send'} ({dayjs.tz.guess()})
+                </Text>
                 <Button
                   onClick={closeScheduleDropdown}
                   h={'20px'} minW={'20px'}

@@ -65,7 +65,6 @@ export function MessageReplyBox(props: MessageBoxType) {
   const { event: incomingEvent } = useSelector((state: StateType) => state.globalEvents);
   const dispatch = useDispatch();
   const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
-  const { isOpen, onClose } = useDisclosure();
   const inputFile = useRef<HTMLInputElement | null>(null)
   const [scheduledDate, setScheduledDate] = useState<string | undefined>();
   const [hideEditorToolbar, setHideEditorToolbar] = useState<boolean>(false);
@@ -600,7 +599,6 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
           }
         })
       }
-      onClose();
 
       setEmailRecipients({
         cc: { items: [], value: blankRecipientValue },
@@ -849,32 +847,8 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
                     <MessageSchedule
                       date={scheduledDate}
-                      sendMessages={sendMessages}
                       onChange={handleSchedule}
                     />
-
-                    <Modal isOpen={isOpen} onClose={onClose} isCentered={true}
-                      scrollBehavior={'outside'}>
-                      <ModalOverlay />
-                      <ModalContent minHeight="440px">
-                        <ModalHeader display="flex" justifyContent="space-between"
-                          alignItems="center">
-                          Schedule send
-                        </ModalHeader>
-                        <ModalCloseButton size={'xs'} />
-                        <ModalBody>
-                          <SingleDatepicker name="date-input"
-                            date={dayjs(scheduledDate).toDate()}
-                            defaultIsOpen={true}
-                            onDateChange={(date) => setScheduledDate(date.toString())} />
-                        </ModalBody>
-                        <ModalFooter>
-                          <Button variant='ghost' onClick={onClose}>Cancel</Button>
-                          <Button colorScheme='blue' mr={3}
-                            onClick={() => sendMessages()}> Schedule </Button>
-                        </ModalFooter>
-                      </ModalContent>
-                    </Modal>
                   </Flex>
                 </Flex>
               </Flex>
