@@ -1,5 +1,5 @@
 import {Project, Thread} from '@/models';
-import { updateThreads } from '@/redux/threads/action-reducer';
+import {updateThreads, updateThreadState} from '@/redux/threads/action-reducer';
 import { Dispatch } from '@reduxjs/toolkit';
 import {addItemToGroup} from "@/redux/memberships/action-reducer";
 
@@ -45,6 +45,11 @@ export function addThreadToProject(item: Project, multiSelection: any, selectedT
       })
     }
     dispatch(addItemToGroup(reqBody));
+    let addProject = {
+      ...selectedThread,
+      projects: [item]
+    }
+    dispatch(updateThreadState({ selectedThread: addProject }));
 
     if (addToProjectRef && addToProjectRef.current) {
       addToProjectRef.current?.click();
