@@ -22,6 +22,7 @@ export interface UserProjectOnlineStatus {
     lastOnlineStatusCheck?: Date | string
     avatar?: string
     color?: string
+    name?: string
 }
 
 

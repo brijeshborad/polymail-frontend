@@ -89,9 +89,8 @@ function ProjectInbox() {
                         updateUserData = true;
                     }
                 }
-                console.log('----------', newMessage);
                 if (updateUserData && newMessage.data.userId) {
-                    let userAlreadyExists = onlineMembersData.findIndex((item) => item.userId === newMessage.userId);
+                    let userAlreadyExists = onlineMembersData.findIndex((item) => item.userId === newMessage.data.userId);
                     if (userAlreadyExists !== -1) {
                         onlineMembersData[userAlreadyExists].isOnline = true;
                         onlineMembersData[userAlreadyExists].lastOnlineStatusCheck = dayjs().format('DD/MM/YYYY hh:mm:ss a').toString();
@@ -102,6 +101,7 @@ function ProjectInbox() {
                             lastOnlineStatusCheck: new Date(),
                             avatar: newMessage.data.avatar,
                             color: Math.floor(Math.random() * 16777215).toString(16),
+                            name: newMessage.data.name
                         })
                     }
                     setOnlineMemberData([...onlineMembersData])
@@ -112,7 +112,6 @@ function ProjectInbox() {
     }, [newMessage, dispatch, userDetails, threads, project, onlineMembersData]);
 
     useEffect(() => {
-        console.log('---', onlineMembersData);
         displayOnlineMembersData = onlineMembersData;
     }, [onlineMembersData])
 
@@ -290,7 +289,7 @@ function ProjectInbox() {
                     <Flex align={'center'} gap={1}>
                         {onlineMembersData.filter(t => t.isOnline).slice(0, maxShowingMembers)
                             .map((item, index) => (
-                                <div className={styles.userImage} style={{border: `2px solid #${item.color}`}}
+                                <div className={styles.userImage} title={item.name} style={{border: `2px solid #${item.color}`}}
                                      key={index}>
                                     {item.avatar && <Image src={item.avatar} width="36" height="36" alt=""/>}
                                 </div>

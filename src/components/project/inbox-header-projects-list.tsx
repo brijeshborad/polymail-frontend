@@ -31,7 +31,7 @@ export function InboxHeaderProjectsList(props: { size: number }) {
             dispatch(updateLastMessage(null));
             if (newMessage.name === 'Activity') {
                 let displayedProjects = [...displayProjectsData];
-                if (userDetails && userDetails.id !== newMessage.userId) {
+                if (userDetails && userDetails.id !== newMessage.data.userId) {
                     let findThread: Thread | any = (threads || []).find((item: Thread) => item.id === newMessage.data.threadId);
                     displayedProjects = displayedProjects.map((projectItem: Project) => {
                         let updateUserData = false;
@@ -51,7 +51,7 @@ export function InboxHeaderProjectsList(props: { size: number }) {
                         }
 
                         if (updateUserData && newMessage.data.userId) {
-                            let userAlreadyExists = finalItem.userProjectOnlineStatus.findIndex((item) => item.userId === newMessage.userId);
+                            let userAlreadyExists = finalItem.userProjectOnlineStatus.findIndex((item) => item.userId === newMessage.data.userId);
                             if (userAlreadyExists !== -1) {
                                 finalItem.userProjectOnlineStatus[userAlreadyExists].isOnline = true;
                                 finalItem.userProjectOnlineStatus[userAlreadyExists].lastOnlineStatusCheck = dayjs().format('DD/MM/YYYY hh:mm:ss a');
@@ -62,6 +62,7 @@ export function InboxHeaderProjectsList(props: { size: number }) {
                                     lastOnlineStatusCheck: new Date(),
                                     avatar: newMessage.data.avatar,
                                     color: Math.floor(Math.random()*16777215).toString(16),
+                                    name: newMessage.data.name
                                 })
                             }
                         }
@@ -100,7 +101,7 @@ export function InboxHeaderProjectsList(props: { size: number }) {
 
     useEffect(() => {
         if (projects && projects.length > 0) {
-            setProjectData(projects.slice(0, maxSize));
+            setProjectData([...(projects || [])].reverse().slice(0, maxSize));
             setProjectDataLength(projects)
         }
     }, [projects, maxSize]);
@@ -164,7 +165,7 @@ export function InboxHeaderProjectsList(props: { size: number }) {
                             {(project.userProjectOnlineStatus || [])
                                 .filter(t => t.isOnline).slice(0, 5)
                                 .map((item, index) => (
-                                        <div className={'member-photo'}
+                                        <div className={'member-photo'} title={item.name}
                                              style={{background: '#000', border: `2px solid #${item.color}`}} key={index}>
                                             {item.avatar && <Image src={item.avatar} width="24" height="24"
                                                                    alt=""/>}
