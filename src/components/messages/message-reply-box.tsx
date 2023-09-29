@@ -306,7 +306,8 @@ export function MessageReplyBox(props: MessageBoxType) {
       if (props.replyType === 'forward') {
         emailSubject = `Fwd: ${messagesData.subject}`;
         let decoded = Buffer.from(props.emailPart || '', 'base64').toString('ascii');
-        setEmailBody(getForwardContent() + (decoded || '') + (selectedAccount?.signature || ''));
+        const sentence = `${selectedAccount?.name || ''} is sharing this email thread (and future replies) <u>with others</u> ${selectedThread?.projects?.length > 0 ? `<u>at ${selectedThread.projects[0].name}</u> on Polymail` : 'on Polymail'}`;
+        setEmailBody(getForwardContent() + (decoded || '') + (selectedAccount?.signature || '') + (`<p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;>${sentence}</p>`));
         debounce(() => {
           handleEditorScroll();
         }, 200)
@@ -321,7 +322,8 @@ export function MessageReplyBox(props: MessageBoxType) {
       } else {
         if (isInitialized) {
           if (selectedAccount && selectedAccount.signature) {
-            setEmailBody(`<p></p><p>${selectedAccount.signature}</p>`);
+            const sentence = `${selectedAccount?.name || ''} is sharing this email thread (and future replies) <u>with others</u> ${selectedThread?.projects?.length > 0 ? `<u>at ${selectedThread.projects[0].name}</u> on Polymail` : 'on Polymail'}`;
+            setEmailBody(`<p></p><p>${selectedAccount.signature}</p><p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`);
           }
         }
       }
@@ -480,8 +482,12 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
   const discardMessage = () => {
     if (selectedAccount && selectedAccount.signature) {
-      setEmailBody(`<p></p><p>${selectedAccount.signature}</p>`);
-      dispatch(fireEvent({event: {data: `<p></p><p>${selectedAccount.signature}</p>`, type: 'richtexteditor.forceUpdate'}}));
+      const sentence = `${selectedAccount?.name || ''} is sharing this email thread (and future replies) <u>with others</u> ${selectedThread?.projects?.length > 0 ? `<u>at ${selectedThread.projects[0].name}</u> on Polymail` : 'on Polymail'}`;
+
+      setEmailBody(`<p></p><p>${selectedAccount.signature}</p><p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`);
+      dispatch(fireEvent({event: {
+        data: `<p></p><p>${selectedAccount.signature}</p><p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`,
+        type: 'richtexteditor.forceUpdate'}}));
     }
   }
 
@@ -613,7 +619,10 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
       setHideEditorToolbar(true);
       let currentEmailBody: string = getPlainTextFromHtml(emailBody);
       if (selectedAccount && selectedAccount.signature && props.replyType !== 'forward' && !currentEmailBody.trim()) {
-        setEmailBody(`<p></p><p>${selectedAccount.signature}</p>`);
+        debugger;
+        const sentence = `${selectedAccount?.name || ''} is sharing this email thread (and future replies) <b>with others</b> ${selectedThread?.projects?.length > 0 ? `<b>at ${selectedThread.projects[0].name}</b> on Polymail` : 'on Polymail'}`;
+
+        setEmailBody(`<p></p><p>${selectedAccount.signature}</p><p></p><p style="padding: 5px 10px; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`);
       }
     }, 500)
   }
@@ -784,12 +793,12 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
               </div> : null}
             </Flex>
 
-            <Flex backgroundColor={'#EBF83E'} width={'fit-content'} borderRadius={'4px'} color={'#0A101D'} fontWeight={'500'} lineHeight={1} padding={'5px 10px'}>
-              <Text fontSize='xs'> {selectedAccount?.name || ''} is sharing this email thread (and future replies) with&nbsp;</Text>
-              <Text fontSize='xs' as='u'>1 person</Text>
-              <Text fontSize='xs'>&nbsp;at chiat.com on&nbsp;</Text>
-              <Text fontSize='xs' as='u'> Polymail</Text>
-            </Flex>
+            {/*<Flex backgroundColor={'#EBF83E'} width={'fit-content'} borderRadius={'4px'} color={'#0A101D'} fontWeight={'500'} lineHeight={1} padding={'5px 10px'}>*/}
+            {/*  <Text fontSize='xs'> {selectedAccount?.name || ''} is sharing this email thread (and future replies) with&nbsp;</Text>*/}
+            {/*  <Text fontSize='xs' as='u'>1 person</Text>*/}
+            {/*  <Text fontSize='xs'>&nbsp;at chiat.com on&nbsp;</Text>*/}
+            {/*  <Text fontSize='xs' as='u'> Polymail</Text>*/}
+            {/*</Flex>*/}
 
             {hideEditorToolbar &&
               <Flex direction={'column'} className={styles.composeBox}>

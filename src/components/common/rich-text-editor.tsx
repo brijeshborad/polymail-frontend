@@ -176,7 +176,7 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
                         defaultTargetOption: '_self',
                         options: ['link'],
                         link: {icon: "/image/icon/link.svg", className: undefined},
-                    },
+                    }
                 }}
             />
         </Flex>
