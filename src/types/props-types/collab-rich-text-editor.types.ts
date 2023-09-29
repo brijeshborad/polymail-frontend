@@ -9,4 +9,5 @@ export declare type CollabRichTextEditorType = {
     content: string;
     placeholder: string;
     isToolbarVisible: boolean;
+    className?: string
 };

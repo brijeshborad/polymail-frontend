@@ -18,7 +18,7 @@ import { useEffect, useState } from 'react'
 export default function CollabRichTextEditor({
   id, isToolbarVisible = false, onChange,
   beforeToolbar, afterToolbar, extendToolbar,
-  placeholder }: CollabRichTextEditorType) {
+  placeholder, className='' }: CollabRichTextEditorType) {
   const dispatch = useDispatch()
   const { selectedAccount } = useSelector((state: StateType) => state.accounts);
   const [provider, setProvider] = useState<any>()
@@ -71,7 +71,7 @@ export default function CollabRichTextEditor({
   if(!provider) return
 
   return (
-    <div>
+    <div className={className}>
       <EditorProvider
         autofocus
         onFocus={() => dispatch(updateKeyNavigation({ isEnabled: false }))}
