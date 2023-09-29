@@ -44,7 +44,7 @@ function CreateNewProjectModal() {
     const {selectedThread, multiSelection} = useSelector((state: StateType) => state.threads);
     const [successMessage, setSuccessMessage] = useState<{ desc: string, title: string } | null>(null);
     const {isThreadAddedToProjectSuccess} = useSelector((state: StateType) => state.memberships);
-
+    const { draft } = useSelector((state: StateType) => state.draft);
 
     const handleChange = (event: ChangeEvent | any) => {
         setProjectName(event.target.value);
@@ -63,7 +63,7 @@ function CreateNewProjectModal() {
             });
             dispatch(updateProjectState({createProjectSuccess: false}))
             if (project && selectedThread) {
-                addThreadToProject(project, multiSelection, selectedThread, dispatch, setSuccessMessage);
+                addThreadToProject(project, multiSelection, selectedThread || draft, dispatch, setSuccessMessage);
             }
             if (selectedAccount && selectedAccount.email && membersInputs.memberArray && membersInputs.memberArray?.length > 0 && project && project.id) {
                 let reqBody = {

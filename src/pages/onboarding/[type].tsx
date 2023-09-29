@@ -8,10 +8,12 @@ import Router, {useRouter} from 'next/router';
 import LocalStorageService from "@/utils/localstorage.service";
 import {googleAuthLink, updateAuthState} from "@/redux/auth/action-reducer";
 import {getRedirectionUrl} from "@/utils/common.functions";
+import {getUsersDetails} from "@/redux/users/action-reducer";
 
 function OnBoardingType() {
     const dispatch = useDispatch();
     const {user, googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
+    const {userDetails} = useSelector((state: StateType) => state.users);
     const router = useRouter();
 
     useEffect(() => {
@@ -19,11 +21,7 @@ function OnBoardingType() {
             if (router.query.access_token) {
                 LocalStorageService.updateUser('store', {token: router.query.access_token})
                 dispatch(updateAuthState({user: {token: router.query.access_token.toString() || ''}}));
-                if (router.query.type === 'login') {
-                    Router.push('/inbox');
-                } else {
-                    Router.push('/onboarding/connect-account');
-                }
+                dispatch(getUsersDetails({}));
                 return;
             }
 
@@ -36,10 +34,14 @@ function OnBoardingType() {
     }, [dispatch, router.query]);
 
     useEffect(() => {
-        if (user && user?.token && !(router.query.hasOwnProperty('access_token') || router.query.hasOwnProperty('error'))) {
-            Router.push('/inbox');
+        if (userDetails && user && user?.token) {
+            if (userDetails.onboarded) {
+                Router.push('/inbox');
+            } else {
+                Router.push('/onboarding/connect-account');
+            }
         }
-    }, [user, router.query])
+    }, [user, userDetails])
 
     function oauthWithGoogle() {
         let body = {

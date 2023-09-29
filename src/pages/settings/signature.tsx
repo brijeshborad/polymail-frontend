@@ -38,7 +38,7 @@ function Signature() {
             let currentEmailBody: string = getPlainTextFromHtml(value);
             let currentAccountSignature: string = getPlainTextFromHtml(selectedAccount.signature);
             if (currentEmailBody.trim().length) {
-                if (currentEmailBody.trim() !== currentAccountSignature.trim()) {
+                if (value.trim() !== currentAccountSignature.trim()) {
                     setIsSignatureUpdate(true);
                 }
             }

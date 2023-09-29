@@ -38,6 +38,14 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
         // eslint-disable-next-line
     }, [editorState, isContentEdited])
 
+    useEffect(() => {
+        if (!isContentEdited) {
+            if (editorState?.getLastChangeType()) {
+                setIsContentEdited(true);
+            }
+        }
+    }, [editorState, value, isContentEdited])
+
     const setEditorReference = (ref: any) => {
         if (!editorRef) {
             setEditorRef(ref);
@@ -48,7 +56,10 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
         if (editorRef) {
             if (editorRef.addEventListener && !editorRef.keyUpListenerAdded) {
                 editorRef.keyUpListenerAdded = true
-                editorRef.addEventListener('keyup', () => {
+                editorRef.addEventListener('keydown', (event: KeyboardEvent | any) => {
+                    if (event.ctrlKey || event.metaKey || event.shiftKey) {
+                        return;
+                    }
                     if (!isContentEdited) {
                         setIsContentEdited(true);
                     }
@@ -98,6 +109,7 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
         if (typeof incomingEvent === 'object' && incomingEvent.type === 'richtexteditor.forceUpdate') {
             let finalHtmlValue = htmlToDraft(incomingEvent.data);
             setEditorState(EditorState.moveSelectionToEnd(EditorState.createWithContent(ContentState.createFromBlockArray(finalHtmlValue))));
+            setIsContentEdited(false);
         }
     }, [incomingEvent])
 
@@ -133,8 +145,7 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
                 onFocus={() => dispatch(updateKeyNavigation({isEnabled: false}))}
                 onBlur={() => dispatch(updateKeyNavigation({isEnabled: true}))}
                 toolbar={{
-                    // options: showImageOption ? ['inline', 'list', 'emoji', 'link', 'image'] : ['inline', 'list', 'emoji', 'link'],
-                options: ['inline', 'list', 'emoji', 'link'],
+                    options: ['inline', 'list', 'emoji', 'link'],
                     inline: {
                         inDropdown: false,
                         options: ['bold', 'italic', 'strikethrough'],
@@ -142,26 +153,7 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
                         italic: {icon: "/image/icon/italic.svg"},
                         strikethrough: {icon: "/image/icon/strikethrough.svg"},
                     },
-                    // image: {
-                //     previewImage: true,
-                //     // icon: "/image/icon/picture.svg",
-                //     uploadCallback: (file: File) => {
-                //       return new Promise((resolve, reject) => {
-                //         const reader = new FileReader();
-                //         reader.onloadend = () => {
-                //           resolve({
-                //             data: {
-                //               url: reader.result,
-                //             },
-                //           });
-                //         };
-                //         reader.onerror = (reason) => reject(reason);
-                //         reader.readAsDataURL(file);
-                //       });
-                //     },
-                //     alt: { present: true, mandatory: false },
-                // },
-                list: {
+                    list: {
                         inDropdown: false,
                         options: ['ordered', 'unordered'],
                         unordered: {icon: "/image/icon/unordered.svg"},
@@ -184,7 +176,7 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
                         defaultTargetOption: '_self',
                         options: ['link'],
                         link: {icon: "/image/icon/link.svg", className: undefined},
-                    },
+                    }
                 }}
             />
         </Flex>

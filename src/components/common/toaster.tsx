@@ -75,7 +75,7 @@ export function Toaster(props: ToasterProps) {
                     </Box>
                 )
             },
-            position: 'bottom-left'
+            position: 'bottom'
         })
     )
 }

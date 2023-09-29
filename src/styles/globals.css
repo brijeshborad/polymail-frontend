@@ -671,3 +671,7 @@ div:has(> .mailSendToaster) {
 .rdw-editor-wrapper .rdw-image-modal .rdw-image-modal-size-input {
     height: 30px;
 }
+
+#chakra-toast-manager-bottom {
+    align-items: start;
+}

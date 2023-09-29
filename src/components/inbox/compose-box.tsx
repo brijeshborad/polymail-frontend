@@ -57,7 +57,7 @@ export function ComposeBox(props: any) {
   const [emailBody, setEmailBody] = useState<string>('');
   const { selectedAccount } = useSelector((state: StateType) => state.accounts);
   const { draft } = useSelector((state: StateType) => state.draft);
-  const { tabValue, threads } = useSelector((state: StateType) => state.threads);
+  const { tabValue, threads, selectedThread } = useSelector((state: StateType) => state.threads);
   const dispatch = useDispatch();
   const { onClose } = useDisclosure();
   const { isOpen: isOpenProject, onOpen: onOpenProject, onClose: onCloseProject } = useDisclosure();
@@ -283,8 +283,13 @@ export function ComposeBox(props: any) {
 
   const discardMessage = () => {
     if (selectedAccount && selectedAccount.signature) {
-      setEmailBody(`<p></p><p>${selectedAccount.signature}</p>`);
-      dispatch(fireEvent({event: {data: `<p></p><p>${selectedAccount.signature}</p>`, type: 'richtexteditor.forceUpdate'}}));
+      let sentence = '';
+      if (selectedThread?.projects && selectedThread?.projects?.length) {
+        sentence = `${selectedAccount?.name || ''} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length > 0 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}`;
+      }
+
+      setEmailBody(`<p></p><p>${selectedAccount.signature}</p><p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`);
+      dispatch(fireEvent({event: {data: `<p></p><p>${selectedAccount.signature}</p><p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`, type: 'richtexteditor.forceUpdate'}}));
     }
   }
 
@@ -393,9 +398,15 @@ export function ComposeBox(props: any) {
 
   useEffect(() => {
     if (selectedAccount && selectedAccount.signature) {
-      setEmailBody(`<p>${selectedAccount.signature}</p>`);
+      let sentence = '';
+      if (selectedThread?.projects && selectedThread?.projects?.length) {
+        sentence = `${selectedAccount?.name || ''} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length === 1 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}`;
+      }
+
+      setEmailBody(`<p></p><p>${selectedAccount.signature}</p><p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`);
     }
-  }, [selectedAccount, props.isOpen])
+  }, [selectedAccount, props.isOpen, selectedThread])
+
 
   const handleSchedule = (date: string | undefined) => {
     setScheduledDate(date);
@@ -411,10 +422,10 @@ export function ComposeBox(props: any) {
       }
     }
 
-    if ((allValues.length > 0 && emailRecipients && emailRecipients['recipients'] && emailRecipients['recipients'].items.length > 0) || subject) {
+    if ((allValues.length > 0 && emailRecipients && emailRecipients['recipients'] && emailRecipients['recipients'].items.length > 0) || subject || emailBody) {
       sendToDraft('', false);
     }
-  }, [emailRecipients.recipients.items, emailRecipients.cc.items, emailRecipients.bcc.items, subject]);
+  }, [emailRecipients.recipients.items, emailRecipients.cc.items, emailRecipients.bcc.items, subject, emailBody]);
 
 
   function handleFileUpload(event: ChangeEventHandler | any) {
@@ -549,12 +560,12 @@ export function ComposeBox(props: any) {
                   </div> : null}
                 </Flex>
 
-                <Flex backgroundColor={'#EBF83E'} width={'fit-content'} borderRadius={'4px'} color={'#0A101D'} fontWeight={'500'} lineHeight={1} padding={'5px 10px'}>
-                  <Text fontSize='xs'> {selectedAccount?.name || ''} is sharing this email thread (and future replies) with&nbsp;</Text>
-                  <Text fontSize='xs' as='u'>1 person</Text>
-                  <Text fontSize='xs'>&nbsp;at chiat.com on&nbsp;</Text>
-                  <Text fontSize='xs' as='u'> Polymail</Text>
-                </Flex>
+                {/*<Flex backgroundColor={'#EBF83E'} width={'fit-content'} borderRadius={'4px'} color={'#0A101D'} fontWeight={'500'} lineHeight={1} padding={'5px 10px'}>*/}
+                {/*  <Text fontSize='xs'> {selectedAccount?.name || ''} is sharing this email thread (and future replies) with&nbsp;</Text>*/}
+                {/*  <Text fontSize='xs' as='u'>1 person</Text>*/}
+                {/*  <Text fontSize='xs'>&nbsp;at chiat.com on&nbsp;</Text>*/}
+                {/*  <Text fontSize='xs' as='u'> Polymail</Text>*/}
+                {/*</Flex>*/}
 
                 <Flex align={'flex-end'} justify={'space-between'} gap={2}>
                   <Flex gap={2} className={styles.replyBoxIcon} mb={'-3px'} position={'relative'} zIndex={5} ml={'170px'}>

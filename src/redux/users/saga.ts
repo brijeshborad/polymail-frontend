@@ -17,12 +17,13 @@ import {
     uploadProfilePictureSuccess, removeProfilePictureSuccess, removeProfilePictureError, removeProfilePicture
 } from "@/redux/users/action-reducer";
 
-function* updateUserPersonalDetails({payload: {firstName, lastName, middleName}}: PayloadAction<{ firstName?: string, lastName?: string, middleName?: string  }>) {
+function* updateUserPersonalDetails({payload: {firstName, lastName, middleName, onboarded}}: PayloadAction<{ firstName?: string, lastName?: string, middleName?: string, onboarded?: boolean  }>) {
     try {
         const response: AxiosResponse = yield ApiService.callPatch(`users`, {
             ...(firstName ? {firstName} : {}),
             ...(lastName ? {lastName} : {}),
             ...(middleName ? {middleName} : {}),
+            onboarded: !!onboarded,
         });
         yield put(updateUsersDetailsSuccess(response));
     } catch (error: any) {

@@ -1,4 +1,5 @@
 import {Message, MessageRecipient} from "@/models/message";
+import {Project} from "@/models/project";
 
 export interface Thread {
     id?: string | undefined,
@@ -16,7 +17,8 @@ export interface Thread {
     mailboxes?: string[],
     numMessages?: number,
     messages?: Message[],
-    project?: string
+    project?: string,
+    projects?: Project[]
 }
 
 export interface ThreadsRequestBody {

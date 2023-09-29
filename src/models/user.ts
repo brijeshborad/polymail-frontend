@@ -32,6 +32,7 @@ export interface UserDetails {
     deviceIds?: string,
     preferences?: Preferences | null,
     avatar?: Avatar | null
+    onboarded?: boolean
 }
 
 
