@@ -2,9 +2,9 @@ import { Box, Button, FormControl, FormLabel, Input, Popover, PopoverArrow, Popo
 import { useCurrentEditor } from "@tiptap/react"
 import Image from "next/image"
 import { useCallback, useState } from "react"
+import ToolbarUrl from "./toolbar-url"
 
 export default function CollabRichTextEditorToolbar() {
-  const [linkUrl, setLinkUrl] = useState('')
   const { editor } = useCurrentEditor()
   const [isLinkMenuOpen, setIsLinkMenuOpen] = useState(false);
 
@@ -100,68 +100,13 @@ export default function CollabRichTextEditorToolbar() {
       >
         <Image src="/image/icon/emoji.svg" alt="emoji" width={16} height={16} />
       </button>
-      <Popover
-        isOpen={isLinkMenuOpen}
-        onClose={() => {
-          setIsLinkMenuOpen(false)
-          setLinkUrl('')
-        }}
-      >
-        <PopoverTrigger>
-          <button
-            onClick={() => {
-              setIsLinkMenuOpen(!isLinkMenuOpen)
-              setLinkUrl(editor.getAttributes('link').href)
-            }}
-            className={editor.isActive('link') ? 'is-active' : ''}
-          >
-            <Image src="/image/icon/link.svg" alt="Link" width={16} height={16} />
-          </button>
-        </PopoverTrigger>
-        <PopoverContent width={250}>
-          <PopoverArrow />
-          <PopoverBody padding={4}>
-            <Box display={'flex'} flexDirection={'column'} gap={4}>
-              <FormControl>
-                <FormLabel fontSize={13} fontWeight={'semibold'}>Url</FormLabel>
-                <Input
-                  type="url"
-                  value={linkUrl}
-                  onChange={(e) => setLinkUrl(e.target.value)}
-                />
-              </FormControl>
-              <Box display={'flex'} gap={2}>
-                <Button
-                  width={'auto'}
-                  backgroundColor={'#000'}
-                  border={'1px solid #000'}
-                  color={'#fff'}
-                  fontSize={13}
-                  paddingX={8} paddingY={4}
-                  className='button'
-                  onClick={() => setLink(linkUrl)}
-                >
-                  Add
-                </Button>
-                <Button
-                  width={'auto'}
-                  backgroundColor={'#fff'}
-                  border={'1px solid #000'}
-                  color={'#000'}
-                  fontSize={13}
-                  paddingX={8} paddingY={4}
-                  className='button'
-                  onClick={() => {
-                    setIsLinkMenuOpen(false)
-                  }}
-                >
-                  Cancel
-                </Button>
-              </Box>
-            </Box>
-          </PopoverBody>
-        </PopoverContent>
-      </Popover>
+      
+      <ToolbarUrl 
+        editor={editor}
+        isOpen={isLinkMenuOpen} 
+        onChangeVisibility={setIsLinkMenuOpen}
+        onChange={setLink}
+      />
     </Box>
   )
 }
