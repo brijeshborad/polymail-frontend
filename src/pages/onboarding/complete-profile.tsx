@@ -60,7 +60,7 @@ function CompleteProfile() {
         if (name && tmp.length > 1) {
             let firstName = tmp[0]
             let lastName = tmp[tmp.length - 1]
-            dispatch(updateUsersDetails({firstName: firstName, lastName: lastName}));
+            dispatch(updateUsersDetails({firstName: firstName, lastName: lastName, onboarded: true}));
         } else {
             Toaster({
                 title: "Stranger Danger!",
