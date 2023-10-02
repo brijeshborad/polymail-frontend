@@ -1,8 +1,9 @@
 import React, {useCallback, useEffect} from "react";
-import {Flex, Grid, GridItem, Heading, ListItem, UnorderedList,} from "@chakra-ui/react";
+import {Button, Flex, Grid, GridItem, Heading, ListItem, UnorderedList,} from "@chakra-ui/react";
 import styles from "@/styles/setting.module.css";
 import {UserIcon} from "@/icons";
 import Router, {useRouter} from "next/router";
+import {ArrowBackIcon} from "@chakra-ui/icons";
 
 const tabMenu = [
     {
@@ -64,8 +65,8 @@ export default function SettingsLayout({children}: any) {
         <>
             <div className={styles.setting}>
                 <Grid templateColumns='232px auto' gap={6} h={'100%'} minHeight={'calc(100vh - 65px)'}>
-                    <GridItem w='100%' className={styles.settingSideBar} padding={'40px 30px 40px 40px'}
-                              borderRight={'1px solid #E1E3E6'}>
+                    <GridItem display={'flex'} w='100%' className={styles.settingSideBar} padding={'40px 30px 40px 40px'}
+                              borderRight={'1px solid #E1E3E6'} flexDirection={'column'}>
                         <Heading as='h4' mb={8} className={styles.settingTitle}> Settings </Heading>
 
                         {tabMenu.map((tab, index: number) => (
@@ -84,12 +85,17 @@ export default function SettingsLayout({children}: any) {
                                 }
                             </Flex>
                         ))}
+                        <Button className={styles.composeButton} borderRadius={8} height={'auto'} padding={'5px 10px'} mt={'auto'}
+                                backgroundColor={'#FFFFFF'} color={'#374151'} borderColor={'#E5E7EB'}  w={'fit-content'}
+                                colorScheme='blue' variant='outline' fontSize={'14px'}
+                                leftIcon={<ArrowBackIcon />} onClick={() => router.back()}>
+                            Go Back
+                        </Button>
                     </GridItem>
                     <GridItem w='100%'>
                         {children}
                     </GridItem>
                 </Grid>
-
             </div>
         </>
     )
