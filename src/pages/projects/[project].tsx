@@ -9,7 +9,7 @@ import {
     MenuButton,
     MenuItem,
     MenuList,
-    Text, useDisclosure
+    Text, Tooltip, useDisclosure
 } from "@chakra-ui/react";
 import React, {useCallback, useEffect, useState} from "react";
 import Image from "next/image";
@@ -289,10 +289,11 @@ function ProjectInbox() {
                     <Flex align={'center'} gap={1}>
                         {onlineMembersData.filter(t => t.isOnline).slice(0, maxShowingMembers)
                             .map((item, index) => (
-                                <div className={styles.userImage} title={item.name} style={{border: `2px solid #${item.color}`}}
-                                     key={index}>
-                                    {item.avatar && <Image src={item.avatar} width="36" height="36" alt=""/>}
-                                </div>
+                                <Tooltip label={item.name} placement='bottom' bg='gray.300' color='black' key={index}>
+                                    <div className={styles.userImage} style={{border: `2px solid #${item.color}`}}>
+                                        {item.avatar && <Image src={item.avatar} width="36" height="36" alt=""/>}
+                                    </div>
+                                </Tooltip>
                             ))}
                         <Text fontSize={'sm'} textDecoration={'underline'} cursor={'pointer'}
                               onClick={() => setMaxShowingMembers(maxShowingMembers + 5)}>

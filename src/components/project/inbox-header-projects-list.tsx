@@ -1,4 +1,4 @@
-import {Flex, Text, Image, Button} from "@chakra-ui/react";
+import {Flex, Text, Image, Button, Tooltip} from "@chakra-ui/react";
 import {DisneyDIcon, FolderIcon} from "@/icons";
 import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
@@ -165,11 +165,13 @@ export function InboxHeaderProjectsList(props: { size: number }) {
                             {(project.userProjectOnlineStatus || [])
                                 .filter(t => t.isOnline).slice(0, 5)
                                 .map((item, index) => (
-                                        <div className={'member-photo'} title={item.name}
-                                             style={{background: '#000', border: `2px solid #${item.color}`}} key={index}>
+                                    <Tooltip label={item.name} placement='bottom' bg='gray.300' color='black' key={index}>
+                                        <div className={'member-photo'}
+                                             style={{background: '#000', border: `2px solid #${item.color}`}}>
                                             {item.avatar && <Image src={item.avatar} width="24" height="24"
                                                                    alt=""/>}
                                         </div>
+                                    </Tooltip>
                                     )
                                 )
                             }
