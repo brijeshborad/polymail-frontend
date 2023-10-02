@@ -73,7 +73,6 @@ export default function CollabRichTextEditor({
   return (
     <div className={className}>
       <EditorProvider
-        autofocus
         onFocus={() => dispatch(updateKeyNavigation({ isEnabled: false }))}
         onBlur={() => dispatch(updateKeyNavigation({ isEnabled: true }))}
         onUpdate={({ editor }) => onChange(editor.getHTML())}
