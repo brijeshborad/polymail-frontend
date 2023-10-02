@@ -9,7 +9,6 @@ import {
   Text, useDisclosure
 } from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
-import { FileIcon, TextIcon } from "@/icons";
 import { CloseIcon } from "@chakra-ui/icons";
 import React, { ChangeEvent, ChangeEventHandler, useCallback, useEffect, useRef, useState } from "react";
 import { StateType } from "@/types";
@@ -26,8 +25,9 @@ import {updateCommonState} from "@/redux/common-apis/action-reducer";
 import {updateThreadState} from "@/redux/threads/action-reducer";
 import {useRouter} from "next/router";
 import {fireEvent} from "@/redux/global-events/action-reducer";
+import CollabRichTextEditor from "../common/collab-rich-text-editor";
+import Image from "next/image";
 const CreateNewProject = dynamic(() => import('@/components/project/create-new-project').then(mod => mod.default));
-const RichTextEditor = dynamic(() => import("@/components/common").then(mod => mod.RichTextEditor));
 const Time = dynamic(() => import("@/components/common").then(mod => mod.Time));
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
 const MessageRecipients = dynamic(() => import("../messages/message-recipients").then(mod => mod.default));
@@ -297,6 +297,7 @@ export function ComposeBox(props: any) {
     if (draft && draft.id) {
       let params = {};
       let polyToast = `poly-toast-${new Date().getTime().toString()}`;
+
       if (scheduledDate) {
         const targetDate = dayjs(scheduledDate)
         // Get the current date and time
@@ -305,6 +306,7 @@ export function ComposeBox(props: any) {
         params = {
           delay: secondsDifference
         }
+        
 
         dispatch(sendMessage({body:{ id: draft.id, ...params }}));
 
@@ -355,6 +357,8 @@ export function ComposeBox(props: any) {
           })
         }
       }
+
+      dispatch(sendMessage({body: { id: draft.id!, ...params }}));
       onClose();
 
       if (props.onClose) {
@@ -546,9 +550,38 @@ export function ComposeBox(props: any) {
               <Flex flex={1} direction={'column'} position={'relative'}>
                 <Flex flex={1} direction={'column'} ref={editorRef} className={`editor-bottom-shadow`}
                       onScroll={() => handleEditorScroll()}>
-                  <RichTextEditor className={`reply-message-area ${extraClassNames} ${extraClassNamesForBottom}`}
-                                  placeholder='Reply with anything you like or @mention someone to share this thread'
-                                  value={emailBody} onChange={(e) => sendToDraft(e)} />
+
+                  <CollabRichTextEditor
+                    id={`${draft?.id}`}
+                    content={emailBody}
+                    onChange={(content) => sendToDraft(content)}
+                    placeholder='Reply with anything you like or @mention someone to share this thread'
+                    isToolbarVisible={true}
+                    className={`${extraClassNames} ${extraClassNamesForBottom}`}
+                    beforeToolbar={(
+                      <>
+                        {selectedThread?.projects?.length && (
+                          <Flex backgroundColor={'#EBF83E'} width={'fit-content'} borderRadius={'4px'} color={'#0A101D'} fontWeight={'500'} lineHeight={1} padding={'5px 10px'}>
+                            <Text fontSize='xs'> {selectedAccount?.name || ''} is sharing this email thread (and future replies) with&nbsp;</Text>
+                            <Text fontSize='xs' as='u'>others</Text>
+                            <Text fontSize='xs'>&nbsp;on&nbsp;</Text>
+                            <Text fontSize='xs' as='u'>Polymail</Text>
+                          </Flex>
+                        )}
+                      </>
+                    )}
+                    extendToolbar={(
+                      <>
+                        <Flex
+                          onClick={() => inputFile.current?.click()}
+                          width={'16px'} h={'16px'} align={'center'} justify={'center'} cursor={'pointer'} className={styles.replyIcon}
+                        >
+                          <Image src="/image/icon/attach.svg" alt="emoji" width={13} height={13} />
+                          <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e)} style={{ display: 'none' }} />
+                        </Flex>
+                      </>
+                    )}
+                  />
                   {attachments && attachments.length > 0 ?
                     <div style={{ marginTop: '20px' }}>
                       {attachments.map((item, index: number) => (
@@ -560,27 +593,8 @@ export function ComposeBox(props: any) {
                   </div> : null}
                 </Flex>
 
-                {/*<Flex backgroundColor={'#EBF83E'} width={'fit-content'} borderRadius={'4px'} color={'#0A101D'} fontWeight={'500'} lineHeight={1} padding={'5px 10px'}>*/}
-                {/*  <Text fontSize='xs'> {selectedAccount?.name || ''} is sharing this email thread (and future replies) with&nbsp;</Text>*/}
-                {/*  <Text fontSize='xs' as='u'>1 person</Text>*/}
-                {/*  <Text fontSize='xs'>&nbsp;at chiat.com on&nbsp;</Text>*/}
-                {/*  <Text fontSize='xs' as='u'> Polymail</Text>*/}
-                {/*</Flex>*/}
-
                 <Flex align={'flex-end'} justify={'space-between'} gap={2}>
                   <Flex gap={2} className={styles.replyBoxIcon} mb={'-3px'} position={'relative'} zIndex={5} ml={'170px'}>
-                    <Flex align={'center'} gap={2}>
-                      <Flex width={'20px'} h={'20px'} align={'center'} justify={'center'} cursor={'pointer'} className={styles.replyIcon}>
-                        <FileIcon click={() => inputFile.current?.click()} />
-                      </Flex>
-
-                      <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e)}
-                             style={{ display: 'none' }} />
-
-                      <Flex width={'20px'} h={'20px'} align={'center'} justify={'center'} cursor={'pointer'} className={styles.replyIcon}>
-                        <TextIcon />
-                      </Flex>
-                    </Flex>
                   </Flex>
                   <Flex align={'center'} className={styles.replyButton}>
                     <Button
