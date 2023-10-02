@@ -481,16 +481,27 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
   const discardMessage = () => {
     if (selectedAccount && selectedAccount.signature) {
-      let sentence = '';
+      const data = [
+        '<p></p>',
+        `<p>${selectedAccount.signature}</p>`,
+      ]
         if (selectedThread?.projects && selectedThread?.projects?.length) {
-          sentence = `${selectedAccount?.name || ''} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length === 1 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}`;
+          data.push(`<p></p>`)
+          data.push(`${selectedAccount?.name || ''} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length === 1 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}`);
         }
 
-      setEmailBody(`<p></p><p>${selectedAccount.signature}</p><p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`);
-      dispatch(fireEvent({event: {
-        data: `<p></p><p>${selectedAccount.signature}</p><p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`,
-        type: 'richtexteditor.forceUpdate'}}));
+      setEmailBody(data.join(''));
+      dispatch(fireEvent({
+        event: {
+          data: data.join(''),
+          type: 'richtexteditor.forceUpdate'
+        }
+      }));
     }
+
+    setTimeout(() => {
+      setHideEditorToolbar(false)
+    }, 500);
   }
 
   const sendMessages = () => {
@@ -805,6 +816,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
           <Flex direction={'column'} position={"relative"} flex={1} >
             <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} overflow={'auto'} ref={editorRef} className={`${styles.replyBoxEditor} editor-bottom-shadow`}
               onScroll={() => handleEditorScroll()}>
+                {extraClassNames}
                 <CollabRichTextEditor
                   id={`${selectedThread?.id}-${(selectedThread?.messages || []).length}`}
                   content={emailBody}

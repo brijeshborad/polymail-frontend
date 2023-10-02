@@ -14,6 +14,7 @@ import { TiptapCollabProvider } from '@hocuspocus/provider'
 import { CollabRichTextEditorType } from '@/types/props-types/collab-rich-text-editor.types'
 import { StateType } from '@/types'
 import { useEffect, useState } from 'react'
+import ContentMonitor from './content-monitor'
 
 export default function CollabRichTextEditor({
   id, isToolbarVisible = false, onChange,
@@ -68,10 +69,12 @@ export default function CollabRichTextEditor({
     ])
   }, [id, selectedAccount, placeholder])
 
+
+
   if(!provider) return
 
   return (
-    <div className={className}>
+    <div className={`tiptap-container ${className}`}>
       <EditorProvider
         onFocus={() => dispatch(updateKeyNavigation({ isEnabled: false }))}
         onBlur={() => dispatch(updateKeyNavigation({ isEnabled: true }))}
@@ -86,6 +89,7 @@ export default function CollabRichTextEditor({
         )}
         extensions={extensions}
       >
+        <ContentMonitor />
       </EditorProvider>
     </div>
   )
