@@ -12,6 +12,7 @@ export declare type InitialThreadStateType = {
     tabValue?: string,
     isThreadFocused?: boolean
     moveToMailBox?: string | null
+    snoozeTime?: string | null
 }
 
 export declare type InitialMembershipStateType = {

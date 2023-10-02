@@ -1,4 +1,4 @@
-import {Button, Flex} from "@chakra-ui/react";
+import {Button, Checkbox, Flex} from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
 import {StateType, TabProps} from "@/types";
 import React, {useState, useEffect, useCallback} from "react";
@@ -9,7 +9,13 @@ import {useDispatch, useSelector} from "react-redux";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import {useRouter} from "next/router";
 import dynamic from "next/dynamic";
-import {getCacheThreads, getCurrentCacheTab, setCacheThreads, setCurrentCacheTab} from "@/utils/cache.functions";
+import {
+    getCacheThreads,
+    getCurrentCacheTab,
+    setCacheThreads,
+    setCurrentCacheTab,
+    setCurrentSelectedThreads
+} from "@/utils/cache.functions";
 import {updateLastMessage} from "@/redux/socket/action-reducer";
 import {getProjectSummary} from "@/redux/common-apis/action-reducer";
 import {updateAccountState} from "@/redux/accounts/action-reducer";
@@ -21,6 +27,8 @@ export function ThreadsSideBarTab(props: TabProps) {
         success: threadListSuccess,
         updateSuccess,
         tabValue,
+        multiSelection,
+        isThreadSearched
     } = useSelector((state: StateType) => state.threads)
     const {selectedAccount, account, success} = useSelector((state: StateType) => state.accounts);
     const {isLoading: summaryIsLoading, syncingEmails} = useSelector((state: StateType) => state.commonApis);
@@ -38,6 +46,7 @@ export function ThreadsSideBarTab(props: TabProps) {
     });
     const [isSummaryApiCalled, setIsSummaryApiCalled] = useState<boolean>(false);
     const [currentTab, setCurrentTab] = useState<string>('');
+    const isMultiItemsSelected = multiSelection && multiSelection.length > 0
 
     const getProjectId = useCallback(() => {
         const routePaths = window.location.pathname.split('/');
@@ -160,40 +169,61 @@ export function ThreadsSideBarTab(props: TabProps) {
         getAllThread(type);
     }
 
+    const toggleSelectAllThreads = (checked: boolean) => {
+        dispatch(updateThreadState({
+            multiSelection: !checked ? [] : threads?.map((thread) => thread.id!)
+        }))
+        setCurrentSelectedThreads(!checked ? [] : (threads || []).map((thread, index) => index));
+        return
+    }
+    const isSelectedAllChecked = ((multiSelection && multiSelection.length > 0) && multiSelection.length === (threads || []).length)
+
     return (
         <>
           <Flex overflowX={'auto'} align={'center'} alignItems={'center'} alignContent={'center'} gap={2} padding={"0 6px"}>
             <div className={styles.mailOtherOption}>
-                <Flex align={'center'} gap={2}>
-                    {router.query.project && (
-                      <div className={tabName === 'every-thing' ? styles.active : ''}>
-                        <Button
-                          colorScheme='white'
-                          onClick={() => changeThread('every-thing')}
-                        >
-                          Everything
-                        </Button>
+                {(isMultiItemsSelected || isThreadSearched) ?
+                  <Flex align={'center'} gap={2} className={styles.checkBoxLabel}>
+                      <Checkbox
+                        isChecked={isSelectedAllChecked}
+                        onChange={(e) => toggleSelectAllThreads(e.target.checked)}
+                      >
+                          Select All
+                      </Checkbox>
+                  </Flex> :
+                  <Flex align={'center'} gap={2}>
+                      {router.query.project && (
+                        <div className={tabName === 'every-thing' ? styles.active : ''}>
+                            <Button
+                              colorScheme='white'
+                              onClick={() => changeThread('every-thing')}
+                            >
+                                Everything
+                            </Button>
+                        </div>
+                      )}
+                      <div className={tabName === 'just-mine' ? styles.active : ''}>
+                          <Button
+                            colorScheme='white'
+                            onClick={() => changeThread('just-mine')}
+                          >
+                              Just mine
+                          </Button>
                       </div>
-                    )}
-                    <div className={tabName === 'just-mine' ? styles.active : ''}>
-                      <Button
-                        colorScheme='white'
-                        onClick={() => changeThread('just-mine')}
-                      >
-                        Just mine
-                      </Button>
-                    </div>
-                    {!router.query.project &&
-                    <div className={tabName === 'projects' ? styles.active : ''}>
-                      <Button
-                        colorScheme='white'
-                        onClick={() => changeThread('projects')}
-                      >
-                        Projects
-                      </Button>
-                    </div>
-                    }
-                </Flex>
+                      {!router.query.project &&
+                      <div className={tabName === 'projects' ? styles.active : ''}>
+                          <Button
+                            colorScheme='white'
+                            onClick={() => changeThread('projects')}
+                          >
+                              Projects
+                          </Button>
+                      </div>
+                      }
+                  </Flex>
+                }
+
+
             </div>
           </Flex>
 

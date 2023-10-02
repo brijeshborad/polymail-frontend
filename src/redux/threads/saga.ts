@@ -44,7 +44,8 @@ function* batchThreads({payload}: PayloadAction<ReducerActionType>){
   try {
     const response: AxiosResponse = yield ApiService.callPatch(`batch`, {
         threadIds: payload.body.body.threadIds,
-        mailboxes: payload.body.body.mailboxes
+        mailboxes: payload.body.body.mailboxes,
+        snooze: payload.body.body.snooze
     })
     performSuccessActions(payload);
     yield put(updateThreadsSuccess(response))
@@ -78,7 +79,7 @@ export function* watchUpdateThreads() {
 export function* watchSearchAndGetThreads() {
     yield takeLatest(searchThreads.type, searchAndGetThreads);
   }
-  
+
   export function* watchBatchUpdateThread() {
     yield takeLatest(batchUpdateThreads.type, batchThreads);
 }

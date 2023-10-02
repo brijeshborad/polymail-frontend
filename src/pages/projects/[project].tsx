@@ -94,7 +94,7 @@ function ProjectInbox() {
                         onlineMembersData.push({
                             userId: newMessage.data.userId,
                             isOnline: true,
-                            lastOnlineStatusCheck: new Date(),
+                            lastOnlineStatusCheck: dayjs().format('DD/MM/YYYY hh:mm:ss a'),
                             avatar: newMessage.data.avatar,
                             color: Math.floor(Math.random() * 16777215).toString(16),
                             name: newMessage.data.name

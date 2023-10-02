@@ -12,8 +12,9 @@ import {updateCommonState} from "@/redux/common-apis/action-reducer";
 import {updateLastMessage} from "@/redux/socket/action-reducer";
 import dayjs from "dayjs";
 import {debounceInterval} from "@/utils/common.functions";
-
-let displayProjectsData: Project[] = [];
+import {getMemberStatusCache, setMemberStatusCache} from "@/utils/cache.functions";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat)
 
 export function InboxHeaderProjectsList(props: { size: number }) {
     const {projects, isLoading} = useSelector((state: StateType) => state.projects);
@@ -30,7 +31,7 @@ export function InboxHeaderProjectsList(props: { size: number }) {
         if (newMessage) {
             dispatch(updateLastMessage(null));
             if (newMessage.name === 'Activity') {
-                let displayedProjects = [...displayProjectsData];
+                let displayedProjects = [...getMemberStatusCache(`projects-inbox`)];
                 if (userDetails && userDetails.id !== newMessage.data.userId) {
                     let findThread: Thread | any = (threads || []).find((item: Thread) => item.id === newMessage.data.threadId);
                     displayedProjects = displayedProjects.map((projectItem: Project) => {
@@ -56,10 +57,11 @@ export function InboxHeaderProjectsList(props: { size: number }) {
                                 finalItem.userProjectOnlineStatus[userAlreadyExists].isOnline = true;
                                 finalItem.userProjectOnlineStatus[userAlreadyExists].lastOnlineStatusCheck = dayjs().format('DD/MM/YYYY hh:mm:ss a');
                             } else {
+                                finalItem.userProjectOnlineStatus = [...finalItem.userProjectOnlineStatus];
                                 finalItem.userProjectOnlineStatus.push({
                                     userId: newMessage.data.userId,
                                     isOnline: true,
-                                    lastOnlineStatusCheck: new Date(),
+                                    lastOnlineStatusCheck: dayjs().format('DD/MM/YYYY hh:mm:ss a'),
                                     avatar: newMessage.data.avatar,
                                     color: Math.floor(Math.random()*16777215).toString(16),
                                     name: newMessage.data.name
@@ -75,12 +77,12 @@ export function InboxHeaderProjectsList(props: { size: number }) {
     }, [newMessage, dispatch, threads, userDetails]);
 
     useEffect(() => {
-        displayProjectsData = projectData;
+        setMemberStatusCache(`projects-inbox`, projectData);
     }, [projectData])
 
     useEffect(() => {
         debounceInterval(() => {
-            let displayedProjects = [...displayProjectsData];
+            let displayedProjects = [...getMemberStatusCache(`projects-inbox`)];
             displayedProjects = displayedProjects.map((item: Project) => {
                 let finalItem = {...item};
                 if (!finalItem.userProjectOnlineStatus) {
@@ -88,7 +90,8 @@ export function InboxHeaderProjectsList(props: { size: number }) {
                 }
                 finalItem.userProjectOnlineStatus = finalItem.userProjectOnlineStatus.map((data) => {
                     let finalData = {...data};
-                    if (finalData.isOnline && dayjs(finalData.lastOnlineStatusCheck, 'DD/MM/YYYY hh:mm:ss a').diff(dayjs(), 'seconds') > 10) {
+                    let lastActiveDate = dayjs(finalData.lastOnlineStatusCheck, 'DD/MM/YYYY hh:mm:ss a');
+                    if (finalData.isOnline && dayjs().diff(lastActiveDate, 'seconds') > 10) {
                         finalData.isOnline = false;
                     }
                     return finalData;

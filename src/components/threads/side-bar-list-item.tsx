@@ -1,11 +1,11 @@
 import styles2 from "@/styles/common.module.css";
 import styles from "@/styles/Inbox.module.css";
-import {Box, Flex} from "@chakra-ui/react";
+import {Box, Flex, Image, Tooltip} from "@chakra-ui/react";
 import {Time} from "@/components/common";
 import {DisneyIcon, DotIcon} from "@/icons";
 import {StateType, ThreadListItemProps} from "@/types";
 import { useDispatch, useSelector } from "react-redux";
-import {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import { MAILBOX_UNREAD } from "@/utils/constants";
 import { updateKeyNavigation } from "@/redux/key-navigation/action-reducer";
 
@@ -41,14 +41,14 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
 
   return (
     <>
-      <Box 
-        ref={ref} 
+      <Box
+        ref={ref}
         onClick={(e) => {
           props.onClick(e)
           dispatch(updateKeyNavigation({
             target: 'threads'
           }))
-        }} 
+        }}
         className={`${styles.mailDetails} ${isSelected ? styles.mailDetailsSelected : ''}`}
       >
           <Flex align={"center"} justify={'space-between'}>
@@ -62,7 +62,24 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
               </Flex>
           </Flex>
           <div className={styles.mailMessage}>
-              {props.thread.subject || "(no subject)"}
+              <Flex alignItems={'center'} justifyContent={'space-between'}>
+                  {props.thread.subject || "(no subject)"}
+                  <Flex alignItems={'center'} justifyContent={'end'} className={'member-images subheader-images'}>
+                      {(props.thread.userProjectOnlineStatus || [])
+                          .filter(t => t.isOnline).slice(0, 5)
+                          .map((item, index) => (
+                                  <Tooltip label={item.name} placement='bottom' bg='gray.300' color='black' key={index}>
+                                      <div className={'member-photo'}
+                                           style={{background: '#000', border: `2px solid #${item.color}`}}>
+                                          {item.avatar && <Image src={item.avatar} width="24" height="24"
+                                                                 alt=""/>}
+                                      </div>
+                                  </Tooltip>
+                              )
+                          )
+                      }
+                  </Flex>
+              </Flex>
           </div>
       </Box>
     </>

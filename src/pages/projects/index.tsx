@@ -5,7 +5,7 @@ import {
     Button,
     Flex,
     Heading, Menu, MenuButton, MenuItem, MenuList,
-    Text
+    Text, Tooltip
 } from "@chakra-ui/react";
 import styles from "@/styles/project.module.css";
 import Image from "next/image";
@@ -18,7 +18,12 @@ import {Project} from "@/models";
 import {POSITION_GAP} from "@/utils/constants";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import {updateCommonState} from "@/redux/common-apis/action-reducer";
-
+import {updateLastMessage} from "@/redux/socket/action-reducer";
+import dayjs from "dayjs";
+import {debounceInterval} from "@/utils/common.functions";
+import {getMemberStatusCache, setMemberStatusCache} from "@/utils/cache.functions";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat)
 
 function Index() {
     const {isLoading, projects, projectSearchedString} = useSelector((state: StateType) => state.projects);
@@ -26,8 +31,71 @@ function Index() {
     const router = useRouter();
     const dispatch = useDispatch();
     const [isOpenByRoute, setIsOpenByRoute] = useState<boolean>(false);
+    const {newMessage} = useSelector((state: StateType) => state.socket);
+    const {userDetails} = useSelector((state: StateType) => state.users);
 
     const [itemList, setItemList] = useState<Project[]>([]);
+
+    useEffect(() => {
+        if (newMessage) {
+            dispatch(updateLastMessage(null));
+            if (newMessage.name === 'Activity') {
+                let displayProjects = [...getMemberStatusCache(`projects-index`)];
+                // if (userDetails && userDetails.id !== newMessage.data.userId) {
+                    displayProjects = displayProjects.map((projectItem: Project) => {
+                        let finalItem: Project = {...projectItem};
+                        if (!finalItem.userProjectOnlineStatus) {
+                            finalItem.userProjectOnlineStatus = [];
+                        }
+                        if (newMessage.data.type === 'ViewingProject') {
+                            if (finalItem.id === newMessage.data.projectId) {
+                                finalItem.showOnlineMembersCount = 5;
+                                let userAlreadyExists = finalItem.userProjectOnlineStatus.findIndex((item) => item.userId === newMessage.data.userId);
+                                if (userAlreadyExists !== -1) {
+                                    finalItem.userProjectOnlineStatus[userAlreadyExists].isOnline = true;
+                                    finalItem.userProjectOnlineStatus[userAlreadyExists].lastOnlineStatusCheck = dayjs().format('DD/MM/YYYY hh:mm:ss a');
+                                } else {
+                                    finalItem.userProjectOnlineStatus = [...finalItem.userProjectOnlineStatus];
+                                    finalItem.userProjectOnlineStatus.push({
+                                        userId: newMessage.data.userId,
+                                        isOnline: true,
+                                        lastOnlineStatusCheck: dayjs().format('DD/MM/YYYY hh:mm:ss a'),
+                                        avatar: newMessage.data.avatar,
+                                        color: Math.floor(Math.random()*16777215).toString(16),
+                                        name: newMessage.data.name
+                                    })
+                                }
+                            }
+                        }
+                        return {...finalItem};
+                    })
+                    setItemList(displayProjects);
+                // }
+            }
+        }
+    }, [newMessage, dispatch, userDetails]);
+
+    useEffect(() => {
+        debounceInterval(() => {
+            let displayProjects = [...getMemberStatusCache(`projects-inbox`)];
+            displayProjects = displayProjects.map((item: Project) => {
+                let finalItem = {...item};
+                if (!finalItem.userProjectOnlineStatus) {
+                    finalItem.userProjectOnlineStatus = [];
+                }
+                finalItem.userProjectOnlineStatus = finalItem.userProjectOnlineStatus.map((data) => {
+                    let finalData = {...data};
+                    let lastActiveDate = dayjs(finalData.lastOnlineStatusCheck, 'DD/MM/YYYY hh:mm:ss a');
+                    if (finalData.isOnline && dayjs().diff(lastActiveDate, 'seconds') > 10) {
+                        finalData.isOnline = false;
+                    }
+                    return finalData;
+                })
+                return {...finalItem}
+            })
+            setItemList([...displayProjects]);
+        }, 1000 * 10);
+    }, [])
 
     useEffect(() => {
         if (projects && projects.length > 0) {
@@ -43,6 +111,10 @@ function Index() {
             }
         }
     }, [router.query.favorite, projects, projectSearchedString])
+
+    useEffect(() => {
+        setMemberStatusCache(`projects-index`, itemList);
+    }, [itemList])
 
 
     const handleDragStart = (index: number, e: ChangeEvent | any) => {
@@ -168,17 +240,18 @@ function Index() {
                                     </Flex>
 
                                     <Flex align={'center'} gap={2}>
-                                        {/*
                                         <Flex className={styles.memberImages}>
-                                            <div className={styles.memberPhoto}>
-                                                <Image src="/image/user.png" width="24" height="24" alt=""/>
-                                            </div>
-                                            <div className={styles.memberPhoto}>
-                                                <Image src="/image/user.png" width="24" height="24" alt=""/>
-                                            </div>
-                                            <div className={styles.memberPhoto}> +6 </div>
+                                            {(project.userProjectOnlineStatus || [])
+                                                .filter(t => t.isOnline).slice(0, 5)
+                                                .map((item, index) => (
+                                                <Tooltip label={item.name} placement='bottom' bg='gray.300' color='black' key={index}>
+                                                    <div className={styles.memberPhoto} style={{border: `2px solid #${item.color}`}}>
+                                                        {item.avatar && <Image src={item.avatar} width="24" height="24" alt=""/>}
+                                                    </div>
+                                                </Tooltip>
+                                            ))}
+                                            {/*<div className={styles.memberPhoto}> +6 </div>*/}
                                         </Flex>
-                                        */}
                                         {project.scope === "private" && (
                                             <Flex align={'center'} justify={'center'} h={'20px'} w={'20px'}
                                                   borderRadius={50} className={styles.projectListIcon}

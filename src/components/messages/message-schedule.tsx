@@ -15,7 +15,7 @@ import {TimeSnoozeIcon} from "@/icons";
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
-export default function MessageSchedule({ date, onChange, isSnooze = false }: MessageScheduleProps) {
+export default function MessageSchedule({ date, onChange, isSnooze = false, isNameShow = false }: MessageScheduleProps) {
   const [isOpen, setOpen] = useState(false)
   const [scheduleDate, setScheduleDate] = useState(date)
   const [customSchedule, setCustomSchedule] = useState(false)
@@ -73,7 +73,7 @@ export default function MessageSchedule({ date, onChange, isSnooze = false }: Me
       lazyBehavior={"keepMounted"}
       isOpen={isOpen}
       onClose={() => closeScheduleDropdown}
-      closeOnSelect={false}>
+      closeOnSelect={false} placement={'bottom'}>
       <MenuButton
         onClick={() => {
           const opened = isOpen
@@ -90,6 +90,7 @@ export default function MessageSchedule({ date, onChange, isSnooze = false }: Me
         {...(!isSnooze ? {variant: 'outline'} : {})}
       >
         {isSnooze ? <TimeSnoozeIcon/> : <ChevronDownIcon />}
+        {isNameShow && 'Snooze'}
       </MenuButton>
 
       {!showScheduleMenu && (
