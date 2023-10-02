@@ -1,11 +1,16 @@
 import {ReducerActionType} from "@/types";
 import {Toaster} from "@/components/common";
 import {createStandaloneToast} from "@chakra-ui/react";
+import {updateThreadState} from "@/redux/threads/action-reducer";
 
 export function performSuccessActions(payload: ReducerActionType) {
     const {toast} = createStandaloneToast();
+
     if (payload.toaster?.success) {
         let polyToast = `poly-toast-${new Date().getMilliseconds()}`;
+        if (payload.toaster.success.id) {
+            polyToast = payload.toaster.success.id;
+        }
         Toaster({
             desc: payload.toaster.success.desc,
             title: payload.toaster.success.title || '',
@@ -18,14 +23,25 @@ export function performSuccessActions(payload: ReducerActionType) {
                             ...(payload.undoAction.showToasterAfterUndoClick ? {
                                 toaster: {
                                     success: {
-                                        desc: 'Thread was moved from ' + (payload.undoAction.undoBody?.tag || 'JUST CHECKING').toLowerCase() + '.',
-                                        title: payload.toaster?.success?.title || ''
+                                        desc: 'Thread was moved from ' + (payload.undoAction.undoBody?.tag || '').toLowerCase() + '.',
+                                        title: payload.toaster?.success?.title || '',
                                     }
-                                }
+                                },
+                                body:  payload.undoAction.undoBody
+
                             } : {})
                         }));
                     }
                     toast.close(`${polyToast}`);
+                    if (payload?.undoAction?.undoBody?.forThread) {
+                        if (payload?.undoAction?.dispatch) {
+                            payload?.undoAction?.dispatch(updateThreadState({
+                                threads: payload.undoAction.undoBody?.data || [],
+                                selectedThread: (payload.undoAction.undoBody?.data || [])[0],
+                            }));
+                        }
+                    }
+
                 }
             } : {})
         });

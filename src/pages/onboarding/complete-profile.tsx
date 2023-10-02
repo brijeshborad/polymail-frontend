@@ -15,7 +15,7 @@ import {useRouter} from "next/router";
 
 function CompleteProfile() {
     const inputFile = useRef<HTMLInputElement | null>(null)
-    const {userDetails, profilePicture, profilePictureUpdated, userDetailsUpdateSuccess} = useSelector((state: StateType) => state.users);
+    const {userDetails, profilePicture, profilePictureUpdated} = useSelector((state: StateType) => state.users);
     const dispatch = useDispatch();
     const router = useRouter();
 
@@ -43,17 +43,17 @@ function CompleteProfile() {
         setName(event.target.value);
     }
 
-    useEffect(() => {
-        if (userDetailsUpdateSuccess) {
-            Toaster({
-                desc: "Your name added successfully",
-                title: "Full name added success",
-                type: 'success'
-            });
-            Router.push('/inbox');
+    // useEffect(() => {
+    //     if (userDetailsUpdateSuccess) {
+    //         Toaster({
+    //             desc: "Your name added successfully",
+    //             title: "Full name added success",
+    //             type: 'success'
+    //         });
+    //         Router.push('/inbox');
 
-        }
-    }, [userDetailsUpdateSuccess])
+    //     }
+    // }, [userDetailsUpdateSuccess])
 
     const submit = () => {
         let tmp = name.split(' ')

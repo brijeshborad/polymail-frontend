@@ -1,4 +1,3 @@
-import { Toaster } from "@/components/common";
 import RemoveRecordModal from "@/components/common/delete-record-modal";
 import { Message } from "@/components/messages";
 import { InviteMember, Project, TeamMember, Thread, UserProjectOnlineStatus } from "@/models";
@@ -49,7 +48,7 @@ function ProjectInbox() {
     const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     // const {success: membershipSuccess} = useSelector((state: StateType) => state.memberships);
-    const {isProjectRemoveSuccess, success} = useSelector((state: StateType) => state.memberships);
+    const {success} = useSelector((state: StateType) => state.memberships);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const [isManagerMembersOpen, setIsManagerMembersOpen] = useState<boolean>(false)
     const {sendJsonMessage, newMessage} = useSelector((state: StateType) => state.socket);
@@ -225,10 +224,21 @@ function ProjectInbox() {
     const removeMemberFromProject = () => {
         if (selectedMember) {
             if (selectedMember?.invite) {
-                dispatch(deleteMemberShipFromProject({body:{id: selectedMember.id}}));
+                dispatch(deleteMemberShipFromProject({body:{id: selectedMember.id},toaster:{
+                    success:{
+                        desc: 'Membership is removed form project successfully',
+                        title: 'Remove membership form project',
+                        type: 'success'
+                    }
+                }}));
             } else {
                 if (project && project.id && selectedMember?.id) {
-                    dispatch(deleteMemberFromProject({body:{id: project.id, accountId: selectedMember.id}}));
+                    dispatch(deleteMemberFromProject({body:{id: project.id, accountId: selectedMember.id},toaster:{
+                        success:{
+                            desc: 'Member is removed form project successfully',
+                            title: 'Remove member form project',
+                            type: 'success'
+                        }}}));
                 }
             }
         }
@@ -254,15 +264,15 @@ function ProjectInbox() {
         }
     }, [success, selectedMember, dispatch])
 
-    useEffect(() => {
-        if (isProjectRemoveSuccess) {
-            Toaster({
-                desc: 'Member is removed form project successfully',
-                title: 'Remove member form project',
-                type: 'success'
-            });
-        }
-    }, [isProjectRemoveSuccess])
+    // useEffect(() => {
+    //     if (isProjectRemoveSuccess) {
+    //         Toaster({
+    //             desc: 'Member is removed form project successfully',
+    //             title: 'Remove member form project',
+    //             type: 'success'
+    //         });
+    //     }
+    // }, [isProjectRemoveSuccess])
 
 
     useEffect(() => {

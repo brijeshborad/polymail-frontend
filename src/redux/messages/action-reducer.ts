@@ -1,5 +1,5 @@
 import {createSlice, current, PayloadAction} from "@reduxjs/toolkit";
-import {InitialMessageStateType} from "@/types";
+import {InitialMessageStateType, ReducerActionType} from "@/types";
 import {Message} from "@/models";
 
 const initialState: any = {
@@ -9,8 +9,6 @@ const initialState: any = {
     messagePart: null,
     messageAttachments: [],
     isLoading: false,
-    error: null,
-    success: false,
     attachmentUrl: null
 } as InitialMessageStateType
 
@@ -18,58 +16,58 @@ const messagesSlice = createSlice({
     name: 'messages',
     initialState,
     reducers: {
-        getAllMessages: (state: InitialMessageStateType, _action: PayloadAction<{ thread?: string }>) => {
-            return {...state, messages: [], isLoading: true, error: null}
+        getAllMessages: (state: InitialMessageStateType, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, messages: [], isLoading: true,}
         },
         getAllMessagesSuccess: (state: InitialMessageStateType, {payload: messages}: PayloadAction<{}>) => {
-            return {...state, messages, isLoading: false, error: null}
+            return {...state, messages, isLoading: false,}
         },
-        getAllMessagesError: (state: InitialMessageStateType, {payload: error}: PayloadAction<{ error: any }>) => {
-            return {...state, messages: [], isLoading: false, error}
+        getAllMessagesError: (state: InitialMessageStateType,  _action: PayloadAction<any>) => {
+            return {...state, messages: [], isLoading: false}
         },
 
-        getMessageParts: (state: InitialMessageStateType, _action: PayloadAction<{ id: string }>) => {
-            return {...state, messagePart: null, isLoading: true, error: null}
+        getMessageParts: (state: InitialMessageStateType, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, messagePart: null, isLoading: true}
         },
         getMessagePartsSuccess: (state: InitialMessageStateType, {payload: messagePart}: PayloadAction<{}>) => {
-            return {...state, messagePart, isLoading: false, error: null}
+            return {...state, messagePart, isLoading: false}
         },
-        getMessagePartsError: (state: InitialMessageStateType, {payload: error}: PayloadAction<{ error: any }>) => {
-            return {...state, messagePart: null, isLoading: false, error}
+        getMessagePartsError: (state: InitialMessageStateType,  _action: PayloadAction<any>) => {
+            return {...state, messagePart: null, isLoading: false}
         },
 
-        getMessageAttachments: (state: InitialMessageStateType, _action: PayloadAction<{ id: string }>) => {
-            return {...state, messageAttachments: null, isLoading: true, error: null}
+        getMessageAttachments: (state: InitialMessageStateType, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, messageAttachments: null, isLoading: true}
         },
         getMessageAttachmentsSuccess: (state: InitialMessageStateType, {payload: messageAttachments}: PayloadAction<{}>) => {
-            return {...state, messageAttachments, isLoading: false, error: null}
+            return {...state, messageAttachments, isLoading: false}
         },
-        getMessageAttachmentsError: (state: InitialMessageStateType, {payload: error}: PayloadAction<{ error: any }>) => {
-            return {...state, messageAttachments: null, isLoading: false, error}
+        getMessageAttachmentsError: (state: InitialMessageStateType,  _action: PayloadAction<any>) => {
+            return {...state, messageAttachments: null, isLoading: false}
         },
 
-        getAttachmentDownloadUrl: (state: InitialMessageStateType, _action: PayloadAction<{ id?: string, attachment?: string }>) => {
-            return {...state, error: null, isLoading: false, success: false}
+        getAttachmentDownloadUrl: (state: InitialMessageStateType, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, isLoading: false}
         },
         getAttachmentDownloadUrlSuccess: (state: InitialMessageStateType, {payload: attachmentUrl}: PayloadAction<{}>) => {
-            return {...state, attachmentUrl, error: null, isLoading: false, success: true}
+            return {...state, attachmentUrl, isLoading: false}
         },
-        getAttachmentDownloadUrlError: (state: InitialMessageStateType, {payload: error}: PayloadAction<any>) => {
-            return {...state, error, isLoading: false, success: false}
+        getAttachmentDownloadUrlError: (state: InitialMessageStateType,  _action: PayloadAction<any>) => {
+            return {...state, isLoading: false}
         },
 
-        uploadAttachment: (state: InitialMessageStateType, _action: PayloadAction<{ id?: string, file?: File }>) => {
-            return {...state, error: null, isLoading: false, success: false}
+        uploadAttachment: (state: InitialMessageStateType, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, isLoading: false}
         },
         uploadAttachmentSuccess: (state: InitialMessageStateType, _action: PayloadAction<{}>) => {
-            return {...state, error: null, isLoading: false, success: true}
+            return {...state, isLoading: false}
         },
-        uploadAttachmentError: (state: InitialMessageStateType, {payload: error}: PayloadAction<any>) => {
-            return {...state, error, isLoading: false, success: false}
+        uploadAttachmentError: (state: InitialMessageStateType,  _action: PayloadAction<any>) => {
+            return {...state, isLoading: false}
         },
 
-        updateMessage: (state: InitialMessageStateType, _action: PayloadAction<{ id?: string, body?: { scope: string } }>) => {
-            return {...state, error: null, isLoading: false, success: false}
+        updateMessage: (state: InitialMessageStateType, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, isLoading: false}
         },
         updateMessageSuccess: (state: InitialMessageStateType, {payload: message}: PayloadAction<{}>) => {
             let currentMessages = [...(current(state).messages || [])] as Message[];
@@ -79,10 +77,10 @@ const messagesSlice = createSlice({
                 ...currentMessages[index1],
                 scope: messageData.scope || 'visible'
             };
-            return {...state, messages: [...currentMessages], error: null, isLoading: false, success: true}
+            return {...state, messages: [...currentMessages], isLoading: false}
         },
-        updateMessageError: (state: InitialMessageStateType, {payload: error}: PayloadAction<any>) => {
-            return {...state, error, isLoading: false, success: false}
+        updateMessageError: (state: InitialMessageStateType,  _action: PayloadAction<any>) => {
+            return {...state, isLoading: false}
         },
 
         updateMessageState: (state: InitialMessageStateType, action: PayloadAction<InitialMessageStateType>) => {

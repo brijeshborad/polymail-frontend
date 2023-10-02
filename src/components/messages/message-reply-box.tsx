@@ -456,7 +456,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
               mimeType: event.target.files[0].type
             }
           ]);
-          dispatch(uploadAttachment({ id: draft.id, file }));
+          dispatch(uploadAttachment({body:{ id: draft.id, file: file }}));
           sendToDraft('', false);
         }
       };
@@ -516,51 +516,51 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         }
 
         dispatch(sendMessage({body:{id: draft.id, ...params },
-          // toaster:{
-          //   success:{
-          //     desc: `Your message has been scheduled`,
-          //     type: 'send_confirmation',
-          //     title: 'Your message has been scheduled',
-          //     id: polyToast,
-          //     undoClick: (type: string) => {
-          //       let params = {};
-    
-          //       if (type === 'undo') {
-          //         params = {
-          //           undo: true
-          //         }
-          //       } else if (type === 'send-now') {
-          //         params = {
-          //           now: true
-          //         }
-          //       }
-          //       dispatch(sendMessage({body:{id: draft.id!, ...params }}));
-          //       toast.close(`${polyToast}`);
-          //     }
-          //   }
-          // },
-      }));
+          toaster: {
+            success: {
+              desc: `Your message has been scheduled`,
+              type: 'send_confirmation',
+              title: 'Your message has been scheduled',
+              id: polyToast,
+              undoClick: (type: string) => {
+                let params = {};
 
-        Toaster({
-          desc: `Your message has been scheduled`,
-          type: 'send_confirmation',
-          title: 'Your message has been scheduled',
-          id: polyToast,
-          undoClick: (type: string) => {
-
-            if (type === 'undo') {
-              params = {
-                undo: true
-              }
-            } else if (type === 'send-now') {
-              params = {
-                now: true
+                if (type === 'undo') {
+                  params = {
+                    undo: true
+                  }
+                } else if (type === 'send-now') {
+                  params = {
+                    now: true
+                  }
+                }
+                dispatch(sendMessage({body:{id: draft.id!, ...params }}));
+                toast.close(`${polyToast}`);
               }
             }
-            dispatch(sendMessage({body:{id: draft.id!, ...params }}));
-            toast.close(`${polyToast}`);
-          }
-        })
+          },
+      }));
+
+        // Toaster({
+        //   desc: `Your message has been scheduled`,
+        //   type: 'send_confirmation',
+        //   title: 'Your message has been scheduled',
+        //   id: polyToast,
+        //   undoClick: (type: string) => {
+        //
+        //     if (type === 'undo') {
+        //       params = {
+        //         undo: true
+        //       }
+        //     } else if (type === 'send-now') {
+        //       params = {
+        //         now: true
+        //       }
+        //     }
+        //     dispatch(sendMessage({body:{id: draft.id!, ...params }}));
+        //     toast.close(`${polyToast}`);
+        //   }
+        // })
 
       } else {
         if (draft && draft.to && draft.to.length) {

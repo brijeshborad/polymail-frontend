@@ -1,6 +1,5 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {InitialUserState, ReducerActionType} from "@/types";
-import {UserDetails} from "@/models";
 
 const initialState: any = {
     userDetails: null,

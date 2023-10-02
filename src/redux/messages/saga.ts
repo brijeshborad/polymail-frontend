@@ -19,13 +19,15 @@ import {
     uploadAttachmentSuccess,
     uploadAttachment, updateMessageSuccess, updateMessageError, updateMessage
 } from "@/redux/messages/action-reducer";
-import {MessageRequestBody} from "@/models";
+import { ReducerActionType } from "@/types";
+import { performSuccessActions } from "@/utils/common-redux.functions";
 
-function* getMessages({payload: {thread}}: PayloadAction<{ thread?: string }>) {
+function* getMessages({payload}: PayloadAction<ReducerActionType>) {
     try {
         const response: AxiosResponse = yield ApiService.callGet(`messages`, {
-            ...(thread ? {thread} : {}),
+            ...(payload.body.thread ? {thread: payload.body.thread} : {}),
         });
+        performSuccessActions(payload);
         yield put(getAllMessagesSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
@@ -33,9 +35,10 @@ function* getMessages({payload: {thread}}: PayloadAction<{ thread?: string }>) {
     }
 }
 
-function* getMessagePart({payload: {id}}: PayloadAction<{ id: string }>) {
+function* getMessagePart({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callGet(`messages/${id}/body`, null);
+        const response: AxiosResponse = yield ApiService.callGet(`messages/${payload.body.id}/body`, null);
+        performSuccessActions(payload);
         yield put(getMessagePartsSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
@@ -43,9 +46,10 @@ function* getMessagePart({payload: {id}}: PayloadAction<{ id: string }>) {
     }
 }
 
-function* getMessageAttachment({payload: {id}}: PayloadAction<{ id: string }>) {
+function* getMessageAttachment({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callGet(`messages/${id}/attachments`, null);
+        const response: AxiosResponse = yield ApiService.callGet(`messages/${payload.body.id}/attachments`, null);
+        performSuccessActions(payload);
         yield put(getMessageAttachmentsSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
@@ -53,9 +57,10 @@ function* getMessageAttachment({payload: {id}}: PayloadAction<{ id: string }>) {
     }
 }
 
-function* getAttachmentUrl({payload: {id, attachment}}: PayloadAction<{ id: string, attachment: string }>) {
+function* getAttachmentUrl({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callGet(`messages/${id}/attachments/${attachment}`, {});
+        const response: AxiosResponse = yield ApiService.callGet(`messages/${payload.body.id}/attachments/${payload.body.attachment}`, {});
+        performSuccessActions(payload);
         yield put(getAttachmentDownloadUrlSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
@@ -63,21 +68,19 @@ function* getAttachmentUrl({payload: {id, attachment}}: PayloadAction<{ id: stri
     }
 }
 
-function* generateAttachmentUploadUrl({payload: {id, file}}: PayloadAction<{
-    id: string,
-    file: File
-}>) {
+function* generateAttachmentUploadUrl({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const {name, type} = file;
-        let response: AxiosResponse = yield ApiService.callPost(`messages/${id}/attachments`, {
+        const {name, type} = payload.body.file;
+        let response: AxiosResponse = yield ApiService.callPost(`messages/${payload.body.id}/attachments`, {
             filename: name,
             mimeType: type
         });
 
         if (response && (response as any)?.url) {
-            yield ApiService.callPut((response as any)?.url, file, {"Content-Type": type, 'Skip-Headers': true});
+            yield ApiService.callPut((response as any)?.url, payload.body.file, {"Content-Type": type, 'Skip-Headers': true});
         }
 
+        performSuccessActions(payload);
         yield put(uploadAttachmentSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
@@ -85,9 +88,10 @@ function* generateAttachmentUploadUrl({payload: {id, file}}: PayloadAction<{
     }
 }
 
-function* updateMessageData({payload: {id, body}}: PayloadAction<{ id: string, body: MessageRequestBody }>) {
+function* updateMessageData({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callPatch(`messages/${id}`, body);
+        const response: AxiosResponse = yield ApiService.callPatch(`messages/${payload.body.id}`, payload.body.body);
+        performSuccessActions(payload);
         yield put(updateMessageSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;

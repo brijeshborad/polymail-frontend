@@ -41,7 +41,6 @@ function CreateNewProjectModal() {
 
     const {createProjectSuccess, project} = useSelector((state: StateType) => state.projects);
     const {selectedThread, multiSelection} = useSelector((state: StateType) => state.threads);
-    const [successMessage, setSuccessMessage] = useState<{ desc: string, title: string } | null>(null);
     const { draft } = useSelector((state: StateType) => state.draft);
 
     const handleChange = (event: ChangeEvent | any) => {
@@ -56,7 +55,7 @@ function CreateNewProjectModal() {
         if (createProjectSuccess) {
             dispatch(updateProjectState({createProjectSuccess: false}))
             if (project && selectedThread) {
-                addThreadToProject(project, multiSelection, selectedThread || draft, dispatch, setSuccessMessage);
+                addThreadToProject(project, multiSelection, selectedThread || draft, dispatch);
             }
             if (selectedAccount && selectedAccount.email && membersInputs.memberArray && membersInputs.memberArray?.length > 0 && project && project.id) {
                 let reqBody = {
@@ -66,12 +65,11 @@ function CreateNewProjectModal() {
                     groupType: 'project',
                     groupId: project?.id
                 }
-                console.log('successMessage', successMessage);
                 dispatch(addItemToGroup({
                     toaster: {
                         success: {
-                            desc: successMessage?.desc || 'Thread was added to ' + project.name?.toLowerCase() + '.',
-                            title: successMessage?.title ||  selectedThread?.subject || '',
+                            desc: 'Thread was added to ' + project.name?.toLowerCase() + '.',
+                            title: selectedThread?.subject || '',
                             type: 'success'
                         }
                     },
@@ -93,33 +91,8 @@ function CreateNewProjectModal() {
             }
             dispatch(updateCommonState({showCreateProjectModal: false, shouldRedirectOnCreateProject: false}))
         }
-    }, [dispatch, createProjectSuccess, selectedAccount, membersInputs.memberArray, project, shouldRedirectOnCreateProject, successMessage])
+    }, [dispatch, createProjectSuccess, selectedAccount, membersInputs.memberArray, project, shouldRedirectOnCreateProject])
 
-    // useEffect(() => {
-    //     if (isThreadAddedToProjectSuccess && successMessage) {
-    //         Toaster({
-    //             desc: successMessage.desc,
-    //             title: successMessage.title || '',
-    //             type: 'success'
-    //         });
-    //         dispatch(updateMembershipState({isThreadAddedToProjectSuccess: false}));
-    //     }
-    // }, [dispatch, isThreadAddedToProjectSuccess, successMessage])
-
-
-    // useEffect(() => {
-    //     if (membershipSuccess) {
-    //         dispatch(updateMembershipState({success: false}));
-    //         setMembersInput({
-    //             input: '',
-    //             role: 'member',
-    //             memberArray: []
-    //         });
-    //         if (shouldRedirectOnCreateProject && project) {
-    //             Router.push(`/projects/${project.id!}`)
-    //         }
-    //     }
-    // }, [dispatch, membershipSuccess, project, shouldRedirectOnCreateProject])
 
     const addNewProject = () => {
         if (projectName.length === 0) {

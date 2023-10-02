@@ -30,7 +30,6 @@ import {ChevronDownIcon} from "@chakra-ui/icons";
 import {PROJECT_ROLES} from "@/utils/constants";
 import RemoveRecordModal from "@/components/common/delete-record-modal";
 import {deleteMemberFromOrganization} from "@/redux/memberships/action-reducer";
-import {Toaster} from "@/components/common";
 import SettingsLayout from "@/pages/settings/settings-layout";
 
 function Members() {
@@ -38,7 +37,7 @@ function Members() {
     const {isOpen: isEditOpen, onOpen: onEditOpen, onClose: onEditClose} = useDisclosure()
     const {isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose} = useDisclosure()
     const {members, organizations, updateMemberRoleSuccess} = useSelector((state: StateType) => state.organizations);
-    const {isOrganizationRemoveSuccess, success} = useSelector((state: StateType) => state.memberships);
+    const {success} = useSelector((state: StateType) => state.memberships);
     const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
     const {userDetails} = useSelector((state: StateType) => state.users);
 
@@ -50,15 +49,15 @@ function Members() {
         }
     }, [dispatch, organizations])
 
-    useEffect(() => {
-        if (isOrganizationRemoveSuccess) {
-            Toaster({
-                desc: 'Member is removed form organization successfully',
-                title: 'Remove member form organization',
-                type: 'success'
-            });
-        }
-    }, [isOrganizationRemoveSuccess])
+    // useEffect(() => {
+    //     if (isOrganizationRemoveSuccess) {
+    //         Toaster({
+    //             desc: 'Member is removed form organization successfully',
+    //             title: 'Remove member form organization',
+    //             type: 'success'
+    //         });
+    //     }
+    // }, [isOrganizationRemoveSuccess])
 
     useEffect(() => {
         if (updateMemberRoleSuccess && members && members.length) {
@@ -119,7 +118,13 @@ function Members() {
 
         } else {
             if (organizations && organizations[0] && organizations[0].id && selectedMember && selectedMember.id) {
-                dispatch(deleteMemberFromOrganization({body:{id: organizations[0].id, accountId: selectedMember?.id}}))
+                dispatch(deleteMemberFromOrganization({body:{id: organizations[0].id, accountId: selectedMember?.id},toaster:{
+                    success:{
+                        desc: 'Member is removed form organization successfully',
+                        title: 'Remove member form organization',
+                        type: 'success'
+                    }
+                }}))
             }
             onDeleteModalClose()
         }

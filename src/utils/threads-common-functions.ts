@@ -21,7 +21,7 @@ export function markThreadAsRead(thread: Thread, dispatch: Dispatch) {
     }
 }
 
-export function addThreadToProject(item: Project, multiSelection: any, selectedThread: any, dispatch: Dispatch, setSuccessMessage: any, addToProjectRef?: any) {
+export function addThreadToProject(item: Project, multiSelection: any, selectedThread: any, dispatch: Dispatch, addToProjectRef?: any) {
   console.log('selectedThread', selectedThread)
   const isThreadMultiSelection = (multiSelection !== undefined && multiSelection.length > 0)
   if ((selectedThread && selectedThread.id || (multiSelection !== undefined && multiSelection.length > 0))) {
@@ -33,26 +33,36 @@ export function addThreadToProject(item: Project, multiSelection: any, selectedT
       groupType: 'project',
       groupId: item.id
     }
-
+    let successMessage: any = {}
     if (isThreadMultiSelection) {
-      setSuccessMessage({
+      successMessage = {
         title: `${multiSelection.length} threads added to ${item.name?.toLowerCase()}`,
-        desc: ''
-      })
+        desc: '',
+        type: 'success'
+      }
     } else {
-      setSuccessMessage({
+      successMessage = {
         desc: 'Thread was added to ' + item.name?.toLowerCase() + '.',
         title: selectedThread?.subject || '',
-      })
+        type: 'success'
+      }
     }
     const projects = selectedThread?.projects || [];
+    console.log('setSuccessMessage', successMessage);
+    
 
     let addProject = {
       ...selectedThread,
       projects: [...projects, item]
     }
     dispatch(updateThreadState({ selectedThread: addProject }));
-    dispatch(addItemToGroup({body:reqBody}));
+    dispatch(addItemToGroup({
+      body:reqBody,
+      toaster:{
+        success: successMessage
+      }
+    }
+    ));
 
     if (addToProjectRef && addToProjectRef.current) {
       addToProjectRef.current?.click();

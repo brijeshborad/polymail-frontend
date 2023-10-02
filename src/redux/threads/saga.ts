@@ -1,5 +1,5 @@
 import {PayloadAction} from "@reduxjs/toolkit";
-import {all, fork, put, takeLatest} from "@redux-saga/core/effects";
+import {all, fork, put, takeLatest, takeEvery} from "@redux-saga/core/effects";
 import ApiService from "@/utils/api.service";
 import {AxiosError, AxiosResponse} from "axios";
 import {
@@ -9,7 +9,6 @@ import {
     batchUpdateThreads,
     updateThreadsSuccess, updateThreadsError, updateThreads, searchThreadsSuccess, searchThreadsError, searchThreads
 } from "@/redux/threads/action-reducer";
-import {ThreadsRequestBody} from "@/models";
 import { ReducerActionType } from "@/types";
 import { performSuccessActions } from "@/utils/common-redux.functions";
 
@@ -32,7 +31,7 @@ function* getThreads({payload}: PayloadAction<ReducerActionType>) {
 
 function* patchThreads({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callPatch(`threads/${payload.body.id}`, payload.body.body);
+      const response: AxiosResponse = yield ApiService.callPatch(`threads/${payload.body.id}`, payload.body.body);
         performSuccessActions(payload);
         yield put(updateThreadsSuccess(response));
     } catch (error: any) {
@@ -44,8 +43,8 @@ function* patchThreads({payload}: PayloadAction<ReducerActionType>) {
 function* batchThreads({payload}: PayloadAction<ReducerActionType>){
   try {
     const response: AxiosResponse = yield ApiService.callPatch(`batch`, {
-        threadIds: payload.body.threadIds,
-      mailboxes: payload.body.mailboxes
+        threadIds: payload.body.body.threadIds,
+        mailboxes: payload.body.body.mailboxes
     })
     performSuccessActions(payload);
     yield put(updateThreadsSuccess(response))
@@ -73,7 +72,7 @@ export function* watchGetThreads() {
 }
 
 export function* watchUpdateThreads() {
-    yield takeLatest(updateThreads.type, patchThreads);
+    yield takeEvery(updateThreads.type, patchThreads);
 }
 
 export function* watchSearchAndGetThreads() {

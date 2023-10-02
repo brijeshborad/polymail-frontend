@@ -137,12 +137,12 @@ export function Message({isProjectView = false}: {isProjectView?: boolean}) {
         if (cacheMessages[inboxMessages[index].id!] && cacheMessages[inboxMessages[index].id!].data) {
           dispatch(updateMessageState({messagePart: {data: cacheMessages[inboxMessages[index].id!].data}}));
         } else {
-          dispatch(getMessageParts({id: inboxMessages[index].id!}));
+          dispatch(getMessageParts({body:{id: inboxMessages[index].id!}}));
         }
         if (cacheMessages[inboxMessages[index].id!] && cacheMessages[inboxMessages[index].id!].attachments) {
           dispatch(updateMessageState({messageAttachments: cacheMessages[inboxMessages[index].id!].attachments}));
         } else {
-          dispatch(getMessageAttachments({id: inboxMessages[index].id!}));
+          dispatch(getMessageAttachments({body:{id: inboxMessages[index].id!}}));
         }
 
       }

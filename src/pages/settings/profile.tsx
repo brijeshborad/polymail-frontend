@@ -224,14 +224,14 @@ function Profile() {
             if (reader.result) {
                 console.log("FileIn",file)
                 dispatch(uploadProfilePicture({body:{file: file}
-                //     ,
-                //     toaster:{
-                //     success:{
-                //         desc: "Profile picture Added successfully",
-                //         title: "Successfully",
-                //         type: 'success'
-                //     }
-                // }
+                    ,
+                    toaster:{
+                    success:{
+                        desc: "Profile picture Added successfully",
+                        title: "Successfully",
+                        type: 'success'
+                    }
+                }
             }));
             }
         };

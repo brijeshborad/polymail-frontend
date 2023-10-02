@@ -88,7 +88,6 @@ function ManageMembersModal() {
 
   const inviteAccountToProject = useCallback((item: Project | null) => {
       if (selectedAccount && selectedAccount.email && membersInputs.input.length > 0) {
-        debugger;
           let reqBody = {
               fromEmail: selectedAccount.email,
               toEmails: [membersInputs.input],

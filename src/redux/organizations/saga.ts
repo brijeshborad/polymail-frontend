@@ -20,7 +20,6 @@ import {
     editOrganization,
     updateOrganizationMemberRoleError, updateOrganizationMemberRoleSuccess, updateOrganizationMemberRole
 } from "@/redux/organizations/action-reducer";
-import {OrganizationRequestBody} from "@/models";
 import { ReducerActionType } from "@/types";
 import { performSuccessActions } from "@/utils/common-redux.functions";
 

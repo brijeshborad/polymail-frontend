@@ -37,7 +37,7 @@ const threadsSlice = createSlice({
         },
 
         updateThreads: (state: InitialThreadStateType, _action: PayloadAction<ReducerActionType>) => {
-            return {...state, isLoading: false, updateSuccess: false}
+                return {...state, isLoading: false, updateSuccess: false}
         },
         updateThreadsSuccess: (state: InitialThreadStateType, {payload: thread}: PayloadAction<{}>) => {
             let currentThreads = [...(current(state).threads || [])] as Thread[];

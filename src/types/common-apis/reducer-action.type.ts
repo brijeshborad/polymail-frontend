@@ -24,4 +24,6 @@ export declare type ReducerActionUndoOptions = {
     id?: string,
     body?: any,
     tag?: string,
+    data?: any,
+    forThread?: boolean
 }

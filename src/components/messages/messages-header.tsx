@@ -1,7 +1,7 @@
 import {
     Flex,
     Tooltip,
-    Heading, createStandaloneToast
+    Heading
 } from "@chakra-ui/react";
 
 import {
@@ -26,73 +26,12 @@ import { MAILBOX_ARCHIVE, MAILBOX_INBOX, MAILBOX_SNOOZED, MAILBOX_STARRED, MAILB
 import dayjs from "dayjs";
 
 export function MessagesHeader({headerType}: MessageHeaderTypes) {
-    const {selectedThread, threads, updateSuccess} = useSelector((state: StateType) => state.threads);
+    const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
     let {success: membershipSuccess} = useSelector((state: StateType) => state.memberships);
-    let {undoBody} = useSelector((state: StateType) => state.undoBody);
 
     const dispatch = useDispatch();
     const [successMessage, setSuccessMessage] = useState<{ desc: string, title: string, id: string, mailboxes: string[], threads: Thread[], thread: Thread | null}[]>([]);
-    const { toast } = createStandaloneToast()
-    const [mailBoxName, setMailBoxName] = useState<string>('');
     const [scheduledDate, setScheduledDate] = useState<string | undefined>();
-
-    useEffect(() => {
-        if (updateSuccess && successMessage.length > 0) {
-            let polyToast = `poly-toast-${new Date().getTime().toString()}`;
-            let successToastMessage: any = successMessage[0];
-            if (successToastMessage) {
-                Toaster({
-                    desc: successToastMessage.desc,
-                    title: successToastMessage.title || '',
-                    type: undoBody ? 'undo_changes': 'success',
-                    id: polyToast,
-                    ...(undoBody ? {
-                        undoUpdateRecordClick: () => {
-                            if (successToastMessage && successToastMessage.id) {
-                                let body = {
-                                    mailboxes: successToastMessage.mailboxes || []
-                                }
-                                dispatch(undoBodyData(null));
-                                dispatch(updateThreads({body:{id: successToastMessage.id, body:body}}));
-
-                                let currentThreads = [...successToastMessage.threads || []] as Thread[];
-                                let threadData = {...(successToastMessage.thread) || {}} as Thread;
-                                let index1 = currentThreads.findIndex((item: Thread) => item.id === threadData?.id);
-
-                                dispatch(updateThreadState({
-                                    threads: currentThreads,
-                                    selectedThread: currentThreads[index1],
-                                    success: true,
-                                    updateSuccess: true
-                                }));
-
-                                successMessage.push({
-                                    desc: 'Thread was moved from ' + mailBoxName.toLowerCase() + '.',
-                                    title: successToastMessage?.title || '',
-                                    id: successToastMessage?.id,
-                                    mailboxes: successToastMessage?.mailboxes,
-                                    threads: successToastMessage?.threads,
-                                    thread: successToastMessage?.thread
-                                });
-                                setSuccessMessage(successMessage)
-                            }
-                            toast.close(`${polyToast}`);
-                        }
-                    }: {})
-                })
-                successMessage.splice(0, 1);
-                setSuccessMessage(successMessage);
-                dispatch(updateThreadState({updateSuccess: false}));
-                if (successMessage.length > 0) {
-                    setTimeout(() => {
-                        dispatch(updateThreadState({updateSuccess: true}));
-                    }, 100);
-                }
-            }
-
-        }
-
-    }, [updateSuccess, dispatch, successMessage]);
 
 
     useEffect(() => {
@@ -114,7 +53,6 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
 
 
     const updateMailBox = (messageBox: string, date: string = '') => {
-        setMailBoxName(messageBox)
         if (selectedThread && selectedThread.id) {
             if (messageBox) {
                 let currentThreads = [...threads || []] as Thread[];
@@ -188,19 +126,38 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                 dispatch(updateThreadState({
                     threads: currentThreads,
                     selectedThread: currentThreads[index1],
-                    success: true
                 }));
                 dispatch(undoBodyData(selectedThread))
-                dispatch(updateThreads({body:{id: selectedThread.id, body: body}}));
-                successMessage.push({
-                    desc: 'Thread was moved to ' + messageBox.toLowerCase() + '.',
-                    title: threadData?.subject || '',
-                    id: threadData?.id!,
-                    mailboxes: threadData?.mailboxes || [],
-                    threads: threads || [],
-                    thread: selectedThread
-                })
-                setSuccessMessage(successMessage)
+                let polyToast = `poly-toast-${new Date().getMilliseconds().toString()}`;
+                    dispatch(updateThreads({
+                        body:{
+                            id: selectedThread.id,
+                            body: body
+                        },
+                        toaster: {
+                            success: {
+                                type: 'undo_changes',
+                                desc: 'Thread was moved to ' + messageBox.toLowerCase() + '.',
+                                title: selectedThread?.subject || '',
+                                id: polyToast,
+                            },
+                    },
+                    undoAction: {
+                        showUndoButton: true,
+                        dispatch,
+                        action: updateThreads,
+                        undoBody: {
+                            id: threadData.id,
+                            body:{
+                                mailboxes: threadData.mailboxes || [],
+                            },
+                            tag: messageBox.toLowerCase(),
+                            data: threads,
+                            forThread: true
+                        },
+                        showToasterAfterUndoClick: true
+                    }
+                }));
             }
         }
     }

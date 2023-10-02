@@ -444,7 +444,7 @@ export function ComposeBox(props: any) {
               mimeType: event.target.files[0].type
             }
           ]);
-          dispatch(uploadAttachment({ id: draft.id, file }));
+          dispatch(uploadAttachment({body:{ id: draft.id, file: file }}));
           sendToDraft('', false);
         }
       };

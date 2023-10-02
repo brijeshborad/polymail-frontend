@@ -50,14 +50,14 @@ export function MessageBox(props: any) {
             let body = {
                 scope: type
             }
-            dispatch(updateMessage({id: item.id, body}))
+            dispatch(updateMessage({body:{id: item.id, body}}))
         }
     }
 
 
     const downloadImage = (item: MessageAttachments) => {
         if (selectedMessage && selectedMessage.id) {
-            dispatch(getAttachmentDownloadUrl({id: selectedMessage.id, attachment: item.id}));
+            dispatch(getAttachmentDownloadUrl({body:{id: selectedMessage.id, attachment: item.id}}));
         }
     }
 

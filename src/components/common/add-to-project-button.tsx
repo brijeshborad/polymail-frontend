@@ -14,10 +14,8 @@ import {SearchIcon, SmallAddIcon} from "@chakra-ui/icons";
 import {FolderIcon} from "@/icons";
 import React, { useEffect, useRef, useState} from "react";
 import {Project} from "@/models";
-import { updateMembershipState} from "@/redux/memberships/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {Toaster} from "@/components/common/toaster";
 import {updateCommonState} from "@/redux/common-apis/action-reducer";
 import {addThreadToProject} from "@/utils/threads-common-functions";
 
@@ -32,9 +30,7 @@ export function AddToProjectButton() {
 
     const addToProjectRef = useRef<HTMLInputElement | null>(null);
     const searchRef = useRef<HTMLInputElement | null>(null);
-    const {isThreadAddedToProjectSuccess} = useSelector((state: StateType) => state.memberships);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
-    const [successMessage, setSuccessMessage] = useState<{ desc: string, title: string } | null>(null);
     const { draft } = useSelector((state: StateType) => state.draft);
 
     useEffect(() => {
@@ -53,16 +49,16 @@ export function AddToProjectButton() {
         };
     }, []);
 
-    useEffect(() => {
-        if (isThreadAddedToProjectSuccess && successMessage) {
-            Toaster({
-                desc: successMessage.desc,
-                title: successMessage.title || '',
-                type: 'success'
-            });
-            dispatch(updateMembershipState({isThreadAddedToProjectSuccess: false}))
-        }
-    }, [dispatch, isThreadAddedToProjectSuccess, successMessage])
+    // useEffect(() => {
+    //     if (isThreadAddedToProjectSuccess && successMessage) {
+    //         Toaster({
+    //             desc: successMessage.desc,
+    //             title: successMessage.title || '',
+    //             type: 'success'
+    //         });
+    //         dispatch(updateMembershipState({isThreadAddedToProjectSuccess: false}))
+    //     }
+    // }, [dispatch, isThreadAddedToProjectSuccess, successMessage])
 
     useEffect(() => {
         setFilteredProjects((projects || []));
@@ -86,7 +82,7 @@ export function AddToProjectButton() {
 
     function checkProjects(e: MouseEvent | any) {
         if (e.key.toLowerCase() === 'enter' && filteredProjects.length === 1 && selectedThread) {
-            addThreadToProject(filteredProjects[0], multiSelection, selectedThread || draft, dispatch, setSuccessMessage, addToProjectRef);
+            addThreadToProject(filteredProjects[0], multiSelection, selectedThread || draft, dispatch, addToProjectRef);
         }
     }
 
@@ -144,7 +140,7 @@ export function AddToProjectButton() {
                         {filteredProjects && !!filteredProjects.length && (filteredProjects || []).map((item: Project, index: number) => (
                             <MenuItem gap={2} key={index} onClick={() => {
                                 if (selectedThread || draft) {
-                                    addThreadToProject(item, multiSelection, selectedThread || draft, dispatch, setSuccessMessage)
+                                    addThreadToProject(item, multiSelection, selectedThread || draft, dispatch)
                                 }
                             }}>
                                 {item.emoji} {item.name}
