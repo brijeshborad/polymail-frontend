@@ -358,7 +358,7 @@ export function ComposeBox(props: any) {
         }
       }
 
-      dispatch(sendMessage({ id: draft.id!, ...params }));
+      dispatch(sendMessage({body: { id: draft.id!, ...params }}));
       onClose();
 
       if (props.onClose) {
