@@ -85,7 +85,7 @@ export default function SettingsLayout({children}: any) {
                                 }
                             </Flex>
                         ))}
-                        <Button className={styles.composeButton} borderRadius={8} height={'auto'} padding={'5px 10px'} mt={'auto'}
+                        <Button className={styles.backButton} borderRadius={8} height={'auto'} padding={'5px 10px'} mt={'auto'}
                                 backgroundColor={'#FFFFFF'} color={'#374151'} borderColor={'#E5E7EB'}  w={'fit-content'}
                                 colorScheme='blue' variant='outline' fontSize={'14px'}
                                 leftIcon={<ArrowBackIcon />} onClick={() => router.back()}>

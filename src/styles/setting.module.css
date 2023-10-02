@@ -481,22 +481,22 @@
     background-color: #E9E9E9;
 }
 
-.composeButton {
+.backButton {
     font-size: 13px;
     font-weight: 500;
     transition: all 0.5s;
     letter-spacing: -0.13px;
 }
 
-.composeButton:hover {
+.backButton:hover {
     background-color: #FFFFFF;
 }
 
-.composeButton svg {
+.backButton svg {
     width: 20px;
     height: 20px;
 }
 
-.composeButton span {
+.backButton span {
     margin-right: 5px;
 }
