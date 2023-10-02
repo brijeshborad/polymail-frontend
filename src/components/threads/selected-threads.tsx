@@ -34,10 +34,10 @@ export default function SelectedThreads() {
       let threadData = (threads || []).filter((item : Thread) => selectedThreadIds.includes(item.id!));
 
       dispatch(batchUpdateThreads({
-        body:body,
+        body: {body},
         toaster: {
           success: {
-              desc: '',
+              desc: `Your message has been moved to ${type.toLowerCase()}`,
               title: `${selectedThreadIds.length} ${messagePlural} has been ${type.toLowerCase()}`,
               type: 'undo_changes',
               id: polyToast,
@@ -80,7 +80,7 @@ export default function SelectedThreads() {
       }
       dispatch(updateThreadState({moveToMailBox: null, snoozeTime: null}));
     }
-  }, [dispatch, moveThreadToMailBoxes, moveToMailBox])
+  }, [dispatch, moveThreadToMailBoxes, moveToMailBox, snoozeTime])
 
   const handleSchedule = (date: string | undefined) => {
     setScheduledDate(date);

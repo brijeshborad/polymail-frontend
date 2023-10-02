@@ -27,8 +27,7 @@ export function performSuccessActions(payload: ReducerActionType) {
                                         title: payload.toaster?.success?.title || '',
                                     }
                                 },
-                                body:  payload.undoAction.undoBody
-
+                                body: payload.undoAction.undoBody
                             } : {})
                         }));
                     }

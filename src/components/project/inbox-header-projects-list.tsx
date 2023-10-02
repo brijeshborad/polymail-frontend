@@ -52,12 +52,15 @@ export function InboxHeaderProjectsList(props: { size: number }) {
                         }
 
                         if (updateUserData && newMessage.data.userId) {
+                            finalItem.userProjectOnlineStatus = [...finalItem.userProjectOnlineStatus];
                             let userAlreadyExists = finalItem.userProjectOnlineStatus.findIndex((item) => item.userId === newMessage.data.userId);
                             if (userAlreadyExists !== -1) {
-                                finalItem.userProjectOnlineStatus[userAlreadyExists].isOnline = true;
-                                finalItem.userProjectOnlineStatus[userAlreadyExists].lastOnlineStatusCheck = dayjs().format('DD/MM/YYYY hh:mm:ss a');
+                                finalItem.userProjectOnlineStatus[userAlreadyExists] = {
+                                    ...finalItem.userProjectOnlineStatus[userAlreadyExists],
+                                    isOnline: true,
+                                    lastOnlineStatusCheck: dayjs().format('DD/MM/YYYY hh:mm:ss a')
+                                }
                             } else {
-                                finalItem.userProjectOnlineStatus = [...finalItem.userProjectOnlineStatus];
                                 finalItem.userProjectOnlineStatus.push({
                                     userId: newMessage.data.userId,
                                     isOnline: true,
