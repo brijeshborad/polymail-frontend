@@ -9,7 +9,8 @@ export interface Project {
     numThreads?: number,
     scope?: string,
     projectMeta?: ProjectMetaData
-    userProjectOnlineStatus?: UserProjectOnlineStatus[]
+    userProjectOnlineStatus?: UserProjectOnlineStatus[],
+    showOnlineMembersCount?: number
 }
 
 export interface ProjectRequestBody {
