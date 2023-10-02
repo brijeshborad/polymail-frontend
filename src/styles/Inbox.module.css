@@ -344,6 +344,7 @@
 }
 
 .addToProject {
+    min-width: 155px;
     border-radius: 50px;
     background: #2A6FFF;
     color: #FFFFFF;
