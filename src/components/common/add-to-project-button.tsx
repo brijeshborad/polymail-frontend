@@ -108,6 +108,7 @@ export function AddToProjectButton() {
                       setDropDownOpen(!isDropdownOpen)
                       focusSearch();
                     }}
+                    cursor={'pointer'}
                     className={styles.addToProject}
                     borderRadius={'50px'}
                     backgroundColor={'#2A6FFF'}
