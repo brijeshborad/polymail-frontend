@@ -472,33 +472,14 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     setAttachments([...newArr!]);
   }
 
-  // const openCalender = () => {
-  //     onOpen();
-  //     let today = new Date();
-  //     today.setDate(today.getDate() + 1);
-  //     setScheduledDate(today);
-  // }
-
   const discardMessage = () => {
-    if (selectedAccount && selectedAccount.signature) {
-      const data = [
-        '<p></p>',
-        `<p>${selectedAccount.signature}</p>`,
-      ]
-        if (selectedThread?.projects && selectedThread?.projects?.length) {
-          data.push(`<p></p>`)
-          data.push(`${selectedAccount?.name || ''} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length === 1 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}`);
-        }
-
-      setEmailBody(data.join(''));
-      dispatch(fireEvent({
-        event: {
-          data: data.join(''),
-          type: 'richtexteditor.forceUpdate'
-        }
-      }));
-    }
-
+    dispatch(fireEvent({
+      event: {
+        data: '',
+        type: 'richtexteditor.forceUpdate'
+      }
+    }));
+    
     setTimeout(() => {
       setHideEditorToolbar(false)
     }, 500);
@@ -637,6 +618,14 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
       });
       setScheduledDate(undefined)
       setEmailBody('');
+
+      dispatch(fireEvent({
+        event: {
+          data: '',
+          type: 'richtexteditor.forceUpdate'
+        }
+      }));
+      
       dispatch(updateDraftState({
         draft: null,
       }));
@@ -662,6 +651,13 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         }
 
         setEmailBody(`<p></p><p>${selectedAccount.signature}</p><p></p><p style="padding: 5px 10px; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`);
+
+        dispatch(fireEvent({
+          event: {
+            data: `<p></p><p>${selectedAccount.signature}</p><p></p><p style="padding: 5px 10px; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`,
+            type: 'richtexteditor.forceUpdate'
+          }
+        }));
       }
     }, 500)
   }
@@ -814,12 +810,13 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
               onScroll={() => handleEditorScroll()}>
                 {extraClassNames}
                 <CollabRichTextEditor
-                  id={`${selectedThread?.id}-${(selectedThread?.messages || []).length}`}
+                  id={selectedThread?.id!}
                   content={emailBody}
                   onChange={(content) => sendToDraft(content)}
                   placeholder='Reply with anything you like or @mention someone to share this thread'
                   isToolbarVisible={hideEditorToolbar}
                   className={`${extraClassNames} ${extraClassNamesForBottom}`}
+                  emailSignature={selectedAccount ? `<br /><p>${selectedAccount?.signature}</p>` : undefined}
                   beforeToolbar={(
                     <>
                       {selectedThread?.projects?.length && (
