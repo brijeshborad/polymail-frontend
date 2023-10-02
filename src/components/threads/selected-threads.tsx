@@ -3,19 +3,22 @@ import { StateType } from "@/types";
 import {Box, Button, createStandaloneToast, Image, Text, Tooltip} from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
-import { ArchiveIcon, TimeSnoozeIcon, TrashIcon } from "@/icons";
+import { ArchiveIcon, TrashIcon } from "@/icons";
 import dynamic from "next/dynamic";
 import {batchUpdateThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import { Toaster } from "../common/toaster";
 import { MAILBOX_ARCHIVE, MAILBOX_SNOOZED, MAILBOX_TRASH } from "@/utils/constants";
-import React, {useCallback, useEffect} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {Thread} from "@/models";
+import dayjs from "dayjs";
+const MessageSchedule = dynamic(() => import("../messages/message-schedule").then(mod => mod.default));
 
 export default function SelectedThreads() {
-  const { multiSelection: selectedThreadIds, threads, moveToMailBox } = useSelector((state: StateType) => state.threads)
+  const { multiSelection: selectedThreadIds, threads, moveToMailBox, snoozeTime } = useSelector((state: StateType) => state.threads)
   const dispatch = useDispatch();
   const messagePlural = (selectedThreadIds || []).length === 1 ? 'message' : 'messages'
   const { toast } = createStandaloneToast()
+  const [scheduledDate, setScheduledDate] = useState<string | undefined>();
 
   const notification = useCallback((title: string, thread: Thread = {}, type: string) => {
     let polyToast = `poly-toast-${new Date().getTime().toString()}`;
@@ -49,11 +52,17 @@ export default function SelectedThreads() {
     })
   }, [dispatch, selectedThreadIds, threads, toast])
 
-  const moveThreadToMailBoxes = useCallback((type: string) => {
+  const moveThreadToMailBoxes = useCallback((type: string, date: string = '') => {
     if(selectedThreadIds && selectedThreadIds.length) {
-      let body = {
+      let body: any  = {
         threadIds: selectedThreadIds,
         mailboxes: [type]
+      }
+      if (type === MAILBOX_SNOOZED) {
+        const targetDate = dayjs(date)
+        const currentDate = dayjs();
+        const secondsDifference = targetDate.diff(currentDate, 'second');
+        body.snooze = secondsDifference
       }
       dispatch(batchUpdateThreads(body))
       let threadData = (threads || []).filter((item : Thread) => selectedThreadIds.includes(item.id!));
@@ -71,10 +80,19 @@ export default function SelectedThreads() {
 
   useEffect(() => {
     if (moveToMailBox) {
-      moveThreadToMailBoxes(moveToMailBox);
-      dispatch(updateThreadState({moveToMailBox: null}));
+      if (snoozeTime) {
+        moveThreadToMailBoxes(moveToMailBox, snoozeTime);
+      } else {
+        moveThreadToMailBoxes(moveToMailBox);
+      }
+      dispatch(updateThreadState({moveToMailBox: null, snoozeTime: null}));
     }
   }, [dispatch, moveThreadToMailBoxes, moveToMailBox])
+
+  const handleSchedule = (date: string | undefined) => {
+    setScheduledDate(date);
+    moveThreadToMailBoxes(MAILBOX_SNOOZED, date);
+  }
 
   return (
     <Box
@@ -100,7 +118,14 @@ export default function SelectedThreads() {
         </Tooltip>
 
         <Tooltip label='Snooze' placement='bottom' bg='gray.300' color='black'>
-          <Button variant='link' size='xs' onClick={() => moveThreadToMailBoxes(MAILBOX_SNOOZED)}><TimeSnoozeIcon /></Button>
+          {/*<Button variant='link' size='xs' onClick={() => moveThreadToMailBoxes(MAILBOX_SNOOZED)}><TimeSnoozeIcon /></Button>*/}
+          <div>
+            <MessageSchedule
+              isSnooze={true}
+              date={scheduledDate}
+              onChange={handleSchedule}
+            />
+          </div>
         </Tooltip>
       </Box>
     </Box>

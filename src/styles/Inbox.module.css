@@ -124,6 +124,22 @@
     gap: 8px;
 }
 
+.tabListDropDown .tabListSnoozeButton {
+    color: #374151;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 12px;
+}
+
+.tabListDropDown .tabListSnoozeButton svg {
+    margin-right: 8px;
+    font-size: 16px;
+}
+
+.tabListDropDown .tabListSnoozeButton:hover {
+    background-color: rgba(8, 22, 47, 0.05);
+}
+
 .mailTabList .tabListDropDown button {
     gap: 8px;
     padding: 10px 12px;

@@ -69,7 +69,7 @@ const threadsSlice = createSlice({
             return {...state, ...action.payload}
         },
 
-        batchUpdateThreads: (state: InitialThreadStateType, _action: PayloadAction<{ threadIds: string[], mailboxes: string[] }>) => {
+        batchUpdateThreads: (state: InitialThreadStateType, _action: PayloadAction<{ threadIds: string[], mailboxes: string[], snooze?: any}>) => {
           return {...state, error: null, isLoading: false, updateSuccess: false, success: false}
         }
     }

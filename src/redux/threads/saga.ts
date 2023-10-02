@@ -45,11 +45,12 @@ function* patchThreads({payload: {id, body}}: PayloadAction<{ id: string, body: 
     }
 }
 
-function* batchThreads({payload: {threadIds, mailboxes}}: PayloadAction<{threadIds: string[], mailboxes: string[]}>){
+function* batchThreads({payload: {threadIds, mailboxes, snooze}}: PayloadAction<{threadIds: string[], mailboxes: string[], snooze?: any}>){
   try {
     const response: AxiosResponse = yield ApiService.callPatch(`batch`, {
       threadIds,
-      mailboxes
+      mailboxes,
+      snooze
     })
     yield put(updateThreadsSuccess(response))
   } catch (error: any) {

@@ -2,7 +2,6 @@ import styles from "@/styles/Inbox.module.css";
 import {
     Badge,
     Button,
-    Checkbox,
     Flex,
     Menu,
     MenuButton,
@@ -23,9 +22,10 @@ import {Message, Thread} from "@/models";
 import dynamic from "next/dynamic";
 import {updateDraftState} from "@/redux/draft/action-reducer";
 import {SmallCloseIcon, TriangleDownIcon} from "@chakra-ui/icons";
-import {getCurrentCacheTab, setCurrentSelectedThreads} from "@/utils/cache.functions";
+import {getCurrentCacheTab} from "@/utils/cache.functions";
 import {updateCommonState} from "@/redux/common-apis/action-reducer";
 import {MAILBOX_ARCHIVE, MAILBOX_INBOX, MAILBOX_SNOOZED, MAILBOX_STARRED, MAILBOX_TRASH} from "@/utils/constants";
+const MessageSchedule = dynamic(() => import("../messages/message-schedule").then(mod => mod.default));
 
 const ThreadsSideBarTab = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarTab), {ssr: false});
 
@@ -51,6 +51,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     const {allowThreadSelection} = useSelector((state: StateType) => state.commonApis);
     const dispatch = useDispatch();
     const {isComposing} = useSelector((state: StateType) => state.commonApis);
+    const [scheduledDate, setScheduledDate] = useState<string | undefined>();
 
 
     useEffect(() => {
@@ -124,14 +125,14 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
         }
     }
 
-    const toggleSelectAllThreads = (checked: boolean) => {
-        dispatch(updateThreadState({
-            multiSelection: !checked ? [] : threads?.map((thread) => thread.id!)
-        }))
-        setCurrentSelectedThreads(!checked ? [] : (threads || []).map((thread, index) => index));
-        return
-    }
-    const isSelectedAllChecked = ((multiSelection && multiSelection.length > 0) && multiSelection.length === (threads || []).length)
+    // const toggleSelectAllThreads = (checked: boolean) => {
+    //     dispatch(updateThreadState({
+    //         multiSelection: !checked ? [] : threads?.map((thread) => thread.id!)
+    //     }))
+    //     setCurrentSelectedThreads(!checked ? [] : (threads || []).map((thread, index) => index));
+    //     return
+    // }
+    // const isSelectedAllChecked = ((multiSelection && multiSelection.length > 0) && multiSelection.length === (threads || []).length)
 
     const changeEmailTabs = (value: string) => {
         if (getCurrentCacheTab() !== value) {
@@ -156,8 +157,14 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
         dispatch(updateThreadState({selectedThread: null}));
     }
 
-    const moveThreadToMailBoxes = (type: string) => {
-        dispatch(updateThreadState({moveToMailBox: type}));
+    const moveThreadToMailBoxes = (type: string, date: string = '') => {
+        dispatch(updateThreadState({moveToMailBox: type, snoozeTime: date}));
+    }
+
+    const handleSchedule = (date: string | undefined) => {
+        setIsMoreDropdownOpen(!isMoreDropdownOpen)
+        setScheduledDate(date);
+        moveThreadToMailBoxes(MAILBOX_SNOOZED, date);
     }
 
     function getHeaderForSearched() {
@@ -183,14 +190,14 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                             )}
                             </span>
                     </Flex> }
-                    <Flex className={styles.checkBoxLabel}>
-                        <Checkbox
-                            isChecked={isSelectedAllChecked}
-                            onChange={(e) => toggleSelectAllThreads(e.target.checked)}
-                        >
-                            Select All
-                        </Checkbox>
-                    </Flex>
+                    {/*<Flex className={styles.checkBoxLabel}>*/}
+                    {/*    <Checkbox*/}
+                    {/*        isChecked={isSelectedAllChecked}*/}
+                    {/*        onChange={(e) => toggleSelectAllThreads(e.target.checked)}*/}
+                    {/*    >*/}
+                    {/*        Select All*/}
+                    {/*    </Checkbox>*/}
+                    {/*</Flex>*/}
                     <Flex gap={2}>
                         <AddToProjectButton/>
                         <Menu isOpen={isMoreDropdownOpen} onClose={() => setIsMoreDropdownOpen(false)}>
@@ -210,8 +217,14 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                     onClick={() => moveThreadToMailBoxes(MAILBOX_INBOX)}><InboxIcon/> Move to Inbox</MenuItem>
                                 <MenuItem
                                     onClick={() => moveThreadToMailBoxes(MAILBOX_ARCHIVE)}><ArchiveIcon/> Move to Archive</MenuItem>
-                                <MenuItem
-                                    onClick={() => moveThreadToMailBoxes(MAILBOX_SNOOZED)}><TimeSnoozeIcon/> Snooze</MenuItem>
+                                <div className={styles.tabListSnoozeButton}>
+                                      <MessageSchedule
+                                        isSnooze={true}
+                                        date={scheduledDate}
+                                        onChange={handleSchedule}
+                                        isNameShow={true}
+                                      />
+                                </div>
                                 <MenuItem onClick={() => moveThreadToMailBoxes(MAILBOX_STARRED)}><StarIcon/> Toggle Star</MenuItem>
                                 <MenuItem
                                     onClick={() => moveThreadToMailBoxes(MAILBOX_TRASH)}><TrashIcon/> Move to Trash</MenuItem>
