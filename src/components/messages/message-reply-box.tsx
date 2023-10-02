@@ -756,10 +756,6 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 </MenuList>
               </Menu>
               <Flex align={'center'} gap={1}>
-                {/*<div className={styles.mailUserImage}>*/}
-
-                {/*</div>*/}
-
                 {!!emailRecipients?.recipients?.items?.length &&
                   <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
                     fontWeight={400}>
@@ -813,12 +809,16 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                   isToolbarVisible={hideEditorToolbar}
                   className={`${extraClassNames} ${extraClassNamesForBottom}`}
                   beforeToolbar={(
-                    <Flex backgroundColor={'#EBF83E'} width={'fit-content'} borderRadius={'4px'} color={'#0A101D'} fontWeight={'500'} lineHeight={1} padding={'5px 10px'}>
-                      <Text fontSize='xs'> {selectedAccount?.name || ''} is sharing this email thread (and future replies) with&nbsp;</Text>
-                      <Text fontSize='xs' as='u'>1 person</Text>
-                      <Text fontSize='xs'>&nbsp;at chiat.com on&nbsp;</Text>
-                      <Text fontSize='xs' as='u'> Polymail</Text>
-                    </Flex>
+                    <>
+                      {selectedThread?.projects?.length && (
+                        <Flex backgroundColor={'#EBF83E'} width={'fit-content'} borderRadius={'4px'} color={'#0A101D'} fontWeight={'500'} lineHeight={1} padding={'5px 10px'}>
+                          <Text fontSize='xs'> {selectedAccount?.name || ''} is sharing this email thread (and future replies) with&nbsp;</Text>
+                          <Text fontSize='xs' as='u'>others</Text>
+                          <Text fontSize='xs'>&nbsp;on&nbsp;</Text>
+                          <Text fontSize='xs' as='u'>Polymail</Text>
+                        </Flex>
+                      )}
+                    </>
                   )}
                   extendToolbar={(
                     <>
@@ -832,11 +832,6 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                     </>
                   )}
                 />
-              {/* <RichTextEditor
-                className={`reply-message-area message-reply-box ${hideEditorToolbar ? 'hide-toolbar' : ''} ${extraClassNames} ${extraClassNamesForBottom}`}
-                placeholder='Reply with anything you like or @mention someone to share this thread'
-                value={emailBody} onChange={(e) => sendToDraft(e)} 
-              /> */}
               {attachments && attachments.length > 0 ? <div style={{ marginTop: '20px' }}>
                 {attachments.map((item, index: number) => (
                   <Flex align={'center'} key={index} className={styles.attachmentsFile}>
