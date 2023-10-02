@@ -5,43 +5,34 @@ import {
   Menu,
   MenuButton, MenuItem,
   MenuList,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Text,
-  useDisclosure
+  Text
 } from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
 import Image from "next/image";
 import { ChevronDownIcon, CloseIcon } from "@chakra-ui/icons";
-import { FileIcon, TextIcon } from "@/icons";
-import React, {ChangeEvent, ChangeEventHandler, useCallback, useEffect, useRef, useState} from "react";
+import React, { ChangeEvent, ChangeEventHandler, useCallback, useEffect, useRef, useState } from "react";
 import { debounce, isEmail } from "@/utils/common.functions";
 import { Toaster } from "@/components/common";
-const RichTextEditor = dynamic(() => import("@/components/common").then(mod => mod.RichTextEditor));
+// const RichTextEditor = dynamic(() => import("@/components/common").then(mod => mod.RichTextEditor));
 const Time = dynamic(() => import("@/components/common").then(mod => mod.Time));
 import { createDraft, sendMessage, updateDraftState, updatePartialMessage } from "@/redux/draft/action-reducer";
 import { useDispatch, useSelector } from "react-redux";
 import { StateType } from "@/types";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import {Message, MessageAttachments, MessageRecipient} from "@/models";
+import { Message, MessageAttachments, MessageRecipient } from "@/models";
 import { uploadAttachment } from "@/redux/messages/action-reducer";
-import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { MessageBoxType } from "@/types/props-types/message-box.type";
 const MessageRecipients = dynamic(() => import("./message-recipients").then(mod => mod.default));
 const MessageSchedule = dynamic(() => import("./message-schedule").then(mod => mod.default));
 import { RecipientsType } from "@/types/props-types/message-recipients.type";
 import { useRouter } from "next/router";
-import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
+import { getPlainTextFromHtml } from "@/utils/editor-common-functions";
 import dynamic from "next/dynamic";
-import {fireEvent} from "@/redux/global-events/action-reducer";
-import {updateThreadState} from "@/redux/threads/action-reducer";
-import {getCacheMessages, setCacheMessages} from "@/utils/cache.functions";
+import { fireEvent } from "@/redux/global-events/action-reducer";
+import { updateThreadState } from "@/redux/threads/action-reducer";
+import { getCacheMessages, setCacheMessages } from "@/utils/cache.functions";
+import CollabRichTextEditor from "../common/collab-rich-text-editor";
 
 dayjs.extend(relativeTime)
 
@@ -65,7 +56,6 @@ export function MessageReplyBox(props: MessageBoxType) {
   const { event: incomingEvent } = useSelector((state: StateType) => state.globalEvents);
   const dispatch = useDispatch();
   const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
-  const { isOpen, onClose } = useDisclosure();
   const inputFile = useRef<HTMLInputElement | null>(null)
   const [scheduledDate, setScheduledDate] = useState<string | undefined>();
   const [hideEditorToolbar, setHideEditorToolbar] = useState<boolean>(false);
@@ -235,17 +225,20 @@ export function MessageReplyBox(props: MessageBoxType) {
     }));
   };
 
-  const sendToDraft = (value: string, isValueUpdate: boolean = true) => {
+  const sendToDraft = (value: string, isValueUpdate: boolean = true, isForceCreate: boolean = false) => {
     let updateValue: string = getPlainTextFromHtml(value);
-    if (!updateValue.trim()) {
-      return;
-    }
-    if (isValueUpdate) {
-      if (!value.trim()) {
-        setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
-        setExtraClassNamesForBottom(prevState => prevState.replace('show-shadow-bottom', ''));
+
+    if(!isForceCreate) {
+      if (!updateValue.trim()) {
+        return;
       }
-      setEmailBody(value);
+      if (isValueUpdate) {
+        if (!value.trim()) {
+          setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
+          setExtraClassNamesForBottom(prevState => prevState.replace('show-shadow-bottom', ''));
+        }
+        setEmailBody(value);
+      }
     }
 
     let body = {
@@ -257,7 +250,7 @@ export function MessageReplyBox(props: MessageBoxType) {
         body: value || emailBody
       },
       messageId: props.messageData?.id,
-      ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
+      ...(props.isProjectView ? { projectId: router.query.project as string } : {}),
     }
 
     debounce(() => {
@@ -399,17 +392,17 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
           }
         }));
       }
-    if (props.threadDetails?.cc?.length) {
-      let items: MessageRecipient[] = []
-      if (props.replyType === 'reply-all') {
-        items.push(props.threadDetails?.from!)
-        if (props.threadDetails?.cc && props.threadDetails?.cc.length) {
-          items.push(...props.threadDetails?.cc)
-        } else if (props.threadDetails?.bcc && props.threadDetails?.bcc.length) {
-          items.push(...props.threadDetails?.bcc)
+      if (props.threadDetails?.cc?.length) {
+        let items: MessageRecipient[] = []
+        if (props.replyType === 'reply-all') {
+          items.push(props.threadDetails?.from!)
+          if (props.threadDetails?.cc && props.threadDetails?.cc.length) {
+            items.push(...props.threadDetails?.cc)
+          } else if (props.threadDetails?.bcc && props.threadDetails?.bcc.length) {
+            items.push(...props.threadDetails?.bcc)
+          }
         }
-      }
-     const filteredArray = (items || []).filter(obj => obj.email !== '');
+        const filteredArray = (items || []).filter(obj => obj.email !== '');
         setEmailRecipients((prevState: RecipientsType) => ({
           ...prevState,
           cc: {
@@ -419,7 +412,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         }));
       }
 
-    if (props.threadDetails?.bcc?.length) {
+      if (props.threadDetails?.bcc?.length) {
         setEmailRecipients((prevState: RecipientsType) => ({
           ...prevState,
           bcc: {
@@ -505,6 +498,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
       let params = {};
       let polyToast = `poly-toast-${new Date().getMilliseconds()}`;
 
+
       // if the user has set a schedule date
       if (scheduledDate) {
         const targetDate = dayjs(scheduledDate)
@@ -553,7 +547,6 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
           title: 'Your message has been scheduled',
           id: polyToast,
           undoClick: (type: string) => {
-            let params = {};
 
             if (type === 'undo') {
               params = {
@@ -577,7 +570,6 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             title: draft?.subject || '',
             id: polyToast,
             undoClick: (type: string) => {
-              let params = {};
 
               if (type === 'undo') {
                 params = {
@@ -595,13 +587,15 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         }
       }
 
+      dispatch(sendMessage({body:{id: draft.id!, ...params }}));
+
       if (selectedThread) {
         let draftData = {
           ...draft,
           mailboxes: [tabValue],
           snippet: draft.subject
         }
-        let threadData = {...selectedThread};
+        let threadData = { ...selectedThread };
         let messages = [...(threadData?.messages || [])];
         let findDraftId = messages.findIndex(item => item.id === draft.id);
         messages.splice(findDraftId, 1);
@@ -624,7 +618,6 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
           }
         })
       }
-      onClose();
 
       setEmailRecipients({
         cc: { items: [], value: blankRecipientValue },
@@ -708,7 +701,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   }, [handleEditorScroll]);
 
   useEffect(() => {
-    if(incomingEvent === 'iframe.clicked') {
+    if (incomingEvent === 'iframe.clicked') {
       setIsReplyDropdownOpen(false)
     }
   }, [incomingEvent, setIsReplyDropdownOpen]);
@@ -774,9 +767,9 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                     <div className={styles.otherMail}>
                       <Text as='u'>{emailRecipients?.recipients?.items?.length - 1 > 0 && `and ${emailRecipients?.recipients?.items?.length - 1} others`} </Text>
                       <div className={styles.otherMailList}>
-                          {(emailList || []).map((item: any, index: number) => (
-                              <p key={index}>{item.email}</p>
-                          ))}
+                        {(emailList || []).map((item: any, index: number) => (
+                          <p key={index}>{item.email}</p>
+                        ))}
 
                       </div>
                     </div>
@@ -812,10 +805,38 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
           <Flex direction={'column'} position={"relative"} flex={1} >
             <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} overflow={'auto'} ref={editorRef} className={`${styles.replyBoxEditor} editor-bottom-shadow`}
               onScroll={() => handleEditorScroll()}>
-              <RichTextEditor
+                <CollabRichTextEditor
+                  id={`${selectedThread?.id}-${(selectedThread?.messages || []).length}`}
+                  content={emailBody}
+                  onChange={(content) => sendToDraft(content)}
+                  placeholder='Reply with anything you like or @mention someone to share this thread'
+                  isToolbarVisible={hideEditorToolbar}
+                  className={`${extraClassNames} ${extraClassNamesForBottom}`}
+                  beforeToolbar={(
+                    <Flex backgroundColor={'#EBF83E'} width={'fit-content'} borderRadius={'4px'} color={'#0A101D'} fontWeight={'500'} lineHeight={1} padding={'5px 10px'}>
+                      <Text fontSize='xs'> {selectedAccount?.name || ''} is sharing this email thread (and future replies) with&nbsp;</Text>
+                      <Text fontSize='xs' as='u'>1 person</Text>
+                      <Text fontSize='xs'>&nbsp;at chiat.com on&nbsp;</Text>
+                      <Text fontSize='xs' as='u'> Polymail</Text>
+                    </Flex>
+                  )}
+                  extendToolbar={(
+                    <>
+                      <Flex
+                        onClick={() => inputFile.current?.click()}
+                        width={'16px'} h={'16px'} align={'center'} justify={'center'} cursor={'pointer'} className={styles.replyIcon}
+                      >
+                        <Image src="/image/icon/attach.svg" alt="emoji" width={13} height={13} />
+                        <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e)} style={{ display: 'none' }} />
+                      </Flex>
+                    </>
+                  )}
+                />
+              {/* <RichTextEditor
                 className={`reply-message-area message-reply-box ${hideEditorToolbar ? 'hide-toolbar' : ''} ${extraClassNames} ${extraClassNamesForBottom}`}
                 placeholder='Reply with anything you like or @mention someone to share this thread'
-                value={emailBody} onChange={(e) => sendToDraft(e)} />
+                value={emailBody} onChange={(e) => sendToDraft(e)} 
+              /> */}
               {attachments && attachments.length > 0 ? <div style={{ marginTop: '20px' }}>
                 {attachments.map((item, index: number) => (
                   <Flex align={'center'} key={index} className={styles.attachmentsFile}>
@@ -828,33 +849,17 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
               </div> : null}
             </Flex>
 
-            {/*<Flex backgroundColor={'#EBF83E'} width={'fit-content'} borderRadius={'4px'} color={'#0A101D'} fontWeight={'500'} lineHeight={1} padding={'5px 10px'}>*/}
-            {/*  <Text fontSize='xs'> {selectedAccount?.name || ''} is sharing this email thread (and future replies) with&nbsp;</Text>*/}
-            {/*  <Text fontSize='xs' as='u'>1 person</Text>*/}
-            {/*  <Text fontSize='xs'>&nbsp;at chiat.com on&nbsp;</Text>*/}
-            {/*  <Text fontSize='xs' as='u'> Polymail</Text>*/}
-            {/*</Flex>*/}
-
             {hideEditorToolbar &&
               <Flex direction={'column'} className={styles.composeBox}>
                 <Flex align={'flex-end'} justify={'space-between'} gap={2}>
                   <Flex gap={2} className={styles.replyBoxIcon} mb={'-3px'} position={'relative'} zIndex={5} ml={'170px'}>
-                    <Flex width={'20px'} h={'20px'} align={'center'} justify={'center'} cursor={'pointer'} className={styles.replyIcon}>
-                      <FileIcon click={() => inputFile.current?.click()} />
-                    </Flex>
-                    <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e)}
-                      style={{ display: 'none' }} />
-                    {/*<LinkIcon/>*/}
-                    <Flex width={'20px'} h={'20px'} align={'center'} justify={'center'} cursor={'pointer'} className={styles.replyIcon}>
-                      <TextIcon />
-                    </Flex>
-                    {/*<EmojiIcon/>*/}
+
                   </Flex>
                   <Flex align={'center'} className={styles.replyButton} position={'relative'} zIndex={5}>
                     <Button
-                        className={styles.replyTextDiscardButton}
-                        fontSize={14} lineHeight={16}
-                        onClick={() => discardMessage()}
+                      className={styles.replyTextDiscardButton}
+                      fontSize={14} lineHeight={16}
+                      onClick={() => discardMessage()}
                     >
                       Discard
                     </Button>
@@ -873,32 +878,8 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
                     <MessageSchedule
                       date={scheduledDate}
-                      sendMessages={sendMessages}
                       onChange={handleSchedule}
                     />
-
-                    <Modal isOpen={isOpen} onClose={onClose} isCentered={true}
-                      scrollBehavior={'outside'}>
-                      <ModalOverlay />
-                      <ModalContent minHeight="440px">
-                        <ModalHeader display="flex" justifyContent="space-between"
-                          alignItems="center">
-                          Schedule send
-                        </ModalHeader>
-                        <ModalCloseButton size={'xs'} />
-                        <ModalBody>
-                          <SingleDatepicker name="date-input"
-                            date={dayjs(scheduledDate).toDate()}
-                            defaultIsOpen={true}
-                            onDateChange={(date) => setScheduledDate(date.toString())} />
-                        </ModalBody>
-                        <ModalFooter>
-                          <Button variant='ghost' onClick={onClose}>Cancel</Button>
-                          <Button colorScheme='blue' mr={3}
-                            onClick={() => sendMessages()}> Schedule </Button>
-                        </ModalFooter>
-                      </ModalContent>
-                    </Modal>
                   </Flex>
                 </Flex>
               </Flex>

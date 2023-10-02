@@ -6,7 +6,6 @@ import {
 
 import {
     ArchiveIcon,
-    TimeSnoozeIcon,
     TrashIcon,
     InboxIcon
 } from "@/icons";
@@ -20,9 +19,11 @@ import {Toaster} from "@/components/common";
 import {Thread} from "@/models";
 
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
+const MessageSchedule = dynamic(() => import("./message-schedule").then(mod => mod.default));
 import {undoBodyData} from "@/redux/undo-body/action-reducer";
 import dynamic from "next/dynamic";
 import { MAILBOX_ARCHIVE, MAILBOX_INBOX, MAILBOX_SNOOZED, MAILBOX_STARRED, MAILBOX_TRASH, MAILBOX_UNREAD } from "@/utils/constants";
+import dayjs from "dayjs";
 
 export function MessagesHeader({headerType}: MessageHeaderTypes) {
     const {selectedThread, threads, updateSuccess} = useSelector((state: StateType) => state.threads);
@@ -33,6 +34,7 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
     const [successMessage, setSuccessMessage] = useState<{ desc: string, title: string, id: string, mailboxes: string[], threads: Thread[], thread: Thread | null}[]>([]);
     const { toast } = createStandaloneToast()
     const [mailBoxName, setMailBoxName] = useState<string>('');
+    const [scheduledDate, setScheduledDate] = useState<string | undefined>();
 
     useEffect(() => {
         if (updateSuccess && successMessage.length > 0) {
@@ -51,7 +53,7 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                                     mailboxes: successToastMessage.mailboxes || []
                                 }
                                 dispatch(undoBodyData(null));
-                                dispatch(updateThreads({id: successToastMessage.id, body}));
+                                dispatch(updateThreads({body:{id: successToastMessage.id, body:body}}));
 
                                 let currentThreads = [...successToastMessage.threads || []] as Thread[];
                                 let threadData = {...(successToastMessage.thread) || {}} as Thread;
@@ -111,7 +113,7 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
     }, [membershipSuccess, dispatch, successMessage]);
 
 
-    const updateMailBox = (messageBox: string) => {
+    const updateMailBox = (messageBox: string, date: string = '') => {
         setMailBoxName(messageBox)
         if (selectedThread && selectedThread.id) {
             if (messageBox) {
@@ -119,7 +121,7 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                 let threadData = {...(selectedThread) || {}} as Thread;
                 let index1 = currentThreads.findIndex((item: Thread) => item.id === threadData?.id);
 
-                let body = {
+                let body: any = {
                     mailboxes: selectedThread.mailboxes || []
                 };
                 let remove_from_list = false
@@ -159,6 +161,19 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                             body.mailboxes = [...body.mailboxes, messageBox]
                         }
                         break;
+                    case MAILBOX_SNOOZED:
+                        if (selectedThread.mailboxes?.includes(messageBox)) {
+                            return
+                        }
+                        body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_INBOX, MAILBOX_TRASH].includes(item))
+                        body.mailboxes = [...body.mailboxes, messageBox]
+                        remove_from_list = true
+                        dispatch(updateMessageState({selectedMessage: null}));
+                        const targetDate = dayjs(date)
+                        const currentDate = dayjs();
+                        const secondsDifference = targetDate.diff(currentDate, 'second');
+                        body.snooze = secondsDifference
+                        break;
                 }
 
                 currentThreads[index1] = {
@@ -176,7 +191,7 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                     success: true
                 }));
                 dispatch(undoBodyData(selectedThread))
-                dispatch(updateThreads({id: selectedThread.id, body}));
+                dispatch(updateThreads({body:{id: selectedThread.id, body: body}}));
                 successMessage.push({
                     desc: 'Thread was moved to ' + messageBox.toLowerCase() + '.',
                     title: threadData?.subject || '',
@@ -188,6 +203,11 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                 setSuccessMessage(successMessage)
             }
         }
+    }
+
+    const handleSchedule = (date: string | undefined) => {
+        setScheduledDate(date);
+        updateMailBox(MAILBOX_SNOOZED, date);
     }
 
     return (
@@ -222,9 +242,13 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                             </div>
                         </Tooltip>
                     )}
-                    <Tooltip label='Snooze' placement='bottom' bg='gray.300' color='black'>
-                        <div onClick={() => updateMailBox(MAILBOX_SNOOZED)}>
-                            <TimeSnoozeIcon/>
+                    <Tooltip label='Snooze' placement='top' bg='gray.300' color='black'>
+                        <div>
+                            <MessageSchedule
+                                isSnooze={true}
+                                date={scheduledDate}
+                                onChange={handleSchedule}
+                            />
                         </div>
                     </Tooltip>
                 </Flex>

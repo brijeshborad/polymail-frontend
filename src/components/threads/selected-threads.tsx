@@ -33,7 +33,7 @@ export default function SelectedThreads() {
             threadIds: selectedThreadIds || [],
             mailboxes: thread.mailboxes || []
           }
-          dispatch(batchUpdateThreads(body))
+          dispatch(batchUpdateThreads({body:body}))
           notification('Thread was moved from ' + type.toLowerCase() + '.', {}, type);
           dispatch(updateThreadState({
             isThreadSearched: false,
@@ -55,7 +55,7 @@ export default function SelectedThreads() {
         threadIds: selectedThreadIds,
         mailboxes: [type]
       }
-      dispatch(batchUpdateThreads(body))
+      dispatch(batchUpdateThreads({body:body}))
       let threadData = (threads || []).filter((item : Thread) => selectedThreadIds.includes(item.id!));
 
       let threadsData = (threads || []).filter((item: Thread) => !selectedThreadIds.includes(item.id!));

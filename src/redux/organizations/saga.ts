@@ -21,6 +21,8 @@ import {
     updateOrganizationMemberRoleError, updateOrganizationMemberRoleSuccess, updateOrganizationMemberRole
 } from "@/redux/organizations/action-reducer";
 import {OrganizationRequestBody} from "@/models";
+import { ReducerActionType } from "@/types";
+import { performSuccessActions } from "@/utils/common-redux.functions";
 
 function* getOrganizations() {
     try {
@@ -32,9 +34,10 @@ function* getOrganizations() {
     }
 }
 
-function* addOrganizations({payload: {name, accountId}}: PayloadAction<{ name: string, accountId: string }>) {
+function* addOrganizations({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callPost(`organizations`, {name, accountId});
+        const response: AxiosResponse = yield ApiService.callPost(`organizations`, {name: payload.body.name,accountId: payload.body.accountId});
+        performSuccessActions(payload);
         yield put(addOrganizationSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
@@ -42,9 +45,10 @@ function* addOrganizations({payload: {name, accountId}}: PayloadAction<{ name: s
     }
 }
 
-function* updateOrganizations({payload: {preferences, id}}: PayloadAction<{ preferences?: OrganizationRequestBody, id?: string }>) {
+function* updateOrganizations({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callPatch(`organizations/${id}`, {preferences});
+        const response: AxiosResponse = yield ApiService.callPatch(`organizations/${payload.body.id}`, {preferences: payload.body.preferences});
+        performSuccessActions(payload);
         yield put(editOrganizationSuccess(response));
 
     } catch (error: any) {
@@ -54,9 +58,10 @@ function* updateOrganizations({payload: {preferences, id}}: PayloadAction<{ pref
 }
 
 
-function* getOrganizationMembersService({payload: {orgId}}: PayloadAction<{ orgId: string }>) {
+function* getOrganizationMembersService({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callGet(`organizations/${orgId}/accounts`, {});
+        const response: AxiosResponse = yield ApiService.callGet(`organizations/${payload.body.orgId}/accounts`, {});
+        performSuccessActions(payload);
         yield put(getOrganizationMembersSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
@@ -64,9 +69,10 @@ function* getOrganizationMembersService({payload: {orgId}}: PayloadAction<{ orgI
     }
 }
 
-function* deleteOrganization({payload: {id}}: PayloadAction<{ id: string }>) {
+function* deleteOrganization({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callDelete(`organizations/${id}`, {});
+        const response: AxiosResponse = yield ApiService.callDelete(`organizations/${payload.body.id}`, {});
+        performSuccessActions(payload);
         yield put(removeOrganizationSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
@@ -74,9 +80,10 @@ function* deleteOrganization({payload: {id}}: PayloadAction<{ id: string }>) {
     }
 }
 
-function* updateOrganizationMembersData({payload: {organizationId, accountId, body}}: PayloadAction<{organizationId: string, accountId: string, body: {role: string}}>) {
+function* updateOrganizationMembersData({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callPatch(`organizations/${organizationId}/accounts/${accountId}`, body);
+        const response: AxiosResponse = yield ApiService.callPatch(`organizations/${payload.body.organizationId}/accounts/${payload.body.accountId}`, payload.body.body);
+        performSuccessActions(payload);
         yield put(updateOrganizationMemberRoleSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;

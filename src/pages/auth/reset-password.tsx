@@ -79,7 +79,7 @@ export default function ForgotPassword() {
                 let body = {
                     code: router.query.code.toString()
                 }
-                dispatch(magicCode(body));
+                dispatch(magicCode({body:body}));
             }
         }
     }, [dispatch, router.query])

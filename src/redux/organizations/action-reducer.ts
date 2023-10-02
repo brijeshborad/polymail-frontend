@@ -1,5 +1,5 @@
 import {createSlice, current, PayloadAction} from "@reduxjs/toolkit";
-import {InitialOrganizationStateType} from "@/types";
+import {InitialOrganizationStateType, ReducerActionType} from "@/types";
 import LocalStorageService from "@/utils/localstorage.service";
 import {Organization, TeamMember} from "@/models";
 
@@ -32,18 +32,18 @@ const organizationSlice = createSlice({
             return {...state, organizations: [], isLoading: false, error}
         },
 
-        getOrganizationMembers: (state: InitialOrganizationStateType, _action: PayloadAction<{ orgId: string }>) => {
-            return {...state, members: [], isLoading: true, error: null}
+        getOrganizationMembers: (state: InitialOrganizationStateType, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, members: [], isLoading: true}
         },
         getOrganizationMembersSuccess: (state: InitialOrganizationStateType, {payload: members}: PayloadAction<{}>) => {
-            return {...state, members, isLoading: false, error: null}
+            return {...state, members, isLoading: false}
         },
-        getOrganizationMembersError: (state: InitialOrganizationStateType, {payload: error}: PayloadAction<{ error: any }>) => {
-            return {...state, members: [], isLoading: false, error}
+        getOrganizationMembersError: (state: InitialOrganizationStateType,  _action: PayloadAction<any>) => {
+            return {...state, members: [], isLoading: false}
         },
 
-        addOrganization: (state: InitialOrganizationStateType, _action: PayloadAction<{ name?: string, accountId?: string }>) => {
-            return {...state, organization: null, error: null, isLoading: true, isOrganizationAddOrRemoveSuccess: false}
+        addOrganization: (state: InitialOrganizationStateType, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, organization: null, isLoading: true, isOrganizationAddOrRemoveSuccess: false}
         },
         addOrganizationSuccess: (state: InitialOrganizationStateType, {payload: organization}: PayloadAction<{}>) => {
             let currentOrganizations = [...(current(state).organizations || [])] as Organization[];
@@ -52,16 +52,15 @@ const organizationSlice = createSlice({
                 organizations: [organization, ...currentOrganizations],
                 organization,
                 isLoading: false,
-                error: null,
                 isOrganizationAddOrRemoveSuccess: true
             }
         },
-        addOrganizationError: (state: InitialOrganizationStateType, {payload: error}: PayloadAction<{ error: any }>) => {
-            return {...state, organization: null, error, isLoading: false, isOrganizationAddOrRemoveSuccess: false}
+        addOrganizationError: (state: InitialOrganizationStateType,  _action: PayloadAction<any>) => {
+            return {...state, organization: null, isLoading: false, isOrganizationAddOrRemoveSuccess: false}
         },
 
-        editOrganization: (state: InitialOrganizationStateType, _action: PayloadAction<{ id?: string, body?: Organization }>) => {
-            return {...state, error: null, isLoading: true, isOrganizationAddOrRemoveSuccess: false}
+        editOrganization: (state: InitialOrganizationStateType, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, isLoading: true, isOrganizationAddOrRemoveSuccess: false}
         },
         editOrganizationSuccess: (state: InitialOrganizationStateType, {payload: organization}: PayloadAction<{}>) => {
             LocalStorageService.updateOrg('store', organization);
@@ -69,33 +68,30 @@ const organizationSlice = createSlice({
                 ...state,
                 selectedOrganization: organization,
                 isLoading: false,
-                error: null,
                 isOrganizationAddOrRemoveSuccess: true
             }
         },
-        editOrganizationError: (state: InitialOrganizationStateType, {payload: error}: PayloadAction<{ error: any }>) => {
-            return {...state, error, isLoading: false, isOrganizationAddOrRemoveSuccess: false}
+        editOrganizationError: (state: InitialOrganizationStateType,  _action: PayloadAction<any>) => {
+            return {...state, isLoading: false, isOrganizationAddOrRemoveSuccess: false}
         },
 
-        removeOrganization: (state: InitialOrganizationStateType, _action: PayloadAction<{ id?: string }>) => {
-            return {...state, organization: null, error: null, isLoading: true, isRemoveOrganization: false}
+        removeOrganization: (state: InitialOrganizationStateType, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, organization: null, isLoading: true, isRemoveOrganization: false}
         },
         removeOrganizationSuccess: (state: InitialOrganizationStateType, _action: PayloadAction<{}>) => {
-            return {...state, isLoading: false, error: null, isRemoveOrganization: true}
+            return {...state, isLoading: false, isRemoveOrganization: true}
         },
-        removeOrganizationError: (state: InitialOrganizationStateType, {payload: error}: PayloadAction<{ error: any }>) => {
-            return {...state, organization: null, error, isLoading: false, isRemoveOrganization: false}
+        removeOrganizationError: (state: InitialOrganizationStateType,  _action: PayloadAction<any>) => {
+            return {...state, organization: null, isLoading: false, isRemoveOrganization: false}
         },
 
         // change role from project members
-        updateOrganizationMemberRole: (state: InitialOrganizationStateType, _action: PayloadAction<{ organizationId?: string, accountId?: string, body?: { role?: string, name?: string } }>) => {
+        updateOrganizationMemberRole: (state: InitialOrganizationStateType, _action: PayloadAction<ReducerActionType>) => {
             return {
                 ...state,
                 member: null,
-                error: null,
                 isLoading: false,
                 updateMemberRoleSuccess: false,
-                success: false
             }
         },
         updateOrganizationMemberRoleSuccess: (state: InitialOrganizationStateType, {payload: member}: PayloadAction<{}>) => {
@@ -109,14 +105,12 @@ const organizationSlice = createSlice({
             return {
                 ...state,
                 members: [...currentMembers],
-                error: null,
                 isLoading: false,
                 updateMemberRoleSuccess: true,
-                success: true
             }
         },
-        updateOrganizationMemberRoleError: (state: InitialOrganizationStateType, {payload: error}: PayloadAction<any>) => {
-            return {...state, member: null, error, isLoading: false, updateMemberRoleSuccess: false, success: false}
+        updateOrganizationMemberRoleError: (state: InitialOrganizationStateType, _action: PayloadAction<any>) => {
+            return {...state, member: null, isLoading: false, updateMemberRoleSuccess: false}
         },
 
         updateOrganizationState: (state: InitialOrganizationStateType, action: PayloadAction<InitialOrganizationStateType>) => {

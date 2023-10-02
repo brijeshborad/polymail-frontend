@@ -86,7 +86,7 @@ export function HeaderSearch() {
                 }));
             }
             setSearchString('');
-            dispatch(getAllThreads({mailbox: tabValue, account: selectedAccount.id}));
+            dispatch(getAllThreads({body:{mailbox: tabValue, account: selectedAccount.id}}));
         }
     }
 

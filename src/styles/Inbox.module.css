@@ -344,6 +344,7 @@
 }
 
 .addToProject {
+    min-width: 155px;
     border-radius: 50px;
     background: #2A6FFF;
     color: #FFFFFF;
@@ -1018,6 +1019,10 @@
     width: 12px;
     height: 12px;
     margin-right: 0;
+}
+
+.dropDownCloseIcon:hover {
+    background: transparent !important;
 }
 
 .addToProjectPlusActions {

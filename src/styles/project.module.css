@@ -24,6 +24,10 @@
     overflow: hidden;
 }
 
+.projectPage .userImage {
+    background-color: #000000;
+}
+
 .projectPage .manageMembers:hover,
 .projectPage .manageMembers:active,
 .projectPage .manageMembers[data-active]{

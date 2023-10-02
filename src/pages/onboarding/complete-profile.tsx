@@ -60,7 +60,14 @@ function CompleteProfile() {
         if (name && tmp.length > 1) {
             let firstName = tmp[0]
             let lastName = tmp[tmp.length - 1]
-            dispatch(updateUsersDetails({firstName: firstName, lastName: lastName, onboarded: true}));
+            dispatch(updateUsersDetails({body:{firstName: firstName, lastName: lastName, onboarded: true},toaster:{
+                success:{
+                    desc: "Your name added successfully",
+                    title: "Full name added success",
+                    type: 'success'
+                }
+            }}));
+            Router.push('/inbox');
         } else {
             Toaster({
                 title: "Stranger Danger!",
@@ -98,7 +105,7 @@ function CompleteProfile() {
             reader.readAsDataURL(file);
             reader.onload = function () {
                 if (reader.result) {
-                    dispatch(uploadProfilePicture({file}));
+                    dispatch(uploadProfilePicture({body:{file: file}}));
                     setShowLoader(true)
                 }
             };

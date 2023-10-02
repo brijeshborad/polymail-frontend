@@ -75,17 +75,17 @@ export function ThreadsSideBarTab(props: TabProps) {
                 }}))
             } else {
                 if (projectId) {
-                    dispatch(getAllThreads({
+                    dispatch(getAllThreads({body:{
                         mailbox: tabValue,
                         project: projectId as string,
                         resetState: resetState,
                         ...(type === 'just-mine' ? {mine: true} : {})
-                    }));
+                    }}));
                 } else {
                     if (type === 'projects') {
-                        dispatch(getAllThreads({project: "ALL", mailbox: tabValue, resetState: resetState}));
+                        dispatch(getAllThreads({body:{project: "ALL", mailbox: tabValue, resetState: resetState}}));
                     } else {
-                        dispatch(getAllThreads({mailbox: tabValue, account: selectedAccount.id, resetState: resetState}));
+                        dispatch(getAllThreads({body:{mailbox: tabValue, account: selectedAccount.id, resetState: resetState}}));
                     }
                 }
             }

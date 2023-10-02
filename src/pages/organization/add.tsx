@@ -37,7 +37,7 @@ function AddOrganization() {
                 name: organizationName,
                 accountId: selectedAccount.id
             }
-            dispatch(addOrganization(body));
+            dispatch(addOrganization({body:body}));
         }
     }
 

@@ -79,7 +79,7 @@ function Preferences() {
                 },
                 id: organization.id
             }
-            dispatch(editOrganization(body));
+            dispatch(editOrganization({body:body}));
         }
     }
 

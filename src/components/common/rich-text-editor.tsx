@@ -175,7 +175,7 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
                         showOpenOptionOnHover: true,
                         defaultTargetOption: '_self',
                         options: ['link'],
-                        link: {icon: "/image/icon/link.svg", className: undefined},
+                        link: {icon: "/image/icon/link.svg", className: 'link-class', popupClassName: 'emoji-picker'},
                     }
                 }}
             />

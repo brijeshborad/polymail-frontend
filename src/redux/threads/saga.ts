@@ -10,24 +10,19 @@ import {
     updateThreadsSuccess, updateThreadsError, updateThreads, searchThreadsSuccess, searchThreadsError, searchThreads
 } from "@/redux/threads/action-reducer";
 import {ThreadsRequestBody} from "@/models";
+import { ReducerActionType } from "@/types";
+import { performSuccessActions } from "@/utils/common-redux.functions";
 
-function* getThreads({
-                         payload: {
-                             mailbox,
-                             project,
-                             account,
-                             mine,
-                             query
-                         }
-                     }: PayloadAction<{ mailbox?: string, project?: string, account?: string, mine?: boolean, query?: string }>) {
+function* getThreads({payload}: PayloadAction<ReducerActionType>) {
     try {
         const response: AxiosResponse = yield ApiService.callGet(`threads`, {
-            ...(mailbox ? {mailbox}: {}),
-            ...(project ? {project}: {}),
-            ...(account ? {account}: {}),
-            ...(mine ? {mine}: {}),
-            ...(query ? {query} : {})
+            ...(payload.body.mailbox ? {mailbox: payload.body.mailbox}: {}),
+            ...(payload.body.project ? {project: payload.body.project}: {}),
+            ...(payload.body.account ? {account: payload.body.account}: {}),
+            ...(payload.body.mine ? {mine: payload.body.mine}: {}),
+            ...(payload.body.query ? {query: payload.body.query} : {})
         });
+        performSuccessActions(payload);
         yield put(getAllThreadsSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
@@ -35,9 +30,10 @@ function* getThreads({
     }
 }
 
-function* patchThreads({payload: {id, body}}: PayloadAction<{ id: string, body: ThreadsRequestBody }>) {
+function* patchThreads({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callPatch(`threads/${id}`, body);
+        const response: AxiosResponse = yield ApiService.callPatch(`threads/${payload.body.id}`, payload.body.body);
+        performSuccessActions(payload);
         yield put(updateThreadsSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
@@ -45,12 +41,13 @@ function* patchThreads({payload: {id, body}}: PayloadAction<{ id: string, body: 
     }
 }
 
-function* batchThreads({payload: {threadIds, mailboxes}}: PayloadAction<{threadIds: string[], mailboxes: string[]}>){
+function* batchThreads({payload}: PayloadAction<ReducerActionType>){
   try {
     const response: AxiosResponse = yield ApiService.callPatch(`batch`, {
-      threadIds,
-      mailboxes
+        threadIds: payload.body.threadIds,
+      mailboxes: payload.body.mailboxes
     })
+    performSuccessActions(payload);
     yield put(updateThreadsSuccess(response))
   } catch (error: any) {
     error = error as AxiosError;
@@ -58,15 +55,12 @@ function* batchThreads({payload: {threadIds, mailboxes}}: PayloadAction<{threadI
   }
 }
 
-function* searchAndGetThreads({
-                         payload: {
-                             query
-                         }
-                     }: PayloadAction<{  query?: string }>) {
+function* searchAndGetThreads({payload}: PayloadAction<ReducerActionType>) {
     try {
         const response: AxiosResponse = yield ApiService.callGet(`search`, {
-            ...(query ? {query} : {})
+            ...(payload.body.query ? {query: payload.body.query} : {})
         });
+        performSuccessActions(payload);
         yield put(searchThreadsSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;

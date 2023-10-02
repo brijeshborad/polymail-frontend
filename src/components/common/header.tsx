@@ -90,9 +90,6 @@ export function Header() {
                     reAuthToast(accountForReAuth.email!);
                 }
             }
-            if (newMessage.name === 'Activity' && newMessage?.data) {
-                console.log("Received activity: ", newMessage)
-            }
         }
     }, [accounts, dispatch, newMessage, threads, reAuthToast]);
 

@@ -480,3 +480,23 @@
 .inviteMemberModal .memberButton:hover {
     background-color: #E9E9E9;
 }
+
+.backButton {
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.5s;
+    letter-spacing: -0.13px;
+}
+
+.backButton:hover {
+    background-color: #FFFFFF;
+}
+
+.backButton svg {
+    width: 20px;
+    height: 20px;
+}
+
+.backButton span {
+    margin-right: 5px;
+}

@@ -1,14 +1,13 @@
-import {Button, Flex, Heading, Input, Text} from "@chakra-ui/react";
+import { Toaster } from "@/components/common";
+import { forgotPassword } from "@/redux/auth/action-reducer";
 import styles from "@/styles/Login.module.css";
+import { ArrowBackIcon } from "@chakra-ui/icons";
+import { Button, Flex, Heading, Input, Text } from "@chakra-ui/react";
 import Image from "next/image";
-import {ArrowBackIcon} from "@chakra-ui/icons";
 import Link from "next/link";
-import {ChangeEvent, useEffect, useState} from "react";
-import {Toaster} from "@/components/common";
-import {useDispatch, useSelector} from "react-redux";
-import {forgotPassword, updateAuthState} from "@/redux/auth/action-reducer";
-import {StateType} from "@/types";
 import Router from "next/router";
+import { ChangeEvent, useState } from "react";
+import { useDispatch } from "react-redux";
 
 
 export default function ForgotPassword() {
@@ -18,7 +17,7 @@ export default function ForgotPassword() {
     const handleChange = (event: ChangeEvent | any) => {
         setEmail(event.target.value);
     }
-    const {passwordResetSuccess} = useSelector((state: StateType) => state.auth);
+    // const {passwordResetSuccess} = useSelector((state: StateType) => state.auth);
 
     const updatePassword = () => {
         if (email.length === 0) {
@@ -29,20 +28,27 @@ export default function ForgotPassword() {
             email,
             url: `${window.location.origin}/auth/reset-password`,
         }
-        dispatch(forgotPassword(body));
-    }
-
-    useEffect(() => {
-        if (passwordResetSuccess) {
-            Toaster({
+        dispatch(forgotPassword({body: body,toaster:{
+            success:{
                 desc: "Email is sent successfully, Please check your email provider",
                 title: "Email Sent!",
                 type: 'success'
-            });
-            dispatch(updateAuthState({passwordResetSuccess: false}))
-            Router.push(`/onboarding`);
-        }
-    }, [passwordResetSuccess, dispatch]);
+            }
+        }}));
+        Router.push(`/onboarding`);
+    }
+
+    // useEffect(() => {
+    //     if (passwordResetSuccess) {
+    //         Toaster({
+    //             desc: "Email is sent successfully, Please check your email provider",
+    //             title: "Email Sent!",
+    //             type: 'success'
+    //         });
+    //         dispatch(updateAuthState({passwordResetSuccess: false}))
+    //         Router.push(`/onboarding`);
+    //     }
+    // }, [passwordResetSuccess, dispatch]);
 
     return (
         <div className={`${styles.login} ${styles.forgotPassword}`}>

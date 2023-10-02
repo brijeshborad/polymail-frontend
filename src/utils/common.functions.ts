@@ -5,12 +5,14 @@ export function debounce(fun: () => void, timeOut: number = 1500) {
     if (timeout)
         clearTimeout(timeout);
     timeout = setTimeout(fun, timeOut);
+    return timeout
 }
 
 export function debounceInterval(fun: () => void, timeOut: number = 1500) {
     if (timeoutInterval)
-        clearTimeout(timeout);
+        clearInterval(timeout);
     timeoutInterval = setInterval(fun, timeOut);
+    return timeoutInterval
 }
 
 export const isEmail = (email: string) => {

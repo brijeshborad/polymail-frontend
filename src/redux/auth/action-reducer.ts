@@ -1,6 +1,6 @@
 import { InitialAuthState, ReducerActionType } from "@/types";
 import LocalStorageService from "@/utils/localstorage.service";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     user: LocalStorageService.updateUser('get') || null,
@@ -60,38 +60,38 @@ const authSlice = createSlice({
             return {...state, isLoading: false}
         },
 
-        forgotPassword: (state: InitialAuthState, _action: PayloadAction<{ email: string, url: string }>) => {
-            return {...state, error: null, isLoading: true, passwordResetSuccess: false}
+        forgotPassword: (state: InitialAuthState, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, isLoading: true,}
         },
         forgotPasswordSuccess: (state: InitialAuthState) => {
-            return {...state, error: null, isLoading: false, passwordResetSuccess: true}
+            return {...state, isLoading: false}
         },
-        forgotPasswordError: (state: InitialAuthState, {payload: error}: PayloadAction<any>) => {
-            return {...state, error, isLoading: false, passwordResetSuccess: false}
+        forgotPasswordError: (state: InitialAuthState, _action: PayloadAction<any>) => {
+            return {...state, isLoading: false,}
         },
 
-        resetPassword: (state: InitialAuthState, _action: PayloadAction<{ Password: string, code: string }>) => {
-            return {...state, error: null, isLoading: true, passwordResetSuccess: false}
+        resetPassword: (state: InitialAuthState, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, isLoading: true}
         },
         resetPasswordSuccess: (state: InitialAuthState) => {
-            return {...state, error: null, isLoading: false, passwordResetSuccess: true}
+            return {...state, isLoading: false}
         },
-        resetPasswordError: (state: InitialAuthState, {payload: error}: PayloadAction<any>) => {
-            return {...state, error, isLoading: false, passwordResetSuccess: false}
+        resetPasswordError: (state: InitialAuthState,  _action: PayloadAction<any>) => {
+            return {...state, isLoading: false}
         },
 
-        magicCode: (state: InitialAuthState, _action: PayloadAction<{ code?: string }>) => {
-            return {...state, error: null, isLoading: true, magicCodeSuccess: false}
+        magicCode: (state: InitialAuthState, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, isLoading: true}
         },
-        magicCodeSuccess: (state: InitialAuthState, {payload: magicCodeResponse}: PayloadAction<any>) => {
-            if (magicCodeResponse && magicCodeResponse.token) {
-                LocalStorageService.updateUser('store', {passwordResetToken: magicCodeResponse.token});
+        magicCodeSuccess: (state: InitialAuthState, {payload}: PayloadAction<ReducerActionType>) => {
+            if (payload.body.magicCodeResponse && payload.body.magicCodeResponse.token) {
+                LocalStorageService.updateUser('store', {passwordResetToken: payload.body.magicCodeResponse.token});
 
             }
-            return {...state,magicCodeResponse, error: null, isLoading: false, magicCodeSuccess: true}
+            return {...state,magicCodeResponse: payload.body.magicCodeResponse, isLoading: false}
         },
-        magicCodeError: (state: InitialAuthState, {payload: error}: PayloadAction<any>) => {
-            return {...state, error, isLoading: false, magicCodeSuccess: false}
+        magicCodeError: (state: InitialAuthState,  _action: PayloadAction<any>) => {
+            return {...state, isLoading: false}
         },
 
     }

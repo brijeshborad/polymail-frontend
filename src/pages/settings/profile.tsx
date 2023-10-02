@@ -84,18 +84,18 @@ function Profile() {
 
     useEffect(() => {
         if (userDetailsUpdateSuccess) {
-            Toaster({
-                desc: "Account details updated successfully",
-                title: "Account details updated",
-                type: 'success'
-            });
+            // Toaster({
+            //     desc: "Account details updated successfully",
+            //     title: "Account details updated",
+            //     type: 'success'
+            // });
             dispatch(updateUserState({userDetailsUpdateSuccess: false}))
         } else if (profilePictureRemoved) {
-            Toaster({
-                desc: "Profile picture removed successfully",
-                title: "Successfully",
-                type: 'success'
-            });
+            // Toaster({
+            //     desc: "Profile picture removed successfully",
+            //     title: "Successfully",
+            //     type: 'success'
+            // });
             dispatch(updateUserState({profilePictureRemoved: false}))
         }
     }, [userDetailsUpdateSuccess, profilePictureRemoved, dispatch])
@@ -146,7 +146,13 @@ function Profile() {
 
     const submit = () => {
         if (profileDetails) {
-            dispatch(updateUsersDetails(profileDetails));
+            dispatch(updateUsersDetails({body: profileDetails ,toaster:{
+                success:{
+                    desc: "Account details updated successfully",
+                    title: "Account details updated",
+                    type: 'success'
+                }
+            }}));
             setIsDataUpdate(false);
         }
     }
@@ -199,6 +205,7 @@ function Profile() {
 
     function handleFileUpload(event: ChangeEventHandler | any) {
         const file = event.target.files[0];
+        console.log("Upload",file)
         const contentType = file.name.split('.').pop();
         if (!['jpg', 'gif', 'png', 'jpeg', 'svg'].includes(contentType)) {
             let validationError = {
@@ -215,7 +222,17 @@ function Profile() {
         reader.readAsDataURL(file);
         reader.onload = function () {
             if (reader.result) {
-                dispatch(uploadProfilePicture({file}));
+                console.log("FileIn",file)
+                dispatch(uploadProfilePicture({body:{file: file}
+                //     ,
+                //     toaster:{
+                //     success:{
+                //         desc: "Profile picture Added successfully",
+                //         title: "Successfully",
+                //         type: 'success'
+                //     }
+                // }
+            }));
             }
         };
         reader.onerror = function (error) {
@@ -252,7 +269,13 @@ function Profile() {
     }
 
     const removePhoto = () => {
-        dispatch(removeProfilePicture());
+        dispatch(removeProfilePicture({toaster:{
+            success:{
+                desc: "Profile picture removed successfully",
+                title: "Successfully",
+                type: 'success'
+            }
+        }}));
     }
 
     return (

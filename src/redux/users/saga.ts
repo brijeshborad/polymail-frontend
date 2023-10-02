@@ -16,15 +16,18 @@ import {
     uploadProfilePictureError,
     uploadProfilePictureSuccess, removeProfilePictureSuccess, removeProfilePictureError, removeProfilePicture
 } from "@/redux/users/action-reducer";
+import { ReducerActionType } from "@/types";
+import { performSuccessActions } from "@/utils/common-redux.functions";
 
-function* updateUserPersonalDetails({payload: {firstName, lastName, middleName, onboarded}}: PayloadAction<{ firstName?: string, lastName?: string, middleName?: string, onboarded?: boolean  }>) {
+function* updateUserPersonalDetails({payload}: PayloadAction<ReducerActionType>) {
     try {
         const response: AxiosResponse = yield ApiService.callPatch(`users`, {
-            ...(firstName ? {firstName} : {}),
-            ...(lastName ? {lastName} : {}),
-            ...(middleName ? {middleName} : {}),
-            onboarded: !!onboarded,
+            ...(payload.body.firstName ? {firstName: payload.body.firstName} : {}),
+            ...(payload.body.lastName ? {lastName: payload.body.lastName} : {}),
+            ...(payload.body.middleName ? {middleName: payload.body.middleName} : {}),
+            onboarded: !!payload.body.onboarded,
         });
+        performSuccessActions(payload);
         yield put(updateUsersDetailsSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
@@ -43,20 +46,18 @@ function* getUsePersonalDetails() {
 }
 
 
-function* generateProfilePictureUploadUrl({payload: { file}}: PayloadAction<{
-    file: File
-}>) {
+function* generateProfilePictureUploadUrl({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const {name, type} = file;
+        const {name, type} = payload.body.file;
         let response: AxiosResponse = yield ApiService.callPatch(`users/avatar`, {
             filename: name,
             mimeType: type
         });
 
         if (response && (response as any)?.url) {
-            yield ApiService.callPut((response as any)?.url, file, {"Content-Type": type, 'Skip-Headers': true});
+            yield ApiService.callPut((response as any)?.url, payload.body.file, {"Content-Type": type, 'Skip-Headers': true});
         }
-
+        performSuccessActions(payload);
         yield put(uploadProfilePictureSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
@@ -64,9 +65,10 @@ function* generateProfilePictureUploadUrl({payload: { file}}: PayloadAction<{
     }
 }
 
-function* getProfilePictureUrl({payload: { }}: PayloadAction<{}>) {
+function* getProfilePictureUrl({payload}: PayloadAction<ReducerActionType>) {
     try {
         let response: AxiosResponse = yield ApiService.callGet(`users/avatar`, {});
+        performSuccessActions(payload);
         yield put(getProfilePictureSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
@@ -74,9 +76,10 @@ function* getProfilePictureUrl({payload: { }}: PayloadAction<{}>) {
     }
 }
 
-function* deleteProfilePictureUrl() {
+function* deleteProfilePictureUrl({payload}: PayloadAction<ReducerActionType>) {
     try {
         let response: AxiosResponse = yield ApiService.callDelete(`users/avatar`, {});
+        performSuccessActions(payload);
         yield put(removeProfilePictureSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;

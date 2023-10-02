@@ -130,17 +130,7 @@ export function CommonApiComponents() {
     }, [dispatch, selectedAccount])
 
     const getAllCommonApis = useCallback(() => {
-        dispatch(getAllAccount({
-            toaster: {
-                success: {desc: 'YEY GOT THE asdasdsa', title: 'KAI PAN', type: 'success'},
-                error: {desc: 'JJJJJ', title: 'asdasdsa', type: 'error'}
-            },
-            undoAction: {
-                showUndoButton: true,
-                dispatch,
-                action: getAllAccount
-            }
-        }));
+        dispatch(getAllAccount({}));
         dispatch(getSummary({}));
         dispatch(getProfilePicture({}));
         dispatch(getContacts({}));

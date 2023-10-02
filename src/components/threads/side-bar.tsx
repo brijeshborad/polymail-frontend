@@ -120,7 +120,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
             });
         }
         if (selectedAccount && selectedAccount.id && callAPI) {
-            dispatch(getAllThreads({mailbox: tabValue, account: selectedAccount.id}));
+            dispatch(getAllThreads({body:{mailbox: tabValue, account: selectedAccount.id}}));
         }
     }
 

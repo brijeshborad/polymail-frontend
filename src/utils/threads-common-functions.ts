@@ -11,12 +11,12 @@ export function markThreadAsRead(thread: Thread, dispatch: Dispatch) {
 
     if (isUnread) {
         dispatch(
-            updateThreads({
+            updateThreads({body:{
                 id: thread.id,
                 body: {
                     mailboxes: mailboxes.filter(i => i !== 'UNREAD'),
                 },
-            }),
+            }}),
         );
     }
 }

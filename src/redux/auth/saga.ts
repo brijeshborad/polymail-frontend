@@ -96,18 +96,14 @@ function* passwordChange({payload}: PayloadAction<ReducerActionType>) {
     }
 }
 
-function* forgotOldPassword({
-                                payload: {
-                                    email,
-                                    url
-                                }
-                            }: PayloadAction<{ email: string, url: string }>) {
+function* forgotOldPassword({payload}: PayloadAction<ReducerActionType>) {
     try {
         yield ApiService.callPost(`auth/forgot`, {
-            email, url
+            email: payload.body.email, url: payload.body.url
         }, {
             'Skip-Headers': true
         });
+        performSuccessActions(payload);
         yield put(forgotPasswordSuccess());
     } catch (error: any) {
         error = error as AxiosError;
@@ -115,18 +111,14 @@ function* forgotOldPassword({
     }
 }
 
-function* updateNewPassword({
-                                payload: {
-                                    Password,
-                                    code
-                                }
-                            }: PayloadAction<{ Password: string, code: string }>) {
+function* updateNewPassword({payload}: PayloadAction<ReducerActionType>) {
     try {
-        yield ApiService.callPost(`auth/reset?code=${code}`, {
-            Password
+        yield ApiService.callPost(`auth/reset?code=${payload.body.code}`, {
+            Password: payload.body.Password
         }, {
             'Skip-Headers': true
         });
+        performSuccessActions(payload);
         yield put(resetPasswordSuccess());
     } catch (error: any) {
         error = error as AxiosError;
@@ -134,12 +126,13 @@ function* updateNewPassword({
     }
 }
 
-function* compareCode({payload: {code}}: PayloadAction<{ code?: string }>) {
+function* compareCode({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callGet(`auth/magic?code=${code}`, {}, {
+        const response: AxiosResponse = yield ApiService.callGet(`auth/magic?code=${payload.body.code}`, {}, {
             'Skip-Headers': true
         });
-        yield put(magicCodeSuccess(response));
+        performSuccessActions(payload);
+        yield put(magicCodeSuccess(response.data));
     } catch (error: any) {
         error = error as AxiosError;
         yield put(magicCodeError(error?.response?.data || {code: '400', description: 'Something went wrong'}));

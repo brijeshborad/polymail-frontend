@@ -1,9 +1,9 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {InitialUserState} from "@/types";
+import {InitialUserState, ReducerActionType} from "@/types";
 import {UserDetails} from "@/models";
 
 const initialState: any = {
-    userDetails: {},
+    userDetails: null,
     isLoading: false,
     error: null,
     profilePicture: {},
@@ -16,54 +16,54 @@ const userSlice = createSlice({
     name: 'users',
     initialState,
     reducers: {
-        updateUsersDetails: (state: InitialUserState, _action: PayloadAction<UserDetails>) => {
-            return {...state, error: null, isLoading: false, userDetailsUpdateSuccess: false}
+        updateUsersDetails: (state: InitialUserState, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, isLoading: false, userDetailsUpdateSuccess: false}
         },
         updateUsersDetailsSuccess: (state: InitialUserState, {payload: userDetails}: PayloadAction<{}>) => {
-            return {...state, userDetails, error: null, isLoading: false, userDetailsUpdateSuccess: true}
+            return {...state, userDetails, isLoading: false, userDetailsUpdateSuccess: true}
         },
-        updateUsersDetailsError: (state: InitialUserState, {payload: error}: PayloadAction<any>) => {
-            return {...state, error, isLoading: false, userDetailsUpdateSuccess: false}
+        updateUsersDetailsError: (state: InitialUserState, _action: PayloadAction<any>) => {
+            return {...state, isLoading: false, userDetailsUpdateSuccess: false}
         },
 
-        getUsersDetails: (state: InitialUserState, _action: PayloadAction<UserDetails>) => {
-            return {...state, userDetails: {}, profilePictureUpdated: false, error: null, isLoading: false}
+        getUsersDetails: (state: InitialUserState, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, userDetails: {}, profilePictureUpdated: false, isLoading: false}
         },
         getUsersDetailsSuccess: (state: InitialUserState, {payload: userDetails}: PayloadAction<{}>) => {
-            return {...state, userDetails, error: null, isLoading: false}
+            return {...state, userDetails, isLoading: false}
         },
-        getUsersDetailsError: (state: InitialUserState, {payload: error}: PayloadAction<any>) => {
-            return {...state, error, isLoading: false}
+        getUsersDetailsError: (state: InitialUserState, _action: PayloadAction<any>) => {
+            return {...state, isLoading: false}
         },
 
-        uploadProfilePicture: (state: InitialUserState, _action: PayloadAction<{ file?: File }>) => {
-            return {...state, error: null, profilePictureUpdated: false, isLoading: false, success: false}
+        uploadProfilePicture: (state: InitialUserState, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, profilePictureUpdated: false, isLoading: false}
         },
         uploadProfilePictureSuccess: (state: InitialUserState, {payload: profilePicture}: PayloadAction<{}>) => {
-            return {...state, profilePicture, profilePictureUpdated: true,  error: null, isLoading: false, success: true}
+            return {...state, profilePicture, profilePictureUpdated: true, isLoading: false}
         },
-        uploadProfilePictureError: (state: InitialUserState, {payload: error}: PayloadAction<any>) => {
-            return {...state, error, isLoading: false, success: false}
+        uploadProfilePictureError: (state: InitialUserState, _action: PayloadAction<any>) => {
+            return {...state, isLoading: false}
         },
 
-        getProfilePicture: (state: InitialUserState, _action: PayloadAction<{}>) => {
-            return {...state, profilePicture: null, error: null, isLoading: true, success: false}
+        getProfilePicture: (state: InitialUserState, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, profilePicture: null, isLoading: true}
         },
         getProfilePictureSuccess: (state: InitialUserState, {payload: profilePicture}: PayloadAction<{}>) => {
-            return {...state, profilePicture, error: null, isLoading: false, success: true}
+            return {...state, profilePicture, isLoading: false}
         },
-        getProfilePictureError: (state: InitialUserState, {payload: error}: PayloadAction<any>) => {
-            return {...state, error, isLoading: false, success: false}
+        getProfilePictureError: (state: InitialUserState,  _action: PayloadAction<any>) => {
+            return {...state, isLoading: false, success: false}
         },
 
-        removeProfilePicture: (state: InitialUserState) => {
-            return {...state, error: null, isLoading: false, success: false, profilePictureRemoved: false}
+        removeProfilePicture: (state: InitialUserState, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, isLoading: false, profilePictureRemoved: false}
         },
         removeProfilePictureSuccess: (state: InitialUserState, _action: PayloadAction<{}>) => {
-            return {...state,  error: null, isLoading: false, success: true, profilePictureRemoved: true}
+            return {...state, isLoading: false, profilePictureRemoved: true}
         },
-        removeProfilePictureError: (state: InitialUserState, {payload: error}: PayloadAction<any>) => {
-            return {...state, error, isLoading: false, success: false, profilePictureRemoved: false}
+        removeProfilePictureError: (state: InitialUserState,  _action: PayloadAction<any>) => {
+            return {...state, isLoading: false, profilePictureRemoved: false}
         },
 
 

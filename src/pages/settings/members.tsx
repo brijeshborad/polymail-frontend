@@ -46,7 +46,7 @@ function Members() {
 
     useEffect(() => {
         if (organizations && organizations.length > 0 && organizations[0].id) {
-            dispatch(getOrganizationMembers({orgId: organizations[0].id}));
+            dispatch(getOrganizationMembers({body:{orgId: organizations[0].id}}));
         }
     }, [dispatch, organizations])
 
@@ -107,11 +107,11 @@ function Members() {
                     role: selectedMember?.role,
                     name: selectedMember?.name
                 }
-                dispatch(updateOrganizationMemberRole({
+                dispatch(updateOrganizationMemberRole({body:{
                     organizationId: organizations[0].id,
                     accountId: selectedMember?.id,
-                    body
-                }));
+                    body: body
+                }}));
             }
 
             onEditClose();
