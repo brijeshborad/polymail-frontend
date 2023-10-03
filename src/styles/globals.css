@@ -650,6 +650,32 @@ div:has(> .mailSendToaster) {
     pointer-events: none;
   }
 
+  .tiptap-container .show-shadow-bottom:after {
+    position: absolute;
+      content: '';
+      width: 100%;
+      height: 72px;
+      background: linear-gradient(0deg, #FFF 0%, rgba(255, 255, 255, 0.00) 100%);
+      bottom: 0;
+      left: 0;
+      z-index: 5;
+  }
+
+  .tiptap-container .show-shadow-bottom:after {
+      position: absolute;
+      content: '';
+      width: 100%;
+      height: 72px;
+      background: linear-gradient(0deg, #FFF 0%, rgba(255, 255, 255, 0.00) 100%);
+      bottom: 0;
+      left: 0;
+      z-index: 5;
+  }
+
+  .tiptap-container .hide-toolbar.show-shadow-bottom:after {
+      bottom: 60px;
+  }
+
   /* Give a remote user a caret */
   .collaboration-cursor__caret {
     /* border-left: 1px solid #0d0d0d;

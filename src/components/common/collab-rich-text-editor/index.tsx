@@ -14,11 +14,12 @@ import { TiptapCollabProvider } from '@hocuspocus/provider'
 import { CollabRichTextEditorType } from '@/types/props-types/collab-rich-text-editor.types'
 import { StateType } from '@/types'
 import { useEffect, useState } from 'react'
+import ContentMonitor from './content-monitor'
 
 export default function CollabRichTextEditor({
   id, isToolbarVisible = false, onChange,
   beforeToolbar, afterToolbar, extendToolbar,
-  placeholder, className='' }: CollabRichTextEditorType) {
+  placeholder, emailSignature, className='' }: CollabRichTextEditorType) {
   const dispatch = useDispatch()
   const { selectedAccount } = useSelector((state: StateType) => state.accounts);
   const [provider, setProvider] = useState<any>()
@@ -30,7 +31,7 @@ export default function CollabRichTextEditor({
     const prov = new TiptapCollabProvider({
       appId: '09XY1YK1', // get this at collab.tiptap.dev
       name: id, // e.g. a uuid uuidv4();
-      token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2OTYwMTI5NDMsIm5iZiI6MTY5NjAxMjk0MywiZXhwIjoxNjk2MDk5MzQzLCJpc3MiOiJodHRwczovL2NvbGxhYi50aXB0YXAuZGV2IiwiYXVkIjoibHVpekBwb2x5bWFpbC5jb20ifQ.eiAUVv-nW6rD-l8YeitTZn2SVgzacDRDaSkYegie800',
+      token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2OTYyODQzNzcsIm5iZiI6MTY5NjI4NDM3NywiZXhwIjoxNjk2MzcwNzc3LCJpc3MiOiJodHRwczovL2NvbGxhYi50aXB0YXAuZGV2IiwiYXVkIjoibHVpekBwb2x5bWFpbC5jb20ifQ.BUEHslAobsvrPSivEtBe3Os7VxiYpt80iRs261zaKOg',
       // document: new Y.Doc() // pass your existing doc, or leave this out and use provider.document
     })
     setProvider(prov)
@@ -68,12 +69,22 @@ export default function CollabRichTextEditor({
     ])
   }, [id, selectedAccount, placeholder])
 
+
+
   if(!provider) return
 
   return (
-    <div className={className}>
+    <div className={`tiptap-container ${className}`}>
       <EditorProvider
-        onFocus={() => dispatch(updateKeyNavigation({ isEnabled: false }))}
+        onFocus={(editor) => {
+          dispatch(updateKeyNavigation({ isEnabled: false }))
+          if(editor.editor.isEmpty && emailSignature) {
+            editor.editor.commands.setContent(emailSignature)
+          }
+
+          editor.editor.commands.focus('start')
+
+        }}
         onBlur={() => dispatch(updateKeyNavigation({ isEnabled: true }))}
         onUpdate={({ editor }) => onChange(editor.getHTML())}
         slotAfter={(
@@ -86,6 +97,7 @@ export default function CollabRichTextEditor({
         )}
         extensions={extensions}
       >
+        <ContentMonitor />
       </EditorProvider>
     </div>
   )
