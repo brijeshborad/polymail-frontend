@@ -34,11 +34,13 @@ function OnBoardingType() {
     }, [dispatch, router.query]);
 
     useEffect(() => {
-        if (userDetails && user && user?.token) {
-            if (userDetails.onboarded) {
-                Router.push('/inbox');
-            } else {
-                Router.push('/onboarding/connect-account');
+        if (userDetails && userDetails.hasOwnProperty('onboarded')) {
+            if (user && user?.token) {
+                if (userDetails.onboarded) {
+                    Router.push('/inbox');
+                } else {
+                    Router.push('/onboarding/complete-profile');
+                }
             }
         }
     }, [user, userDetails])

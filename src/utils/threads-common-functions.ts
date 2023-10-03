@@ -21,7 +21,7 @@ export function markThreadAsRead(thread: Thread, dispatch: Dispatch) {
     }
 }
 
-export function addThreadToProject(item: Project, multiSelection: any, selectedThread: any, dispatch: Dispatch, addToProjectRef?: any) {
+export function addThreadToProject(item: Project, multiSelection: any, selectedThread: any, dispatch: Dispatch, threads: Thread[], addToProjectRef?: any) {
   const isThreadMultiSelection = (multiSelection !== undefined && multiSelection.length > 0)
   if ((selectedThread && selectedThread.id || (multiSelection !== undefined && multiSelection.length > 0))) {
     let reqBody = {
@@ -52,7 +52,16 @@ export function addThreadToProject(item: Project, multiSelection: any, selectedT
       ...selectedThread,
       projects: [...projects, item]
     }
-    dispatch(updateThreadState({ selectedThread: addProject }));
+    let index1 = (threads || []).findIndex((item: Thread) => item.id === selectedThread?.id);
+    let newThreads: Thread[] = threads ?? [];
+    if (threads) {
+      newThreads = [...threads];
+      newThreads[index1] = {
+        ...newThreads[index1],
+        projects: [...projects, item]
+      }
+    }
+    dispatch(updateThreadState({ selectedThread: addProject , threads: newThreads}));
     dispatch(addItemToGroup({
       body:reqBody,
       toaster:{

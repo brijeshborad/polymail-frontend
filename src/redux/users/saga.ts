@@ -25,7 +25,7 @@ function* updateUserPersonalDetails({payload}: PayloadAction<ReducerActionType>)
             ...(payload.body.firstName ? {firstName: payload.body.firstName} : {}),
             ...(payload.body.lastName ? {lastName: payload.body.lastName} : {}),
             ...(payload.body.middleName ? {middleName: payload.body.middleName} : {}),
-            onboarded: !!payload.body.onboarded,
+            ...(payload.body.onboarded ? {onboarded: payload.body.onboarded}: {})
         });
         performSuccessActions(payload);
         yield put(updateUsersDetailsSuccess(response));

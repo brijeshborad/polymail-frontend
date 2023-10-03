@@ -40,7 +40,7 @@ function CreateNewProjectModal() {
     const [projectEmoji, setProjectEmoji] = useState<string>('');
 
     const {createProjectSuccess, project} = useSelector((state: StateType) => state.projects);
-    const {selectedThread, multiSelection} = useSelector((state: StateType) => state.threads);
+    const {selectedThread, multiSelection, threads} = useSelector((state: StateType) => state.threads);
     const { draft } = useSelector((state: StateType) => state.draft);
 
     const handleChange = (event: ChangeEvent | any) => {
@@ -55,7 +55,7 @@ function CreateNewProjectModal() {
         if (createProjectSuccess) {
             dispatch(updateProjectState({createProjectSuccess: false}))
             if (project && selectedThread) {
-                addThreadToProject(project, multiSelection, selectedThread || draft, dispatch);
+                addThreadToProject(project, multiSelection, selectedThread || draft, dispatch, threads || [], null);
             }
             if (selectedAccount && selectedAccount.email && membersInputs.memberArray && membersInputs.memberArray?.length > 0 && project && project.id) {
                 let reqBody = {

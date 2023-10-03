@@ -60,12 +60,24 @@ function CompleteProfile() {
         if (name && tmp.length > 1) {
             let firstName = tmp[0]
             let lastName = tmp[tmp.length - 1]
-            dispatch(updateUsersDetails({body:{firstName: firstName, lastName: lastName, onboarded: true},toaster:{
-                success:{
-                    desc: "Your name added successfully",
-                    title: "Full name added success",
-                    type: 'success'
+            let body : any = {
+                firstName: firstName,
+                lastName: lastName
+            }
+            if (userDetails && !userDetails.onboarded) {
+                body = {
+                    ...body,
+                    onboarded: true
                 }
+            }
+            dispatch(updateUsersDetails({
+                body: body,
+                toaster:{
+                    success:{
+                        desc: "Your name added successfully",
+                        title: "Full name added success",
+                        type: 'success'
+                    }
             }}));
             Router.push('/inbox');
         } else {

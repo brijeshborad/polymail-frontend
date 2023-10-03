@@ -22,7 +22,7 @@ import {addThreadToProject} from "@/utils/threads-common-functions";
 export function AddToProjectButton() {
     const [isDropdownOpen, setDropDownOpen] = useState(false)
     const dispatch = useDispatch();
-    const {selectedThread, multiSelection} = useSelector((state: StateType) => state.threads);
+    const {selectedThread, multiSelection, threads} = useSelector((state: StateType) => state.threads);
 
     let {projects} = useSelector((state: StateType) => state.projects);
     const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
@@ -82,7 +82,7 @@ export function AddToProjectButton() {
 
     function checkProjects(e: MouseEvent | any) {
         if (e.key.toLowerCase() === 'enter' && filteredProjects.length === 1 && selectedThread) {
-            addThreadToProject(filteredProjects[0], multiSelection, selectedThread || draft, dispatch, addToProjectRef);
+            addThreadToProject(filteredProjects[0], multiSelection, selectedThread || draft, dispatch, threads || [], addToProjectRef);
         }
     }
 
@@ -180,7 +180,7 @@ export function AddToProjectButton() {
                         {filteredProjects && !!filteredProjects.length && (filteredProjects || []).map((item: Project, index: number) => (
                             <MenuItem gap={2} key={index} onClick={() => {
                                 if (selectedThread || draft) {
-                                    addThreadToProject(item, multiSelection, selectedThread || draft, dispatch)
+                                    addThreadToProject(item, multiSelection, selectedThread || draft, dispatch, threads || [], null)
                                 }
                             }}>
                                 {item.emoji} {item.name}
