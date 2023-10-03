@@ -371,6 +371,44 @@
     height: fit-content;
 }
 
+.projectAdded span {
+    display: flex;
+    align-items: center;
+}
+
+.projectAdded {
+    border: 1px solid #F3F4F6;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: none;
+    min-width: 1px;
+}
+
+.projectAdded .projectSelectImage .projectCount + .projectCount {
+    margin-left: -10px;
+}
+
+.projectAdded .projectSelectImage .projectsLength {
+    background-color: #C5D5ED;
+    border-radius: 10px;
+    margin-left: -10px;
+    padding: 2px 4px;
+    line-height: 1;
+    font-size: 10px;
+}
+
+.projectAdded svg {
+    width: 16px;
+    height: 16px;
+    margin-right: 0;
+}
+
+.projectAdded .projectMenuIcon svg {
+    width: 12px;
+    height: 12px;
+    fill: #6B7280;
+}
+
 .addToProject:hover,
 .addToProject[data-active] {
     background: #2A6FFF !important;
@@ -395,6 +433,16 @@
 .addToProjectList .addNewProject {
     width: calc(100% - 24px);
     margin: 0 auto;
+}
+
+.addToProjectList .selectedProject:after {
+    position: absolute;
+    content: '';
+    width: calc(100% - 24px);
+    height: 1px;
+    background-color: #F3F4F6;
+    bottom: 0;
+    left: 12px;
 }
 
 .addToProjectList .addNewProject button {
