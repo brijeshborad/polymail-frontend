@@ -4,10 +4,12 @@ import Image from "next/image"
 import { useCallback, useState } from "react"
 import ToolbarUrl from "./toolbar-url"
 import { CollabRichTextEditorToolbarType } from "@/types/props-types/collab-rich-text-toolbar.types"
+import ToolbarEmoji from "@/components/common/collab-rich-text-editor/toolbar-emoji";
 
 export default function CollabRichTextEditorToolbar({ isToolbarVisible = false, beforeToolbar, afterToolbar, extendToolbar }: CollabRichTextEditorToolbarType) {
   const { editor } = useCurrentEditor()
   const [isLinkMenuOpen, setIsLinkMenuOpen] = useState(false);
+  const [isEmojiMenuOpen, setIsEmojiMenuOpen] = useState(false);
 
   const setLink = useCallback((url?: string) => {
     if (!editor) return
@@ -34,6 +36,10 @@ export default function CollabRichTextEditorToolbar({ isToolbarVisible = false, 
       }
     }
     // empty
+  }, [editor])
+
+  const setEmoji = useCallback((emoji?: string) => {
+    console.log('emoji', emoji)
   }, [editor])
 
 
@@ -99,12 +105,18 @@ export default function CollabRichTextEditorToolbar({ isToolbarVisible = false, 
             <Image src="/image/icon/unordered.svg" alt="unordered list" width={16} height={16} />
           </button>
           <div style={{ width: 1, backgroundColor: '#E5E7EB' }}></div>
-          <button
-            onClick={() => { }}
-            className={editor.isActive('emoji') ? 'is-active' : ''}
-          >
-            <Image src="/image/icon/emoji.svg" alt="emoji" width={16} height={16} />
-          </button>
+          {/*<button*/}
+          {/*  onClick={() => { }}*/}
+          {/*  className={editor.isActive('emoji') ? 'is-active' : ''}*/}
+          {/*>*/}
+          {/*  <Image src="/image/icon/emoji.svg" alt="emoji" width={16} height={16} />*/}
+          {/*</button>*/}
+          <ToolbarEmoji
+            editor={editor}
+            isOpen={isEmojiMenuOpen}
+            onChangeVisibility={setIsEmojiMenuOpen}
+            onChange={setEmoji}
+          />
 
           {extendToolbar && extendToolbar}
 

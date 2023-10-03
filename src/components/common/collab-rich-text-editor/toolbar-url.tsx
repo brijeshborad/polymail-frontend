@@ -8,6 +8,8 @@ export default function ToolbarUrl({ isOpen, onChangeVisibility, onChange, edito
 
   return (
     <Popover
+        placement='top'
+        isLazy={true}
         isOpen={isOpen}
         onClose={() => {
           onChangeVisibility(false)
@@ -25,7 +27,7 @@ export default function ToolbarUrl({ isOpen, onChangeVisibility, onChange, edito
             <Image src="/image/icon/link.svg" alt="Link" width={16} height={16} />
           </button>
         </PopoverTrigger>
-        <PopoverContent width={250}>
+        <PopoverContent width={250} className={'link-modal-ui'}>
           <PopoverArrow />
           <PopoverBody padding={4}>
             <Box display={'flex'} flexDirection={'column'} gap={4}>

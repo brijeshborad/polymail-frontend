@@ -549,7 +549,7 @@ export function ComposeBox(props: any) {
               />
               <Flex flex={1} direction={'column'} position={'relative'}>
                 <Flex flex={1} direction={'column'} ref={editorRef} className={`editor-bottom-shadow`}
-                      onScroll={() => handleEditorScroll()}>
+                      onScroll={() => handleEditorScroll()} zIndex={6}>
 
                   <CollabRichTextEditor
                     id={`${draft?.id}`}

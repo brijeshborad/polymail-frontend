@@ -741,7 +741,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 fontWeight={500} lineHeight={'normal'}> Create new draft </Button>
             </Flex>
           )}
-          <Flex align={'center'} justify={'space-between'} gap={4} position={"relative"} zIndex={10}>
+          <Flex align={'center'} justify={'space-between'} gap={4} position={"relative"} zIndex={1}>
             <Flex align={'center'} gap={1}>
               <Menu isOpen={isReplyDropdownOpen} onClose={() => setIsReplyDropdownOpen(false)}>
                 <MenuButton
@@ -806,9 +806,8 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
 
           <Flex direction={'column'} position={"relative"} flex={1} >
-            <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} overflow={'auto'} ref={editorRef} className={`${styles.replyBoxEditor} editor-bottom-shadow`}
+            <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} overflow={'auto'} zIndex={6} ref={editorRef} className={`${styles.replyBoxEditor} editor-bottom-shadow`}
               onScroll={() => handleEditorScroll()}>
-                {extraClassNames}
                 <CollabRichTextEditor
                   id={selectedThread?.id!}
                   content={emailBody}
@@ -854,36 +853,28 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             </Flex>
 
             {hideEditorToolbar &&
-              <Flex direction={'column'} className={styles.composeBox}>
-                <Flex align={'flex-end'} justify={'space-between'} gap={2}>
-                  <Flex gap={2} className={styles.replyBoxIcon} mb={'-3px'} position={'relative'} zIndex={5} ml={'170px'}>
-
-                  </Flex>
-                  <Flex align={'center'} className={styles.replyButton} position={'relative'} zIndex={5}>
-                    <Button
+              <Flex direction={'column'} className={styles.composeBox} width={'fit-content'} marginLeft={'auto'} mr={'6px'}>
+                <Flex align={'center'} className={styles.replyButton} position={'relative'} zIndex={6}>
+                  <Button
                       className={styles.replyTextDiscardButton}
-                      fontSize={14} lineHeight={16}
+                      fontSize={14} lineHeight={16} height={'38px'}
                       onClick={() => discardMessage()}
-                    >
-                      Discard
-                    </Button>
+                  > Discard </Button>
+                  <Flex className={styles.messageSendButton}>
                     <Button
-                      className={styles.replyTextButton}
-                      colorScheme='blue'
-                      fontSize={14} lineHeight={16}
-                      onClick={() => sendMessages()}
+                        className={styles.replyTextButton}
+                        colorScheme='blue'
+                        fontSize={14} lineHeight={16}
+                        onClick={() => sendMessages()}
                     >
                       {scheduledDate ? (
-                        <>Send {dayjs(scheduledDate).from(dayjs())} @ {dayjs(scheduledDate).format('hh:mmA')}</>
+                          <>Send {dayjs(scheduledDate).from(dayjs())} @ {dayjs(scheduledDate).format('hh:mmA')}</>
                       ) : (
-                        <>Send</>
+                          <>Send</>
                       )}
                     </Button>
 
-                    <MessageSchedule
-                      date={scheduledDate}
-                      onChange={handleSchedule}
-                    />
+                    <MessageSchedule date={scheduledDate} onChange={handleSchedule} />
                   </Flex>
                 </Flex>
               </Flex>

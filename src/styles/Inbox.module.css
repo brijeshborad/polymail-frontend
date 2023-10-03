@@ -1126,6 +1126,10 @@
     line-height: 18px;
 }
 
+.composeBox .replyButton .messageSendButton {
+    background-color: #1F2937;
+    border-radius: 5px 5px;
+}
 
 .composeBox .replyButton .replyTextDiscardButton {
     border-radius: 5px 0 0 5px;
