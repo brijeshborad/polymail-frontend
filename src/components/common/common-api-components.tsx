@@ -83,12 +83,21 @@ export function CommonApiComponents() {
                 ...onlineUsers[type],
                 ...(!onlineUsers[type][id] ? {[id]: []} : {[id]: [...onlineUsers[type][id]]})
             };
+            console.log('NEW', type, id);
             let userAlreadyExists = onlineUsers[type][id].findIndex((item: UserProjectOnlineStatus) => item.userId === newMessage.data.userId);
             if (userAlreadyExists !== -1) {
-                onlineUsers[type][id][userAlreadyExists] = {
-                    ...onlineUsers[type][id][userAlreadyExists],
-                    isOnline: true,
-                    lastOnlineStatusCheck: dayjs().format('DD/MM/YYYY hh:mm:ss a')
+                if (onlineUsers[type][id][userAlreadyExists].forceWait > 0) {
+                    onlineUsers[type][id][userAlreadyExists] = {
+                        ...onlineUsers[type][id][userAlreadyExists],
+                        forceWait: onlineUsers[type][id][userAlreadyExists].forceWait - 1
+                    }
+                } else {
+                    onlineUsers[type][id][userAlreadyExists] = {
+                        ...onlineUsers[type][id][userAlreadyExists],
+                        isOnline: true,
+                        lastOnlineStatusCheck: dayjs().format('DD/MM/YYYY hh:mm:ss a'),
+                        forceWait: 0
+                    }
                 }
             } else {
                 onlineUsers[type][id].push({
@@ -97,7 +106,8 @@ export function CommonApiComponents() {
                     lastOnlineStatusCheck: dayjs().format('DD/MM/YYYY hh:mm:ss a'),
                     avatar: newMessage.data.avatar,
                     color: Math.floor(Math.random() * 16777215).toString(16),
-                    name: newMessage.data.name
+                    name: newMessage.data.name,
+                    forceWait: 0
                 })
             }
             setMemberStatusCache(onlineUsers);

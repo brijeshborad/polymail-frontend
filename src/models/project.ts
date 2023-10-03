@@ -24,6 +24,7 @@ export interface UserProjectOnlineStatus {
     avatar?: string
     color?: string
     name?: string
+    forceWait?: number
 }
 
 

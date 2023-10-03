@@ -1,4 +1,4 @@
-import {Thread} from "@/models";
+import {Thread, UserProjectOnlineStatus} from "@/models";
 import styles from "@/styles/Inbox.module.css";
 import { Flex, Input } from "@chakra-ui/react";
 import React, {useEffect, useCallback, useRef, useState, RefObject} from "react";
@@ -13,10 +13,11 @@ import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import {updateCommonState} from "@/redux/common-apis/action-reducer";
 import {
-  getCurrentSelectedThreads,
-  setCurrentSelectedThreads,
+  getCurrentSelectedThreads, getMemberStatusCache,
+  setCurrentSelectedThreads, setMemberStatusCache,
 } from "@/utils/cache.functions";
 import {debounceInterval} from "@/utils/common.functions";
+import dayjs from "dayjs";
 
 export function ThreadsSideBarList(props: ThreadListProps) {
   const { selectedThread, threads} = useSelector((state: StateType) => state.threads);
@@ -66,6 +67,44 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     }
   }, [target, threadIndex, currentThreadRef])
 
+  const updateOnlineStatus = useCallback((oldThread: Thread, newThread: Thread) => {
+    let oldThreadOnlineUser: UserProjectOnlineStatus | null = null;
+    let onlineMembers: any = {...getMemberStatusCache()};
+    onlineMembers['threads'] = {...onlineMembers['threads']};
+    let oldThreadId: string = oldThread.id!;
+    let newThreadId: string = newThread.id!;
+    onlineMembers['threads'][oldThreadId] = [...onlineMembers['threads'][oldThreadId]];
+    if (!onlineMembers['threads'][newThreadId]) {
+      onlineMembers['threads'][newThreadId] = [];
+    } else {
+      onlineMembers['threads'][newThreadId] = [...onlineMembers['threads'][newThreadId]];
+    }
+    let findOldThreadUserIndex = onlineMembers['threads'][oldThreadId].findIndex((item: UserProjectOnlineStatus) => item.userId === oldThread.user);
+    if (findOldThreadUserIndex !== -1) {
+      onlineMembers['threads'][oldThreadId][findOldThreadUserIndex] = {...onlineMembers['threads'][oldThreadId][findOldThreadUserIndex]};
+      oldThreadOnlineUser = onlineMembers['threads'][oldThreadId][findOldThreadUserIndex];
+      onlineMembers['threads'][oldThreadId][findOldThreadUserIndex].isOnline = false;
+      onlineMembers['threads'][oldThreadId][findOldThreadUserIndex].forceWait = 2;
+    }
+
+    let findNewThreadUserIndex = onlineMembers['threads'][newThreadId].findIndex((item: UserProjectOnlineStatus) => item.userId === newThread.user);
+    if (findNewThreadUserIndex !== -1) {
+      onlineMembers['threads'][newThreadId][findNewThreadUserIndex] = {...onlineMembers['threads'][newThreadId][findNewThreadUserIndex]};
+      onlineMembers['threads'][newThreadId][findNewThreadUserIndex].isOnline = true;
+      onlineMembers['threads'][newThreadId][findNewThreadUserIndex].lastOnlineStatusCheck = dayjs().format('DD/MM/YYYY hh:mm:ss a');
+      onlineMembers['threads'][newThreadId][findNewThreadUserIndex].forceWait = 0;
+    } else {
+      onlineMembers['threads'][newThreadId].push({
+        ...oldThreadOnlineUser,
+        isOnline: true,
+        lastOnlineStatusCheck: dayjs().format('DD/MM/YYYY hh:mm:ss a'),
+        forceWait: 0
+      })
+    }
+    setMemberStatusCache(onlineMembers);
+    dispatch(updateCommonState({onlineUsers: onlineMembers}));
+  }, [dispatch])
+
   const handleClick = useCallback((item: Thread, event: KeyboardEvent | any, index: number) => {
     // Check if Control key (or Command key on Mac) is held down
     if (event) {
@@ -104,6 +143,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
         }))
 
       } else {
+        updateOnlineStatus(selectedThread!, item!);
         dispatch(updateCommonState({isComposing: false}));
         if (props.tab === 'DRAFT') {
           if (item && item.messages && item.messages[0]) {
@@ -121,7 +161,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
         dispatch(updateDraftState({ draft: null }));
       }
     }
-  }, [dispatch, props.tab, selectedThread, currentThreads]);
+  }, [dispatch, currentThreads, selectedThread, updateOnlineStatus, props.tab]);
 
 
   const handleEditorScroll = useCallback(() => {
