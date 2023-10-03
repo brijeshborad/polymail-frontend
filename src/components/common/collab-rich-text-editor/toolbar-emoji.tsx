@@ -39,7 +39,7 @@ export default function ToolbarEmoji({ isOpen, onChangeVisibility, onChange, edi
       </PopoverTrigger>
       <PopoverContent width={250} className={'emoji-popover'}>
         <PopoverArrow />
-        <PopoverBody padding={4}>
+        <PopoverBody padding={0}>
           <Grid templateColumns='repeat(10, 1fr)' maxH={'175px'} overflow={'auto'} gap={2}
                 padding={3}>
             {emojiArray.map((item: string, index: number) => (
