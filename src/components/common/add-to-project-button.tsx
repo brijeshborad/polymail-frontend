@@ -8,11 +8,11 @@ import {
     Input,
     InputGroup,
     InputLeftElement,
-    Box, Flex,Text
+    Box, Flex, Text
 } from "@chakra-ui/react";
 import {CloseIcon, SearchIcon, SmallAddIcon} from "@chakra-ui/icons";
 import {FolderIcon, MenuIcon} from "@/icons";
-import React, { useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Project} from "@/models";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
@@ -31,7 +31,7 @@ export function AddToProjectButton() {
     const addToProjectRef = useRef<HTMLInputElement | null>(null);
     const searchRef = useRef<HTMLInputElement | null>(null);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
-    const { draft } = useSelector((state: StateType) => state.draft);
+    const {draft} = useSelector((state: StateType) => state.draft);
 
     useEffect(() => {
         const handleShortcutKeyPress = (e: KeyboardEvent | any) => {
@@ -91,6 +91,7 @@ export function AddToProjectButton() {
             setDropDownOpen(false);
         }
     }, [incomingEvent, setDropDownOpen]);
+
     const closeScheduleDropdown = () => {
         setDropDownOpen(false)
     }
@@ -105,41 +106,46 @@ export function AddToProjectButton() {
                     window.focus()
                 }}
                 closeOnBlur={true}
-              >
-                {selectedThread?.projects?.length  ? <MenuButton onClick={() => {
+            >
+                {selectedThread?.projects?.length ? <MenuButton onClick={() => {
                     setDropDownOpen(!isDropdownOpen)
-                    focusSearch(); }}
-                                                                cursor={'pointer'} className={`${styles.projectAdded}`} borderRadius={'8px'}
-                                                                backgroundColor={'#FFFFFF'} color={'#0A101D'} as={Box} padding={'3px 4px'}
-                                                                fontSize={'13px'} fontWeight={500} h={'fit-content'} ref={addToProjectRef}>
+                    focusSearch();
+                }}
+                                                                cursor={'pointer'} className={`${styles.projectAdded}`}
+                                                                borderRadius={'8px'}
+                                                                backgroundColor={'#FFFFFF'} color={'#0A101D'} as={Box}
+                                                                padding={'3px 4px'}
+                                                                fontSize={'13px'} fontWeight={500} h={'fit-content'}
+                                                                ref={addToProjectRef}>
                     <Flex alignItems={'center'} justify={'center'} mr={1} className={styles.projectSelectImage}>
                         {(selectedThread?.projects || []).slice(0, 2).map((item: any, index: number) => (
-                          <span className={styles.projectCount} key={index}> {item.emoji} </span>
+                            <span className={styles.projectCount} key={index}> {item.emoji} </span>
                         ))}
                         {((selectedThread?.projects || []).length > 2) && (
-                          <span className={styles.projectsLength}>{`+${selectedThread?.projects?.length - 2}`}</span>
+                            <span className={styles.projectsLength}>{`+${selectedThread?.projects?.length - 2}`}</span>
                         )}
                     </Flex>
                     {selectedThread?.projects?.length === 1 ? selectedThread?.projects[0]?.name : selectedThread?.projects?.length + ' ' + 'Projects'}
-                    <Flex width={'20px'} height={'20px'} alignItems={'center'} justifyContent={'center'} className={styles.projectMenuIcon}><MenuIcon/></Flex>
+                    <Flex width={'20px'} height={'20px'} alignItems={'center'} justifyContent={'center'}
+                          className={styles.projectMenuIcon}><MenuIcon/></Flex>
                 </MenuButton> : <MenuButton
-                  onClick={() => {
-                      setDropDownOpen(!isDropdownOpen)
-                      focusSearch();
-                  }}
-                  cursor={'pointer'}
-                  className={`${styles.addToProject} ${styles.projectAdded}`}
-                  borderRadius={'50px'}
-                  backgroundColor={'#2A6FFF'}
-                  color={'#FFFFFF'}
-                  as={Box}
-                  boxShadow={'0 0 3px 0 rgba(38, 109, 240, 0.12)'}
-                  padding={'4px 4px 4px 8px'}
-                  fontSize={'12px'} fontWeight={500}
-                  h={'fit-content'}
-                  ref={addToProjectRef}
+                    onClick={() => {
+                        setDropDownOpen(!isDropdownOpen)
+                        focusSearch();
+                    }}
+                    cursor={'pointer'}
+                    className={`${styles.addToProject} ${styles.projectAdded}`}
+                    borderRadius={'50px'}
+                    backgroundColor={'#2A6FFF'}
+                    color={'#FFFFFF'}
+                    as={Box}
+                    boxShadow={'0 0 3px 0 rgba(38, 109, 240, 0.12)'}
+                    padding={'4px 4px 4px 8px'}
+                    fontSize={'12px'} fontWeight={500}
+                    h={'fit-content'}
+                    ref={addToProjectRef}
                 >
-                    <span style={{ marginRight: 4 }}><FolderIcon/></span>
+                    <span style={{marginRight: 4}}><FolderIcon/></span>
                     Add to Project
                     <span className={styles.RightContent}>⌘P</span>
                 </MenuButton>}
@@ -149,18 +155,19 @@ export function AddToProjectButton() {
                     {selectedThread?.projects?.length &&
                     <Flex direction={'column'} position={'relative'} pb={1} className={styles.selectedProject}>
                         {(selectedThread?.projects || []).map((item: any, index: number) => (
-                          <Flex alignItems={'center'} justifyContent={'space-between'} padding={'8px 12px'} key={index}>
-                              <Text color={'#374151'} fontSize={'13px'} fontWeight={'500'} lineHeight={1}
-                                    letterSpacing={'-0.13px'}>{item.emoji} {item.name}</Text>
-                              <Button
-                                onClick={closeScheduleDropdown}
-                                h={'20px'} minW={'20px'}
-                                className={styles.dropDownCloseIcon}
-                                backgroundColor={'transparent'} padding={0}
-                                color={'#6B7280'} colorScheme='blue'>
-                                  <CloseIcon/>
-                              </Button>
-                          </Flex>
+                            <Flex alignItems={'center'} justifyContent={'space-between'} padding={'8px 12px'}
+                                  key={index}>
+                                <Text color={'#374151'} fontSize={'13px'} fontWeight={'500'} lineHeight={1}
+                                      letterSpacing={'-0.13px'}>{item.emoji} {item.name}</Text>
+                                <Button
+                                    onClick={closeScheduleDropdown}
+                                    h={'20px'} minW={'20px'}
+                                    className={styles.dropDownCloseIcon}
+                                    backgroundColor={'transparent'} padding={0}
+                                    color={'#6B7280'} colorScheme='blue'>
+                                    <CloseIcon/>
+                                </Button>
+                            </Flex>
                         ))}
                     </Flex>
                     }

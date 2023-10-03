@@ -10,7 +10,8 @@ const initialState: any = {
   syncingEmails: null,
   isComposing: false,
   contacts: [],
-  allowThreadSelection: true
+  allowThreadSelection: true,
+  onlineUsers: {threads: {}, projects: {}}
 } as InitialCommonApisStateType
 
 const commonApisSlice = createSlice({

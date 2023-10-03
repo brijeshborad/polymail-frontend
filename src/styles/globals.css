@@ -157,13 +157,13 @@ a {
     padding: 0;
     margin: 0;
     min-width: 20px;
-     border: 1px solid transparent;
+    border: 1px solid transparent;
     box-shadow: none;
 }
 
 .rdw-editor-wrapper .rdw-editor-toolbar .rdw-option-wrapper.rdw-option-active {
     background-color: rgba(32, 33, 36, 0.1);
-    box-shadow: 0 0 4px 0 rgba(0,0,0, 0.1);
+    box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.1);
 }
 
 .rdw-editor-wrapper .rdw-editor-toolbar .rdw-option-wrapper:hover {
@@ -191,7 +191,6 @@ a {
     background: linear-gradient(180deg, #FFF 0%, rgba(255, 255, 255, 0.00) 100%);
     z-index: 5;
 }
-
 
 
 .rdw-editor-wrapper .rdw-editor-toolbar .rdw-emoji-wrapper {
@@ -294,45 +293,45 @@ div:has(> .mailSendToaster) {
 }
 
 .disney-icon:before {
-  position: absolute;
-  content: '';
-  width: 6px;
-  height: 6px;
-  background-color: #FF87DB;
-  border-radius: 50%;
-  border: 1px solid #FFFFFF;
-  top: -2px;
-  right: -2px;
+    position: absolute;
+    content: '';
+    width: 6px;
+    height: 6px;
+    background-color: #FF87DB;
+    border-radius: 50%;
+    border: 1px solid #FFFFFF;
+    top: -2px;
+    right: -2px;
 }
 
 .member-images .member-photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .member-images .member-photo {
-  min-width: 24px;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  overflow: hidden;
-  background-color: #EBF2FF;
-  border: 1px solid #FFFFFF;
+    min-width: 24px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: #EBF2FF;
+    border: 1px solid #FFFFFF;
 }
 
 .member-images.subheader-images .member-photo {
-  min-width: 18px;
-  width: 18px;
-  height: 18px;
+    min-width: 18px;
+    width: 18px;
+    height: 18px;
 }
 
 .member-images .member-photo + .member-photo {
-  margin-left: -12px;
+    margin-left: -12px;
 }
 
 .folder-icon svg {
-  stroke: #374151;
+    stroke: #374151;
 }
 
 .readThreadIcon {
@@ -341,11 +340,11 @@ div:has(> .mailSendToaster) {
 
 
 .dot {
-  width: 3px;
-  height: 3px;
-  border-radius: 4px;
-  background-color: #0A101D;
-  display: inline-block;
+    width: 3px;
+    height: 3px;
+    border-radius: 4px;
+    background-color: #0A101D;
+    display: inline-block;
     margin-bottom: 3px;
 }
 
@@ -416,7 +415,7 @@ div:has(> .mailSendToaster) {
     top: unset;
     bottom: 30px;
     border-radius: 10px;
-    box-shadow: 0 0 4px 0 rgba(0,0,0, 0.1);
+    box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.1);
 }
 
 .rdw-editor-wrapper .emoji-picker.rdw-link-modal {
@@ -570,7 +569,7 @@ div:has(> .mailSendToaster) {
 }
 
 ::-webkit-datetime-edit-ampm-field {
-  display: none;
+    display: none;
 }
 
 .project-list-shadow {
@@ -608,7 +607,7 @@ div:has(> .mailSendToaster) {
 }
 
 .add-to-project-list {
-    max-height: 60vh;
+    max-height: 40vh;
     overflow: auto;
 }
 
@@ -617,67 +616,67 @@ div:has(> .mailSendToaster) {
   * Collab Rich Text Editor
   */
 
-  .tiptap {
+.tiptap {
     padding-bottom: 16px;
     font-size: 13px;
     font-weight: 500;
-  }
+}
 
-  .tiptap:focus {
+.tiptap:focus {
     outline: none;
-  }
+}
 
-  .tiptap ul, 
-  .tiptap ol {
+.tiptap ul,
+.tiptap ol {
     margin-left: 20px;
-  }
+}
 
-  .tiptap-toolbar button {
+.tiptap-toolbar button {
     width: 16px;
     height: 16px;
-  }
+}
 
-  .tiptap a {
+.tiptap a {
     color: #000;
     text-decoration: underline;
-  }
+}
 
-  .tiptap p.is-editor-empty:first-child::before {
+.tiptap p.is-editor-empty:first-child::before {
     color: #adb5bd;
     content: attr(data-placeholder);
     float: left;
     height: 0;
     pointer-events: none;
-  }
+}
 
-  .tiptap-container .show-shadow-bottom:after {
+.tiptap-container .show-shadow-bottom:after {
     position: absolute;
-      content: '';
-      width: 100%;
-      height: 72px;
-      background: linear-gradient(0deg, #FFF 0%, rgba(255, 255, 255, 0.00) 100%);
-      bottom: 0;
-      left: 0;
-      z-index: 5;
-  }
+    content: '';
+    width: 100%;
+    height: 72px;
+    background: linear-gradient(0deg, #FFF 0%, rgba(255, 255, 255, 0.00) 100%);
+    bottom: 0;
+    left: 0;
+    z-index: 5;
+}
 
-  .tiptap-container .show-shadow-bottom:after {
-      position: absolute;
-      content: '';
-      width: 100%;
-      height: 72px;
-      background: linear-gradient(0deg, #FFF 0%, rgba(255, 255, 255, 0.00) 100%);
-      bottom: 0;
-      left: 0;
-      z-index: 5;
-  }
+.tiptap-container .show-shadow-bottom:after {
+    position: absolute;
+    content: '';
+    width: 100%;
+    height: 72px;
+    background: linear-gradient(0deg, #FFF 0%, rgba(255, 255, 255, 0.00) 100%);
+    bottom: 0;
+    left: 0;
+    z-index: 5;
+}
 
-  .tiptap-container .hide-toolbar.show-shadow-bottom:after {
-      bottom: 60px;
-  }
+.tiptap-container .hide-toolbar.show-shadow-bottom:after {
+    bottom: 60px;
+}
 
-  /* Give a remote user a caret */
-  .collaboration-cursor__caret {
+/* Give a remote user a caret */
+.collaboration-cursor__caret {
     /* border-left: 1px solid #0d0d0d;
     border-right: 1px solid #0d0d0d; */
     margin-left: -1px;
@@ -685,10 +684,10 @@ div:has(> .mailSendToaster) {
     pointer-events: none;
     position: relative;
     word-break: normal;
-  }
+}
 
-  /* Render the username above the caret */
-  .collaboration-cursor__label {
+/* Render the username above the caret */
+.collaboration-cursor__label {
     border-radius: 3px;
     color: #0d0d0d;
     font-size: 12px;
@@ -703,7 +702,7 @@ div:has(> .mailSendToaster) {
     user-select: none;
     white-space: nowrap;
     z-index: 9999 !important;
-  }
+}
 
 .email-signature.rdw-editor-wrapper .rdw-editor-toolbar .rdw-option-wrapper {
     width: 24px;

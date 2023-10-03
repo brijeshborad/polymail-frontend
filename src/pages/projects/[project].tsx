@@ -1,6 +1,6 @@
 import RemoveRecordModal from "@/components/common/delete-record-modal";
-import { Message } from "@/components/messages";
-import { InviteMember, Project, TeamMember, Thread, UserProjectOnlineStatus } from "@/models";
+import {Message} from "@/components/messages";
+import {InviteMember, Project, TeamMember, UserProjectOnlineStatus} from "@/models";
 import {
     addItemToGroup, deleteMemberFromProject, deleteMemberShipFromProject
 } from "@/redux/memberships/action-reducer";
@@ -9,12 +9,11 @@ import {
     getProjectMembersInvites,
     updateProjectMemberRole, updateProjectState
 } from "@/redux/projects/action-reducer";
-import { updateLastMessage } from "@/redux/socket/action-reducer";
 import styles from "@/styles/project.module.css";
-import { StateType } from "@/types";
-import { debounceInterval, isEmail } from "@/utils/common.functions";
-import { PROJECT_ROLES } from "@/utils/constants";
-import { ChevronDownIcon, CloseIcon, TriangleDownIcon } from "@chakra-ui/icons";
+import {StateType} from "@/types";
+import {debounceInterval, isEmail} from "@/utils/common.functions";
+import {PROJECT_ROLES} from "@/utils/constants";
+import {ChevronDownIcon, CloseIcon, TriangleDownIcon} from "@chakra-ui/icons";
 import {
     Badge,
     Button,
@@ -28,35 +27,28 @@ import {
     MenuList,
     Text, Tooltip, useDisclosure
 } from "@chakra-ui/react";
-import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
 import dynamic from 'next/dynamic';
 import Image from "next/image";
-import { useRouter } from "next/router";
-import { useCallback, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import {useRouter} from "next/router";
+import {useCallback, useEffect, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+
 const ThreadsSideBar = dynamic(
     () => import('@/components/threads').then((mod) => mod.ThreadsSideBar)
 )
-dayjs.extend(customParseFormat)
-
-
-let displayOnlineMembersData: UserProjectOnlineStatus[] = [];
 
 function ProjectInbox() {
     const {members, project, invitees} = useSelector((state: StateType) => state.projects);
-    const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
+    const {selectedThread} = useSelector((state: StateType) => state.threads);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
-    // const {success: membershipSuccess} = useSelector((state: StateType) => state.memberships);
+    const {onlineUsers} = useSelector((state: StateType) => state.commonApis);
     const {success} = useSelector((state: StateType) => state.memberships);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const [isManagerMembersOpen, setIsManagerMembersOpen] = useState<boolean>(false)
-    const {sendJsonMessage, newMessage} = useSelector((state: StateType) => state.socket);
-    const {userDetails} = useSelector((state: StateType) => state.users);
+    const {sendJsonMessage} = useSelector((state: StateType) => state.socket);
 
     const [size, setSize] = useState<number>(0);
     const [maxShowingMembers, setMaxShowingMembers] = useState<number>(5);
-    const [onlineMembersData, setOnlineMemberData] = useState<UserProjectOnlineStatus[]>([]);
     const [allowAdd, setAllowAdd] = useState<boolean>(false);
     const [membersInputs, setMembersInput] = useState<{ input: string, role: string }>({
         input: '',
@@ -67,63 +59,6 @@ function ProjectInbox() {
 
     const router = useRouter();
     const dispatch = useDispatch();
-
-    useEffect(() => {
-        if (newMessage) {
-            dispatch(updateLastMessage(null));
-            if (newMessage.name === 'Activity' && project) {
-                // if (userDetails && userDetails.id !== newMessage.userId) {
-                let findThread: Thread | any = (threads || []).find((item: Thread) => item.id === newMessage.data.threadId);
-                let updateUserData = false;
-                if (newMessage.data.type === 'ViewingThread') {
-                    if (findThread && (findThread.projects || []).some((value: Project) => value.id === project!.id)) {
-                        updateUserData = true;
-                    }
-                }
-                if (newMessage.data.type === 'ViewingProject') {
-                    if (project && project.id === newMessage.data.projectId) {
-                        updateUserData = true;
-                    }
-                }
-                if (updateUserData && newMessage.data.userId) {
-                    let userAlreadyExists = onlineMembersData.findIndex((item) => item.userId === newMessage.data.userId);
-                    if (userAlreadyExists !== -1) {
-                        onlineMembersData[userAlreadyExists].isOnline = true;
-                        onlineMembersData[userAlreadyExists].lastOnlineStatusCheck = dayjs().format('DD/MM/YYYY hh:mm:ss a').toString();
-                    } else {
-                        onlineMembersData.push({
-                            userId: newMessage.data.userId,
-                            isOnline: true,
-                            lastOnlineStatusCheck: dayjs().format('DD/MM/YYYY hh:mm:ss a'),
-                            avatar: newMessage.data.avatar,
-                            color: Math.floor(Math.random() * 16777215).toString(16),
-                            name: newMessage.data.name
-                        })
-                    }
-                    setOnlineMemberData([...onlineMembersData])
-                }
-                // }
-            }
-        }
-    }, [newMessage, dispatch, userDetails, threads, project, onlineMembersData]);
-
-    useEffect(() => {
-        displayOnlineMembersData = onlineMembersData;
-    }, [onlineMembersData])
-
-    useEffect(() => {
-        debounceInterval(() => {
-            setOnlineMemberData([...displayOnlineMembersData.map((data) => {
-                let finalData = {...data};
-                let lastActiveDate = dayjs(finalData.lastOnlineStatusCheck, 'DD/MM/YYYY hh:mm:ss a');
-                if (finalData.isOnline && dayjs().diff(lastActiveDate, 'seconds') > 10) {
-                    finalData.isOnline = false;
-                }
-                return finalData;
-            })]);
-        }, 1000 * 10);
-    }, [])
-
 
     useEffect(() => {
         if (router.query.project && sendJsonMessage) {
@@ -151,17 +86,17 @@ function ProjectInbox() {
             let projectId = router.query.project as string;
             dispatch(getProjectMembers({
                 body: {
-                        projectId: projectId
-                      }
-                }));
-            dispatch(getProjectMembersInvites({body:{projectId: projectId}}));
+                    projectId: projectId
+                }
+            }));
+            dispatch(getProjectMembersInvites({body: {projectId: projectId}}));
         }
     }, [router.query.project, dispatch])
 
     // useEffect(() => {
     //     if (membershipSuccess && router.query.project) {
     //         dispatch(updateMembershipState({success: false}));
-            
+
     //     }
     // }, [dispatch, membershipSuccess, router.query.project])
 
@@ -197,10 +132,10 @@ function ProjectInbox() {
                 groupType: 'project',
                 groupId: item?.id
             }
-            dispatch(addItemToGroup({body:reqBody}))
+            dispatch(addItemToGroup({body: reqBody}))
 
             let projectId = router.query.project as string;
-            dispatch(getProjectMembersInvites({body:{projectId: projectId}}));
+            dispatch(getProjectMembersInvites({body: {projectId: projectId}}));
             setMembersInput({input: '', role: 'member'});
         }
     }, [dispatch, membersInputs, selectedAccount, router.query.project]);
@@ -211,7 +146,13 @@ function ProjectInbox() {
             let body = {
                 role: role
             }
-            dispatch(updateProjectMemberRole({body:{projectId: project.id, accountId: selectedAccount.id, body:body}}))
+            dispatch(updateProjectMemberRole({
+                body: {
+                    projectId: project.id,
+                    accountId: selectedAccount.id,
+                    body: body
+                }
+            }))
         }
 
     };
@@ -224,21 +165,26 @@ function ProjectInbox() {
     const removeMemberFromProject = () => {
         if (selectedMember) {
             if (selectedMember?.invite) {
-                dispatch(deleteMemberShipFromProject({body:{id: selectedMember.id},toaster:{
-                    success:{
-                        desc: 'Membership is removed form project successfully',
-                        title: 'Remove membership form project',
-                        type: 'success'
+                dispatch(deleteMemberShipFromProject({
+                    body: {id: selectedMember.id}, toaster: {
+                        success: {
+                            desc: 'Membership is removed form project successfully',
+                            title: 'Remove membership form project',
+                            type: 'success'
+                        }
                     }
-                }}));
+                }));
             } else {
                 if (project && project.id && selectedMember?.id) {
-                    dispatch(deleteMemberFromProject({body:{id: project.id, accountId: selectedMember.id},toaster:{
-                        success:{
-                            desc: 'Member is removed form project successfully',
-                            title: 'Remove member form project',
-                            type: 'success'
-                        }}}));
+                    dispatch(deleteMemberFromProject({
+                        body: {id: project.id, accountId: selectedMember.id}, toaster: {
+                            success: {
+                                desc: 'Member is removed form project successfully',
+                                title: 'Remove member form project',
+                                type: 'success'
+                            }
+                        }
+                    }));
                 }
             }
         }
@@ -300,8 +246,9 @@ function ProjectInbox() {
                                lineHeight={'1.19'}>{members && members.length === 1 ? `1 member` : `${members && members.length} members`}</Badge>
                     </Flex>
                     <Flex align={'center'} gap={1}>
-                        {onlineMembersData.filter(t => t.isOnline).slice(0, maxShowingMembers)
-                            .map((item, index) => (
+                        {project && onlineUsers && (onlineUsers['projects'][project.id!] || [])
+                            .filter((t: UserProjectOnlineStatus) => t.isOnline).slice(0, maxShowingMembers)
+                            .map((item: UserProjectOnlineStatus, index: number) => (
                                 <Tooltip label={item.name} placement='bottom' bg='gray.300' color='black' key={index}>
                                     <div className={styles.userImage} style={{border: `2px solid #${item.color}`}}>
                                         {item.avatar && <Image src={item.avatar} width="36" height="36" alt=""/>}
@@ -310,7 +257,7 @@ function ProjectInbox() {
                             ))}
                         <Text fontSize={'sm'} textDecoration={'underline'} cursor={'pointer'}
                               onClick={() => setMaxShowingMembers(maxShowingMembers + 5)}>
-                            {onlineMembersData.length > maxShowingMembers ? `+${onlineMembersData.length - maxShowingMembers}more` : ''}
+                            {project && onlineUsers && (onlineUsers['projects'][project.id!] || []).length > maxShowingMembers ? `+${(onlineUsers['projects'][project.id!] || []).length - maxShowingMembers}more` : ''}
                         </Text>
                         <Menu isOpen={isManagerMembersOpen} onClose={() => setIsManagerMembersOpen(false)}>
                             {({onClose}) => (

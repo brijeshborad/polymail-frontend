@@ -1,10 +1,16 @@
-import {MessageAttachments, MessagePart, Project, Thread} from "@/models";
+import {MessageAttachments, MessagePart, Thread, UserProjectOnlineStatus} from "@/models";
 
 let cacheThreads: { [key: string]: Thread[] } = {};
 let currentCacheTab = 'INBOX';
 let cacheMessages: { [key: string]: { body: MessagePart, attachments: MessageAttachments[] } } = {};
 let currentSelectedThreads: number[] = [];
-let memberStatus: { [key: string]: Thread[] | Project[] } = {};
+let memberStatus: {
+    threads: { [key: string]: UserProjectOnlineStatus[] },
+    projects: { [key: string]: UserProjectOnlineStatus[] }
+} = {
+    threads: {},
+    projects: {}
+};
 
 export function getCurrentCacheTab() {
     return currentCacheTab;
@@ -42,11 +48,11 @@ export function setCurrentSelectedThreads(indexes: number[]) {
     return currentSelectedThreads;
 }
 
-export function getMemberStatusCache(key: string) {
-    return memberStatus[key] || [];
+export function getMemberStatusCache() {
+    return memberStatus;
 }
 
-export function setMemberStatusCache(key: string, data: Thread[] | Project[]) {
-    memberStatus[key] = data;
+export function setMemberStatusCache(data: any) {
+    memberStatus = data;
     return memberStatus;
 }

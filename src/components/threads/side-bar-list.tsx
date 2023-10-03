@@ -1,4 +1,4 @@
-import {Project, Thread} from "@/models";
+import {Thread} from "@/models";
 import styles from "@/styles/Inbox.module.css";
 import { Flex, Input } from "@chakra-ui/react";
 import React, {useEffect, useCallback, useRef, useState, RefObject} from "react";
@@ -14,15 +14,9 @@ import dynamic from "next/dynamic";
 import {updateCommonState} from "@/redux/common-apis/action-reducer";
 import {
   getCurrentSelectedThreads,
-  getMemberStatusCache,
   setCurrentSelectedThreads,
-  setMemberStatusCache
 } from "@/utils/cache.functions";
 import {debounceInterval} from "@/utils/common.functions";
-import {updateLastMessage} from "@/redux/socket/action-reducer";
-import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
-dayjs.extend(customParseFormat)
 
 export function ThreadsSideBarList(props: ThreadListProps) {
   const { selectedThread, threads} = useSelector((state: StateType) => state.threads);
@@ -38,84 +32,12 @@ export function ThreadsSideBarList(props: ThreadListProps) {
   const [currentThreads, setCurrentThreads] = useState<Thread[]>([]);
   const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
   const { target, threadIndex } = useSelector((state: StateType) => state.keyNavigation)
-  const {newMessage} = useSelector((state: StateType) => state.socket);
-  const {userDetails} = useSelector((state: StateType) => state.users);
-
-  useEffect(() => {
-    if (newMessage) {
-      dispatch(updateLastMessage(null));
-      if (newMessage.name === 'Activity') {
-        let displayedThreads = [...getMemberStatusCache(`threads-${router.pathname.includes('inbox') ? 'inbox': 'project'}`)];
-        // if (userDetails && userDetails.id !== newMessage.data.userId) {
-          displayedThreads = displayedThreads.map((threadItem: Thread) => {
-            let finalItem: Thread = {...threadItem};
-            if (!finalItem.userProjectOnlineStatus) {
-              finalItem.userProjectOnlineStatus = [];
-            }
-            if (newMessage.data.type === 'ViewingThread') {
-              if (finalItem.id === newMessage.data.threadId) {
-                finalItem.userProjectOnlineStatus = [...finalItem.userProjectOnlineStatus];
-                finalItem.showOnlineMembersCount = 5;
-                let userAlreadyExists = finalItem.userProjectOnlineStatus.findIndex((item) => item.userId === newMessage.data.userId);
-                if (userAlreadyExists !== -1) {
-                  finalItem.userProjectOnlineStatus[userAlreadyExists] = {
-                    ...finalItem.userProjectOnlineStatus[userAlreadyExists],
-                    isOnline: true,
-                    lastOnlineStatusCheck: dayjs().format('DD/MM/YYYY hh:mm:ss a')
-                  }
-                } else {
-                  finalItem.userProjectOnlineStatus.push({
-                    userId: newMessage.data.userId,
-                    isOnline: true,
-                    lastOnlineStatusCheck: dayjs().format('DD/MM/YYYY hh:mm:ss a'),
-                    avatar: newMessage.data.avatar,
-                    color: Math.floor(Math.random()*16777215).toString(16),
-                    name: newMessage.data.name
-                  })
-                }
-              }
-            }
-            return {...finalItem};
-          })
-          setCurrentThreads(displayedThreads);
-          setMemberStatusCache(`threads-${router.pathname.includes('inbox') ? 'inbox': 'project'}`, displayedThreads);
-        // }
-      }
-    }
-  }, [newMessage, dispatch, userDetails, router.pathname]);
 
   useEffect(() => {
     if (threads) {
       setCurrentThreads(threads);
     }
   }, [threads])
-
-  useEffect(() => {
-    setMemberStatusCache(`threads-${router.pathname.includes('inbox') ? 'inbox': 'project'}`, currentThreads);
-  }, [currentThreads, router.pathname])
-
-  useEffect(() => {
-    debounceInterval(() => {
-      let displayedThreads = [...getMemberStatusCache(`threads-${router.pathname.includes('inbox') ? 'inbox': 'project'}`)];
-      displayedThreads = displayedThreads.map((item: Project) => {
-        let finalItem = {...item};
-        if (!finalItem.userProjectOnlineStatus) {
-          finalItem.userProjectOnlineStatus = [];
-        }
-        finalItem.userProjectOnlineStatus = finalItem.userProjectOnlineStatus.map((data) => {
-          let finalData = {...data};
-          let lastActiveDate = dayjs(finalData.lastOnlineStatusCheck, 'DD/MM/YYYY hh:mm:ss a');
-          if (finalData.isOnline && dayjs().diff(lastActiveDate, 'seconds') > 10) {
-            finalData.isOnline = false;
-          }
-          return finalData;
-        })
-        return {...finalItem}
-      })
-      setCurrentThreads([...displayedThreads]);
-      setMemberStatusCache(`threads-${router.pathname.includes('inbox') ? 'inbox': 'project'}`, displayedThreads);
-    }, 1000 * 10);
-  }, [router.pathname])
 
   useEffect(() => {
     // Make isThreadSearched as false when multiSelection is null or blank

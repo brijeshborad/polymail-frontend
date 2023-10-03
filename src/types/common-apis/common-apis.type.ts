@@ -1,4 +1,4 @@
-import {Summary, Contacts} from "@/models";
+import {Summary, Contacts, UserProjectOnlineStatus} from "@/models";
 
 export declare type InitialCommonApisStateType = {
   summary?: Summary | null,
@@ -10,4 +10,8 @@ export declare type InitialCommonApisStateType = {
   isComposing?: boolean,
   allowThreadSelection?: boolean,
   contacts?: Contacts[] | []
+  onlineUsers?: {
+    threads: { [key: string]: UserProjectOnlineStatus[] },
+    projects: { [key: string]: UserProjectOnlineStatus[] }
+  }
 }

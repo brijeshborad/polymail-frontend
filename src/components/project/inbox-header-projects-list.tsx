@@ -3,107 +3,21 @@ import {DisneyDIcon, FolderIcon} from "@/icons";
 import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {Project, Thread} from "@/models";
+import {Project, UserProjectOnlineStatus} from "@/models";
 import Router from "next/router";
 import {PlusIcon} from "@/icons/plus.icon";
 import {updateThreadState} from "@/redux/threads/action-reducer";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 import {updateCommonState} from "@/redux/common-apis/action-reducer";
-import {updateLastMessage} from "@/redux/socket/action-reducer";
-import dayjs from "dayjs";
-import {debounceInterval} from "@/utils/common.functions";
-import {getMemberStatusCache, setMemberStatusCache} from "@/utils/cache.functions";
-import customParseFormat from "dayjs/plugin/customParseFormat";
-dayjs.extend(customParseFormat)
 
 export function InboxHeaderProjectsList(props: { size: number }) {
     const {projects, isLoading} = useSelector((state: StateType) => state.projects);
-    const {newMessage} = useSelector((state: StateType) => state.socket);
-    const {threads} = useSelector((state: StateType) => state.threads);
-    const {userDetails} = useSelector((state: StateType) => state.users);
+    const {onlineUsers} = useSelector((state: StateType) => state.commonApis);
     const [projectData, setProjectData] = useState<Project[]>([]);
     const [projectDataLength, setProjectDataLength] = useState<Project[]>([]);
     const dispatch = useDispatch();
     const projectButtonRef = React.useRef<HTMLDivElement | null | any>(null);
     const [maxSize, setMaxSize] = useState<number>(5);
-
-    useEffect(() => {
-        if (newMessage) {
-            dispatch(updateLastMessage(null));
-            if (newMessage.name === 'Activity') {
-                let displayedProjects = [...getMemberStatusCache(`projects-inbox`)];
-                if (userDetails && userDetails.id !== newMessage.data.userId) {
-                    let findThread: Thread | any = (threads || []).find((item: Thread) => item.id === newMessage.data.threadId);
-                    displayedProjects = displayedProjects.map((projectItem: Project) => {
-                        let updateUserData = false;
-                        let finalItem: Project = {...projectItem};
-                        if (!finalItem.userProjectOnlineStatus) {
-                            finalItem.userProjectOnlineStatus = [];
-                        }
-                        if (newMessage.data.type === 'ViewingThread') {
-                            if (findThread && (findThread.projects || []).some((value: Project) => value.id === projectItem!.id)) {
-                                updateUserData = true;
-                            }
-                        }
-                        if (newMessage.data.type === 'ViewingProject') {
-                            if (projectItem.id === newMessage.data.projectId) {
-                                updateUserData = true;
-                            }
-                        }
-
-                        if (updateUserData && newMessage.data.userId) {
-                            finalItem.userProjectOnlineStatus = [...finalItem.userProjectOnlineStatus];
-                            let userAlreadyExists = finalItem.userProjectOnlineStatus.findIndex((item) => item.userId === newMessage.data.userId);
-                            if (userAlreadyExists !== -1) {
-                                finalItem.userProjectOnlineStatus[userAlreadyExists] = {
-                                    ...finalItem.userProjectOnlineStatus[userAlreadyExists],
-                                    isOnline: true,
-                                    lastOnlineStatusCheck: dayjs().format('DD/MM/YYYY hh:mm:ss a')
-                                }
-                            } else {
-                                finalItem.userProjectOnlineStatus.push({
-                                    userId: newMessage.data.userId,
-                                    isOnline: true,
-                                    lastOnlineStatusCheck: dayjs().format('DD/MM/YYYY hh:mm:ss a'),
-                                    avatar: newMessage.data.avatar,
-                                    color: Math.floor(Math.random()*16777215).toString(16),
-                                    name: newMessage.data.name
-                                })
-                            }
-                        }
-                        return {...finalItem};
-                    })
-                    setProjectData(displayedProjects);
-                }
-            }
-        }
-    }, [newMessage, dispatch, threads, userDetails]);
-
-    useEffect(() => {
-        setMemberStatusCache(`projects-inbox`, projectData);
-    }, [projectData])
-
-    useEffect(() => {
-        debounceInterval(() => {
-            let displayedProjects = [...getMemberStatusCache(`projects-inbox`)];
-            displayedProjects = displayedProjects.map((item: Project) => {
-                let finalItem = {...item};
-                if (!finalItem.userProjectOnlineStatus) {
-                    finalItem.userProjectOnlineStatus = [];
-                }
-                finalItem.userProjectOnlineStatus = finalItem.userProjectOnlineStatus.map((data) => {
-                    let finalData = {...data};
-                    let lastActiveDate = dayjs(finalData.lastOnlineStatusCheck, 'DD/MM/YYYY hh:mm:ss a');
-                    if (finalData.isOnline && dayjs().diff(lastActiveDate, 'seconds') > 10) {
-                        finalData.isOnline = false;
-                    }
-                    return finalData;
-                })
-                return {...finalItem}
-            })
-            setProjectData([...displayedProjects]);
-        }, 1000 * 10);
-    }, [])
 
     useEffect(() => {
         if (projects && projects.length > 0) {
@@ -168,9 +82,9 @@ export function InboxHeaderProjectsList(props: { size: number }) {
                         <Text whiteSpace={'nowrap'} overflow={'hidden'} textOverflow={'ellipsis'} fontSize='13px'
                               color={'#0A101D'} flex={'1'}>{project.name}</Text>
                         <Flex className={'member-images subheader-images'}>
-                            {(project.userProjectOnlineStatus || [])
-                                .filter(t => t.isOnline).slice(0, 5)
-                                .map((item, index) => (
+                            {(onlineUsers && onlineUsers.projects[project.id!] || [])
+                                .filter((t: UserProjectOnlineStatus) => t.isOnline).slice(0, 5)
+                                .map((item: UserProjectOnlineStatus, index: number) => (
                                     <Tooltip label={item.name} placement='bottom' bg='gray.300' color='black' key={index}>
                                         <div className={'member-photo'}
                                              style={{background: '#000', border: `2px solid #${item.color}`}}>

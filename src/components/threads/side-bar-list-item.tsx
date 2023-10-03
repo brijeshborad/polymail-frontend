@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import React, {useEffect, useRef, useState} from "react";
 import { MAILBOX_UNREAD } from "@/utils/constants";
 import { updateKeyNavigation } from "@/redux/key-navigation/action-reducer";
+import {UserProjectOnlineStatus} from "@/models";
 
 
 export function ThreadsSideBarListItem(props: ThreadListItemProps) {
@@ -16,6 +17,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
   const [isSelected, setIsSelected] = useState<boolean>(false);
   const [isClicked, setIsClicked] = useState<boolean>(false);
   const dispatch = useDispatch()
+  const { onlineUsers } = useSelector((state: StateType) => state.commonApis)
 
     useEffect(() => {
         setIsSelected((multiSelection || [])?.includes(props.thread.id!));
@@ -65,9 +67,9 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
               <Flex alignItems={'center'} justifyContent={'space-between'}>
                   {props.thread.subject || "(no subject)"}
                   <Flex alignItems={'center'} justifyContent={'end'} className={'member-images subheader-images'}>
-                      {(props.thread.userProjectOnlineStatus || [])
-                          .filter(t => t.isOnline).slice(0, 5)
-                          .map((item, index) => (
+                      {(onlineUsers && props.thread && onlineUsers['threads'][props.thread.id!] || [])
+                          .filter((t: UserProjectOnlineStatus) => t.isOnline).slice(0, 5)
+                          .map((item: UserProjectOnlineStatus, index: number) => (
                                   <Tooltip label={item.name} placement='bottom' bg='gray.300' color='black' key={index}>
                                       <div className={'member-photo'}
                                            style={{background: '#000', border: `2px solid #${item.color}`}}>
