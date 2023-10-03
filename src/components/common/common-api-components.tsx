@@ -83,7 +83,6 @@ export function CommonApiComponents() {
                 ...onlineUsers[type],
                 ...(!onlineUsers[type][id] ? {[id]: []} : {[id]: [...onlineUsers[type][id]]})
             };
-            console.log('NEW', type, id);
             let userAlreadyExists = onlineUsers[type][id].findIndex((item: UserProjectOnlineStatus) => item.userId === newMessage.data.userId);
             if (userAlreadyExists !== -1) {
                 if (onlineUsers[type][id][userAlreadyExists].forceWait > 0) {
