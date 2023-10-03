@@ -73,7 +73,11 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     onlineMembers['threads'] = {...onlineMembers['threads']};
     let oldThreadId: string = oldThread.id!;
     let newThreadId: string = newThread.id!;
-    onlineMembers['threads'][oldThreadId] = [...onlineMembers['threads'][oldThreadId]];
+    if (!onlineMembers['threads'][oldThreadId]) {
+      onlineMembers['threads'][oldThreadId] = [];
+    } else {
+      onlineMembers['threads'][oldThreadId] = [...onlineMembers['threads'][oldThreadId]];
+    }
     if (!onlineMembers['threads'][newThreadId]) {
       onlineMembers['threads'][newThreadId] = [];
     } else {
