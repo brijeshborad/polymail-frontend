@@ -724,7 +724,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
       <Flex maxHeight={'450px'} direction={'column'} backgroundColor={'#FFFFFF'} width={'100%'}
         onFocus={() => handleFocus()} onBlur={() => handleBlur()}>
         <Flex borderRadius={8} gap={4} border={'1px solid #F3F4F6'} direction={'column'} padding={4}>
-          {router.query.project && (
+          {/*router.query.project && (
             <Flex align={'center'} justify={'space-between'} gap={4} pb={4}
               borderBottom={'1px solid #F3F4F6'}>
               <Flex gap={1} align={'center'}>
@@ -746,7 +746,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 padding={'4px 8px'} borderRadius={'30px'} color={'#374151'} fontSize={'12px'}
                 fontWeight={500} lineHeight={'normal'}> Create new draft </Button>
             </Flex>
-          )}
+          ) */}
           <Flex align={'center'} justify={'space-between'} gap={4} position={"relative"} zIndex={8}>
             <Flex align={'center'} gap={1}>
               <Menu isOpen={isReplyDropdownOpen} onClose={() => setIsReplyDropdownOpen(false)}>
