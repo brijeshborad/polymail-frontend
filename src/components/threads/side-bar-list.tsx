@@ -33,6 +33,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
   const [currentThreads, setCurrentThreads] = useState<Thread[]>([]);
   const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
   const { target, threadIndex } = useSelector((state: StateType) => state.keyNavigation)
+  const { userDetails, profilePicture } = useSelector((state: StateType) => state.users)
 
   useEffect(() => {
     if (threads) {
@@ -98,6 +99,14 @@ export function ThreadsSideBarList(props: ThreadListProps) {
       onlineMembers['threads'][newThreadId][findNewThreadUserIndex].lastOnlineStatusCheck = dayjs().format('DD/MM/YYYY hh:mm:ss a');
       onlineMembers['threads'][newThreadId][findNewThreadUserIndex].forceWait = 0;
     } else {
+      if (!oldThreadOnlineUser && userDetails) {
+        oldThreadOnlineUser = {
+          userId: userDetails.id,
+          avatar: (profilePicture?.url || ''),
+          color: Math.floor(Math.random() * 16777215).toString(16),
+          name: (userDetails.firstName || '') + ' ' + (userDetails.lastName || ' '),
+        }
+      }
       onlineMembers['threads'][newThreadId].push({
         ...oldThreadOnlineUser,
         isOnline: true,
@@ -107,7 +116,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     }
     setMemberStatusCache(onlineMembers);
     dispatch(updateCommonState({onlineUsers: onlineMembers}));
-  }, [dispatch])
+  }, [dispatch, userDetails, profilePicture])
 
   const handleClick = useCallback((item: Thread, event: KeyboardEvent | any, index: number) => {
     // Check if Control key (or Command key on Mac) is held down
