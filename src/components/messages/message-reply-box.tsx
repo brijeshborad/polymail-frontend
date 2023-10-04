@@ -39,7 +39,7 @@ const blankRecipientValue: MessageRecipient = {
   name: '',
   email: ''
 }
-let collabId = makeCollabId(10);
+let collabid = makeCollabId(10);
 export function MessageReplyBox(props: MessageBoxType) {
   const [emailRecipients, setEmailRecipients] = useState<RecipientsType | any>({
     cc: { items: [], value: blankRecipientValue },
@@ -244,7 +244,7 @@ export function MessageReplyBox(props: MessageBoxType) {
       bcc: emailRecipients.bcc?.items && emailRecipients.bcc?.items.length > 0 ? emailRecipients.bcc?.items : [],
       draftInfo: {
         body: value || emailBody,
-        collabId
+        collabid
       },
       messageId: props.messageData?.id,
       ...(props.isProjectView ? { projectId: router.query.project as string } : {}),
@@ -276,8 +276,8 @@ export function MessageReplyBox(props: MessageBoxType) {
     // Add signature and draft to email body
     if (draft && draft.draftInfo) {
       if (draft.draftInfo.body) {
-        if (draft.draftInfo.collabId) {
-          collabId = draft.draftInfo.collabId;
+        if (draft.draftInfo.collabid) {
+          collabid = draft.draftInfo.collabid;
         }
         setEmailBody(draft?.draftInfo?.body || '');
       }
@@ -815,7 +815,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} overflow={'auto'} zIndex={6} ref={editorRef} className={`editor-bottom-shadow`}
               onScroll={() => handleEditorScroll()}>
               {selectedThread && <CollabRichTextEditor
-                  id={'thread-' + collabId}
+                  id={'thread-' + collabid}
                   onChange={(content) => sendToDraft(content)}
                   placeholder='Reply with anything you like or @mention someone to share this thread'
                   isToolbarVisible={hideEditorToolbar}
