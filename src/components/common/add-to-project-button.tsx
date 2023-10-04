@@ -18,7 +18,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {updateCommonState} from "@/redux/common-apis/action-reducer";
 import {addThreadToProject} from "@/utils/threads-common-functions";
-import {createProjects, removeThreadFromProject} from "@/redux/projects/action-reducer";
+import { removeThreadFromProject} from "@/redux/projects/action-reducer";
 
 export function AddToProjectButton() {
     const [isDropdownOpen, setDropDownOpen] = useState(false)
