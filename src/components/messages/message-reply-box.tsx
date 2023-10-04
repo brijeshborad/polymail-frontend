@@ -13,7 +13,6 @@ import { ChevronDownIcon, CloseIcon } from "@chakra-ui/icons";
 import React, { ChangeEvent, ChangeEventHandler, useCallback, useEffect, useRef, useState } from "react";
 import { debounce, isEmail } from "@/utils/common.functions";
 import { Toaster } from "@/components/common";
-// const RichTextEditor = dynamic(() => import("@/components/common").then(mod => mod.RichTextEditor));
 const Time = dynamic(() => import("@/components/common").then(mod => mod.Time));
 import { createDraft, sendMessage, updateDraftState, updatePartialMessage } from "@/redux/draft/action-reducer";
 import { useDispatch, useSelector } from "react-redux";
@@ -49,7 +48,6 @@ export function MessageReplyBox(props: MessageBoxType) {
   })
   const [subject, setSubject] = useState<string>('');
   const [emailBody, setEmailBody] = useState<string>('');
-  // const { target } = useSelector((state: StateType) => state.keyNavigation);
   const { selectedAccount } = useSelector((state: StateType) => state.accounts);
   const { draft } = useSelector((state: StateType) => state.draft);
   const { selectedThread, tabValue } = useSelector((state: StateType) => state.threads);
@@ -225,20 +223,18 @@ export function MessageReplyBox(props: MessageBoxType) {
     }));
   };
 
-  const sendToDraft = (value: string, isValueUpdate: boolean = true, isForceCreate: boolean = false) => {
+  const sendToDraft = (value: string, isValueUpdate: boolean = true) => {
     let updateValue: string = getPlainTextFromHtml(value);
 
-    if(!isForceCreate) {
-      if (!updateValue.trim()) {
-        return;
+    if (!updateValue.trim()) {
+      return;
+    }
+    if (isValueUpdate) {
+      if (!value.trim()) {
+        setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
+        setExtraClassNamesForBottom(prevState => prevState.replace('show-shadow-bottom', ''));
       }
-      if (isValueUpdate) {
-        if (!value.trim()) {
-          setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
-          setExtraClassNamesForBottom(prevState => prevState.replace('show-shadow-bottom', ''));
-        }
-        setEmailBody(value);
-      }
+      setEmailBody(value);
     }
 
     let body = {
@@ -816,7 +812,6 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
               onScroll={() => handleEditorScroll()}>
               {selectedThread && <CollabRichTextEditor
                   id={selectedThread?.id!}
-                  content={emailBody}
                   onChange={(content) => sendToDraft(content)}
                   placeholder='Reply with anything you like or @mention someone to share this thread'
                   isToolbarVisible={hideEditorToolbar}

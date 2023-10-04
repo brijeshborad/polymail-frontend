@@ -199,15 +199,20 @@ export function AddToProjectButton() {
                     </div>
 
                     <div className={'add-to-project-list'}>
-                        {filteredProjects && !!filteredProjects.length && (filteredProjects || []).map((item: Project, index: number) => (
-                            <MenuItem gap={2} key={index} onClick={() => {
-                                if (selectedThread || draft) {
-                                    addThreadToProject(item, multiSelection, selectedThread || draft, dispatch, threads || [], null)
-                                }
-                            }}>
-                                {item.emoji} {item.name}
-                            </MenuItem>
-                        ))}
+                        {filteredProjects && !!filteredProjects.length && (filteredProjects || []).map((item: Project, index: number) => {
+                            if (selectedThread && selectedThread?.projects && selectedThread?.projects.map(t => t.id).includes(item.id)) {
+                                return null;
+                            }
+                            return (
+                                <MenuItem gap={2} key={index} onClick={() => {
+                                    if (selectedThread || draft) {
+                                        addThreadToProject(item, multiSelection, selectedThread || draft, dispatch, threads || [], null)
+                                    }
+                                }}>
+                                    {item.emoji} {item.name}
+                                </MenuItem>
+                            )
+                        })}
                     </div>
 
                     <div className={styles.addNewProject}>

@@ -6,7 +6,7 @@ export declare type CollabRichTextEditorType = {
     beforeToolbar?: ReactElement;
     afterToolbar?: ReactElement;
     extendToolbar?: ReactElement;
-    content: string;
+    content?: string;
     placeholder: string;
     isToolbarVisible: boolean;
     className?: string

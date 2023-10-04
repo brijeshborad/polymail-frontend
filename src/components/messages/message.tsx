@@ -75,6 +75,7 @@ export function Message({isProjectView = false}: {isProjectView?: boolean}) {
       setShowReplyBox(false)
       setIndex(null);
       setMessageDetailsForReplyBox(null);
+      setReplyType('reply');
       dispatch(updateMessageState({messages: selectedThread.messages}));
       setTimeout(() => {
         setShowReplyBox(true)

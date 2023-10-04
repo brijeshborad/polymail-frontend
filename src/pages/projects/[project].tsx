@@ -235,13 +235,13 @@ function ProjectInbox() {
                 <Flex align={'center'} justify={'space-between'} gap={4} padding={'16px 40px 15px'}
                       borderBottom={'1px solid rgba(8, 22, 47, 0.12)'} backgroundColor={'#FFFFFF'}>
                     <Flex align={'center'} gap={2}>
-                        <div className={styles.imgWrapper}>
+                        <Flex className={styles.imgWrapper} marginBottom={'-4px'} alignItems={'center'} justifyContent={'center'} fontSize={'20px'}>
                             {project?.emoji ? project.emoji :
                                 <Image src="/image/user.png" width="36" height="36" alt=""/>}
-                        </div>
+                        </Flex>
                         <Heading as='h4' fontSize={'24px'} color={'#08162F'}>{project && project.name}</Heading>
                         <Badge textTransform={'none'} color={'#000000'} fontSize={'14px'} fontWeight={'600'}
-                               backgroundColor={'#E9E9E9'}
+                               backgroundColor={'#E9E9E9'} marginBottom={'-2px'}
                                padding={'3px 6px'} borderRadius={'4px'}
                                lineHeight={'1.19'}>{members && members.length === 1 ? `1 member` : `${members && members.length} members`}</Badge>
                     </Flex>

@@ -1,16 +1,13 @@
-import {ContentState} from "draft-js";
-import {mergeAttributes, Node} from "@tiptap/react";
-
-let htmlToDraft: any = null;
-if (typeof window === 'object') {
-  htmlToDraft = require('html-to-draftjs').default;
-}
+import {Node} from "@tiptap/react";
 
 export function getPlainTextFromHtml(value: string) {
-  if (htmlToDraft) {
-    return ContentState.createFromBlockArray(htmlToDraft(value)).getPlainText()
+  let textContent = new DOMParser()
+      .parseFromString(value, "text/html")
+      .documentElement.textContent;
+  if (textContent) {
+    return textContent.toString();
   }
-  return value;
+  return '';
 }
 
 export const getSchema = [
@@ -82,14 +79,14 @@ export const getSchema = [
     parseHTML() {
       return [{tag: 'p'}]
     },
-    renderHTML({node, HTMLAttributes}) {
-      let style = node.attrs.style;
+    renderHTML({node}) {
+      // let style = node.attrs.style;
       // if (style) {
       //   style += ' margin-block-start: 1em; margin-block-end: 1em;';
       // } else {
       //   style = ' margin-block-start: 1em; margin-block-end: 1em;';
       // }
-      return ['p', mergeAttributes(HTMLAttributes, node.attrs, {style}), 0]
+      return ['p', node.attrs, 0]
     }
   }),
   Node.create({
@@ -122,8 +119,8 @@ export const getSchema = [
     content: '(tableCell | tableHeader)*',
     tableRole: 'row',
     parseHTML() {return [{ tag: 'tr' }]},
-    renderHTML({ HTMLAttributes, node }) {
-      return ['tr', mergeAttributes(HTMLAttributes, node.attrs), 0]
+    renderHTML({ node }) {
+      return ['tr', node.attrs, 0]
     },
   }),
   Node.create({
@@ -150,8 +147,8 @@ export const getSchema = [
     tableRole: 'header_cell',
     isolating: true,
     parseHTML() {return [{ tag: 'th' }]},
-    renderHTML({ HTMLAttributes, node }) {
-      return ['th', mergeAttributes(HTMLAttributes, node.attrs), 0]
+    renderHTML({ node }) {
+      return ['th', node.attrs, 0]
     },
   }),
   Node.create({
@@ -178,8 +175,8 @@ export const getSchema = [
     tableRole: 'cell',
     isolating: true,
     parseHTML() {return [{ tag: 'td' }]},
-    renderHTML({ HTMLAttributes }) {
-      return ['td', mergeAttributes(HTMLAttributes), 0]
+    renderHTML() {
+      return ['td', 0]
     },
   }),
   Node.create({
@@ -196,8 +193,8 @@ export const getSchema = [
       }
     },
     parseHTML() {return [{ tag: 'center' }]},
-    renderHTML({ HTMLAttributes }) {
-      return ['center', mergeAttributes(HTMLAttributes), 0]
+    renderHTML() {
+      return ['center', 0]
     },
   }),
   Node.create({
