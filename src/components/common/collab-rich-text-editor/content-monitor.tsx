@@ -9,7 +9,9 @@ export default function ContentMonitor() {
 
     useEffect(() => {
         if (event && event.type === 'richtexteditor.forceUpdate') {
-            editor?.commands.setContent(event.data)
+            // console.log('COMES HERE', event);
+            editor?.commands.clearContent(false);
+            editor?.commands.setContent(event.data, false)
         }
     }, [editor, event]);
 

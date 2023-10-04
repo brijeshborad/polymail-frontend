@@ -58,6 +58,7 @@ export interface MessageAttachment {
 export interface MessageDraftInfo {
     body?: string,
     attachments?: MessageAttachments[],
+    collabId?: string,
 }
 
 export interface MessageRequestBody {

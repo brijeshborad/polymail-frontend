@@ -11,7 +11,7 @@ import styles from "@/styles/Inbox.module.css";
 import Image from "next/image";
 import { ChevronDownIcon, CloseIcon } from "@chakra-ui/icons";
 import React, { ChangeEvent, ChangeEventHandler, useCallback, useEffect, useRef, useState } from "react";
-import { debounce, isEmail } from "@/utils/common.functions";
+import {debounce, isEmail, makeCollabId} from "@/utils/common.functions";
 import { Toaster } from "@/components/common";
 const Time = dynamic(() => import("@/components/common").then(mod => mod.Time));
 import { createDraft, sendMessage, updateDraftState, updatePartialMessage } from "@/redux/draft/action-reducer";
@@ -39,7 +39,7 @@ const blankRecipientValue: MessageRecipient = {
   name: '',
   email: ''
 }
-
+let collabId = makeCollabId(10);
 export function MessageReplyBox(props: MessageBoxType) {
   const [emailRecipients, setEmailRecipients] = useState<RecipientsType | any>({
     cc: { items: [], value: blankRecipientValue },
@@ -237,13 +237,14 @@ export function MessageReplyBox(props: MessageBoxType) {
       setEmailBody(value);
     }
 
-    let body = {
+    let body: any = {
       subject: subject,
       to: emailRecipients.recipients?.items,
       cc: emailRecipients.cc?.items && emailRecipients.cc?.items.length > 0 ? emailRecipients.cc?.items : [],
       bcc: emailRecipients.bcc?.items && emailRecipients.bcc?.items.length > 0 ? emailRecipients.bcc?.items : [],
       draftInfo: {
-        body: value || emailBody
+        body: value || emailBody,
+        collabId
       },
       messageId: props.messageData?.id,
       ...(props.isProjectView ? { projectId: router.query.project as string } : {}),
@@ -275,6 +276,9 @@ export function MessageReplyBox(props: MessageBoxType) {
     // Add signature and draft to email body
     if (draft && draft.draftInfo) {
       if (draft.draftInfo.body) {
+        if (draft.draftInfo.collabId) {
+          collabId = draft.draftInfo.collabId;
+        }
         setEmailBody(draft?.draftInfo?.body || '');
       }
       if (draft?.draftInfo?.attachments?.length) {
@@ -811,7 +815,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} overflow={'auto'} zIndex={6} ref={editorRef} className={`editor-bottom-shadow`}
               onScroll={() => handleEditorScroll()}>
               {selectedThread && <CollabRichTextEditor
-                  id={selectedThread?.id!}
+                  id={'thread-' + collabId}
                   onChange={(content) => sendToDraft(content)}
                   placeholder='Reply with anything you like or @mention someone to share this thread'
                   isToolbarVisible={hideEditorToolbar}
