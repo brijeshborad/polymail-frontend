@@ -157,7 +157,9 @@ export function ThreadsSideBarList(props: ThreadListProps) {
         }))
 
       } else {
-        updateOnlineStatus(selectedThread!, item!);
+        if(selectedThread && item) {
+          updateOnlineStatus(selectedThread!, item!);
+        }
         dispatch(fireEvent({
           event: {
             data: '',
