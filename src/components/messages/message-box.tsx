@@ -85,7 +85,7 @@ export function MessageBox(props: any) {
                           {props?.item.scope !== 'visible' ? <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
                                 <EyeSlashedIcon />
                           </Flex> : ''}
-                          <span style={{ marginRight: '20px', marginTop: '2.5px' }}>
+                          <span style={{ marginRight: '20px', marginTop: '5.5px' }}>
                             <Time time={props?.item.created || ''} isShowFullTime={true} showTimeInShortForm={false} />
                           </span>
                           
@@ -167,7 +167,7 @@ export function MessageBox(props: any) {
                                           +4
                                       </Flex>
                                   </Flex>*/}
-                                  <div className={styles.mailBoxTime}>
+                                  <div className={styles.mailBoxTime} style={{ marginTop: '5.5px' }}>
                                       <Time time={props.threadDetails?.created || ''} isShowFullTime={true} showTimeInShortForm={false}/>
                                   </div>
                               </Flex>
