@@ -18,7 +18,6 @@ import {
 } from "@/utils/cache.functions";
 import {debounceInterval} from "@/utils/common.functions";
 import dayjs from "dayjs";
-import {fireEvent} from "@/redux/global-events/action-reducer";
 
 export function ThreadsSideBarList(props: ThreadListProps) {
   const { selectedThread, threads} = useSelector((state: StateType) => state.threads);
@@ -160,12 +159,6 @@ export function ThreadsSideBarList(props: ThreadListProps) {
         if(selectedThread && item) {
           updateOnlineStatus(selectedThread!, item!);
         }
-        dispatch(fireEvent({
-          event: {
-            data: '',
-            type: 'richtexteditor.forceUpdate'
-          }
-        }));
         dispatch(updateCommonState({isComposing: false}));
         if (props.tab === 'DRAFT') {
           if (item && item.messages && item.messages[0]) {

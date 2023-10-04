@@ -31,7 +31,7 @@ import dynamic from "next/dynamic";
 import { fireEvent } from "@/redux/global-events/action-reducer";
 import { updateThreadState } from "@/redux/threads/action-reducer";
 import { getCacheMessages, setCacheMessages } from "@/utils/cache.functions";
-import CollabRichTextEditor from "../common/collab-rich-text-editor";
+import CollabRichTextEditor from "@/components/common/collab-rich-text-editor";
 
 dayjs.extend(relativeTime)
 
@@ -39,7 +39,6 @@ const blankRecipientValue: MessageRecipient = {
   name: '',
   email: ''
 }
-let collabid = makeCollabId(10);
 export function MessageReplyBox(props: MessageBoxType) {
   const [emailRecipients, setEmailRecipients] = useState<RecipientsType | any>({
     cc: { items: [], value: blankRecipientValue },
@@ -63,6 +62,7 @@ export function MessageReplyBox(props: MessageBoxType) {
   const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
   const [waitForDraft, setWaitForDraft] = useState<boolean>(false);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
+  const [collabId, setCollabId] = useState<string | undefined>(draft?.draftInfo?.collabId)
 
   const editorRef = useRef<any>(null);
   const { toast } = createStandaloneToast()
@@ -70,6 +70,23 @@ export function MessageReplyBox(props: MessageBoxType) {
   const divRef = useRef<HTMLDivElement | null>(null);
   const [divHeight, setDivHeight] = useState<number>(0);
   const [emailList, setEmailList] = useState<any>([]);
+
+  useEffect(() => {
+    if(!collabId) {
+      const newCollabId = makeCollabId(10)
+      dispatch(updateDraftState({
+        draft: {
+          ...draft,
+          draftInfo: {
+            ...draft?.draftInfo,
+            collabId: newCollabId
+          }
+        }
+      }))
+
+      setCollabId(newCollabId)
+    }
+  }, [dispatch, collabId])
 
   useEffect(() => {
     if (emailRecipients?.recipients?.items && emailRecipients?.recipients?.items.length > 1) {
@@ -244,7 +261,7 @@ export function MessageReplyBox(props: MessageBoxType) {
       bcc: emailRecipients.bcc?.items && emailRecipients.bcc?.items.length > 0 ? emailRecipients.bcc?.items : [],
       draftInfo: {
         body: value || emailBody,
-        collabid
+        collabId
       },
       messageId: props.messageData?.id,
       ...(props.isProjectView ? { projectId: router.query.project as string } : {}),
@@ -276,9 +293,6 @@ export function MessageReplyBox(props: MessageBoxType) {
     // Add signature and draft to email body
     if (draft && draft.draftInfo) {
       if (draft.draftInfo.body) {
-        if (draft.draftInfo.collabid) {
-          collabid = draft.draftInfo.collabid;
-        }
         setEmailBody(draft?.draftInfo?.body || '');
       }
       if (draft?.draftInfo?.attachments?.length) {
@@ -815,7 +829,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} overflow={'auto'} zIndex={6} ref={editorRef} className={`editor-bottom-shadow`}
               onScroll={() => handleEditorScroll()}>
               {selectedThread && <CollabRichTextEditor
-                  id={'thread-' + collabid}
+                  id={'thread-' + collabId}
                   onChange={(content) => sendToDraft(content)}
                   placeholder='Reply with anything you like or @mention someone to share this thread'
                   isToolbarVisible={hideEditorToolbar}

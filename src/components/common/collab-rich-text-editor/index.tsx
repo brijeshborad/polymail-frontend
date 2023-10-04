@@ -3,9 +3,6 @@ import {EditorProvider} from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import {useDispatch, useSelector} from 'react-redux'
 import CollabRichTextEditorToolbar from './toolbar'
-import {Color} from '@tiptap/extension-color'
-import ListItem from '@tiptap/extension-list-item'
-import TextStyle from '@tiptap/extension-text-style'
 import Link from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
 import Collaboration from '@tiptap/extension-collaboration'
@@ -37,7 +34,7 @@ export default function CollabRichTextEditor({
         const prov = new TiptapCollabProvider({
             appId: process.env.NEXT_PUBLIC_TIPTAP_APP_ID!, // get this at collab.tiptap.dev
             name: id, // e.g. a uuid uuidv4();
-            token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2OTY0MzAyMzgsIm5iZiI6MTY5NjQzMDIzOCwiZXhwIjoxNjk2NTE2NjM4LCJpc3MiOiJodHRwczovL2NvbGxhYi50aXB0YXAuZGV2IiwiYXVkIjoibHVpekBwb2x5bWFpbC5jb20ifQ.4B8QVC0h6deIody3m780W7ioSaP7SleGr35MiQJzh5c',
+            token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2OTY0NDM1NzAsIm5iZiI6MTY5NjQ0MzU3MCwiZXhwIjoxNjk2NTI5OTcwLCJpc3MiOiJodHRwczovL2NvbGxhYi50aXB0YXAuZGV2IiwiYXVkIjoibHVpekBwb2x5bWFpbC5jb20ifQ.pm5towD49TWNkWf3OTqFthYp-7zZBPaqRUZU8P4JDu4',
             // document: new Y.Doc() // pass your existing doc, or leave this out and use provider.document
         })
         setProvider(prov)
@@ -50,7 +47,6 @@ export default function CollabRichTextEditor({
             Placeholder.configure({
                 placeholder: placeholder,
             }),
-            Color.configure({types: [TextStyle.name, ListItem.name]}),
             Link.configure({
                 openOnClick: false,
                 linkOnPaste: true
