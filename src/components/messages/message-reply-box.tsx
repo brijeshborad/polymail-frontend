@@ -761,7 +761,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 fontWeight={500} lineHeight={'normal'}> Create new draft </Button>
             </Flex>
           ) */}
-          <Flex align={'center'} justify={'space-between'} gap={4} position={"relative"} zIndex={8}>
+          <Flex align={'center'} justify={'space-between'} gap={4} position={"relative"} zIndex={6}>
             <Flex align={'center'} gap={1}>
               <Menu isOpen={isReplyDropdownOpen} onClose={() => setIsReplyDropdownOpen(false)}>
                 <MenuButton
@@ -826,7 +826,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
 
           <Flex direction={'column'} position={"relative"} flex={1} >
-            <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} overflow={'auto'} zIndex={6} ref={editorRef} className={`editor-bottom-shadow`}
+            <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} zIndex={6} ref={editorRef} className={`editor-bottom-shadow`}
               onScroll={() => handleEditorScroll()}>
               {selectedThread && <CollabRichTextEditor
                   id={'thread-' + collabId}

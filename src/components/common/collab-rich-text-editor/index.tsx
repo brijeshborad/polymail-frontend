@@ -50,7 +50,7 @@ export default function CollabRichTextEditor({
                 placeholder: placeholder,
             }),
             Link.configure({
-                openOnClick: false,
+                openOnClick: true,
                 linkOnPaste: true
             }),
             StarterKit.configure({

@@ -39,7 +39,14 @@ export default function CollabRichTextEditorToolbar({ isToolbarVisible = false, 
   }, [editor])
 
   const setEmoji = useCallback((emoji?: string) => {
-    console.log('emoji', emoji)
+    if(!editor) return
+
+    editor.commands.insertContent([
+      {
+        type: 'text',
+        text: emoji
+      }
+    ])
   }, [editor])
 
 
