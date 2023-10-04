@@ -220,13 +220,14 @@ export function Message({isProjectView = false}: {isProjectView?: boolean}) {
 
   const handleRowClick = (index: any) => {
     setIndex(index);
-    const selectedMessageIndex = (messages || []).findIndex(msg => msg.id === selectedMessage?.id)
+    const selectedMessageIndex = (messages || []).filter(msg => !(msg.mailboxes || []).includes('DRAFT')).findIndex(msg => msg.id === selectedMessage?.id)
 
     if (selectedMessageIndex === index) {
       // Clicking on an already expanded row, so close it
       dispatch(updateMessageState({
         selectedMessage: null
       }))
+      setIndex(null)
     } else {
       // Clicking on a new row, expand it
       const targetMessage = (messages || [])[index]
