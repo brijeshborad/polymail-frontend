@@ -85,7 +85,33 @@ export function MessageBox(props: any) {
                           {props?.item.scope !== 'visible' ? <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
                                 <EyeSlashedIcon />
                           </Flex> : ''}
-                          <Time time={props?.item.created || ''} isShowFullTime={true} showTimeInShortForm={false}/>
+                          <span style={{ marginRight: '20px', marginTop: '2.5px' }}>
+                            <Time time={props?.item.created || ''} isShowFullTime={true} showTimeInShortForm={false} />
+                          </span>
+                          
+                          <Menu isOpen={isContextMenuOpen} onClose={() => setIsContextMenuOpen(false)}>
+                            <MenuButton
+                              onClick={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                setIsContextMenuOpen(!isContextMenuOpen)
+                              }}
+                              position={'absolute'} right={'10px'} top={'20px'} className={styles.menuIcon}
+                              transition={'all 0.5s'} backgroundColor={'transparent'} fontSize={'12px'}
+                              h={'auto'} minWidth={'24px'} padding={'0'} as={Button} rightIcon={<MenuIcon/>}>
+                            </MenuButton>
+                            <MenuList className={'drop-down-list'}>
+                                {props.threadDetails && (
+                                    <MenuItem
+                                        onClick={() => setScope(props.threadDetails.scope === 'visible' ? 'hidden' : 'visible', props.threadDetails)}>
+                                        {props.threadDetails.scope === 'visible' ? 'Hide from project members' : 'Show to project members'}
+                                    </MenuItem>
+                                )}
+                                <MenuItem onClick={() => props.hideAndShowReplayBox('reply', props.threadDetails)}> Reply </MenuItem>
+                                <MenuItem onClick={() => props.hideAndShowReplayBox('reply-all', props.threadDetails)}> Reply All </MenuItem>
+                                <MenuItem onClick={() => props.hideAndShowReplayBox('forward', props.threadDetails)}> Forward </MenuItem>
+                            </MenuList>
+                          </Menu>
                       </Flex>
                   </Flex>
                   <Text fontSize='13px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
