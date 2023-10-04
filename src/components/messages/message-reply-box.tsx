@@ -303,7 +303,13 @@ export function MessageReplyBox(props: MessageBoxType) {
         if (selectedThread?.projects && selectedThread?.projects?.length) {
           sentence = `${selectedAccount?.name || ''} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length === 1 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}`;
         }
-        setEmailBody(getForwardContent() + (decoded || '') + (selectedAccount?.signature || '') + (`<p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;>${sentence}</p>`));
+        setEmailBody(getForwardContent() + (decoded || '') + (selectedAccount?.signature || '') + (`<p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`));
+        dispatch(fireEvent({
+          event: {
+            data: getForwardContent() + (decoded || '') + (selectedAccount?.signature || '') + (`<p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`),
+            type: 'richtexteditor.forceUpdate'
+          }
+        }));
         debounce(() => {
           handleEditorScroll();
         }, 200)
@@ -816,28 +822,13 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                   isToolbarVisible={hideEditorToolbar}
                   className={`${extraClassNames} ${extraClassNamesForBottom}`}
                   emailSignature={selectedAccount ? `<br /><p>${selectedAccount?.signature}</p>` : undefined}
-                  projectShare={`<p></p><p></p><p></p><p></p>
-             <p style="color: black; background: none">---------- Forwarded message ----------
-From: developer@polymail.io
-Date: Mon, Oct 02, 2023 at 10:39 PM
-Subject: Amazon Web Services Invoice Available [Account: 311399265881] [Invoice ID: 1453958597]
-To: developer.admin@polymail.io
-</p><br/><br/><br/>
-<img width="1" height="1" src="https://www.amazon.com/gp/r.html?C=2WSH1UP25HK1R&M=urn:rtn:msg:20231002170944ed77971f578e47d99d945a504bd0p0na&R=2DY5O71K2AUTO&T=O&U=https%3A%2F%2Fimages-na.ssl-images-amazon.com%2Fimages%2FG%2F01%2Fnav%2Ftransp.gif&H=ADA5XAWDPAZB8YAGPD5BWERRP4MA&ref_=pe_1679150_412551630_opens" />
-    <div style="padding-right:20px; padding-left:20px; padding-bottom:20px; width:80%; padding-top:20px; font-family:Verdana;">
-      <p><img src="https://media.amazonwebservices.com/aws-email-logo.png" border="0" alt="Amazon Logo"/></p>
-      <p>Greetings from Amazon Web Services,</p>
-      <p>We're writing to provide you with an electronic invoice for your use of AWS services for the billing period September 1 - September 30, 2023.  Additional information regarding your bill, individual service charge details, and your account history are available on the <a href="https://www.amazon.com/gp/f.html?C=2WSH1UP25HK1R&M=urn:rtn:msg:20231002170944ed77971f578e47d99d945a504bd0p0na&R=UYUAJ55KY567&T=C&U=https%3A%2F%2Fconsole.aws.amazon.com%2Fbilling%2Fhome%3Fref_%3Dpe_1679150_412551630&H=UVBTLDRDSUNDJPJLY755ZSZ1DWQA&ref_=pe_1679150_412551630">Billing &amp; Cost Management Page</a>.</p>
-      <p>Did you know that you can use AWS Budgets to manage your AWS costs and usage? Click <a href="https://www.amazon.com/gp/f.html?C=2WSH1UP25HK1R&M=urn:rtn:msg:20231002170944ed77971f578e47d99d945a504bd0p0na&R=MU7Q29PXWIJA&T=C&U=https%3A%2F%2Fconsole.aws.amazon.com%2Fbilling%2Fhome%3Fref_%3Dpe_1679150_412551630%23%2Fcreatebudget%3Fsource%3Dawsemail&H=APG2UA9GTCGCO4RF6YKUUYPAGKSA&ref_=pe_1679150_412551630">here</a> to get started.</p>
-      <p>&nbsp;</p>
-      <p>Sincerely,</p>
-      <p>The Amazon Web Services Team</p>
-      <p style="font-size:10px">This message was produced and distributed by Amazon Web Services, Inc. and affiliates, 410 Terry Avenue North, Seattle, Washington 98109-5210.</p>
-      <p style="font-size:10px">AWS will not be bound by, and specifically objects to, any term, condition or other provision which is different from or in addition to the provisions of the AWS Customer Agreement or AWS Enterprise Agreement between AWS and you (whether or not it would materially alter such AWS Customer Agreement or AWS Enterprise Agreement) and which is submitted in any order, receipt, acceptance, confirmation, correspondence or otherwise, unless AWS specifically agrees to such provision in a written instrument signed by AWS.</p>
-      <p style="font-size:10px">The current AWS Customer Agreement is available at <a href="https://www.amazon.com/gp/f.html?C=2WSH1UP25HK1R&M=urn:rtn:msg:20231002170944ed77971f578e47d99d945a504bd0p0na&R=2EE15TXPF4VSD&T=C&U=https%3A%2F%2Faws.amazon.com%2Fagreement%2F%3Fref_%3Dpe_1679150_412551630&H=YGLGXQGHBAERXWU3AASAKEAAYBQA&ref_=pe_1679150_412551630">https://aws.amazon.com/agreement/</a>. You can see more information about these changes at <a href="https://www.amazon.com/gp/f.html?C=2WSH1UP25HK1R&M=urn:rtn:msg:20231002170944ed77971f578e47d99d945a504bd0p0na&R=1DZKKN2NYBNAJ&T=C&U=https%3A%2F%2Faws.amazon.com%2Fagreement%2Frecent-changes%2F%3Fref_%3Dpe_1679150_412551630&H=V2BRTFMAGNMWXXTD9P912OXV9SYA&ref_=pe_1679150_412551630">https://aws.amazon.com/agreement/recent-changes/</a>.</p>
-      <p style="font-size:10px">Submit feedback on your Invoice Experience <a href="https://www.amazon.com/gp/f.html?C=2WSH1UP25HK1R&M=urn:rtn:msg:20231002170944ed77971f578e47d99d945a504bd0p0na&R=3PZQMTMNK8TQW&T=C&U=https%3A%2F%2Famazonmr.au1.qualtrics.com%2Fjfe%2Fform%2FSV_1LYl8aAqrflQhXo&H=PHCLDSHKKFGDAAJKWGFL3RUVIY8A">here</a>.</p>      
-    </div>
-  <img width="1" height="1" src="https://www.amazon.com/gp/r.html?C=2WSH1UP25HK1R&M=urn:rtn:msg:20231002170944ed77971f578e47d99d945a504bd0p0na&R=3FWQ7GW9TQSKS&T=E&U=https%3A%2F%2Fimages-na.ssl-images-amazon.com%2Fimages%2FG%2F01%2Fnav%2Ftransp.gif&H=9MQ5ADRIYWLOOATDAWETDV3YSAYA&ref_=pe_1679150_412551630_open" /><div>Brijesh Borad</div><p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1">Brijesh Borad is sharing this email thread (and future replies) with others at project 1 on Polymail</p>`}
+                  projectShare={selectedThread?.projects?.length ? `
+                        <div style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">
+                          <p data-test="DEMO" style="font-size: 13px"> ${selectedAccount?.name || ''} is sharing this email thread (and future replies) with&nbsp;</p>
+                          <p style="font-size: 13px; text-decoration: underline">others</p>
+                          <p style="font-size: 13px">&nbsp;on&nbsp;</p>
+                          <p style="font-size: 13px; text-decoration: underline">Polymail</p>
+                        </div>` : undefined}
                   extendToolbar={(
                     <>
                       <Flex
