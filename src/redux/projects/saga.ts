@@ -13,7 +13,7 @@ import {
     getProjectMembersInvites,
     getProjectMembersInvitesError,
     getProjectMembersInvitesSuccess,
-    getProjectMembersSuccess,
+    getProjectMembersSuccess, removeThreadFromProject, removeThreadFromProjectError, removeThreadFromProjectSuccess,
     undoProjectUpdate,
     updateOptimisticProject,
     updateProject,
@@ -129,6 +129,18 @@ function* updateProjectDataWithUndo({payload}: PayloadAction<ReducerActionType>)
     }
 }
 
+function* removeProjectFormThreads({payload}: PayloadAction<ReducerActionType>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callDelete(`projects/${payload.body.projectId}/threads/${payload.body.threadId}`, {});
+        performSuccessActions(payload);
+        yield put(removeThreadFromProjectSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        performSuccessActions(payload);
+        yield put(removeThreadFromProjectError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
+    }
+}
+
 export function* watchGetProjects() {
     yield takeLatest(getAllProjects.type, getProjects);
 }
@@ -161,6 +173,11 @@ export function* watchUpdateOptimisticProjectData() {
     yield takeLatest(updateOptimisticProject.type, updateProjectDataWithUndo);
 }
 
+
+export function* watchRemoveProjectFromThread() {
+    yield takeLatest(removeThreadFromProject.type, removeProjectFormThreads);
+}
+
 export default function* rootSaga() {
     yield all([
         fork(watchGetProjects),
@@ -171,6 +188,7 @@ export default function* rootSaga() {
         fork(watchUpdateProjectMembersData),
         fork(watchUpdateProjectData),
         fork(watchUpdateOptimisticProjectData),
+        fork(watchRemoveProjectFromThread),
     ]);
 }
 

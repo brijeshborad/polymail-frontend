@@ -159,6 +159,17 @@ const projectsSlice = createSlice({
             const sortedList = [...currentProjects].sort((a: Project, b: Project) => (a.projectMeta?.order || 0) - (b.projectMeta?.order || 0));
             return {...state, projects: [...sortedList], isProjectUpdateSuccess: false}
         },
+
+        removeThreadFromProject: (state: InitialProjectState, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, isLoading: true}
+        },
+        removeThreadFromProjectSuccess: (state: InitialProjectState, _action: PayloadAction<{}>) => {
+            return {...state,isLoading: false,}
+        },
+        removeThreadFromProjectError: (state: InitialProjectState, _action: PayloadAction<any>) => {
+            return {...state, isLoading: false}
+        },
+
         updateProjectState: (state: InitialProjectState, action: PayloadAction<InitialProjectState>) => {
             return {...state, ...action.payload}
         },
@@ -189,6 +200,9 @@ export const {
     updateOptimisticProject,
     updateProjectSuccess,
     updateProjectError,
+    removeThreadFromProject,
+    removeThreadFromProjectSuccess,
+    removeThreadFromProjectError,
     undoProjectUpdate
 } = projectsSlice.actions
 export default projectsSlice.reducer

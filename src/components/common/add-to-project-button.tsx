@@ -18,6 +18,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {updateCommonState} from "@/redux/common-apis/action-reducer";
 import {addThreadToProject} from "@/utils/threads-common-functions";
+import {createProjects, removeThreadFromProject} from "@/redux/projects/action-reducer";
 
 export function AddToProjectButton() {
     const [isDropdownOpen, setDropDownOpen] = useState(false)
@@ -92,7 +93,21 @@ export function AddToProjectButton() {
         }
     }, [incomingEvent, setDropDownOpen]);
 
-    const closeScheduleDropdown = () => {
+    const closeScheduleDropdown = (item: Project) => {
+        if (selectedThread && selectedThread.id) {
+            dispatch(removeThreadFromProject({
+                body: {
+                    threadId: selectedThread.id,
+                    projectId: item.id,
+                },
+                toaster: {
+                    success: {
+                        desc: "Project is removed from thread",
+                        title: "Success",
+                        type: 'success'},
+                },
+            }));
+        }
         setDropDownOpen(false)
     }
 
@@ -160,7 +175,7 @@ export function AddToProjectButton() {
                                 <Text color={'#374151'} fontSize={'13px'} fontWeight={'500'} lineHeight={1}
                                       letterSpacing={'-0.13px'}>{item.emoji} {item.name}</Text>
                                 <Button
-                                    onClick={closeScheduleDropdown}
+                                    onClick={() => closeScheduleDropdown(item)}
                                     h={'20px'} minW={'20px'}
                                     className={styles.dropDownCloseIcon}
                                     backgroundColor={'transparent'} padding={0}
