@@ -303,7 +303,15 @@ export function MessageReplyBox(props: MessageBoxType) {
         if (selectedThread?.projects && selectedThread?.projects?.length) {
           sentence = `${selectedAccount?.name || ''} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length === 1 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}`;
         }
-        setEmailBody(getForwardContent() + (decoded || '') + (selectedAccount?.signature || '') + (`<p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;>${sentence}</p>`));
+        setEmailBody(getForwardContent() + (decoded || '') + (selectedAccount?.signature || '') + (`<p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`));
+        if (!draft) {
+          dispatch(fireEvent({
+            event: {
+              data: getForwardContent() + (decoded || '') + (selectedAccount?.signature || '') + (`<p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`),
+              type: 'richtexteditor.forceUpdate'
+            }
+          }));
+        }
         debounce(() => {
           handleEditorScroll();
         }, 200)
@@ -350,11 +358,11 @@ export function MessageReplyBox(props: MessageBoxType) {
     const ccEmailString = formatEmailString(cc);
 
     const forwardContent: string = `<p></p><p></p><p></p><p></p>
-             <p style="color: black; background: none">---------- Forwarded message ----------
-From: ${props.messageData?.from?.email}
-Date: ${dayjs(props.messageData?.created).format('ddd, MMM DD, YYYY [at] hh:mm A')}
-Subject: ${props.messageData?.subject}
-To: ${toEmailString}
+             <p style="color: black; background: none">---------- Forwarded message ----------</br>
+From: ${props.messageData?.from?.email}</br>
+Date: ${dayjs(props.messageData?.created).format('ddd, MMM DD, YYYY [at] hh:mm A')}</br>
+Subject: ${props.messageData?.subject}</br>
+To: ${toEmailString}</br>
 ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     return forwardContent;
   }
@@ -479,7 +487,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         type: 'richtexteditor.forceUpdate'
       }
     }));
-    
+
     setTimeout(() => {
       setHideEditorToolbar(false)
     }, 500);
@@ -625,7 +633,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
           type: 'richtexteditor.forceUpdate'
         }
       }));
-      
+
       dispatch(updateDraftState({
         draft: null,
       }));
@@ -649,12 +657,10 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         if (selectedThread?.projects && selectedThread?.projects.length) {
            sentence = `${selectedAccount?.name || ''} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length === 1 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}`;
         }
-
-        setEmailBody(`<p></p><p>${selectedAccount.signature}</p><p></p><p style="padding: 5px 10px; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`);
-
+        setEmailBody(`<p>${selectedAccount.signature}</p><p style="padding: 5px 10px; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`);
         dispatch(fireEvent({
           event: {
-            data: `<p></p><p>${selectedAccount.signature}</p><p></p><p style="padding: 5px 10px; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`,
+            data: `<p>${selectedAccount.signature}</p><p style="padding: 5px 10px; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`,
             type: 'richtexteditor.forceUpdate'
           }
         }));
@@ -741,7 +747,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 fontWeight={500} lineHeight={'normal'}> Create new draft </Button>
             </Flex>
           )}
-          <Flex align={'center'} justify={'space-between'} gap={4} position={"relative"} zIndex={1}>
+          <Flex align={'center'} justify={'space-between'} gap={4} position={"relative"} zIndex={8}>
             <Flex align={'center'} gap={1}>
               <Menu isOpen={isReplyDropdownOpen} onClose={() => setIsReplyDropdownOpen(false)}>
                 <MenuButton
@@ -806,9 +812,9 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
 
           <Flex direction={'column'} position={"relative"} flex={1} >
-            <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} overflow={'auto'} zIndex={6} ref={editorRef} className={`${styles.replyBoxEditor} editor-bottom-shadow`}
+            <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} overflow={'auto'} zIndex={6} ref={editorRef} className={`editor-bottom-shadow`}
               onScroll={() => handleEditorScroll()}>
-                <CollabRichTextEditor
+              {selectedThread && <CollabRichTextEditor
                   id={selectedThread?.id!}
                   content={emailBody}
                   onChange={(content) => sendToDraft(content)}
@@ -816,30 +822,26 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                   isToolbarVisible={hideEditorToolbar}
                   className={`${extraClassNames} ${extraClassNamesForBottom}`}
                   emailSignature={selectedAccount ? `<br /><p>${selectedAccount?.signature}</p>` : undefined}
-                  beforeToolbar={(
-                    <>
-                      {selectedThread?.projects?.length && (
-                        <Flex backgroundColor={'#EBF83E'} width={'fit-content'} borderRadius={'4px'} color={'#0A101D'} fontWeight={'500'} lineHeight={1} padding={'5px 10px'}>
-                          <Text fontSize='xs'> {selectedAccount?.name || ''} is sharing this email thread (and future replies) with&nbsp;</Text>
-                          <Text fontSize='xs' as='u'>others</Text>
-                          <Text fontSize='xs'>&nbsp;on&nbsp;</Text>
-                          <Text fontSize='xs' as='u'>Polymail</Text>
-                        </Flex>
-                      )}
-                    </>
-                  )}
+                  projectShare={selectedThread?.projects?.length ? `
+                        <div style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">
+                          <p style="font-size: 13px"> ${selectedAccount?.name || ''} is sharing this email thread (and future replies) with&nbsp;</p>
+                          <p style="font-size: 13px; text-decoration: underline">others</p>
+                          <p style="font-size: 13px">&nbsp;on&nbsp;</p>
+                          <p style="font-size: 13px; text-decoration: underline">Polymail</p>
+                        </div>` : undefined}
                   extendToolbar={(
-                    <>
-                      <Flex
-                        onClick={() => inputFile.current?.click()}
-                        width={'16px'} h={'16px'} align={'center'} justify={'center'} cursor={'pointer'} className={styles.replyIcon}
-                      >
-                        <Image src="/image/icon/attach.svg" alt="emoji" width={13} height={13} />
-                        <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e)} style={{ display: 'none' }} />
-                      </Flex>
-                    </>
+                      <>
+                        <Flex
+                            onClick={() => inputFile.current?.click()}
+                            width={'16px'} h={'16px'} align={'center'} justify={'center'} cursor={'pointer'} className={styles.replyIcon}
+                        >
+                          <Image src="/image/icon/attach.svg" alt="emoji" width={13} height={13} />
+                          <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e)} style={{ display: 'none' }} />
+                        </Flex>
+                      </>
                   )}
-                />
+              />}
+
               {attachments && attachments.length > 0 ? <div style={{ marginTop: '20px' }}>
                 {attachments.map((item, index: number) => (
                   <Flex align={'center'} key={index} className={styles.attachmentsFile}>

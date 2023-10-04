@@ -11,4 +11,5 @@ export declare type CollabRichTextEditorType = {
     isToolbarVisible: boolean;
     className?: string
     emailSignature?: string
+    projectShare?: ReactElement | string;
 };
