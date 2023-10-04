@@ -834,7 +834,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                   placeholder='Reply with anything you like or @mention someone to share this thread'
                   isToolbarVisible={hideEditorToolbar}
                   className={`${extraClassNames} ${extraClassNamesForBottom}`}
-                  emailSignature={selectedAccount ? `<br /><p>${selectedAccount?.signature}</p>` : undefined}
+                  emailSignature={selectedAccount ? `<p></p><p>${selectedAccount?.signature}</p>` : undefined}
                   projectShare={selectedThread?.projects?.length ? `
                         <div style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">
                           <p style="font-size: 13px"> ${selectedAccount?.name || ''} is sharing this email thread (and future replies) with&nbsp;</p>

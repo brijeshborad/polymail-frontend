@@ -21,6 +21,8 @@ export default function CollabRichTextEditor({
                                                  afterToolbar,
                                                  extendToolbar,
                                                  placeholder,
+                                                 emailSignature,
+                                                 projectShare,
                                                  className = ''
                                              }: CollabRichTextEditorType) {
     const dispatch = useDispatch()
@@ -79,16 +81,16 @@ export default function CollabRichTextEditor({
             <EditorProvider
                 onFocus={(editor) => {
                     dispatch(updateKeyNavigation({isEnabled: false}))
-                    // if (editor.editor.isEmpty) {
-                    //     let finalContent = '';
-                    //     if (emailSignature) {
-                    //         finalContent += emailSignature;
-                    //     }
-                    //     if (projectShare) {
-                    //         finalContent += projectShare
-                    //     }
-                    //     editor.editor.commands.setContent(finalContent, false)
-                    // }
+                    if (editor.editor.isEmpty) {
+                        let finalContent = '';
+                        if (emailSignature) {
+                            finalContent += emailSignature;
+                        }
+                        if (projectShare) {
+                            finalContent += projectShare
+                        }
+                        editor.editor.commands.setContent(finalContent, false)
+                    }
                     editor.editor.commands.focus('start')
                 }}
                 onBlur={() => dispatch(updateKeyNavigation({isEnabled: true}))}
