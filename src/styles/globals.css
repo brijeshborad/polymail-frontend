@@ -637,8 +637,9 @@ div:has(> .mailSendToaster) {
 }
 
 .tiptap a {
-    color: #000;
+    color: rgb(0, 0, 238);
     text-decoration: underline;
+    cursor: pointer;
 }
 
 .tiptap p.is-editor-empty:first-child::before {
@@ -677,31 +678,31 @@ div:has(> .mailSendToaster) {
 
 /* Give a remote user a caret */
 .collaboration-cursor__caret {
-    /* border-left: 1px solid #0d0d0d;
-    border-right: 1px solid #0d0d0d; */
-    margin-left: -1px;
-    margin-right: -1px;
-    pointer-events: none;
-    position: relative;
-    word-break: normal;
+  border-left: 1px solid #0d0d0d;
+  border-right: 1px solid #0d0d0d;
+  margin-left: -1px;
+  margin-right: -1px;
+  pointer-events: none;
+  position: relative;
+  word-break: normal;
+  z-index: 10000;
 }
 
 /* Render the username above the caret */
 .collaboration-cursor__label {
-    border-radius: 3px;
-    color: #0d0d0d;
-    font-size: 12px;
-    font-style: normal;
-    font-weight: 600;
-    left: -1px;
-    line-height: normal;
-    padding: 0.1rem 0.3rem;
-    position: absolute;
-    top: -0.1em;
-    left: 4px;
-    user-select: none;
-    white-space: nowrap;
-    z-index: 9999 !important;
+  border-radius: 3px 3px 3px 0;
+  color: #0d0d0d;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  left: -1px;
+  line-height: normal;
+  padding: 0.1rem 0.3rem;
+  position: absolute;
+  top: -1.4em;
+  user-select: none;
+  white-space: nowrap;
+  z-index: 10000;
 }
 
 .email-signature.rdw-editor-wrapper .rdw-editor-toolbar .rdw-option-wrapper {
@@ -766,6 +767,11 @@ div:has(> .mailSendToaster) {
 
 #chakra-toast-manager-bottom {
     align-items: start;
+}
+
+.emoji-popover {
+  background-color: white;
+  z-index: 10 !important;
 }
 
 .emoji-popover.chakra-popover__content {
