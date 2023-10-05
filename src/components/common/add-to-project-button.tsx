@@ -143,7 +143,7 @@ export function AddToProjectButton() {
                  let threadIndex = (threads || []).findIndex((thread: Thread) => thread.id === selectedThread.id);
                  let data = (threads || []).filter((thread: Thread) => thread.id !== selectedThread.id);
                  dispatch(updateThreadState({
-                     selectedThread: (threads || [])[(threadIndex + 1 == threads.length - 1) ? threadIndex + 1 : ((threadIndex >= 0) ? threadIndex - 1 : threadIndex + 1)] || null,
+                     selectedThread: (threads || [])[(threadIndex + 1 < threads.length) ? threadIndex + 1 : (threadIndex >= 0 ? threadIndex - 1 : threadIndex + 1)] || null,
                      threads: data
                  }));
             } else {
