@@ -827,7 +827,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
 
           <Flex direction={'column'} position={"relative"} flex={1} overflow={'none'}>
-            <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} zIndex={6} ref={editorRef} overflow={'auto'} className={`editor-bottom-shadow`}
+            <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} zIndex={6} ref={editorRef} overflowX={'auto'} className={`editor-bottom-shadow`}
               onScroll={() => handleEditorScroll()}>
               {(selectedThread && collabId) && (
                 <CollabRichTextEditor
@@ -836,7 +836,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                     placeholder='Reply with anything you like or @mention someone to share this thread'
                     isToolbarVisible={hideEditorToolbar}
                     className={`${extraClassNames} ${extraClassNamesForBottom}`}
-                    emailSignature={selectedAccount ? `<p></p><p>${selectedAccount?.signature}</p>` : undefined}
+                    emailSignature={selectedAccount ? `<p></p>${selectedAccount?.signature}` : undefined}
                     projectShare={selectedThread?.projects?.length ? `
                           <div style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">
                             <p style="font-size: 13px"> ${selectedAccount?.name || ''} is sharing this email thread (and future replies) with&nbsp;</p>

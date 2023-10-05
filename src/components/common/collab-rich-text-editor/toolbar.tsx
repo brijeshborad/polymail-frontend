@@ -6,7 +6,7 @@ import ToolbarUrl from "./toolbar-url"
 import { CollabRichTextEditorToolbarType } from "@/types/props-types/collab-rich-text-toolbar.types"
 import ToolbarEmoji from "@/components/common/collab-rich-text-editor/toolbar-emoji";
 
-export default function CollabRichTextEditorToolbar({ isToolbarVisible = false, beforeToolbar, afterToolbar, extendToolbar }: CollabRichTextEditorToolbarType) {
+export default function CollabRichTextEditorToolbar({ beforeToolbar, afterToolbar, extendToolbar }: CollabRichTextEditorToolbarType) {
   const { editor } = useCurrentEditor()
   const [isLinkMenuOpen, setIsLinkMenuOpen] = useState(false);
   const [isEmojiMenuOpen, setIsEmojiMenuOpen] = useState(false);
@@ -58,7 +58,6 @@ export default function CollabRichTextEditorToolbar({ isToolbarVisible = false, 
     <>
       {beforeToolbar && beforeToolbar}
 
-      {isToolbarVisible && (
         <Box position={'absolute'} display={'flex'} gap={4} bottom={3} zIndex={9} className='tiptap-toolbar'>
           <button
             onClick={() => editor.chain().focus().toggleBold().run()}
@@ -130,7 +129,6 @@ export default function CollabRichTextEditorToolbar({ isToolbarVisible = false, 
           />
 
         </Box>
-      )}
       {afterToolbar && afterToolbar}
     </>
   )
