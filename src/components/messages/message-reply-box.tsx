@@ -865,6 +865,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
 
           <Flex
+            onFocus={() => handleFocus()}
             direction={'column'} position={"relative"} flex={1} overflow={'none'}>
             <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} zIndex={6} ref={editorRef} overflowY={'auto'} className={`editor-bottom-shadow`}
               onScroll={() => handleEditorScroll()}>
