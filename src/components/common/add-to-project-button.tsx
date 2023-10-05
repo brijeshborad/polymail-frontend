@@ -20,6 +20,8 @@ import Router from 'next/router';
 import {updateCommonState} from "@/redux/common-apis/action-reducer";
 import {addThreadToProject} from "@/utils/threads-common-functions";
 import { removeThreadFromProject} from "@/redux/projects/action-reducer";
+import {updateThreadState} from "@/redux/threads/action-reducer";
+import {addItemToGroup} from "@/redux/memberships/action-reducer";
 
 export function AddToProjectButton() {
     const [isDropdownOpen, setDropDownOpen] = useState(false)
@@ -93,8 +95,17 @@ export function AddToProjectButton() {
         }
     }, [incomingEvent, setDropDownOpen]);
 
-    const closeScheduleDropdown = (item: Project) => {
+    const removeProjectFromThread = (item: Project) => {
         if (selectedThread && selectedThread.id) {
+            let polyToast = `poly-toast-${new Date().getMilliseconds().toString()}`;
+            let reqBody = {
+                threadIds:[selectedThread!.id],
+                roles: [
+                    'n/a',
+                ],
+                groupType: 'project',
+                groupId: item.id
+            }
             dispatch(removeThreadFromProject({
                 body: {
                     threadId: selectedThread.id,
@@ -104,11 +115,48 @@ export function AddToProjectButton() {
                     success: {
                         desc: "Project is removed from thread",
                         title: "Success",
-                        type: 'success'},
+                        type: 'undo_changes',
+                        id: polyToast,
+                    },
                 },
+                undoAction: {
+                    showUndoButton: true,
+                    dispatch,
+                    action: addItemToGroup,
+                    undoBody: {
+                        body: reqBody,
+                        success: {
+                            desc: 'Thread was added to ' + item.name?.toLowerCase() + '.',
+                            title: selectedThread?.subject || '',
+                            type: 'success'
+                        },
+                        afterUndoAction: () => {
+                            dispatch(updateThreadState({ selectedThread: selectedThread , threads: threads}));
+                        }
+                    },
+                    showToasterAfterUndoClick: true
+                }
+            }));
+
+            let data = (selectedThread.projects || []).filter((project: Project) => project.id !== item.id);
+            let thread = {
+                ...selectedThread,
+                projects: data
+            }
+            dispatch(updateThreadState({ selectedThread: thread}));
+            setFilteredProjects(prevState => ({
+            ...prevState,
+                  item
             }));
         }
-        setDropDownOpen(false)
+        setDropDownOpen(true)
+    }
+
+    const addProjectToThread = (item: Project) => {
+        if (selectedThread || draft) {
+                addThreadToProject(item, multiSelection, selectedThread || draft, dispatch, threads || [], null)
+        }
+        setFilteredProjects((filteredProjects || []).filter((project: Project) => project.id !== item.id));
     }
 
     return (
@@ -175,7 +223,7 @@ export function AddToProjectButton() {
                                 <Text color={'#374151'} fontSize={'13px'} fontWeight={'500'} width={'100%'} lineHeight={1} onClick={() =>  Router.push(`/projects/${item.id!}`)}
                                       letterSpacing={'-0.13px'}>{item.emoji} {item.name}</Text>
                                 <Button
-                                    onClick={() => closeScheduleDropdown(item)}
+                                    onClick={() => removeProjectFromThread(item)}
                                     h={'20px'} minW={'20px'}
                                     className={styles.dropDownCloseIcon}
                                     backgroundColor={'transparent'} padding={0}
@@ -204,11 +252,7 @@ export function AddToProjectButton() {
                                 return null;
                             }
                             return (
-                                <MenuItem gap={2} key={index} onClick={() => {
-                                    if (selectedThread || draft) {
-                                        addThreadToProject(item, multiSelection, selectedThread || draft, dispatch, threads || [], null)
-                                    }
-                                }}>
+                                <MenuItem gap={2} key={index} onClick={() =>  addProjectToThread(item)}>
                                     {item.emoji} {item.name}
                                 </MenuItem>
                             )

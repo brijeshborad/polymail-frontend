@@ -25,5 +25,7 @@ export declare type ReducerActionUndoOptions = {
     body?: any,
     tag?: string,
     data?: any,
-    forThread?: boolean
+    forThread?: boolean,
+    success?: ToasterProps,
+    afterUndoAction?: () => void
 }

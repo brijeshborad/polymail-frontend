@@ -20,7 +20,7 @@ import { performSuccessActions } from "@/utils/common-redux.functions";
 // Add members to Projects
 function* addItemToGroupService({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callPost(`memberships`, payload.body);
+        const response: AxiosResponse = yield ApiService.callPost(`memberships`, payload.body.body || payload.body);
         performSuccessActions(payload);
         yield put(addItemToGroupSuccess(response));
     } catch (error: any) {

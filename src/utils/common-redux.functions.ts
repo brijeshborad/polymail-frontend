@@ -23,8 +23,8 @@ export function performSuccessActions(payload: ReducerActionType) {
                             ...(payload.undoAction.showToasterAfterUndoClick ? {
                                 toaster: {
                                     success: {
-                                        desc: 'Thread was moved from ' + (payload.undoAction.undoBody?.tag || '').toLowerCase() + '.',
-                                        title: payload.toaster?.success?.title || '',
+                                        desc: payload.undoAction.undoBody?.success ? payload?.undoAction?.undoBody?.success?.desc : 'Thread was moved from ' + (payload.undoAction.undoBody?.tag || '').toLowerCase() + '.',
+                                        title: payload.undoAction.undoBody?.success ? payload?.undoAction?.undoBody?.success?.title || '' : payload.toaster?.success?.title || '',
                                     }
                                 },
                                 body: payload.undoAction.undoBody
@@ -32,6 +32,9 @@ export function performSuccessActions(payload: ReducerActionType) {
                         }));
                     }
                     toast.close(`${polyToast}`);
+                    if (payload?.undoAction?.undoBody?.afterUndoAction) {
+                        payload?.undoAction?.undoBody?.afterUndoAction();
+                    }
                     if (payload?.undoAction?.undoBody?.forThread) {
                         if (payload?.undoAction?.dispatch) {
                             payload?.undoAction?.dispatch(updateThreadState({
