@@ -499,7 +499,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     dispatch(fireEvent({
       event: {
         data: '',
-        type: 'richtexteditor.forceUpdate'
+        type: 'richtexteditor.discard'
       }
     }));
 
@@ -674,6 +674,14 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   const handleFocus = () => {
     setIsInitialized(true);
     setHideEditorToolbar(true);
+    
+    dispatch(fireEvent({
+      event: {
+        data: null,
+        type: 'richtexteditor.focus'
+      }
+    }));
+
     setTimeout(() => {
       let currentEmailBody: string = getPlainTextFromHtml(emailBody);
       if (selectedAccount && selectedAccount.signature && props.replyType !== 'forward' && !currentEmailBody.trim()) {

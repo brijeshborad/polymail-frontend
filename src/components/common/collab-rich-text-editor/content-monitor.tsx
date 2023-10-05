@@ -8,10 +8,18 @@ export default function ContentMonitor() {
     const {editor} = useCurrentEditor()
 
     useEffect(() => {
-        if (event && event.type === 'richtexteditor.forceUpdate') {
-            // console.log('COMES HERE', event);
+      if (event && event.type === 'richtexteditor.forceUpdate') {
             editor?.commands.clearContent(false);
             editor?.commands.setContent(event.data, false)
+        }
+        
+        if (event && event.type === 'richtexteditor.focus') {
+            editor?.commands.focus('start')
+        }
+        
+        if (event && event.type === 'richtexteditor.discard') {
+            editor?.commands.clearContent(true);
+            editor?.commands.blur()
         }
     }, [editor, event]);
 
