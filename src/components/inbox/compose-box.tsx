@@ -527,8 +527,14 @@ export function ComposeBox(props: any) {
         <Flex padding={'16px 20px'} align={'center'} justify={'space-between'} gap={3} className={styles.composeHeader} borderBottom={'1px solid #E5E7EB'}>
           <Flex gap={1} align={'center'}>
             <Heading as='h6' fontSize={'12px'} color={'#0A101D'} fontWeight={500} lineHeight={1}>Draft </Heading>
-            <Text fontSize='xs' lineHeight={1} color={'#6B7280'} display={'flex'} alignItems={'center'} fontWeight={400}>(Saved to drafts&nbsp;
-              {(props.messageDetails && props.messageDetails?.created) ? <Time as={'span'} time={props.messageDetails?.created || ''} isShowFullTime={false} showTimeInShortForm={true} /> : '0s'}&nbsp;ago)</Text>
+            <Text fontSize='xs' lineHeight={1} color={'#6B7280'} display={'flex'} alignItems={'center'} fontWeight={400}>
+              {!draft && 'Not Saved'}
+              {draft &&
+              <>
+                (Saved to drafts&nbsp;{(draft?.updated) ? <Time as={'span'} time={draft?.updated || ''} isShowFullTime={false} showTimeInShortForm={true} /> : '0s'}&nbsp;ago)
+              </>
+              }
+            </Text>
           </Flex>
           <Flex color={'#6B7280'} fontSize={'13px'} h={'20px'} w={'20px'} align={'center'} justify={'center'} cursor={'pointer'} onClick={() => onCloseClick()}> <CloseIcon/> </Flex>
         </Flex>
