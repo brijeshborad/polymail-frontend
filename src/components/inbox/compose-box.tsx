@@ -559,34 +559,33 @@ export function ComposeBox(props: any) {
               <Flex flex={1} direction={'column'} position={'relative'}>
                 <Flex flex={1} direction={'column'} ref={editorRef} className={`editor-bottom-shadow`}
                       onScroll={() => handleEditorScroll()} zIndex={6}>
-
-                  <CollabRichTextEditor
-                    id={'draft-' + collabId}
-                    content={emailBody}
-                    onChange={(content) => sendToDraft(content)}
-                    placeholder='Reply with anything you like or @mention someone to share this thread'
-                    isToolbarVisible={true}
-                    className={`${extraClassNames} ${extraClassNamesForBottom}`}
-                    emailSignature={selectedAccount ? `<p></p>${selectedAccount?.signature}` : undefined}
-                    projectShare={selectedThread?.projects?.length ? `
+                  {collabId && <CollabRichTextEditor
+                      id={'draft-' + collabId}
+                      content={emailBody}
+                      onChange={(content) => sendToDraft(content)}
+                      placeholder='Reply with anything you like or @mention someone to share this thread'
+                      isToolbarVisible={true}
+                      className={`${extraClassNames} ${extraClassNamesForBottom}`}
+                      emailSignature={selectedAccount ? `<p></p>${selectedAccount?.signature}` : undefined}
+                      projectShare={selectedThread?.projects?.length ? `
                           <div style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">
                             <p style="font-size: 13px; margin-right: 3px;"> ${selectedAccount?.name || ''} is sharing this email thread (and future replies) with</p>
                             <p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">others</p>
                             <p style="font-size: 13px; margin-right: 3px;">on</p>
                             <p style="font-size: 13px; text-decoration: underline">Polymail</p>
                           </div>` : undefined}
-                    extendToolbar={(
-                      <>
-                        <Flex
-                          onClick={() => inputFile.current?.click()}
-                          width={'16px'} h={'16px'} align={'center'} justify={'center'} cursor={'pointer'} className={styles.replyIcon}
-                        >
-                          <Image src="/image/icon/attach.svg" alt="emoji" width={13} height={13} />
-                          <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e)} style={{ display: 'none' }} />
-                        </Flex>
-                      </>
-                    )}
-                  />
+                      extendToolbar={(
+                          <>
+                            <Flex
+                                onClick={() => inputFile.current?.click()}
+                                width={'16px'} h={'16px'} align={'center'} justify={'center'} cursor={'pointer'} className={styles.replyIcon}
+                            >
+                              <Image src="/image/icon/attach.svg" alt="emoji" width={13} height={13} />
+                              <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e)} style={{ display: 'none' }} />
+                            </Flex>
+                          </>
+                      )}
+                  />}
                   {attachments && attachments.length > 0 ?
                     <div style={{ marginTop: '20px' }}>
                       {attachments.map((item, index: number) => (
