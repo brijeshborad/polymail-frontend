@@ -22,7 +22,6 @@ export function MessageBox(props: any) {
     const [emailList, setEmailList] = useState<any>([]);
 
     useEffect(() => {
-      props.threadDetails.to[0].email
       if (props.threadDetails.to && props.threadDetails.to.length > 1) {
         let myArray = [...props.threadDetails.to]
         myArray.shift();

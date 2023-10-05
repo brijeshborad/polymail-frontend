@@ -19,7 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { StateType } from "@/types";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { Message, MessageAttachments, MessageRecipient } from "@/models";
+import { Message, MessageAttachments, MessageRecipient, Thread } from "@/models";
 import { uploadAttachment } from "@/redux/messages/action-reducer";
 import { MessageBoxType } from "@/types/props-types/message-box.type";
 const MessageRecipients = dynamic(() => import("./message-recipients").then(mod => mod.default));
@@ -31,7 +31,8 @@ import dynamic from "next/dynamic";
 import { fireEvent } from "@/redux/global-events/action-reducer";
 import { updateThreadState } from "@/redux/threads/action-reducer";
 import { getCacheMessages, setCacheMessages } from "@/utils/cache.functions";
-import CollabRichTextEditor from "@/components/common/collab-rich-text-editor";
+import CollabRichTextEditor from "../common/collab-rich-text-editor";
+import { MAILBOX_DRAFT } from "@/utils/constants";
 
 dayjs.extend(relativeTime)
 
@@ -49,7 +50,7 @@ export function MessageReplyBox(props: MessageBoxType) {
   const [emailBody, setEmailBody] = useState<string>('');
   const { selectedAccount } = useSelector((state: StateType) => state.accounts);
   const { draft } = useSelector((state: StateType) => state.draft);
-  const { selectedThread, tabValue } = useSelector((state: StateType) => state.threads);
+  const { selectedThread, tabValue, threads } = useSelector((state: StateType) => state.threads);
   const { event: incomingEvent } = useSelector((state: StateType) => state.globalEvents);
   const dispatch = useDispatch();
   const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
@@ -60,7 +61,7 @@ export function MessageReplyBox(props: MessageBoxType) {
   const [isReplyDropdownOpen, setIsReplyDropdownOpen] = useState<boolean>(false);
   const [extraClassNames, setExtraClassNames] = useState<string>('');
   const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
-  const [waitForDraft, setWaitForDraft] = useState<boolean>(false);
+  const [waitForDraft, setWaitForDraft] = useState<boolean>(false); 
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [collabId, setCollabId] = useState<string | undefined>(draft?.draftInfo?.collabId)
 
@@ -507,11 +508,60 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     }, 500);
   }
 
+  const updateThreadStateOpration = (type: string) =>{
+    let draftData = {
+      ...draft,
+      mailboxes: type === 'undo' ? [MAILBOX_DRAFT] : [tabValue],
+      snippet: draft?.subject
+    }    
+    let threadData: Thread = { ...selectedThread } as Thread;
+    let messages = [...(threadData?.messages || [])];
+    let findDraft: Message[] = [];
+
+
+    if(type === 'send-now'){
+      messages.push(draftData as Message);
+    }
+    else if(type === 'undo'){
+      findDraft = messages.filter(item => item.id !== draft?.id);
+      findDraft.push(draftData as Message);
+    }
+    threadData = {
+      ...threadData,
+      messages: type === 'undo' ? findDraft : messages,
+    };
+
+     let index1 = (threads || []).findIndex((item: Thread) => item.id === threadData?.id);  
+        let newThreads: Thread[] = threads ?? [];
+        if (threads) {
+          newThreads = [...threads];
+          newThreads[index1] = {
+            ...newThreads[index1],
+            messages: [...(threadData.messages ?? [])]
+        }
+        };
+    dispatch(updateThreadState({
+      selectedThread: threadData,
+      threads: newThreads
+    }))
+    dispatch(updateDraftState({draft: null}));
+    let cacheMessages = getCacheMessages();
+    setCacheMessages({
+      ...cacheMessages,
+      [draftData.id!]: {
+        ...cacheMessages[draftData.id!],
+        data: Buffer.from(draft?.draftInfo!.body || '').toString('base64'),
+        attachments: draft?.draftInfo?.attachments || []
+      }
+    })
+  }
+  
+
   const sendMessages = () => {
     if (draft && draft.id) {
       let params = {};
       let polyToast = `poly-toast-${new Date().getMilliseconds()}`;
-
+      let optionType ='send-now';
 
       // if the user has set a schedule date
       if (scheduledDate) {
@@ -529,52 +579,32 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
           delay: secondsDifference
         }
 
-        dispatch(sendMessage({body:{id: draft.id, ...params },
-          toaster: {
-            success: {
-              desc: `Your message has been scheduled`,
-              type: 'send_confirmation',
-              title: 'Your message has been scheduled',
-              id: polyToast,
-              undoClick: (type: string) => {
-                let params = {};
+        dispatch(sendMessage({body:{id: draft.id, ...params }}));
 
-                if (type === 'undo') {
-                  params = {
-                    undo: true
-                  }
-                } else if (type === 'send-now') {
-                  params = {
-                    now: true
-                  }
-                }
-                dispatch(sendMessage({body:{id: draft.id!, ...params }}));
-                toast.close(`${polyToast}`);
+        Toaster({
+          desc: `Your message has been scheduled`,
+          type: 'send_confirmation',
+          title: 'Your message has been scheduled',
+          id: polyToast,
+          undoClick: (type: string) => {
+
+            if (type === 'undo') {
+              params = {
+                undo: true
               }
+              updateThreadStateOpration(type)
+            } else if (type === 'send-now') {
+              params = {
+                now: true
+              }
+               dispatch(updateDraftState({
+                draft: null,
+              }));
             }
-          },
-      }));
-
-        // Toaster({
-        //   desc: `Your message has been scheduled`,
-        //   type: 'send_confirmation',
-        //   title: 'Your message has been scheduled',
-        //   id: polyToast,
-        //   undoClick: (type: string) => {
-        //
-        //     if (type === 'undo') {
-        //       params = {
-        //         undo: true
-        //       }
-        //     } else if (type === 'send-now') {
-        //       params = {
-        //         now: true
-        //       }
-        //     }
-        //     dispatch(sendMessage({body:{id: draft.id!, ...params }}));
-        //     toast.close(`${polyToast}`);
-        //   }
-        // })
+            dispatch(sendMessage({body:{id: draft.id!, ...params }}));
+            toast.close(`${polyToast}`);
+          }
+        })
 
       } else {
         if (draft && draft.to && draft.to.length) {
@@ -584,53 +614,33 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             title: draft?.subject || '',
             id: polyToast,
             undoClick: (type: string) => {
-
+              optionType = type;
               if (type === 'undo') {
                 params = {
                   undo: true
                 }
-              } else if (type === 'send-now') {
+                updateThreadStateOpration(type) 
+              }
+            
+             else if (type === 'send-now') {
                 params = {
                   now: true
                 }
+                dispatch(updateDraftState({
+                  draft: null,
+                }));
               }
               dispatch(sendMessage({body:{ id: draft.id!, ...params }}));
               toast.close(`${polyToast}`);
             }
           })
-        }
-      }
+            }
+          }
 
-      dispatch(sendMessage({body:{id: draft.id!, ...params }}));
+          dispatch(sendMessage({body:{id: draft.id!, ...params }}));
 
       if (selectedThread) {
-        let draftData = {
-          ...draft,
-          mailboxes: [tabValue],
-          snippet: draft.subject
-        }
-        let threadData = { ...selectedThread };
-        let messages = [...(threadData?.messages || [])];
-        let findDraftId = messages.findIndex(item => item.id === draft.id);
-        messages.splice(findDraftId, 1);
-        messages.push(draftData as Message);
-        threadData = {
-          ...threadData,
-          messages: messages
-        };
-
-        dispatch(updateThreadState({
-          selectedThread: threadData
-        }))
-        let cacheMessages = getCacheMessages();
-        setCacheMessages({
-          ...cacheMessages,
-          [draftData.id!]: {
-            ...cacheMessages[draftData.id!],
-            data: Buffer.from(draft.draftInfo!.body || '').toString('base64'),
-            attachments: draft?.draftInfo?.attachments || []
-          }
-        })
+        updateThreadStateOpration(optionType)
       }
 
       setEmailRecipients({
