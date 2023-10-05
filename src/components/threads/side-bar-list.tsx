@@ -156,6 +156,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
         }))
 
       } else {
+        dispatch(updateDraftState({ draft: null }));
         if(selectedThread && item) {
           updateOnlineStatus(selectedThread!, item!);
         }
@@ -173,7 +174,6 @@ export function ThreadsSideBarList(props: ThreadListProps) {
 
         dispatch(updateThreadState({ selectedThread: item, isThreadFocused: false, multiSelection: [] }));
         dispatch(updateMessageState({ selectedMessage: (item.messages || [])[0], messages: [] }));
-        dispatch(updateDraftState({ draft: null }));
       }
     }
   }, [dispatch, currentThreads, selectedThread, updateOnlineStatus, props.tab]);

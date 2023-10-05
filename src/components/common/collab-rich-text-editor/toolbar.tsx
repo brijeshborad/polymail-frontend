@@ -112,12 +112,7 @@ export default function CollabRichTextEditorToolbar({ isToolbarVisible = false, 
             <Image src="/image/icon/unordered.svg" alt="unordered list" width={16} height={16} />
           </button>
           <div style={{ width: 1, backgroundColor: '#E5E7EB' }}></div>
-          {/*<button*/}
-          {/*  onClick={() => { }}*/}
-          {/*  className={editor.isActive('emoji') ? 'is-active' : ''}*/}
-          {/*>*/}
-          {/*  <Image src="/image/icon/emoji.svg" alt="emoji" width={16} height={16} />*/}
-          {/*</button>*/}
+
           <ToolbarEmoji
             editor={editor}
             isOpen={isEmojiMenuOpen}
