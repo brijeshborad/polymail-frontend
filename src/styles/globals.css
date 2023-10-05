@@ -650,6 +650,10 @@ div:has(> .mailSendToaster) {
     pointer-events: none;
 }
 
+.tiptap-container{
+  transition: all 1s ease-in-out;
+}
+
 .tiptap-container .show-shadow-bottom:after {
     position: absolute;
     content: '';
@@ -788,6 +792,11 @@ div:has(> .mailSendToaster) {
 
 .emoji-popover .emoji-modal-icon {
     cursor: pointer;
+}
+
+.tiptap-toolbar {
+  background-color: #fff;
+  transition: all 1s ease-in-out;
 }
 
 .tiptap-toolbar button.is-active {

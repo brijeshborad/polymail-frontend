@@ -876,7 +876,10 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                   <Button
                       className={styles.replyTextDiscardButton}
                       fontSize={14} lineHeight={16} height={'38px'}
-                      onClick={() => discardMessage()}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        discardMessage()
+                      }}
                   > Discard </Button>
                   <Flex className={styles.messageSendButton}>
                     <Button

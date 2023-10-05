@@ -74,6 +74,10 @@ export default function CollabRichTextEditor({
         ])
     }, [id, selectedAccount, placeholder])
 
+    useEffect(() => {
+      setIsFocused(isToolbarVisible)
+    }, [isToolbarVisible])
+
 
     if (!provider) return
 
@@ -91,26 +95,25 @@ export default function CollabRichTextEditor({
                         if (projectShare) {
                             finalContent += projectShare
                         }
+
                         editor.editor.commands.setContent(finalContent.trim(), false)
-                        console.log(finalContent)
                     }
                     editor.editor.commands.focus('start')
                 }}
+                slotAfter={isFocused && (
+                  <CollabRichTextEditorToolbar
+                      isToolbarVisible={isFocused}
+                      beforeToolbar={null}
+                      afterToolbar={afterToolbar}
+                      extendToolbar={extendToolbar}
+                    />
+                )}
                 onBlur={() => {
-                  setIsFocused(false)
                   dispatch(updateKeyNavigation({isEnabled: true}))
                 }}
                 onUpdate={({editor}) => onChange(editor.getHTML())}
                 extensions={extensions}>
-                <ContentMonitor/>
-                  {isFocused && (
-                    <CollabRichTextEditorToolbar
-                        isToolbarVisible={isToolbarVisible}
-                        beforeToolbar={null}
-                        afterToolbar={afterToolbar}
-                        extendToolbar={extendToolbar}
-                    />
-                  )}
+                <ContentMonitor />
             </EditorProvider>
         </div>
     )
