@@ -795,7 +795,13 @@ div:has(> .mailSendToaster) {
 }
 
 .tiptap-toolbar {
+  opacity: 0;
   background-color: #fff;
+  transition: all 1s ease-in-out;
+}
+
+.tiptap-toolbar.show{
+  opacity: 1;
   transition: all 1s ease-in-out;
 }
 

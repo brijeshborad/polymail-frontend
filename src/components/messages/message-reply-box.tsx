@@ -827,7 +827,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
 
           <Flex direction={'column'} position={"relative"} flex={1} overflow={'none'}>
-            <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} zIndex={6} ref={editorRef} overflowX={'auto'} className={`editor-bottom-shadow`}
+            <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} zIndex={6} ref={editorRef} overflowY={'auto'} className={`editor-bottom-shadow`}
               onScroll={() => handleEditorScroll()}>
               {(selectedThread && collabId) && (
                 <CollabRichTextEditor
