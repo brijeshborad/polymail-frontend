@@ -10,7 +10,6 @@ export default function CollabRichTextEditorToolbar({ beforeToolbar, afterToolba
   const { editor } = useCurrentEditor()
   const [isLinkMenuOpen, setIsLinkMenuOpen] = useState(false);
   const [isEmojiMenuOpen, setIsEmojiMenuOpen] = useState(false);
-  const [waitDelay, setWaitDelay] = useState(true)
 
   const setLink = useCallback((url?: string) => {
     if (!editor) return
@@ -55,18 +54,11 @@ export default function CollabRichTextEditorToolbar({ beforeToolbar, afterToolba
     return null
   }
 
-  if(waitDelay) {
-    setTimeout(() => {
-      setWaitDelay(false)
-    }, 500)
-    return null
-  }
-
   return (
     <>
       {beforeToolbar && beforeToolbar}
 
-        <Box position={'absolute'} display={'flex'} gap={4} bottom={3} zIndex={9} className={`tiptap-toolbar ${!waitDelay ? 'show' : ''}`}>
+        <Box position={'absolute'} display={'flex'} gap={4} bottom={3} zIndex={9} className={`tiptap-toolbar show`}>
           <button
             onClick={() => editor.chain().focus().toggleBold().run()}
             disabled={
@@ -118,7 +110,7 @@ export default function CollabRichTextEditorToolbar({ beforeToolbar, afterToolba
           >
             <Image src="/image/icon/unordered.svg" alt="unordered list" width={16} height={16} />
           </button>
-          <div style={{ width: 1, backgroundColor: '#E5E7EB' }}></div>
+          <div style={{ width: 1, backgroundColor: '#E5E7EB' }}/>
 
           <ToolbarEmoji
             editor={editor}

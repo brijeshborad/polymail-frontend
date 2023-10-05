@@ -61,7 +61,7 @@ export function MessageReplyBox(props: MessageBoxType) {
   const [isReplyDropdownOpen, setIsReplyDropdownOpen] = useState<boolean>(false);
   const [extraClassNames, setExtraClassNames] = useState<string>('');
   const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
-  const [waitForDraft, setWaitForDraft] = useState<boolean>(false); 
+  const [waitForDraft, setWaitForDraft] = useState<boolean>(false);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [collabId, setCollabId] = useState<string | undefined>(draft?.draftInfo?.collabId)
 
@@ -505,7 +505,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
     setTimeout(() => {
       setHideEditorToolbar(false)
-    }, 500);
+    }, 200);
   }
 
   const updateThreadStateOpration = (type: string) =>{
@@ -513,7 +513,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
       ...draft,
       mailboxes: type === 'undo' ? [MAILBOX_DRAFT] : [tabValue],
       snippet: draft?.subject
-    }    
+    }
     let threadData: Thread = { ...selectedThread } as Thread;
     let messages = [...(threadData?.messages || [])];
     let findDraft: Message[] = [];
@@ -531,7 +531,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
       messages: type === 'undo' ? findDraft : messages,
     };
 
-     let index1 = (threads || []).findIndex((item: Thread) => item.id === threadData?.id);  
+     let index1 = (threads || []).findIndex((item: Thread) => item.id === threadData?.id);
         let newThreads: Thread[] = threads ?? [];
         if (threads) {
           newThreads = [...threads];
@@ -555,7 +555,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
       }
     })
   }
-  
+
 
   const sendMessages = () => {
     if (draft && draft.id) {
@@ -619,9 +619,9 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 params = {
                   undo: true
                 }
-                updateThreadStateOpration(type) 
+                updateThreadStateOpration(type)
               }
-            
+
              else if (type === 'send-now') {
                 params = {
                   now: true
@@ -673,8 +673,8 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
   const handleFocus = () => {
     setIsInitialized(true);
+    setHideEditorToolbar(true);
     setTimeout(() => {
-      setHideEditorToolbar(true);
       let currentEmailBody: string = getPlainTextFromHtml(emailBody);
       if (selectedAccount && selectedAccount.signature && props.replyType !== 'forward' && !currentEmailBody.trim()) {
         let sentence = '';

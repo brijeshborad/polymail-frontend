@@ -29,7 +29,6 @@ export default function CollabRichTextEditor({
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const [provider, setProvider] = useState<any>()
     const [extensions, setExtensions] = useState<any>([]);
-    const [isFocused, setIsFocused] = useState(isToolbarVisible)
 
     useEffect(() => {
         if (!id) return
@@ -74,10 +73,6 @@ export default function CollabRichTextEditor({
         ])
     }, [id, selectedAccount, placeholder])
 
-    useEffect(() => {
-      setIsFocused(isToolbarVisible)
-    }, [isToolbarVisible])
-
 
     if (!provider) return
 
@@ -85,7 +80,6 @@ export default function CollabRichTextEditor({
         <div className={`tiptap-container ${className}`}>
             <EditorProvider
                 onFocus={(editor) => {
-                    setIsFocused(true)
                     dispatch(updateKeyNavigation({isEnabled: false}))
                     if (editor.editor.isEmpty) {
                         let finalContent = '';
@@ -100,9 +94,8 @@ export default function CollabRichTextEditor({
                     }
                     editor.editor.commands.focus('start')
                 }}
-                slotAfter={isFocused && (
+                slotAfter={isToolbarVisible && (
                   <CollabRichTextEditorToolbar
-                      isToolbarVisible={isFocused}
                       beforeToolbar={null}
                       afterToolbar={afterToolbar}
                       extendToolbar={extendToolbar}

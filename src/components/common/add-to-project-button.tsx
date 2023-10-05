@@ -16,7 +16,7 @@ import React, {useEffect, useRef, useState} from "react";
 import {Project, Thread} from "@/models";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import Router from 'next/router';
+import Router, {useRouter} from 'next/router';
 import {updateCommonState} from "@/redux/common-apis/action-reducer";
 import {addThreadToProject} from "@/utils/threads-common-functions";
 import { removeThreadFromProject} from "@/redux/projects/action-reducer";
@@ -35,6 +35,7 @@ export function AddToProjectButton() {
     const searchRef = useRef<HTMLInputElement | null>(null);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const {draft} = useSelector((state: StateType) => state.draft);
+    const router = useRouter();
 
     useEffect(() => {
         const handleShortcutKeyPress = (e: KeyboardEvent | any) => {
@@ -138,9 +139,7 @@ export function AddToProjectButton() {
                 }
             }));
 
-            // switch thread to previous or next
-            const routePaths = window.location.pathname.split('/');
-            if (routePaths.includes('projects') && routePaths.includes(item.id!) && threads) {
+            if (router.query.project && threads) {
                  let threadIndex = (threads || []).findIndex((thread: Thread) => thread.id === selectedThread.id);
                  let data = (threads || []).filter((thread: Thread) => thread.id !== selectedThread.id);
                  dispatch(updateThreadState({
@@ -154,10 +153,9 @@ export function AddToProjectButton() {
                     projects: data
                 }
                 dispatch(updateThreadState({ selectedThread: thread}));
-                setFilteredProjects(prevState => ({
-                    ...prevState,
-                    item
-                }));
+                let projects = [...filteredProjects];
+                projects.push(item);
+                setFilteredProjects([...projects]);
             }
         }
         setDropDownOpen(true)

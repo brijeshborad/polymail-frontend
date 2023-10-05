@@ -161,7 +161,7 @@ const projectsSlice = createSlice({
         },
 
         removeThreadFromProject: (state: InitialProjectState, _action: PayloadAction<ReducerActionType>) => {
-            return {...state, isLoading: true}
+            return {...state, isLoading: false}
         },
         removeThreadFromProjectSuccess: (state: InitialProjectState, _action: PayloadAction<{}>) => {
             return {...state,isLoading: false,}
