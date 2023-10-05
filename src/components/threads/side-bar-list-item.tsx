@@ -39,7 +39,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
       if(selectedThread && selectedThread.id === props.thread.id) {
         props.onSelect(ref)
       }
-    }, [selectedThread, props])
+    }, [selectedThread])
 
   return (
     <>
