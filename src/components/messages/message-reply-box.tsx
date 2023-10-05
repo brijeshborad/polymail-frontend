@@ -672,12 +672,6 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
            sentence = `${selectedAccount?.name || ''} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length === 1 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}`;
         }
         setEmailBody(`<p>${selectedAccount.signature}</p><p style="padding: 5px 10px; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`);
-        dispatch(fireEvent({
-          event: {
-            data: `<p>${selectedAccount.signature}</p><p style="padding: 5px 10px; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`,
-            type: 'richtexteditor.forceUpdate'
-          }
-        }));
       }
     }, 500)
   }
@@ -735,8 +729,12 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
   return (
     <Flex backgroundColor={'#FFFFFF'} position={'sticky'} mt={'auto'} bottom={0} boxShadow={'0 20px 0px 0 #fff'}>
-      <Flex maxHeight={'450px'} direction={'column'} backgroundColor={'#FFFFFF'} width={'100%'}
-        onFocus={() => handleFocus()} onBlur={() => handleBlur()}>
+      <Flex 
+        maxHeight={'450px'} direction={'column'} backgroundColor={'#FFFFFF'} width={'100%'}
+        onClick={() => handleFocus()} 
+        onFocus={() => handleFocus()} 
+        onBlur={() => handleBlur()}
+      >
         <Flex borderRadius={8} gap={4} border={'1px solid #F3F4F6'} direction={'column'} padding={4}>
           {/*router.query.project && (
             <Flex align={'center'} justify={'space-between'} gap={4} pb={4}
@@ -761,11 +759,14 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 fontWeight={500} lineHeight={'normal'}> Create new draft </Button>
             </Flex>
           ) */}
-          <Flex align={'center'} justify={'space-between'} gap={4} position={"relative"} zIndex={6}>
+          <Flex align={'center'} justify={'space-between'} gap={4} position={"relative"} zIndex={isReplyDropdownOpen ? 8 : 6}>
             <Flex align={'center'} gap={1}>
               <Menu isOpen={isReplyDropdownOpen} onClose={() => setIsReplyDropdownOpen(false)}>
                 <MenuButton
-                  onClick={() => setIsReplyDropdownOpen(true)}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setIsReplyDropdownOpen(true)
+                  }}
                   color={'#6B7280'} variant='link' size='xs'
                   as={Button} rightIcon={<ChevronDownIcon />}
                 >
@@ -825,35 +826,37 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             </div>}
 
 
-          <Flex direction={'column'} position={"relative"} flex={1} >
-            <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} zIndex={6} ref={editorRef} className={`editor-bottom-shadow`}
+          <Flex direction={'column'} position={"relative"} flex={1} overflow={'none'}>
+            <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} zIndex={6} ref={editorRef} overflow={'auto'} className={`editor-bottom-shadow`}
               onScroll={() => handleEditorScroll()}>
-              {selectedThread && <CollabRichTextEditor
-                  id={'thread-' + collabId}
-                  onChange={(content) => sendToDraft(content)}
-                  placeholder='Reply with anything you like or @mention someone to share this thread'
-                  isToolbarVisible={hideEditorToolbar}
-                  className={`${extraClassNames} ${extraClassNamesForBottom}`}
-                  emailSignature={selectedAccount ? `<p></p><p>${selectedAccount?.signature}</p>` : undefined}
-                  projectShare={selectedThread?.projects?.length ? `
-                        <div style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">
-                          <p style="font-size: 13px"> ${selectedAccount?.name || ''} is sharing this email thread (and future replies) with&nbsp;</p>
-                          <p style="font-size: 13px; text-decoration: underline">others</p>
-                          <p style="font-size: 13px">&nbsp;on&nbsp;</p>
-                          <p style="font-size: 13px; text-decoration: underline">Polymail</p>
-                        </div>` : undefined}
-                  extendToolbar={(
-                      <>
-                        <Flex
-                            onClick={() => inputFile.current?.click()}
-                            width={'16px'} h={'16px'} align={'center'} justify={'center'} cursor={'pointer'} className={styles.replyIcon}
-                        >
-                          <Image src="/image/icon/attach.svg" alt="emoji" width={13} height={13} />
-                          <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e)} style={{ display: 'none' }} />
-                        </Flex>
-                      </>
-                  )}
-              />}
+              {(selectedThread && collabId) && (
+                <CollabRichTextEditor
+                    id={'thread-' + collabId}
+                    onChange={(content) => sendToDraft(content)}
+                    placeholder='Reply with anything you like or @mention someone to share this thread'
+                    isToolbarVisible={hideEditorToolbar}
+                    className={`${extraClassNames} ${extraClassNamesForBottom}`}
+                    emailSignature={selectedAccount ? `<p></p><p>${selectedAccount?.signature}</p>` : undefined}
+                    projectShare={selectedThread?.projects?.length ? `
+                          <div style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">
+                            <p style="font-size: 13px"> ${selectedAccount?.name || ''} is sharing this email thread (and future replies) with&nbsp;</p>
+                            <p style="font-size: 13px; text-decoration: underline">others</p>
+                            <p style="font-size: 13px">&nbsp;on&nbsp;</p>
+                            <p style="font-size: 13px; text-decoration: underline">Polymail</p>
+                          </div>` : undefined}
+                    extendToolbar={(
+                        <>
+                          <Flex
+                              onClick={() => inputFile.current?.click()}
+                              width={'16px'} h={'16px'} align={'center'} justify={'center'} cursor={'pointer'} className={styles.replyIcon}
+                          >
+                            <Image src="/image/icon/attach.svg" alt="emoji" width={13} height={13} />
+                            <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e)} style={{ display: 'none' }} />
+                          </Flex>
+                        </>
+                    )}
+                />
+              )}
 
               {attachments && attachments.length > 0 ? <div style={{ marginTop: '20px' }}>
                 {attachments.map((item, index: number) => (

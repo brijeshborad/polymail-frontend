@@ -676,14 +676,22 @@ div:has(> .mailSendToaster) {
     bottom: 60px;
 }
 
+.ProseMirror {
+  position: static !important;
+}
+
 /* Give a remote user a caret */
 .collaboration-cursor__caret {
+  content: "x";
+  width: 1px;
+  height: 18px;
   border-left: 1px solid #0d0d0d;
   border-right: 1px solid #0d0d0d;
+  margin-top: 0px;
   margin-left: -1px;
   margin-right: -1px;
   pointer-events: none;
-  position: relative;
+  position: absolute;
   word-break: normal;
   z-index: 10000;
 }
@@ -699,7 +707,7 @@ div:has(> .mailSendToaster) {
   line-height: normal;
   padding: 0.1rem 0.3rem;
   position: absolute;
-  top: -1.4em;
+  top: -1.3em;
   user-select: none;
   white-space: nowrap;
   z-index: 10000;

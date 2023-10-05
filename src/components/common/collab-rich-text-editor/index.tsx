@@ -95,16 +95,14 @@ export default function CollabRichTextEditor({
                 }}
                 onBlur={() => dispatch(updateKeyNavigation({isEnabled: true}))}
                 onUpdate={({editor}) => onChange(editor.getHTML())}
-                slotAfter={(
-                    <CollabRichTextEditorToolbar
-                        isToolbarVisible={isToolbarVisible}
-                        beforeToolbar={null}
-                        afterToolbar={afterToolbar}
-                        extendToolbar={extendToolbar}
-                    />
-                )}
                 extensions={extensions}>
                 <ContentMonitor/>
+                <CollabRichTextEditorToolbar
+                    isToolbarVisible={isToolbarVisible}
+                    beforeToolbar={null}
+                    afterToolbar={afterToolbar}
+                    extendToolbar={extendToolbar}
+                />
             </EditorProvider>
         </div>
     )
