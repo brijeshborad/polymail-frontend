@@ -676,13 +676,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   const handleFocus = () => {
     setIsInitialized(true);
     setHideEditorToolbar(true);
-    
-    dispatch(fireEvent({
-      event: {
-        data: null,
-        type: 'richtexteditor.focus'
-      }
-    }));
+
 
     setTimeout(() => {
       let currentEmailBody: string = getPlainTextFromHtml(emailBody);
@@ -835,7 +829,15 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 }}> {!replyBoxHide ? 'Edit' : 'Close'} </Button>
             </Flex>
             <Flex
-              onClick={() => handleFocus()}
+              onClick={() => {
+                handleFocus()
+                dispatch(fireEvent({
+                    event: {
+                      data: null,
+                      type: 'richtexteditor.focus'
+                    }
+                  }));
+              }}
               onFocus={() => handleFocus()}
               grow={1} justifyContent={'flex-end'}
             >
