@@ -496,6 +496,8 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   }
 
   const discardMessage = () => {
+    setIsReplyDropdownOpen(false)
+    setReplyBoxHide(false)
     dispatch(fireEvent({
       event: {
         data: '',
@@ -775,7 +777,10 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 fontWeight={500} lineHeight={'normal'}> Create new draft </Button>
             </Flex>
           ) */}
-          <Flex align={'center'} justify={'space-between'} gap={4} position={"relative"} zIndex={isReplyDropdownOpen ? 8 : 6}>
+          <Flex
+            onClick={() => handleFocus()}
+            onFocus={() => handleFocus()}
+            align={'center'} justify={'space-between'} gap={4} position={"relative"} zIndex={isReplyDropdownOpen ? 8 : 6}>
             <Flex align={'center'} gap={1}>
               <Menu isOpen={isReplyDropdownOpen} onClose={() => setIsReplyDropdownOpen(false)}>
                 <MenuButton
