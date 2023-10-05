@@ -288,7 +288,7 @@ export function Message({isProjectView = false}: {isProjectView?: boolean}) {
               <MessagesHeader inboxMessages={inboxMessages} index={index}
                               headerType={'inbox'}/>
 
-              <Flex ref={messagesWrapperRef} padding={'22px'} gap={5} direction={'column'} flex={1} overflowY={'scroll'}>
+              <Flex ref={messagesWrapperRef} padding={'20px'} gap={5} direction={'column'} flex={1} overflowY={'scroll'} overflowX={'hidden'}>
                 <Flex gap={2} direction={'column'} height={'100%'}>
                   {inboxMessages && !!inboxMessages.length && inboxMessages.map((item: any, index: number) => (
                       <div key={index}>
