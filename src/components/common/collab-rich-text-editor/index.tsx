@@ -29,6 +29,7 @@ export default function CollabRichTextEditor({
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const [provider, setProvider] = useState<any>()
     const [extensions, setExtensions] = useState<any>([]);
+    const [isFocused, setIsFocused] = useState(isToolbarVisible)
 
     useEffect(() => {
         if (!id) return
@@ -80,6 +81,7 @@ export default function CollabRichTextEditor({
         <div className={`tiptap-container ${className}`}>
             <EditorProvider
                 onFocus={(editor) => {
+                    setIsFocused(true)
                     dispatch(updateKeyNavigation({isEnabled: false}))
                     if (editor.editor.isEmpty) {
                         let finalContent = '';
@@ -89,20 +91,26 @@ export default function CollabRichTextEditor({
                         if (projectShare) {
                             finalContent += projectShare
                         }
-                        editor.editor.commands.setContent(finalContent, false)
+                        editor.editor.commands.setContent(finalContent.trim(), false)
+                        console.log(finalContent)
                     }
                     editor.editor.commands.focus('start')
                 }}
-                onBlur={() => dispatch(updateKeyNavigation({isEnabled: true}))}
+                onBlur={() => {
+                  setIsFocused(false)
+                  dispatch(updateKeyNavigation({isEnabled: true}))
+                }}
                 onUpdate={({editor}) => onChange(editor.getHTML())}
                 extensions={extensions}>
                 <ContentMonitor/>
-                <CollabRichTextEditorToolbar
-                    isToolbarVisible={isToolbarVisible}
-                    beforeToolbar={null}
-                    afterToolbar={afterToolbar}
-                    extendToolbar={extendToolbar}
-                />
+                  {isFocused && (
+                    <CollabRichTextEditorToolbar
+                        isToolbarVisible={isToolbarVisible}
+                        beforeToolbar={null}
+                        afterToolbar={afterToolbar}
+                        extendToolbar={extendToolbar}
+                    />
+                  )}
             </EditorProvider>
         </div>
     )
