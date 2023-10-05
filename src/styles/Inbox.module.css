@@ -446,6 +446,14 @@
     left: 12px;
 }
 
+.addToProjectList .selectedProject .selectedProjectName {
+    cursor: pointer;
+}
+
+.addToProjectList .selectedProject .selectedProjectName:hover {
+    background-color: rgba(8,22,47,.05);
+}
+
 .addToProjectList .addNewProject button {
     border-top: 1px solid #F3F4F6;
     padding: 0;

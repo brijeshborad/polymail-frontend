@@ -16,6 +16,7 @@ import React, {useEffect, useRef, useState} from "react";
 import {Project} from "@/models";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
+import Router from 'next/router';
 import {updateCommonState} from "@/redux/common-apis/action-reducer";
 import {addThreadToProject} from "@/utils/threads-common-functions";
 import { removeThreadFromProject} from "@/redux/projects/action-reducer";
@@ -24,7 +25,6 @@ export function AddToProjectButton() {
     const [isDropdownOpen, setDropDownOpen] = useState(false)
     const dispatch = useDispatch();
     const {selectedThread, multiSelection, threads} = useSelector((state: StateType) => state.threads);
-
     let {projects} = useSelector((state: StateType) => state.projects);
     const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
     const [searchValue, setSearchValue] = useState<string>('');
@@ -171,8 +171,8 @@ export function AddToProjectButton() {
                     <Flex direction={'column'} position={'relative'} pb={1} className={styles.selectedProject}>
                         {(selectedThread?.projects || []).map((item: any, index: number) => (
                             <Flex alignItems={'center'} justifyContent={'space-between'} padding={'8px 12px'}
-                                  key={index}>
-                                <Text color={'#374151'} fontSize={'13px'} fontWeight={'500'} lineHeight={1}
+                                  key={index} className={styles.selectedProjectName}>
+                                <Text color={'#374151'} fontSize={'13px'} fontWeight={'500'} width={'100%'} lineHeight={1} onClick={() =>  Router.push(`/projects/${item.id!}`)}
                                       letterSpacing={'-0.13px'}>{item.emoji} {item.name}</Text>
                                 <Button
                                     onClick={() => closeScheduleDropdown(item)}
