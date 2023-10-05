@@ -749,8 +749,6 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     <Flex backgroundColor={'#FFFFFF'} position={'sticky'} mt={'auto'} bottom={0} boxShadow={'0 20px 0px 0 #fff'}>
       <Flex
         maxHeight={'450px'} direction={'column'} backgroundColor={'#FFFFFF'} width={'100%'}
-        onClick={() => handleFocus()}
-        onFocus={() => handleFocus()}
         onBlur={() => handleBlur()}
       >
         <Flex borderRadius={8} gap={4} border={'1px solid #F3F4F6'} direction={'column'} padding={4}>
@@ -849,7 +847,10 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             </div>}
 
 
-          <Flex direction={'column'} position={"relative"} flex={1} overflow={'none'}>
+          <Flex
+            onClick={() => handleFocus()}
+            onFocus={() => handleFocus()}
+            direction={'column'} position={"relative"} flex={1} overflow={'none'}>
             <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} zIndex={6} ref={editorRef} overflowY={'auto'} className={`editor-bottom-shadow`}
               onScroll={() => handleEditorScroll()}>
               {(selectedThread && collabId) && (
