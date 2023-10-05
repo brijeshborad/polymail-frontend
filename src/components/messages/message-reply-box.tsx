@@ -819,9 +819,14 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 }}> {!replyBoxHide ? 'Edit' : 'Close'} </Button>
             </Flex>
             <Text as={'h1'} fontSize='11px' color={'#6B7280'} display={'flex'} gap={'2px'}
-              className={styles.mailSaveTime}>Saved {draft ?
-                <Time time={draft?.updated || ''} isShowFullTime={false}
-                  showTimeInShortForm={true} /> : '0s'} ago</Text>
+              className={styles.mailSaveTime}>
+              {!draft?.updated && 'Not Saved'}
+              {draft?.updated &&
+              <>
+                Saved <Time time={draft?.updated || ''} isShowFullTime={false} showTimeInShortForm={true} />&nbsp;ago
+              </>
+              }
+            </Text>
           </Flex>
           {replyBoxHide &&
             <div ref={divRef}>
