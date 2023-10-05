@@ -730,10 +730,8 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         handleEditorScroll();
       }, 500)
     }
-    if (props.replyType === 'forward') {
+    if(props.replyType === 'forward') {
       setReplyBoxHide(true)
-    } else {
-      setReplyBoxHide(false)
     }
   }, [props.replyType, handleEditorScroll])
 
@@ -778,8 +776,6 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             </Flex>
           ) */}
           <Flex
-            onClick={() => handleFocus()}
-            onFocus={() => handleFocus()}
             align={'center'} justify={'space-between'} gap={4} position={"relative"} zIndex={isReplyDropdownOpen ? 8 : 6}>
             <Flex align={'center'} gap={1}>
               <Menu isOpen={isReplyDropdownOpen} onClose={() => setIsReplyDropdownOpen(false)}>
@@ -800,7 +796,13 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                   }
                   {props.replyType === 'forward' ?
                     <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply', props.threadDetails) : null}> Reply</MenuItem> :
-                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('forward', props.threadDetails) : null}> Forward</MenuItem>
+                    <MenuItem 
+                      onClick={() => {
+                        if(props.hideAndShowReplayBox){
+                          props.hideAndShowReplayBox('forward', props.threadDetails)
+                          handleFocus()
+                        }
+                      }}> Forward</MenuItem>
                   }
                 </MenuList>
               </Menu>
@@ -827,17 +829,27 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                   e.stopPropagation();
                   e.preventDefault();
                   showRecipientsBox()
+                  if(!replyBoxHide) {
+                    handleFocus()
+                  }
                 }}> {!replyBoxHide ? 'Edit' : 'Close'} </Button>
             </Flex>
-            <Text as={'h1'} fontSize='11px' color={'#6B7280'} display={'flex'} gap={'2px'}
-              className={styles.mailSaveTime}>
-              {!draft?.updated && 'Not Saved'}
-              {draft?.updated &&
-              <>
-                Saved <Time time={draft?.updated || ''} isShowFullTime={false} showTimeInShortForm={true} />&nbsp;ago
-              </>
-              }
-            </Text>
+            <Flex
+              onClick={() => handleFocus()}
+              onFocus={() => handleFocus()}
+              grow={1} justifyContent={'flex-end'}
+            >
+              <Text
+                as={'h1'} fontSize='11px' color={'#6B7280'} display={'flex'} gap={'2px'}
+                className={styles.mailSaveTime}>
+                {!draft?.updated && 'Not Saved'}
+                {draft?.updated &&
+                <>
+                  Saved <Time time={draft?.updated || ''} isShowFullTime={false} showTimeInShortForm={true} />&nbsp;ago
+                </>
+                }
+              </Text>
+            </Flex>
           </Flex>
           {replyBoxHide &&
             <div ref={divRef}>
@@ -853,8 +865,6 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
 
           <Flex
-            onClick={() => handleFocus()}
-            onFocus={() => handleFocus()}
             direction={'column'} position={"relative"} flex={1} overflow={'none'}>
             <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} zIndex={6} ref={editorRef} overflowY={'auto'} className={`editor-bottom-shadow`}
               onScroll={() => handleEditorScroll()}>

@@ -93,8 +93,8 @@ export default function CollabRichTextEditor({
                         }
 
                         editor.editor.commands.setContent(finalContent.trim(), false)
+                        editor.editor.commands.focus('start')
                     }
-                    editor.editor.commands.focus('start')
                 }}
                 slotAfter={isToolbarVisible && (
                   <CollabRichTextEditorToolbar
