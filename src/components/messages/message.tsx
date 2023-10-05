@@ -154,7 +154,7 @@ export function Message({isProjectView = false}: {isProjectView?: boolean}) {
   useEffect(() => {
     if (messagePart && messagePart.data) {
       cacheMessage({data: messagePart.data});
-      let decoded = Buffer.from(messagePart.data || '', 'base64').toString('ascii');
+      let decoded = Buffer.from(messagePart.data || '', 'base64').toString();
       let addTargetBlank = decoded.replace(/<a/g, '<a target="_blank"');
       const blob = new Blob([addTargetBlank], {type: "text/html"});
       const blobUrl = window.URL.createObjectURL(blob);
