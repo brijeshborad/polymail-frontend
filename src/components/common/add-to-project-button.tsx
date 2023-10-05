@@ -139,7 +139,7 @@ export function AddToProjectButton() {
                 }
             }));
 
-            if (router.query.project && threads) {
+            if (router.query.project && router.query.project === item.id && threads) {
                  let threadIndex = (threads || []).findIndex((thread: Thread) => thread.id === selectedThread.id);
                  let data = (threads || []).filter((thread: Thread) => thread.id !== selectedThread.id);
                  dispatch(updateThreadState({
@@ -158,7 +158,7 @@ export function AddToProjectButton() {
                 setFilteredProjects([...projects]);
             }
         }
-        setDropDownOpen(true)
+        setDropDownOpen(false)
     }
 
     const addProjectToThread = (item: Project) => {

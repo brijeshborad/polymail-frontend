@@ -114,6 +114,9 @@ export function ThreadsSideBarList(props: ThreadListProps) {
         forceWait: 0
       })
     }
+    Object.keys(onlineMembers['threads']).forEach((key: string) => {
+      onlineMembers['threads'][key] = [...onlineMembers['threads'][key].filter((data: UserProjectOnlineStatus) => data.userId)];
+    });
     setMemberStatusCache(onlineMembers);
     dispatch(updateCommonState({onlineUsers: onlineMembers}));
   }, [dispatch, userDetails, profilePicture])
