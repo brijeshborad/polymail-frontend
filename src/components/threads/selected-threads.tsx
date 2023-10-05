@@ -53,8 +53,12 @@ export default function SelectedThreads() {
               mailboxes: threadData[0].mailboxes || [],
             },
             tag: type.toLowerCase(),
-            data: threads,
-            forThread: true
+            afterUndoAction: () => {
+              dispatch(updateThreadState({
+                threads: threads || [],
+                selectedThread: (threads || [])[0],
+              }));
+            }
           },
           showToasterAfterUndoClick: true
         }

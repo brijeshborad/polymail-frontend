@@ -1,7 +1,6 @@
 import {ReducerActionType} from "@/types";
 import {Toaster} from "@/components/common";
 import {createStandaloneToast} from "@chakra-ui/react";
-import {updateThreadState} from "@/redux/threads/action-reducer";
 
 export function performSuccessActions(payload: ReducerActionType) {
     const {toast} = createStandaloneToast();
@@ -35,14 +34,14 @@ export function performSuccessActions(payload: ReducerActionType) {
                     if (payload?.undoAction?.undoBody?.afterUndoAction) {
                         payload?.undoAction?.undoBody?.afterUndoAction();
                     }
-                    if (payload?.undoAction?.undoBody?.forThread) {
-                        if (payload?.undoAction?.dispatch) {
-                            payload?.undoAction?.dispatch(updateThreadState({
-                                threads: payload.undoAction.undoBody?.data || [],
-                                selectedThread: (payload.undoAction.undoBody?.data || [])[0],
-                            }));
-                        }
-                    }
+                    // if (payload?.undoAction?.undoBody?.forThread) {
+                    //     if (payload?.undoAction?.dispatch) {
+                    //         payload?.undoAction?.dispatch(updateThreadState({
+                    //             threads: payload.undoAction.undoBody?.data || [],
+                    //             selectedThread: (payload.undoAction.undoBody?.data || [])[0],
+                    //         }));
+                    //     }
+                    // }
 
                 }
             } : {})

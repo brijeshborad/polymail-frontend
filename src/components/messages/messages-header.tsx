@@ -152,8 +152,14 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                                 mailboxes: threadData.mailboxes || [],
                             },
                             tag: messageBox.toLowerCase(),
-                            data: threads,
-                            forThread: true
+                            // data: threads,
+                            // forThread: true,
+                            afterUndoAction: () => {
+                                dispatch(updateThreadState({
+                                    threads: threads || [],
+                                    selectedThread: (threads || [])[0],
+                                }));
+                            }
                         },
                         showToasterAfterUndoClick: true
                     }

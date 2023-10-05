@@ -13,7 +13,7 @@ import {
 import {CloseIcon, SearchIcon, SmallAddIcon} from "@chakra-ui/icons";
 import {FolderIcon, MenuIcon} from "@/icons";
 import React, {useEffect, useRef, useState} from "react";
-import {Project} from "@/models";
+import {Project, Thread} from "@/models";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import Router from 'next/router';
@@ -65,7 +65,7 @@ export function AddToProjectButton() {
 
     useEffect(() => {
         setFilteredProjects((projects || []));
-    }, [projects])
+    }, [projects, selectedThread])
 
     useEffect(() => {
         if (searchValue.length > 0) {
@@ -138,16 +138,27 @@ export function AddToProjectButton() {
                 }
             }));
 
-            let data = (selectedThread.projects || []).filter((project: Project) => project.id !== item.id);
-            let thread = {
-                ...selectedThread,
-                projects: data
+            // switch thread to previous or next
+            const routePaths = window.location.pathname.split('/');
+            if (routePaths.includes('projects') && routePaths.includes(item.id!) && threads) {
+                 let threadIndex = (threads || []).findIndex((thread: Thread) => thread.id === selectedThread.id);
+                 let data = (threads || []).filter((thread: Thread) => thread.id !== selectedThread.id);
+                 dispatch(updateThreadState({
+                     selectedThread: (threads || [])[(threadIndex + 1 == threads.length - 1) ? threadIndex + 1 : ((threadIndex >= 0) ? threadIndex - 1 : threadIndex + 1)] || null,
+                     threads: data
+                 }));
+            } else {
+                let data = (selectedThread.projects || []).filter((project: Project) => project.id !== item.id);
+                let thread = {
+                    ...selectedThread,
+                    projects: data
+                }
+                dispatch(updateThreadState({ selectedThread: thread}));
+                setFilteredProjects(prevState => ({
+                    ...prevState,
+                    item
+                }));
             }
-            dispatch(updateThreadState({ selectedThread: thread}));
-            setFilteredProjects(prevState => ({
-            ...prevState,
-                  item
-            }));
         }
         setDropDownOpen(true)
     }
