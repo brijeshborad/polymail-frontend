@@ -12,7 +12,7 @@ import styles from "@/styles/Inbox.module.css";
 import { CloseIcon } from "@chakra-ui/icons";
 import React, { ChangeEvent, ChangeEventHandler, useCallback, useEffect, useRef, useState } from "react";
 import { StateType } from "@/types";
-import { debounce, isEmail } from "@/utils/common.functions";
+import {debounce, isEmail, makeCollabId} from "@/utils/common.functions";
 import { createDraft, sendMessage, updateDraftState, updatePartialMessage } from "@/redux/draft/action-reducer";
 import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
@@ -72,6 +72,14 @@ export function ComposeBox(props: any) {
   const [isDraftUpdated, setIsDraftUpdated] = useState<boolean>(false);
   const [waitForDraft, setWaitForDraft] = useState<boolean>(false);
   const router = useRouter();
+  const [collabId, setCollabId] = useState<string | undefined>();
+
+  useEffect(() => {
+    if(!collabId) {
+      const newCollabId = makeCollabId(10)
+      setCollabId(newCollabId)
+    }
+  }, [collabId])
 
   useEffect(() => {
     if (props.messageDetails) {
@@ -260,7 +268,8 @@ export function ComposeBox(props: any) {
       cc: emailRecipients.cc?.items && emailRecipients.cc?.items.length > 0 ? emailRecipients.cc?.items : [],
       bcc: emailRecipients.bcc?.items && emailRecipients.bcc?.items.length > 0 ? emailRecipients.bcc?.items : [],
       draftInfo: {
-        body: value
+        body: value || emailBody,
+        collabId
       },
       ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
     }
@@ -306,7 +315,7 @@ export function ComposeBox(props: any) {
         params = {
           delay: secondsDifference
         }
-        
+
 
         dispatch(sendMessage({body:{ id: draft.id, ...params }}));
 
@@ -552,24 +561,20 @@ export function ComposeBox(props: any) {
                       onScroll={() => handleEditorScroll()} zIndex={6}>
 
                   <CollabRichTextEditor
-                    id={`${draft?.id}`}
+                    id={'draft-' + collabId}
                     content={emailBody}
                     onChange={(content) => sendToDraft(content)}
                     placeholder='Reply with anything you like or @mention someone to share this thread'
                     isToolbarVisible={true}
                     className={`${extraClassNames} ${extraClassNamesForBottom}`}
-                    beforeToolbar={(
-                      <>
-                        {selectedThread?.projects?.length && (
-                          <Flex backgroundColor={'#EBF83E'} width={'fit-content'} borderRadius={'4px'} color={'#0A101D'} fontWeight={'500'} lineHeight={1} padding={'5px 10px'}>
-                            <Text fontSize='xs'> {selectedAccount?.name || ''} is sharing this email thread (and future replies) with&nbsp;</Text>
-                            <Text fontSize='xs' as='u'>others</Text>
-                            <Text fontSize='xs'>&nbsp;on&nbsp;</Text>
-                            <Text fontSize='xs' as='u'>Polymail</Text>
-                          </Flex>
-                        )}
-                      </>
-                    )}
+                    emailSignature={selectedAccount ? `<p></p>${selectedAccount?.signature}` : undefined}
+                    projectShare={selectedThread?.projects?.length ? `
+                          <div style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">
+                            <p style="font-size: 13px; margin-right: 3px;"> ${selectedAccount?.name || ''} is sharing this email thread (and future replies) with</p>
+                            <p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">others</p>
+                            <p style="font-size: 13px; margin-right: 3px;">on</p>
+                            <p style="font-size: 13px; text-decoration: underline">Polymail</p>
+                          </div>` : undefined}
                     extendToolbar={(
                       <>
                         <Flex

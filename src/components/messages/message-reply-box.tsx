@@ -849,9 +849,9 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                     emailSignature={selectedAccount ? `<p></p>${selectedAccount?.signature}` : undefined}
                     projectShare={selectedThread?.projects?.length ? `
                           <div style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">
-                            <p style="font-size: 13px"> ${selectedAccount?.name || ''} is sharing this email thread (and future replies) with&nbsp;</p>
-                            <p style="font-size: 13px; text-decoration: underline">others</p>
-                            <p style="font-size: 13px">&nbsp;on&nbsp;</p>
+                            <p style="font-size: 13px; margin-right: 3px;"> ${selectedAccount?.name || ''} is sharing this email thread (and future replies) with</p>
+                            <p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">others</p>
+                            <p style="font-size: 13px; margin-right: 3px;">on</p>
                             <p style="font-size: 13px; text-decoration: underline">Polymail</p>
                           </div>` : undefined}
                     extendToolbar={(

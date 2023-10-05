@@ -153,6 +153,9 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     }, [incomingEvent])
 
     const openComposeModel = () => {
+        if (!isComposing) {
+            dispatch(updateDraftState({draft: null}));
+        }
         dispatch(updateCommonState({isComposing: true}));
         dispatch(updateThreadState({selectedThread: null}));
     }

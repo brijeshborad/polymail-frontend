@@ -33,10 +33,12 @@ export default function CollabRichTextEditor({
     useEffect(() => {
         if (!id) return
 
+        console.log('---', id);
+
         const prov = new TiptapCollabProvider({
             appId: process.env.NEXT_PUBLIC_TIPTAP_APP_ID!, // get this at collab.tiptap.dev
             name: id, // e.g. a uuid uuidv4();
-            token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2OTY0NDM1NzAsIm5iZiI6MTY5NjQ0MzU3MCwiZXhwIjoxNjk2NTI5OTcwLCJpc3MiOiJodHRwczovL2NvbGxhYi50aXB0YXAuZGV2IiwiYXVkIjoibHVpekBwb2x5bWFpbC5jb20ifQ.pm5towD49TWNkWf3OTqFthYp-7zZBPaqRUZU8P4JDu4',
+            token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2OTY1MTIyMzAsIm5iZiI6MTY5NjUxMjIzMCwiZXhwIjoxNjk2NTk4NjMwLCJpc3MiOiJodHRwczovL2NvbGxhYi50aXB0YXAuZGV2IiwiYXVkIjoibHVpekBwb2x5bWFpbC5jb20ifQ.S1qYVFOSvs66yBh-k0--NaSrZVHsUEmIHu3K71mtqPg',
             // document: new Y.Doc() // pass your existing doc, or leave this out and use provider.document
         })
         setProvider(prov)
@@ -84,10 +86,10 @@ export default function CollabRichTextEditor({
                     if (editor.editor.isEmpty) {
                         let finalContent = '';
                         if (emailSignature) {
-                            finalContent += emailSignature;
+                            finalContent += `<p></p>` + emailSignature;
                         }
                         if (projectShare) {
-                            finalContent += projectShare
+                            finalContent += `<p></p>` + projectShare
                         }
 
                         editor.editor.commands.setContent(finalContent.trim(), false)
