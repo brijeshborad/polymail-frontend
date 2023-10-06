@@ -747,6 +747,7 @@
 }
 
 .mailListTabs .composeButton:hover {
+    background: #fff;
     color: #00A88E;
 }
 
