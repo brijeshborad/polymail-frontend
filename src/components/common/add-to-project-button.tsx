@@ -224,7 +224,7 @@ export function AddToProjectButton() {
 
 
                 <MenuList className={`${styles.addToProjectList} drop-down-list`} zIndex={'overlay'}>
-                    {selectedThread?.projects?.length &&
+                    {!!selectedThread?.projects?.length &&
                     <Flex direction={'column'} position={'relative'} pb={1} className={styles.selectedProject}>
                         {(selectedThread?.projects || []).map((item: any, index: number) => (
                             <Flex alignItems={'center'} justifyContent={'space-between'} padding={'8px 12px'}
