@@ -738,7 +738,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   }, [incomingEvent, setIsReplyDropdownOpen]);
 
   return (
-    <Flex backgroundColor={'#FFFFFF'} position={'sticky'} mt={'10px'} bottom={0} boxShadow={'0 20px 0px 0 #fff'}>
+    <Flex backgroundColor={'#FFFFFF'} position={'sticky'} mt={'20px'} bottom={0} boxShadow={'0 20px 0px 0 #fff'}>
       <Flex
         maxHeight={'450px'} direction={'column'} backgroundColor={'#FFFFFF'} width={'100%'}
         onBlur={() => handleBlur()}
@@ -788,7 +788,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                   }
                   {props.replyType === 'forward' ?
                     <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply', props.threadDetails) : null}> Reply</MenuItem> :
-                    <MenuItem 
+                    <MenuItem
                       onClick={() => {
                         if(props.hideAndShowReplayBox){
                           props.hideAndShowReplayBox('forward', props.threadDetails)
@@ -888,7 +888,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                         <>
                           <Flex
                               onClick={() => inputFile.current?.click()}
-                              align={'center'} justify={'center'} cursor={'pointer'} 
+                              align={'center'} justify={'center'} cursor={'pointer'}
                               className={styles.attachIcon}
                           >
                             <Image src="/image/icon/attach.svg" alt="emoji" width={13} height={13} />
