@@ -157,7 +157,6 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
             dispatch(updateDraftState({draft: null}));
         }
         dispatch(updateCommonState({isComposing: true}));
-        dispatch(updateThreadState({selectedThread: null}));
     }
 
     const moveThreadToMailBoxes = (type: string, date: string = '') => {
