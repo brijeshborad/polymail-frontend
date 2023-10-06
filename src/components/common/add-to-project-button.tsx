@@ -197,7 +197,9 @@ export function AddToProjectButton() {
                             <span className={styles.projectsLength}>{`+${selectedThread?.projects?.length - 2}`}</span>
                         )}
                     </Flex>
-                    {selectedThread?.projects?.length === 1 ? selectedThread?.projects[0]?.name : selectedThread?.projects?.length + ' ' + 'Projects'}
+                    <div className={styles.projectAddedText}>
+                        {selectedThread?.projects?.length === 1 ? selectedThread?.projects[0]?.name : selectedThread?.projects?.length + ' ' + 'Projects'}
+                    </div>
                     <Flex width={'20px'} height={'20px'} alignItems={'center'} justifyContent={'center'}
                           className={styles.projectMenuIcon}><MenuIcon/></Flex>
                 </MenuButton> : <MenuButton

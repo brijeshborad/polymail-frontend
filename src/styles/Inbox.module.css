@@ -388,6 +388,14 @@
     min-width: 1px;
 }
 
+.projectAdded .projectAddedText {
+    max-width: 130px;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
 .projectAdded .projectSelectImage .projectCount + .projectCount {
     margin-left: -10px;
 }
