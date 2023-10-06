@@ -18,6 +18,7 @@ import {
 } from "@/utils/cache.functions";
 import {debounceInterval} from "@/utils/common.functions";
 import dayjs from "dayjs";
+import {fireEvent} from "@/redux/global-events/action-reducer";
 
 export function ThreadsSideBarList(props: ThreadListProps) {
   const { selectedThread, threads} = useSelector((state: StateType) => state.threads);
@@ -177,6 +178,12 @@ export function ThreadsSideBarList(props: ThreadListProps) {
 
         dispatch(updateThreadState({ selectedThread: item, isThreadFocused: false, multiSelection: [] }));
         dispatch(updateMessageState({ selectedMessage: (item.messages || [])[0], messages: [] }));
+        dispatch(fireEvent({
+          event: {
+            data: '',
+            type: 'richtexteditor.forceUpdate'
+          }
+        }));
       }
     }
   }, [dispatch, currentThreads, selectedThread, updateOnlineStatus, props.tab]);
