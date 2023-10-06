@@ -313,7 +313,7 @@ export function MessageReplyBox(props: MessageBoxType) {
       let emailSubject = `${messagesData.subject}`;
       if (props.replyType === 'forward') {
         emailSubject = `Fwd: ${messagesData.subject}`;
-        let decoded = Buffer.from(props.emailPart || '', 'base64').toString('ascii');
+        let decoded = Buffer.from(props.emailPart || '', 'base64').toString('utf-8');
         let sentence = '';
         if (selectedThread?.projects && selectedThread?.projects?.length) {
           sentence = `<p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${selectedAccount?.name || ''} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length === 1 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}`;
@@ -507,9 +507,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
       }
     }));
 
-    setTimeout(() => {
-      setHideEditorToolbar(false)
-    }, 200);
+    setHideEditorToolbar(false)
   }
 
   const updateThreadStateOpration = (type: string) =>{
@@ -742,7 +740,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   }, [incomingEvent, setIsReplyDropdownOpen]);
 
   return (
-    <Flex backgroundColor={'#FFFFFF'} position={'sticky'} mt={'auto'} bottom={0} boxShadow={'0 20px 0px 0 #fff'}>
+    <Flex backgroundColor={'#FFFFFF'} position={'sticky'} mt={'20px'} bottom={0} boxShadow={'0 20px 0px 0 #fff'}>
       <Flex
         maxHeight={'450px'} direction={'column'} backgroundColor={'#FFFFFF'} width={'100%'}
         onBlur={() => handleBlur()}
@@ -792,7 +790,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                   }
                   {props.replyType === 'forward' ?
                     <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply', props.threadDetails) : null}> Reply</MenuItem> :
-                    <MenuItem 
+                    <MenuItem
                       onClick={() => {
                         if(props.hideAndShowReplayBox){
                           props.hideAndShowReplayBox('forward', props.threadDetails)
@@ -878,7 +876,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                     id={'thread-' + collabId}
                     onCreate={() => sendToDraft('')}
                     onFileDrop={(files) => handleFileUpload(files)}
-                    placeholder='Reply with anything you like or @mention someone to share this thread'
+                    placeholder="Hit enter to reply with anything you'd like"
                     isToolbarVisible={hideEditorToolbar}
                     className={`${extraClassNames} ${extraClassNamesForBottom}`}
                     emailSignature={selectedAccount ? `<p></p>${selectedAccount?.signature}` : undefined}
@@ -893,7 +891,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                         <>
                           <Flex
                               onClick={() => inputFile.current?.click()}
-                              align={'center'} justify={'center'} cursor={'pointer'} 
+                              align={'center'} justify={'center'} cursor={'pointer'}
                               className={styles.attachIcon}
                           >
                             <Image src="/image/icon/attach.svg" alt="emoji" width={13} height={13} />

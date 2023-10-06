@@ -167,6 +167,13 @@
     border-color: #08162F;
 }
 
+.mailOtherOption {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
 .mailOtherOption button {
     border: 1px solid rgba(93, 95, 98, 0.14);
     border-radius: 50px;
@@ -174,7 +181,18 @@
     font-size: 13px;
     line-height: 1;
     padding: 5px 12px;
-    height: auto;
+    height: 28px;
+}
+
+.mailOtherOption .resumeDraft {
+    border: 1px solid #FF87DB;
+    background-color: #FFFFFF;
+    color: #67074A;
+    width: 110px;
+}
+
+.mailOtherOption .resumeDraft:hover {
+    background-color: #FFFFFF;
 }
 
 .mailOtherOption button span {
@@ -299,6 +317,9 @@
     box-shadow: 0 0 12px 0 #00000014;
 
 }
+.mailBox .mailBoxMailList {
+    flex: 1;
+}
 
 .mailBox.mailBoxFocused {
   border: 1px solid #000;
@@ -379,10 +400,19 @@
 
 .projectAdded {
     border: 1px solid #F3F4F6;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: none;
-    min-width: 1px;
+}
+
+.projectAdded:hover {
+    background-color: #f7f7f7;
+    border-color: #e9e9e9;
+}
+
+.projectAdded .projectAddedText {
+    max-width: 130px;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .projectAdded .projectSelectImage .projectCount + .projectCount {
@@ -743,6 +773,7 @@
     font-size: 13px;
     font-weight: 500;
     letter-spacing: -0.13px;
+    width: 110px;
 }
 
 .mailListTabs .composeButton:hover {

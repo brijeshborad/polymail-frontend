@@ -7,7 +7,12 @@ import Image from "next/image";
 import React, {ChangeEvent, ChangeEventHandler, useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {getUsersDetails, getProfilePicture, updateUsersDetails, uploadProfilePicture} from "@/redux/users/action-reducer";
+import {
+    getUsersDetails,
+    getProfilePicture,
+    updateUsersDetails,
+    uploadProfilePicture
+} from "@/redux/users/action-reducer";
 import {SpinnerUI, Toaster} from "@/components/common";
 import {getFileSize} from "@/utils/common.functions";
 import {useRouter} from "next/router";
@@ -23,16 +28,13 @@ function CompleteProfile() {
     const [showLoader, setShowLoader] = useState<boolean>(false);
 
     useEffect(() => {
-        if (profilePicture && name) {
-            router.push('/inbox')
-        }
-    }, [profilePicture, router, name]);
-
-    useEffect(() => {
         if (userDetails) {
+            if (userDetails.onboarded === true) {
+                router.push('/inbox')
+            }
             setName((userDetails.firstName ?? '') + " " + (userDetails.lastName ?? ''))
         }
-    }, [userDetails]);
+    }, [router, userDetails]);
 
     useEffect(() => {
         dispatch(getUsersDetails({}));
@@ -60,7 +62,7 @@ function CompleteProfile() {
         if (name && tmp.length > 1) {
             let firstName = tmp[0]
             let lastName = tmp[tmp.length - 1]
-            let body : any = {
+            let body: any = {
                 firstName: firstName,
                 lastName: lastName
             }
@@ -72,13 +74,14 @@ function CompleteProfile() {
             }
             dispatch(updateUsersDetails({
                 body: body,
-                toaster:{
-                    success:{
+                toaster: {
+                    success: {
                         desc: "Your name added successfully",
                         title: "Full name added success",
                         type: 'success'
                     }
-            }}));
+                }
+            }));
             Router.push('/inbox');
         } else {
             Toaster({
@@ -117,7 +120,7 @@ function CompleteProfile() {
             reader.readAsDataURL(file);
             reader.onload = function () {
                 if (reader.result) {
-                    dispatch(uploadProfilePicture({body:{file: file}}));
+                    dispatch(uploadProfilePicture({body: {file: file}}));
                     setShowLoader(true)
                 }
             };
@@ -166,7 +169,7 @@ function CompleteProfile() {
 
                                         {profilePicture && profilePicture.url ?
                                             <Image src={profilePicture && profilePicture.url} width="100" height="100"
-                                                   alt=""/> : <UploadIcon/> }
+                                                   alt=""/> : <UploadIcon/>}
 
                                         <input type='file' id='file' ref={inputFile} accept={'image/*'}
                                                onChange={(e) => handleFileUpload(e)}

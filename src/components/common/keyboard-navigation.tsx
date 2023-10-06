@@ -6,6 +6,7 @@ import { MONITORED_KEYS } from "@/utils/constants";
 import { markThreadAsRead } from "@/utils/threads-common-functions";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import {fireEvent} from "@/redux/global-events/action-reducer";
 
 export default function KeyboardNavigationListener() {
   const dispatch = useDispatch();
@@ -63,9 +64,22 @@ export default function KeyboardNavigationListener() {
             dispatchAction.currentMessageId = undefined
             dispatchAction.threadIndex = 0
             dispatchAction.messageIndex = 0
-            
+
             dispatch(updateThreadState({
               isThreadFocused: false
+            }))
+          }
+
+          if (pressedKey?.value === 'ENTER') {
+            dispatchAction.target = 'threads';
+            dispatch(fireEvent({
+              event: {
+                data: null,
+                type: 'richtexteditor.focus'
+              }
+            }));
+            dispatch(updateThreadState({
+              isThreadFocused: true
             }))
           }
 

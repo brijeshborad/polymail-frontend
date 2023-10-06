@@ -13,5 +13,6 @@ export const MONITORED_KEYS = [
     { key: 38, value: 'UP' },
     { key: 39, value: 'RIGHT' },
     { key: 40, value: 'DOWN' },
+    { key: 13, value: 'ENTER' },
 ];
 export const ACCOUNT_MAIL_INIT_SYNC_TIMEOUT = 5000;

@@ -2,6 +2,7 @@ import {Project, Thread} from '@/models';
 import {updateThreads, updateThreadState} from '@/redux/threads/action-reducer';
 import { Dispatch } from '@reduxjs/toolkit';
 import {addItemToGroup} from "@/redux/memberships/action-reducer";
+import {removeThreadFromProject} from "@/redux/projects/action-reducer";
 
 export function markThreadAsRead(thread: Thread, dispatch: Dispatch) {
     if (!thread) return;
@@ -33,17 +34,21 @@ export function addThreadToProject(item: Project, multiSelection: any, selectedT
       groupId: item.id
     }
     let successMessage: any = {}
+    let polyToast = `poly-toast-${new Date().getMilliseconds().toString()}`;
+
     if (isThreadMultiSelection) {
       successMessage = {
         title: `${multiSelection.length} threads added to ${item.name?.toLowerCase()}`,
         desc: '',
-        type: 'success'
+        type: 'undo_changes',
+        id: polyToast
       }
     } else {
       successMessage = {
         desc: 'Thread was added to ' + item.name?.toLowerCase() + '.',
         title: selectedThread?.subject || '',
-        type: 'success'
+        type: 'undo_changes',
+        id: polyToast
       }
     }
     const projects = selectedThread?.projects || [];
@@ -65,8 +70,28 @@ export function addThreadToProject(item: Project, multiSelection: any, selectedT
     dispatch(addItemToGroup({
       body:reqBody,
       toaster:{
-        success: successMessage
-      }
+        success: successMessage,
+      },
+        undoAction: {
+          showUndoButton: true,
+          dispatch,
+          action: removeThreadFromProject,
+          undoBody: {
+            body: {
+              threadId: selectedThread.id,
+              projectId: item.id,
+            },
+            success: {
+              desc: 'Thread was removed from ' + item.name?.toLowerCase() + '.',
+              title: selectedThread?.subject || '',
+              type: 'success'
+            },
+            afterUndoAction: () => {
+              dispatch(updateThreadState({ selectedThread: selectedThread , threads: threads}));
+            }
+          },
+          showToasterAfterUndoClick: true
+        }
     }
     ));
 

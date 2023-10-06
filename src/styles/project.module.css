@@ -358,6 +358,16 @@
     gap: 8px;
 }
 
+.manageMemberDropDown .projectMember:hover {
+    background-color: rgba(8, 22, 47, 0.05);
+}
+
+.manageMemberDropDown .projectMember button:hover,
+.manageMemberDropDown .projectMember:hover button,
+.manageMemberDropDown .projectMember button:focus {
+    background-color: transparent;
+}
+
 .manageMemberDropDown .addMemberButton:hover {
     background-color: #1F2937 !important;
 }

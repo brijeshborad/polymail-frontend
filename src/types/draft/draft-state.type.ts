@@ -2,6 +2,8 @@ import {MessageDraft} from "@/models";
 
 export declare type InitialDraftStateType = {
     draft?: MessageDraft | null,
+    composeDraft?: MessageDraft | null,
+    updatedComposeDraft?: MessageDraft | null,
     updatedDraft?: MessageDraft | null,
     sendMessage?: MessageDraft | null,
     isLoading?: boolean,

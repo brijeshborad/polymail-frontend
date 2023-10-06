@@ -27,6 +27,7 @@ import {useRouter} from "next/router";
 import {fireEvent} from "@/redux/global-events/action-reducer";
 import CollabRichTextEditor from "../common/collab-rich-text-editor";
 import Image from "next/image";
+import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
 const CreateNewProject = dynamic(() => import('@/components/project/create-new-project').then(mod => mod.default));
 const Time = dynamic(() => import("@/components/common").then(mod => mod.Time));
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
@@ -56,7 +57,7 @@ export function ComposeBox(props: any) {
   const [subject, setSubject] = useState<string>('');
   const [emailBody, setEmailBody] = useState<string>('');
   const { selectedAccount } = useSelector((state: StateType) => state.accounts);
-  const { draft } = useSelector((state: StateType) => state.draft);
+  const { composeDraft } = useSelector((state: StateType) => state.draft);
   const { tabValue, threads, selectedThread } = useSelector((state: StateType) => state.threads);
   const dispatch = useDispatch();
   const { onClose } = useDisclosure();
@@ -72,11 +73,28 @@ export function ComposeBox(props: any) {
   const [isDraftUpdated, setIsDraftUpdated] = useState<boolean>(false);
   const [waitForDraft, setWaitForDraft] = useState<boolean>(false);
   const router = useRouter();
-  const [collabId, setCollabId] = useState<string | undefined>(draft?.draftInfo?.collabId);
+  const [collabId, setCollabId] = useState<string | undefined>(composeDraft?.draftInfo?.collabId);
+  const [isContentSet, setIsContentSet] = useState<boolean>(false);
 
   useEffect(() => {
-    if (props.messageDetails) {
-      const { subject, to, cc, bcc, draftInfo } = props.messageDetails;
+    if(!collabId) {
+      const newCollabId = makeCollabId(10)
+      dispatch(updateDraftState({
+        composeDraft: {
+          ...composeDraft,
+          draftInfo: {
+            ...composeDraft?.draftInfo,
+            collabId: newCollabId
+          }
+        }
+      }))
+      setCollabId(newCollabId)
+    }
+  }, [collabId])
+
+  useEffect(() => {
+    if (composeDraft && !isContentSet) {
+      const { subject, to, cc, bcc, draftInfo } = composeDraft;
 
       if (subject) {
         setSubject(subject)
@@ -114,8 +132,9 @@ export function ComposeBox(props: any) {
       if (draftInfo && draftInfo.body) {
         setEmailBody(draftInfo.body);
       }
+      setIsContentSet(true);
     }
-  }, [props.messageDetails])
+  }, [composeDraft, isContentSet])
 
   useEffect(() => {
     if (props.isOpen) {
@@ -162,11 +181,11 @@ export function ComposeBox(props: any) {
   };
 
   useEffect(() => {
-    if (waitForDraft && draft && draft.id) {
+    if (waitForDraft && composeDraft && composeDraft.id) {
       setWaitForDraft(false);
       sendToDraft('', false);
     }
-  }, [waitForDraft, draft])
+  }, [waitForDraft, composeDraft])
 
   const handleAutoCompleteSelect = (value: any, type: string) => {
     if (value.email && isValid(value.email, type)) {
@@ -243,12 +262,21 @@ export function ComposeBox(props: any) {
     setSubject(event.target.value || '');
   }
 
+  const validateDraft = (value: string) => {
+    return !!(subject || getPlainTextFromHtml(value).trim() || emailRecipients.recipients.items.length > 0 || emailRecipients.cc.items.length > 0 || emailRecipients.bcc.items.length > 0);
+
+  }
+
   const sendToDraft = (value: string, isValueUpdate: boolean = true) => {
-    if (value.trim()) {
+    if (!validateDraft(value)) {
+      return;
+    }
+    let checkValue = getPlainTextFromHtml(value).trim();
+    if (checkValue.trim()) {
       setIsDraftUpdated(true)
     }
     if (isValueUpdate) {
-      if (!value.trim()) {
+      if (!checkValue.trim()) {
         setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
         setExtraClassNamesForBottom(prevState => prevState.replace('show-shadow-bottom', ''));
       }
@@ -262,8 +290,8 @@ export function ComposeBox(props: any) {
       cc: emailRecipients.cc?.items && emailRecipients.cc?.items.length > 0 ? emailRecipients.cc?.items : [],
       bcc: emailRecipients.bcc?.items && emailRecipients.bcc?.items.length > 0 ? emailRecipients.bcc?.items : [],
       draftInfo: {
-        body: value || emailBody,
-        collabId: collaborationId
+        collabId: collaborationId,
+        body: checkValue ? value : emailBody
       },
       messageId: props.messageData?.id,
       ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
@@ -274,33 +302,20 @@ export function ComposeBox(props: any) {
         if (waitForDraft) {
           return;
         }
-        if (draft && draft.id) {
-          dispatch(updatePartialMessage({body:{id: draft.id, body:body }}));
+        if (composeDraft && composeDraft.id) {
+          dispatch(updatePartialMessage({body:{id: composeDraft.id, body:body, fromCompose: true }}));
         } else {
           // setIsDraftUpdated(true);
           setWaitForDraft(true);
-          dispatch(createDraft({body:{ accountId: selectedAccount.id, body:body }}));
           setCollabId(collaborationId)
+          dispatch(createDraft({body:{ accountId: selectedAccount.id, body:body, fromCompose: true }}));
         }
       }
     }, 500);
   }
 
-
-  const discardMessage = () => {
-    if (selectedAccount && selectedAccount.signature) {
-      let sentence = '';
-      if (selectedThread?.projects && selectedThread?.projects?.length) {
-        sentence = `${selectedAccount?.name || ''} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length > 0 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}`;
-      }
-
-      setEmailBody(`<p></p><p>${selectedAccount.signature}</p><p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`);
-      dispatch(fireEvent({event: {data: `<p></p><p>${selectedAccount.signature}</p><p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`, type: 'richtexteditor.forceUpdate'}}));
-    }
-  }
-
   const sendMessages = () => {
-    if (draft && draft.id) {
+    if (composeDraft && composeDraft.id) {
       let params = {};
       let polyToast = `poly-toast-${new Date().getTime().toString()}`;
 
@@ -314,7 +329,7 @@ export function ComposeBox(props: any) {
         }
 
 
-        dispatch(sendMessage({body:{ id: draft.id, ...params }}));
+        dispatch(sendMessage({body:{ id: composeDraft.id, ...params }}));
 
         Toaster({
           desc: `Your message has been scheduled`,
@@ -333,17 +348,17 @@ export function ComposeBox(props: any) {
                 now: true
               }
             }
-            dispatch(sendMessage({body:{id: draft.id!, ...params }}));
+            dispatch(sendMessage({body:{id: composeDraft.id!, ...params }}));
             toast.close(`${polyToast}`);
           }
         })
 
       } else {
-        if (draft && draft.to && draft.to.length) {
+        if (composeDraft && composeDraft.to && composeDraft.to.length) {
           Toaster({
-            desc: `Your message has been sent to ${draft?.to && draft?.to[0].email}${draft?.to && draft?.to?.length > 1 ? ` and ${draft?.to && draft?.to?.length - 1} other${draft?.to && draft?.to?.length === 2 ? '' : 's'}` : ''}`,
+            desc: `Your message has been sent to ${composeDraft?.to && composeDraft?.to[0].email}${composeDraft?.to && composeDraft?.to?.length > 1 ? ` and ${composeDraft?.to && composeDraft?.to?.length - 1} other${composeDraft?.to && composeDraft?.to?.length === 2 ? '' : 's'}` : ''}`,
             type: 'send_confirmation',
-            title: draft?.subject || '',
+            title: composeDraft?.subject || '',
             id: polyToast,
             undoClick: (type: string) => {
               let params = {};
@@ -357,14 +372,14 @@ export function ComposeBox(props: any) {
                   now: true
                 }
               }
-              dispatch(sendMessage({body:{id: draft.id!, ...params }}));
+              dispatch(sendMessage({body:{id: composeDraft.id!, ...params }}));
               toast.close(`${polyToast}`);
             }
           })
         }
       }
 
-      dispatch(sendMessage({body: { id: draft.id!, ...params }}));
+      dispatch(sendMessage({body: { id: composeDraft.id!, ...params }}));
       onClose();
 
       if (props.onClose) {
@@ -390,8 +405,8 @@ export function ComposeBox(props: any) {
 
       if(props.tabValue === 'DRAFT') {
         (threads || []).map((item: Thread) => {
-          if (item.id === draft.threadId) {
-            const newThreadArray = (threads || []).filter(obj => obj.id !== draft.threadId);
+          if (item.id === composeDraft.threadId) {
+            const newThreadArray = (threads || []).filter(obj => obj.id !== composeDraft.threadId);
             dispatch(updateThreadState({threads: newThreadArray, selectedThread: newThreadArray[0]}));
             dispatch(updateCommonState({ isComposing: true }));
           }
@@ -401,7 +416,7 @@ export function ComposeBox(props: any) {
       }
 
       dispatch(updateDraftState({
-        draft: null,
+        composeDraft: null,
       }));
     }
   }
@@ -431,15 +446,15 @@ export function ComposeBox(props: any) {
         allValues = [...allValues, ...emailRecipients[property].items];
       }
     }
-
-    if ((allValues.length > 0 && emailRecipients && emailRecipients['recipients'] && emailRecipients['recipients'].items.length > 0) || subject || emailBody) {
+    if ((allValues.length > 0 && emailRecipients && emailRecipients['recipients'] && emailRecipients['recipients'].items.length > 0) || subject) {
       sendToDraft('', false);
     }
-  }, [emailRecipients.recipients.items, emailRecipients.cc.items, emailRecipients.bcc.items, subject, emailBody]);
+  }, [emailRecipients.recipients.items, emailRecipients.cc.items, emailRecipients.bcc.items, subject]);
 
-  function handleFileUpload(files: any, event: any=null) {
+
+  function handleFileUpload(files: any, event: any) {
     const file = files[0];
-    if (draft && draft.id) {
+    if (composeDraft && composeDraft.id) {
       if(event) {
         event.stopPropagation();
         event.preventDefault();
@@ -457,7 +472,8 @@ export function ComposeBox(props: any) {
               mimeType: file.type
             }
           ]);
-          dispatch(uploadAttachment({body:{ id: draft.id, file: file }}));
+          dispatch(uploadAttachment({body:{ id: composeDraft.id, file: file }}));
+          sendToDraft('', false);
         }
       };
       reader.onerror = function (error) {
@@ -497,6 +513,7 @@ export function ComposeBox(props: any) {
   const onCloseClick = () => {
     if (!isDraftUpdated) {
       dispatch(updateCommonState({ isComposing: false, allowThreadSelection: tabValue !== 'DRAFT' }));
+      dispatch(updateDraftState({ composeDraft: null }));
       if (tabValue === 'DRAFT') {
         dispatch(updateThreadState({ selectedThread: null }));
       }
@@ -508,13 +525,13 @@ export function ComposeBox(props: any) {
 
   const modalCloseConfirmation = (type: string) => {
     if (type === 'yes') {
-      sendToDraft('', false)
+      dispatch(updateCommonState({ isComposing: false, allowThreadSelection: tabValue !== 'DRAFT' }));
+      dispatch(updateDraftState({ composeDraft: null }));
+      if (tabValue === 'DRAFT') {
+        dispatch(updateThreadState({ selectedThread: null }));
+      }
     }
     onCloseDraftConformationModal();
-    dispatch(updateCommonState({ isComposing: false, allowThreadSelection: tabValue !== 'DRAFT' }));
-    if (tabValue === 'DRAFT') {
-      dispatch(updateThreadState({ selectedThread: null }));
-    }
   }
 
 
@@ -527,10 +544,10 @@ export function ComposeBox(props: any) {
           <Flex gap={1} align={'center'}>
             <Heading as='h6' fontSize={'12px'} color={'#0A101D'} fontWeight={500} lineHeight={1}>Draft </Heading>
             <Text fontSize='xs' lineHeight={1} color={'#6B7280'} display={'flex'} alignItems={'center'} fontWeight={400}>
-              {!draft && 'Not Saved'}
-              {draft &&
+              {!composeDraft && 'Not Saved'}
+              {composeDraft &&
               <>
-                (Saved to drafts&nbsp;{(draft?.updated) ? <Time as={'span'} time={draft?.updated || ''} isShowFullTime={false} showTimeInShortForm={true} /> : '0s'}&nbsp;ago)
+                (Saved to drafts&nbsp;{(composeDraft?.updated) ? <Time as={'span'} time={composeDraft?.updated || ''} isShowFullTime={false} showTimeInShortForm={true} /> : '0s'}&nbsp;ago)
               </>
               }
             </Text>
@@ -562,17 +579,19 @@ export function ComposeBox(props: any) {
                   handleItemDelete={handleItemDelete}
               />
               <Flex flex={1} direction={'column'} position={'relative'}>
-                <Flex flex={1} direction={'column'} ref={editorRef} className={`editor-bottom-shadow`}
-                      onScroll={() => handleEditorScroll()} zIndex={6}>
-                  {(collabId && draft && draft.id) && <CollabRichTextEditor
-                      id={'draft-' + collabId}
+              <Flex flex={1} direction={'column'} ref={editorRef} className={`editor-bottom-shadow`} maxH={'calc(100vh - 500px)'} overflowY={'auto'}
+                      onScroll={() => handleEditorScroll()} zIndex={6}
+                      onClick={() => dispatch(fireEvent({event: {data: null, type: 'richtexteditor.focus'}}))}
+              >
+                  {(collabId && composeDraft && composeDraft.id) && <CollabRichTextEditor
+                      id={'compose-draft-' + collabId}
                       isAutoFocus={true}
                       content={emailBody}
                       onCreate={() => {}}
                       onFileDrop={(files) => handleFileUpload(files, null)}
                       placeholder='Reply with anything you like or @mention someone to share this thread'
                       isToolbarVisible={true}
-                      className={`${extraClassNames} ${extraClassNamesForBottom}`}
+                      className={`compose-view ${extraClassNames} ${extraClassNamesForBottom}`}
                       emailSignature={selectedAccount ? `<p></p>${selectedAccount?.signature}` : undefined}
                       projectShare={selectedThread?.projects?.length ? `<div style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">
                             <p style="font-size: 13px; margin-right: 3px;"> ${selectedAccount?.name || ''} is sharing this email thread (and future replies) with</p>
@@ -612,7 +631,7 @@ export function ComposeBox(props: any) {
                     <Button
                         className={styles.replyTextDiscardButton}
                         fontSize={14} lineHeight={16}
-                        onClick={() => discardMessage()}
+                        onClick={() => onCloseClick()}
                     >
                       Discard
                     </Button>

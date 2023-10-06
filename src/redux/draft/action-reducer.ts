@@ -3,25 +3,31 @@ import {InitialDraftStateType, ReducerActionType} from "@/types";
 
 const initialState: any = {
     draft: null,
+    composeDraft: null,
     sendMessage: null,
     isLoading: false,
     error: null,
     success: false,
-    updatedDraft: null
+    updatedDraft: null,
+    updatedComposeDraft: null
 } as InitialDraftStateType
 
 const draftSlice = createSlice({
     name: 'draft',
     initialState,
     reducers: {
-        createDraft: (state: InitialDraftStateType, _action: PayloadAction<ReducerActionType>) => {
-            return {...state, draft: null, isLoading: false}
+        createDraft: (state: InitialDraftStateType, {payload}: PayloadAction<ReducerActionType>) => {
+            return {...state, ...(payload.body.forCompose ? {composeDraft: null} : {draft: null}), isLoading: false}
         },
-        createDraftSuccess: (state: InitialDraftStateType, {payload: draft}: PayloadAction<{}>) => {
-            return {...state, draft, updatedDraft: draft, isLoading: false}
+        createDraftSuccess: (state: InitialDraftStateType, {payload: {draft, isForCompose}}: PayloadAction<any>) => {
+            return {
+                ...state,
+                ...(isForCompose ? {composeDraft: draft, updatedComposeDraft: draft} : {draft, updatedDraft: draft}),
+                isLoading: false
+            }
         },
-        createDraftError: (state: InitialDraftStateType, _action: PayloadAction<any>) => {
-            return {...state, draft: null, isLoading: false}
+        createDraftError: (state: InitialDraftStateType, {payload: {isForCompose}}: PayloadAction<any>) => {
+            return {...state, ...(isForCompose ? {composeDraft: null} : {draft: null}), isLoading: false}
         },
 
         sendMessage: (state: InitialDraftStateType, _action: PayloadAction<ReducerActionType>) => {
@@ -37,8 +43,20 @@ const draftSlice = createSlice({
         updatePartialMessage: (state: InitialDraftStateType, _action: PayloadAction<ReducerActionType>) => {
             return {...state, isLoading: false}
         },
-        updatePartialMessageSuccess: (state: InitialDraftStateType, {payload: updatedDraft}: PayloadAction<{}>) => {
-            return {...state, updatedDraft, draft: updatedDraft, isLoading: false}
+        updatePartialMessageSuccess: (state: InitialDraftStateType, {
+            payload: {
+                updatedDraft,
+                isForCompose
+            }
+        }: PayloadAction<any>) => {
+            return {
+                ...state,
+                ...(isForCompose ? {
+                    composeDraft: updatedDraft,
+                    updatedComposeDraft: updatedDraft
+                } : {draft: updatedDraft, updatedDraft}),
+                isLoading: false
+            }
         },
         updatePartialMessageError: (state: InitialDraftStateType, _action: PayloadAction<any>) => {
             return {...state, isLoading: false}

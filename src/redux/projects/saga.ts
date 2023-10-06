@@ -131,7 +131,9 @@ function* updateProjectDataWithUndo({payload}: PayloadAction<ReducerActionType>)
 
 function* removeProjectFormThreads({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callDelete(`projects/${payload.body.projectId}/threads/${payload.body.threadId}`, {});
+        let projectId = payload.body.projectId || payload.body.body.projectId
+        let threadId = payload.body.threadId || payload.body.body.threadId
+        const response: AxiosResponse = yield ApiService.callDelete(`projects/${projectId}/threads/${threadId}`, {});
         performSuccessActions(payload);
         yield put(removeThreadFromProjectSuccess(response));
     } catch (error: any) {

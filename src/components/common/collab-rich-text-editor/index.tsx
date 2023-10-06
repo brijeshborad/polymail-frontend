@@ -7,6 +7,7 @@ import Link from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
 import Collaboration from '@tiptap/extension-collaboration'
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
+import Highlight from '@tiptap/extension-highlight'
 import {TiptapCollabProvider} from '@hocuspocus/provider'
 import {CollabRichTextEditorType} from '@/types/props-types/collab-rich-text-editor.types'
 import FileHandler from '@tiptap-pro/extension-file-handler'
@@ -39,7 +40,7 @@ export default function CollabRichTextEditor({
         const prov = new TiptapCollabProvider({
             appId: process.env.NEXT_PUBLIC_TIPTAP_APP_ID!, // get this at collab.tiptap.dev
             name: id, // e.g. a uuid uuidv4();
-            token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2OTY2MTIxMzMsIm5iZiI6MTY5NjYxMjEzMywiZXhwIjoxNjk2Njk4NTMzLCJpc3MiOiJodHRwczovL2NvbGxhYi50aXB0YXAuZGV2IiwiYXVkIjoibHVpekBwb2x5bWFpbC5jb20ifQ.zprEOwgG-82Vo_c8HeDxpCtNpmi-5AJHyEuUYDWRHV0',
+            token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2OTY2MDc5NzQsIm5iZiI6MTY5NjYwNzk3NCwiZXhwIjoxNjk2Njk0Mzc0LCJpc3MiOiJodHRwczovL2NvbGxhYi50aXB0YXAuZGV2IiwiYXVkIjoibHVpekBwb2x5bWFpbC5jb20ifQ.Fc26DC4XUqr-ds7wD44iAUF4vrCm7H1pqqW5HNUmjA8',
             // document: new Y.Doc() // pass your existing doc, or leave this out and use provider.document
         })
         setProvider(prov)
@@ -77,6 +78,12 @@ export default function CollabRichTextEditor({
               onDrop: (editor, files) => {
                 onFileDrop(files);
               },
+            }),
+            Highlight.configure({
+                HTMLAttributes: {
+                    class: 'highlight',
+                },
+                multicolor: true
             })
         ])
     }, [id, selectedAccount, placeholder])

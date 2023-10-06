@@ -197,7 +197,9 @@ export function AddToProjectButton() {
                             <span className={styles.projectsLength}>{`+${selectedThread?.projects?.length - 2}`}</span>
                         )}
                     </Flex>
-                    {selectedThread?.projects?.length === 1 ? selectedThread?.projects[0]?.name : selectedThread?.projects?.length + ' ' + 'Projects'}
+                    <div className={styles.projectAddedText}>
+                        {selectedThread?.projects?.length === 1 ? selectedThread?.projects[0]?.name : selectedThread?.projects?.length + ' ' + 'Projects'}
+                    </div>
                     <Flex width={'20px'} height={'20px'} alignItems={'center'} justifyContent={'center'}
                           className={styles.projectMenuIcon}><MenuIcon/></Flex>
                 </MenuButton> : <MenuButton
@@ -224,7 +226,7 @@ export function AddToProjectButton() {
 
 
                 <MenuList className={`${styles.addToProjectList} drop-down-list`} zIndex={'overlay'}>
-                    {selectedThread?.projects?.length &&
+                    {!!selectedThread?.projects?.length &&
                     <Flex direction={'column'} position={'relative'} pb={1} className={styles.selectedProject}>
                         {(selectedThread?.projects || []).map((item: any, index: number) => (
                             <Flex alignItems={'center'} justifyContent={'space-between'} padding={'8px 12px'}

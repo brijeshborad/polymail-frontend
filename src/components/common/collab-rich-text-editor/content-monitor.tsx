@@ -12,11 +12,13 @@ export default function ContentMonitor() {
             editor?.commands.clearContent(false);
             editor?.commands.setContent(event.data, false)
         }
-        
+
         if (event && event.type === 'richtexteditor.focus') {
-            editor?.commands.focus('start')
+            if (editor && !editor.isFocused) {
+                editor?.commands.focus('start')
+            }
         }
-        
+
         if (event && event.type === 'richtexteditor.discard') {
             editor?.commands.clearContent(true);
             editor?.commands.blur()

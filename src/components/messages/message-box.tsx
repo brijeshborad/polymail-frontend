@@ -89,7 +89,7 @@ export function MessageBox(props: any) {
                           <span style={{ marginRight: '20px', marginTop: '5.5px' }}>
                             <Time time={props?.item.created || ''} isShowFullTime={true} showTimeInShortForm={false} />
                           </span>
-                          
+
                           <Menu isOpen={isContextMenuOpen} onClose={() => setIsContextMenuOpen(false)}>
                             <MenuButton
                               onClick={(e) => {
@@ -116,7 +116,9 @@ export function MessageBox(props: any) {
                       </Flex>
                   </Flex>
                   <Text fontSize='13px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
-                        fontWeight={400}>{props?.item.snippet || '(no content)'}</Text>
+                        fontWeight={400}>
+                      <span dangerouslySetInnerHTML={{__html: props?.item.snippet || ''}}/>
+                  </Text>
               </Flex>
           </Flex>}
 

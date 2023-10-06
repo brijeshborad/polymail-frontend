@@ -31,6 +31,7 @@
     "@tiptap/extension-collaboration": "^2.1.11",
     "@tiptap/extension-collaboration-cursor": "^2.1.11",
     "@tiptap/extension-color": "^2.1.11",
+    "@tiptap/extension-highlight": "^2.1.11",
     "@tiptap/extension-link": "^2.1.11",
     "@tiptap/extension-list-item": "^2.1.11",
     "@tiptap/extension-placeholder": "^2.1.11",

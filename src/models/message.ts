@@ -34,6 +34,7 @@ export interface MessageDraft {
     from?: MessageRecipient,
     to?: MessageRecipient[],
     cc?: MessageRecipient[],
+    bcc?: MessageRecipient[],
     threadId?: string,
     mailboxes?: string[],
     providerId?: string,

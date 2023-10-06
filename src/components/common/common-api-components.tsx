@@ -13,6 +13,7 @@ import {getAllAccount} from "@/redux/accounts/action-reducer";
 import {getMemberStatusCache, setMemberStatusCache} from "@/utils/cache.functions";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import {getAllThreads} from "@/redux/threads/action-reducer";
 dayjs.extend(customParseFormat)
 
 // Multiple instances of the hook can exist simultaneously.
@@ -205,7 +206,8 @@ export function CommonApiComponents() {
             } else {
                 if (selectedAccount.syncHistory?.mailInitSynced) {
                     loaderPercentage = 0;
-                    dispatch(updateCommonState({syncingEmails: null}))
+                    dispatch(updateCommonState({syncingEmails: null}));
+                    dispatch(getAllThreads({body:{mailbox: 'INBOX', account: selectedAccount.id}}));
                 }
             }
         }
