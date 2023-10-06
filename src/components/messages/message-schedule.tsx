@@ -87,6 +87,7 @@ export default function MessageSchedule({ date, onChange, isSnooze = false, isNa
           }
         }}
         className={`${styles.replyArrowIcon} snooze-button-icon`} as={isSnooze ? "div" : Button}
+        style={{ cursor: 'pointer' }}
         aria-label='Options'
         {...(!isSnooze ? {variant: 'outline'} : {})}
       >
