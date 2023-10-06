@@ -3,7 +3,7 @@ import styles from "@/styles/Login.module.css";
 import {Button, Flex, Heading, Image, Text} from "@chakra-ui/react";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import Router, {useRouter} from 'next/router';
 import LocalStorageService from "@/utils/localstorage.service";
 import {googleAuthLink, updateAuthState} from "@/redux/auth/action-reducer";
@@ -15,6 +15,7 @@ function OnBoardingType() {
     const {user, googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
     const {userDetails} = useSelector((state: StateType) => state.users);
     const router = useRouter();
+    const [showPage, setShowPage] = useState<boolean>(false);
 
     useEffect(() => {
         if (router.query) {
@@ -32,6 +33,15 @@ function OnBoardingType() {
             }
         }
     }, [dispatch, router.query]);
+
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('access_token')) {
+            setShowPage(false);
+        } else {
+            setShowPage(true);
+        }
+    }, [dispatch]);
 
     useEffect(() => {
         if (userDetails && userDetails.hasOwnProperty('onboarded')) {
@@ -62,6 +72,10 @@ function OnBoardingType() {
             window.location.href = googleAuthRedirectionLink.url || '';
         }
     }, [googleAuthRedirectionLink])
+
+    if (!showPage) {
+        return null;
+    }
 
     return (
         <>
