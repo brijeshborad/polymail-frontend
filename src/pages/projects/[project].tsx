@@ -322,7 +322,7 @@ function ProjectInbox() {
                                         </div>
 
                                         {members && !!members.length && members.map((member, index) => (
-                                            <Flex align={'center'} gap={2} pr={3} key={index}>
+                                            <Flex align={'center'} gap={2} pr={3} key={index} className={styles.projectMember}>
                                                 <MenuItem>
                                                     <div className={styles.imgWrapper}>
                                                         <Image src="/image/user.png" width="36" height="36" alt=""/>
