@@ -72,14 +72,7 @@ export function ComposeBox(props: any) {
   const [isDraftUpdated, setIsDraftUpdated] = useState<boolean>(false);
   const [waitForDraft, setWaitForDraft] = useState<boolean>(false);
   const router = useRouter();
-  const [collabId, setCollabId] = useState<string | undefined>();
-
-  useEffect(() => {
-    if(!collabId) {
-      const newCollabId = makeCollabId(10)
-      setCollabId(newCollabId)
-    }
-  }, [collabId])
+  const [collabId, setCollabId] = useState<string | undefined>(draft?.draftInfo?.collabId);
 
   useEffect(() => {
     if (props.messageDetails) {
@@ -262,6 +255,7 @@ export function ComposeBox(props: any) {
       setEmailBody(value);
     }
 
+    const collaborationId = collabId ? collabId : makeCollabId(10);
     let body = {
       subject: subject,
       to: emailRecipients.recipients?.items,
@@ -269,8 +263,9 @@ export function ComposeBox(props: any) {
       bcc: emailRecipients.bcc?.items && emailRecipients.bcc?.items.length > 0 ? emailRecipients.bcc?.items : [],
       draftInfo: {
         body: value || emailBody,
-        collabId
+        collabId: collaborationId
       },
+      messageId: props.messageData?.id,
       ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
     }
 
@@ -282,13 +277,15 @@ export function ComposeBox(props: any) {
         if (draft && draft.id) {
           dispatch(updatePartialMessage({body:{id: draft.id, body:body }}));
         } else {
-          setIsDraftUpdated(true);
+          // setIsDraftUpdated(true);
           setWaitForDraft(true);
           dispatch(createDraft({body:{ accountId: selectedAccount.id, body:body }}));
+          setCollabId(collaborationId)
         }
       }
     }, 500);
   }
+
 
   const discardMessage = () => {
     if (selectedAccount && selectedAccount.signature) {
@@ -440,10 +437,8 @@ export function ComposeBox(props: any) {
     }
   }, [emailRecipients.recipients.items, emailRecipients.cc.items, emailRecipients.bcc.items, subject, emailBody]);
 
-
   function handleFileUpload(files: any, event: any=null) {
     const file = files[0];
-
     if (draft && draft.id) {
       if(event) {
         event.stopPropagation();
@@ -569,11 +564,12 @@ export function ComposeBox(props: any) {
               <Flex flex={1} direction={'column'} position={'relative'}>
                 <Flex flex={1} direction={'column'} ref={editorRef} className={`editor-bottom-shadow`}
                       onScroll={() => handleEditorScroll()} zIndex={6}>
-                  {collabId && <CollabRichTextEditor
+                  {(collabId && draft && draft.id) && <CollabRichTextEditor
                       id={'draft-' + collabId}
+                      isAutoFocus={true}
                       content={emailBody}
-                      onCreate={() => sendToDraft('')}
-                      onFileDrop={(files) => handleFileUpload(files)}
+                      onCreate={() => {}}
+                      onFileDrop={(files) => handleFileUpload(files, null)}
                       placeholder='Reply with anything you like or @mention someone to share this thread'
                       isToolbarVisible={true}
                       className={`${extraClassNames} ${extraClassNamesForBottom}`}

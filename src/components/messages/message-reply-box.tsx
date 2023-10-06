@@ -277,7 +277,6 @@ export function MessageReplyBox(props: MessageBoxType) {
           dispatch(updatePartialMessage({body:{ id: draft.id, body: body }}));
         } else {
           setWaitForDraft(true);
-          console.log('CREATING DRAFT')
           dispatch(createDraft({body:{ accountId: selectedAccount.id, body: body }}));
         }
       }
