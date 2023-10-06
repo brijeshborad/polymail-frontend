@@ -23,14 +23,13 @@ function CompleteProfile() {
     const [showLoader, setShowLoader] = useState<boolean>(false);
 
     useEffect(() => {
-        if (profilePicture && name) {
-            router.push('/inbox')
-        }
-    }, [profilePicture, router, name]);
-
-    useEffect(() => {
         if (userDetails) {
+            if(userDetails.onboarded === true)
+            {
+                router.push('/inbox')
+            }
             setName((userDetails.firstName ?? '') + " " + (userDetails.lastName ?? ''))
+            
         }
     }, [userDetails]);
 
