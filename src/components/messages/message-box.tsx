@@ -42,7 +42,7 @@ export function MessageBox(props: any) {
                 iframeRef.current.contentDocument.body.style.fontSize = "14px";
                 setIframeHeight((iframeRef.current.contentWindow.document.body.scrollHeight + 20 ) + "px");
             }
-        }, 500);
+        }, 0);
 
     };
 
