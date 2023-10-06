@@ -186,23 +186,23 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                     {headerType === 'inbox' && <AddToProjectButton/>}
                     {!(selectedThread?.mailboxes || []).includes(MAILBOX_INBOX) && (
                         <Tooltip label='Inbox' placement='bottom' bg='gray.300' color='black'>
-                            <div onClick={() => updateMailBox(MAILBOX_INBOX)}>
+                            <button onClick={() => updateMailBox(MAILBOX_INBOX)}>
                                 <InboxIcon/>
-                            </div>
+                            </button>
                         </Tooltip>
                     )}
                     {!(selectedThread?.mailboxes || []).includes(MAILBOX_ARCHIVE) && (
                         <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
-                            <div onClick={() => updateMailBox(MAILBOX_ARCHIVE)} className='archive-button-icon'>
+                            <button onClick={() => updateMailBox(MAILBOX_ARCHIVE)} className='archive-button-icon'>
                                 <ArchiveIcon />
-                            </div>
+                            </button>
                         </Tooltip>
                     )}
                     {!(selectedThread?.mailboxes || []).includes(MAILBOX_TRASH) && (
                         <Tooltip label='Trash' placement='bottom' bg='gray.300' color='black'>
-                            <div onClick={() => updateMailBox(MAILBOX_TRASH)} className='trash-button-icon'>
+                            <button onClick={() => updateMailBox(MAILBOX_TRASH)} className='trash-button-icon'>
                                 <TrashIcon/>
-                            </div>
+                            </button>
                         </Tooltip>
                     )}
                     <Tooltip label='Snooze' placement='top' bg='gray.300' color='black'>
