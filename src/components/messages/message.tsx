@@ -291,7 +291,7 @@ export function Message({isProjectView = false}: {isProjectView?: boolean}) {
               <Flex ref={messagesWrapperRef} padding={'20px'} gap={5} direction={'column'} flex={1} overflowY={'scroll'} overflowX={'hidden'}>
                 <Flex gap={2} direction={'column'} height={'100%'}>
                   {inboxMessages && !!inboxMessages.length && inboxMessages.map((item: any, index: number) => (
-                      <div key={index}>
+                      <div className={styles.mailBoxMailList} key={index}>
                         <MessageBox
                             item={item} index={index} threadDetails={item}
                             isLoading={messageLoading} emailPart={emailPart}

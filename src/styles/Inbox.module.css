@@ -299,6 +299,9 @@
     box-shadow: 0 0 12px 0 #00000014;
 
 }
+.mailBox .mailBoxMailList {
+    flex: 1;
+}
 
 .mailBox.mailBoxFocused {
   border: 1px solid #000;
