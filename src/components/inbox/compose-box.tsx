@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
 import { CloseIcon } from "@chakra-ui/icons";
-import React, { ChangeEvent, ChangeEventHandler, useCallback, useEffect, useRef, useState } from "react";
+import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { StateType } from "@/types";
 import {debounce, isEmail, makeCollabId} from "@/utils/common.functions";
 import { createDraft, sendMessage, updateDraftState, updatePartialMessage } from "@/redux/draft/action-reducer";
@@ -283,15 +283,17 @@ export function ComposeBox(props: any) {
       setEmailBody(value);
     }
 
+    const collaborationId = collabId ? collabId : makeCollabId(10);
     let body = {
       subject: subject,
       to: emailRecipients.recipients?.items,
       cc: emailRecipients.cc?.items && emailRecipients.cc?.items.length > 0 ? emailRecipients.cc?.items : [],
       bcc: emailRecipients.bcc?.items && emailRecipients.bcc?.items.length > 0 ? emailRecipients.bcc?.items : [],
       draftInfo: {
-        body: checkValue ? value : emailBody,
-        collabId
+        collabId: collaborationId,
+        body: checkValue ? value : emailBody
       },
+      messageId: props.messageData?.id,
       ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
     }
 
@@ -303,8 +305,9 @@ export function ComposeBox(props: any) {
         if (composeDraft && composeDraft.id) {
           dispatch(updatePartialMessage({body:{id: composeDraft.id, body:body, fromCompose: true }}));
         } else {
-          setIsDraftUpdated(true);
+          // setIsDraftUpdated(true);
           setWaitForDraft(true);
+          setCollabId(collaborationId)
           dispatch(createDraft({body:{ accountId: selectedAccount.id, body:body, fromCompose: true }}));
         }
       }
@@ -449,20 +452,24 @@ export function ComposeBox(props: any) {
   }, [emailRecipients.recipients.items, emailRecipients.cc.items, emailRecipients.bcc.items, subject]);
 
 
-  function handleFileUpload(event: ChangeEventHandler | any) {
-    const file = event.target.files[0];
+  function handleFileUpload(files: any, event: any) {
+    const file = files[0];
     if (composeDraft && composeDraft.id) {
-      event.stopPropagation();
-      event.preventDefault();
+      if(event) {
+        event.stopPropagation();
+        event.preventDefault();
+      }
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = function () {
+
+
         if (reader.result) {
           setAttachments([
             ...(attachments || []),
             {
-              filename: event.target.files[0].name,
-              mimeType: event.target.files[0].type
+              filename: file.name,
+              mimeType: file.type
             }
           ]);
           dispatch(uploadAttachment({body:{ id: composeDraft.id, file: file }}));
@@ -572,34 +579,38 @@ export function ComposeBox(props: any) {
                   handleItemDelete={handleItemDelete}
               />
               <Flex flex={1} direction={'column'} position={'relative'}>
-                <Flex flex={1} direction={'column'} ref={editorRef} className={`editor-bottom-shadow`} maxH={'calc(100vh - 500px)'} overflowY={'auto'}
+              <Flex flex={1} direction={'column'} ref={editorRef} className={`editor-bottom-shadow`} maxH={'calc(100vh - 500px)'} overflowY={'auto'}
                       onScroll={() => handleEditorScroll()} zIndex={6}
-                      onClick={() => dispatch(fireEvent({event: {data: null, type: 'richtexteditor.focus'}}))}>
-                  {collabId && <CollabRichTextEditor
+                      onClick={() => dispatch(fireEvent({event: {data: null, type: 'richtexteditor.focus'}}))}
+              >
+                  {(collabId && composeDraft && composeDraft.id) && <CollabRichTextEditor
                       id={'compose-draft-' + collabId}
+                      isAutoFocus={true}
                       content={emailBody}
-                      onChange={(content) => sendToDraft(content)}
+                      onCreate={() => {}}
+                      onFileDrop={(files) => handleFileUpload(files, null)}
                       placeholder='Reply with anything you like or @mention someone to share this thread'
                       isToolbarVisible={true}
                       className={`compose-view ${extraClassNames} ${extraClassNamesForBottom}`}
                       emailSignature={selectedAccount ? `<p></p>${selectedAccount?.signature}` : undefined}
-                      projectShare={selectedThread?.projects?.length ? `
-                          <div style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">
+                      projectShare={selectedThread?.projects?.length ? `<div style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">
                             <p style="font-size: 13px; margin-right: 3px;"> ${selectedAccount?.name || ''} is sharing this email thread (and future replies) with</p>
                             <p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">others</p>
                             <p style="font-size: 13px; margin-right: 3px;">on</p>
                             <p style="font-size: 13px; text-decoration: underline">Polymail</p>
                           </div>` : undefined}
                       extendToolbar={(
-                          <>
-                            <Flex
-                                onClick={() => inputFile.current?.click()}
-                                width={'16px'} h={'16px'} align={'center'} justify={'center'} cursor={'pointer'} className={styles.replyIcon}
-                            >
-                              <Image src="/image/icon/attach.svg" alt="emoji" width={13} height={13} />
-                              <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e)} style={{ display: 'none' }} />
-                            </Flex>
-                          </>
+                        <>
+                          <Flex
+                              onClick={() => inputFile.current?.click()}
+                              align={'center'} justify={'center'} cursor={'pointer'} 
+                              className={styles.attachIcon}
+                          >
+                            <Image src="/image/icon/attach.svg" alt="emoji" width={13} height={13} />
+                            Attach
+                            <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e.target.files, e)} style={{ display: 'none' }} />
+                          </Flex>
+                        </>
                       )}
                   />}
                   {attachments && attachments.length > 0 ?

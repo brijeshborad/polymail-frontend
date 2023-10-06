@@ -827,3 +827,26 @@ div:has(> .mailSendToaster) {
 .inbox-button-icon:hover svg{
   stroke: #0556FF !important;
 }
+
+.prosemirror-dropcursor-inline{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  left: 0;
+  margin: 0px;
+  position: absolute;
+  background-color: #E5E7EB !important;
+  border: 1px dashed #6B7280 !important;
+  border-radius: 8px;
+  width: 100% !important;
+  height: 100% !important;
+}
+.prosemirror-dropcursor-inline:after{
+  margin: 0 auto;
+  text-align: center;
+  content: "Release to upload attachment";
+  font-size: 13px;
+  font-weight: 500;
+  color: #0A101D;
+}
