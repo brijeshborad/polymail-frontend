@@ -313,7 +313,7 @@ export function MessageReplyBox(props: MessageBoxType) {
       let emailSubject = `${messagesData.subject}`;
       if (props.replyType === 'forward') {
         emailSubject = `Fwd: ${messagesData.subject}`;
-        let decoded = Buffer.from(props.emailPart || '', 'base64').toString('ascii');
+        let decoded = Buffer.from(props.emailPart || '', 'base64').toString('utf-8');
         let sentence = '';
         if (selectedThread?.projects && selectedThread?.projects?.length) {
           sentence = `<p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${selectedAccount?.name || ''} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length === 1 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}`;
