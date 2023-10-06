@@ -1236,3 +1236,14 @@
 .mailBox .otherMail:hover .otherMailList {
     display: block;
 }
+
+.attachIcon{
+  display: flex;
+  gap: 4px;
+  background-color: #F3F4F6;
+  padding: 4px 8px 4px 6px;
+  font-size: 12px;
+  line-height: 14.52px;
+  font-weight: 500;
+  border-radius: 34px;
+}

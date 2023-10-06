@@ -58,7 +58,7 @@ export default function CollabRichTextEditorToolbar({ beforeToolbar, afterToolba
     <>
       {beforeToolbar && beforeToolbar}
 
-        <Box position={'absolute'} display={'flex'} gap={4} bottom={3} zIndex={9} className={`tiptap-toolbar show`}>
+        <Box position={'absolute'} display={'flex'} gap={4} bottom={3} zIndex={9} alignItems={'center'} className={`tiptap-toolbar show`}>
           <button
             onClick={() => editor.chain().focus().toggleBold().run()}
             disabled={
@@ -110,7 +110,8 @@ export default function CollabRichTextEditorToolbar({ beforeToolbar, afterToolba
           >
             <Image src="/image/icon/unordered.svg" alt="unordered list" width={16} height={16} />
           </button>
-          <div style={{ width: 1, backgroundColor: '#E5E7EB' }}/>
+
+          <div style={{ width: 1, height: '16px', backgroundColor: '#E5E7EB' }}/>
 
           <ToolbarEmoji
             editor={editor}
@@ -118,15 +119,16 @@ export default function CollabRichTextEditorToolbar({ beforeToolbar, afterToolba
             onChangeVisibility={setIsEmojiMenuOpen}
             onChange={setEmoji}
           />
-
-          {extendToolbar && extendToolbar}
-
+          
           <ToolbarUrl
             editor={editor}
             isOpen={isLinkMenuOpen}
             onChangeVisibility={setIsLinkMenuOpen}
             onChange={setLink}
           />
+
+          {extendToolbar && extendToolbar}
+
 
         </Box>
       {afterToolbar && afterToolbar}
