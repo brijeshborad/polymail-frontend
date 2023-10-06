@@ -9,6 +9,7 @@ import Collaboration from '@tiptap/extension-collaboration'
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
 import {TiptapCollabProvider} from '@hocuspocus/provider'
 import {CollabRichTextEditorType} from '@/types/props-types/collab-rich-text-editor.types'
+import FileHandler from '@tiptap-pro/extension-file-handler'
 import {StateType} from '@/types'
 import {useEffect, useState} from 'react'
 import ContentMonitor from './content-monitor'
@@ -17,7 +18,8 @@ import {getSchema} from "@/utils/editor-common-functions";
 export default function CollabRichTextEditor({
                                                  id,
                                                  isToolbarVisible = false,
-                                                 onChange,
+                                                 onCreate,
+                                                 onFileDrop,
                                                  afterToolbar,
                                                  extendToolbar,
                                                  placeholder,
@@ -32,8 +34,6 @@ export default function CollabRichTextEditor({
 
     useEffect(() => {
         if (!id) return
-
-        console.log('---', id);
 
         const prov = new TiptapCollabProvider({
             appId: process.env.NEXT_PUBLIC_TIPTAP_APP_ID!, // get this at collab.tiptap.dev
@@ -72,6 +72,11 @@ export default function CollabRichTextEditor({
                     color: '#f783ac',
                 },
             }),
+            FileHandler.configure({
+              onDrop: (editor, files) => {
+                onFileDrop(files);
+              },
+            })
         ])
     }, [id, selectedAccount, placeholder])
 
@@ -81,6 +86,7 @@ export default function CollabRichTextEditor({
     return (
         <div className={`tiptap-container ${className}`}>
             <EditorProvider
+                onCreate={onCreate}
                 onFocus={(editor) => {
                     dispatch(updateKeyNavigation({isEnabled: false}))
                     if (editor.editor.isEmpty) {
@@ -106,7 +112,6 @@ export default function CollabRichTextEditor({
                 onBlur={() => {
                   dispatch(updateKeyNavigation({isEnabled: true}))
                 }}
-                onUpdate={({editor}) => onChange(editor.getHTML())}
                 extensions={extensions}>
                 <ContentMonitor />
             </EditorProvider>

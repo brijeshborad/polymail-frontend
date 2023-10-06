@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
 import { CloseIcon } from "@chakra-ui/icons";
-import React, { ChangeEvent, ChangeEventHandler, useCallback, useEffect, useRef, useState } from "react";
+import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { StateType } from "@/types";
 import {debounce, isEmail, makeCollabId} from "@/utils/common.functions";
 import { createDraft, sendMessage, updateDraftState, updatePartialMessage } from "@/redux/draft/action-reducer";
@@ -441,24 +441,28 @@ export function ComposeBox(props: any) {
   }, [emailRecipients.recipients.items, emailRecipients.cc.items, emailRecipients.bcc.items, subject, emailBody]);
 
 
-  function handleFileUpload(event: ChangeEventHandler | any) {
-    const file = event.target.files[0];
+  function handleFileUpload(files: any, event: any=null) {
+    const file = files[0];
+
     if (draft && draft.id) {
-      event.stopPropagation();
-      event.preventDefault();
+      if(event) {
+        event.stopPropagation();
+        event.preventDefault();
+      }
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = function () {
+
+
         if (reader.result) {
           setAttachments([
             ...(attachments || []),
             {
-              filename: event.target.files[0].name,
-              mimeType: event.target.files[0].type
+              filename: file.name,
+              mimeType: file.type
             }
           ]);
           dispatch(uploadAttachment({body:{ id: draft.id, file: file }}));
-          sendToDraft('', false);
         }
       };
       reader.onerror = function (error) {
@@ -568,13 +572,13 @@ export function ComposeBox(props: any) {
                   {collabId && <CollabRichTextEditor
                       id={'draft-' + collabId}
                       content={emailBody}
-                      onChange={(content) => sendToDraft(content)}
+                      onCreate={() => sendToDraft('')}
+                      onFileDrop={(files) => handleFileUpload(files)}
                       placeholder='Reply with anything you like or @mention someone to share this thread'
                       isToolbarVisible={true}
                       className={`${extraClassNames} ${extraClassNamesForBottom}`}
                       emailSignature={selectedAccount ? `<p></p>${selectedAccount?.signature}` : undefined}
-                      projectShare={selectedThread?.projects?.length ? `
-                          <div style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">
+                      projectShare={selectedThread?.projects?.length ? `<div style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">
                             <p style="font-size: 13px; margin-right: 3px;"> ${selectedAccount?.name || ''} is sharing this email thread (and future replies) with</p>
                             <p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">others</p>
                             <p style="font-size: 13px; margin-right: 3px;">on</p>
@@ -587,7 +591,7 @@ export function ComposeBox(props: any) {
                                 width={'16px'} h={'16px'} align={'center'} justify={'center'} cursor={'pointer'} className={styles.replyIcon}
                             >
                               <Image src="/image/icon/attach.svg" alt="emoji" width={13} height={13} />
-                              <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e)} style={{ display: 'none' }} />
+                              <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e.target.files, e)} style={{ display: 'none' }} />
                             </Flex>
                           </>
                       )}

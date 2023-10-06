@@ -10,7 +10,7 @@ import {
 import styles from "@/styles/Inbox.module.css";
 import Image from "next/image";
 import { ChevronDownIcon, CloseIcon } from "@chakra-ui/icons";
-import React, { ChangeEvent, ChangeEventHandler, useCallback, useEffect, useRef, useState } from "react";
+import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import {debounce, isEmail, makeCollabId} from "@/utils/common.functions";
 import { Toaster } from "@/components/common";
 const Time = dynamic(() => import("@/components/common").then(mod => mod.Time));
@@ -242,11 +242,11 @@ export function MessageReplyBox(props: MessageBoxType) {
   };
 
   const sendToDraft = (value: string, isValueUpdate: boolean = true) => {
-    let updateValue: string = getPlainTextFromHtml(value);
+    // let updateValue: string = getPlainTextFromHtml(value);
 
-    if (!updateValue.trim()) {
-      return;
-    }
+    // if (!updateValue.trim()) {
+    //   return;
+    // }
     if (isValueUpdate) {
       if (!value.trim()) {
         setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
@@ -277,6 +277,7 @@ export function MessageReplyBox(props: MessageBoxType) {
           dispatch(updatePartialMessage({body:{ id: draft.id, body: body }}));
         } else {
           setWaitForDraft(true);
+          console.log('CREATING DRAFT')
           dispatch(createDraft({body:{ accountId: selectedAccount.id, body: body }}));
         }
       }
@@ -461,24 +462,28 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     }
   }, [emailRecipients.recipients.items, emailRecipients.cc.items, emailRecipients.bcc.items, subject, emailBody]);
 
-  function handleFileUpload(event: ChangeEventHandler | any) {
-    const file = event.target.files[0];
+  function handleFileUpload(files: any, event: any=null) {
+    const file = files[0];
+
     if (draft && draft.id) {
-      event.stopPropagation();
-      event.preventDefault();
+      if(event) {
+        event.stopPropagation();
+        event.preventDefault();
+      }
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = function () {
+
+
         if (reader.result) {
           setAttachments([
             ...(attachments || []),
             {
-              filename: event.target.files[0].name,
-              mimeType: event.target.files[0].type
+              filename: file.name,
+              mimeType: file.type
             }
           ]);
           dispatch(uploadAttachment({body:{ id: draft.id, file: file }}));
-          sendToDraft('', false);
         }
       };
       reader.onerror = function (error) {
@@ -872,7 +877,8 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
               {(selectedThread && collabId) && (
                 <CollabRichTextEditor
                     id={'thread-' + collabId}
-                    onChange={(content) => sendToDraft(content)}
+                    onCreate={() => sendToDraft('')}
+                    onFileDrop={(files) => handleFileUpload(files)}
                     placeholder='Reply with anything you like or @mention someone to share this thread'
                     isToolbarVisible={hideEditorToolbar}
                     className={`${extraClassNames} ${extraClassNamesForBottom}`}
@@ -893,7 +899,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                           >
                             <Image src="/image/icon/attach.svg" alt="emoji" width={13} height={13} />
                             Attach
-                            <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e)} style={{ display: 'none' }} />
+                            <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e.target.files, e)} style={{ display: 'none' }} />
                           </Flex>
                         </>
                     )}

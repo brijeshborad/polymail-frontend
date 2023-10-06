@@ -2,7 +2,8 @@ import { ReactElement } from 'react';
 
 export declare type CollabRichTextEditorType = {
     id: string;
-    onChange: (_content: string) => void;
+    onCreate: () => void;
+    onFileDrop: (_e: any) => void;
     beforeToolbar?: ReactElement;
     afterToolbar?: ReactElement;
     extendToolbar?: ReactElement;
