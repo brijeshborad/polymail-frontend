@@ -581,15 +581,17 @@ export function ComposeBox(props: any) {
                             <p style="font-size: 13px; text-decoration: underline">Polymail</p>
                           </div>` : undefined}
                       extendToolbar={(
-                          <>
-                            <Flex
-                                onClick={() => inputFile.current?.click()}
-                                width={'16px'} h={'16px'} align={'center'} justify={'center'} cursor={'pointer'} className={styles.replyIcon}
-                            >
-                              <Image src="/image/icon/attach.svg" alt="emoji" width={13} height={13} />
-                              <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e.target.files, e)} style={{ display: 'none' }} />
-                            </Flex>
-                          </>
+                        <>
+                          <Flex
+                              onClick={() => inputFile.current?.click()}
+                              align={'center'} justify={'center'} cursor={'pointer'} 
+                              className={styles.attachIcon}
+                          >
+                            <Image src="/image/icon/attach.svg" alt="emoji" width={13} height={13} />
+                            Attach
+                            <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e.target.files, e)} style={{ display: 'none' }} />
+                          </Flex>
+                        </>
                       )}
                   />}
                   {attachments && attachments.length > 0 ?
