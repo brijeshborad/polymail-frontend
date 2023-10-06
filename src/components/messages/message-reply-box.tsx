@@ -503,9 +503,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
       }
     }));
 
-    setTimeout(() => {
-      setHideEditorToolbar(false)
-    }, 200);
+    setHideEditorToolbar(false)
   }
 
   const updateThreadStateOpration = (type: string) =>{
