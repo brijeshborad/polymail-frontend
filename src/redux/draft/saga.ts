@@ -17,12 +17,14 @@ import { ReducerActionType } from "@/types";
 import { performSuccessActions } from "@/utils/common-redux.functions";
 
 function* createNewDraft({payload}: PayloadAction<ReducerActionType>) {
+    const isForCompose = payload.body.fromCompose;
     try {
+        delete payload.body.fromCompose;
         const response: AxiosResponse = yield ApiService.callPost(`messages`, {accountId: payload.body.accountId, ...payload.body.body});
-        yield put(createDraftSuccess(response));
+        yield put(createDraftSuccess({draft: response, isForCompose}));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(createDraftError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
+        yield put(createDraftError({error: error?.response?.data || {code: '400', description: 'Something went wrong'}, isForCompose}));
     }
 }
 
@@ -43,10 +45,12 @@ function* sendDraftMessage({payload}: PayloadAction<ReducerActionType>) {
 }
 
 function* patchPartialMessage({payload}: PayloadAction<ReducerActionType>) {
+    const isForCompose = payload.body.fromCompose;
     try {
+        delete payload.body.fromCompose;
         const response: AxiosResponse = yield ApiService.callPatch(`messages/${payload.body.id}`, payload.body.body);
         performSuccessActions(payload);
-        yield put(updatePartialMessageSuccess(response));
+        yield put(updatePartialMessageSuccess({updatedDraft: response, isForCompose}));
     } catch (error: any) {
         error = error as AxiosError;
         yield put(updatePartialMessageError(error?.response?.data || {code: '400', description: 'Something went wrong'}));

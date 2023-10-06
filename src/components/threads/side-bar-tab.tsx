@@ -17,7 +17,7 @@ import {
     setCurrentSelectedThreads
 } from "@/utils/cache.functions";
 import {updateLastMessage} from "@/redux/socket/action-reducer";
-import {getProjectSummary} from "@/redux/common-apis/action-reducer";
+import {getProjectSummary, updateCommonState} from "@/redux/common-apis/action-reducer";
 import {updateAccountState} from "@/redux/accounts/action-reducer";
 
 export function ThreadsSideBarTab(props: TabProps) {
@@ -31,8 +31,9 @@ export function ThreadsSideBarTab(props: TabProps) {
         isThreadSearched
     } = useSelector((state: StateType) => state.threads)
     const {selectedAccount, account, success} = useSelector((state: StateType) => state.accounts);
-    const {isLoading: summaryIsLoading, syncingEmails} = useSelector((state: StateType) => state.commonApis);
+    const {isLoading: summaryIsLoading, syncingEmails, isComposing} = useSelector((state: StateType) => state.commonApis);
     const {newMessage} = useSelector((state: StateType) => state.socket);
+    const {composeDraft} = useSelector((state: StateType) => state.draft);
     const router = useRouter();
     const dispatch = useDispatch();
     const [tabName, setTabName] = useState<string>(() => {
@@ -222,8 +223,12 @@ export function ThreadsSideBarTab(props: TabProps) {
                       }
                   </Flex>
                 }
-
-
+                {
+                    composeDraft && !isComposing &&
+                    <Button className={styles.resumeDraft} onClick={() => dispatch(updateCommonState({isComposing: true}))}>
+                        Resume Draft
+                    </Button>
+                }
             </div>
           </Flex>
 
