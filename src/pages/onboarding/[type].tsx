@@ -9,6 +9,7 @@ import LocalStorageService from "@/utils/localstorage.service";
 import {googleAuthLink, updateAuthState} from "@/redux/auth/action-reducer";
 import {getRedirectionUrl} from "@/utils/common.functions";
 import {getUsersDetails} from "@/redux/users/action-reducer";
+import {Toaster} from "@/components/common";
 
 function OnBoardingType() {
     const dispatch = useDispatch();
@@ -29,6 +30,7 @@ function OnBoardingType() {
             if (router.query.error) {
                 Router.replace(`/onboarding/${router.query.type}`, undefined, {shallow: true});
                 dispatch(updateAuthState({error: {description: 'Invalid account'}}));
+                Toaster({desc: 'Invalid account', title: 'User not found', type: 'error'});
                 return;
             }
         }
