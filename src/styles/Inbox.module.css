@@ -742,7 +742,6 @@
 .mailListTabs .composeButton {
     font-size: 13px;
     font-weight: 500;
-    transition: all 0.5s;
     letter-spacing: -0.13px;
 }
 
@@ -756,7 +755,7 @@
 }
 
 .mailListTabs .composeButton svg {
-    transition: all 0.5s;
+    transition: all 0.2s;
     width: 20px;
     height: 20px;
 }
