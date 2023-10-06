@@ -38,7 +38,7 @@ export default function CollabRichTextEditor({
         const prov = new TiptapCollabProvider({
             appId: process.env.NEXT_PUBLIC_TIPTAP_APP_ID!, // get this at collab.tiptap.dev
             name: id, // e.g. a uuid uuidv4();
-            token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2OTY1MTIyMzAsIm5iZiI6MTY5NjUxMjIzMCwiZXhwIjoxNjk2NTk4NjMwLCJpc3MiOiJodHRwczovL2NvbGxhYi50aXB0YXAuZGV2IiwiYXVkIjoibHVpekBwb2x5bWFpbC5jb20ifQ.S1qYVFOSvs66yBh-k0--NaSrZVHsUEmIHu3K71mtqPg',
+            token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2OTY1NTYyOTIsIm5iZiI6MTY5NjU1NjI5MiwiZXhwIjoxNjk2NjQyNjkyLCJpc3MiOiJodHRwczovL2NvbGxhYi50aXB0YXAuZGV2IiwiYXVkIjoibHVpekBwb2x5bWFpbC5jb20ifQ.A9XKQyRuj8a9NzhlZ1_CIDOYa3U1NTzwAkJxERrSrr8',
             // document: new Y.Doc() // pass your existing doc, or leave this out and use provider.document
         })
         setProvider(prov)
