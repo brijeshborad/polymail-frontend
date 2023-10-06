@@ -572,7 +572,7 @@ export function ComposeBox(props: any) {
                   handleItemDelete={handleItemDelete}
               />
               <Flex flex={1} direction={'column'} position={'relative'}>
-                <Flex flex={1} direction={'column'} ref={editorRef} className={`editor-bottom-shadow`} maxH={'380px'} overflowY={'auto'}
+                <Flex flex={1} direction={'column'} ref={editorRef} className={`editor-bottom-shadow`} maxH={'calc(100vh - 500px)'} overflowY={'auto'}
                       onScroll={() => handleEditorScroll()} zIndex={6}
                       onClick={() => dispatch(fireEvent({event: {data: null, type: 'richtexteditor.focus'}}))}>
                   {collabId && <CollabRichTextEditor
@@ -581,7 +581,7 @@ export function ComposeBox(props: any) {
                       onChange={(content) => sendToDraft(content)}
                       placeholder='Reply with anything you like or @mention someone to share this thread'
                       isToolbarVisible={true}
-                      className={`${extraClassNames} ${extraClassNamesForBottom}`}
+                      className={`compose-view ${extraClassNames} ${extraClassNamesForBottom}`}
                       emailSignature={selectedAccount ? `<p></p>${selectedAccount?.signature}` : undefined}
                       projectShare={selectedThread?.projects?.length ? `
                           <div style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">

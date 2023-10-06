@@ -650,6 +650,10 @@ div:has(> .mailSendToaster) {
   transition: all 1s ease-in-out;
 }
 
+.tiptap-container.compose-view{
+  flex: 1;
+}
+
 .tiptap-container .show-shadow-bottom:after {
     position: absolute;
     content: '';
