@@ -64,13 +64,14 @@ export default function KeyboardNavigationListener() {
             dispatchAction.currentMessageId = undefined
             dispatchAction.threadIndex = 0
             dispatchAction.messageIndex = 0
-            
+
             dispatch(updateThreadState({
               isThreadFocused: false
             }))
           }
 
           if (pressedKey?.value === 'ENTER') {
+            dispatchAction.target = 'threads';
             dispatch(fireEvent({
               event: {
                 data: null,
