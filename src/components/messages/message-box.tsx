@@ -37,8 +37,9 @@ export function MessageBox(props: any) {
     // Set iframe height once content is loaded within iframe
     const onIframeLoad = () => {
         debounce(() => {
-          iframeRef.current.contentDocument.body.style.fontFamily = "'Inter', sans-serif";
-            if (iframeRef.current && iframeRef.current.contentWindow) {
+          if (iframeRef.current && iframeRef.current.contentWindow) {
+                iframeRef.current.contentDocument.body.style.fontFamily = "'Inter', sans-serif";
+                iframeRef.current.contentDocument.body.style.fontSize = "14px";
                 setIframeHeight((iframeRef.current.contentWindow.document.body.scrollHeight + 20 ) + "px");
             }
         }, 500);
