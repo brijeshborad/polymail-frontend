@@ -871,7 +871,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 <CollabRichTextEditor
                     id={'thread-' + collabId}
                     onChange={(content) => sendToDraft(content)}
-                    placeholder='Reply with anything you like or @mention someone to share this thread'
+                    placeholder="Hit enter to reply with anything you'd like"
                     isToolbarVisible={hideEditorToolbar}
                     className={`${extraClassNames} ${extraClassNamesForBottom}`}
                     emailSignature={selectedAccount ? `<p></p>${selectedAccount?.signature}` : undefined}
