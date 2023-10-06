@@ -181,7 +181,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
         dispatch(fireEvent({
           event: {
             data: '',
-            type: 'richtexteditor.forceUpdate'
+            type: 'richtexteditor.discard'
           }
         }));
       }

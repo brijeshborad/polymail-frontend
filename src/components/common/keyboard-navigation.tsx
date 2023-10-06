@@ -77,6 +77,9 @@ export default function KeyboardNavigationListener() {
                 type: 'richtexteditor.focus'
               }
             }));
+            dispatch(updateThreadState({
+              isThreadFocused: true
+            }))
           }
 
           if (target === 'threads') {
