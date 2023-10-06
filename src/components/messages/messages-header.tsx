@@ -193,14 +193,14 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                     )}
                     {!(selectedThread?.mailboxes || []).includes(MAILBOX_ARCHIVE) && (
                         <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
-                            <div onClick={() => updateMailBox(MAILBOX_ARCHIVE)}>
-                                <ArchiveIcon/>
+                            <div onClick={() => updateMailBox(MAILBOX_ARCHIVE)} className='archive-button-icon'>
+                                <ArchiveIcon />
                             </div>
                         </Tooltip>
                     )}
                     {!(selectedThread?.mailboxes || []).includes(MAILBOX_TRASH) && (
                         <Tooltip label='Trash' placement='bottom' bg='gray.300' color='black'>
-                            <div onClick={() => updateMailBox(MAILBOX_TRASH)}>
+                            <div onClick={() => updateMailBox(MAILBOX_TRASH)} className='trash-button-icon'>
                                 <TrashIcon/>
                             </div>
                         </Tooltip>

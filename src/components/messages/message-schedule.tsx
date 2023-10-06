@@ -73,7 +73,8 @@ export default function MessageSchedule({ date, onChange, isSnooze = false, isNa
       lazyBehavior={"keepMounted"}
       isOpen={isOpen}
       onClose={() => closeScheduleDropdown}
-      closeOnSelect={false} placement={'bottom'}>
+      closeOnSelect={false} placement={'bottom'}
+      >
       <MenuButton
         onClick={() => {
           const opened = isOpen
@@ -85,11 +86,11 @@ export default function MessageSchedule({ date, onChange, isSnooze = false, isNa
             }
           }
         }}
-        className={styles.replyArrowIcon} as={isSnooze ? "div" : Button}
+        className={`${styles.replyArrowIcon} snooze-button-icon`} as={isSnooze ? "div" : Button}
         aria-label='Options'
         {...(!isSnooze ? {variant: 'outline'} : {})}
       >
-        {isSnooze ? <TimeSnoozeIcon/> : <ChevronDownIcon />}
+          {isSnooze ? <TimeSnoozeIcon/> : <ChevronDownIcon />}
         {isNameShow && 'Snooze'}
       </MenuButton>
 
