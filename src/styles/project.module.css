@@ -363,7 +363,8 @@
 }
 
 .manageMemberDropDown .projectMember button:hover,
-.manageMemberDropDown .projectMember:hover button {
+.manageMemberDropDown .projectMember:hover button,
+.manageMemberDropDown .projectMember button:focus {
     background-color: transparent;
 }
 

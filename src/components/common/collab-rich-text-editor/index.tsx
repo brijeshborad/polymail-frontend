@@ -7,6 +7,7 @@ import Link from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
 import Collaboration from '@tiptap/extension-collaboration'
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
+import Highlight from '@tiptap/extension-highlight'
 import {TiptapCollabProvider} from '@hocuspocus/provider'
 import {CollabRichTextEditorType} from '@/types/props-types/collab-rich-text-editor.types'
 import {StateType} from '@/types'
@@ -72,6 +73,12 @@ export default function CollabRichTextEditor({
                     color: '#f783ac',
                 },
             }),
+            Highlight.configure({
+                HTMLAttributes: {
+                    class: 'highlight',
+                },
+                multicolor: true
+            })
         ])
     }, [id, selectedAccount, placeholder])
 

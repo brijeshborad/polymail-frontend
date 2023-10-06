@@ -4,7 +4,7 @@ import Image from "next/image"
 import { useState } from "react"
 
 export default function ToolbarUrl({ isOpen, onChangeVisibility, onChange, editor }: ToolbarUrlType) {
-  const [url, setUrl] = useState('')
+  const [url, setUrl] = useState<string>('')
 
   return (
     <Popover
@@ -20,7 +20,8 @@ export default function ToolbarUrl({ isOpen, onChangeVisibility, onChange, edito
           <button
             onClick={() => {
               onChangeVisibility(!isOpen)
-              setUrl(editor.getAttributes('link').href)
+              setUrl(editor.getAttributes('link').href || '')
+              editor?.chain().focus().toggleHighlight({ color: '#c8c8c8' }).run()
             }}
             className={editor.isActive('link') ? 'is-active' : ''}
           >
@@ -48,7 +49,10 @@ export default function ToolbarUrl({ isOpen, onChangeVisibility, onChange, edito
                   fontSize={13}
                   paddingX={8} paddingY={4}
                   className='button'
-                  onClick={() => onChange(url)}
+                  onClick={() => {
+                    onChange(url);
+                    editor.chain().focus().unsetHighlight().run();
+                  }}
                 >
                   Add
                 </Button>
@@ -61,7 +65,8 @@ export default function ToolbarUrl({ isOpen, onChangeVisibility, onChange, edito
                   paddingX={8} paddingY={4}
                   className='button'
                   onClick={() => {
-                    onChangeVisibility(false)
+                    onChangeVisibility(false);
+                    editor.chain().focus().unsetHighlight().run()
                   }}
                 >
                   Cancel
