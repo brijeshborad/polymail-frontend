@@ -74,6 +74,7 @@ export function ComposeBox(props: any) {
   const [waitForDraft, setWaitForDraft] = useState<boolean>(false);
   const router = useRouter();
   const [collabId, setCollabId] = useState<string | undefined>(composeDraft?.draftInfo?.collabId);
+  const [isContentSet, setIsContentSet] = useState<boolean>(false);
 
   useEffect(() => {
     if(!collabId) {
@@ -92,7 +93,7 @@ export function ComposeBox(props: any) {
   }, [collabId])
 
   useEffect(() => {
-    if (composeDraft) {
+    if (composeDraft && !isContentSet) {
       const { subject, to, cc, bcc, draftInfo } = composeDraft;
 
       if (subject) {
@@ -131,8 +132,9 @@ export function ComposeBox(props: any) {
       if (draftInfo && draftInfo.body) {
         setEmailBody(draftInfo.body);
       }
+      setIsContentSet(true);
     }
-  }, [composeDraft])
+  }, [composeDraft, isContentSet])
 
   useEffect(() => {
     if (props.isOpen) {
@@ -269,11 +271,12 @@ export function ComposeBox(props: any) {
     if (!validateDraft(value)) {
       return;
     }
-    if (value.trim()) {
+    let checkValue = getPlainTextFromHtml(value).trim();
+    if (checkValue.trim()) {
       setIsDraftUpdated(true)
     }
     if (isValueUpdate) {
-      if (!value.trim()) {
+      if (!checkValue.trim()) {
         setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
         setExtraClassNamesForBottom(prevState => prevState.replace('show-shadow-bottom', ''));
       }
@@ -286,7 +289,7 @@ export function ComposeBox(props: any) {
       cc: emailRecipients.cc?.items && emailRecipients.cc?.items.length > 0 ? emailRecipients.cc?.items : [],
       bcc: emailRecipients.bcc?.items && emailRecipients.bcc?.items.length > 0 ? emailRecipients.bcc?.items : [],
       draftInfo: {
-        body: value || emailBody,
+        body: checkValue ? value : emailBody,
         collabId
       },
       ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
@@ -306,18 +309,6 @@ export function ComposeBox(props: any) {
         }
       }
     }, 500);
-  }
-
-  const discardMessage = () => {
-    if (selectedAccount && selectedAccount.signature) {
-      let sentence = '';
-      if (selectedThread?.projects && selectedThread?.projects?.length) {
-        sentence = `${selectedAccount?.name || ''} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length > 0 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}`;
-      }
-
-      setEmailBody(`<p></p><p>${selectedAccount.signature}</p><p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`);
-      dispatch(fireEvent({event: {data: `<p></p><p>${selectedAccount.signature}</p><p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`, type: 'richtexteditor.forceUpdate'}}));
-    }
   }
 
   const sendMessages = () => {
@@ -452,10 +443,10 @@ export function ComposeBox(props: any) {
         allValues = [...allValues, ...emailRecipients[property].items];
       }
     }
-    if ((allValues.length > 0 && emailRecipients && emailRecipients['recipients'] && emailRecipients['recipients'].items.length > 0) || subject || emailBody) {
+    if ((allValues.length > 0 && emailRecipients && emailRecipients['recipients'] && emailRecipients['recipients'].items.length > 0) || subject) {
       sendToDraft('', false);
     }
-  }, [emailRecipients.recipients.items, emailRecipients.cc.items, emailRecipients.bcc.items, subject, emailBody]);
+  }, [emailRecipients.recipients.items, emailRecipients.cc.items, emailRecipients.bcc.items, subject]);
 
 
   function handleFileUpload(event: ChangeEventHandler | any) {
@@ -581,7 +572,7 @@ export function ComposeBox(props: any) {
                   handleItemDelete={handleItemDelete}
               />
               <Flex flex={1} direction={'column'} position={'relative'}>
-                <Flex flex={1} direction={'column'} ref={editorRef} className={`editor-bottom-shadow`}
+                <Flex flex={1} direction={'column'} ref={editorRef} className={`editor-bottom-shadow`} maxH={'380px'} overflowY={'auto'}
                       onScroll={() => handleEditorScroll()} zIndex={6}
                       onClick={() => dispatch(fireEvent({event: {data: null, type: 'richtexteditor.focus'}}))}>
                   {collabId && <CollabRichTextEditor
@@ -629,7 +620,7 @@ export function ComposeBox(props: any) {
                     <Button
                         className={styles.replyTextDiscardButton}
                         fontSize={14} lineHeight={16}
-                        onClick={() => discardMessage()}
+                        onClick={() => onCloseClick()}
                     >
                       Discard
                     </Button>

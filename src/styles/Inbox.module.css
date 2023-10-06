@@ -188,6 +188,7 @@
     border: 1px solid #FF87DB;
     background-color: #FFFFFF;
     color: #67074A;
+    width: 110px;
 }
 
 .mailOtherOption .resumeDraft:hover {
@@ -772,6 +773,7 @@
     font-size: 13px;
     font-weight: 500;
     letter-spacing: -0.13px;
+    width: 110px;
 }
 
 .mailListTabs .composeButton:hover {
