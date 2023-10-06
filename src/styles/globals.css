@@ -824,3 +824,6 @@ div:has(> .mailSendToaster) {
 .snooze-button-icon:hover svg{
   stroke: #918F1F;
 }
+.inbox-button-icon:hover svg{
+  stroke: #0556FF !important;
+}

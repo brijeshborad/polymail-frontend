@@ -747,10 +747,16 @@
 }
 
 .mailListTabs .composeButton:hover {
-    background-color: #FFFFFF;
+    background-color: #28C07D;
+    color: #fff;
+}
+
+.mailListTabs .composeButton:hover svg{
+    stroke: #fff;
 }
 
 .mailListTabs .composeButton svg {
+    transition: all 0.5s;
     width: 20px;
     height: 20px;
 }

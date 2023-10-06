@@ -253,7 +253,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                      <Tab className={styles.emailTabs}>
                          <Tooltip label='Inbox' placement='bottom' bg='gray.300' color='black'>
                              <div
-                                 className={`${tab === 'INBOX' ? styles.active : ''}`}
+                                 className={`inbox-button-icon ${tab === 'INBOX' ? styles.active : ''}`}
                                  onClick={() => changeEmailTabs('INBOX')}
                              >
                                  <InboxIcon/>
