@@ -186,7 +186,7 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                     {headerType === 'inbox' && <AddToProjectButton/>}
                     {!(selectedThread?.mailboxes || []).includes(MAILBOX_INBOX) && (
                         <Tooltip label='Inbox' placement='bottom' bg='gray.300' color='black'>
-                            <button onClick={() => updateMailBox(MAILBOX_INBOX)}>
+                            <button onClick={() => updateMailBox(MAILBOX_INBOX)} className='inbox-button-icon'>
                                 <InboxIcon/>
                             </button>
                         </Tooltip>
