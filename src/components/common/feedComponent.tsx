@@ -1,6 +1,7 @@
 import {Box, Flex, Text} from '@chakra-ui/react';
 import React from 'react';
 import {ActivityFeed} from "@/models/activityFeed";
+import styles from '@/styles/Home.module.css';
 
 interface FeedComponentProps {
     feedData?: ActivityFeed;
@@ -9,8 +10,8 @@ interface FeedComponentProps {
 
 export const FeedComponent: React.FC<FeedComponentProps> = ({feedData, markFeedAsRead}) => {
     return (
-        <Box padding="12px" background={feedData?.isRead ? 'var(--alias-bg-subtle)': ''} border={'1px solid var(--alias-bg-subtle)'}
-             borderRadius="8px" cursor={'pointer'} marginBottom="8px" onClick={() => markFeedAsRead ? markFeedAsRead() : null}>
+        <Box className={`${styles.feedBox} ${feedData?.isRead ? styles.feedBoxRead: ''}`}
+             onClick={() => markFeedAsRead ? markFeedAsRead() : null}>
             <Flex>
                 <Box flex={1}>
                     <Text fontSize="13px">

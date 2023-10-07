@@ -8,6 +8,7 @@ import {updateLastMessage} from "@/redux/socket/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {ActivityFeed} from "@/models/activityFeed";
+import {ACTIVITY_FEED_EVENT_TYPES} from "@/utils/constants";
 
 const FeedComponent = dynamic(
     () => import('./feedComponent').then((mod) => mod.FeedComponent)
@@ -20,12 +21,12 @@ export const FeedSidebar = () => {
     const {newMessage} = useSelector((state: StateType) => state.socket);
     const dispatch = useDispatch();
     const [feeds, setFeeds] = useState<ActivityFeed[]>([]);
+    const [unreadCount, setUnreadCount] = useState<number>(0);
 
     useEffect(() => {
         if (newMessage && newMessage.name === 'Activity') {
             dispatch(updateLastMessage(null));
-            if (['ThreadShared'].includes(newMessage.data.type)) {
-                console.log('----', feeds, newMessage);
+            if (ACTIVITY_FEED_EVENT_TYPES.includes(newMessage.data.type)) {
                 let currentFeeds: ActivityFeed[] = [...feeds];
                 if (currentFeeds.length > 0) {
                     currentFeeds.unshift({
@@ -50,6 +51,10 @@ export const FeedSidebar = () => {
         }
     }, [newMessage, dispatch, feeds])
 
+    useEffect(() => {
+        setUnreadCount(feeds.filter((t: ActivityFeed) => !t.isRead).length);
+    }, [feeds])
+
     function markFeedAsRead(index: number) {
         let currentFeeds = [...feeds];
         currentFeeds[index] = {
@@ -64,7 +69,7 @@ export const FeedSidebar = () => {
             <Flex align={'center'} cursor={'pointer'} justify={'center'} className={styles.notificationIcon}
                   onClick={onOpen}>
                 <EnergyIcon/>
-                <Badge>{feeds.filter((t: ActivityFeed) => !t.isRead).length}</Badge>
+                {unreadCount > 0 ? (<Badge>{unreadCount}</Badge>): null}
             </Flex>
             <Drawer isOpen={isOpen} placement="right" onClose={onClose} finalFocusRef={btnRef}>
                 {/* <DrawerOverlay /> */}

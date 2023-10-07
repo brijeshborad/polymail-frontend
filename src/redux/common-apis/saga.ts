@@ -62,7 +62,7 @@ function* getAllContacts() {
 
 function* getAllActivityFeed() {
   try {
-    const response: AxiosResponse = yield ApiService.callGet(`admin/websocket/activity`, null);
+    const response: AxiosResponse = yield ApiService.callGet(`activity`, null);
     yield put(getActivityFeedSuccess(response));
   } catch (error: any) {
     error = error as AxiosError;

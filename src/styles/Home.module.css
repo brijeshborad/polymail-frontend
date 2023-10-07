@@ -311,18 +311,39 @@
     border: 1px solid rgba(8, 22, 47, 0.2);
     margin-left: 21px;
     margin-right: 160px;
+
+    background-color: #08162F;
+    color: #ffffff;
+}
+
+.feedBox {
+    padding: 12px;
+    border: 1px solid var(--alias-bg-subtle);
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 8px;
+    background: var(--alias-bg-subtle);
+}
+
+.feedBox.feedBoxRead {
+    background: #FFFFFF;
+}
+
+.feedBox:hover {
+    background: var(--alias-bg-subtle);
 }
 
 .notificationIcon span {
     position: absolute;
     border-radius: 50px;
-    background-color: #08162F;
-    color: #ffffff;
+    background-color: #FFFFFF;
+    border: 1px solid #08162F;
+    color: #08162F;
     min-width: 16px;
     width: fit-content;
     height: 16px;
     font-size: 10px;
-    line-height: 1.6;
+    line-height: 1.5;
     text-align: center;
     right: -5px;
     top: -5px;
