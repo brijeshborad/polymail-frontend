@@ -1,5 +1,6 @@
 import {MessagePart} from "@/models/messagesPart";
 import {MessageAttachments} from "@/models/messageAttachments";
+import {Project} from "@/models/project";
 
 export type MessageRecipient = {
   name: string
@@ -43,7 +44,8 @@ export interface MessageDraft {
     created?: string,
     updated?: string,
     subject?: string,
-    projectId?: string
+    projectId?: string,
+    projects?: Project[],
 }
 
 export interface MessageHeaders {

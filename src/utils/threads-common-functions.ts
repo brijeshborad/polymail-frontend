@@ -3,6 +3,7 @@ import {updateThreads, updateThreadState} from '@/redux/threads/action-reducer';
 import { Dispatch } from '@reduxjs/toolkit';
 import {addItemToGroup} from "@/redux/memberships/action-reducer";
 import {removeThreadFromProject} from "@/redux/projects/action-reducer";
+import {updateDraftState} from "@/redux/draft/action-reducer";
 
 export function markThreadAsRead(thread: Thread, dispatch: Dispatch) {
     if (!thread) return;
@@ -22,7 +23,7 @@ export function markThreadAsRead(thread: Thread, dispatch: Dispatch) {
     }
 }
 
-export function addThreadToProject(item: Project, multiSelection: any, selectedThread: any, dispatch: Dispatch, threads: Thread[], addToProjectRef?: any) {
+export function addThreadToProject(item: Project, multiSelection: any, selectedThread: any, dispatch: Dispatch, threads: Thread[], addToProjectRef?: any, isComposing: boolean = false) {
   const isThreadMultiSelection = (multiSelection !== undefined && multiSelection.length > 0)
   if ((selectedThread && selectedThread.id || (multiSelection !== undefined && multiSelection.length > 0))) {
     let reqBody = {
@@ -66,7 +67,12 @@ export function addThreadToProject(item: Project, multiSelection: any, selectedT
         projects: [...projects, item]
       }
     }
-    dispatch(updateThreadState({ selectedThread: addProject , threads: newThreads}));
+    if (isComposing) {
+      dispatch(updateDraftState({ draft: addProject}));
+    } else {
+      dispatch(updateThreadState({ selectedThread: addProject , threads: newThreads}));
+
+    }
     dispatch(addItemToGroup({
       body:reqBody,
       toaster:{

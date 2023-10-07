@@ -77,6 +77,7 @@ export function ComposeBox(props: any) {
   const [collabId, setCollabId] = useState<string | undefined>(composeDraft?.draftInfo?.collabId);
   const [isContentSet, setIsContentSet] = useState<boolean>(false);
   const { project } = useSelector((state: StateType) => state.projects);
+  const {isComposing} = useSelector((state: StateType) => state.commonApis);
 
   useEffect(() => {
     if(!collabId) {
@@ -97,7 +98,7 @@ export function ComposeBox(props: any) {
   useEffect(() => {
     if (composeDraft && composeDraft.id && !isContentSet) {
       if (project && props.isProjectView) {
-        addThreadToProject(project, multiSelection, composeDraft, dispatch, threads || [], null);
+        addThreadToProject(project, multiSelection, composeDraft, dispatch, threads || [], null, isComposing);
       }
 
       const { subject, to, cc, bcc, draftInfo } = composeDraft;
@@ -309,6 +310,9 @@ export function ComposeBox(props: any) {
           return;
         }
         if (composeDraft && composeDraft.id) {
+          if (composeDraft?.projects?.length) {
+            delete composeDraft?.projects;
+          }
           dispatch(updatePartialMessage({body:{id: composeDraft.id, body:body, fromCompose: true }}));
         } else {
           // setIsDraftUpdated(true);

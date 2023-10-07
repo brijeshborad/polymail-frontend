@@ -73,7 +73,8 @@ export function Message({isProjectView = false}: {isProjectView?: boolean}) {
 
   useEffect(() => {
     if (selectedThread && selectedThread?.id) {
-      setPassSelectedThreadData(selectedThread)
+      console.log('selectedThread', selectedThread)
+      setPassSelectedThreadData(selectedThread);
       setShowReplyBox(false)
       setIndex(null);
       setMessageDetailsForReplyBox(null);
@@ -326,7 +327,7 @@ export function Message({isProjectView = false}: {isProjectView?: boolean}) {
   return (
     <>
       {!isComposing && showMessageBox()}
-      {isComposing && <ComposeBox tabValue={tabValue} isProjectView={isProjectView} passSelectedThreadData={passSelectedThreadData}/>
+      {isComposing && <ComposeBox tabValue={tabValue} isProjectView={isProjectView} passSelectedThreadData={passSelectedThreadData} />
       }
     </>
   )

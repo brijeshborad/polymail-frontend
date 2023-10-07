@@ -27,8 +27,9 @@ export function AddToProjectButton() {
     const [isDropdownOpen, setDropDownOpen] = useState(false)
     const dispatch = useDispatch();
     const {selectedThread, multiSelection, threads} = useSelector((state: StateType) => state.threads);
-    let {projects} = useSelector((state: StateType) => state.projects);
+    let {projects, project} = useSelector((state: StateType) => state.projects);
     const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
+    const [threadProject, setThreadProject] = useState<Project[]>([]);
     const [searchValue, setSearchValue] = useState<string>('');
 
     const addToProjectRef = useRef<HTMLInputElement | null>(null);
@@ -36,6 +37,7 @@ export function AddToProjectButton() {
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const {draft} = useSelector((state: StateType) => state.draft);
     const router = useRouter();
+    const {isComposing} = useSelector((state: StateType) => state.commonApis);
 
     useEffect(() => {
         const handleShortcutKeyPress = (e: KeyboardEvent | any) => {
@@ -52,6 +54,17 @@ export function AddToProjectButton() {
             window.removeEventListener('keydown', handleShortcutKeyPress);
         };
     }, []);
+
+
+    useEffect(() => {
+        if((selectedThread && selectedThread.projects && selectedThread.projects.length) || (draft && draft.projects && draft.projects.length)) {
+            setThreadProject(selectedThread?.projects || draft?.projects || [])
+        } else {
+            if (project) {
+                setThreadProject([project])
+            }
+        }
+    }, [selectedThread, draft])
 
     // useEffect(() => {
     //     if (isThreadAddedToProjectSuccess && successMessage) {
@@ -139,33 +152,38 @@ export function AddToProjectButton() {
                 }
             }));
 
-            if (router.query.project && router.query.project === item.id && threads) {
-                 let threadIndex = (threads || []).findIndex((thread: Thread) => thread.id === selectedThread.id);
-                 let data = (threads || []).filter((thread: Thread) => thread.id !== selectedThread.id);
-                 dispatch(updateThreadState({
-                     selectedThread: (threads || [])[(threadIndex + 1 < threads.length) ? threadIndex + 1 : (threadIndex >= 0 ? threadIndex - 1 : threadIndex + 1)] || null,
-                     threads: data
-                 }));
-            } else {
-                let data = (selectedThread.projects || []).filter((project: Project) => project.id !== item.id);
-                let thread = {
-                    ...selectedThread,
-                    projects: data
+            if (!isComposing) {
+                if (router.query.project && router.query.project === item.id && threads) {
+                    let threadIndex = (threads || []).findIndex((thread: Thread) => thread.id === selectedThread.id);
+                    let data = (threads || []).filter((thread: Thread) => thread.id !== selectedThread.id);
+                    dispatch(updateThreadState({
+                        selectedThread: (threads || [])[(threadIndex + 1 < threads.length) ? threadIndex + 1 : (threadIndex >= 0 ? threadIndex - 1 : threadIndex + 1)] || null,
+                        threads: data
+                    }));
+                } else {
+                    let data = (selectedThread.projects || []).filter((project: Project) => project.id !== item.id);
+                    let thread = {
+                        ...selectedThread,
+                        projects: data
+                    }
+                    dispatch(updateThreadState({ selectedThread: thread}));
+                    let projects = [...filteredProjects];
+                    projects.push(item);
+                    setFilteredProjects([...projects]);
                 }
-                dispatch(updateThreadState({ selectedThread: thread}));
-                let projects = [...filteredProjects];
-                projects.push(item);
-                setFilteredProjects([...projects]);
             }
+        } else {
+            let removeProject = threadProject.filter((project: any) => project.id !== item.id);
+            setThreadProject(removeProject)
         }
         setDropDownOpen(false)
     }
 
     const addProjectToThread = (item: Project) => {
         if (selectedThread || draft) {
-                addThreadToProject(item, multiSelection, selectedThread || draft, dispatch, threads || [], null)
+            addThreadToProject(item, multiSelection, selectedThread || draft, dispatch, threads || [], null)
+            setFilteredProjects((filteredProjects || []).filter((project: Project) => project.id !== item.id));
         }
-        setFilteredProjects((filteredProjects || []).filter((project: Project) => project.id !== item.id));
     }
 
     return (
@@ -179,7 +197,7 @@ export function AddToProjectButton() {
                 }}
                 closeOnBlur={true}
             >
-                {selectedThread?.projects?.length ? <MenuButton onClick={() => {
+                {threadProject?.length ? <MenuButton onClick={() => {
                     setDropDownOpen(!isDropdownOpen)
                     focusSearch();
                 }}
@@ -190,15 +208,15 @@ export function AddToProjectButton() {
                                                                 fontSize={'13px'} fontWeight={500} h={'fit-content'}
                                                                 ref={addToProjectRef}>
                     <Flex alignItems={'center'} justify={'center'} mr={1} className={styles.projectSelectImage}>
-                        {(selectedThread?.projects || []).slice(0, 2).map((item: any, index: number) => (
+                        {(threadProject || []).slice(0, 2).map((item: any, index: number) => (
                             <span className={styles.projectCount} key={index}> {item.emoji} </span>
                         ))}
-                        {((selectedThread?.projects || []).length > 2) && (
-                            <span className={styles.projectsLength}>{`+${selectedThread?.projects?.length - 2}`}</span>
+                        {((threadProject || []).length > 2) && (
+                            <span className={styles.projectsLength}>{`+${threadProject?.length - 2}`}</span>
                         )}
                     </Flex>
                     <div className={styles.projectAddedText}>
-                        {selectedThread?.projects?.length === 1 ? selectedThread?.projects[0]?.name : selectedThread?.projects?.length + ' ' + 'Projects'}
+                        {threadProject?.length === 1 ? threadProject[0]?.name : threadProject?.length + ' ' + 'Projects'}
                     </div>
                     <Flex width={'20px'} height={'20px'} alignItems={'center'} justifyContent={'center'}
                           className={styles.projectMenuIcon}><MenuIcon/></Flex>
@@ -226,9 +244,9 @@ export function AddToProjectButton() {
 
 
                 <MenuList className={`${styles.addToProjectList} drop-down-list`} zIndex={'overlay'}>
-                    {!!selectedThread?.projects?.length &&
+                    {!!threadProject?.length &&
                     <Flex direction={'column'} position={'relative'} pb={1} className={styles.selectedProject}>
-                        {(selectedThread?.projects || []).map((item: any, index: number) => (
+                        {(threadProject || []).map((item: any, index: number) => (
                             <Flex alignItems={'center'} justifyContent={'space-between'} padding={'8px 12px'}
                                   key={index} className={styles.selectedProjectName}>
                                 <Text color={'#374151'} fontSize={'13px'} fontWeight={'500'} width={'100%'} lineHeight={1} onClick={() =>  Router.push(`/projects/${item.id!}`)}
@@ -259,7 +277,7 @@ export function AddToProjectButton() {
 
                     <div className={'add-to-project-list'}>
                         {filteredProjects && !!filteredProjects.length && (filteredProjects || []).map((item: Project, index: number) => {
-                            if (selectedThread && selectedThread?.projects && selectedThread?.projects.map(t => t.id).includes(item.id)) {
+                            if (threadProject && threadProject.map(t => t.id).includes(item.id)) {
                                 return null;
                             }
                             return (

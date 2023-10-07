@@ -20,7 +20,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {getAllThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {Message, Thread} from "@/models";
 import dynamic from "next/dynamic";
-import {createDraft, updateDraftState} from "@/redux/draft/action-reducer";
+import {updateDraftState} from "@/redux/draft/action-reducer";
 import {SmallCloseIcon, TriangleDownIcon} from "@chakra-ui/icons";
 import {getCurrentCacheTab} from "@/utils/cache.functions";
 import {updateCommonState} from "@/redux/common-apis/action-reducer";
@@ -154,10 +154,6 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
 
     const openComposeModel = () => {
         dispatch(updateThreadState({selectedThread: null}));
-        if (selectedAccount && selectedAccount.id) {
-            dispatch(createDraft({body:{ accountId: selectedAccount.id, body: {}, fromCompose: true }}));
-        }
-
         if (!isComposing) {
             dispatch(updateDraftState({composeDraft: null}));
         }
