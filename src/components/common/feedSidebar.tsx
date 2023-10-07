@@ -70,10 +70,10 @@ export const FeedSidebar = () => {
                 {/* <DrawerOverlay /> */}
 
                 <DrawerContent>
-                    <Box borderLeft="1px solid #F3F4F6" height="100vh">
+                    <Box borderLeft="1px solid #F3F4F6" maxH="100vh" overflowY={'scroll'}>
                         {/* Header */}
                         <Box height="65px" borderBottom="1px solid #F3F4F6" padding="12px 16px" display="flex"
-                             justifyContent="space-between" alignItems="center">
+                             justifyContent="space-between" alignItems="center" position={'sticky'} top={0} background={'#fff'}>
                             <Flex align={'center'} justify={'center'}>
                                 <Text fontStyle="bold">Updates</Text>
                             </Flex>
@@ -116,7 +116,7 @@ export const FeedSidebar = () => {
                         {/*</Box>*/}
 
                         <Box padding="12px 16px">
-                            {feeds.slice(0, 20).map((t: ActivityFeed, index: number) => (
+                            {feeds.map((t: ActivityFeed, index: number) => (
                                 <FeedComponent key={index} feedData={t} markFeedAsRead={() => markFeedAsRead(index)}/>
                             ))}
                             {/*<FeedComponent isRead={true}/>*/}
