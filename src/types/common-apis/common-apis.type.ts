@@ -1,7 +1,9 @@
 import {Summary, Contacts, UserProjectOnlineStatus} from "@/models";
+import {ActivityFeed} from "@/models/activityFeed";
 
 export declare type InitialCommonApisStateType = {
   summary?: Summary | null,
+  activityFeed?: ActivityFeed[],
   isLoading?: boolean,
   error?: Error | any,
   showCreateProjectModal?: boolean,

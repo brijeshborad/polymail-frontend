@@ -7,7 +7,7 @@ import {User, UserProjectOnlineStatus} from "@/models";
 import LocalStorageService from "@/utils/localstorage.service";
 import {StateType} from "@/types";
 import useWebSocket from "react-use-websocket";
-import {getContacts, getSummary, updateCommonState} from "@/redux/common-apis/action-reducer";
+import {getActivityFeed, getContacts, getSummary, updateCommonState} from "@/redux/common-apis/action-reducer";
 import {ACCOUNT_MAIL_INIT_SYNC_TIMEOUT} from "@/utils/constants";
 import {getAllAccount} from "@/redux/accounts/action-reducer";
 import {getMemberStatusCache, setMemberStatusCache} from "@/utils/cache.functions";
@@ -215,6 +215,7 @@ export function CommonApiComponents() {
         dispatch(getSummary({}));
         dispatch(getProfilePicture({}));
         dispatch(getContacts({}));
+        dispatch(getActivityFeed({}));
     }, [dispatch]);
 
     useEffect(() => {

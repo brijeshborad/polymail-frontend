@@ -11,7 +11,8 @@ const initialState: any = {
   isComposing: false,
   contacts: [],
   allowThreadSelection: true,
-  onlineUsers: {threads: {}, projects: {}}
+  onlineUsers: {threads: {}, projects: {}},
+  activityFeed: []
 } as InitialCommonApisStateType
 
 const commonApisSlice = createSlice({
@@ -48,6 +49,16 @@ const commonApisSlice = createSlice({
       return {...state, contacts: [], isLoading: false}
     },
 
+    getActivityFeed: (state: InitialCommonApisStateType, _action: PayloadAction<ReducerActionType>) => {
+      return {...state, activityFeed: [], isLoading: true}
+    },
+    getActivityFeedSuccess: (state: InitialCommonApisStateType, _action: PayloadAction<any>) => {
+      return {...state, isLoading: false, error: null}
+    },
+    getActivityFeedError: (state: InitialCommonApisStateType, _action: PayloadAction<any>) => {
+      return {...state, activityFeed: [], isLoading: false}
+    },
+
     updateCommonState: (state: InitialCommonApisStateType, action: PayloadAction<InitialCommonApisStateType>) => {
       return {...state, ...action.payload}
     },
@@ -65,6 +76,6 @@ export const {
   getContacts,
   getContactsSuccess,
   getContactsError,
-  updateCommonState
+  updateCommonState, getActivityFeed, getActivityFeedSuccess, getActivityFeedError
 } = commonApisSlice.actions
 export default commonApisSlice.reducer

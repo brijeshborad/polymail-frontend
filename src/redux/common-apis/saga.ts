@@ -2,6 +2,7 @@ import {AxiosError, AxiosResponse} from "axios";
 import ApiService from "@/utils/api.service";
 import {all, fork, put, takeLatest} from "@redux-saga/core/effects";
 import {
+  getActivityFeed, getActivityFeedError, getActivityFeedSuccess,
   getContacts, getContactsError, getContactsSuccess,
   getProjectSummary,
   getProjectSummaryError, getProjectSummarySuccess,
@@ -59,6 +60,16 @@ function* getAllContacts() {
   }
 }
 
+function* getAllActivityFeed() {
+  try {
+    const response: AxiosResponse = yield ApiService.callGet(`admin/websocket/activity`, null);
+    yield put(getActivityFeedSuccess(response));
+  } catch (error: any) {
+    error = error as AxiosError;
+    yield put(getActivityFeedError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
+  }
+}
+
 
 export function* watchGetSummary() {
   yield takeLatest(getSummary.type, getSummaryData);
@@ -72,10 +83,15 @@ export function* watchGetAllContacts() {
   yield takeLatest(getContacts.type, getAllContacts);
 }
 
+export function* watchGetAllActivityFeed() {
+  yield takeLatest(getActivityFeed.type, getAllActivityFeed);
+}
+
 export default function* rootSaga() {
   yield all([
     fork(watchGetSummary),
     fork(watchGetProjectsSummary),
     fork(watchGetAllContacts),
+    fork(watchGetAllActivityFeed),
   ]);
 }
