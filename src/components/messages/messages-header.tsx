@@ -1,7 +1,8 @@
 import {
     Flex,
     Tooltip,
-    Heading
+    Heading,
+    Image
 } from "@chakra-ui/react";
 
 import {
@@ -16,7 +17,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType, MessageHeaderTypes} from "@/types";
 import {updateMessageState} from "@/redux/messages/action-reducer";
 import {Toaster} from "@/components/common";
-import {Thread} from "@/models";
+import {Thread, UserProjectOnlineStatus} from "@/models";
 
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
 const MessageSchedule = dynamic(() => import("./message-schedule").then(mod => mod.default));
@@ -28,6 +29,7 @@ import dayjs from "dayjs";
 export function MessagesHeader({headerType}: MessageHeaderTypes) {
     const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
     let {success: membershipSuccess} = useSelector((state: StateType) => state.memberships);
+    const {onlineUsers} = useSelector((state: StateType) => state.commonApis);
 
     const dispatch = useDispatch();
     const [successMessage, setSuccessMessage] = useState<{ desc: string, title: string, id: string, mailboxes: string[], threads: Thread[], thread: Thread | null}[]>([]);
@@ -183,6 +185,21 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                 </Flex>
 
                 <Flex gap={3} align={'center'}>
+                <Flex alignItems={'center'} justifyContent={'end'} className={'member-images'}>
+                      {(onlineUsers && selectedThread && onlineUsers['threads'][selectedThread.id!] || [])
+                          .filter((t: UserProjectOnlineStatus) => t.isOnline).slice(0, 5)
+                          .map((item: UserProjectOnlineStatus, index: number) => (
+                                  <Tooltip label={item.name} placement='bottom' bg='gray.300' color='black' key={index}>
+                                      <div className={'member-photo'}
+                                           style={{background: '#000', border: `2px solid #${item.color}`}}>
+                                          {item.avatar && <Image src={item.avatar} width="24" height="24"
+                                                                 alt=""/>}
+                                      </div>
+                                  </Tooltip>
+                              )
+                          )
+                      }
+                  </Flex>
                     {headerType === 'inbox' && <AddToProjectButton/>}
                     {!(selectedThread?.mailboxes || []).includes(MAILBOX_INBOX) && (
                         <Tooltip label='Inbox' placement='bottom' bg='gray.300' color='black'>
