@@ -104,7 +104,14 @@ export function MessageBox(props: any) {
                             <MenuList className={'drop-down-list'}>
                                 {props.threadDetails && (
                                     <MenuItem
-                                        onClick={() => setScope(props.threadDetails.scope === 'visible' ? 'hidden' : 'visible', props.threadDetails)}>
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            e.stopPropagation()
+                                            if (props.preventSelectingMessage) {
+                                                props.preventSelectingMessage()
+                                            }
+                                            setScope(props.threadDetails.scope === 'visible' ? 'hidden' : 'visible', props.threadDetails)
+                                        }}>
                                         {props.threadDetails.scope === 'visible' ? 'Hide from project members' : 'Show to project members'}
                                     </MenuItem>
                                 )}
@@ -203,7 +210,14 @@ export function MessageBox(props: any) {
                       <MenuList className={'drop-down-list'}>
                           {props.threadDetails && (
                               <MenuItem
-                                  onClick={() => setScope(props.threadDetails.scope === 'visible' ? 'hidden' : 'visible', props.threadDetails)}>
+                                  onClick={(e) => {
+                                      e.preventDefault()
+                                      e.stopPropagation()
+                                      if (props.preventSelectingMessage) {
+                                          props.preventSelectingMessage()
+                                      }
+                                      setScope(props.threadDetails.scope === 'visible' ? 'hidden' : 'visible', props.threadDetails)
+                                  }}>
                                   {props.threadDetails.scope === 'visible' ? 'Hide from project members' : 'Show to project members'}
                               </MenuItem>
                           )}

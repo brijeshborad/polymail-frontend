@@ -27,6 +27,8 @@ import {updateKeyNavigation} from "@/redux/key-navigation/action-reducer";
 import {getCacheMessages, setCacheMessages} from "@/utils/cache.functions";
 import {InboxLoader} from "@/components/loader-screen/inbox-loader";
 
+let preventOpen: boolean = false;
+
 export function Message({isProjectView = false}: {isProjectView?: boolean}) {
   const messagesWrapperRef = React.useRef<HTMLDivElement | null | any>(null);
 
@@ -94,7 +96,11 @@ export function Message({isProjectView = false}: {isProjectView?: boolean}) {
       if (draftMessage) {
         dispatch(updateDraftState({draft: draftMessage as MessageDraft}));
       }
-      setIndex(currentInboxMessages.length - 1);
+      if (preventOpen) {
+        preventOpen = false;
+      } else {
+        setIndex(currentInboxMessages.length - 1);
+      }
       setMessageDetailsForReplyBox(currentInboxMessages[currentInboxMessages.length - 1]);
     }
   }, [messages, dispatch])
@@ -296,6 +302,7 @@ export function Message({isProjectView = false}: {isProjectView?: boolean}) {
                     {inboxMessages && !!inboxMessages.length && inboxMessages.map((item: any, index: number) => (
                         <div key={index}>
                           <MessageBox
+                              preventSelectingMessage={() => preventOpen = true}
                               item={item} index={index} threadDetails={item}
                               isLoading={messageLoading} emailPart={emailPart}
                               messageAttachments={messageAttachments} hideAndShowReplayBox={hideAndShowReplayBox}
