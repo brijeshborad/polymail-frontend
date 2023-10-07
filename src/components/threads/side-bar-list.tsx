@@ -38,6 +38,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
 
   useEffect(() => {
     if (threads) {
+      console.log('threads------', threads)
       setCurrentThreads(threads);
     }
   }, [threads])
