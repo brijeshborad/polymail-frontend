@@ -27,7 +27,8 @@ export default function CollabRichTextEditor({
                                                  placeholder,
                                                  emailSignature,
                                                  projectShare,
-                                                 className = ''
+                                                 className = '',
+                                                 onChange
                                              }: CollabRichTextEditorType) {
     const dispatch = useDispatch()
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
@@ -78,6 +79,9 @@ export default function CollabRichTextEditor({
               onDrop: (editor, files) => {
                 onFileDrop(files);
               },
+              onPaste: (editor, files) => {
+                onFileDrop(files);
+              },
             }),
             Highlight.configure({
                 HTMLAttributes: {
@@ -111,6 +115,7 @@ export default function CollabRichTextEditor({
                         editor.editor.commands.focus('start')
                     }
                 }}
+                onUpdate={({editor}) => onChange(editor.getHTML())}
                 slotAfter={isToolbarVisible && (
                   <CollabRichTextEditorToolbar
                       beforeToolbar={null}

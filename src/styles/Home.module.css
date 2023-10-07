@@ -318,7 +318,8 @@
     border-radius: 50px;
     background-color: #08162F;
     color: #ffffff;
-    width: 16px;
+    min-width: 16px;
+    width: fit-content;
     height: 16px;
     font-size: 10px;
     line-height: 1.6;

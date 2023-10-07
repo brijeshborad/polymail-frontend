@@ -600,12 +600,13 @@ export function ComposeBox(props: any) {
                       onScroll={() => handleEditorScroll()} zIndex={6}
                       onClick={() => dispatch(fireEvent({event: {data: null, type: 'richtexteditor.focus'}}))}
               >
-                  {(collabId && composeDraft && composeDraft.id) && <CollabRichTextEditor
+                  {collabId && <CollabRichTextEditor
                       id={'compose-draft-' + collabId}
                       isAutoFocus={true}
                       content={emailBody}
-                      onCreate={() => {}}
+                      onCreate={() => sendToDraft('')}
                       onFileDrop={(files) => handleFileUpload(files, null)}
+                      onChange={(value) => sendToDraft(value)}
                       placeholder='Reply with anything you like or @mention someone to share this thread'
                       isToolbarVisible={true}
                       className={`compose-view ${extraClassNames} ${extraClassNamesForBottom}`}
@@ -620,7 +621,7 @@ export function ComposeBox(props: any) {
                         <>
                           <Flex
                               onClick={() => inputFile.current?.click()}
-                              align={'center'} justify={'center'} cursor={'pointer'} 
+                              align={'center'} justify={'center'} cursor={'pointer'}
                               className={styles.attachIcon}
                           >
                             <Image src="/image/icon/attach.svg" alt="emoji" width={13} height={13} />

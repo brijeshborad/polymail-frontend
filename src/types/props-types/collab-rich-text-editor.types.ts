@@ -14,4 +14,5 @@ export declare type CollabRichTextEditorType = {
     className?: string
     emailSignature?: string
     projectShare?: ReactElement | string;
+    onChange: (_content: string) => void;
 };

@@ -506,6 +506,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         type: 'richtexteditor.discard'
       }
     }));
+    setAttachments([]);
 
     setHideEditorToolbar(false)
   }
@@ -652,6 +653,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
       });
       setScheduledDate(undefined)
       setEmailBody('');
+      setAttachments([]);
 
       dispatch(fireEvent({
         event: {
@@ -878,6 +880,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                     onFileDrop={(files) => handleFileUpload(files)}
                     placeholder="Hit enter to reply with anything you'd like"
                     isToolbarVisible={hideEditorToolbar}
+                    onChange={(value) => sendToDraft(value)}
                     className={`${extraClassNames} ${extraClassNamesForBottom}`}
                     emailSignature={selectedAccount ? `<p></p>${selectedAccount?.signature}` : undefined}
                     projectShare={selectedThread?.projects?.length ? `
