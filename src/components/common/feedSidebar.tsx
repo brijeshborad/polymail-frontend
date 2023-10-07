@@ -95,25 +95,25 @@ export const FeedSidebar = () => {
                             </Box>
                         </Box>
                         {/* Content */}
-                        <Box margin="12px 16px" mb="6px" height="36px" display={'flex'}
-                             backgroundColor=" var(--alias-bg-subtle)" borderRadius="6px">
-                            {['Disney Launch', 'Everything'].map(item => (
-                                <Box
-                                    key={item}
-                                    onClick={() => setSelectedMenu(item)}
-                                    color={item === selectedMenu ? 'black' : '#6B7280'}
-                                    width="50%"
-                                    alignItems={'center'}
-                                    display="flex"
-                                    justifyContent="center"
-                                    backgroundColor={item === selectedMenu ? 'white' : 'var(--alias-bg-subtle)'}
-                                    borderRadius="6px"
-                                    cursor="pointer"
-                                    margin="2px">
-                                    <Text fontSize="13px">{item}</Text>
-                                </Box>
-                            ))}
-                        </Box>
+                        {/*<Box margin="12px 16px" mb="6px" height="36px" display={'flex'}*/}
+                        {/*     backgroundColor=" var(--alias-bg-subtle)" borderRadius="6px">*/}
+                        {/*    {['Disney Launch', 'Everything'].map(item => (*/}
+                        {/*        <Box*/}
+                        {/*            key={item}*/}
+                        {/*            onClick={() => setSelectedMenu(item)}*/}
+                        {/*            color={item === selectedMenu ? 'black' : '#6B7280'}*/}
+                        {/*            width="50%"*/}
+                        {/*            alignItems={'center'}*/}
+                        {/*            display="flex"*/}
+                        {/*            justifyContent="center"*/}
+                        {/*            backgroundColor={item === selectedMenu ? 'white' : 'var(--alias-bg-subtle)'}*/}
+                        {/*            borderRadius="6px"*/}
+                        {/*            cursor="pointer"*/}
+                        {/*            margin="2px">*/}
+                        {/*            <Text fontSize="13px">{item}</Text>*/}
+                        {/*        </Box>*/}
+                        {/*    ))}*/}
+                        {/*</Box>*/}
 
                         <Box padding="12px 16px">
                             {feeds.slice(0, 20).map((t: ActivityFeed, index: number) => (
