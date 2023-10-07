@@ -465,6 +465,17 @@
     justify-content: center;
 }
 
+.projectPage .projectListMenuButton svg {
+    fill: #374151;
+}
+.projectPage .projectListDropDownButton.projectListMenuButton:hover,
+.projectPage .projectListDropDownButton.projectListMenuButton[data-active],
+.projectPage .projectListDropDownButton.projectListMenuButton:active {
+    background-color: #FFFFFF;
+}
+
+
+
 
 @media (max-width: 991px) {
     .projectPage .mailGrid {

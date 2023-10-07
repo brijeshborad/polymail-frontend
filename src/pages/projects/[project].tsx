@@ -30,8 +30,9 @@ import {
 import dynamic from 'next/dynamic';
 import Image from "next/image";
 import {useRouter} from "next/router";
-import {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
+import {MenuIcon} from "@/icons";
 
 const ThreadsSideBar = dynamic(
     () => import('@/components/threads').then((mod) => mod.ThreadsSideBar)
@@ -398,6 +399,18 @@ function ProjectInbox() {
                                     </MenuList>
                                 </>
                             )}
+                        </Menu>
+
+                        <Menu isLazy>
+                            <MenuButton className={`${styles.projectListDropDownButton} ${styles.projectListMenuButton} `} border={'1px solid #374151'} borderRadius={8} marginLeft={2} backgroundColor={'#FFFFFF'} h={'auto'} fontSize={12} minW={'1px'} padding={'10px 11px'} as={Button}>
+                                <MenuIcon/>
+                            </MenuButton>
+                            <MenuList minW={'126px'} className={'drop-down-list'}>
+                                <MenuItem>Mark as read</MenuItem>
+                                <MenuItem>Edit project</MenuItem>
+                                <MenuItem>Leave project</MenuItem>
+                                <MenuItem className={'delete-button'}>Delete project</MenuItem>
+                            </MenuList>
                         </Menu>
                     </Flex>
                 </Flex>

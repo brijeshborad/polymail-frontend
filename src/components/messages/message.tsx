@@ -57,6 +57,7 @@ export function Message({isProjectView = false}: {isProjectView?: boolean}) {
   const {isLoading: projectsLoading} = useSelector((state: StateType) => state.projects);
   const {isLoading: summaryLoading, syncingEmails, isComposing} = useSelector((state: StateType) => state.commonApis);
   const [messageDetailsForReplyBox, setMessageDetailsForReplyBox] = useState<MessageModel | null>(null);
+  const [passSelectedThreadData, setPassSelectedThreadData] = useState<MessageModel | null>(null);
   const [isLoaderShow, setIsLoaderShow] = useState<boolean>(false);
   const [showReplyBox, setShowReplyBox] = useState<boolean>(false);
 
@@ -72,6 +73,7 @@ export function Message({isProjectView = false}: {isProjectView?: boolean}) {
 
   useEffect(() => {
     if (selectedThread && selectedThread?.id) {
+      setPassSelectedThreadData(selectedThread)
       setShowReplyBox(false)
       setIndex(null);
       setMessageDetailsForReplyBox(null);
@@ -324,7 +326,7 @@ export function Message({isProjectView = false}: {isProjectView?: boolean}) {
   return (
     <>
       {!isComposing && showMessageBox()}
-      {isComposing && <ComposeBox tabValue={tabValue} isProjectView={isProjectView}/>
+      {isComposing && <ComposeBox tabValue={tabValue} isProjectView={isProjectView} passSelectedThreadData={passSelectedThreadData}/>
       }
     </>
   )

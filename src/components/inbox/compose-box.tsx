@@ -28,6 +28,7 @@ import {fireEvent} from "@/redux/global-events/action-reducer";
 import CollabRichTextEditor from "../common/collab-rich-text-editor";
 import Image from "next/image";
 import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
+import {addThreadToProject} from "@/utils/threads-common-functions";
 const CreateNewProject = dynamic(() => import('@/components/project/create-new-project').then(mod => mod.default));
 const Time = dynamic(() => import("@/components/common").then(mod => mod.Time));
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
@@ -58,7 +59,7 @@ export function ComposeBox(props: any) {
   const [emailBody, setEmailBody] = useState<string>('');
   const { selectedAccount } = useSelector((state: StateType) => state.accounts);
   const { composeDraft } = useSelector((state: StateType) => state.draft);
-  const { tabValue, threads, selectedThread } = useSelector((state: StateType) => state.threads);
+  const { tabValue, threads, selectedThread,  multiSelection } = useSelector((state: StateType) => state.threads);
   const dispatch = useDispatch();
   const { onClose } = useDisclosure();
   const { isOpen: isOpenProject, onOpen: onOpenProject, onClose: onCloseProject } = useDisclosure();
@@ -75,6 +76,7 @@ export function ComposeBox(props: any) {
   const router = useRouter();
   const [collabId, setCollabId] = useState<string | undefined>(composeDraft?.draftInfo?.collabId);
   const [isContentSet, setIsContentSet] = useState<boolean>(false);
+  const { project } = useSelector((state: StateType) => state.projects);
 
   useEffect(() => {
     if(!collabId) {
@@ -93,7 +95,11 @@ export function ComposeBox(props: any) {
   }, [collabId])
 
   useEffect(() => {
-    if (composeDraft && !isContentSet) {
+    if (composeDraft && composeDraft.id && !isContentSet) {
+      if (project && props.isProjectView) {
+        addThreadToProject(project, multiSelection, composeDraft, dispatch, threads || [], null);
+      }
+
       const { subject, to, cc, bcc, draftInfo } = composeDraft;
 
       if (subject) {
@@ -134,7 +140,7 @@ export function ComposeBox(props: any) {
       }
       setIsContentSet(true);
     }
-  }, [composeDraft, isContentSet])
+  }, [composeDraft, isContentSet, project])
 
   useEffect(() => {
     if (props.isOpen) {
@@ -378,7 +384,7 @@ export function ComposeBox(props: any) {
           })
         }
       }
-
+      changeThreadData();
       dispatch(sendMessage({body: { id: composeDraft.id!, ...params }}));
       onClose();
 
@@ -517,10 +523,10 @@ export function ComposeBox(props: any) {
       if (tabValue === 'DRAFT') {
         dispatch(updateThreadState({ selectedThread: null }));
       }
+      changeThreadData();
     } else {
       onOpenDraftConformationModal()
     }
-
   }
 
   const modalCloseConfirmation = (type: string) => {
@@ -530,10 +536,17 @@ export function ComposeBox(props: any) {
       if (tabValue === 'DRAFT') {
         dispatch(updateThreadState({ selectedThread: null }));
       }
+      changeThreadData();
     }
     onCloseDraftConformationModal();
   }
 
+  const changeThreadData = () => {
+    let threadIndex = (threads || []).findIndex((thread: Thread) => thread.id === props.passSelectedThreadData.id);
+    dispatch(updateThreadState({
+      selectedThread: (threads || [])[(props.isProjectView && threadIndex === -1) ? 0 : threadIndex]
+    }));
+  }
 
   return (
     <>
