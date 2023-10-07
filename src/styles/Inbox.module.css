@@ -416,13 +416,13 @@
 }
 
 .projectAdded .projectSelectImage .projectCount + .projectCount {
-    margin-left: -10px;
+    margin-left: -11px;
 }
 
 .projectAdded .projectSelectImage .projectsLength {
     background-color: #C5D5ED;
     border-radius: 10px;
-    margin-left: -10px;
+    margin-left: -11px;
     padding: 2px 4px;
     line-height: 1;
     font-size: 10px;

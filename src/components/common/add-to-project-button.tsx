@@ -208,11 +208,11 @@ export function AddToProjectButton() {
                                                                 fontSize={'13px'} fontWeight={500} h={'fit-content'}
                                                                 ref={addToProjectRef}>
                     <Flex alignItems={'center'} justify={'center'} mr={1} className={styles.projectSelectImage}>
-                        {(threadProject || []).slice(0, 2).map((item: any, index: number) => (
+                        {(threadProject || []).slice(0, 5).map((item: any, index: number) => (
                             <span className={styles.projectCount} key={index}> {item.emoji} </span>
                         ))}
-                        {((threadProject || []).length > 2) && (
-                            <span className={styles.projectsLength}>{`+${threadProject?.length - 2}`}</span>
+                        {((threadProject || []).length > 5) && (
+                            <span className={styles.projectsLength}>{`+${threadProject?.length - 5}`}</span>
                         )}
                     </Flex>
                     <div className={styles.projectAddedText}>
