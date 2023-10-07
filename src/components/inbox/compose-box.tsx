@@ -59,7 +59,7 @@ export function ComposeBox(props: any) {
   const [emailBody, setEmailBody] = useState<string>('');
   const { selectedAccount } = useSelector((state: StateType) => state.accounts);
   const { composeDraft } = useSelector((state: StateType) => state.draft);
-  const { tabValue, threads, selectedThread,  multiSelection } = useSelector((state: StateType) => state.threads);
+  const { tabValue, threads, selectedThread } = useSelector((state: StateType) => state.threads);
   const dispatch = useDispatch();
   const { onClose } = useDisclosure();
   const { isOpen: isOpenProject, onOpen: onOpenProject, onClose: onCloseProject } = useDisclosure();
@@ -77,7 +77,6 @@ export function ComposeBox(props: any) {
   const [collabId, setCollabId] = useState<string | undefined>(composeDraft?.draftInfo?.collabId);
   const [isContentSet, setIsContentSet] = useState<boolean>(false);
   const { project } = useSelector((state: StateType) => state.projects);
-  const {isComposing} = useSelector((state: StateType) => state.commonApis);
 
   useEffect(() => {
     if(!collabId) {
