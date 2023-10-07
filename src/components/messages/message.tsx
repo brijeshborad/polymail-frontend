@@ -73,7 +73,6 @@ export function Message({isProjectView = false}: {isProjectView?: boolean}) {
 
   useEffect(() => {
     if (selectedThread && selectedThread?.id) {
-      console.log('selectedThread', selectedThread)
       setPassSelectedThreadData(selectedThread);
       setShowReplyBox(false)
       setIndex(null);

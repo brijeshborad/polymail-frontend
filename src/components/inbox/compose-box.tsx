@@ -28,7 +28,7 @@ import {fireEvent} from "@/redux/global-events/action-reducer";
 import CollabRichTextEditor from "../common/collab-rich-text-editor";
 import Image from "next/image";
 import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
-import {addThreadToProject} from "@/utils/threads-common-functions";
+import {addItemToGroup} from "@/redux/memberships/action-reducer";
 const CreateNewProject = dynamic(() => import('@/components/project/create-new-project').then(mod => mod.default));
 const Time = dynamic(() => import("@/components/common").then(mod => mod.Time));
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
@@ -97,9 +97,6 @@ export function ComposeBox(props: any) {
 
   useEffect(() => {
     if (composeDraft && composeDraft.id && !isContentSet) {
-      if (project && props.isProjectView) {
-        addThreadToProject(project, multiSelection, composeDraft, dispatch, threads || [], null, isComposing);
-      }
 
       const { subject, to, cc, bcc, draftInfo } = composeDraft;
 
@@ -140,6 +137,22 @@ export function ComposeBox(props: any) {
         setEmailBody(draftInfo.body);
       }
       setIsContentSet(true);
+      if (project && props.isProjectView) {
+        let reqBody = {
+          threadIds: [composeDraft!.id],
+          roles: [
+            'n/a',
+          ],
+          groupType: 'project',
+          groupId: project.id
+        }
+        dispatch(addItemToGroup({
+          body: reqBody,
+          afterSuccessAction: () => {
+            dispatch(updateDraftState({ composeDraft: {...composeDraft, projects: [project]} }))
+          }}
+        ))
+      }
     }
   }, [composeDraft, isContentSet, project])
 
@@ -546,10 +559,12 @@ export function ComposeBox(props: any) {
   }
 
   const changeThreadData = () => {
-    let threadIndex = (threads || []).findIndex((thread: Thread) => thread.id === props.passSelectedThreadData.id);
-    dispatch(updateThreadState({
-      selectedThread: (threads || [])[(props.isProjectView && threadIndex === -1) ? 0 : threadIndex]
-    }));
+    if (props.passSelectedThreadData) {
+      let thread = (threads || []).find((thread: Thread) => thread.id === props.passSelectedThreadData.id);
+      dispatch(updateThreadState({
+        selectedThread: thread || (threads || [])[0]
+      }));
+    }
   }
 
   return (

@@ -47,6 +47,10 @@ export function performSuccessActions(payload: ReducerActionType) {
             } : {})
         });
     }
+
+    if (payload.afterSuccessAction) {
+        payload.afterSuccessAction();
+    }
 }
 
 export function performErrorActions(payload: ReducerActionType) {

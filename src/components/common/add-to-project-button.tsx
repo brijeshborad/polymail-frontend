@@ -35,7 +35,7 @@ export function AddToProjectButton() {
     const addToProjectRef = useRef<HTMLInputElement | null>(null);
     const searchRef = useRef<HTMLInputElement | null>(null);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
-    const {draft} = useSelector((state: StateType) => state.draft);
+    const {composeDraft} = useSelector((state: StateType) => state.draft);
     const router = useRouter();
     const {isComposing} = useSelector((state: StateType) => state.commonApis);
 
@@ -57,14 +57,14 @@ export function AddToProjectButton() {
 
 
     useEffect(() => {
-        if((selectedThread && selectedThread.projects && selectedThread.projects.length) || (draft && draft.projects && draft.projects.length)) {
-            setThreadProject(selectedThread?.projects || draft?.projects || [])
+        if((selectedThread && selectedThread.projects && selectedThread.projects.length) || (composeDraft && composeDraft.projects && composeDraft.projects.length)) {
+            setThreadProject(selectedThread?.projects || composeDraft?.projects || [])
         } else {
             if (project) {
                 setThreadProject([project])
             }
         }
-    }, [selectedThread, draft])
+    }, [selectedThread])
 
     // useEffect(() => {
     //     if (isThreadAddedToProjectSuccess && successMessage) {
@@ -180,8 +180,8 @@ export function AddToProjectButton() {
     }
 
     const addProjectToThread = (item: Project) => {
-        if (selectedThread || draft) {
-            addThreadToProject(item, multiSelection, selectedThread || draft, dispatch, threads || [], null)
+        if (selectedThread || composeDraft) {
+            addThreadToProject(item, multiSelection, selectedThread || composeDraft, dispatch, threads || [], null)
             setFilteredProjects((filteredProjects || []).filter((project: Project) => project.id !== item.id));
         }
     }
