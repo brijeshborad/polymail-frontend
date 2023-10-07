@@ -76,7 +76,7 @@ export function InboxHeaderProjectsList(props: { size: number }) {
                             border={'1px solid #F3F4F6'} h={'fit-content'}
                             borderRadius={'8px'} padding={'7px'} minWidth={'216px'} maxWidth={'216px'}>
                         <Flex className={'disney-icon'} position={'relative'} align={'center'} justify={'center'}
-                              borderRadius={'3px'} backgroundColor={'#C5D5ED'} h={'20px'} w={'20px'}>
+                              borderRadius={'3px'} h={'20px'} w={'20px'} fontSize={'18px'}>
                             {project?.emoji ? project.emoji : <DisneyDIcon/>}
                         </Flex>
                         <Text whiteSpace={'nowrap'} overflow={'hidden'} textOverflow={'ellipsis'} fontSize='13px'

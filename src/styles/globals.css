@@ -292,17 +292,17 @@ div:has(> .mailSendToaster) {
     max-width: 700px;
 }
 
-.disney-icon:before {
-    position: absolute;
-    content: '';
-    width: 6px;
-    height: 6px;
-    background-color: #FF87DB;
-    border-radius: 50%;
-    border: 1px solid #FFFFFF;
-    top: -2px;
-    right: -2px;
-}
+/*.disney-icon:before {*/
+/*    position: absolute;*/
+/*    content: '';*/
+/*    width: 6px;*/
+/*    height: 6px;*/
+/*    background-color: #FF87DB;*/
+/*    border-radius: 50%;*/
+/*    border: 1px solid #FFFFFF;*/
+/*    top: -2px;*/
+/*    right: -2px;*/
+/*}*/
 
 .member-images .member-photo img {
     width: 100%;
