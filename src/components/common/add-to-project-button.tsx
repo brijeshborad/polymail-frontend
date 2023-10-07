@@ -99,7 +99,7 @@ export function AddToProjectButton() {
 
     function checkProjects(e: MouseEvent | any) {
         if (e.key.toLowerCase() === 'enter' && filteredProjects.length === 1 && selectedThread) {
-            addThreadToProject(filteredProjects[0], multiSelection, selectedThread || draft, dispatch, threads || [], addToProjectRef);
+            addThreadToProject(filteredProjects[0], multiSelection, selectedThread || composeDraft, dispatch, threads || [], addToProjectRef);
         }
     }
 
