@@ -321,78 +321,80 @@ function ProjectInbox() {
                                             </Flex>
                                         </div>
 
-                                        {members && !!members.length && members.map((member, index) => (
-                                            <Flex align={'center'} gap={2} pr={3} key={index} className={styles.projectMember}>
-                                                <MenuItem>
-                                                    <div className={styles.imgWrapper}>
-                                                        <Image src="/image/user.png" width="36" height="36" alt=""/>
-                                                    </div>
-                                                    {member.name}
-                                                </MenuItem>
-                                                <Flex align={'center'} gap={1}>
-                                                    <Menu>
-                                                        <MenuButton className={styles.memberDropDown} fontSize={'12px'}
-                                                                    color={'#374151'} textTransform={'capitalize'}
-                                                                    backgroundColor={'#FFFFFF'} h={'auto'}
-                                                                    border={'1px solid #D1D5DB'} borderRadius={'50px'}
-                                                                    as={Button} rightIcon={<TriangleDownIcon/>}>
-                                                            {member.role}
-                                                        </MenuButton>
-                                                        <MenuList className={`drop-down-list`}>
-                                                            {PROJECT_ROLES.map((role, roleIndex) => {
-                                                                return <MenuItem
-                                                                    onClick={() => updateProjectMemberRoleData(role)}
-                                                                    textTransform={'capitalize'} key={roleIndex}>
-                                                                    {role}
-                                                                </MenuItem>
-                                                            })}
-                                                        </MenuList>
-                                                    </Menu>
-                                                    <IconButton className={styles.closeIcon}
-                                                                onClick={() => openModel(member)}
-                                                                cursor={'pointer'} backgroundColor={'#FFFFFF'}
-                                                                padding={0}
-                                                                minWidth={'1px'} aria-label='Add to friends'
-                                                                icon={<CloseIcon/>}/>
+                                        <Flex backgroundColor={'rgba(8, 22, 47, 0.05)'} direction={'column'} pb={4}>
+                                            {members && !!members.length && members.map((member, index) => (
+                                                <Flex align={'center'} gap={2} pr={3} key={index} className={styles.projectMember}>
+                                                    <MenuItem>
+                                                        <div className={styles.imgWrapper}>
+                                                            <Image src="/image/user.png" width="36" height="36" alt=""/>
+                                                        </div>
+                                                        {member.name}
+                                                    </MenuItem>
+                                                    <Flex align={'center'} gap={1}>
+                                                        <Menu>
+                                                            <MenuButton className={styles.memberDropDown} fontSize={'12px'}
+                                                                        color={'#374151'} textTransform={'capitalize'}
+                                                                        backgroundColor={'#FFFFFF'} h={'auto'}
+                                                                        border={'1px solid #D1D5DB'} borderRadius={'50px'}
+                                                                        as={Button} rightIcon={<TriangleDownIcon/>}>
+                                                                {member.role}
+                                                            </MenuButton>
+                                                            <MenuList className={`drop-down-list`}>
+                                                                {PROJECT_ROLES.map((role, roleIndex) => {
+                                                                    return <MenuItem
+                                                                        onClick={() => updateProjectMemberRoleData(role)}
+                                                                        textTransform={'capitalize'} key={roleIndex}>
+                                                                        {role}
+                                                                    </MenuItem>
+                                                                })}
+                                                            </MenuList>
+                                                        </Menu>
+                                                        <IconButton className={styles.closeIcon}
+                                                                    onClick={() => openModel(member)}
+                                                                    cursor={'pointer'} backgroundColor={'#FFFFFF'}
+                                                                    padding={0}
+                                                                    minWidth={'1px'} aria-label='Add to friends'
+                                                                    icon={<CloseIcon/>}/>
+                                                    </Flex>
                                                 </Flex>
-                                            </Flex>
-                                        ))}
-                                        {invitees && !!invitees.length && invitees.map((invite, index) => (
-                                            <Flex align={'center'} pr={3} gap={3} key={index}>
-                                                <MenuItem>
-                                                    <div className={styles.imgWrapper}>
-                                                        <Image src="/image/user.png" width="36" height="36" alt=""/>
-                                                    </div>
-                                                    {invite?.invite?.toEmail}
-                                                </MenuItem>
-                                                <Flex align={'center'} gap={1}>
-                                                    <Menu>
-                                                        <MenuButton className={styles.memberDropDown} fontSize={'12px'}
-                                                                    color={'#374151'} textTransform={'capitalize'}
-                                                                    backgroundColor={'#FFFFFF'} h={'auto'}
-                                                                    border={'1px solid #D1D5DB'} borderRadius={'50px'}
-                                                                    as={Button} rightIcon={<TriangleDownIcon/>}>
-                                                            {invite.role}
-                                                        </MenuButton>
-                                                        <MenuList className={`drop-down-list`}>
-                                                            {PROJECT_ROLES.map((role, roleIndex) => {
-                                                                return <MenuItem
-                                                                    onClick={() => updateProjectMemberRoleData(role)}
-                                                                    textTransform={'capitalize'} key={roleIndex}>
-                                                                    {role}
-                                                                </MenuItem>
-                                                            })}
-                                                        </MenuList>
-                                                    </Menu>
-                                                    <IconButton className={styles.closeIcon}
-                                                                onClick={() => openModel(invite)}
-                                                                cursor={'pointer'} backgroundColor={'#FFFFFF'}
-                                                                padding={0}
-                                                                minWidth={'1px'} aria-label='Add to friends'
-                                                                icon={<CloseIcon/>}/>
+                                            ))}
+                                            {invitees && !!invitees.length && invitees.map((invite, index) => (
+                                                <Flex align={'center'} pr={3} gap={3} key={index} className={styles.projectMember}>
+                                                    <MenuItem>
+                                                        <div className={styles.imgWrapper}>
+                                                            <Image src="/image/user.png" width="36" height="36" alt=""/>
+                                                        </div>
+                                                        {invite?.invite?.toEmail}
+                                                    </MenuItem>
+                                                    <Flex align={'center'} gap={1}>
+                                                        <Menu>
+                                                            <MenuButton className={styles.memberDropDown} fontSize={'12px'}
+                                                                        color={'#374151'} textTransform={'capitalize'}
+                                                                        backgroundColor={'#FFFFFF'} h={'auto'}
+                                                                        border={'1px solid #D1D5DB'} borderRadius={'50px'}
+                                                                        as={Button} rightIcon={<TriangleDownIcon/>}>
+                                                                {invite.role}
+                                                            </MenuButton>
+                                                            <MenuList className={`drop-down-list`}>
+                                                                {PROJECT_ROLES.map((role, roleIndex) => {
+                                                                    return <MenuItem
+                                                                        onClick={() => updateProjectMemberRoleData(role)}
+                                                                        textTransform={'capitalize'} key={roleIndex}>
+                                                                        {role}
+                                                                    </MenuItem>
+                                                                })}
+                                                            </MenuList>
+                                                        </Menu>
+                                                        <IconButton className={styles.closeIcon}
+                                                                    onClick={() => openModel(invite)}
+                                                                    cursor={'pointer'} backgroundColor={'#FFFFFF'}
+                                                                    padding={0}
+                                                                    minWidth={'1px'} aria-label='Add to friends'
+                                                                    icon={<CloseIcon/>}/>
+                                                    </Flex>
                                                 </Flex>
-                                            </Flex>
-                                        ))}
+                                            ))}
+                                        </Flex>
                                     </MenuList>
                                 </>
                             )}
