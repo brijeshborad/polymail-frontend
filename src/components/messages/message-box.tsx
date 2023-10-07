@@ -81,7 +81,7 @@ export function MessageBox(props: any) {
               <Flex w={'100%'} direction={'column'}>
                   <Flex align={'center'} justify={'space-between'} mb={1}>
                       <Heading as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400}
-                                letterSpacing={'-0.13px'} lineHeight={1}>{message.from.name}</Heading>
+                                letterSpacing={'-0.13px'} lineHeight={1}>{message.from.name || message.from.email}</Heading>
                       <Flex align={'center'} className={styles.mailBoxTime} gap={3}>
                           {props?.item.scope !== 'visible' ? <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
                                 <EyeSlashedIcon />
