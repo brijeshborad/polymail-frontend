@@ -15,7 +15,7 @@ const FeedComponent = dynamic(
 
 export const FeedSidebar = () => {
     const {isOpen, onOpen, onClose} = useDisclosure();
-    const [selectedMenu, setSelectedMenu] = React.useState('Disney Launch');
+    // const [selectedMenu, setSelectedMenu] = React.useState('Disney Launch');
     const btnRef = React.useRef(null);
     const {newMessage} = useSelector((state: StateType) => state.socket);
     const dispatch = useDispatch();
