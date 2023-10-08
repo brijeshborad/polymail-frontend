@@ -1,10 +1,12 @@
 import {BaseService} from "@/services/base.service";
 import {InitialCommonApisStateType} from "@/types";
 import {updateCommonState} from "@/redux/common-apis/action-reducer";
-import {Thread, UserDetails, UserProjectOnlineStatus} from "@/models";
+import {Thread, UserProjectOnlineStatus} from "@/models";
 import {getMemberStatusCache, setMemberStatusCache} from "@/utils/cache.functions";
 import dayjs from "dayjs";
 import {userService} from "@/services/user.service";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat)
 
 class CommonService extends BaseService {
     constructor() {
@@ -74,15 +76,99 @@ class CommonService extends BaseService {
                 forceWait: 0
             })
         }
-        // onlineMembers = {...this.removeAllOtherOnlineStatusForUser(onlineMembers, [oldThreadId, newThreadId])}
+        onlineMembers = {...this.removeAllOtherOnlineStatusForUser(onlineMembers, [oldThreadId, newThreadId], newThread.user)}
         setMemberStatusCache(onlineMembers);
         this.setCommonState({onlineUsers: onlineMembers});
     }
 
-    // removeAllOtherOnlineStatusForUser(onlineMembers, ignoreThreadIds: string[]) {
-    //     Object.keys(onlineMembers['threads'])
-    //     return {};
-    // }
+    removeAllOtherOnlineStatusForUser(onlineMembers: any, ignoreThreadIds: string[], userId: string | undefined) {
+        Object.keys(onlineMembers['threads']).forEach((threadId: string) => {
+            if (!ignoreThreadIds.includes(threadId)) {
+                onlineMembers['threads'][threadId] = [...onlineMembers['threads'][threadId]];
+                onlineMembers['threads'][threadId].forEach((user: UserProjectOnlineStatus, index: number) => {
+                    onlineMembers['threads'][threadId][index] = {...onlineMembers['threads'][threadId][index]};
+                    if (userId && user.userId === userId) {
+                        onlineMembers['threads'][threadId][index].isOnline = false;
+                    }
+                })
+            }
+        })
+        return onlineMembers;
+    }
+
+    updateUserOnlineStatusWithSocketEvent(newMessage: any) {
+        if (newMessage.name === 'Activity') {
+            let onlineUsers: any = {...getMemberStatusCache()};
+            let type = '';
+            let id = '';
+            if (newMessage.data.type === 'ViewingThread') {
+                type = 'threads';
+                id = newMessage.data.threadId;
+            }
+            if (newMessage.data.type === 'ViewingProject') {
+                type = 'projects';
+                id = newMessage.data.projectId;
+            }
+            if (!type || !id) {
+                return;
+            }
+            onlineUsers[type] = {
+                ...onlineUsers[type],
+                ...(!onlineUsers[type][id] ? {[id]: []} : {[id]: [...onlineUsers[type][id]]})
+            };
+            let userAlreadyExists = onlineUsers[type][id].findIndex((item: UserProjectOnlineStatus) => item.userId === newMessage.data.userId);
+            if (userAlreadyExists !== -1) {
+                if (onlineUsers[type][id][userAlreadyExists].forceWait > 0) {
+                    onlineUsers[type][id][userAlreadyExists] = {
+                        ...onlineUsers[type][id][userAlreadyExists],
+                        forceWait: onlineUsers[type][id][userAlreadyExists].forceWait - 1
+                    }
+                } else {
+                    onlineUsers[type][id][userAlreadyExists] = {
+                        ...onlineUsers[type][id][userAlreadyExists],
+                        isOnline: true,
+                        lastOnlineStatusCheck: dayjs().format('DD/MM/YYYY hh:mm:ss a'),
+                        forceWait: 0
+                    }
+                }
+            } else {
+                onlineUsers[type][id].push({
+                    userId: newMessage.data.userId,
+                    isOnline: true,
+                    lastOnlineStatusCheck: dayjs().format('DD/MM/YYYY hh:mm:ss a'),
+                    avatar: newMessage.data.avatar,
+                    color: Math.floor(Math.random() * 16777215).toString(16),
+                    name: newMessage.data.name,
+                    forceWait: 0
+                })
+            }
+            setMemberStatusCache(onlineUsers);
+            this.setCommonState({onlineUsers: onlineUsers});
+        }
+    }
+
+    updateUserOnlineStatusOnInterval() {
+        let onlineMembers: any = {...getMemberStatusCache()};
+        Object.keys(onlineMembers).forEach((item: string) => {
+            onlineMembers[item] = {...onlineMembers[item]};
+            Object.keys(onlineMembers[item]).forEach((itemObj: string) => {
+                onlineMembers[item][itemObj] = [...onlineMembers[item][itemObj]];
+                onlineMembers[item][itemObj].forEach((user: object, index: number) => {
+                    onlineMembers[item][itemObj][index] = {...onlineMembers[item][itemObj][index]};
+                    let lastActiveDate = dayjs(onlineMembers[item][itemObj][index].lastOnlineStatusCheck, 'DD/MM/YYYY hh:mm:ss a');
+                    if (onlineMembers[item][itemObj][index].isOnline && dayjs().diff(lastActiveDate, 'seconds') > 10) {
+                        onlineMembers[item][itemObj][index].isOnline = false;
+                    }
+                })
+            })
+        })
+        setMemberStatusCache(onlineMembers);
+        this.setCommonState({onlineUsers: onlineMembers});
+    }
+
+    updateEmailSyncPercentage(percentage: number | null) {
+        this.setCommonState({syncingEmails: percentage});
+    }
 }
 
 export const commonService = new CommonService();

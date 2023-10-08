@@ -1,7 +1,6 @@
-import {updateKeyNavigation} from '@/redux/key-navigation/action-reducer'
 import {EditorProvider} from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import {useDispatch, useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 import CollabRichTextEditorToolbar from './toolbar'
 import Link from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
@@ -15,10 +14,11 @@ import {StateType} from '@/types'
 import {useEffect, useState} from 'react'
 import ContentMonitor from './content-monitor'
 import {getSchema} from "@/utils/editor-common-functions";
+import {keyNavigationService} from "@/services";
 
 export default function CollabRichTextEditor({
                                                  id,
-                                                 isAutoFocus=false,
+                                                 isAutoFocus = false,
                                                  isToolbarVisible = false,
                                                  onCreate,
                                                  onFileDrop,
@@ -30,7 +30,6 @@ export default function CollabRichTextEditor({
                                                  className = '',
                                                  onChange
                                              }: CollabRichTextEditorType) {
-    const dispatch = useDispatch()
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const [provider, setProvider] = useState<any>()
     const [extensions, setExtensions] = useState<any>([]);
@@ -76,12 +75,12 @@ export default function CollabRichTextEditor({
                 },
             }),
             FileHandler.configure({
-              onDrop: (editor, files) => {
-                onFileDrop(files);
-              },
-              onPaste: (editor, files) => {
-                onFileDrop(files);
-              },
+                onDrop: (editor, files) => {
+                    onFileDrop(files);
+                },
+                onPaste: (editor, files) => {
+                    onFileDrop(files);
+                },
             }),
             Highlight.configure({
                 HTMLAttributes: {
@@ -101,7 +100,7 @@ export default function CollabRichTextEditor({
                 autofocus={isAutoFocus}
                 onCreate={onCreate}
                 onFocus={(editor) => {
-                    dispatch(updateKeyNavigation({isEnabled: false}))
+                    keyNavigationService.toggleKeyNavigation(false);
                     if (editor.editor.isEmpty) {
                         let finalContent = '';
                         if (emailSignature) {
@@ -117,17 +116,17 @@ export default function CollabRichTextEditor({
                 }}
                 onUpdate={({editor}) => onChange(editor.getHTML())}
                 slotAfter={isToolbarVisible && (
-                  <CollabRichTextEditorToolbar
-                      beforeToolbar={null}
-                      afterToolbar={afterToolbar}
-                      extendToolbar={extendToolbar}
+                    <CollabRichTextEditorToolbar
+                        beforeToolbar={null}
+                        afterToolbar={afterToolbar}
+                        extendToolbar={extendToolbar}
                     />
                 )}
                 onBlur={() => {
-                  dispatch(updateKeyNavigation({isEnabled: true}))
+                    keyNavigationService.toggleKeyNavigation(true);
                 }}
                 extensions={extensions}>
-                <ContentMonitor />
+                <ContentMonitor/>
             </EditorProvider>
         </div>
     )

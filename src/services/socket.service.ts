@@ -1,6 +1,7 @@
 import {BaseService} from "@/services/base.service";
 import {InitialSocketType} from "@/types";
 import {SendJsonMessage} from "react-use-websocket/src/lib/types";
+import {updateLastMessage, updateSendFunction} from "@/redux/socket/action-reducer";
 
 class SocketService extends BaseService {
     constructor() {
@@ -16,6 +17,14 @@ class SocketService extends BaseService {
         if (sendJsonMessage) {
             sendJsonMessage(body);
         }
+    }
+
+    updateSocketMessage(body: any) {
+        this.dispatchAction(updateLastMessage, body);
+    }
+
+    updateSocketMessageFunction(body: any) {
+        this.dispatchAction(updateSendFunction, body);
     }
 
     cancelThreadSearch(userId: string | undefined) {

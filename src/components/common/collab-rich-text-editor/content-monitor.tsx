@@ -8,7 +8,7 @@ export default function ContentMonitor() {
     const {editor} = useCurrentEditor()
 
     useEffect(() => {
-      if (event && event.type === 'richtexteditor.forceUpdate') {
+        if (event && event.type === 'richtexteditor.forceUpdate') {
             editor?.commands.clearContent(false);
             editor?.commands.setContent(event.data, false)
         }

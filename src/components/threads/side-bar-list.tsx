@@ -19,7 +19,7 @@ import {
 import {debounceInterval} from "@/utils/common.functions";
 import dayjs from "dayjs";
 import {fireEvent} from "@/redux/global-events/action-reducer";
-import {socketService} from "@/services";
+import {commonService, socketService} from "@/services";
 
 export function ThreadsSideBarList(props: ThreadListProps) {
   const { selectedThread, threads} = useSelector((state: StateType) => state.threads);
@@ -69,56 +69,6 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     }
   }, [target, threadIndex, currentThreadRef])
 
-  const updateOnlineStatus = useCallback((oldThread: Thread, newThread: Thread) => {
-    let oldThreadOnlineUser: UserProjectOnlineStatus | null = null;
-    let onlineMembers: any = {...getMemberStatusCache()};
-    onlineMembers['threads'] = {...onlineMembers['threads']};
-    let oldThreadId: string = oldThread.id!;
-    let newThreadId: string = newThread.id!;
-    if (!onlineMembers['threads'][oldThreadId]) {
-      onlineMembers['threads'][oldThreadId] = [];
-    } else {
-      onlineMembers['threads'][oldThreadId] = [...onlineMembers['threads'][oldThreadId]];
-    }
-    if (!onlineMembers['threads'][newThreadId]) {
-      onlineMembers['threads'][newThreadId] = [];
-    } else {
-      onlineMembers['threads'][newThreadId] = [...onlineMembers['threads'][newThreadId]];
-    }
-    let findOldThreadUserIndex = onlineMembers['threads'][oldThreadId].findIndex((item: UserProjectOnlineStatus) => item.userId === oldThread.user);
-    if (findOldThreadUserIndex !== -1) {
-      onlineMembers['threads'][oldThreadId][findOldThreadUserIndex] = {...onlineMembers['threads'][oldThreadId][findOldThreadUserIndex]};
-      oldThreadOnlineUser = onlineMembers['threads'][oldThreadId][findOldThreadUserIndex];
-      onlineMembers['threads'][oldThreadId][findOldThreadUserIndex].isOnline = false;
-      onlineMembers['threads'][oldThreadId][findOldThreadUserIndex].forceWait = 2;
-    }
-
-    let findNewThreadUserIndex = onlineMembers['threads'][newThreadId].findIndex((item: UserProjectOnlineStatus) => item.userId === newThread.user);
-    if (findNewThreadUserIndex !== -1) {
-      onlineMembers['threads'][newThreadId][findNewThreadUserIndex] = {...onlineMembers['threads'][newThreadId][findNewThreadUserIndex]};
-      onlineMembers['threads'][newThreadId][findNewThreadUserIndex].isOnline = true;
-      onlineMembers['threads'][newThreadId][findNewThreadUserIndex].lastOnlineStatusCheck = dayjs().format('DD/MM/YYYY hh:mm:ss a');
-      onlineMembers['threads'][newThreadId][findNewThreadUserIndex].forceWait = 0;
-    } else {
-      if (!oldThreadOnlineUser && userDetails) {
-        oldThreadOnlineUser = {
-          userId: userDetails.id,
-          avatar: (profilePicture?.url || ''),
-          color: Math.floor(Math.random() * 16777215).toString(16),
-          name: (userDetails.firstName || '') + ' ' + (userDetails.lastName || ' '),
-        }
-      }
-      onlineMembers['threads'][newThreadId].push({
-        ...oldThreadOnlineUser,
-        isOnline: true,
-        lastOnlineStatusCheck: dayjs().format('DD/MM/YYYY hh:mm:ss a'),
-        forceWait: 0
-      })
-    }
-    setMemberStatusCache(onlineMembers);
-    dispatch(updateCommonState({onlineUsers: onlineMembers}));
-  }, [dispatch, userDetails, profilePicture])
-
   const handleClick = useCallback((item: Thread, event: KeyboardEvent | any, index: number) => {
     // Check if Control key (or Command key on Mac) is held down
     if (event) {
@@ -159,7 +109,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
       } else {
         dispatch(updateDraftState({ draft: null }));
         if(selectedThread && item) {
-          updateOnlineStatus(selectedThread!, item!);
+          commonService.updateUserOnlineStatus(selectedThread!, item!);
         }
         dispatch(updateCommonState({isComposing: false}));
         if (props.tab === 'DRAFT') {
@@ -183,7 +133,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
         }));
       }
     }
-  }, [dispatch, currentThreads, selectedThread, updateOnlineStatus, props.tab]);
+  }, [dispatch, currentThreads, selectedThread, props.tab]);
 
 
   const handleEditorScroll = useCallback(() => {
