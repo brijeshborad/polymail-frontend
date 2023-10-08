@@ -1,11 +1,14 @@
 import {InitialThreadStateType} from "@/types";
-import {Message, MessageDraft, Thread} from "@/models";
+import {Message, MessageDraft, Project, Thread} from "@/models";
 import {batchUpdateThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {BaseService} from "@/services/base.service";
 import {draftService} from "@/services/draft.service";
 import {MAILBOX_SNOOZED} from "@/utils/constants";
 import {generateToasterId} from "@/utils/common.functions";
 import dayjs from "dayjs";
+import {addItemToGroup} from "@/redux/memberships/action-reducer";
+import {removeThreadFromProject} from "@/redux/projects/action-reducer";
+import {commonService} from "@/services/common.service";
 
 declare type MailBoxTypes = 'INBOX' | 'DRAFT' | 'UNREAD' | 'ARCHIVE' | 'TRASH' | 'SNOOZED' | 'STARRED' | string;
 
@@ -69,7 +72,7 @@ class ThreadsService extends BaseService {
         let threads = this.getThreadState().threads || [];
         if (selectedThreadIds.length > 0) {
             const messagePlural = selectedThreadIds.length === 1 ? 'message' : 'messages'
-            let body: any  = {
+            let body: any = {
                 threadIds: selectedThreadIds,
                 mailboxes: [mailBoxType]
             }
@@ -111,6 +114,131 @@ class ThreadsService extends BaseService {
             let newFilteredThreads = threads.filter((thread: Thread) => !selectedThreadIds.includes(thread.id!))
             this.setThreadState({threads: newFilteredThreads, selectedThread: newFilteredThreads[0]});
             this.cancelThreadSearch();
+        }
+    }
+
+    addThreadToProject(item: Project, ref: any = null, allowComposeDraft: boolean = false) {
+        let {multiSelection, selectedThread: currentSelectedThread, threads} = this.getThreadState();
+        let {composeDraft} = draftService.getDraftState();
+        let selectedThread = currentSelectedThread;
+        if (!selectedThread && allowComposeDraft) {
+            selectedThread = composeDraft;
+        }
+        const isThreadMultiSelection = (multiSelection !== undefined && multiSelection.length > 0);
+        if (selectedThread && selectedThread.id || isThreadMultiSelection) {
+            let reqBody = {
+                threadIds: isThreadMultiSelection ? multiSelection : [selectedThread!.id],
+                roles: ['n/a'],
+                groupType: 'project',
+                groupId: item.id
+            }
+            let polyToast = generateToasterId();
+            let toasterSuccessMessage: any = {
+                type: 'undo_changes',
+                id: polyToast,
+                desc: '',
+            };
+            if (isThreadMultiSelection) {
+                toasterSuccessMessage.title`${(multiSelection || []).length} threads added to ${item.name?.toLowerCase()}`;
+            } else {
+                toasterSuccessMessage.desc = 'Thread was added to ' + item.name?.toLowerCase() + '.';
+                toasterSuccessMessage.title = selectedThread?.subject || '';
+            }
+            this.dispatchAction(
+                addItemToGroup,
+                {
+                    body: reqBody,
+                    toaster: {
+                        success: toasterSuccessMessage,
+                    },
+                    undoAction: {
+                        showUndoButton: true,
+                        dispatch: this.getDispatch(),
+                        action: removeThreadFromProject,
+                        undoBody: {
+                            body: {
+                                threadId: selectedThread!.id,
+                                projectId: item.id,
+                            },
+                            success: {
+                                desc: 'Thread was removed from ' + item.name?.toLowerCase() + '.',
+                                title: selectedThread?.subject || '',
+                                type: 'success'
+                            },
+                            afterUndoAction: () => {
+                                this.setThreadState({selectedThread: selectedThread, threads: threads});
+                            }
+                        },
+                        showToasterAfterUndoClick: true
+                    }
+                }
+            )
+            if (ref && ref.current) {
+                ref.current?.click();
+            }
+        }
+    }
+
+    removeThreadFromProject(item: Project, isOnProjectRoute: boolean = false) {
+        let {selectedThread, threads} = this.getThreadState();
+        let {isComposing} = commonService.getCommonState();
+        if (selectedThread && selectedThread.id) {
+            let polyToast = generateToasterId();
+            let reqBody = {
+                threadIds: [selectedThread!.id],
+                roles: ['n/a'],
+                groupType: 'project',
+                groupId: item.id
+            }
+            this.dispatchAction(removeThreadFromProject, {
+                body: {
+                    threadId: selectedThread.id,
+                    projectId: item.id,
+                },
+                toaster: {
+                    success: {
+                        desc: "Project is removed from thread",
+                        title: "Success",
+                        type: 'undo_changes',
+                        id: polyToast,
+                    },
+                },
+                undoAction: {
+                    showUndoButton: true,
+                    dispatch: this.getDispatch(),
+                    action: addItemToGroup,
+                    undoBody: {
+                        body: reqBody,
+                        success: {
+                            desc: 'Thread was added to ' + item.name?.toLowerCase() + '.',
+                            title: selectedThread?.subject || '',
+                            type: 'success'
+                        },
+                        afterUndoAction: () => {
+                            this.setThreadState({selectedThread: selectedThread, threads: threads});
+                        }
+                    },
+                    showToasterAfterUndoClick: true
+                }
+            })
+
+            if (!isComposing) {
+                if (isOnProjectRoute && threads) {
+                    let threadIndex = threads.findIndex((thread: Thread) => thread.id === selectedThread?.id);
+                    let data = threads.filter((thread: Thread) => thread.id !== selectedThread?.id);
+                    this.setThreadState({
+                        selectedThread: threads[(threadIndex + 1 < threads.length) ? threadIndex + 1 : (threadIndex >= 0 ? threadIndex - 1 : threadIndex + 1)] || null,
+                        threads: data
+                    });
+                } else {
+                    let data = (selectedThread.projects || []).filter((project: Project) => project.id !== item.id);
+                    let thread = {
+                        ...selectedThread,
+                        projects: data
+                    }
+                    this.setSelectedThread(thread);
+                }
+            }
         }
     }
 }

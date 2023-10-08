@@ -7,7 +7,6 @@ import styles from "@/styles/project.module.css";
 import { StateType } from "@/types";
 import { emojiArray } from "@/utils/common.functions";
 import { PROJECT_ROLES } from "@/utils/constants";
-import { addThreadToProject } from "@/utils/threads-common-functions";
 import { CloseIcon, SmallAddIcon, TriangleDownIcon } from "@chakra-ui/icons";
 import {
     Button,
@@ -24,6 +23,7 @@ import Image from "next/image";
 import Router from "next/router";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import {threadService} from "@/services";
 
 
 function CreateNewProjectModal() {
@@ -55,7 +55,7 @@ function CreateNewProjectModal() {
         if (createProjectSuccess) {
             dispatch(updateProjectState({createProjectSuccess: false}))
             if (project && selectedThread) {
-                addThreadToProject(project, multiSelection, selectedThread || draft, dispatch, threads || [], null);
+                threadService.addThreadToProject(project, null, false);
             }
             if (selectedAccount && selectedAccount.email && membersInputs.memberArray && membersInputs.memberArray?.length > 0 && project && project.id) {
                 let reqBody = {

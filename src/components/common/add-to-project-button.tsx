@@ -13,20 +13,15 @@ import {
 import {CloseIcon, SearchIcon, SmallAddIcon} from "@chakra-ui/icons";
 import {FolderIcon, MenuIcon} from "@/icons";
 import React, {useEffect, useRef, useState} from "react";
-import {Project, Thread} from "@/models";
-import {useDispatch, useSelector} from "react-redux";
+import {Project} from "@/models";
+import {useSelector} from "react-redux";
 import {StateType} from "@/types";
 import Router, {useRouter} from 'next/router';
-import {updateCommonState} from "@/redux/common-apis/action-reducer";
-import {addThreadToProject} from "@/utils/threads-common-functions";
-import { removeThreadFromProject} from "@/redux/projects/action-reducer";
-import {updateThreadState} from "@/redux/threads/action-reducer";
-import {addItemToGroup} from "@/redux/memberships/action-reducer";
+import {commonService, threadService} from "@/services";
 
 export function AddToProjectButton() {
     const [isDropdownOpen, setDropDownOpen] = useState(false)
-    const dispatch = useDispatch();
-    const {selectedThread, multiSelection, threads} = useSelector((state: StateType) => state.threads);
+    const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
     let {projects, project} = useSelector((state: StateType) => state.projects);
     const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
     const [threadProject, setThreadProject] = useState<Project[]>([]);
@@ -57,25 +52,14 @@ export function AddToProjectButton() {
 
 
     useEffect(() => {
-        if((selectedThread && selectedThread.projects && selectedThread.projects.length) || (composeDraft && composeDraft.projects && composeDraft.projects.length)) {
+        if ((selectedThread && selectedThread.projects && selectedThread.projects.length) || (composeDraft && composeDraft.projects && composeDraft.projects.length)) {
             setThreadProject(selectedThread?.projects || composeDraft?.projects || [])
         } else {
             if (project) {
                 setThreadProject([project])
             }
         }
-    }, [selectedThread])
-
-    // useEffect(() => {
-    //     if (isThreadAddedToProjectSuccess && successMessage) {
-    //         Toaster({
-    //             desc: successMessage.desc,
-    //             title: successMessage.title || '',
-    //             type: 'success'
-    //         });
-    //         dispatch(updateMembershipState({isThreadAddedToProjectSuccess: false}))
-    //     }
-    // }, [dispatch, isThreadAddedToProjectSuccess, successMessage])
+    }, [composeDraft, project, selectedThread])
 
     useEffect(() => {
         setFilteredProjects((projects || []));
@@ -98,8 +82,8 @@ export function AddToProjectButton() {
     }
 
     function checkProjects(e: MouseEvent | any) {
-        if (e.key.toLowerCase() === 'enter' && filteredProjects.length === 1 && selectedThread) {
-            addThreadToProject(filteredProjects[0], multiSelection, selectedThread || composeDraft, dispatch, threads || [], addToProjectRef);
+        if (e.key.toLowerCase() === 'enter' && filteredProjects.length === 1) {
+            threadService.addThreadToProject(filteredProjects[0], addToProjectRef, true);
         }
     }
 
@@ -111,62 +95,10 @@ export function AddToProjectButton() {
 
     const removeProjectFromThread = (item: Project) => {
         if (selectedThread && selectedThread.id) {
-            let polyToast = `poly-toast-${new Date().getMilliseconds().toString()}`;
-            let reqBody = {
-                threadIds:[selectedThread!.id],
-                roles: [
-                    'n/a',
-                ],
-                groupType: 'project',
-                groupId: item.id
-            }
-            dispatch(removeThreadFromProject({
-                body: {
-                    threadId: selectedThread.id,
-                    projectId: item.id,
-                },
-                toaster: {
-                    success: {
-                        desc: "Project is removed from thread",
-                        title: "Success",
-                        type: 'undo_changes',
-                        id: polyToast,
-                    },
-                },
-                undoAction: {
-                    showUndoButton: true,
-                    dispatch,
-                    action: addItemToGroup,
-                    undoBody: {
-                        body: reqBody,
-                        success: {
-                            desc: 'Thread was added to ' + item.name?.toLowerCase() + '.',
-                            title: selectedThread?.subject || '',
-                            type: 'success'
-                        },
-                        afterUndoAction: () => {
-                            dispatch(updateThreadState({ selectedThread: selectedThread , threads: threads}));
-                        }
-                    },
-                    showToasterAfterUndoClick: true
-                }
-            }));
-
+            let isOnProjectView: boolean = !!(router.query.project && router.query.project === item.id);
+            threadService.removeThreadFromProject(item, isOnProjectView)
             if (!isComposing) {
-                if (router.query.project && router.query.project === item.id && threads) {
-                    let threadIndex = (threads || []).findIndex((thread: Thread) => thread.id === selectedThread.id);
-                    let data = (threads || []).filter((thread: Thread) => thread.id !== selectedThread.id);
-                    dispatch(updateThreadState({
-                        selectedThread: (threads || [])[(threadIndex + 1 < threads.length) ? threadIndex + 1 : (threadIndex >= 0 ? threadIndex - 1 : threadIndex + 1)] || null,
-                        threads: data
-                    }));
-                } else {
-                    let data = (selectedThread.projects || []).filter((project: Project) => project.id !== item.id);
-                    let thread = {
-                        ...selectedThread,
-                        projects: data
-                    }
-                    dispatch(updateThreadState({ selectedThread: thread}));
+                if (!(isOnProjectView && threads)) {
                     let projects = [...filteredProjects];
                     projects.push(item);
                     setFilteredProjects([...projects]);
@@ -181,7 +113,7 @@ export function AddToProjectButton() {
 
     const addProjectToThread = (item: Project) => {
         if (selectedThread || composeDraft) {
-            addThreadToProject(item, multiSelection, selectedThread || composeDraft, dispatch, threads || [], null)
+            threadService.addThreadToProject(item, null, true);
             setFilteredProjects((filteredProjects || []).filter((project: Project) => project.id !== item.id));
         }
     }
@@ -201,12 +133,12 @@ export function AddToProjectButton() {
                     setDropDownOpen(!isDropdownOpen)
                     focusSearch();
                 }}
-                                                                cursor={'pointer'} className={`${styles.projectAdded}`}
-                                                                borderRadius={'8px'}
-                                                                backgroundColor={'#FFFFFF'} color={'#0A101D'} as={Box}
-                                                                padding={'3px 4px'}
-                                                                fontSize={'13px'} fontWeight={500} h={'fit-content'}
-                                                                ref={addToProjectRef}>
+                                                     cursor={'pointer'} className={`${styles.projectAdded}`}
+                                                     borderRadius={'8px'}
+                                                     backgroundColor={'#FFFFFF'} color={'#0A101D'} as={Box}
+                                                     padding={'3px 4px'}
+                                                     fontSize={'13px'} fontWeight={500} h={'fit-content'}
+                                                     ref={addToProjectRef}>
                     <Flex alignItems={'center'} justify={'center'} mr={1} className={styles.projectSelectImage}>
                         {(threadProject || []).slice(0, 5).map((item: any, index: number) => (
                             <span className={styles.projectCount} key={index}> {item.emoji} </span>
@@ -249,7 +181,8 @@ export function AddToProjectButton() {
                         {(threadProject || []).map((item: any, index: number) => (
                             <Flex alignItems={'center'} justifyContent={'space-between'} padding={'8px 12px'}
                                   key={index} className={styles.selectedProjectName}>
-                                <Text color={'#374151'} fontSize={'13px'} fontWeight={'500'} width={'100%'} lineHeight={1} onClick={() =>  Router.push(`/projects/${item.id!}`)}
+                                <Text color={'#374151'} fontSize={'13px'} fontWeight={'500'} width={'100%'}
+                                      lineHeight={1} onClick={() => Router.push(`/projects/${item.id!}`)}
                                       letterSpacing={'-0.13px'}>{item.emoji} {item.name}</Text>
                                 <Button
                                     onClick={() => removeProjectFromThread(item)}
@@ -281,7 +214,7 @@ export function AddToProjectButton() {
                                 return null;
                             }
                             return (
-                                <MenuItem gap={2} key={index} onClick={() =>  addProjectToThread(item)}>
+                                <MenuItem gap={2} key={index} onClick={() => addProjectToThread(item)}>
                                     {item.emoji} {item.name}
                                 </MenuItem>
                             )
@@ -290,10 +223,8 @@ export function AddToProjectButton() {
 
                     <div className={styles.addNewProject}>
                         <Button backgroundColor={'transparent'} w={'100%'} borderRadius={0}
-                                justifyContent={'flex-start'} onClick={() => dispatch(updateCommonState({
-                            showCreateProjectModal: true,
-                            shouldRedirectOnCreateProject: false
-                        }))}>
+                                justifyContent={'flex-start'}
+                                onClick={() => commonService.toggleCreateProjectModel(true, false)}>
                             <div className={styles.plusIcon}>
                                 <SmallAddIcon/>
                             </div>

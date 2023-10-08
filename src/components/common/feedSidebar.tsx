@@ -9,6 +9,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {ActivityFeed} from "@/models/activityFeed";
 import {ACTIVITY_FEED_EVENT_TYPES} from "@/utils/constants";
+import {socketService} from "@/services";
 
 const FeedComponent = dynamic(
     () => import('./feedComponent').then((mod) => mod.FeedComponent)
@@ -25,7 +26,7 @@ export const FeedSidebar = () => {
 
     useEffect(() => {
         if (newMessage && newMessage.name === 'Activity') {
-            dispatch(updateLastMessage(null));
+            socketService.updateSocketMessage(null);
             if (ACTIVITY_FEED_EVENT_TYPES.includes(newMessage.data.type)) {
                 let currentFeeds: ActivityFeed[] = [...feeds];
                 if (currentFeeds.length > 0) {

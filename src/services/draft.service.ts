@@ -8,7 +8,7 @@ class DraftService extends BaseService {
         super();
     }
 
-    private getDraftState(): InitialDraftStateType {
+    public getDraftState(): InitialDraftStateType {
         return this.getState('draft');
     }
 

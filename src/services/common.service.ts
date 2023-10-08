@@ -13,7 +13,7 @@ class CommonService extends BaseService {
         super();
     }
 
-    private getCommonState(): InitialCommonApisStateType {
+    public getCommonState(): InitialCommonApisStateType {
         return this.getState('commonApis');
     }
 
@@ -168,6 +168,10 @@ class CommonService extends BaseService {
 
     updateEmailSyncPercentage(percentage: number | null) {
         this.setCommonState({syncingEmails: percentage});
+    }
+
+    toggleCreateProjectModel(enable: boolean, shouldRedirect: boolean = false) {
+        this.setCommonState({showCreateProjectModal: enable, shouldRedirectOnCreateProject: shouldRedirect});
     }
 }
 
