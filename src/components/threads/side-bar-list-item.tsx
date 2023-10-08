@@ -4,7 +4,7 @@ import {Box, Flex, Image, Tooltip} from "@chakra-ui/react";
 import {Time} from "@/components/common";
 import {DisneyIcon, DotIcon} from "@/icons";
 import {StateType, ThreadListItemProps} from "@/types";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import React, {useEffect, useRef, useState} from "react";
 import {MAILBOX_UNREAD} from "@/utils/constants";
 import {UserProjectOnlineStatus} from "@/models";
@@ -22,7 +22,6 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
     } = useSelector((state: StateType) => state.threads);
     const [isSelected, setIsSelected] = useState<boolean>(false);
     const [isClicked, setIsClicked] = useState<boolean>(false);
-    const dispatch = useDispatch()
     const {onlineUsers} = useSelector((state: StateType) => state.commonApis)
 
     useEffect(() => {

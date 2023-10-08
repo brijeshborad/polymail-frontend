@@ -1,7 +1,7 @@
 import {Flex, Text, Image, Button, Tooltip} from "@chakra-ui/react";
 import {DisneyDIcon, FolderIcon} from "@/icons";
 import React, {useEffect, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {Project, UserProjectOnlineStatus} from "@/models";
 import Router from "next/router";
