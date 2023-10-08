@@ -12,8 +12,7 @@ const initialState: any = {
     success: false,
     isThreadSearched: false,
     tabValue: '',
-    isThreadFocused: false,
-    moveToMailBox: null
+    isThreadFocused: false
 } as InitialThreadStateType
 
 const threadsSlice = createSlice({

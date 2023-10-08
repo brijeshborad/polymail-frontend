@@ -19,6 +19,7 @@ export function performSuccessActions(payload: ReducerActionType) {
                 undoUpdateRecordClick: () => {
                     if (payload.undoAction?.dispatch && payload.undoAction.action) {
                         payload.undoAction.dispatch(payload.undoAction.action({
+                            body: payload.undoAction.undoBody,
                             ...(payload.undoAction.showToasterAfterUndoClick ? {
                                 toaster: {
                                     success: {
@@ -26,7 +27,6 @@ export function performSuccessActions(payload: ReducerActionType) {
                                         title: payload.undoAction.undoBody?.success ? payload?.undoAction?.undoBody?.success?.title || '' : payload.toaster?.success?.title || '',
                                     }
                                 },
-                                body: payload.undoAction.undoBody
                             } : {})
                         }));
                     }

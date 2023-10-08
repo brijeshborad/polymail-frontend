@@ -83,3 +83,7 @@ export function setGlobalStore(store: any) {
 export function getGlobalStore() {
     return globalStore;
 }
+
+export function generateToasterId() {
+    return `poly-toast-${new Date().getMilliseconds().toString()}`;
+}
