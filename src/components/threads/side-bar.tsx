@@ -78,7 +78,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                 }
             }
         }
-    }, [threads, dispatch, selectedThread, isLoading, tabValue, allowThreadSelection, isComposing])
+    }, [allowThreadSelection, isComposing, isLoading, selectedThread, tabValue, threads])
 
     useEffect(() => {
         if (tab !== '' && getCurrentCacheTab() !== '') {

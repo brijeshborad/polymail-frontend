@@ -11,11 +11,39 @@ class SocketService extends BaseService {
         return this.getState('socket');
     }
 
-    cancelThreadSearch(userId: string | undefined) {
+    sendMessage(body: any) {
         let sendJsonMessage: SendJsonMessage | null = this.getSocketState().sendJsonMessage;
         if (sendJsonMessage) {
-            sendJsonMessage({"userId": userId || '', "name": "SearchCancel"});
+            sendJsonMessage(body);
         }
+    }
+
+    cancelThreadSearch(userId: string | undefined) {
+        this.sendMessage({userId: userId || '', name: "SearchCancel"});
+    }
+
+    fireThreadViewActivity(userId: string | undefined, threadId: string | undefined) {
+        console.log('Sending activity event THREAD');
+        this.sendMessage({
+            userId: userId || '',
+            name: 'Activity',
+            data: {
+                type: "ViewingThread",
+                id: threadId || '',
+            },
+        });
+    }
+
+    fireProjectViewActivity(userId: string | undefined, projectId: string | undefined) {
+        console.log('Sending activity event PROJECT');
+        this.sendMessage({
+            userId: userId || '',
+            name: 'Activity',
+            data: {
+                type: "ViewingProject",
+                id: projectId || '',
+            },
+        });
     }
 }
 

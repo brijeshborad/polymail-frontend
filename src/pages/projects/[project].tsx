@@ -33,6 +33,7 @@ import {useRouter} from "next/router";
 import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {MenuIcon} from "@/icons";
+import {socketService} from "@/services";
 
 const ThreadsSideBar = dynamic(
     () => import('@/components/threads').then((mod) => mod.ThreadsSideBar)
@@ -46,7 +47,6 @@ function ProjectInbox() {
     const {success} = useSelector((state: StateType) => state.memberships);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const [isManagerMembersOpen, setIsManagerMembersOpen] = useState<boolean>(false)
-    const {sendJsonMessage} = useSelector((state: StateType) => state.socket);
 
     const [size, setSize] = useState<number>(0);
     const [maxShowingMembers, setMaxShowingMembers] = useState<number>(5);
@@ -62,25 +62,15 @@ function ProjectInbox() {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (router.query.project && sendJsonMessage) {
+        if (router.query.project) {
             const interval = debounceInterval(() => {
-                console.log('Sending activity event PROJECT');
                 let projectId = router.query.project as string;
-                sendJsonMessage({
-                    userId: selectedAccount?.userId,
-                    name: 'Activity',
-                    data: {
-                        type: "ViewingProject",
-                        id: projectId,
-                    },
-                });
+                socketService.fireProjectViewActivity(selectedAccount?.userId, projectId);
             }, 5000);
-
             return () => clearInterval(interval);
         }
-
         return undefined
-    }, [router.query.project, selectedAccount?.userId, sendJsonMessage]);
+    }, [router.query.project, selectedAccount?.userId]);
 
     useEffect(() => {
         if (router.query.project) {
@@ -236,7 +226,8 @@ function ProjectInbox() {
                 <Flex align={'center'} justify={'space-between'} gap={4} padding={'16px 40px 15px'}
                       borderBottom={'1px solid rgba(8, 22, 47, 0.12)'} backgroundColor={'#FFFFFF'}>
                     <Flex align={'center'} gap={2}>
-                        <Flex className={styles.imgWrapper} marginBottom={'-4px'} alignItems={'center'} justifyContent={'center'} fontSize={'20px'}>
+                        <Flex className={styles.imgWrapper} marginBottom={'-4px'} alignItems={'center'}
+                              justifyContent={'center'} fontSize={'20px'}>
                             {project?.emoji ? project.emoji :
                                 <Image src="/image/user.png" width="36" height="36" alt=""/>}
                         </Flex>
@@ -324,7 +315,8 @@ function ProjectInbox() {
 
                                         <Flex backgroundColor={'rgba(8, 22, 47, 0.05)'} direction={'column'} pb={4}>
                                             {members && !!members.length && members.map((member, index) => (
-                                                <Flex align={'center'} gap={2} pr={3} key={index} className={styles.projectMember}>
+                                                <Flex align={'center'} gap={2} pr={3} key={index}
+                                                      className={styles.projectMember}>
                                                     <MenuItem>
                                                         <div className={styles.imgWrapper}>
                                                             <Image src="/image/user.png" width="36" height="36" alt=""/>
@@ -333,10 +325,12 @@ function ProjectInbox() {
                                                     </MenuItem>
                                                     <Flex align={'center'} gap={1}>
                                                         <Menu>
-                                                            <MenuButton className={styles.memberDropDown} fontSize={'12px'}
+                                                            <MenuButton className={styles.memberDropDown}
+                                                                        fontSize={'12px'}
                                                                         color={'#374151'} textTransform={'capitalize'}
                                                                         backgroundColor={'#FFFFFF'} h={'auto'}
-                                                                        border={'1px solid #D1D5DB'} borderRadius={'50px'}
+                                                                        border={'1px solid #D1D5DB'}
+                                                                        borderRadius={'50px'}
                                                                         as={Button} rightIcon={<TriangleDownIcon/>}>
                                                                 {member.role}
                                                             </MenuButton>
@@ -360,7 +354,8 @@ function ProjectInbox() {
                                                 </Flex>
                                             ))}
                                             {invitees && !!invitees.length && invitees.map((invite, index) => (
-                                                <Flex align={'center'} pr={3} gap={3} key={index} className={styles.projectMember}>
+                                                <Flex align={'center'} pr={3} gap={3} key={index}
+                                                      className={styles.projectMember}>
                                                     <MenuItem>
                                                         <div className={styles.imgWrapper}>
                                                             <Image src="/image/user.png" width="36" height="36" alt=""/>
@@ -369,10 +364,12 @@ function ProjectInbox() {
                                                     </MenuItem>
                                                     <Flex align={'center'} gap={1}>
                                                         <Menu>
-                                                            <MenuButton className={styles.memberDropDown} fontSize={'12px'}
+                                                            <MenuButton className={styles.memberDropDown}
+                                                                        fontSize={'12px'}
                                                                         color={'#374151'} textTransform={'capitalize'}
                                                                         backgroundColor={'#FFFFFF'} h={'auto'}
-                                                                        border={'1px solid #D1D5DB'} borderRadius={'50px'}
+                                                                        border={'1px solid #D1D5DB'}
+                                                                        borderRadius={'50px'}
                                                                         as={Button} rightIcon={<TriangleDownIcon/>}>
                                                                 {invite.role}
                                                             </MenuButton>
@@ -402,7 +399,10 @@ function ProjectInbox() {
                         </Menu>
 
                         <Menu isLazy>
-                            <MenuButton className={`${styles.projectListDropDownButton} ${styles.projectListMenuButton} `} border={'1px solid #374151'} borderRadius={8} marginLeft={2} backgroundColor={'#FFFFFF'} h={'auto'} fontSize={12} minW={'1px'} padding={'10px 11px'} as={Button}>
+                            <MenuButton
+                                className={`${styles.projectListDropDownButton} ${styles.projectListMenuButton} `}
+                                border={'1px solid #374151'} borderRadius={8} marginLeft={2} backgroundColor={'#FFFFFF'}
+                                h={'auto'} fontSize={12} minW={'1px'} padding={'10px 11px'} as={Button}>
                                 <MenuIcon/>
                             </MenuButton>
                             <MenuList minW={'126px'} className={'drop-down-list'}>

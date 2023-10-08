@@ -19,6 +19,7 @@ import {
 import {debounceInterval} from "@/utils/common.functions";
 import dayjs from "dayjs";
 import {fireEvent} from "@/redux/global-events/action-reducer";
+import {socketService} from "@/services";
 
 export function ThreadsSideBarList(props: ThreadListProps) {
   const { selectedThread, threads} = useSelector((state: StateType) => state.threads);
@@ -29,7 +30,6 @@ export function ThreadsSideBarList(props: ThreadListProps) {
   const router = useRouter();
   const routePaths = router.pathname.split('/');
   const editorRef = useRef<any>(null);
-  const { sendJsonMessage } = useSelector((state: StateType) => state.socket);
   const [extraClassNames, setExtraClassNames] = useState<string>('');
   const [currentThreads, setCurrentThreads] = useState<Thread[]>([]);
   const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
@@ -115,9 +115,6 @@ export function ThreadsSideBarList(props: ThreadListProps) {
         forceWait: 0
       })
     }
-    Object.keys(onlineMembers['threads']).forEach((key: string) => {
-      onlineMembers['threads'][key] = [...onlineMembers['threads'][key].filter((data: UserProjectOnlineStatus) => data.userId)];
-    });
     setMemberStatusCache(onlineMembers);
     dispatch(updateCommonState({onlineUsers: onlineMembers}));
   }, [dispatch, userDetails, profilePicture])
@@ -216,23 +213,14 @@ export function ThreadsSideBarList(props: ThreadListProps) {
 
 
   useEffect(() => {
-    if (selectedThread && selectedAccount && sendJsonMessage) {
+    if (selectedThread && selectedAccount) {
       const interval = debounceInterval(() => {
-        console.log('Sending activity event THREAD');
-        sendJsonMessage({
-            userId: selectedAccount?.userId,
-            name: 'Activity',
-            data: {
-                type: "ViewingThread",
-                id: selectedThread.id,
-            },
-        });
+        socketService.fireThreadViewActivity(selectedAccount?.userId, selectedThread.id);
       }, 2000);
-
       return () => clearInterval(interval);
     }
     return undefined
-  }, [selectedThread, selectedAccount, sendJsonMessage]);
+  }, [selectedThread, selectedAccount]);
 
   return (
     <>
