@@ -1,6 +1,6 @@
 import {InitialThreadStateType} from "@/types";
 import {Message, MessageDraft, Project, Thread} from "@/models";
-import {batchUpdateThreads, updateThreadState} from "@/redux/threads/action-reducer";
+import {batchUpdateThreads, updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {BaseService} from "@/services/base.service";
 import {draftService} from "@/services/draft.service";
 import {MAILBOX_SNOOZED} from "@/utils/constants";
@@ -33,8 +33,29 @@ class ThreadsService extends BaseService {
         this.setThreadState({tabValue, threads: []});
     }
 
-    cancelThreadSearch() {
-        this.setThreadState({isThreadSearched: false, multiSelection: []});
+    cancelThreadSearch(isFromHeader: boolean = false) {
+        this.setThreadState({
+            isThreadSearched: false, multiSelection: [],
+            ...(isFromHeader ? {
+                threads: [],
+                isLoading: true,
+                selectedThread: null,
+            } : {})
+        });
+    }
+
+    pageChange() {
+        this.setThreadState({
+            threads: [],
+            success: false,
+            updateSuccess: false,
+            selectedThread: null,
+            tabValue: ''
+        });
+    }
+
+    toggleThreadFocused(enable: boolean) {
+        this.setThreadState({isThreadFocused: enable});
     }
 
     pushOrUpdateDraftInThreadMessages(tab: string = '', draft: MessageDraft) {
@@ -63,7 +84,7 @@ class ThreadsService extends BaseService {
         }
     }
 
-    setThreadState(body: any) {
+    setThreadState(body: InitialThreadStateType) {
         this.dispatchAction(updateThreadState, body);
     }
 
@@ -239,6 +260,21 @@ class ThreadsService extends BaseService {
                     this.setSelectedThread(thread);
                 }
             }
+        }
+    }
+
+    makeThreadAsRead(thread: Thread | null) {
+        if (!thread) return;
+        const mailboxes = (thread.mailboxes || [])
+        const isUnread = mailboxes.includes('UNREAD');
+
+        if (isUnread) {
+            this.dispatchAction(updateThreads, {
+                body: {
+                    id: thread.id,
+                    body: {mailboxes: mailboxes.filter(i => i !== 'UNREAD')}
+                }
+            });
         }
     }
 }

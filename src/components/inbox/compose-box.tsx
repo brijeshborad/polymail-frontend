@@ -12,7 +12,7 @@ import styles from "@/styles/Inbox.module.css";
 import { CloseIcon } from "@chakra-ui/icons";
 import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { StateType } from "@/types";
-import {debounce, isEmail, makeCollabId} from "@/utils/common.functions";
+import {debounce, generateToasterId, isEmail, makeCollabId} from "@/utils/common.functions";
 import { createDraft, sendMessage, updateDraftState, updatePartialMessage } from "@/redux/draft/action-reducer";
 import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
@@ -339,7 +339,7 @@ export function ComposeBox(props: any) {
   const sendMessages = () => {
     if (composeDraft && composeDraft.id) {
       let params = {};
-      let polyToast = `poly-toast-${new Date().getTime().toString()}`;
+      let polyToast = generateToasterId();
 
       if (scheduledDate) {
         const targetDate = dayjs(scheduledDate)

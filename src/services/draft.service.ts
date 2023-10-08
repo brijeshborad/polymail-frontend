@@ -16,7 +16,7 @@ class DraftService extends BaseService {
         this.setDraftState({composeDraft: draft});
     }
 
-    setDraftState(body: any) {
+    setDraftState(body: InitialDraftStateType) {
         this.dispatchAction(updateDraftState, body);
     }
 }

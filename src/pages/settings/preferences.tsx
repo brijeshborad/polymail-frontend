@@ -17,11 +17,13 @@ import withAuth from "@/components/auth/withAuth";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {Organization} from "@/models";
-import {editOrganization, updateOrganizationState} from "@/redux/organizations/action-reducer";
+import {editOrganization} from "@/redux/organizations/action-reducer";
 import {CloseIcon, CheckIcon} from "@chakra-ui/icons";
 import {TrashIcon, EditIcon} from "@/icons";
 import {isDomain} from "@/utils/common.functions";
 import SettingsLayout from "@/pages/settings/settings-layout";
+import {organizationService} from "@/services";
+
 
 function Preferences() {
     const {
@@ -46,15 +48,17 @@ function Preferences() {
         }
     }, [selectedOrganization])
 
+
     useEffect(() => {
         if (isOrganizationAddOrRemoveSuccess) {
-            dispatch(updateOrganizationState({isOrganizationAddOrRemoveSuccess: false}));
+            organizationService.setOrganizationState({isOrganizationAddOrRemoveSuccess: false})
             setInputValue('');
             setIsDomainValid(true)
             setIsAddingDomain(false);
             setCurrentEditIndex(null)
         }
     }, [dispatch, isOrganizationAddOrRemoveSuccess])
+
 
     const submit = (type: string, index: number = 0) => {
         if (organization && organization.id) {
@@ -83,11 +87,13 @@ function Preferences() {
         }
     }
 
+
     function editValue(index: number) {
         setInputValue(domains[index]);
         setIsAddingDomain(true);
         setCurrentEditIndex(index);
     }
+
 
     return (
         <SettingsLayout>

@@ -1,12 +1,13 @@
 import {ReducerActionType} from "@/types";
 import {Toaster} from "@/components/common";
 import {createStandaloneToast} from "@chakra-ui/react";
+import {generateToasterId} from "@/utils/common.functions";
 
 export function performSuccessActions(payload: ReducerActionType) {
     const {toast} = createStandaloneToast();
 
     if (payload.toaster?.success) {
-        let polyToast = `poly-toast-${new Date().getMilliseconds()}`;
+        let polyToast = generateToasterId();
         if (payload.toaster.success.id) {
             polyToast = payload.toaster.success.id;
         }

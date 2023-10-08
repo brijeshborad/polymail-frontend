@@ -3,17 +3,15 @@ import {Badge, Button, Flex, Input, InputGroup, InputRightElement} from "@chakra
 import {CloseIcon, SearchIcon} from "@chakra-ui/icons";
 import {FolderIcon, InboxIcon, UserIcon} from "@/icons";
 import React, {useEffect, useRef, useState} from "react";
-import {getAllThreads, updateThreadState} from "@/redux/threads/action-reducer";
+import {getAllThreads} from "@/redux/threads/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {useRouter} from "next/router";
-import {updateProjectState} from "@/redux/projects/action-reducer";
-import {updateKeyNavigation} from "@/redux/key-navigation/action-reducer";
+import {keyNavigationService, projectService, socketService, threadService} from "@/services";
 
 export function HeaderSearch() {
     const dispatch = useDispatch();
     const {tabValue, isThreadSearched} = useSelector((state: StateType) => state.threads);
-    const {sendJsonMessage} = useSelector((state: StateType) => state.socket);
     const {userDetails} = useSelector((state: StateType) => state.users);
     const [showCloseIcon, setShowCloseIcon] = useState(false);
     const [searchString, setSearchString] = useState<string>('');
@@ -57,36 +55,25 @@ export function HeaderSearch() {
 
     useEffect(() => {
         if (isProjectRoute) {
-            dispatch(updateProjectState({projectSearchedString: searchString}));
+            projectService.setProjectSearchString(searchString);
         }
-    }, [searchString, isProjectRoute, dispatch])
+    }, [searchString, isProjectRoute])
 
     const searchCancel = (callAPI: boolean = false) => {
         if (isProjectRoute) {
             if (callAPI) {
                 setSearchString('');
-                dispatch(updateProjectState({projectSearchedString: ''}));
+                projectService.setProjectSearchString('');
             }
             return;
         }
-        if (sendJsonMessage) {
-            sendJsonMessage({
-                "userId": userDetails?.id,
-                "name": "SearchCancel",
-            });
-        }
+        socketService.cancelThreadSearch(userDetails?.id);
         if (selectedAccount && selectedAccount.id && callAPI) {
             if (searchString) {
-                dispatch(updateThreadState({
-                    threads: [],
-                    isLoading: true,
-                    selectedThread: null,
-                    isThreadSearched: false,
-                    multiSelection: []
-                }));
+                threadService.cancelThreadSearch(true);
             }
             setSearchString('');
-            dispatch(getAllThreads({body:{mailbox: tabValue, account: selectedAccount.id}}));
+            dispatch(getAllThreads({body: {mailbox: tabValue, account: selectedAccount.id}}));
         }
     }
 
@@ -94,34 +81,20 @@ export function HeaderSearch() {
         if (event.key.toLowerCase() === 'enter') {
             searchCancel(false);
             if (searchString) {
-                dispatch(updateThreadState({
-                    threads: [],
-                    isThreadSearched: true,
-                    isLoading: true,
-                    selectedThread: null,
-                    multiSelection: []
-                }));
-                if (sendJsonMessage) {
-                    sendJsonMessage({
-                        userId: userDetails?.id,
-                        name: 'SearchRequest',
-                        data: {
-                            query: searchString,
-                        },
-                    });
-                }
+                threadService.cancelThreadSearch(true);
+                socketService.searchThreads(userDetails?.id, searchString);
                 return;
             }
         }
     };
 
     const handleFocus = () => {
-        dispatch(updateKeyNavigation({isEnabled: false}));
+        keyNavigationService.toggleKeyNavigation(false);
         setShowCloseIcon(true);
     }
 
     const handleBlur = () => {
-        dispatch(updateKeyNavigation({isEnabled: true}));
+        keyNavigationService.toggleKeyNavigation(true);
         setTimeout(() => {
             setShowCloseIcon(false);
         }, 300)

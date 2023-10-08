@@ -1,0 +1,22 @@
+import {BaseService} from "@/services/base.service";
+import {updateAccountState} from "@/redux/accounts/action-reducer";
+import {InitialAccountStateType} from "@/types";
+import {Account} from "@/models";
+
+export class AccountService extends BaseService {
+
+    constructor() {
+        super();
+    }
+
+    setSelectedAccount(account: Account | null) {
+        this.setAccountState({selectedAccount: account});
+    }
+
+    setAccountState(stateBody: InitialAccountStateType) {
+        this.dispatchAction(updateAccountState, stateBody);
+    }
+
+}
+
+export const accountService = new AccountService();

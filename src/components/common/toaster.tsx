@@ -4,11 +4,12 @@ import styles from "@/styles/Home.module.css";
 import {CheckIcon, SmallCloseIcon} from "@chakra-ui/icons";
 import React from "react";
 import {RepIcon} from "@/icons";
+import {generateToasterId} from "@/utils/common.functions";
 
 const {toast} = createStandaloneToast()
 
 export function Toaster(props: ToasterProps) {
-    let polyToasterId = `poly-toast-${new Date().getMilliseconds()}`;
+    let polyToasterId = generateToasterId();
     if (props.id) {
         polyToasterId = props.id;
     }
@@ -36,7 +37,8 @@ export function Toaster(props: ToasterProps) {
                             </div>
                         }
 
-                        <Flex direction={'column'} gap={'2px'} overflow={'hidden'} whiteSpace={'nowrap'} textOverflow={'ellipsis'}>
+                        <Flex direction={'column'} gap={'2px'} overflow={'hidden'} whiteSpace={'nowrap'}
+                              textOverflow={'ellipsis'}>
                             <Heading as='h6' fontSize={'15px'} lineHeight={'1.21'}>{props.title}</Heading>
                             <Text fontSize='13px' color={'#6B7280'} lineHeight={'1.21'}>{props.desc}</Text>
                         </Flex>
@@ -55,15 +57,16 @@ export function Toaster(props: ToasterProps) {
                                     Now</Button>
                             </>
                         )}
-                      {props.type === 'undo_changes' && (
-                        <>
-                          <Button className={styles.toasterUndoButton} backgroundColor={'#1F2937'}
-                                  color={'#FFFFFF'}
-                                  onClick={() => props.undoUpdateRecordClick ? props.undoUpdateRecordClick() : null} ml={3}
-                                  height={"auto"}
-                                  padding={'7px 20px'} borderRadius={'20px'}><RepIcon /></Button>
-                        </>
-                      )}
+                        {props.type === 'undo_changes' && (
+                            <>
+                                <Button className={styles.toasterUndoButton} backgroundColor={'#1F2937'}
+                                        color={'#FFFFFF'}
+                                        onClick={() => props.undoUpdateRecordClick ? props.undoUpdateRecordClick() : null}
+                                        ml={3}
+                                        height={"auto"}
+                                        padding={'7px 20px'} borderRadius={'20px'}><RepIcon/></Button>
+                            </>
+                        )}
                         {['success', 'error', 'undo_changes'].includes(props.type) && (
                             <Button
                                 className={styles.toasterCloseIcon}

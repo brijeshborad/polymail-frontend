@@ -25,7 +25,7 @@ class CommonService extends BaseService {
         this.setCommonState({isComposing: enable, allowThreadSelection: allowSelection})
     }
 
-    setCommonState(body: any) {
+    setCommonState(body: InitialCommonApisStateType) {
         this.dispatchAction(updateCommonState, body);
     }
 

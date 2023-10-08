@@ -5,11 +5,13 @@ import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {RichTextEditor} from "@/components/common";
-import {updateAccountDetails, updateAccountState} from "@/redux/accounts/action-reducer";
+import {updateAccountDetails} from "@/redux/accounts/action-reducer";
 import withAuth from "@/components/auth/withAuth";
 import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
 import SettingsLayout from "@/pages/settings/settings-layout";
 import {fireEvent} from "@/redux/global-events/action-reducer";
+import {accountService} from "@/services";
+
 
 function Signature() {
 
@@ -26,12 +28,14 @@ function Signature() {
         }
     }, [selectedAccount])
 
+
     useEffect(() => {
         if (account) {
-            dispatch(updateAccountState({selectedAccount: {...account}}));
+            accountService.setSelectedAccount({...account});
             setIsSignatureUpdate(false);
         }
     }, [dispatch, account])
+
 
     const addSignature = (value: string) => {
         if (selectedAccount && selectedAccount.signature) {
@@ -66,6 +70,7 @@ function Signature() {
             }
         }
     }
+
 
     const cancelButtonClick = () => {
         if (selectedAccount && selectedAccount.signature) {

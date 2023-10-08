@@ -17,6 +17,7 @@ import {MasterCardIcon} from "@/icons";
 import withAuth from "@/components/auth/withAuth";
 import SettingsLayout from "@/pages/settings/settings-layout";
 
+
 function Billing() {
     const {isOpen, onOpen, onClose} = useDisclosure();
 

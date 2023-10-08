@@ -3,45 +3,33 @@ import styles from "@/styles/setting.module.css";
 import {GoogleIcon} from "@/icons";
 import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {StateType} from "@/types";
+import {InitialAccountStateType, StateType} from "@/types";
 import {Account} from "@/models";
 import {googleAuthLink} from "@/redux/auth/action-reducer";
 import withAuth from "@/components/auth/withAuth";
 import {CloseIcon} from "@chakra-ui/icons";
-import {removeAccountDetails, updateAccountState} from "@/redux/accounts/action-reducer";
+import {removeAccountDetails} from "@/redux/accounts/action-reducer";
 import LocalStorageService from "@/utils/localstorage.service";
 import RemoveRecordModal from "@/components/common/delete-record-modal";
 import Router, {useRouter} from "next/router";
 import {Toaster} from "@/components/common";
 import {getRedirectionUrl} from "@/utils/common.functions";
 import SettingsLayout from "@/pages/settings/settings-layout";
+import {accountService} from "@/services";
+
 
 function EmailAddress() {
     let {accounts, success, selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
     const {isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose} = useDisclosure()
+    const [accountData, setAccountData] = useState<Account | null>(null);
     const dispatch = useDispatch();
     const router = useRouter();
 
-    function addNewGoogleAccount(mode: string) {
-        let body = {
-            mode: mode,
-            redirectUrl: getRedirectionUrl('/settings/email-address'),
-            accountType: "google",
-            platform: "web",
-            withToken: true
-        }
-        dispatch(googleAuthLink({
-            body: body
-        }));
-    }
 
     useEffect(() => {
         if (router.query.error) {
-            let errorMessage = {
-                desc: '',
-                title: ''
-            }
+            let errorMessage: { title: string; desc: string }
             if (router.query.error === 'account_exists') {
                 errorMessage = {
                     desc: 'This account is already exist',
@@ -62,12 +50,27 @@ function EmailAddress() {
         }
     }, [dispatch, router.query]);
 
+
+    useEffect(() => {
+        if (success && accountData && accountData.id) {
+            let data = (accounts || []).filter((item: Account) => item.id !== accountData.id)
+            const accountStateData: InitialAccountStateType = {};
+            if (accountData.id === selectedAccount?.id) {
+                LocalStorageService.updateAccount('store', data[0]);
+                accountStateData.selectedAccount = data[0];
+            }
+            accountStateData.accounts = data;
+            accountService.setAccountState(accountStateData);
+        }
+    }, [success, accountData, dispatch])
+
+
     useEffect(() => {
         if (googleAuthRedirectionLink) {
             window.location.href = googleAuthRedirectionLink.url || '';
         }
     }, [googleAuthRedirectionLink])
-    const [accountData, setAccountData] = useState<Account | null>(null);
+
 
     const removeAccount = useCallback(() => {
         if (accountData && accountData.id) {
@@ -89,22 +92,25 @@ function EmailAddress() {
     }, [dispatch, accountData])
 
 
+    function addNewGoogleAccount(mode: string) {
+        let body = {
+            mode: mode,
+            redirectUrl: getRedirectionUrl('/settings/email-address'),
+            accountType: "google",
+            platform: "web",
+            withToken: true
+        }
+        dispatch(googleAuthLink({
+            body: body
+        }));
+    }
+
+
     const openModel = (item: Account) => {
         setAccountData(item);
         onDeleteModalOpen()
     }
 
-    useEffect(() => {
-        if (success && accountData && accountData.id) {
-            let data = (accounts || []).filter((item: Account) => item.id !== accountData.id)
-
-            if (accountData.id === selectedAccount?.id) {
-                LocalStorageService.updateAccount('store', data[0]);
-                dispatch(updateAccountState({selectedAccount: data[0]}));
-            }
-            dispatch(updateAccountState({accounts: data}));
-        }
-    }, [success, accountData, dispatch])
 
     return (
         <>

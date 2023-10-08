@@ -20,6 +20,7 @@ export function Time(props: TimeProps) {
         return () => {
             clearInterval(timerInterval); // Cleanup the interval when the component unmounts
         };
+        // eslint-disable-next-line
     }, []);
 
     const formatElapsedTime = () => {
@@ -53,6 +54,7 @@ export function Time(props: TimeProps) {
     };
 
     return (
-        props.as ? <Text as={props.as!} fontSize={'sm'}>{formatElapsedTime()}</Text> : <Text fontSize={'sm'}>{formatElapsedTime()}</Text>
+        props.as ? <Text as={props.as!} fontSize={'sm'}>{formatElapsedTime()}</Text> :
+            <Text fontSize={'sm'}>{formatElapsedTime()}</Text>
     )
 }

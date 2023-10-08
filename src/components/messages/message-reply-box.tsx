@@ -11,7 +11,7 @@ import styles from "@/styles/Inbox.module.css";
 import Image from "next/image";
 import { ChevronDownIcon, CloseIcon } from "@chakra-ui/icons";
 import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
-import {debounce, isEmail, makeCollabId} from "@/utils/common.functions";
+import {debounce, generateToasterId, isEmail, makeCollabId} from "@/utils/common.functions";
 import { Toaster } from "@/components/common";
 const Time = dynamic(() => import("@/components/common").then(mod => mod.Time));
 import { createDraft, sendMessage, updateDraftState, updatePartialMessage } from "@/redux/draft/action-reducer";
@@ -563,7 +563,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   const sendMessages = () => {
     if (draft && draft.id) {
       let params = {};
-      let polyToast = `poly-toast-${new Date().getMilliseconds()}`;
+      let polyToast = generateToasterId();
       let optionType ='send-now';
 
       // if the user has set a schedule date

@@ -54,6 +54,16 @@ class SocketService extends BaseService {
             },
         });
     }
+
+    searchThreads(userId: string | undefined, searchString: string) {
+        this.sendMessage({
+            userId: userId || '',
+            name: 'SearchRequest',
+            data: {
+                query: searchString,
+            },
+        });
+    }
 }
 
 export const socketService = new SocketService();

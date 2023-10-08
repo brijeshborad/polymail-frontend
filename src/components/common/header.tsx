@@ -10,21 +10,23 @@ import {
 import {CheckIcon, ChevronDownIcon} from '@chakra-ui/icons';
 import {FolderIcon, MailIcon} from '@/icons';
 import styles from '@/styles/Home.module.css';
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 import Router, {useRouter} from 'next/router';
 import {StateType} from '@/types';
 import React, {useCallback, useEffect, useState} from 'react';
-import {updateOrganizationState} from '@/redux/organizations/action-reducer';
 import {Account, Message, Organization, User} from '@/models';
-import {updateAccountState} from '@/redux/accounts/action-reducer';
 import LocalStorageService from '@/utils/localstorage.service';
-import {updateThreadState} from '@/redux/threads/action-reducer';
-import {updateUserState} from '@/redux/users/action-reducer';
-import {updateLastMessage} from '@/redux/socket/action-reducer';
-import {updateMessageState} from '@/redux/messages/action-reducer';
 import {Toaster} from '@/components/common';
 import dynamic from 'next/dynamic'
 import {HeaderSearch} from "@/components/common/header-search";
+import {
+    accountService,
+    messageService,
+    organizationService,
+    socketService,
+    threadService,
+    userService
+} from "@/services";
 
 const FeedSidebar = dynamic(
     () => import('./feedSidebar').then((mod) => mod.FeedSidebar)
@@ -34,7 +36,6 @@ const CreateNewProjectModal = dynamic(
 )
 
 export function Header() {
-    const dispatch = useDispatch();
     const {organizations} = useSelector((state: StateType) => state.organizations);
     const {isLoading: isApiLoading} = useSelector((state: StateType) => state.commonApis);
     const {accounts, selectedAccount} = useSelector((state: StateType) => state.accounts);
@@ -70,7 +71,7 @@ export function Header() {
 
     useEffect(() => {
         if (newMessage) {
-            dispatch(updateLastMessage(null));
+            socketService.updateSocketMessage(null);
             if (newMessage.name === 'SearchResult' && newMessage?.data) {
                 Object.keys(newMessage?.data).map((id: string) => {
                     let newThread = {
@@ -81,7 +82,7 @@ export function Header() {
                         newThread.messages = newThread.messages.map((t: Message) => ({...t, id: t._id}));
                         newThread.messages = newThread.messages.sort((a: Message, b: Message) => new Date(b.created as string).valueOf() - new Date(a.created as string).valueOf());
                     }
-                    dispatch(updateThreadState({threads: [...(threads || []), newThread]}));
+                    threadService.setThreadState({threads: [...(threads || []), newThread]})
                 });
             }
             if (newMessage.name === 'authenticate' && newMessage?.data && accounts!.length > 0) {
@@ -91,7 +92,7 @@ export function Header() {
                 }
             }
         }
-    }, [accounts, dispatch, newMessage, threads, reAuthToast]);
+    }, [accounts, newMessage, threads, reAuthToast]);
 
     useEffect(() => {
         if (googleAuthRedirectionLink) {
@@ -119,9 +120,9 @@ export function Header() {
     const setOrganization = useCallback(
         (org: Organization) => {
             LocalStorageService.updateOrg('store', org);
-            dispatch(updateOrganizationState({selectedOrganization: org}));
+            organizationService.setSelectedOrganization(org);
         },
-        [dispatch],
+        [],
     );
 
     const setAccounts = useCallback(
@@ -129,9 +130,9 @@ export function Header() {
             if (account.syncHistory?.mailInitSynced) {
                 LocalStorageService.updateAccount('store', account);
             }
-            dispatch(updateAccountState({selectedAccount: account}));
+            accountService.setSelectedAccount(account);
         },
-        [dispatch],
+        [],
     );
 
     useEffect(() => {
@@ -148,25 +149,22 @@ export function Header() {
                 setAccounts(accounts[0]);
             }
         }
-    }, [accounts, dispatch, setAccounts]);
+    }, [accounts, setAccounts]);
 
     useEffect(() => {
         if (selectedAccount && !userDetails?.id) {
-            dispatch(
-                updateUserState({
-                    userDetailsUpdateSuccess: false,
-                    ...(userDetails ? {
-                            userDetails: {
-                                ...userDetails,
-                                id: selectedAccount.userId,
-                            }
+            userService.setUserState({
+                userDetailsUpdateSuccess: false,
+                ...(userDetails ? {
+                        userDetails: {
+                            ...userDetails,
+                            id: selectedAccount.userId,
                         }
-                        : {userDetails})
-                })
-            );
-
+                    }
+                    : {userDetails})
+            })
         }
-    }, [dispatch, selectedAccount, userDetails])
+    }, [selectedAccount, userDetails])
 
     function logout() {
         Router.push(`/auth/logout`);
@@ -199,16 +197,8 @@ export function Header() {
 
     const changePage = (page: string) => {
         if (router.pathname.replace('/', '') !== page) {
-            dispatch(
-                updateThreadState({
-                    threads: [],
-                    success: false,
-                    updateSuccess: false,
-                    selectedThread: null,
-                    tabValue: ''
-                }),
-            );
-            dispatch(updateMessageState({selectedMessage: null, messages: []}));
+            threadService.pageChange();
+            messageService.pageChange();
             Router.push(`/${page}`);
         }
     };

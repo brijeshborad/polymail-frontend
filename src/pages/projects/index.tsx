@@ -17,7 +17,7 @@ import Router, {useRouter} from "next/router";
 import {Project, UserProjectOnlineStatus} from "@/models";
 import {POSITION_GAP} from "@/utils/constants";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
-import {updateCommonState} from "@/redux/common-apis/action-reducer";
+import {commonService} from "@/services";
 
 function Index() {
     const {isLoading, projects, projectSearchedString} = useSelector((state: StateType) => state.projects);
@@ -27,6 +27,7 @@ function Index() {
     const [isOpenByRoute, setIsOpenByRoute] = useState<boolean>(false);
 
     const [itemList, setItemList] = useState<Project[]>([]);
+
 
     useEffect(() => {
         if (projects && projects.length > 0) {
@@ -44,9 +45,11 @@ function Index() {
     }, [router.query.favorite, projects, projectSearchedString])
 
 
+
     const handleDragStart = (index: number, e: ChangeEvent | any) => {
         e.dataTransfer.setData('index', index);
     };
+
 
     const handleDragOver = (e: ChangeEvent | any) => {
         e.preventDefault();
@@ -91,6 +94,7 @@ function Index() {
         setItemList(newItems);
     };
 
+
     const makeProjectFavorite = (item: Project, isProjectFavorite: boolean) => {
         if (item && item.id) {
             let body = {
@@ -108,13 +112,15 @@ function Index() {
         }
     }
 
+
     useEffect(() => {
         const routePaths = router.pathname.split('/');
         if (routePaths.includes('create-project')) {
             setIsOpenByRoute(true);
-            dispatch(updateCommonState({showCreateProjectModal: true, shouldRedirectOnCreateProject: true}));
+            commonService.toggleCreateProjectModel(true, true);
         }
     }, [dispatch, router.pathname])
+
 
     useEffect(() => {
         if (!showCreateProjectModal && isOpenByRoute) {
@@ -122,6 +128,7 @@ function Index() {
             Router.replace('/projects', undefined, {shallow: true});
         }
     }, [showCreateProjectModal, isOpenByRoute])
+
 
     return (
         <>

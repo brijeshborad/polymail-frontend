@@ -1,4 +1,4 @@
-import {Thread, UserProjectOnlineStatus} from "@/models";
+import {Thread} from "@/models";
 import styles from "@/styles/Inbox.module.css";
 import { Flex, Input } from "@chakra-ui/react";
 import React, {useEffect, useCallback, useRef, useState, RefObject} from "react";
@@ -13,11 +13,10 @@ import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import {updateCommonState} from "@/redux/common-apis/action-reducer";
 import {
-  getCurrentSelectedThreads, getMemberStatusCache,
-  setCurrentSelectedThreads, setMemberStatusCache,
+  getCurrentSelectedThreads,
+  setCurrentSelectedThreads,
 } from "@/utils/cache.functions";
 import {debounceInterval} from "@/utils/common.functions";
-import dayjs from "dayjs";
 import {fireEvent} from "@/redux/global-events/action-reducer";
 import {commonService, socketService} from "@/services";
 
@@ -34,7 +33,6 @@ export function ThreadsSideBarList(props: ThreadListProps) {
   const [currentThreads, setCurrentThreads] = useState<Thread[]>([]);
   const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
   const { target, threadIndex } = useSelector((state: StateType) => state.keyNavigation)
-  const { userDetails, profilePicture } = useSelector((state: StateType) => state.users)
 
   useEffect(() => {
     if (threads) {

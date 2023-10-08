@@ -61,6 +61,7 @@ function ProjectInbox() {
     const router = useRouter();
     const dispatch = useDispatch();
 
+
     useEffect(() => {
         if (router.query.project) {
             const interval = debounceInterval(() => {
@@ -71,6 +72,7 @@ function ProjectInbox() {
         }
         return undefined
     }, [router.query.project, selectedAccount?.userId]);
+
 
     useEffect(() => {
         if (router.query.project) {
@@ -91,9 +93,11 @@ function ProjectInbox() {
     //     }
     // }, [dispatch, membershipSuccess, router.query.project])
 
+
     function updateSize() {
         setSize(window.innerWidth);
     }
+
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -107,12 +111,47 @@ function ProjectInbox() {
         };
     }, []);
 
+
     useEffect(() => {
         if (membersInputs) {
             let alreadyInvitedMembers = (invitees || []).map(t => t?.invite?.toEmail);
             setAllowAdd(!!(membersInputs.input.trim() && isEmail(membersInputs.input.trim()) && !alreadyInvitedMembers.includes(membersInputs.input)));
         }
     }, [invitees, membersInputs])
+
+
+    useEffect(() => {
+        if (success && selectedMember && selectedMember?.id) {
+            if (selectedMember && selectedMember?.invite) {
+                let data = (invitees || []).filter((item: InviteMember) => item.id !== selectedMember.id);
+
+                dispatch(updateProjectState({invitees: data}));
+            } else {
+                let data = (members || []).filter((item: TeamMember) => item.id !== selectedMember.id);
+                dispatch(updateProjectState({members: data}));
+            }
+
+            setSelectedMember(null);
+        }
+    }, [success, selectedMember, dispatch])
+
+    // useEffect(() => {
+    //     if (isProjectRemoveSuccess) {
+    //         Toaster({
+    //             desc: 'Member is removed form project successfully',
+    //             title: 'Remove member form project',
+    //             type: 'success'
+    //         });
+    //     }
+    // }, [isProjectRemoveSuccess])
+
+
+    useEffect(() => {
+        if (incomingEvent === 'iframe.clicked') {
+            setIsManagerMembersOpen(false)
+        }
+    }, [incomingEvent]);
+
 
     const inviteAccountToProject = useCallback((item: Project | null) => {
         if (selectedAccount && selectedAccount.email && membersInputs.input.length > 0) {
@@ -148,10 +187,12 @@ function ProjectInbox() {
 
     };
 
+
     const openModel = (item: any) => {
         setSelectedMember(item)
         onDeleteModalOpen()
     }
+
 
     const removeMemberFromProject = () => {
         if (selectedMember) {
@@ -182,41 +223,11 @@ function ProjectInbox() {
         onDeleteModalClose()
     }
 
+
     const capitalizeFLetter = (value: string) => {
         return value[0].toUpperCase() + value.slice(1)
     }
 
-    useEffect(() => {
-        if (success && selectedMember && selectedMember?.id) {
-            if (selectedMember && selectedMember?.invite) {
-                let data = (invitees || []).filter((item: InviteMember) => item.id !== selectedMember.id);
-
-                dispatch(updateProjectState({invitees: data}));
-            } else {
-                let data = (members || []).filter((item: TeamMember) => item.id !== selectedMember.id);
-                dispatch(updateProjectState({members: data}));
-            }
-
-            setSelectedMember(null);
-        }
-    }, [success, selectedMember, dispatch])
-
-    // useEffect(() => {
-    //     if (isProjectRemoveSuccess) {
-    //         Toaster({
-    //             desc: 'Member is removed form project successfully',
-    //             title: 'Remove member form project',
-    //             type: 'success'
-    //         });
-    //     }
-    // }, [isProjectRemoveSuccess])
-
-
-    useEffect(() => {
-        if (incomingEvent === 'iframe.clicked') {
-            setIsManagerMembersOpen(false)
-        }
-    }, [incomingEvent]);
 
     return (
         <>
@@ -237,6 +248,7 @@ function ProjectInbox() {
                                padding={'3px 6px'} borderRadius={'4px'}
                                lineHeight={'1.19'}>{members && members.length === 1 ? `1 member` : `${members && members.length} members`}</Badge>
                     </Flex>
+
                     <Flex align={'center'} gap={1}>
                         {project && onlineUsers && (onlineUsers['projects'][project.id!] || [])
                             .filter((t: UserProjectOnlineStatus) => t.isOnline).slice(0, maxShowingMembers)
@@ -247,10 +259,12 @@ function ProjectInbox() {
                                     </div>
                                 </Tooltip>
                             ))}
+
                         <Text fontSize={'sm'} textDecoration={'underline'} cursor={'pointer'}
                               onClick={() => setMaxShowingMembers(maxShowingMembers + 5)}>
                             {project && onlineUsers && (onlineUsers['projects'][project.id!] || []).length > maxShowingMembers ? `+${(onlineUsers['projects'][project.id!] || []).length - maxShowingMembers}more` : ''}
                         </Text>
+
                         <Menu isOpen={isManagerMembersOpen} onClose={() => setIsManagerMembersOpen(false)}>
                             {({onClose}) => (
                                 <>
@@ -272,9 +286,11 @@ function ProjectInbox() {
                                                         icon={<CloseIcon/>}/>
                                         </Flex>
                                         <div className={styles.dropDownSearchBar}>
+
                                             <Text color={'#374151'} fontSize={'13px'} fontWeight={'500'}
                                                   lineHeight={'normal'}
                                                   letterSpacing={'-0.13px'}>Add members</Text>
+
                                             <Flex align={'center'} gap={3} pt={2}>
                                                 <Flex w={'100%'} backgroundColor={'#FFFFFF'}
                                                       border={'1px solid #E5E7EB'}
@@ -286,6 +302,7 @@ function ProjectInbox() {
                                                         membersInputs.input = e.target.value;
                                                         setMembersInput({...membersInputs})
                                                     }}/>
+
                                                     <Menu isLazy>
                                                         <MenuButton className={styles.addMemberDropDownButton}
                                                                     minWidth={'65px'}
@@ -306,6 +323,7 @@ function ProjectInbox() {
                                                         </MenuList>
                                                     </Menu>
                                                 </Flex>
+
                                                 <Button className={styles.addMemberButton} backgroundColor={'#1F2937'}
                                                         border={'8px'} color={'#FFFFFF'} padding={'9px 12px'}
                                                         isDisabled={!allowAdd}

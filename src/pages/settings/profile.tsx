@@ -2,12 +2,11 @@ import withAuth from "@/components/auth/withAuth";
 import { Toaster } from "@/components/common";
 import { Account, UserDetails } from "@/models";
 import SettingsLayout from "@/pages/settings/settings-layout";
-import { updateAccountState } from "@/redux/accounts/action-reducer";
 import { changePassword } from "@/redux/auth/action-reducer";
 import {
     getProfilePicture,
-    getUsersDetails, removeProfilePicture,
-    updateUserState,
+    getUsersDetails,
+    removeProfilePicture,
     updateUsersDetails,
     uploadProfilePicture
 } from "@/redux/users/action-reducer";
@@ -36,6 +35,8 @@ import {
 import Image from "next/image";
 import { ChangeEvent, ChangeEventHandler, useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import {accountService, userService} from "@/services";
+
 
 function Profile() {
     const {
@@ -50,6 +51,7 @@ function Profile() {
     const inputFile = useRef<HTMLInputElement | null>(null)
     let {accounts, success} = useSelector((state: StateType) => state.accounts);
     const [isDataUpdate, setIsDataUpdate] = useState<boolean>(false);
+    const [accountData] = useState<Account>();
     // let {passwordChangeSuccess} = useSelector((state: StateType) => state.auth);
 
     const [profileDetails, setProfileDetails] = useState<UserDetails>({
@@ -71,6 +73,13 @@ function Profile() {
 
     const [passwordMatch, setPasswordMatch] = useState<boolean>(true);
 
+    const validatePassword = useCallback(() => {
+        debounce(() => {
+            setPasswordMatch(passwordUpdate.newP.trim() === passwordUpdate.confirmP.trim())
+        }, 300);
+    }, [passwordUpdate])
+
+
     const setFullName = (event: ChangeEvent | any, type: string) => {
         if (type === 'firstName' || type === 'middleName' || type === 'lastName') {
             setProfileDetails((prevState) => {
@@ -82,23 +91,15 @@ function Profile() {
         }
     }
 
+
     useEffect(() => {
         if (userDetailsUpdateSuccess) {
-            // Toaster({
-            //     desc: "Account details updated successfully",
-            //     title: "Account details updated",
-            //     type: 'success'
-            // });
-            dispatch(updateUserState({userDetailsUpdateSuccess: false}))
+            userService.setUserState({userDetailsUpdateSuccess: false});
         } else if (profilePictureRemoved) {
-            // Toaster({
-            //     desc: "Profile picture removed successfully",
-            //     title: "Successfully",
-            //     type: 'success'
-            // });
-            dispatch(updateUserState({profilePictureRemoved: false}))
+            userService.setUserState({profilePictureRemoved: false});
         }
     }, [userDetailsUpdateSuccess, profilePictureRemoved, dispatch])
+
 
     useEffect(() => {
         if (profilePictureUpdated || profilePictureRemoved) {
@@ -106,17 +107,6 @@ function Profile() {
         }
     }, [dispatch, profilePictureUpdated, profilePictureRemoved]);
 
-    // useEffect(() => {
-    //     if (passwordChangeSuccess) {
-    //         onClose();
-    //         Toaster({
-    //             desc: "Password changed successfully",
-    //             title: "Password changed",
-    //             type: 'success'
-    //         });
-    //         dispatch(updateAuthState({passwordChangeSuccess: false}));
-    //     }
-    // }, [dispatch, passwordChangeSuccess, onClose]);
 
     useEffect(() => {
         if (userDetails) {
@@ -139,6 +129,7 @@ function Profile() {
         }
     }, [userDetails]);
 
+
     useEffect(() => {
         dispatch(getUsersDetails({}));
     }, [dispatch])
@@ -156,6 +147,7 @@ function Profile() {
             setIsDataUpdate(false);
         }
     }
+
 
     const cancelButtonClick = () => {
         if (userDetails) {
@@ -177,22 +169,16 @@ function Profile() {
         }
         setIsDataUpdate(false);
     }
-    const [accountData] = useState<Account>();
+
 
     useEffect(() => {
         if (success && accountData && accountData.id) {
             let data = (accounts || []).filter((item: Account) => item.id !== accountData.id)
             LocalStorageService.updateAccount('store', data[0]);
-
-            dispatch(updateAccountState({accounts: data, selectedAccount: data[0]}));
+            accountService.setAccountState({accounts: data, selectedAccount: data[0]});
         }
     }, [success, accountData, dispatch, accounts])
 
-    const validatePassword = useCallback(() => {
-        debounce(() => {
-            setPasswordMatch(passwordUpdate.newP.trim() === passwordUpdate.confirmP.trim())
-        }, 300);
-    }, [passwordUpdate])
 
     useEffect(() => {
         if (passwordUpdate.newP && passwordUpdate.confirmP) {
@@ -240,6 +226,7 @@ function Profile() {
         };
     }
 
+
     function handlePasswordChange(e: KeyboardEvent | any, type: string) {
         setPasswordUpdate(prevState => ({
             ...prevState,
@@ -247,12 +234,14 @@ function Profile() {
         }))
     }
 
+
     function handlePasswordShow(e: MouseEvent | any, type: string) {
         setPasswordShow(prevState => ({
             ...prevState,
             [type]: !prevState[type as keyof object]
         }))
     }
+
 
     function updatePassword() {
         let newPHash = encryptData(passwordUpdate.newP);
@@ -268,6 +257,7 @@ function Profile() {
         onClose();
     }
 
+
     const removePhoto = () => {
         dispatch(removeProfilePicture({toaster:{
             success:{
@@ -277,6 +267,7 @@ function Profile() {
             }
         }}));
     }
+
 
     return (
         <>

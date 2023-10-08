@@ -4,7 +4,6 @@ import React, {useEffect, useState} from 'react';
 import {EnergyIcon} from '@/icons';
 import {CloseIcon} from '@chakra-ui/icons';
 import dynamic from 'next/dynamic'
-import {updateLastMessage} from "@/redux/socket/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {ActivityFeed} from "@/models/activityFeed";

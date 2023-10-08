@@ -40,8 +40,7 @@ function CreateNewProjectModal() {
     const [projectEmoji, setProjectEmoji] = useState<string>('');
 
     const {createProjectSuccess, project} = useSelector((state: StateType) => state.projects);
-    const {selectedThread, multiSelection, threads} = useSelector((state: StateType) => state.threads);
-    const { draft } = useSelector((state: StateType) => state.draft);
+    const {selectedThread} = useSelector((state: StateType) => state.threads);
 
     const handleChange = (event: ChangeEvent | any) => {
         setProjectName(event.target.value);

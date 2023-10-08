@@ -5,6 +5,7 @@ import {UserIcon} from "@/icons";
 import Router, {useRouter} from "next/router";
 import {ArrowBackIcon} from "@chakra-ui/icons";
 
+
 const tabMenu = [
     {
         title: 'My Account',
@@ -41,10 +42,12 @@ const tabMenu = [
         ]
     },
 ];
+
 let currentRoute: string = '';
+
 export default function SettingsLayout({children}: any) {
     const router = useRouter()
-    
+
     useEffect(() => {
         const routePaths = router.pathname.split('/');
         if (routePaths[routePaths.length - 1] === 'settings') {
@@ -54,6 +57,7 @@ export default function SettingsLayout({children}: any) {
             currentRoute = router.pathname;
         }
     }, [router.pathname]);
+
 
     const openTabs = useCallback((menuItem: { route: string, title: string }) => {
         currentRoute = menuItem.route;

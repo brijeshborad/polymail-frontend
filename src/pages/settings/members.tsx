@@ -19,8 +19,7 @@ import {MenuIcon, TextIcon} from "@/icons";
 import withAuth from "@/components/auth/withAuth";
 import {
     getOrganizationMembers,
-    updateOrganizationMemberRole,
-    updateOrganizationState
+    updateOrganizationMemberRole
 } from "@/redux/organizations/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
@@ -31,6 +30,8 @@ import {PROJECT_ROLES} from "@/utils/constants";
 import RemoveRecordModal from "@/components/common/delete-record-modal";
 import {deleteMemberFromOrganization} from "@/redux/memberships/action-reducer";
 import SettingsLayout from "@/pages/settings/settings-layout";
+import {organizationService} from "@/services";
+
 
 function Members() {
     const {isOpen: InviteModelIsOpen, onOpen: InviteModelOnOpen, onClose: InviteModelOnClose} = useDisclosure();
@@ -38,8 +39,8 @@ function Members() {
     const {isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose} = useDisclosure()
     const {members, organizations, updateMemberRoleSuccess} = useSelector((state: StateType) => state.organizations);
     const {success} = useSelector((state: StateType) => state.memberships);
-    const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
     const {userDetails} = useSelector((state: StateType) => state.users);
+    const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
 
     const dispatch = useDispatch();
 
@@ -48,6 +49,7 @@ function Members() {
             dispatch(getOrganizationMembers({body:{orgId: organizations[0].id}}));
         }
     }, [dispatch, organizations])
+
 
     // useEffect(() => {
     //     if (isOrganizationRemoveSuccess) {
@@ -59,13 +61,25 @@ function Members() {
     //     }
     // }, [isOrganizationRemoveSuccess])
 
+
     useEffect(() => {
         if (updateMemberRoleSuccess && members && members.length) {
-            dispatch(updateOrganizationState({updateMemberRoleSuccess: false}));
+            organizationService.setOrganizationState({updateMemberRoleSuccess: false});
             let index1 = (members || []).findIndex((item: TeamMember) => item.id === selectedMember?.id);
             setSelectedMember(members[index1])
         }
     }, [updateMemberRoleSuccess, selectedMember, members, dispatch])
+
+
+    useEffect(() => {
+        if (success && selectedMember && selectedMember?.id) {
+            let data = (members || []).filter((item: TeamMember) => item.id !== selectedMember.id);
+            organizationService.setOrganizationState({members: data});
+            setSelectedMember(null);
+
+        }
+    }, [success, selectedMember, dispatch])
+
 
     const handleChange = (event: ChangeEvent | any) => {
         setSelectedMember(prevState => ({
@@ -73,6 +87,8 @@ function Members() {
             name: event.target.value,
         }))
     }
+
+
     const openModel = (item: any, type: string) => {
         setSelectedMember({...item});
         if (type === 'edit') {
@@ -82,14 +98,6 @@ function Members() {
         }
     }
 
-    useEffect(() => {
-        if (success && selectedMember && selectedMember?.id) {
-            let data = (members || []).filter((item: TeamMember) => item.id !== selectedMember.id);
-            dispatch(updateOrganizationState({members: data}));
-            setSelectedMember(null);
-
-        }
-    }, [success, selectedMember, dispatch])
 
     const updateOrganizationMemberRoleData = (role: string) => {
         setSelectedMember(prevState => ({
@@ -98,6 +106,7 @@ function Members() {
         }));
 
     };
+
 
     const onSubmit = (type: string) => {
         if (type === 'edit') {
@@ -130,6 +139,7 @@ function Members() {
         }
 
     }
+
 
     return (
         <>

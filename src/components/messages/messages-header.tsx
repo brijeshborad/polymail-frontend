@@ -25,6 +25,7 @@ import {undoBodyData} from "@/redux/undo-body/action-reducer";
 import dynamic from "next/dynamic";
 import { MAILBOX_ARCHIVE, MAILBOX_INBOX, MAILBOX_SNOOZED, MAILBOX_STARRED, MAILBOX_TRASH, MAILBOX_UNREAD } from "@/utils/constants";
 import dayjs from "dayjs";
+import {generateToasterId} from "@/utils/common.functions";
 
 export function MessagesHeader({headerType}: MessageHeaderTypes) {
     const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
@@ -130,7 +131,7 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                     selectedThread: currentThreads[index1],
                 }));
                 dispatch(undoBodyData(selectedThread))
-                let polyToast = `poly-toast-${new Date().getMilliseconds().toString()}`;
+                let polyToast = generateToasterId();
                     dispatch(updateThreads({
                         body:{
                             id: selectedThread.id,
