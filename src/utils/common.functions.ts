@@ -1,6 +1,6 @@
 let timeout: any = null;
 let timeoutInterval: any = null;
-
+let globalStore: any = null;
 export function debounce(fun: () => void, timeOut: number = 1500) {
     if (timeout)
         clearTimeout(timeout);
@@ -74,4 +74,12 @@ export function makeCollabId(length: number) {
         counter += 1;
     }
     return result;
+}
+
+export function setGlobalStore(store: any) {
+    globalStore = store;
+}
+
+export function getGlobalStore() {
+    return globalStore;
 }

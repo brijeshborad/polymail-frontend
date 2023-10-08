@@ -15,6 +15,7 @@ import { useRouter } from 'next/router';
 import { HEADER_NOT_ALLOWED_PATHS } from '@/utils/constants';
 import {CommonApiComponents} from "@/components/common";
 import GlobalEvents from '@/components/common/global-events';
+import {setGlobalStore} from "@/utils/common.functions";
 
 const { Button, Input, Menu, Checkbox, Heading, Divider, Alert, Modal, Popover, Tooltip, Textarea, Spinner, List, Select, Table, Progress, Skeleton, Radio, Drawer, Badge } =
     chakraTheme.components;
@@ -52,6 +53,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export default function App({ Component, ...rest }: AppProps) {
     const { store, props } = wrapper.useWrappedStore(rest);
+    setGlobalStore(store);
     const { pageProps } = props;
     const router = useRouter();
     return (

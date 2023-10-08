@@ -25,6 +25,7 @@ import {SmallCloseIcon, TriangleDownIcon} from "@chakra-ui/icons";
 import {getCurrentCacheTab} from "@/utils/cache.functions";
 import {updateCommonState} from "@/redux/common-apis/action-reducer";
 import {MAILBOX_ARCHIVE, MAILBOX_INBOX, MAILBOX_SNOOZED, MAILBOX_STARRED, MAILBOX_TRASH} from "@/utils/constants";
+import {threadService} from "@/services/threads.service";
 const MessageSchedule = dynamic(() => import("../messages/message-schedule").then(mod => mod.default));
 
 const ThreadsSideBarTab = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarTab), {ssr: false});
@@ -96,7 +97,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
         if (threads && threads.length > 0 && !selectedThread && !isLoading) {
             if (allowThreadSelection) {
                 if (!isComposing) {
-                    dispatch(updateThreadState({selectedThread: threads[0]}));
+                    threadService.setSelectedThread(threads[0]);
                 }
                 if (tabValue === 'DRAFT') {
                     dispatch(updateCommonState({isComposing: true}));
@@ -108,9 +109,9 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
 
     useEffect(() => {
         if (tab !== '' && getCurrentCacheTab() !== '') {
-            dispatch(updateThreadState({tabValue: tab}));
+            threadService.setTabValue(tab);
         }
-    }, [dispatch, tab])
+    }, [tab])
 
     const searchCancel = (callAPI: boolean = false) => {
         dispatch(updateThreadState({isThreadSearched: false, multiSelection: []}));
