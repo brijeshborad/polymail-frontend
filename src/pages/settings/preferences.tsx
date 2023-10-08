@@ -83,7 +83,7 @@ function Preferences() {
                 },
                 id: organization.id
             }
-            dispatch(editOrganization({body:body}));
+            dispatch(editOrganization({body: body}));
         }
     }
 

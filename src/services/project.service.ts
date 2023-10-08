@@ -1,13 +1,14 @@
 import {InitialProjectState} from "@/types";
 import {BaseService} from "@/services/base.service";
 import {updateProjectState} from "@/redux/projects/action-reducer";
+import {InviteMember, TeamMember} from "@/models";
 
 class ProjectService extends BaseService {
     constructor() {
         super();
     }
 
-    private getProjectState(): InitialProjectState {
+    public getProjectState(): InitialProjectState {
         return this.getState('projects');
     }
 
@@ -15,7 +16,15 @@ class ProjectService extends BaseService {
         this.setProjectState({projectSearchedString: value});
     }
 
-    setProjectState(body: any) {
+    setInvitees(inviteMembers: InviteMember[]) {
+        this.setProjectState({invitees: inviteMembers});
+    }
+
+    setMembers(teamMembers: TeamMember[]) {
+        this.setProjectState({members: teamMembers});
+    }
+
+    setProjectState(body: InitialProjectState) {
         this.dispatchAction(updateProjectState, body);
     }
 }

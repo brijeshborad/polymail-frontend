@@ -1,13 +1,13 @@
-import { Toaster } from "@/components/common";
-import { forgotPassword } from "@/redux/auth/action-reducer";
+import {Toaster} from "@/components/common";
+import {forgotPassword} from "@/redux/auth/action-reducer";
 import styles from "@/styles/Login.module.css";
-import { ArrowBackIcon } from "@chakra-ui/icons";
-import { Button, Flex, Heading, Input, Text } from "@chakra-ui/react";
+import {ArrowBackIcon} from "@chakra-ui/icons";
+import {Button, Flex, Heading, Input, Text} from "@chakra-ui/react";
 import Image from "next/image";
 import Link from "next/link";
 import Router from "next/router";
-import { ChangeEvent, useState } from "react";
-import { useDispatch } from "react-redux";
+import {ChangeEvent, useState} from "react";
+import {useDispatch} from "react-redux";
 
 
 export default function ForgotPassword() {
@@ -21,34 +21,24 @@ export default function ForgotPassword() {
 
     const updatePassword = () => {
         if (email.length === 0) {
-            Toaster({desc: 'Please enter valid email',title: 'Add email', type: 'error'})
+            Toaster({desc: 'Please enter valid email', title: 'Add email', type: 'error'})
             return;
         }
         let body = {
             email,
             url: `${window.location.origin}/auth/reset-password`,
         }
-        dispatch(forgotPassword({body: body,toaster:{
-            success:{
-                desc: "Email is sent successfully, Please check your email provider",
-                title: "Email Sent!",
-                type: 'success'
+        dispatch(forgotPassword({
+            body: body, toaster: {
+                success: {
+                    desc: "Email is sent successfully, Please check your email provider",
+                    title: "Email Sent!",
+                    type: 'success'
+                }
             }
-        }}));
+        }));
         Router.push(`/onboarding`);
     }
-
-    // useEffect(() => {
-    //     if (passwordResetSuccess) {
-    //         Toaster({
-    //             desc: "Email is sent successfully, Please check your email provider",
-    //             title: "Email Sent!",
-    //             type: 'success'
-    //         });
-    //         dispatch(updateAuthState({passwordResetSuccess: false}))
-    //         Router.push(`/onboarding`);
-    //     }
-    // }, [passwordResetSuccess, dispatch]);
 
     return (
         <div className={`${styles.login} ${styles.forgotPassword}`}>
@@ -59,36 +49,21 @@ export default function ForgotPassword() {
                 </Flex>
 
                 <Heading marginLeft={'10px'} as={'h6'} mb={1} size='md'>Forgot Password?</Heading>
-                <Text fontSize={'13px'} mb={10} opacity={'0.5'}>No worries, we&apos;ll send you reset instructions.</Text>
+                <Text fontSize={'13px'} mb={10} opacity={'0.5'}>No worries, we&apos;ll send you reset
+                    instructions.</Text>
 
                 <div className={styles.forgotInput}>
-                    <Text fontSize={'13px'} fontWeight={500} textAlign={'left'} >Enter Email</Text>
+                    <Text fontSize={'13px'} fontWeight={500} textAlign={'left'}>Enter Email</Text>
                     <Input name={'email'} placeholder={'name@work-email.com'} size='md' onChange={handleChange}
                            className={`${styles.loginInput}`} type={'email'}/>
                 </div>
 
-                <Button className={styles.loginButton} py={'25px'} mb={12} onClick={() => updatePassword()}>Send Link</Button>
+                <Button className={styles.loginButton} py={'25px'} mb={12} onClick={() => updatePassword()}>Send
+                    Link</Button>
 
-                <Link href={'/onboarding'}> <Flex align={'center'} justify={'center'}> <ArrowBackIcon marginRight={1} /> Back to login </Flex> </Link>
+                <Link href={'/onboarding'}> <Flex align={'center'} justify={'center'}> <ArrowBackIcon
+                    marginRight={1}/> Back to login </Flex> </Link>
             </Flex>
-
-            {/*{showHtml && <Flex alignItems={'center'} justifyContent={'center'} flexDir={'column'} className={styles.loginBox} >*/}
-            {/*    <Flex alignItems={'center'} className={styles.loginHeader}>*/}
-            {/*        <Image width="30" height="30" src="/image/logo.png" alt="" />*/}
-            {/*        <Heading marginLeft={'10px'} as={'h6'} size='lg'>Polymail</Heading>*/}
-            {/*    </Flex>*/}
-
-            {/*    <Heading marginLeft={'10px'} as={'h6'} size='md' mb={1}>Check your email</Heading>*/}
-            {/*    <Text fontSize={'13px'} mb={10} opacity={'0.5'}>We sent a password reset link to {email}</Text>*/}
-
-            {/*    <Button className={styles.loginButton} py={'25px'} mb={12}>Open email app</Button>*/}
-
-            {/*    <Text className={styles.loginInfo} mb={10}>*/}
-            {/*        Didn&apos;t receive the email?<Link color={'#761799'} href={'#'}>Click to resend </Link>*/}
-            {/*    </Text>*/}
-
-            {/*    <Link href={'#'}> <Flex align={'center'} justify={'center'}> <ArrowBackIcon marginRight={1} /> Back to login </Flex> </Link>*/}
-            {/*</Flex>}*/}
 
         </div>
     )

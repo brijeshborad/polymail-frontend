@@ -13,6 +13,10 @@ export class AccountService extends BaseService {
         this.setAccountState({selectedAccount: account});
     }
 
+    setAccounts(accounts: Account[]) {
+        this.setAccountState({accounts: accounts});
+    }
+
     setAccountState(stateBody: InitialAccountStateType) {
         this.dispatchAction(updateAccountState, stateBody);
     }

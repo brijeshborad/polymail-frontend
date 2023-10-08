@@ -7,7 +7,7 @@ import {
 import {
     getProjectMembers,
     getProjectMembersInvites,
-    updateProjectMemberRole, updateProjectState
+    updateProjectMemberRole
 } from "@/redux/projects/action-reducer";
 import styles from "@/styles/project.module.css";
 import {StateType} from "@/types";
@@ -33,7 +33,7 @@ import {useRouter} from "next/router";
 import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {MenuIcon} from "@/icons";
-import {socketService} from "@/services";
+import {projectService, socketService} from "@/services";
 
 const ThreadsSideBar = dynamic(
     () => import('@/components/threads').then((mod) => mod.ThreadsSideBar)
@@ -86,14 +86,6 @@ function ProjectInbox() {
         }
     }, [router.query.project, dispatch])
 
-    // useEffect(() => {
-    //     if (membershipSuccess && router.query.project) {
-    //         dispatch(updateMembershipState({success: false}));
-
-    //     }
-    // }, [dispatch, membershipSuccess, router.query.project])
-
-
     function updateSize() {
         setSize(window.innerWidth);
     }
@@ -124,26 +116,14 @@ function ProjectInbox() {
         if (success && selectedMember && selectedMember?.id) {
             if (selectedMember && selectedMember?.invite) {
                 let data = (invitees || []).filter((item: InviteMember) => item.id !== selectedMember.id);
-
-                dispatch(updateProjectState({invitees: data}));
+                projectService.setInvitees(data);
             } else {
                 let data = (members || []).filter((item: TeamMember) => item.id !== selectedMember.id);
-                dispatch(updateProjectState({members: data}));
+                projectService.setMembers(data);
             }
-
             setSelectedMember(null);
         }
-    }, [success, selectedMember, dispatch])
-
-    // useEffect(() => {
-    //     if (isProjectRemoveSuccess) {
-    //         Toaster({
-    //             desc: 'Member is removed form project successfully',
-    //             title: 'Remove member form project',
-    //             type: 'success'
-    //         });
-    //     }
-    // }, [isProjectRemoveSuccess])
+    }, [success, selectedMember, invitees, members])
 
 
     useEffect(() => {
@@ -227,7 +207,6 @@ function ProjectInbox() {
     const capitalizeFLetter = (value: string) => {
         return value[0].toUpperCase() + value.slice(1)
     }
-
 
     return (
         <>

@@ -9,8 +9,7 @@ import {updateAccountDetails} from "@/redux/accounts/action-reducer";
 import withAuth from "@/components/auth/withAuth";
 import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
 import SettingsLayout from "@/pages/settings/settings-layout";
-import {fireEvent} from "@/redux/global-events/action-reducer";
-import {accountService} from "@/services";
+import {accountService, globalEventService} from "@/services";
 
 
 function Signature() {
@@ -74,7 +73,7 @@ function Signature() {
 
     const cancelButtonClick = () => {
         if (selectedAccount && selectedAccount.signature) {
-            dispatch(fireEvent({event: {data: selectedAccount.signature, type: 'richtexteditor.forceUpdate'}}));
+            globalEventService.fireEvent({data: selectedAccount.signature, type: 'richtexteditor.forceUpdate'});
             setSignature(selectedAccount.signature);
             setIsSignatureUpdate(false);
         }

@@ -64,8 +64,10 @@ export default function MessageRecipients({
                         {finalContacts.map((contact, index) => (
                             <Box onClick={() => handleAutoCompleteSelect(contact, type)}
                                  className={styles.emailRecipientsAutoComplete} key={index} cursor={'pointer'} px={4}>
-                                {contact.name && <Text title={`${contact.name} <${contact.email}>`}>{contact.name} &#60;{contact.email}&gt;</Text>}
-                                {!contact.name && <Text title={`${contact.email} <${contact.email}>`}>{contact.email} &#60;{contact.email}&gt;</Text>}
+                                {contact.name && <Text
+                                    title={`${contact.name} <${contact.email}>`}>{contact.name} &#60;{contact.email}&gt;</Text>}
+                                {!contact.name && <Text
+                                    title={`${contact.email} <${contact.email}>`}>{contact.email} &#60;{contact.email}&gt;</Text>}
 
                             </Box>
                         ))}

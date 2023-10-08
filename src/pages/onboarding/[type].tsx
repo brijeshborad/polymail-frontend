@@ -6,10 +6,11 @@ import {StateType} from "@/types";
 import {useEffect, useState} from "react";
 import Router, {useRouter} from 'next/router';
 import LocalStorageService from "@/utils/localstorage.service";
-import {googleAuthLink, updateAuthState} from "@/redux/auth/action-reducer";
+import {googleAuthLink} from "@/redux/auth/action-reducer";
 import {getRedirectionUrl} from "@/utils/common.functions";
 import {getUsersDetails} from "@/redux/users/action-reducer";
 import {Toaster} from "@/components/common";
+import {authService} from "@/services";
 
 function OnBoardingType() {
     const dispatch = useDispatch();
@@ -22,14 +23,14 @@ function OnBoardingType() {
         if (router.query) {
             if (router.query.access_token) {
                 LocalStorageService.updateUser('store', {token: router.query.access_token})
-                dispatch(updateAuthState({user: {token: router.query.access_token.toString() || ''}}));
+                authService.setUser({token: router.query.access_token.toString() || ''});
                 dispatch(getUsersDetails({}));
                 return;
             }
 
             if (router.query.error) {
                 Router.replace(`/onboarding/${router.query.type}`, undefined, {shallow: true});
-                dispatch(updateAuthState({error: {description: 'Invalid account'}}));
+                authService.setAuthState({error: {description: 'Invalid account'}});
                 Toaster({desc: 'Invalid account', title: 'User not found', type: 'error'});
                 return;
             }

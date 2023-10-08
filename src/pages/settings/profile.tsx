@@ -1,8 +1,8 @@
 import withAuth from "@/components/auth/withAuth";
-import { Toaster } from "@/components/common";
-import { Account, UserDetails } from "@/models";
+import {Toaster} from "@/components/common";
+import {Account, UserDetails} from "@/models";
 import SettingsLayout from "@/pages/settings/settings-layout";
-import { changePassword } from "@/redux/auth/action-reducer";
+import {changePassword} from "@/redux/auth/action-reducer";
 import {
     getProfilePicture,
     getUsersDetails,
@@ -11,10 +11,10 @@ import {
     uploadProfilePicture
 } from "@/redux/users/action-reducer";
 import styles from "@/styles/setting.module.css";
-import { StateType } from "@/types";
-import { debounce, encryptData } from "@/utils/common.functions";
+import {StateType} from "@/types";
+import {debounce, encryptData} from "@/utils/common.functions";
 import LocalStorageService from "@/utils/localstorage.service";
-import { EditIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import {EditIcon, ViewIcon, ViewOffIcon} from "@chakra-ui/icons";
 import {
     Button, Flex, Heading, Input,
     InputGroup,
@@ -33,8 +33,8 @@ import {
     useDisclosure,
 } from "@chakra-ui/react";
 import Image from "next/image";
-import { ChangeEvent, ChangeEventHandler, useCallback, useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import {ChangeEvent, ChangeEventHandler, useCallback, useEffect, useRef, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
 import {accountService, userService} from "@/services";
 
 
@@ -98,7 +98,7 @@ function Profile() {
         } else if (profilePictureRemoved) {
             userService.setUserState({profilePictureRemoved: false});
         }
-    }, [userDetailsUpdateSuccess, profilePictureRemoved, dispatch])
+    }, [userDetailsUpdateSuccess, profilePictureRemoved])
 
 
     useEffect(() => {
@@ -137,13 +137,15 @@ function Profile() {
 
     const submit = () => {
         if (profileDetails) {
-            dispatch(updateUsersDetails({body: profileDetails ,toaster:{
-                success:{
-                    desc: "Account details updated successfully",
-                    title: "Account details updated",
-                    type: 'success'
+            dispatch(updateUsersDetails({
+                body: profileDetails, toaster: {
+                    success: {
+                        desc: "Account details updated successfully",
+                        title: "Account details updated",
+                        type: 'success'
+                    }
                 }
-            }}));
+            }));
             setIsDataUpdate(false);
         }
     }
@@ -191,7 +193,7 @@ function Profile() {
 
     function handleFileUpload(event: ChangeEventHandler | any) {
         const file = event.target.files[0];
-        console.log("Upload",file)
+        console.log("Upload", file)
         const contentType = file.name.split('.').pop();
         if (!['jpg', 'gif', 'png', 'jpeg', 'svg'].includes(contentType)) {
             let validationError = {
@@ -208,17 +210,18 @@ function Profile() {
         reader.readAsDataURL(file);
         reader.onload = function () {
             if (reader.result) {
-                console.log("FileIn",file)
-                dispatch(uploadProfilePicture({body:{file: file}
+                console.log("FileIn", file)
+                dispatch(uploadProfilePicture({
+                    body: {file: file}
                     ,
-                    toaster:{
-                    success:{
-                        desc: "Profile picture Added successfully",
-                        title: "Successfully",
-                        type: 'success'
+                    toaster: {
+                        success: {
+                            desc: "Profile picture Added successfully",
+                            title: "Successfully",
+                            type: 'success'
+                        }
                     }
-                }
-            }));
+                }));
             }
         };
         reader.onerror = function (error) {
@@ -245,7 +248,8 @@ function Profile() {
 
     function updatePassword() {
         let newPHash = encryptData(passwordUpdate.newP);
-        dispatch(changePassword({body: {password: passwordUpdate.old, newPasswordOne: newPHash, newPasswordTwo: newPHash},
+        dispatch(changePassword({
+            body: {password: passwordUpdate.old, newPasswordOne: newPHash, newPasswordTwo: newPHash},
             toaster: {
                 success: {
                     desc: "Password changed successfully",
@@ -259,13 +263,15 @@ function Profile() {
 
 
     const removePhoto = () => {
-        dispatch(removeProfilePicture({toaster:{
-            success:{
-                desc: "Profile picture removed successfully",
-                title: "Successfully",
-                type: 'success'
+        dispatch(removeProfilePicture({
+            toaster: {
+                success: {
+                    desc: "Profile picture removed successfully",
+                    title: "Successfully",
+                    type: 'success'
+                }
             }
-        }}));
+        }));
     }
 
 
@@ -317,7 +323,7 @@ function Profile() {
                                     <div className={styles.profileAccount}>
                                         <Text fontSize={'14px'}>First Name</Text>
                                         <Input placeholder='Enter First Name' value={profileDetails.firstName}
-                                              onChange={(event) => setFullName(event, 'firstName')}/>
+                                               onChange={(event) => setFullName(event, 'firstName')}/>
 
                                         <Text fontSize={'14px'} mt={2}>Last Name</Text>
                                         <Input placeholder='Enter Last Name' value={profileDetails.lastName}
@@ -333,7 +339,7 @@ function Profile() {
                                     Profile </Button>
                             </Flex>
                             {isDataUpdate &&
-                             <>
+                            <>
                                 <Flex align={'center'} gap={2} mt={10} className={styles.settingButton}>
                                     <Button className={styles.settingSave} onClick={submit}>Save</Button>
                                     <Button className={styles.settingCancel} onClick={cancelButtonClick}>Cancel</Button>

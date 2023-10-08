@@ -1,13 +1,12 @@
 import withAuth from "@/components/auth/withAuth";
-import { Toaster } from "@/components/common";
-import { updateCommonState } from "@/redux/common-apis/action-reducer";
-import { addItemToGroup } from "@/redux/memberships/action-reducer";
-import { createProjects, updateProjectState } from "@/redux/projects/action-reducer";
+import {Toaster} from "@/components/common";
+import {addItemToGroup} from "@/redux/memberships/action-reducer";
+import {createProjects} from "@/redux/projects/action-reducer";
 import styles from "@/styles/project.module.css";
-import { StateType } from "@/types";
-import { emojiArray } from "@/utils/common.functions";
-import { PROJECT_ROLES } from "@/utils/constants";
-import { CloseIcon, SmallAddIcon, TriangleDownIcon } from "@chakra-ui/icons";
+import {StateType} from "@/types";
+import {emojiArray} from "@/utils/common.functions";
+import {PROJECT_ROLES} from "@/utils/constants";
+import {CloseIcon, SmallAddIcon, TriangleDownIcon} from "@chakra-ui/icons";
 import {
     Button,
     Flex, Grid, GridItem,
@@ -21,9 +20,9 @@ import {
 } from "@chakra-ui/react";
 import Image from "next/image";
 import Router from "next/router";
-import { ChangeEvent, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {threadService} from "@/services";
+import {ChangeEvent, useEffect, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {commonService, projectService, threadService} from "@/services";
 
 
 function CreateNewProjectModal() {
@@ -52,7 +51,7 @@ function CreateNewProjectModal() {
 
     useEffect(() => {
         if (createProjectSuccess) {
-            dispatch(updateProjectState({createProjectSuccess: false}))
+            projectService.setProjectState({createProjectSuccess: false})
             if (project && selectedThread) {
                 threadService.addThreadToProject(project, null, false);
             }
@@ -88,9 +87,9 @@ function CreateNewProjectModal() {
                     Router.push(`/projects/${project.id!}`);
                 }
             }
-            dispatch(updateCommonState({showCreateProjectModal: false, shouldRedirectOnCreateProject: false}))
+            commonService.toggleCreateProjectModel(false, false);
         }
-    }, [dispatch, createProjectSuccess, selectedAccount, membersInputs.memberArray, project, shouldRedirectOnCreateProject])
+    }, [dispatch, createProjectSuccess, selectedAccount, membersInputs.memberArray, project, shouldRedirectOnCreateProject, selectedThread])
 
 
     const addNewProject = () => {
@@ -118,9 +117,10 @@ function CreateNewProjectModal() {
                 },
                 toaster: {
                     success: {
-                    desc: "New project added successfully",
-                    title: "Success",
-                    type: 'success'},
+                        desc: "New project added successfully",
+                        title: "Success",
+                        type: 'success'
+                    },
                 },
             }));
         }
@@ -170,10 +170,7 @@ function CreateNewProjectModal() {
     }
 
     return (
-        <Modal isOpen={!!showCreateProjectModal} onClose={() => dispatch(updateCommonState({
-            showCreateProjectModal: false,
-            shouldRedirectOnCreateProject: false
-        }))} isCentered>
+        <Modal isOpen={!!showCreateProjectModal} onClose={() => commonService.toggleCreateProjectModel(false, false)} isCentered>
             <ModalOverlay backgroundColor={'rgba(229, 231, 235, 0.50)'} backdropFilter={'blur(16px)'}/>
             <ModalContent maxWidth={'480px'} borderRadius={'12px'} className={styles.projectMemberModal}>
                 <ModalHeader padding={'12px 14px'} fontSize={'13px'} color={'#374151'}
@@ -299,10 +296,7 @@ function CreateNewProjectModal() {
                         <Flex align={'center'} justify={'flex-end'} pt={4} borderTop={'1px solid #F3F4F6'} gap={3}>
                             <Button className={styles.cancelModalButton} border={'1px solid #374151'}
                                     backgroundColor={'#FFFFFF'} borderRadius={8}
-                                    onClick={() => dispatch(updateCommonState({
-                                        showCreateProjectModal: false,
-                                        shouldRedirectOnCreateProject: false
-                                    }))} fontSize={'14px'} height={'auto'} lineHeight={1} padding={'10px 12px'}
+                                    onClick={() => commonService.toggleCreateProjectModel(false, false)} fontSize={'14px'} height={'auto'} lineHeight={1} padding={'10px 12px'}
                                     color={'#374151'}> Cancel </Button>
 
                             <Button className={styles.addMemberButton} backgroundColor={'#1F2937'} borderRadius={8}

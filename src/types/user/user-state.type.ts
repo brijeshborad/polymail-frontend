@@ -2,7 +2,7 @@ import {User} from "../../models";
 import {Avatar, MagicCode, UserDetails} from "@/models";
 
 export declare type InitialAuthState = {
-    user?: User | undefined,
+    user?: User | undefined | null,
     isLoading?: boolean
     error?: Error | any | null,
     googleAuthRedirectionLink?: { url?: string } | null

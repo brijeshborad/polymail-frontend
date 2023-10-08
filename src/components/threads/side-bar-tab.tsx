@@ -2,9 +2,7 @@ import {Button, Checkbox, Flex} from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
 import {StateType, TabProps} from "@/types";
 import React, {useState, useEffect, useCallback} from "react";
-
-const ThreadsSideBarList = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarList), {ssr: false});
-import {getAllThreads, updateThreadState} from "@/redux/threads/action-reducer";
+import {getAllThreads} from "@/redux/threads/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import {useRouter} from "next/router";
@@ -16,9 +14,10 @@ import {
     setCurrentCacheTab,
     setCurrentSelectedThreads
 } from "@/utils/cache.functions";
-import {updateLastMessage} from "@/redux/socket/action-reducer";
-import {getProjectSummary, updateCommonState} from "@/redux/common-apis/action-reducer";
-import {updateAccountState} from "@/redux/accounts/action-reducer";
+import {getProjectSummary} from "@/redux/common-apis/action-reducer";
+import {accountService, commonService, socketService, threadService} from "@/services";
+
+const ThreadsSideBarList = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarList), {ssr: false});
 
 export function ThreadsSideBarTab(props: TabProps) {
     const {
@@ -31,7 +30,11 @@ export function ThreadsSideBarTab(props: TabProps) {
         isThreadSearched
     } = useSelector((state: StateType) => state.threads)
     const {selectedAccount, account, success} = useSelector((state: StateType) => state.accounts);
-    const {isLoading: summaryIsLoading, syncingEmails, isComposing} = useSelector((state: StateType) => state.commonApis);
+    const {
+        isLoading: summaryIsLoading,
+        syncingEmails,
+        isComposing
+    } = useSelector((state: StateType) => state.commonApis);
     const {newMessage} = useSelector((state: StateType) => state.socket);
     const {composeDraft} = useSelector((state: StateType) => state.draft);
     const router = useRouter();
@@ -71,31 +74,41 @@ export function ThreadsSideBarTab(props: TabProps) {
             }
             if (getCacheThreads()[`${props.cachePrefix}-${tabValue}-${selectedAccount.id}-${type}`]) {
                 resetState = false
-                dispatch(updateThreadState({
+                threadService.setThreadState({
                     threads: getCacheThreads()[`${props.cachePrefix}-${tabValue}-${selectedAccount.id}-${type}`],
                     isLoading: false
-                }));
+                })
             }
             let projectId = getProjectId();
             if (projectId && !isSummaryApiCalled) {
                 setIsSummaryApiCalled(true);
-                dispatch(getProjectSummary({body:{
-                    id: projectId as string,
-                    mailbox: tabValue,
-                }}))
+                dispatch(getProjectSummary({
+                    body: {
+                        id: projectId as string,
+                        mailbox: tabValue,
+                    }
+                }))
             } else {
                 if (projectId) {
-                    dispatch(getAllThreads({body:{
-                        mailbox: tabValue,
-                        project: projectId as string,
-                        resetState: resetState,
-                        ...(type === 'just-mine' ? {mine: true} : {})
-                    }}));
+                    dispatch(getAllThreads({
+                        body: {
+                            mailbox: tabValue,
+                            project: projectId as string,
+                            resetState: resetState,
+                            ...(type === 'just-mine' ? {mine: true} : {})
+                        }
+                    }));
                 } else {
                     if (type === 'projects') {
-                        dispatch(getAllThreads({body:{project: "ALL", mailbox: tabValue, resetState: resetState}}));
+                        dispatch(getAllThreads({body: {project: "ALL", mailbox: tabValue, resetState: resetState}}));
                     } else {
-                        dispatch(getAllThreads({body:{mailbox: tabValue, account: selectedAccount.id, resetState: resetState}}));
+                        dispatch(getAllThreads({
+                            body: {
+                                mailbox: tabValue,
+                                account: selectedAccount.id,
+                                resetState: resetState
+                            }
+                        }));
                     }
                 }
             }
@@ -109,71 +122,69 @@ export function ThreadsSideBarTab(props: TabProps) {
                 ...getCacheThreads(),
                 [`${props.cachePrefix}-${tabValue!}-${selectedAccount?.id}-${tabName}`]: threads ? [...threads] : []
             });
-            dispatch(updateThreadState({success: false}));
+            threadService.setThreadState({success: false});
         }
     }, [selectedAccount, threadListSuccess, props.cachePrefix, dispatch, threads, tabName, tabValue])
 
     useEffect(() => {
         if (newMessage && newMessage.name === 'new_message') {
             console.log('---NEW MESSAGE---', newMessage);
-            dispatch(updateLastMessage(null));
+            socketService.updateSocketMessage(null);
             getAllThread();
         }
-    }, [getAllThread, newMessage, dispatch])
+    }, [getAllThread, newMessage])
 
     useEffect(() => {
         if (selectedAccount && success) {
-            dispatch(updateAccountState({success: false}));
+            accountService.setAccountState({success: false});
             getAllThread();
         }
-    }, [getAllThread, selectedAccount, success, dispatch])
+    }, [getAllThread, selectedAccount, success])
 
     useEffect(() => {
         if (updateSuccess) {
-            dispatch(updateThreadState({updateSuccess: false}));
+            threadService.setThreadState({updateSuccess: false});
             getAllThread();
         }
-    }, [updateSuccess, getAllThread, dispatch])
+    }, [updateSuccess, getAllThread])
 
     useEffect(() => {
         if (account && account.success) {
             getAllThread();
         }
-    }, [account, dispatch, getAllThread])
+    }, [account, getAllThread])
 
     useEffect(() => {
         if (tabValue && currentTab !== tabValue) {
             setCurrentTab(tabValue)
-            dispatch(updateThreadState({selectedThread: null}));
+            threadService.setSelectedThread(null);
             getAllThread();
         }
-    }, [dispatch, getAllThread, tabValue, currentTab])
+    }, [getAllThread, tabValue, currentTab])
 
     useEffect(() => {
         if (threadListSuccess) {
             if (threads && threads.length) {
-                dispatch(updateThreadState({threads: threads}));
+                threadService.setThreads(threads)
             }
         }
-    }, [dispatch, threadListSuccess, threads])
+    }, [threadListSuccess, threads])
 
     useEffect(() => {
         if (isLoading && threads && threads.length >= 1) {
-            dispatch(updateThreadState({isLoading: false}));
+            threadService.setThreadState({isLoading: false});
         }
-    }, [dispatch, isLoading, threads])
+    }, [isLoading, threads])
 
     const changeThread = (type: string) => {
         setTabName(type);
-        dispatch(updateThreadState({threads: []}));
-        dispatch(updateThreadState({selectedThread: null}));
+        threadService.setThreads(threads || [])
+        threadService.setSelectedThread(null)
         getAllThread(type);
     }
 
     const toggleSelectAllThreads = (checked: boolean) => {
-        dispatch(updateThreadState({
-            multiSelection: !checked ? [] : threads?.map((thread) => thread.id!)
-        }))
+        threadService.setMultiSelectionThreads((!checked ? [] : threads?.map((thread) => thread.id!)) || []);
         setCurrentSelectedThreads(!checked ? [] : (threads || []).map((thread, index) => index));
         return
     }
@@ -181,56 +192,58 @@ export function ThreadsSideBarTab(props: TabProps) {
 
     return (
         <>
-          <Flex overflowX={'auto'} align={'center'} alignItems={'center'} alignContent={'center'} gap={2} padding={"0 6px"}>
-            <div className={styles.mailOtherOption}>
-                {(isMultiItemsSelected || isThreadSearched) ?
-                  <Flex align={'center'} gap={2} className={styles.checkBoxLabel}>
-                      <Checkbox
-                        isChecked={isSelectedAllChecked}
-                        onChange={(e) => toggleSelectAllThreads(e.target.checked)}
-                      >
-                          Select All
-                      </Checkbox>
-                  </Flex> :
-                  <Flex align={'center'} gap={2}>
-                      {router.query.project && (
-                        <div className={tabName === 'every-thing' ? styles.active : ''}>
-                            <Button
-                              colorScheme='white'
-                              onClick={() => changeThread('every-thing')}
+            <Flex overflowX={'auto'} align={'center'} alignItems={'center'} alignContent={'center'} gap={2}
+                  padding={"0 6px"}>
+                <div className={styles.mailOtherOption}>
+                    {(isMultiItemsSelected || isThreadSearched) ?
+                        <Flex align={'center'} gap={2} className={styles.checkBoxLabel}>
+                            <Checkbox
+                                isChecked={isSelectedAllChecked}
+                                onChange={(e) => toggleSelectAllThreads(e.target.checked)}
                             >
-                                Everything
-                            </Button>
-                        </div>
-                      )}
-                      <div className={tabName === 'just-mine' ? styles.active : ''}>
-                          <Button
-                            colorScheme='white'
-                            onClick={() => changeThread('just-mine')}
-                          >
-                              Just mine
-                          </Button>
-                      </div>
-                      {!router.query.project &&
-                      <div className={tabName === 'projects' ? styles.active : ''}>
-                          <Button
-                            colorScheme='white'
-                            onClick={() => changeThread('projects')}
-                          >
-                              Projects
-                          </Button>
-                      </div>
-                      }
-                  </Flex>
-                }
-                {
-                    composeDraft && !isComposing &&
-                    <Button className={styles.resumeDraft} onClick={() => dispatch(updateCommonState({isComposing: true}))}>
-                        Resume Draft
-                    </Button>
-                }
-            </div>
-          </Flex>
+                                Select All
+                            </Checkbox>
+                        </Flex> :
+                        <Flex align={'center'} gap={2}>
+                            {router.query.project && (
+                                <div className={tabName === 'every-thing' ? styles.active : ''}>
+                                    <Button
+                                        colorScheme='white'
+                                        onClick={() => changeThread('every-thing')}
+                                    >
+                                        Everything
+                                    </Button>
+                                </div>
+                            )}
+                            <div className={tabName === 'just-mine' ? styles.active : ''}>
+                                <Button
+                                    colorScheme='white'
+                                    onClick={() => changeThread('just-mine')}
+                                >
+                                    Just mine
+                                </Button>
+                            </div>
+                            {!router.query.project &&
+                            <div className={tabName === 'projects' ? styles.active : ''}>
+                                <Button
+                                    colorScheme='white'
+                                    onClick={() => changeThread('projects')}
+                                >
+                                    Projects
+                                </Button>
+                            </div>
+                            }
+                        </Flex>
+                    }
+                    {
+                        composeDraft && !isComposing &&
+                        <Button className={styles.resumeDraft}
+                                onClick={() => commonService.toggleComposing(true)}>
+                            Resume Draft
+                        </Button>
+                    }
+                </div>
+            </Flex>
 
 
             {(isLoading || summaryIsLoading || syncingEmails) && (

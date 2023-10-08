@@ -8,7 +8,6 @@ import {
     InitialSocketType,
     InitialDraftStateType,
     InitialUserState, InitialMembershipStateType,
-    InitialUndoBodyType, 
     InitialCommonApisStateType,
     InitialKeyNavigationStateType,
     InitialGlobalEventsStateType,
@@ -25,7 +24,6 @@ export declare type StateType = {
     draft: InitialDraftStateType,
     users: InitialUserState,
     memberships: InitialMembershipStateType,
-    undoBody: InitialUndoBodyType,
     commonApis: InitialCommonApisStateType,
     keyNavigation: InitialKeyNavigationStateType,
     globalEvents: InitialGlobalEventsStateType

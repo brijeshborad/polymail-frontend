@@ -9,3 +9,5 @@ export * from './key-action.service';
 export * from './global-event.service';
 export * from './message.service';
 export * from './project.service';
+export * from './membership.service';
+export * from './auth.service';

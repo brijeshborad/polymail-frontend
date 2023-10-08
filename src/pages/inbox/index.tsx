@@ -7,13 +7,14 @@ import {useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {User} from "@/models";
 import dynamic from 'next/dynamic'
+import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
+
 const InboxHeaderProjectsList = dynamic(
     () => import('@/components/project/inbox-header-projects-list').then((mod) => mod.InboxHeaderProjectsList)
 )
 const Message = dynamic(
     () => import('@/components/messages').then((mod) => mod.Message)
 )
-import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 const SelectedThreads = dynamic(
     () => import('@/components/threads/selected-threads').then((mod) => mod.default)
 )
@@ -54,7 +55,7 @@ function InboxPage() {
     return (
         <div>
             <Flex padding={'16px 40px 15px'} backgroundColor={'#FFFFFF'} borderBottom={'1px solid #F3F4F6'} gap={3}
-                                 overflowX={'auto'}>
+                  overflowX={'auto'}>
                 {isLoading && <SkeletonLoader height={'36px'} skeletonLength={6} width={'216px'}/>}
                 <InboxHeaderProjectsList size={size}/>
             </Flex>
@@ -63,17 +64,17 @@ function InboxPage() {
                 <Grid className={styles.mailGrid} templateColumns='30% auto' gap={4} height={'100%'}>
                     <GridItem w='100%'>
                         {((size < 991 && !selectedThread) || size > 991) &&
-                        <ThreadsSideBar cachePrefix={'inbox-page'} />}
+                        <ThreadsSideBar cachePrefix={'inbox-page'}/>}
                     </GridItem>
                     <GridItem w='100%'>
                         {((size < 991 && selectedThread) || size > 991) && (
-                          <>
-                            {isMultiItemsSelected ? (
-                              <SelectedThreads />
-                            ) : (
-                              <Message/>
-                            )}
-                          </>
+                            <>
+                                {isMultiItemsSelected ? (
+                                    <SelectedThreads/>
+                                ) : (
+                                    <Message/>
+                                )}
+                            </>
                         )}
                     </GridItem>
                 </Grid>

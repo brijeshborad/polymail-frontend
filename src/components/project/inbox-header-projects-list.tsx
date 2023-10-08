@@ -6,16 +6,13 @@ import {StateType} from "@/types";
 import {Project, UserProjectOnlineStatus} from "@/models";
 import Router from "next/router";
 import {PlusIcon} from "@/icons/plus.icon";
-import {updateThreadState} from "@/redux/threads/action-reducer";
-import {updateMessageState} from "@/redux/messages/action-reducer";
-import {updateCommonState} from "@/redux/common-apis/action-reducer";
+import {commonService, messageService, threadService} from "@/services";
 
 export function InboxHeaderProjectsList(props: { size: number }) {
     const {projects, isLoading} = useSelector((state: StateType) => state.projects);
     const {onlineUsers} = useSelector((state: StateType) => state.commonApis);
     const [projectData, setProjectData] = useState<Project[]>([]);
     const [projectDataLength, setProjectDataLength] = useState<Project[]>([]);
-    const dispatch = useDispatch();
     const projectButtonRef = React.useRef<HTMLDivElement | null | any>(null);
     const [maxSize, setMaxSize] = useState<number>(5);
 
@@ -41,26 +38,16 @@ export function InboxHeaderProjectsList(props: { size: number }) {
     }
 
     function applyChanges() {
-        dispatch(
-            updateThreadState({
-                threads: [],
-                success: false,
-                updateSuccess: false,
-                selectedThread: null,
-                tabValue: ''
-            }),
-        );
-        dispatch(updateMessageState({selectedMessage: null, messages: []}));
+        threadService.pageChange();
+        messageService.pageChange();
     }
 
     return (
         <>
             <>
                 <Button alignItems={'center'} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
-                        onClick={() => dispatch(updateCommonState({
-                            showCreateProjectModal: true,
-                            shouldRedirectOnCreateProject: true
-                        }))} padding={'7px'} minWidth={'216px'}
+                        onClick={() => commonService.toggleCreateProjectModel(true, true)} padding={'7px'}
+                        minWidth={'216px'}
                         border={'1px dashed #E5E7EB'} borderRadius={'8px'} h={'fit-content'}
                         maxWidth={'216px'} className={'create-project-button'}>
                     <div className={'folder-icon'}>
@@ -85,13 +72,14 @@ export function InboxHeaderProjectsList(props: { size: number }) {
                             {(onlineUsers && onlineUsers.projects[project.id!] || [])
                                 .filter((t: UserProjectOnlineStatus) => t.isOnline).slice(0, 5)
                                 .map((item: UserProjectOnlineStatus, index: number) => (
-                                    <Tooltip label={item.name} placement='bottom' bg='gray.300' color='black' key={index}>
-                                        <div className={'member-photo'}
-                                             style={{background: '#000', border: `2px solid #${item.color}`}}>
-                                            {item.avatar && <Image src={item.avatar} width="24" height="24"
-                                                                   alt=""/>}
-                                        </div>
-                                    </Tooltip>
+                                        <Tooltip label={item.name} placement='bottom' bg='gray.300' color='black'
+                                                 key={index}>
+                                            <div className={'member-photo'}
+                                                 style={{background: '#000', border: `2px solid #${item.color}`}}>
+                                                {item.avatar && <Image src={item.avatar} width="24" height="24"
+                                                                       alt=""/>}
+                                            </div>
+                                        </Tooltip>
                                     )
                                 )
                             }

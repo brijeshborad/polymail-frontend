@@ -1,15 +1,16 @@
-import { changePassword, magicCode, updateAuthState } from "@/redux/auth/action-reducer";
+import {changePassword, magicCode} from "@/redux/auth/action-reducer";
 import styles from "@/styles/Login.module.css";
-import { StateType } from "@/types";
-import { debounce, encryptData } from "@/utils/common.functions";
+import {StateType} from "@/types";
+import {debounce, encryptData} from "@/utils/common.functions";
 import LocalStorageService from "@/utils/localstorage.service";
-import { ArrowBackIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import { Button, Flex, Heading, Input, InputGroup, InputRightElement, Text } from "@chakra-ui/react";
+import {ArrowBackIcon, ViewIcon, ViewOffIcon} from "@chakra-ui/icons";
+import {Button, Flex, Heading, Input, InputGroup, InputRightElement, Text} from "@chakra-ui/react";
 import Image from "next/image";
 import Link from "next/link";
-import Router, { useRouter } from "next/router";
-import { useCallback, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import Router, {useRouter} from "next/router";
+import {useCallback, useEffect, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {authService} from "@/services";
 
 
 export default function ForgotPassword() {
@@ -57,29 +58,13 @@ export default function ForgotPassword() {
         }))
     }
 
-    // useEffect(() => {
-    //     if (passwordChangeSuccess) {
-    //         Toaster({
-    //             desc: "Password changed successfully",
-    //             title: "Password changed",
-    //             type: 'success'
-    //         });
-    //         dispatch(updateAuthState({passwordChangeSuccess: false}));
-    //         LocalStorageService.clearStorage();
-    //         Router.push(`/onboarding`);
-    //         if (magicCodeResponse && magicCodeResponse.token) {
-    //             dispatch(updateAuthState({magicCodeSuccess: false}));
-    //         }
-    //     }
-    // })
-
     useEffect(() => {
         if (router.query) {
             if (router.query.code) {
                 let body = {
                     code: router.query.code.toString()
                 }
-                dispatch(magicCode({body:body}));
+                dispatch(magicCode({body: body}));
             }
         }
     }, [dispatch, router.query])
@@ -87,22 +72,23 @@ export default function ForgotPassword() {
     const updatePassword = () => {
         if (magicCodeSuccess) {
             let newPHash = encryptData(newPassword.newP);
-            dispatch(changePassword({body: {
-                newPasswordTwo: newPHash, newPasswordOne: newPHash
-            },
-             toaster: {
+            dispatch(changePassword({
+                    body: {
+                        newPasswordTwo: newPHash, newPasswordOne: newPHash
+                    },
+                    toaster: {
                         success: {
                             desc: "Password changed successfully",
                             title: "Password changed",
                             type: 'success'
                         }
                     },
-        }
+                }
             ));
             LocalStorageService.clearStorage();
             Router.push(`/onboarding`);
             if (magicCodeResponse && magicCodeResponse.token) {
-                dispatch(updateAuthState({magicCodeSuccess: false}));
+                authService.setAuthState({magicCodeSuccess: false});
             }
         }
 
@@ -154,49 +140,6 @@ export default function ForgotPassword() {
                         {!passwordMatch &&
                         <Text fontSize={'11px'} fontWeight={600} color={'crimson'}>Passwords do not match</Text>}
                     </Flex>
-                    {/*<Flex direction={'column'} mb={5}>*/}
-                    {/*    <Text fontSize={'13px'} fontWeight={500} textAlign={'left'}>New Password</Text>*/}
-                    {/*    /!*<Input placeholder={'Enter New Password'} size='md' onChange={handleChange}*!/*/}
-                    {/*    /!*       className={`${styles.loginInput}`} type={'email'}/>*!/*/}
-
-                    {/*    <InputGroup size='sm'>*/}
-                    {/*        <Input tabIndex={3} onChange={handleChange}*/}
-                    {/*               borderRadius={8} className={`${styles.loginInput}`}*/}
-                    {/*               border={'1px solid #E5E5E5'} fontSize={'13px'} placeholder='Confirm Password'*/}
-                    {/*               size='sm' type={passwordShow ? 'text' : 'password'}*/}
-                    {/*               isInvalid={!newPassword}/>*/}
-                    {/*        <InputRightElement width='fit-content' h='40px'>*/}
-                    {/*            <Button h='40px' background={"transparent"} size='sm'*/}
-                    {/*                    onClick={() => handlePasswordShow()}>*/}
-                    {/*                {!passwordShow ? <ViewOffIcon/> : <ViewIcon/>}*/}
-                    {/*            </Button>*/}
-                    {/*        </InputRightElement>*/}
-                    {/*    </InputGroup>*/}
-                    {/*</Flex>*/}
-                    {/*<Flex direction={'column'} mb={3}>*/}
-                    {/*    <Text fontSize={'11px'} fontWeight={600}>Confirm Password</Text>*/}
-                    {/*    <InputGroup size='sm'>*/}
-                    {/*        <Input tabIndex={3} onChange={handleChange}*/}
-                    {/*               borderRadius={8}*/}
-                    {/*               border={'1px solid #E5E5E5'} fontSize={'13px'} placeholder='Confirm Password'*/}
-                    {/*               size='sm' type={passwordShow['confirmP'] ? 'text' : 'password'}*/}
-                    {/*               isInvalid={!newPassword}*/}
-                    {/*               errorBorderColor={!passwordMatch ? 'crimson' : ''}/>*/}
-                    {/*        <InputRightElement width='fit-content'>*/}
-                    {/*            <Button h='1.75rem' background={"transparent"} size='sm'*/}
-                    {/*                    onClick={() => handlePasswordShow()}>*/}
-                    {/*                {passwordShow['confirmP'] ? <ViewOffIcon/> : <ViewIcon/>}*/}
-                    {/*            </Button>*/}
-                    {/*        </InputRightElement>*/}
-                    {/*    </InputGroup>*/}
-                    {/*    {!passwordMatch &&*/}
-                    {/*    <Text fontSize={'11px'} fontWeight={600} color={'crimson'}>Passwords do not match</Text>}*/}
-                    {/*</Flex>*/}
-                    {/*<Flex direction={'column'}>*/}
-                    {/*    <Text fontSize={'13px'} fontWeight={500} textAlign={'left'}>Confirm Password</Text>*/}
-                    {/*    <Input placeholder={'Confirm Password'} size='md'*/}
-                    {/*           className={`${styles.loginInput}`} type={'email'}/>*/}
-                    {/*</Flex>*/}
                 </div>
 
                 <Button className={styles.loginButton} py={'25px'} mb={12} onClick={() => updatePassword()}>Reset

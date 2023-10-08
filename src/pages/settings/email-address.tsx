@@ -62,6 +62,7 @@ function EmailAddress() {
             accountStateData.accounts = data;
             accountService.setAccountState(accountStateData);
         }
+        // eslint-disable-next-line
     }, [success, accountData, dispatch])
 
 
@@ -89,6 +90,7 @@ function EmailAddress() {
             setAccountData(null)
             onDeleteModalClose()
         }
+        // eslint-disable-next-line
     }, [dispatch, accountData])
 
 

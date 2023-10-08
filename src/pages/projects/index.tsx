@@ -45,7 +45,6 @@ function Index() {
     }, [router.query.favorite, projects, projectSearchedString])
 
 
-
     const handleDragStart = (index: number, e: ChangeEvent | any) => {
         e.dataTransfer.setData('index', index);
     };
@@ -86,7 +85,7 @@ function Index() {
         let body = {
             order: nextPosition(itemList, dropIndex, draggedItem.id)
         }
-        dispatch(updateProject({body:{id: draggedItem.id!, body:body}}))
+        dispatch(updateProject({body: {id: draggedItem.id!, body: body}}))
 
         const newItems = (itemList || []).filter((_, index) => index !== draggedIndex);
         newItems.splice(dropIndex, 0, draggedItem);
@@ -133,42 +132,51 @@ function Index() {
     return (
         <>
             <Flex maxH={"calc(100vh - 65px)"} overflow={"auto"}>
-                <Flex direction={'column'} gap={7} maxWidth={'895px'} padding={'27px 20px'} margin={'0 auto'} w={'100%'} h={'100%'}
+                <Flex direction={'column'} gap={7} maxWidth={'895px'} padding={'27px 20px'} margin={'0 auto'} w={'100%'}
+                      h={'100%'}
                       className={styles.projectListPage}>
                     <Flex align={'center'} justify={'space-between'}>
                         <Heading as='h4' fontSize={'24px'} lineHeight={'29px'} fontWeight={600} color={'#374151'}>Projects
                             <Badge backgroundColor={'#EBF2FF'} fontSize={'14px'} lineHeight={'16px'} color={'#0556FF'}
-                            padding={'3px 6px'} borderRadius={'4px'} marginLeft={2}>{itemList && itemList.length}</Badge></Heading>
+                                   padding={'3px 6px'} borderRadius={'4px'}
+                                   marginLeft={2}>{itemList && itemList.length}</Badge></Heading>
                         <Button className={styles.createProjectButton} color={'#ffffff'} backgroundColor={'#1F2937'}
-                                onClick={() => { Router.replace('/projects/create-project'); }}
+                                onClick={() => {
+                                    Router.replace('/projects/create-project');
+                                }}
                                 h={'auto'} borderRadius={'8px'} fontSize={'14px'} fontWeight={'500'}
                                 padding={'10px 12px'} lineHeight={'16px'}>Create Project</Button>
                     </Flex>
-                    {isLoading &&  <Flex direction="column" gap={2} mt={5}>
-                        <SkeletonLoader skeletonLength={10} />
+                    {isLoading && <Flex direction="column" gap={2} mt={5}>
+                        <SkeletonLoader skeletonLength={10}/>
                     </Flex>}
                     <Flex align={'center'} direction={'column'} gap={2}>
                         {itemList && itemList.length > 0 && itemList.map((project: Project, index: number) => (
                             <Flex key={index + 1} width={'100%'} className={styles.projects} cursor={'pointer'}
                                   align={'center'}
-                                   gap={2} paddingRight={'15px'} backgroundColor={'#ffffff'}
+                                  gap={2} paddingRight={'15px'} backgroundColor={'#ffffff'}
                                   borderRadius={8}
                                   border={'1px solid #E5E7EB'}
                             >
-                                <Flex justify={'space-between'} align={'center'} gap={3} padding={'15px 0 15px 15px'} width={'100%'}
-                                      onClick={() => router.push(`/projects/${project.id}`)} onDrop={(e) => handleDrop(e, index)}
+                                <Flex justify={'space-between'} align={'center'} gap={3} padding={'15px 0 15px 15px'}
+                                      width={'100%'}
+                                      onClick={() => router.push(`/projects/${project.id}`)}
+                                      onDrop={(e) => handleDrop(e, index)}
                                       draggable
                                       onDragStart={(e) => handleDragStart(index, e)}
                                       onDragOver={handleDragOver}>
                                     <Flex align={'center'} gap={2}>
                                         <Flex className={styles.dragIcon} cursor={'grab'}> <DragIcon/> </Flex>
                                         <div className={styles.projectIcon}>
-                                            { project?.emoji ? project.emoji : <Image src="/image/handcraft.png" width="24" height="24" alt=""/> }
+                                            {project?.emoji ? project.emoji :
+                                                <Image src="/image/handcraft.png" width="24" height="24" alt=""/>}
                                         </div>
-                                        <Text fontSize='sm' lineHeight={'16px'} color={'#0A101D'} fontWeight={'500'}>{project.name}</Text>
-                                        <Badge textTransform={'none'} backgroundColor={'#F3F4F6'} fontSize={'11px'} fontWeight={400}
+                                        <Text fontSize='sm' lineHeight={'16px'} color={'#0A101D'}
+                                              fontWeight={'500'}>{project.name}</Text>
+                                        <Badge textTransform={'none'} backgroundColor={'#F3F4F6'} fontSize={'11px'}
+                                               fontWeight={400}
                                                color={'#374151'} lineHeight={'1'} borderRadius={50}
-                                               padding={'3px 6px'}>{project.numThreads} thread{(project.numThreads || 0) !== 1 ? 's': ''}</Badge>
+                                               padding={'3px 6px'}>{project.numThreads} thread{(project.numThreads || 0) !== 1 ? 's' : ''}</Badge>
                                         {/*<Badge backgroundColor={'rgba(0, 0, 0, 0.03)'} fontSize={'12px'} color={'#000000'}
                                        lineHeight={'1'} borderRadius={50} padding={'4px 6px'}>2 updates</Badge>*/}
                                     </Flex>
@@ -178,12 +186,15 @@ function Index() {
                                             {onlineUsers && (onlineUsers['projects'][project.id!] || [])
                                                 .filter((t: UserProjectOnlineStatus) => t.isOnline).slice(0, 5)
                                                 .map((item: UserProjectOnlineStatus, index: number) => (
-                                                <Tooltip label={item.name} placement='bottom' bg='gray.300' color='black' key={index}>
-                                                    <div className={styles.memberPhoto} style={{border: `2px solid #${item.color}`}}>
-                                                        {item.avatar && <Image src={item.avatar} width="24" height="24" alt=""/>}
-                                                    </div>
-                                                </Tooltip>
-                                            ))}
+                                                    <Tooltip label={item.name} placement='bottom' bg='gray.300'
+                                                             color='black' key={index}>
+                                                        <div className={styles.memberPhoto}
+                                                             style={{border: `2px solid #${item.color}`}}>
+                                                            {item.avatar &&
+                                                            <Image src={item.avatar} width="24" height="24" alt=""/>}
+                                                        </div>
+                                                    </Tooltip>
+                                                ))}
                                             {/*<div className={styles.memberPhoto}> +6 </div>*/}
                                         </Flex>
                                         {project.scope === "private" && (
@@ -195,7 +206,8 @@ function Index() {
                                         )}
                                         {project.projectMeta?.favorite ?
                                             <Flex align={'center'} justify={'center'} h={'20px'} w={'20px'}
-                                                  borderRadius={50} className={`${styles.projectListIcon} ${styles.projectFillStar}`}
+                                                  borderRadius={50}
+                                                  className={`${styles.projectListIcon} ${styles.projectFillStar}`}
                                                   backgroundColor={'#F3F4F6'} onClick={(e) => {
                                                 e.stopPropagation();
                                                 makeProjectFavorite(project, false)
@@ -214,7 +226,9 @@ function Index() {
                                     </Flex>
                                 </Flex>
                                 <Menu isLazy>
-                                    <MenuButton className={styles.projectListDropDownButton} borderRadius={4} backgroundColor={'#FFFFFF'} h={'20px'} fontSize={12} padding={0} minW={5} as={Button}>
+                                    <MenuButton className={styles.projectListDropDownButton} borderRadius={4}
+                                                backgroundColor={'#FFFFFF'} h={'20px'} fontSize={12} padding={0}
+                                                minW={5} as={Button}>
                                         <MenuIcon/>
                                     </MenuButton>
                                     <MenuList minW={'126px'} className={'drop-down-list'}>

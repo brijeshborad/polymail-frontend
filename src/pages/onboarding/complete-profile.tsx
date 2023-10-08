@@ -45,18 +45,6 @@ function CompleteProfile() {
         setName(event.target.value);
     }
 
-    // useEffect(() => {
-    //     if (userDetailsUpdateSuccess) {
-    //         Toaster({
-    //             desc: "Your name added successfully",
-    //             title: "Full name added success",
-    //             type: 'success'
-    //         });
-    //         Router.push('/inbox');
-
-    //     }
-    // }, [userDetailsUpdateSuccess])
-
     const submit = () => {
         let tmp = name.split(' ')
         if (name && tmp.length > 1) {

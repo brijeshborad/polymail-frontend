@@ -69,7 +69,8 @@ export default function SettingsLayout({children}: any) {
         <>
             <div className={styles.setting}>
                 <Grid templateColumns='232px auto' gap={6} h={'100%'} minHeight={'calc(100vh - 65px)'}>
-                    <GridItem display={'flex'} w='100%' className={styles.settingSideBar} padding={'40px 30px 40px 40px'}
+                    <GridItem display={'flex'} w='100%' className={styles.settingSideBar}
+                              padding={'40px 30px 40px 40px'}
                               borderRight={'1px solid #E1E3E6'} flexDirection={'column'}>
                         <Heading as='h4' mb={8} className={styles.settingTitle}> Settings </Heading>
 
@@ -89,10 +90,11 @@ export default function SettingsLayout({children}: any) {
                                 }
                             </Flex>
                         ))}
-                        <Button className={styles.backButton} borderRadius={8} height={'auto'} padding={'5px 10px'} mt={'auto'}
-                                backgroundColor={'#FFFFFF'} color={'#374151'} borderColor={'#E5E7EB'}  w={'fit-content'}
+                        <Button className={styles.backButton} borderRadius={8} height={'auto'} padding={'5px 10px'}
+                                mt={'auto'}
+                                backgroundColor={'#FFFFFF'} color={'#374151'} borderColor={'#E5E7EB'} w={'fit-content'}
                                 colorScheme='blue' variant='outline' fontSize={'14px'}
-                                leftIcon={<ArrowBackIcon />} onClick={() => router.back()}>
+                                leftIcon={<ArrowBackIcon/>} onClick={() => router.back()}>
                             Go Back
                         </Button>
                     </GridItem>

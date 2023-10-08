@@ -1,7 +1,7 @@
 import {InitialMessageStateType} from "@/types";
 import {BaseService} from "@/services/base.service";
 import {updateMessageState} from "@/redux/messages/action-reducer";
-import {Message} from "@/models";
+import {Message, MessageAttachments, MessagePart} from "@/models";
 
 class MessageService extends BaseService {
     constructor() {
@@ -20,7 +20,19 @@ class MessageService extends BaseService {
         this.setMessageState({selectedMessage: message});
     }
 
-    setMessageState(body: any) {
+    setMessageBody(body: MessagePart | null) {
+        this.setMessageState({messagePart: body});
+    }
+
+    setMessageAttachments(attachments: MessageAttachments[]) {
+        this.setMessageState({messageAttachments: attachments});
+    }
+
+    setMessages(messages: Message[]) {
+        this.setMessageState({messages: messages});
+    }
+
+    setMessageState(body: InitialMessageStateType) {
         this.dispatchAction(updateMessageState, body);
     }
 }

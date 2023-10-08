@@ -8,11 +8,12 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {useEffect, useCallback, useState} from "react";
 import {Account} from "@/models";
-import {getAllAccount, removeAccountDetails, updateAccountState} from "@/redux/accounts/action-reducer";
+import {getAllAccount, removeAccountDetails} from "@/redux/accounts/action-reducer";
 import LocalStorageService from "@/utils/localstorage.service";
-import {googleAuthLink, updateAuthState} from "@/redux/auth/action-reducer";
+import {googleAuthLink} from "@/redux/auth/action-reducer";
 import {useRouter} from "next/router";
 import {getRedirectionUrl} from "@/utils/common.functions";
+import {accountService, authService} from "@/services";
 
 function ConnectAccount() {
     const dispatch = useDispatch();
@@ -25,16 +26,16 @@ function ConnectAccount() {
         if (router.query) {
             if (router.query.access_token) {
                 LocalStorageService.updateUser('store', {token: router.query.access_token})
-                dispatch(updateAuthState({user: {token: router.query.access_token.toString() || ''}}));
+                authService.setUser({token: router.query.access_token.toString() || ''});
                 Router.replace('/onboarding/connect-account')
             }
 
             if (router.query.error) {
                 Router.replace('/onboarding', undefined, {shallow: true});
-                dispatch(updateAuthState({error: {description: 'Invalid account'}}));
+                authService.setAuthState({error: {description: 'Invalid account'}});
             }
         }
-    }, [dispatch, router.query]);
+    }, [router.query]);
 
     function oauthWithGoogle() {
         let body = {
@@ -75,9 +76,10 @@ function ConnectAccount() {
     useEffect(() => {
         if (accountData && accountData.id) {
             let data = (accounts || []).filter((item: Account) => item.id !== accountData.id)
-            dispatch(updateAccountState({accounts: data}));
+            accountService.setAccounts(data);
         }
-    }, [accountData, dispatch])
+        // eslint-disable-next-line
+    }, [accountData])
 
     const getAllAccounts = useCallback(() => {
         dispatch(getAllAccount({}));
@@ -94,21 +96,23 @@ function ConnectAccount() {
                     <Heading as='h4' size='md' fontWeight={700} color={'#0A101D'} mb={4}>Connect email
                         accounts</Heading>
                     <Flex direction={"column"} mb={10} gap={3}>
-                    {accounts && !!accounts.length && (accounts || []).map((item: Account, index: number) => (
+                        {accounts && !!accounts.length && (accounts || []).map((item: Account, index: number) => (
                             <InputGroup key={index}>
-                                <InputLeftElement h={'28px'} w={'28px'} top={'4px'} left={'4px'} backgroundColor={'#EBF2FF'}
-                                                borderRadius={'6px'}><CheckIcon color='#2A6FFF'/></InputLeftElement>
+                                <InputLeftElement h={'28px'} w={'28px'} top={'4px'} left={'4px'}
+                                                  backgroundColor={'#EBF2FF'}
+                                                  borderRadius={'6px'}><CheckIcon color='#2A6FFF'/></InputLeftElement>
                                 <Input fontSize={'14px'} h={'auto'} p={'7px 40px'} className={styles.onboardingInput}
-                                    value={item.email} readOnly />
-                                <InputRightElement h={'37px'} fontSize={'11px'}> <CloseIcon onClick={() => removeAccount(item)} color={'#9CA3AF'}/>
+                                       value={item.email} readOnly/>
+                                <InputRightElement h={'37px'} fontSize={'11px'}> <CloseIcon
+                                    onClick={() => removeAccount(item)} color={'#9CA3AF'}/>
                                 </InputRightElement>
                             </InputGroup>
-                    ))}
+                        ))}
                         <Button onClick={() => oauthWithGoogle()}
                                 className={styles.connectGoogleAccount} padding={'4px'} height={'auto'}
                                 border={'1px solid #E5E7EB'} width={'100%'} color={'#374151'}
                                 justifyContent={'flex-start'} gap={3} backgroundColor={'#FFFFFF'} fontSize={'14px'}
-                                fontWeight={'500'}  >
+                                fontWeight={'500'}>
                             <Flex backgroundColor={'#FFFFFF'} padding={'2px'} borderRadius={'6px'}>
                                 <Image src={'/image/google-logo.png'} alt={''} width={24} height={24}/>
                             </Flex>

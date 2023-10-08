@@ -46,20 +46,9 @@ function Members() {
 
     useEffect(() => {
         if (organizations && organizations.length > 0 && organizations[0].id) {
-            dispatch(getOrganizationMembers({body:{orgId: organizations[0].id}}));
+            dispatch(getOrganizationMembers({body: {orgId: organizations[0].id}}));
         }
     }, [dispatch, organizations])
-
-
-    // useEffect(() => {
-    //     if (isOrganizationRemoveSuccess) {
-    //         Toaster({
-    //             desc: 'Member is removed form organization successfully',
-    //             title: 'Remove member form organization',
-    //             type: 'success'
-    //         });
-    //     }
-    // }, [isOrganizationRemoveSuccess])
 
 
     useEffect(() => {
@@ -115,11 +104,13 @@ function Members() {
                     role: selectedMember?.role,
                     name: selectedMember?.name
                 }
-                dispatch(updateOrganizationMemberRole({body:{
-                    organizationId: organizations[0].id,
-                    accountId: selectedMember?.id,
-                    body: body
-                }}));
+                dispatch(updateOrganizationMemberRole({
+                    body: {
+                        organizationId: organizations[0].id,
+                        accountId: selectedMember?.id,
+                        body: body
+                    }
+                }));
             }
 
             onEditClose();
@@ -127,13 +118,15 @@ function Members() {
 
         } else {
             if (organizations && organizations[0] && organizations[0].id && selectedMember && selectedMember.id) {
-                dispatch(deleteMemberFromOrganization({body:{id: organizations[0].id, accountId: selectedMember?.id},toaster:{
-                    success:{
-                        desc: 'Member is removed form organization successfully',
-                        title: 'Remove member form organization',
-                        type: 'success'
+                dispatch(deleteMemberFromOrganization({
+                    body: {id: organizations[0].id, accountId: selectedMember?.id}, toaster: {
+                        success: {
+                            desc: 'Member is removed form organization successfully',
+                            title: 'Remove member form organization',
+                            type: 'success'
+                        }
                     }
-                }}))
+                }))
             }
             onDeleteModalClose()
         }

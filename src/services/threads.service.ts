@@ -25,6 +25,10 @@ class ThreadsService extends BaseService {
         this.setThreadState({selectedThread: thread});
     }
 
+    setThreads(threads: Thread[]) {
+        this.setThreadState({threads: threads});
+    }
+
     setTabValue(tabValue: string = '') {
         this.setThreadState({tabValue});
     }
@@ -52,6 +56,10 @@ class ThreadsService extends BaseService {
             selectedThread: null,
             tabValue: ''
         });
+    }
+
+    setMultiSelectionThreads(ids: string[]) {
+        this.setThreadState({multiSelection: ids});
     }
 
     toggleThreadFocused(enable: boolean) {

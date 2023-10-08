@@ -11,21 +11,26 @@ import {
     InboxIcon
 } from "@/icons";
 import React, {useEffect, useState} from "react";
-import {updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
-import {updateMembershipState} from "@/redux/memberships/action-reducer";
+import {updateThreads} from "@/redux/threads/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType, MessageHeaderTypes} from "@/types";
-import {updateMessageState} from "@/redux/messages/action-reducer";
 import {Toaster} from "@/components/common";
 import {Thread, UserProjectOnlineStatus} from "@/models";
+import dynamic from "next/dynamic";
+import {
+    MAILBOX_ARCHIVE,
+    MAILBOX_INBOX,
+    MAILBOX_SNOOZED,
+    MAILBOX_STARRED,
+    MAILBOX_TRASH,
+    MAILBOX_UNREAD
+} from "@/utils/constants";
+import dayjs from "dayjs";
+import {generateToasterId} from "@/utils/common.functions";
+import {membershipService, messageService, threadService} from "@/services";
 
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
 const MessageSchedule = dynamic(() => import("./message-schedule").then(mod => mod.default));
-import {undoBodyData} from "@/redux/undo-body/action-reducer";
-import dynamic from "next/dynamic";
-import { MAILBOX_ARCHIVE, MAILBOX_INBOX, MAILBOX_SNOOZED, MAILBOX_STARRED, MAILBOX_TRASH, MAILBOX_UNREAD } from "@/utils/constants";
-import dayjs from "dayjs";
-import {generateToasterId} from "@/utils/common.functions";
 
 export function MessagesHeader({headerType}: MessageHeaderTypes) {
     const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
@@ -33,7 +38,7 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
     const {onlineUsers} = useSelector((state: StateType) => state.commonApis);
 
     const dispatch = useDispatch();
-    const [successMessage, setSuccessMessage] = useState<{ desc: string, title: string, id: string, mailboxes: string[], threads: Thread[], thread: Thread | null}[]>([]);
+    const [successMessage, setSuccessMessage] = useState<{ desc: string, title: string, id: string, mailboxes: string[], threads: Thread[], thread: Thread | null }[]>([]);
     const [scheduledDate, setScheduledDate] = useState<string | undefined>();
 
 
@@ -48,11 +53,11 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                 })
                 successMessage.splice(0, 1);
                 setSuccessMessage(successMessage);
-                dispatch(updateMembershipState({success: false}));
+                membershipService.setMembershipState({success: false})
             }
 
         }
-    }, [membershipSuccess, dispatch, successMessage]);
+    }, [membershipSuccess, successMessage]);
 
 
     const updateMailBox = (messageBox: string, date: string = '') => {
@@ -74,7 +79,7 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                         body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_ARCHIVE, MAILBOX_TRASH].includes(item))
                         body.mailboxes = [...body.mailboxes, messageBox]
                         remove_from_list = true
-                        dispatch(updateMessageState({selectedMessage: null}));
+                        messageService.setSelectedMessage(null);
                         break;
                     case MAILBOX_TRASH:
                         if (selectedThread.mailboxes?.includes(messageBox)) {
@@ -83,7 +88,7 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                         body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_INBOX, MAILBOX_ARCHIVE].includes(item))
                         body.mailboxes = [...body.mailboxes, messageBox]
                         remove_from_list = true
-                        dispatch(updateMessageState({selectedMessage: null}));
+                        messageService.setSelectedMessage(null);
                         break;
                     case MAILBOX_ARCHIVE:
                         if (selectedThread.mailboxes?.includes(messageBox)) {
@@ -92,7 +97,7 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                         body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_INBOX, MAILBOX_TRASH].includes(item))
                         body.mailboxes = [...body.mailboxes, messageBox]
                         remove_from_list = true
-                        dispatch(updateMessageState({selectedMessage: null}));
+                        messageService.setSelectedMessage(null);
                         break;
                     case MAILBOX_STARRED:
                     case MAILBOX_UNREAD:
@@ -109,7 +114,7 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                         body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_INBOX, MAILBOX_TRASH].includes(item))
                         body.mailboxes = [...body.mailboxes, messageBox]
                         remove_from_list = true
-                        dispatch(updateMessageState({selectedMessage: null}));
+                        messageService.setSelectedMessage(null);
                         const targetDate = dayjs(date)
                         const currentDate = dayjs();
                         const secondsDifference = targetDate.diff(currentDate, 'second');
@@ -125,25 +130,20 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                 if (remove_from_list) {
                     currentThreads.splice(index1, 1)
                 }
-
-                dispatch(updateThreadState({
-                    threads: currentThreads,
-                    selectedThread: currentThreads[index1],
-                }));
-                dispatch(undoBodyData(selectedThread))
+                threadService.setThreadState({threads: currentThreads, selectedThread: currentThreads[index1]});
                 let polyToast = generateToasterId();
-                    dispatch(updateThreads({
-                        body:{
-                            id: selectedThread.id,
-                            body: body
+                dispatch(updateThreads({
+                    body: {
+                        id: selectedThread.id,
+                        body: body
+                    },
+                    toaster: {
+                        success: {
+                            type: 'undo_changes',
+                            desc: 'Thread was moved to ' + messageBox.toLowerCase() + '.',
+                            title: selectedThread?.subject || '',
+                            id: polyToast,
                         },
-                        toaster: {
-                            success: {
-                                type: 'undo_changes',
-                                desc: 'Thread was moved to ' + messageBox.toLowerCase() + '.',
-                                title: selectedThread?.subject || '',
-                                id: polyToast,
-                            },
                     },
                     undoAction: {
                         showUndoButton: true,
@@ -151,17 +151,15 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                         action: updateThreads,
                         undoBody: {
                             id: threadData.id,
-                            body:{
+                            body: {
                                 mailboxes: threadData.mailboxes || [],
                             },
                             tag: messageBox.toLowerCase(),
-                            // data: threads,
-                            // forThread: true,
                             afterUndoAction: () => {
-                                dispatch(updateThreadState({
+                                threadService.setThreadState({
                                     threads: threads || [],
-                                    selectedThread: (threads || [])[0],
-                                }));
+                                    selectedThread: (threads || [])[0]
+                                })
                             }
                         },
                         showToasterAfterUndoClick: true
@@ -186,21 +184,21 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                 </Flex>
 
                 <Flex gap={3} align={'center'}>
-                <Flex alignItems={'center'} justifyContent={'end'} className={'member-images'}>
-                      {(onlineUsers && selectedThread && onlineUsers['threads'][selectedThread.id!] || [])
-                          .filter((t: UserProjectOnlineStatus) => t.isOnline).slice(0, 5)
-                          .map((item: UserProjectOnlineStatus, index: number) => (
-                                  <Tooltip label={item.name} placement='bottom' bg='gray.300' color='black' key={index}>
-                                      <div className={'member-photo'}
-                                           style={{background: '#000', border: `2px solid #${item.color}`}}>
-                                          {item.avatar && <Image src={item.avatar} width="24" height="24"
-                                                                 alt=""/>}
-                                      </div>
-                                  </Tooltip>
-                              )
-                          )
-                      }
-                  </Flex>
+                    <Flex alignItems={'center'} justifyContent={'end'} className={'member-images'}>
+                        {(onlineUsers && selectedThread && onlineUsers['threads'][selectedThread.id!] || [])
+                            .filter((t: UserProjectOnlineStatus) => t.isOnline).slice(0, 5)
+                            .map((item: UserProjectOnlineStatus, index: number) => (
+                                    <Tooltip label={item.name} placement='bottom' bg='gray.300' color='black' key={index}>
+                                        <div className={'member-photo'}
+                                             style={{background: '#000', border: `2px solid #${item.color}`}}>
+                                            {item.avatar && <Image src={item.avatar} width="24" height="24"
+                                                                   alt=""/>}
+                                        </div>
+                                    </Tooltip>
+                                )
+                            )
+                        }
+                    </Flex>
                     {headerType === 'inbox' && <AddToProjectButton/>}
                     {!(selectedThread?.mailboxes || []).includes(MAILBOX_INBOX) && (
                         <Tooltip label='Inbox' placement='bottom' bg='gray.300' color='black'>
@@ -212,7 +210,7 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                     {!(selectedThread?.mailboxes || []).includes(MAILBOX_ARCHIVE) && (
                         <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
                             <button onClick={() => updateMailBox(MAILBOX_ARCHIVE)} className='archive-button-icon'>
-                                <ArchiveIcon />
+                                <ArchiveIcon/>
                             </button>
                         </Tooltip>
                     )}
