@@ -4,3 +4,4 @@ export * from './socket.service';
 export * from './threads.service';
 export * from './user.service';
 export * from './key-action.service';
+export * from './global-event.service';
