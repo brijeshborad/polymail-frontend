@@ -9,17 +9,12 @@ export default function Notification() {
 
   useEffect(() => {
     setTimeout(() => {
-      const dateAskedNotificationPermission = localStorage.getItem('_dateAskedNotificationPermission')
-      if(!isPermissionGranted()) {
-        const olderThanAWeek = dayjs(dateAskedNotificationPermission).diff(dayjs(), 'days') >= 7
-        if(!dateAskedNotificationPermission || olderThanAWeek) {
+      if (!isPermissionGranted()) {
+        if (shouldRequestPermission()) {
           requestPermission()
         }
-
       }
     }, 2000);
-
-
   }, [])
 
   useEffect(() => {
@@ -28,6 +23,16 @@ export default function Notification() {
       showNotification(event.data)
     }
   }, [incomingEvent])
+
+  function shouldRequestPermission(): boolean {
+    const dateAskedNotificationPermission = localStorage.getItem('_dateAskedNotificationPermission')
+    const diffInDays = dayjs().diff(dayjs(dateAskedNotificationPermission), 'days')
+
+    if (!dateAskedNotificationPermission || diffInDays > 1) {
+      return true
+    }
+    return false
+  }
 
   function requestPermission() {
     if (!("Notification" in window)) {
@@ -42,19 +47,23 @@ export default function Notification() {
   function isPermissionGranted() {
     return window.Notification.permission === 'granted'
   }
-  
+
   function showNotification(notification: NotificationProps) {
     if (!isPermissionGranted()) {
-      requestPermission()
+      if (shouldRequestPermission()) {
+        requestPermission()
+      }
       return
     }
 
+    console.log(notification)
+
     new window.Notification(notification.title, {
-      icon: 'https://polymail.com/img/apple-touch-icon.png',
-      body: notification?.data?.body || ''
+      icon: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}image/logo.png`,
+      body: notification?.data?.body || 'test...'
     })
   }
-  
+
   return (
     <></>
   )
