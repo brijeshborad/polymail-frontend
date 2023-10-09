@@ -168,7 +168,7 @@ class ThreadsService extends BaseService {
                 desc: '',
             };
             if (isThreadMultiSelection) {
-                toasterSuccessMessage.title`${(multiSelection || []).length} threads added to ${item.name?.toLowerCase()}`;
+                toasterSuccessMessage.title = `${(multiSelection || []).length} threads added to ${item.name?.toLowerCase()}`;
             } else {
                 toasterSuccessMessage.desc = 'Thread was added to ' + item.name?.toLowerCase() + '.';
                 toasterSuccessMessage.title = selectedThread?.subject || '';

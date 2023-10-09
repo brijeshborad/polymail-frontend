@@ -94,7 +94,7 @@ export function ComposeBox(props: any) {
             });
             setCollabId(newCollabId)
         }
-    }, [collabId, composeDraft])
+    }, [collabId])
 
     useEffect(() => {
         if (composeDraft && composeDraft.id && !isContentSet) {
