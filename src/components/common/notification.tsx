@@ -56,8 +56,6 @@ export default function Notification() {
       return
     }
 
-    console.log(notification)
-
     new window.Notification(notification.title, {
       icon: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}image/logo.png`,
       body: notification?.data?.body || 'test...'
