@@ -16,6 +16,7 @@ import {
 } from "@/utils/cache.functions";
 import {getProjectSummary} from "@/redux/common-apis/action-reducer";
 import {accountService, commonService, socketService, threadService} from "@/services";
+import { fireEvent } from "@/redux/global-events/action-reducer";
 
 const ThreadsSideBarList = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarList), {ssr: false});
 
@@ -129,10 +130,19 @@ export function ThreadsSideBarTab(props: TabProps) {
     useEffect(() => {
         if (newMessage && newMessage.name === 'new_message') {
             console.log('---NEW MESSAGE---', newMessage);
+            dispatch(fireEvent({
+              event: {
+                type: 'show-notification',
+                data: {
+                  title: "You got a new message",
+                  body: "Read it now"
+                }
+              },
+            }))
             socketService.updateSocketMessage(null);
             getAllThread();
         }
-    }, [getAllThread, newMessage])
+    }, [getAllThread, newMessage, dispatch])
 
     useEffect(() => {
         if (selectedAccount && success) {

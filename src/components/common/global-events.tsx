@@ -2,6 +2,7 @@ import {useEffect} from "react";
 import KeyboardNavigationListener from "./keyboard-navigation";
 import {useDispatch} from "react-redux";
 import {globalEventService} from "@/services";
+import Notification from "./notification";
 
 export default function GlobalEvents() {
     const dispatch = useDispatch()
@@ -22,6 +23,9 @@ export default function GlobalEvents() {
     }, [dispatch])
 
     return (
+      <>
+        <Notification />
         <KeyboardNavigationListener/>
+      </>
     )
 }
