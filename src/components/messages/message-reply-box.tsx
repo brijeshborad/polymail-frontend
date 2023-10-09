@@ -33,6 +33,7 @@ import { updateThreadState } from "@/redux/threads/action-reducer";
 import { getCacheMessages, setCacheMessages } from "@/utils/cache.functions";
 import CollabRichTextEditor from "../common/collab-rich-text-editor";
 import { MAILBOX_DRAFT } from "@/utils/constants";
+import {draftService} from "@/services";
 
 dayjs.extend(relativeTime)
 
@@ -499,7 +500,8 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
   const discardMessage = () => {
     setIsReplyDropdownOpen(false)
-    setReplyBoxHide(false)
+    setReplyBoxHide(false);
+    draftService.setDraftState({draft: {...draft, updated: ''}});
     dispatch(fireEvent({
       event: {
         data: '',
