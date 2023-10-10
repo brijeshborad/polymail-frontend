@@ -1,4 +1,4 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {createSlice, current, PayloadAction} from "@reduxjs/toolkit";
 import {InitialDraftStateType, ReducerActionType} from "@/types";
 
 const initialState: any = {
@@ -50,12 +50,14 @@ const draftSlice = createSlice({
                 isForCompose
             }
         }: PayloadAction<any>) => {
+            let {composeDraft, draft} = current(state);
+            let finalUpdates: any = {...(isForCompose ? composeDraft: draft), ...updatedDraft}
             return {
                 ...state,
                 ...(isForCompose ? {
-                    composeDraft: updatedDraft,
-                    updatedComposeDraft: updatedDraft
-                } : {draft: updatedDraft, updatedDraft}),
+                    composeDraft: finalUpdates,
+                    updatedComposeDraft: finalUpdates
+                } : {draft: finalUpdates, finalUpdates}),
                 isLoading: false
             }
         },

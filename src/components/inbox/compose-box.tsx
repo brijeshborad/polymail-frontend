@@ -312,9 +312,6 @@ export function ComposeBox(props: any) {
                     return;
                 }
                 if (composeDraft && composeDraft.id) {
-                    if (composeDraft?.projects?.length) {
-                        delete composeDraft?.projects;
-                    }
                     dispatch(updatePartialMessage({body: {id: composeDraft.id, body: body, fromCompose: true}}));
                 } else {
                     // setIsDraftUpdated(true);
@@ -465,6 +462,7 @@ export function ComposeBox(props: any) {
 
     useEffect(() => {
         if (composeDraft && composeDraft.id) {
+            draftService.setResumeDraft(composeDraft);
             let cacheMessages = getCacheMessages();
             setCacheMessages({
                 ...cacheMessages,

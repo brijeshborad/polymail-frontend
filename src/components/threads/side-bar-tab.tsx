@@ -116,7 +116,7 @@ export function ThreadsSideBarTab(props: TabProps) {
                 }
             }
         }
-    }, [dispatch, getProjectId, isSummaryApiCalled, props.cachePrefix, selectedAccount, tabName, tabValue]);
+    }, [dispatch, isSummaryApiCalled, projectId, props.cachePrefix, selectedAccount, tabName, tabValue]);
 
     useEffect(() => {
         if (threadListSuccess && selectedAccount) {

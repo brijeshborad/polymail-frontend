@@ -253,9 +253,10 @@ class ThreadsService extends BaseService {
     removeThreadFromProject(item: Project, isOnProjectRoute: boolean = false) {
         let {selectedThread: thread, threads} = this.getThreadState();
         let {isComposing} = commonService.getCommonState();
+        let {composeDraft} = draftService.getDraftState();
         let selectedThread: any = thread;
         if (isComposing) {
-            selectedThread = {...thread, id: selectedThread.threadId}
+            selectedThread = {...thread, id: composeDraft?.threadId}
         }
         if (selectedThread && selectedThread.id) {
             let polyToast = generateToasterId();

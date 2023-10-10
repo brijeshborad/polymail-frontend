@@ -89,7 +89,7 @@ export function AddToProjectButton() {
 
     function checkProjects(e: MouseEvent | any) {
         if (e.key.toLowerCase() === 'enter' && filteredProjects.length === 1) {
-            threadService.addThreadToProject(filteredProjects[0], addToProjectRef, true);
+            threadService.addThreadToProject(filteredProjects[0], addToProjectRef, isComposing);
         }
     }
 
@@ -100,7 +100,8 @@ export function AddToProjectButton() {
     }, [incomingEvent, setDropDownOpen]);
 
     const removeProjectFromThread = (item: Project) => {
-        if (selectedThread && selectedThread.id) {
+        let finalThread = isComposing ? composeDraft : selectedThread;
+        if (finalThread && finalThread.id) {
             let isOnProjectView: boolean = !!(router.query.project && router.query.project === item.id);
             threadService.removeThreadFromProject(item, isOnProjectView)
             if (!isComposing) {
@@ -119,7 +120,7 @@ export function AddToProjectButton() {
 
     const addProjectToThread = (item: Project) => {
         if (selectedThread || composeDraft) {
-            threadService.addThreadToProject(item, null, true);
+            threadService.addThreadToProject(item, null, isComposing);
             setFilteredProjects((filteredProjects || []).filter((project: Project) => project.id !== item.id));
         }
     }
