@@ -48,6 +48,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     const dispatch = useDispatch();
     const {isComposing} = useSelector((state: StateType) => state.commonApis);
     const [scheduledDate, setScheduledDate] = useState<string | undefined>();
+    const [isMoreClicked, setIsMoreClicked] = useState(false)
 
 
     useEffect(() => {
@@ -168,7 +169,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                           onClose={() => setIsMoreDropdownOpen(false)}
                         >
                             <MenuButton
-                                onClick={() => setIsMoreDropdownOpen(!isMoreDropdownOpen)}
+                                onClick={() => {setIsMoreDropdownOpen(!isMoreDropdownOpen)}}
                                 className={styles.tabListMoreButton} minWidth={'60px'} height={'auto'}
                                 backgroundColor={'transparent'} border={'1px solid #D1D5DB'}
                                 lineHeight={1}
@@ -312,9 +313,17 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                     </Tab>
                     }
 
-                    <Menu isOpen={isMoreDropdownOpen} onClose={() => setIsMoreDropdownOpen(false)}>
+                    <Menu 
+                      isOpen={isMoreDropdownOpen} 
+                      onClose={() => {
+                        setIsMoreDropdownOpen(false)
+                        setIsMoreClicked(false)
+                      }}>
                         <MenuButton
-                            onClick={() => setIsMoreDropdownOpen(!isMoreDropdownOpen)}
+                            onClick={() => {
+                              setIsMoreDropdownOpen(!isMoreDropdownOpen)
+                              setIsMoreClicked(true)
+                            }}
                             className={styles.tabListMoreButton} minWidth={'80px'}
                             borderLeft={'1px solid #D1D5DB'}
                             borderRadius={0} backgroundColor={'transparent'} height={'auto'}
@@ -326,7 +335,12 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                         </MenuButton>
                         <MenuList 
                           className={`${styles.tabListDropDown} drop-down-list`}
-                          onMouseLeave={() => setIsMoreDropdownOpen(false)}
+                          onMouseLeave={() => {
+                            if(!isMoreClicked) {
+                              setIsMoreDropdownOpen(false)
+                              setIsMoreClicked(false)
+                            }
+                          }}
                         >
                             {['TRASH', 'STARRED', 'ARCHIVE', 'DRAFT'].includes(tab) &&
                             <MenuItem
