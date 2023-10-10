@@ -22,7 +22,8 @@ export function MessageBox(props: any) {
     const {isExpanded} = props
     const [emailList, setEmailList] = useState<any>([]);
     const dispatch = useDispatch();
-    const {selectedMessage} = useSelector((state: StateType) => state.messages);
+    const {selectedMessage, error} = useSelector((state: StateType) => state.messages);
+    const [isEyeShow, setIsEyeShow] = useState<any>(false);
 
     useEffect(() => {
         if (props.threadDetails.to && props.threadDetails.to.length > 1) {
@@ -44,7 +45,16 @@ export function MessageBox(props: any) {
 
     };
 
+    useEffect(() => {
+        setIsEyeShow(props?.item.scope !== 'visible')
+    }, [props?.item.scope, error])
+
     const setScope = (type: string, item: any) => {
+        if (type !== 'visible') {
+            setIsEyeShow(true)
+        } else {
+            setIsEyeShow(false)
+        }
         if (item && item.id) {
             let body = {scope: type}
             dispatch(updateMessage({body: {id: item.id, body}}))
@@ -75,12 +85,12 @@ export function MessageBox(props: any) {
                 </div>
 
                 <Flex w={'100%'} direction={'column'}>
-                    <Flex align={'center'} justify={'space-between'} mb={1}>
+                    <Flex align={'center'} justify={'space-between'} mb={1} minH={5}>
                         <Heading as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400}
                                  letterSpacing={'-0.13px'}
                                  lineHeight={1}>{message.from.name || message.from.email}</Heading>
                         <Flex align={'center'} className={styles.mailBoxTime} gap={3}>
-                            {props?.item.scope !== 'visible' ?
+                            {isEyeShow ?
                                 <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
                                     <EyeSlashedIcon/>
                                 </Flex> : ''}

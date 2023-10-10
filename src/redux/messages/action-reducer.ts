@@ -9,7 +9,8 @@ const initialState: any = {
     messagePart: null,
     messageAttachments: [],
     isLoading: false,
-    attachmentUrl: null
+    attachmentUrl: null,
+    error: null,
 } as InitialMessageStateType
 
 const messagesSlice = createSlice({
@@ -67,7 +68,7 @@ const messagesSlice = createSlice({
         },
 
         updateMessage: (state: InitialMessageStateType, _action: PayloadAction<ReducerActionType>) => {
-            return {...state, isLoading: false}
+            return {...state, isLoading: false, error: null}
         },
         updateMessageSuccess: (state: InitialMessageStateType, {payload: message}: PayloadAction<{}>) => {
             let currentMessages = [...(current(state).messages || [])] as Message[];
@@ -77,10 +78,10 @@ const messagesSlice = createSlice({
                 ...currentMessages[index1],
                 scope: messageData.scope || 'visible'
             };
-            return {...state, messages: [...currentMessages], isLoading: false}
+            return {...state, messages: [...currentMessages], isLoading: false, error: null}
         },
-        updateMessageError: (state: InitialMessageStateType,  _action: PayloadAction<any>) => {
-            return {...state, isLoading: false}
+        updateMessageError: (state: InitialMessageStateType, {payload: error}: PayloadAction<any>) => {
+            return {...state, isLoading: false, error}
         },
 
         updateMessageState: (state: InitialMessageStateType, action: PayloadAction<InitialMessageStateType>) => {
