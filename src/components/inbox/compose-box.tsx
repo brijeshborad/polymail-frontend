@@ -141,12 +141,6 @@ export function ComposeBox(props: any) {
         }
     }, [composeDraft, isContentSet, props.isProjectView])
 
-    useEffect(() => {
-        if (props.isOpen) {
-            handleEditorScroll();
-        }
-    }, [props.isOpen]);
-
     const isValid = (email: string, type: string) => {
         let error = null;
         if ((emailRecipients[type as keyof RecipientsType].items || []).map(r => r.email).includes(email)) {

@@ -11,6 +11,7 @@ const initialState: any = {
     isLoading: false,
     attachmentUrl: null,
     error: null,
+    showMessageBox: true,
 } as InitialMessageStateType
 
 const messagesSlice = createSlice({

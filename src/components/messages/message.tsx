@@ -39,7 +39,8 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
         isLoading: messageLoading,
         messageAttachments,
         selectedMessage,
-        attachmentUrl
+        attachmentUrl,
+        showMessageBox: isShowingMessageBox
     } = useSelector((state: StateType) => state.messages);
     const {
         selectedThread,
@@ -57,7 +58,6 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
     const [messageDetailsForReplyBox, setMessageDetailsForReplyBox] = useState<MessageModel | null>(null);
     const [passSelectedThreadData, setPassSelectedThreadData] = useState<MessageModel | null>(null);
     const [isLoaderShow, setIsLoaderShow] = useState<boolean>(false);
-    const [showReplyBox, setShowReplyBox] = useState<boolean>(false);
 
     const dispatch = useDispatch();
 
@@ -72,14 +72,10 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
     useEffect(() => {
         if (selectedThread && selectedThread?.id) {
             setPassSelectedThreadData(selectedThread);
-            setShowReplyBox(false)
             setIndex(null);
             setMessageDetailsForReplyBox(null);
             setReplyType('reply');
             messageService.setMessages(selectedThread.messages || []);
-            setTimeout(() => {
-                setShowReplyBox(true)
-            }, 200);
         }
     }, [dispatch, selectedThread])
 
@@ -280,7 +276,7 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
         return (
             <>
                 {!selectedThread && showBlankPage()}
-                {selectedThread && <Flex flexDir={'column'} height={'100%'}>
+                {selectedThread && isShowingMessageBox && <Flex flexDir={'column'} height={'100%'}>
                     <>
                         <MessagesHeader inboxMessages={inboxMessages} index={index}
                                         headerType={'inbox'}/>
@@ -304,14 +300,12 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
                                     ))}
                                 </div>
 
-                                {showReplyBox &&
                                 <MessageReplyBox
                                     isProjectView={isProjectView}
                                     emailPart={(messagePart?.data || '')} messageData={messageDetailsForReplyBox}
                                     threadDetails={index !== null && inboxMessages[index]}
                                     replyType={replyType}
                                     hideAndShowReplayBox={hideAndShowReplayBox} replyTypeName={replyTypeName}/>
-                                }
                             </Flex>
                         </Flex>
                     </>

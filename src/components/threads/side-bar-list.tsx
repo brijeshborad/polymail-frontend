@@ -129,7 +129,10 @@ export function ThreadsSideBarList(props: ThreadListProps) {
                     isThreadFocused: false,
                     multiSelection: []
                 });
-                messageService.setMessageState({selectedMessage: (item.messages || [])[0], messages: []})
+                messageService.setMessageState({selectedMessage: (item.messages || [])[0], messages: [], showMessageBox: false})
+                setTimeout(() => {
+                    messageService.setMessageState({showMessageBox: true});
+                }, 10);
                 globalEventService.fireEvent({data: '', type: 'richtexteditor.discard'});
             }
         }
