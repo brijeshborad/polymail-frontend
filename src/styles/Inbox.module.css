@@ -494,7 +494,8 @@
     background-color: transparent;
 }
 
-.addToProjectList .addNewProject button .plusIcon {
+.addToProjectList .addNewProject button .plusIcon,
+.plusIconBlack {
     width: 20px;
     height: 20px;
     border-radius: 3px;

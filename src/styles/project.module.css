@@ -495,3 +495,12 @@
         max-height: calc(100vh - 236px);
     }
 }
+
+.projectNameDropdown {
+  background-color: #fff !important;
+
+}
+
+.projectNameDropdown:hover {
+  background-color: #F6F6F6 !important;
+}

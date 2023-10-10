@@ -11,10 +11,11 @@ import {
     updateProjectState
 } from "@/redux/projects/action-reducer";
 import styles from "@/styles/project.module.css";
+import inboxStyles from "@/styles/Inbox.module.css";
 import {StateType} from "@/types";
 import {debounceInterval, isEmail} from "@/utils/common.functions";
 import {PROJECT_ROLES} from "@/utils/constants";
-import {ChevronDownIcon, CloseIcon, TriangleDownIcon} from "@chakra-ui/icons";
+import {ChevronDownIcon, CloseIcon, SearchIcon, SmallAddIcon, TriangleDownIcon} from "@chakra-ui/icons";
 import {
     Badge,
     Button,
@@ -22,6 +23,8 @@ import {
     Grid, GridItem,
     IconButton,
     Input,
+    InputGroup,
+    InputLeftElement,
     Menu,
     MenuButton,
     MenuItem,
@@ -31,10 +34,10 @@ import {
 import dynamic from 'next/dynamic';
 import Image from "next/image";
 import {useRouter} from "next/router";
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {MenuIcon} from "@/icons";
-import {projectService, socketService} from "@/services";
+import {commonService, projectService, socketService} from "@/services";
 import Tooltip from "@/components/common/Tooltip";
 
 const ThreadsSideBar = dynamic(
@@ -42,6 +45,9 @@ const ThreadsSideBar = dynamic(
 )
 
 function ProjectInbox() {
+    const searchRef = useRef<HTMLInputElement | null>(null);
+    const [searchValue, setSearchValue] = useState<string>('');
+    const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
     const {members, project, invitees} = useSelector((state: StateType) => state.projects);
     const {selectedThread} = useSelector((state: StateType) => state.threads);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
@@ -64,6 +70,17 @@ function ProjectInbox() {
     const router = useRouter();
     const dispatch = useDispatch();
 
+    useEffect(() => {
+      setFilteredProjects((projects || []));
+  }, [projects, selectedThread])
+
+  useEffect(() => {
+      if (searchValue.length > 0) {
+          setFilteredProjects((projects || []).filter((item: Project) => item.name?.toLowerCase().includes(searchValue.toLowerCase())));
+      } else {
+          setFilteredProjects((projects || []));
+      }
+  }, [searchValue, projects])
 
     useEffect(() => {
         if (router.query.project) {
@@ -226,34 +243,52 @@ function ProjectInbox() {
                 <Flex align={'center'} justify={'space-between'} gap={4} padding={'16px 40px 15px'}
                       borderBottom={'1px solid rgba(8, 22, 47, 0.12)'} backgroundColor={'#FFFFFF'}>
                     <Flex align={'center'} gap={2}>
-                        <Flex className={styles.imgWrapper} marginBottom={'-4px'} alignItems={'center'}
-                              justifyContent={'center'} fontSize={'20px'}>
-                            {project?.emoji ? project.emoji :
-                                <Image src="/image/user.png" width="36" height="36" alt=""/>}
-                        </Flex>
                         <Menu>
                         <Tooltip label='Show all projects' placement='bottom'>
                           <MenuButton 
+                            display={'flex'}
                             as={Button} 
                             fontSize={'24px'} color={'#08162F'} 
                             backgroundColor={'#fff'}
                             rightIcon={<ChevronDownIcon />}
-                          >
-                            {project && project.name}
+                            className={styles.projectNameDropdown}
+                            >
+                            {project?.emoji ? project.emoji : <Image src="/image/user.png" width="36" height="36" alt=""/>}
+                            <span style={{ marginLeft: 12 }}>{project && project.name}</span>
                           </MenuButton>
                         </Tooltip>
-                          <MenuList>
-                            {projects?.filter(proj => proj.id !== project?.id)
-                              .map(project => (
-                              <MenuItem 
-                                key={project.id}
-                                onClick={() => router.push(`/projects/${project.id}`)}
-                              >
-                                <span style={{ width: '24px' }}>{project.emoji}</span>
-                                {project.name}
-                              </MenuItem>
-                            ))}
-                          </MenuList>
+                        
+                        <MenuList className={`${inboxStyles.addToProjectList} drop-down-list`} zIndex={'overlay'}>
+                          <div className={'dropdown-searchbar'}>
+                            <InputGroup>
+                                <InputLeftElement h={'27px'} pointerEvents='none'>
+                                    <SearchIcon/>
+                                </InputLeftElement>
+                                <Input ref={searchRef} autoFocus value={searchValue}
+                                      onChange={(e) => setSearchValue(e.target.value)}
+                                      placeholder='Search project'/>
+                            </InputGroup>
+                          </div>
+                          <div className={'add-to-project-list'}>
+                              {filteredProjects && !!filteredProjects.length && (filteredProjects || []).map((project: Project) => {
+                                return (
+                                  <MenuItem gap={2} key={project.id} onClick={() => router.push(`/projects/${project.id}`)}>
+                                      {project.emoji} {project.name}
+                                  </MenuItem>
+                                )
+                              })}
+                              <div className={styles.addNewProject}>
+                                  <Button backgroundColor={'transparent'} w={'100%'} borderRadius={0}
+                                          justifyContent={'flex-start'}
+                                          onClick={() => commonService.toggleCreateProjectModel(true, false)}>
+                                      <div className={inboxStyles.plusIconBlack} style={{ marginRight: 8 }}>
+                                          <SmallAddIcon/>
+                                      </div>
+                                      Create New Project
+                                  </Button>
+                              </div>
+                          </div>
+                        </MenuList>
                         </Menu>
                         <Badge textTransform={'none'} color={'#000000'} fontSize={'14px'} fontWeight={'600'}
                                backgroundColor={'#E9E9E9'} marginBottom={'-2px'}
