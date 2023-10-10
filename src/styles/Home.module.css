@@ -361,7 +361,8 @@
 
 .profileButton {
     background: #fff !important;
-    padding: 2px 8px !important;
+    padding: 4px 8px !important;
+    height: auto !important;
 }
 
 .profileButton:hover {

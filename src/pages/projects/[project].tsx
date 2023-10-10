@@ -29,6 +29,7 @@ import {
     MenuButton,
     MenuItem,
     MenuList,
+    Skeleton,
     Text, useDisclosure
 } from "@chakra-ui/react";
 import dynamic from 'next/dynamic';
@@ -250,63 +251,95 @@ function ProjectInbox() {
                 <Flex align={'center'} justify={'space-between'} gap={4} padding={'16px 40px 15px'}
                       borderBottom={'1px solid rgba(8, 22, 47, 0.12)'} backgroundColor={'#FFFFFF'}>
                     <Flex align={'center'} gap={2}>
-                      <Menu isOpen={isProjectDropdownOpen} onClose={() => setIsProjectDropdownOpen(false)}>
-                        <Tooltip label='Show all projects' placement='bottom'>
-                          <MenuButton
-                            onClick={() => {
-                              setIsProjectDropdownOpen(!isProjectDropdownOpen)
-                            }} 
-                            display={'flex'}
-                            as={Flex} 
-                            fontSize={'24px'} color={'#08162F'} 
-                            backgroundColor={'#fff'}
-                            className={styles.projectNameDropdown}
-                            padding={'0 8px'}
-                            cursor={'pointer'}
-                            rounded={'md'}
-                            >
-                            {project?.emoji ? project.emoji : <Image src="/image/user.png" width="24" height="24" alt=""/>}
-                            <span style={{ marginLeft: 12 }}>{project && project.name ? project.name : 'Loading...'}</span>
-                            <ChevronDownIcon />
-                          </MenuButton>
-                        </Tooltip>
-                        
-                        <MenuList className={`${inboxStyles.addToProjectList} drop-down-list`} zIndex={'overlay'}>
-                          <div className={'dropdown-searchbar'}>
-                            <InputGroup>
-                                <InputLeftElement h={'27px'} pointerEvents='none'>
-                                    <SearchIcon/>
-                                </InputLeftElement>
-                                <Input ref={searchRef} autoFocus value={searchValue}
-                                      onChange={(e) => setSearchValue(e.target.value)}
-                                      placeholder='Search project'/>
-                            </InputGroup>
-                          </div>
-                          <div className={'add-to-project-list'}>
-                              {filteredProjects && !!filteredProjects.length && (filteredProjects || []).map((project: Project) => {
-                                return (
-                                  <MenuItem gap={2} key={project.id} onClick={() => router.push(`/projects/${project.id}`)}>
-                                      {project.emoji} {project.name}
-                                  </MenuItem>
-                                )
-                              })}
-                              <div className={styles.addNewProject}>
-                                  <Button backgroundColor={'transparent'} w={'100%'} borderRadius={0}
-                                          justifyContent={'flex-start'}
-                                          onClick={() => commonService.toggleCreateProjectModel(true, true)}>
-                                      <div className={inboxStyles.plusIconBlack} style={{ marginRight: 8 }}>
-                                          <SmallAddIcon/>
-                                      </div>
-                                      Create New Project
-                                  </Button>
-                              </div>
-                          </div>
-                        </MenuList>
-                        </Menu>
-                        <Badge textTransform={'none'} color={'#000000'} fontSize={'14px'} fontWeight={'600'}
-                               backgroundColor={'#E9E9E9'} marginBottom={'-2px'}
-                               padding={'3px 6px'} borderRadius={'4px'}
-                               lineHeight={'1.19'}>{members && members.length === 1 ? `1 member` : `${members && members.length} members`}</Badge>
+                      {!project ? (
+                        <>
+                          <Skeleton
+                            className={styles.mailListSkeleton}
+                            startColor='#F3F4F6' endColor='#f3f3f3'
+                            height={'40px'}
+                            borderRadius={'8px'}
+                            border={'1px solid #E5E7EB'}
+                            width={'40px'}
+                          />
+                          <Skeleton
+                            className={styles.mailListSkeleton}
+                            startColor='#F3F4F6' endColor='#f3f3f3'
+                            height={'40px'}
+                            borderRadius={'8px'}
+                            border={'1px solid #E5E7EB'}
+                            width={'380px'}
+                          />
+                          <Skeleton
+                            className={styles.mailListSkeleton}
+                            startColor='#F3F4F6' endColor='#f3f3f3'
+                            height={'23px'}
+                            borderRadius={'8px'}
+                            border={'1px solid #E5E7EB'}
+                            width={'90px'}
+                          />
+                        </>
+                      ) : (
+                        <>
+                        <Menu isOpen={isProjectDropdownOpen} onClose={() => setIsProjectDropdownOpen(false)}>
+                          <Tooltip label='Show all projects' placement='bottom'>
+                            <MenuButton
+                              onClick={() => {
+                                setIsProjectDropdownOpen(!isProjectDropdownOpen)
+                              }} 
+                              display={'flex'}
+                              as={Flex} 
+                              fontSize={'24px'} color={'#08162F'} 
+                              fontWeight={600}
+                              backgroundColor={'#fff'}
+                              className={styles.projectNameDropdown}
+                              padding={'0 8px'}
+                              cursor={'pointer'}
+                              rounded={'md'}
+                              >
+                              {project?.emoji ? project.emoji : <Image src="/image/user.png" width="24" height="24" alt=""/>}
+                              <span style={{ marginLeft: 12 }}>{project && project.name ? project.name : 'Loading...'}</span>
+                              <ChevronDownIcon />
+                            </MenuButton>
+                          </Tooltip>
+                          
+                          <MenuList className={`${inboxStyles.addToProjectList} drop-down-list`} zIndex={'overlay'}>
+                            <div className={'dropdown-searchbar'}>
+                              <InputGroup>
+                                  <InputLeftElement h={'27px'} pointerEvents='none'>
+                                      <SearchIcon/>
+                                  </InputLeftElement>
+                                  <Input ref={searchRef} autoFocus value={searchValue}
+                                        onChange={(e) => setSearchValue(e.target.value)}
+                                        placeholder='Search project'/>
+                              </InputGroup>
+                            </div>
+                            <div className={'add-to-project-list'}>
+                                {filteredProjects && !!filteredProjects.length && (filteredProjects || []).map((project: Project) => {
+                                  return (
+                                    <MenuItem gap={2} key={project.id} onClick={() => router.push(`/projects/${project.id}`)}>
+                                        {project.emoji} {project.name}
+                                    </MenuItem>
+                                  )
+                                })}
+                                <div className={styles.addNewProject}>
+                                    <Button backgroundColor={'transparent'} w={'100%'} borderRadius={0}
+                                            justifyContent={'flex-start'}
+                                            onClick={() => commonService.toggleCreateProjectModel(true, true)}>
+                                        <div className={inboxStyles.plusIconBlack} style={{ marginRight: 8 }}>
+                                            <SmallAddIcon/>
+                                        </div>
+                                        Create New Project
+                                    </Button>
+                                </div>
+                            </div>
+                          </MenuList>
+                          </Menu>
+                          <Badge textTransform={'none'} color={'#000000'} fontSize={'14px'} fontWeight={'600'}
+                                backgroundColor={'#E9E9E9'} marginBottom={'-2px'}
+                                padding={'3px 6px'} borderRadius={'4px'}
+                                lineHeight={'1.19'}>{members && members.length === 1 ? `1 member` : `${members && members.length} members`}</Badge>
+                        </>
+                      )}
                     </Flex>
 
                     <Flex align={'center'} gap={1}>

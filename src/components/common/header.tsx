@@ -224,7 +224,7 @@ export function Header() {
             </Flex>
 
             <HeaderSearch/>
-            <Flex padding={'12px 0'} align={'center'}>
+            <Flex padding={'0px 0'} align={'center'}>
                 <FeedSidebar/>
                 <div className={styles.profile}>
                     <Menu isOpen={showSettingsMenu} onOpen={() => setShowSettingsMenu(true)}
