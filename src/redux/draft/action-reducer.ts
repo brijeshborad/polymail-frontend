@@ -9,7 +9,8 @@ const initialState: any = {
     error: null,
     success: false,
     updatedDraft: null,
-    updatedComposeDraft: null
+    updatedComposeDraft: null,
+    resumeAbleDraft: null
 } as InitialDraftStateType
 
 const draftSlice = createSlice({

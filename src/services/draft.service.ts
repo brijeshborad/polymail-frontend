@@ -14,12 +14,16 @@ class DraftService extends BaseService {
         return this.getState('draft');
     }
 
-    setComposeDraft(draft: MessageDraft | null) {
+    setComposeDraft(draft: MessageDraft | null | undefined) {
         this.setDraftState({composeDraft: draft});
     }
 
     setReplyDraft(draft: MessageDraft | null) {
         this.setDraftState({draft: draft});
+    }
+
+    setResumeDraft(draft: MessageDraft | null | undefined) {
+        this.setDraftState({resumeAbleDraft: draft});
     }
 
     updateComposeDraftWithCollabId(collabId: string) {
@@ -46,6 +50,16 @@ class DraftService extends BaseService {
                 }
             }
         });
+    }
+
+    saveDraftToResume() {
+        let {composeDraft} = this.getDraftState();
+        this.setResumeDraft(composeDraft);
+    }
+
+    resumeDraft() {
+        let {resumeAbleDraft} = this.getDraftState();
+        this.setComposeDraft(resumeAbleDraft);
     }
 
     addComposeToProject() {

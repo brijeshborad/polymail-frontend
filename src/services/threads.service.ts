@@ -159,14 +159,18 @@ class ThreadsService extends BaseService {
     addThreadToProject(item: Project, ref: any = null, allowComposeDraft: boolean = false) {
         let {multiSelection, selectedThread: currentSelectedThread, threads} = this.getThreadState();
         let {composeDraft} = draftService.getDraftState();
-        let selectedThread = currentSelectedThread;
+        let selectedThread: any = currentSelectedThread;
         if (!selectedThread && allowComposeDraft) {
             selectedThread = composeDraft;
         }
         const isThreadMultiSelection = (multiSelection !== undefined && multiSelection.length > 0);
+        let threadsId = isThreadMultiSelection ? multiSelection : [selectedThread!.id];
+        if (allowComposeDraft) {
+            threadsId = [selectedThread.threadId]
+        }
         if (selectedThread && selectedThread.id || isThreadMultiSelection) {
             let reqBody = {
-                threadIds: isThreadMultiSelection ? multiSelection : [selectedThread!.id],
+                threadIds: threadsId,
                 roles: ['n/a'],
                 groupType: 'project',
                 groupId: item.id
@@ -235,8 +239,12 @@ class ThreadsService extends BaseService {
     }
 
     removeThreadFromProject(item: Project, isOnProjectRoute: boolean = false) {
-        let {selectedThread, threads} = this.getThreadState();
+        let {selectedThread: thread, threads} = this.getThreadState();
         let {isComposing} = commonService.getCommonState();
+        let selectedThread: any = thread;
+        if (isComposing) {
+            selectedThread = {...thread, id: selectedThread.threadId}
+        }
         if (selectedThread && selectedThread.id) {
             let polyToast = generateToasterId();
             let reqBody = {
@@ -293,6 +301,20 @@ class ThreadsService extends BaseService {
                     }
                     this.setSelectedThread(thread);
                 }
+            } else {
+                let {composeDraft} = draftService.getDraftState();
+                let data = (composeDraft?.projects || []).filter((project: Project) => project.id !== item.id);
+                let thread = {
+                    ...composeDraft,
+                    projects: data
+                }
+                draftService.setComposeDraft(thread)
+                data = (selectedThread.projects || []).filter((project: Project) => project.id !== item.id);
+                thread = {
+                    ...selectedThread,
+                    projects: data
+                }
+                this.setSelectedThread(thread);
             }
         }
     }

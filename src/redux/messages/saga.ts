@@ -17,7 +17,7 @@ import {
     getAttachmentDownloadUrlSuccess,
     uploadAttachmentError,
     uploadAttachmentSuccess,
-    uploadAttachment, updateMessageSuccess, updateMessageError, updateMessage
+    uploadAttachment, updateMessageSuccess, updateMessageError, updateMessage, deleteMessage
 } from "@/redux/messages/action-reducer";
 import { ReducerActionType } from "@/types";
 import { performSuccessActions } from "@/utils/common-redux.functions";
@@ -99,6 +99,14 @@ function* updateMessageData({payload}: PayloadAction<ReducerActionType>) {
     }
 }
 
+function* deleteMessageAPI({payload}: PayloadAction<ReducerActionType>) {
+    try {
+        yield ApiService.callDelete(`messages/${payload.body.id}`, {});
+        performSuccessActions(payload);
+    } catch (error: any) {
+    }
+}
+
 export function* watchGetMessages() {
     yield takeLatest(getAllMessages.type, getMessages);
 }
@@ -123,6 +131,10 @@ export function* watchUpdateMessageData() {
     yield takeLatest(updateMessage.type, updateMessageData);
 }
 
+export function* watchDeleteMessage() {
+    yield takeLatest(deleteMessage.type, deleteMessageAPI);
+}
+
 
 export default function* rootSaga() {
     yield all([
@@ -132,6 +144,7 @@ export default function* rootSaga() {
         fork(watchGetAttachmentUrl),
         fork(watchAddAttachmentUrlToS3),
         fork(watchUpdateMessageData),
+        fork(watchDeleteMessage),
     ]);
 }
 

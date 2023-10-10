@@ -85,6 +85,10 @@ const messagesSlice = createSlice({
             return {...state, isLoading: false, error}
         },
 
+        deleteMessage: (state: InitialMessageStateType, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, isLoading: false}
+        },
+
         updateMessageState: (state: InitialMessageStateType, action: PayloadAction<InitialMessageStateType>) => {
             return {...state, ...action.payload}
         },
@@ -110,6 +114,6 @@ export const {
     uploadAttachmentError,
     updateMessage,
     updateMessageSuccess,
-    updateMessageError
+    updateMessageError, deleteMessage
 } = messagesSlice.actions
 export default messagesSlice.reducer

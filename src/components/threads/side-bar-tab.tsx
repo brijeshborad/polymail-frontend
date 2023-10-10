@@ -15,7 +15,7 @@ import {
     setCurrentSelectedThreads
 } from "@/utils/cache.functions";
 import {getProjectSummary} from "@/redux/common-apis/action-reducer";
-import {accountService, commonService, socketService, threadService} from "@/services";
+import {accountService, commonService, draftService, socketService, threadService} from "@/services";
 import { fireEvent } from "@/redux/global-events/action-reducer";
 import { Thread } from "@/models";
 
@@ -38,7 +38,7 @@ export function ThreadsSideBarTab(props: TabProps) {
         isComposing
     } = useSelector((state: StateType) => state.commonApis);
     const {newMessage} = useSelector((state: StateType) => state.socket);
-    const {composeDraft} = useSelector((state: StateType) => state.draft);
+    const {resumeAbleDraft} = useSelector((state: StateType) => state.draft);
     const router = useRouter();
     const dispatch = useDispatch();
     const [tabName, setTabName] = useState<string>(() => {
@@ -257,9 +257,12 @@ export function ThreadsSideBarTab(props: TabProps) {
                         </Flex>
                     }
                     {
-                        composeDraft && !isComposing &&
+                        resumeAbleDraft && !isComposing &&
                         <Button className={styles.resumeDraft}
-                                onClick={() => commonService.toggleComposing(true)}>
+                                onClick={() => {
+                                    commonService.toggleComposing(true);
+                                    draftService.resumeDraft();
+                                }}>
                             Resume Draft
                         </Button>
                     }

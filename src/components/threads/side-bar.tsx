@@ -100,6 +100,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
         if (getCurrentCacheTab() !== value) {
             if (value !== 'DRAFT') {
                 commonService.toggleComposingWithThreadSelection(false, true);
+                draftService.saveDraftToResume();
             }
             threadService.setTabValueWithEmptyThread(tab);
             searchCancel();
@@ -117,6 +118,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
         threadService.setSelectedThread(null);
         if (!isComposing) {
             draftService.setComposeDraft(null);
+            draftService.resumeDraft();
         }
         commonService.toggleComposing(true);
         if (selectedAccount && selectedAccount.id) {
@@ -168,8 +170,8 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                     {/*</Flex>*/}
                     <Flex gap={2}>
                         <AddToProjectButton/>
-                        <Menu 
-                          isOpen={isMoreDropdownOpen} 
+                        <Menu
+                          isOpen={isMoreDropdownOpen}
                           onClose={() => setIsMoreDropdownOpen(false)}
                         >
                             <MenuButton
@@ -317,8 +319,8 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                     </Tab>
                     }
 
-                    <Menu 
-                      isOpen={isMoreDropdownOpen} 
+                    <Menu
+                      isOpen={isMoreDropdownOpen}
                       onClose={() => {
                         setIsMoreDropdownOpen(false)
                         setIsMoreClicked(false)
@@ -337,7 +339,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                         >
                             More
                         </MenuButton>
-                        <MenuList 
+                        <MenuList
                           className={`${styles.tabListDropDown} drop-down-list`}
                           onMouseLeave={() => {
                             if(!isMoreClicked) {

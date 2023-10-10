@@ -12,6 +12,10 @@ export default function ContentMonitor() {
             editor?.commands.clearContent(false);
             editor?.commands.setContent(event.data, false)
         }
+        if (event && event.type === 'richtexteditor.forceUpdateWithOnChange') {
+            editor?.commands.clearContent(false);
+            editor?.commands.setContent(event.data, true)
+        }
 
         if (event && event.type === 'richtexteditor.focus') {
             if (editor && !editor.isFocused) {

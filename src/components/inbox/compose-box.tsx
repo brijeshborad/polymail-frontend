@@ -16,7 +16,7 @@ import {debounce, generateToasterId, isEmail, makeCollabId} from "@/utils/common
 import {createDraft, sendMessage, updateDraftState, updatePartialMessage} from "@/redux/draft/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import dayjs from "dayjs";
-import {uploadAttachment} from "@/redux/messages/action-reducer";
+import {deleteMessage, uploadAttachment} from "@/redux/messages/action-reducer";
 import {MessageAttachments, MessageRecipient, Thread} from "@/models";
 import {Toaster} from "@/components/common";
 import {RecipientsType} from "@/types/props-types/message-recipients.type";
@@ -28,7 +28,7 @@ import {fireEvent} from "@/redux/global-events/action-reducer";
 import CollabRichTextEditor from "../common/collab-rich-text-editor";
 import Image from "next/image";
 import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
-import {draftService} from "@/services";
+import {commonService, draftService, globalEventService, threadService} from "@/services";
 
 const CreateNewProject = dynamic(() => import('@/components/project/create-new-project').then(mod => mod.default));
 const Time = dynamic(() => import("@/components/common").then(mod => mod.Time));
@@ -132,6 +132,7 @@ export function ComposeBox(props: any) {
 
 
             if (draftInfo && draftInfo.body) {
+                globalEventService.fireEvent({data: draftInfo.body, type: 'richtexteditor.forceUpdateWithOnChange'});
                 setEmailBody(draftInfo.body);
             }
             setIsContentSet(true);
@@ -516,25 +517,28 @@ export function ComposeBox(props: any) {
 
     const onCloseClick = () => {
         if (!isDraftUpdated) {
-            dispatch(updateCommonState({isComposing: false, allowThreadSelection: tabValue !== 'DRAFT'}));
-            dispatch(updateDraftState({composeDraft: null}));
-            if (tabValue === 'DRAFT') {
-                dispatch(updateThreadState({selectedThread: null}));
+            performUpdate();
+            if (composeDraft) {
+                dispatch(deleteMessage({body: {id: composeDraft.id}}));
             }
-            changeThreadData();
         } else {
             onOpenDraftConformationModal()
         }
     }
 
+    function performUpdate() {
+        commonService.toggleComposingWithThreadSelection(false, tabValue !== 'DRAFT');
+        draftService.setComposeDraft(null);
+        globalEventService.fireEvent({data: null, type: 'richtexteditor.forceUpdate'});
+        if (tabValue === 'DRAFT') {
+            threadService.setSelectedThread(null)
+        }
+        changeThreadData();
+    }
+
     const modalCloseConfirmation = (type: string) => {
         if (type === 'yes') {
-            dispatch(updateCommonState({isComposing: false, allowThreadSelection: tabValue !== 'DRAFT'}));
-            dispatch(updateDraftState({composeDraft: null}));
-            if (tabValue === 'DRAFT') {
-                dispatch(updateThreadState({selectedThread: null}));
-            }
-            changeThreadData();
+            performUpdate();
         }
         onCloseDraftConformationModal();
     }
@@ -560,8 +564,8 @@ export function ComposeBox(props: any) {
                                  lineHeight={1}>Draft </Heading>
                         <Text fontSize='xs' lineHeight={1} color={'#6B7280'} display={'flex'} alignItems={'center'}
                               fontWeight={400}>
-                            {!composeDraft && 'Not Saved'}
-                            {composeDraft &&
+                            {!composeDraft && !isDraftUpdated && 'Not Saved'}
+                            {composeDraft && isDraftUpdated &&
                             <>
                                 (Saved to drafts&nbsp;{(composeDraft?.updated) ?
                                 <Time as={'span'} time={composeDraft?.updated || ''} isShowFullTime={false}
