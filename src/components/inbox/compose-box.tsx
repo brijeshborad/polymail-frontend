@@ -551,7 +551,7 @@ export function ComposeBox(props: any) {
     const onCloseClick = () => {
         if (!isDraftUpdated) {
             performUpdate();
-            if (composeDraft) {
+            if (composeDraft && composeDraft.id) {
                 dispatch(deleteMessage({body: {id: composeDraft.id}}));
             }
         } else {
@@ -562,6 +562,7 @@ export function ComposeBox(props: any) {
     function performUpdate() {
         commonService.toggleComposingWithThreadSelection(false, tabValue !== 'DRAFT');
         draftService.setComposeDraft(null);
+        draftService.setResumeDraft(null);
         globalEventService.fireEvent({data: null, type: 'richtexteditor.forceUpdate'});
         if (tabValue === 'DRAFT') {
             threadService.setSelectedThread(null)
