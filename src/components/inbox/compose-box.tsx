@@ -314,7 +314,7 @@ export function ComposeBox(props: any) {
                     dispatch(createDraft({body: {accountId: selectedAccount.id, body: body, fromCompose: true}}));
                 }
             }
-        }, 500);
+        }, 250);
     }
 
     const sendMessages = () => {

@@ -281,7 +281,7 @@ export function MessageReplyBox(props: MessageBoxType) {
           dispatch(createDraft({body:{ accountId: selectedAccount.id, body: body }}));
         }
       }
-    }, 500);
+    }, 250);
   }
 
   useEffect(() => {
