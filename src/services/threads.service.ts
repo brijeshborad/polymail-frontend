@@ -183,6 +183,22 @@ class ThreadsService extends BaseService {
                 toasterSuccessMessage.desc = 'Thread was added to ' + item.name?.toLowerCase() + '.';
                 toasterSuccessMessage.title = selectedThread?.subject || '';
             }
+            const projects = selectedThread?.projects || [];
+
+            let addProject = {
+                ...selectedThread,
+                projects: [...projects, item]
+            }
+            let index1 = (threads || []).findIndex((thread: Thread) => thread.id === selectedThread?.id);
+            let newThreads: Thread[] = threads ?? [];
+            if (threads) {
+                newThreads = [...threads];
+                newThreads[index1] = {
+                    ...newThreads[index1],
+                    projects: [...projects, item]
+                }
+            }
+            this.setThreadState({selectedThread: addProject, threads: newThreads});
             this.dispatchAction(
                 addItemToGroup,
                 {

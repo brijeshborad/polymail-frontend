@@ -57,6 +57,8 @@ export function AddToProjectButton() {
         } else {
             if (project) {
                 setThreadProject([project])
+            } else {
+                setThreadProject([])
             }
         }
     }, [composeDraft, project, selectedThread])
