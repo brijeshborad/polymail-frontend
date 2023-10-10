@@ -1,9 +1,12 @@
 import {InitialDraftStateType} from "@/types";
 import {BaseService} from "@/services/base.service";
 import {updateDraftState} from "@/redux/draft/action-reducer";
-import {MessageDraft} from "@/models";
+import {MessageDraft, Thread} from "@/models";
 import {addItemToGroup} from "@/redux/memberships/action-reducer";
 import {projectService} from "@/services/project.service";
+import {threadService} from "@/services/threads.service";
+import {getCacheThreads, getCurrentViewingCacheTab, setCacheThreads} from "@/utils/cache.functions";
+import {removeAttachment} from "@/redux/messages/action-reducer";
 
 class DraftService extends BaseService {
     constructor() {
@@ -81,6 +84,51 @@ class DraftService extends BaseService {
 
     setDraftState(body: InitialDraftStateType) {
         this.dispatchAction(updateDraftState, body);
+    }
+
+    discardDraft(callBackFunction: any) {
+        let {draft} = this.getDraftState();
+        let {threads, selectedThread} = threadService.getThreadState();
+        let attachments = draft?.draftInfo?.attachments || [];
+        this.setDraftState({draft: {...draft, updated: '', draftInfo: {...(draft?.draftInfo || {}), attachments: []}}});
+        let draftIndex = selectedThread?.messages?.findIndex((item) => item.id === draft?.id);
+        if (draftIndex !== -1) {
+            let currentThreads: any = [...(threads || [])];
+            let selectThreadIndex: number = currentThreads.findIndex((item: Thread) => item.id === selectedThread?.id);
+            if (selectThreadIndex !== -1) {
+                currentThreads[selectThreadIndex] = {...(currentThreads[selectThreadIndex] || {})};
+                currentThreads[selectThreadIndex!].messages = [...(currentThreads[selectThreadIndex!].messages || [])];
+                if (currentThreads[selectThreadIndex]!.messages![draftIndex!]) {
+                    currentThreads[selectThreadIndex!].messages![draftIndex!] = {
+                        ...currentThreads![selectThreadIndex!].messages![draftIndex!],
+                        ...{...draft, updated: '', draftInfo: {...(draft?.draftInfo || {}), attachments: []}}
+                    }
+                }
+                threadService.setThreads(currentThreads);
+                setCacheThreads({
+                    ...getCacheThreads(),
+                    [getCurrentViewingCacheTab()]: currentThreads
+                })
+                let finalSelectThread: any = {...selectedThread};
+                finalSelectThread.messages = [...finalSelectThread.messages];
+                finalSelectThread.messages[draftIndex!] = {
+                    ...finalSelectThread.messages[draftIndex!],
+                    ...{...draft, updated: '', draftInfo: {...(draft?.draftInfo || {}), attachments: []}}
+                }
+                threadService.setSelectedThread(finalSelectThread);
+            }
+        }
+
+        attachments.forEach((item) => {
+            this.dispatchAction(removeAttachment, {
+                body: {id: draft?.id, attachment: item.id!},
+                afterSuccessAction: () => {
+                    if (callBackFunction) {
+                        callBackFunction('', false)
+                    }
+                }
+            })
+        })
     }
 }
 

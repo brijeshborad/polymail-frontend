@@ -2,6 +2,7 @@ import {MessageAttachments, MessagePart, Thread, UserProjectOnlineStatus} from "
 
 let cacheThreads: { [key: string]: Thread[] } = {};
 let currentCacheTab = 'INBOX';
+let currentViewingCacheTab = '';
 let cacheMessages: { [key: string]: { body: MessagePart, attachments: MessageAttachments[] } } = {};
 let currentSelectedThreads: number[] = [];
 let memberStatus: {
@@ -19,6 +20,15 @@ export function getCurrentCacheTab() {
 export function setCurrentCacheTab(value: string) {
     currentCacheTab = value;
     return currentCacheTab;
+}
+
+export function getCurrentViewingCacheTab() {
+    return currentViewingCacheTab;
+}
+
+export function setCurrentViewingCacheTab(value: string) {
+    currentViewingCacheTab = value;
+    return currentViewingCacheTab;
 }
 
 export function getCacheThreads() {

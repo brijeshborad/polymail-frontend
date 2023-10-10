@@ -502,7 +502,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
           dispatch(uploadAttachment({
             body:{ id: draft.id, file: file },
             afterSuccessAction: () => {
-              dispatch(updatePartialMessage({body:{ id: draft.id }}));
+              sendToDraft('', false);
             }
           }));
         }
@@ -530,7 +530,6 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   const discardMessage = () => {
     setIsReplyDropdownOpen(false)
     setReplyBoxHide(false);
-    draftService.setDraftState({draft: {...draft, updated: ''}});
     dispatch(fireEvent({
       event: {
         data: '',
@@ -538,6 +537,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
       }
     }));
     setAttachments([]);
+    draftService.discardDraft(sendToDraft);
 
     setHideEditorToolbar(false)
   }

@@ -17,7 +17,7 @@ class ThreadsService extends BaseService {
         super();
     }
 
-    private getThreadState(): InitialThreadStateType {
+    public getThreadState(): InitialThreadStateType {
         return this.getState('threads');
     }
 
@@ -160,7 +160,7 @@ class ThreadsService extends BaseService {
         let {multiSelection, selectedThread: currentSelectedThread, threads} = this.getThreadState();
         let {composeDraft} = draftService.getDraftState();
         let selectedThread: any = currentSelectedThread;
-        if (!selectedThread && allowComposeDraft) {
+        if (allowComposeDraft) {
             selectedThread = composeDraft;
         }
         const isThreadMultiSelection = (multiSelection !== undefined && multiSelection.length > 0);
@@ -185,24 +185,27 @@ class ThreadsService extends BaseService {
                 toasterSuccessMessage.title = `${(multiSelection || []).length} threads added to ${item.name?.toLowerCase()}`;
             } else {
                 toasterSuccessMessage.desc = 'Thread was added to ' + item.name?.toLowerCase() + '.';
-                toasterSuccessMessage.title = selectedThread?.subject || '';
+                toasterSuccessMessage.title = selectedThread?.subject || 'Success';
             }
             const projects = selectedThread?.projects || [];
-
             let addProject = {
                 ...selectedThread,
                 projects: [...projects, item]
             }
-            let index1 = (threads || []).findIndex((thread: Thread) => thread.id === selectedThread?.id);
-            let newThreads: Thread[] = threads ?? [];
-            if (threads) {
-                newThreads = [...threads];
-                newThreads[index1] = {
-                    ...newThreads[index1],
-                    projects: [...projects, item]
+            if (allowComposeDraft) {
+                draftService.setComposeDraft(addProject)
+            } else {
+                let index1 = (threads || []).findIndex((thread: Thread) => thread.id === selectedThread?.id);
+                let newThreads: Thread[] = threads ?? [];
+                if (threads) {
+                    newThreads = [...threads];
+                    newThreads[index1] = {
+                        ...newThreads[index1],
+                        projects: [...projects, item]
+                    }
                 }
+                this.setThreadState({selectedThread: addProject, threads: newThreads});
             }
-            this.setThreadState({selectedThread: addProject, threads: newThreads});
             this.dispatchAction(
                 addItemToGroup,
                 {
@@ -216,15 +219,24 @@ class ThreadsService extends BaseService {
                         action: removeThreadFromProject,
                         undoBody: {
                             body: {
-                                threadId: selectedThread!.id,
+                                threadId: allowComposeDraft ? selectedThread.threadId : selectedThread!.id,
                                 projectId: item.id,
                             },
                             success: {
                                 desc: 'Thread was removed from ' + item.name?.toLowerCase() + '.',
-                                title: selectedThread?.subject || '',
+                                title: selectedThread?.subject || 'Success',
                                 type: 'success'
                             },
                             afterUndoAction: () => {
+                                if (allowComposeDraft) {
+                                    let {composeDraft} = draftService.getDraftState();
+                                    let data = (composeDraft?.projects || []).filter((project: Project) => project.id !== item.id);
+                                    let thread = {
+                                        ...composeDraft,
+                                        projects: data
+                                    }
+                                    draftService.setComposeDraft(thread)
+                                }
                                 this.setThreadState({selectedThread: selectedThread, threads: threads});
                             }
                         },
@@ -274,10 +286,18 @@ class ThreadsService extends BaseService {
                         body: reqBody,
                         success: {
                             desc: 'Thread was added to ' + item.name?.toLowerCase() + '.',
-                            title: selectedThread?.subject || '',
+                            title: selectedThread?.subject || 'Success',
                             type: 'success'
                         },
                         afterUndoAction: () => {
+                            if (isComposing) {
+                                const projects = selectedThread?.projects || [];
+                                let addProject = {
+                                    ...selectedThread,
+                                    projects: [...projects, item]
+                                }
+                                draftService.setComposeDraft(addProject)
+                            }
                             this.setThreadState({selectedThread: selectedThread, threads: threads});
                         }
                     },

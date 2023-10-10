@@ -52,8 +52,12 @@ export function AddToProjectButton() {
 
 
     useEffect(() => {
-        if ((selectedThread && selectedThread.projects && selectedThread.projects.length) || (composeDraft && composeDraft.projects && composeDraft.projects.length)) {
-            setThreadProject(selectedThread?.projects || composeDraft?.projects || [])
+        let selectedProjects = selectedThread?.projects || [];
+        if (isComposing) {
+            selectedProjects = composeDraft?.projects || [];
+        }
+        if (selectedProjects.length) {
+            setThreadProject(selectedProjects || [])
         } else {
             if (project) {
                 setThreadProject([project])
@@ -61,7 +65,7 @@ export function AddToProjectButton() {
                 setThreadProject([])
             }
         }
-    }, [composeDraft, project, selectedThread])
+    }, [composeDraft, isComposing, project, selectedThread])
 
     useEffect(() => {
         setFilteredProjects((projects || []));

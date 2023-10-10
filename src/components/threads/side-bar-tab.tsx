@@ -12,7 +12,7 @@ import {
     getCurrentCacheTab,
     setCacheThreads,
     setCurrentCacheTab,
-    setCurrentSelectedThreads
+    setCurrentSelectedThreads, setCurrentViewingCacheTab
 } from "@/utils/cache.functions";
 import {getProjectSummary} from "@/redux/common-apis/action-reducer";
 import {accountService, commonService, draftService, socketService, threadService} from "@/services";
@@ -121,6 +121,7 @@ export function ThreadsSideBarTab(props: TabProps) {
     useEffect(() => {
         if (threadListSuccess && selectedAccount) {
             setCurrentCacheTab(tabValue!);
+            setCurrentViewingCacheTab(`${props.cachePrefix}-${tabValue!}-${selectedAccount?.id}-${tabName}`);
             setCacheThreads({
                 ...getCacheThreads(),
                 [`${props.cachePrefix}-${tabValue!}-${selectedAccount?.id}-${tabName}`]: threads ? [...threads] : []
