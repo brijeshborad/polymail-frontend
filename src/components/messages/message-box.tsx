@@ -94,9 +94,9 @@ export function MessageBox(props: any) {
                                 <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
                                     <EyeSlashedIcon/>
                                 </Flex> : ''}
-                            <span style={{marginRight: '20px', marginTop: '5.5px'}}>
-                            <Time time={props?.item.created || ''} isShowFullTime={true} showTimeInShortForm={false}/>
-                          </span>
+                                <span style={{marginRight: '20px', marginTop: '5px'}}>
+                                    <Time time={props?.item.created || ''} isShowFullTime={true} showTimeInShortForm={false}/>
+                                </span>
 
                             <Menu isOpen={isContextMenuOpen} onClose={() => setIsContextMenuOpen(false)}>
                                 <MenuButton
@@ -202,7 +202,7 @@ export function MessageBox(props: any) {
                                 {props.threadDetails.to[0].email}&nbsp;
 
                                 <div className={styles.otherMail}>
-                                  <Tooltip 
+                                  <Tooltip
                                     placement="bottom"
                                     label={(emailList || []).map((item: any, index: number) => (
                                         <p key={index}>{item.email}</p>

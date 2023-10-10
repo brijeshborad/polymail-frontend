@@ -22,7 +22,7 @@ import {HeaderSearch} from "@/components/common/header-search";
 import {
     accountService,
     messageService,
-    organizationService,
+    organizationService, projectService,
     socketService,
     threadService,
     userService
@@ -199,6 +199,7 @@ export function Header() {
     const changePage = (page: string) => {
         if (router.pathname.replace('/', '') !== page) {
             threadService.pageChange();
+            projectService.pageChange();
             messageService.pageChange();
             Router.push(`/${page}`);
         }

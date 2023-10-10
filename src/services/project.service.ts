@@ -1,7 +1,7 @@
 import {InitialProjectState} from "@/types";
 import {BaseService} from "@/services/base.service";
 import {updateProjectState} from "@/redux/projects/action-reducer";
-import {InviteMember, TeamMember} from "@/models";
+import {InviteMember, Project, TeamMember} from "@/models";
 
 class ProjectService extends BaseService {
     constructor() {
@@ -10,6 +10,12 @@ class ProjectService extends BaseService {
 
     public getProjectState(): InitialProjectState {
         return this.getState('projects');
+    }
+
+    pageChange() {
+        this.setProjectState({
+            project: null
+        });
     }
 
     setProjectSearchString(value: string) {
