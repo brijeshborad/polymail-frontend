@@ -1,7 +1,7 @@
 import {InitialProjectState} from "@/types";
 import {BaseService} from "@/services/base.service";
 import {updateProjectState} from "@/redux/projects/action-reducer";
-import {InviteMember, Project, TeamMember} from "@/models";
+import {InviteMember, TeamMember} from "@/models";
 
 class ProjectService extends BaseService {
     constructor() {
