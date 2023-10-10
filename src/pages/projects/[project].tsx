@@ -56,6 +56,7 @@ function ProjectInbox() {
     const { projects } = useSelector((state: StateType) => state.projects);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const [isManagerMembersOpen, setIsManagerMembersOpen] = useState<boolean>(false)
+    const [isProjectDropdownOpen, setIsProjectDropdownOpen] = useState<boolean>(false)
 
     const [size, setSize] = useState<number>(0);
     const [maxShowingMembers, setMaxShowingMembers] = useState<number>(5);
@@ -70,7 +71,13 @@ function ProjectInbox() {
     const router = useRouter();
     const dispatch = useDispatch();
 
-    useEffect(() => {
+  useEffect(() => {
+      if (incomingEvent === 'iframe.clicked') {
+        setIsProjectDropdownOpen(false);
+      }
+  }, [incomingEvent, setIsProjectDropdownOpen]);
+
+  useEffect(() => {
       setFilteredProjects((projects || []));
   }, [projects, selectedThread])
 
@@ -243,18 +250,23 @@ function ProjectInbox() {
                 <Flex align={'center'} justify={'space-between'} gap={4} padding={'16px 40px 15px'}
                       borderBottom={'1px solid rgba(8, 22, 47, 0.12)'} backgroundColor={'#FFFFFF'}>
                     <Flex align={'center'} gap={2}>
-                        <Menu>
+                      <Menu isOpen={isProjectDropdownOpen} onClose={() => setIsProjectDropdownOpen(false)}>
                         <Tooltip label='Show all projects' placement='bottom'>
-                          <MenuButton 
+                          <MenuButton
+                            onClick={() => {
+                              setIsProjectDropdownOpen(!isProjectDropdownOpen)
+                            }} 
                             display={'flex'}
-                            as={Button} 
+                            as={Flex} 
                             fontSize={'24px'} color={'#08162F'} 
                             backgroundColor={'#fff'}
-                            rightIcon={<ChevronDownIcon />}
                             className={styles.projectNameDropdown}
+                            padding={'0 8px'}
+                            cursor={'pointer'}
                             >
-                            {project?.emoji ? project.emoji : <Image src="/image/user.png" width="36" height="36" alt=""/>}
-                            <span style={{ marginLeft: 12 }}>{project && project.name}</span>
+                            {project?.emoji ? project.emoji : <Image src="/image/user.png" width="24" height="24" alt=""/>}
+                            <span style={{ marginLeft: 12 }}>{project && project.name ? project.name : 'Loading...'}</span>
+                            <ChevronDownIcon />
                           </MenuButton>
                         </Tooltip>
                         

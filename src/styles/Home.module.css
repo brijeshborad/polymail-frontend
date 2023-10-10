@@ -350,8 +350,8 @@
 }
 
 .profile {
+    background-color: #fff !important;
     margin-left: auto;
-    padding: 2px 8px;
     border-radius: 8px;
 }
 
@@ -361,7 +361,7 @@
 
 .profileButton {
     background: #fff !important;
-    padding: 0 !important;
+    padding: 2px 8px !important;
 }
 
 .profileButton:hover {
