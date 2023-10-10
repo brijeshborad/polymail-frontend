@@ -81,7 +81,7 @@ export function HeaderSearch() {
         if (event.key.toLowerCase() === 'enter') {
             searchCancel(false);
             if (searchString) {
-                threadService.cancelThreadSearch(true);
+                threadService.searchThread();
                 socketService.searchThreads(userDetails?.id, searchString);
                 return;
             }

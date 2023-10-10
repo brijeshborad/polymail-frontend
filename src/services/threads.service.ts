@@ -48,6 +48,16 @@ class ThreadsService extends BaseService {
         });
     }
 
+    searchThread() {
+        this.setThreadState({
+            isThreadSearched: true,
+            multiSelection: [],
+            threads: [],
+            isLoading: true,
+            selectedThread: null,
+        });
+    }
+
     pageChange() {
         this.setThreadState({
             threads: [],
