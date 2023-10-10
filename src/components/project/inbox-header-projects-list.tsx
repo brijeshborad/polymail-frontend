@@ -1,4 +1,4 @@
-import {Flex, Text, Image, Button, Tooltip} from "@chakra-ui/react";
+import {Flex, Text, Image, Button} from "@chakra-ui/react";
 import {DisneyDIcon, FolderIcon} from "@/icons";
 import React, {useEffect, useState} from "react";
 import {useSelector} from "react-redux";
@@ -7,6 +7,7 @@ import {Project, UserProjectOnlineStatus} from "@/models";
 import Router from "next/router";
 import {PlusIcon} from "@/icons/plus.icon";
 import {commonService, messageService, threadService} from "@/services";
+import Tooltip from "../common/Tooltip";
 
 export function InboxHeaderProjectsList(props: { size: number }) {
     const {projects, isLoading} = useSelector((state: StateType) => state.projects);
@@ -72,7 +73,7 @@ export function InboxHeaderProjectsList(props: { size: number }) {
                             {(onlineUsers && onlineUsers.projects[project.id!] || [])
                                 .filter((t: UserProjectOnlineStatus) => t.isOnline).slice(0, 5)
                                 .map((item: UserProjectOnlineStatus, index: number) => (
-                                        <Tooltip label={item.name} placement='bottom' bg='gray.300' color='black'
+                                        <Tooltip label={item.name || ''} placement='bottom'
                                                  key={index}>
                                             <div className={'member-photo'}
                                                  style={{background: '#000', border: `2px solid #${item.color}`}}>

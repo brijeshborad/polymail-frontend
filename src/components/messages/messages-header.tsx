@@ -1,6 +1,5 @@
 import {
     Flex,
-    Tooltip,
     Heading,
     Image
 } from "@chakra-ui/react";
@@ -28,6 +27,7 @@ import {
 import dayjs from "dayjs";
 import {generateToasterId} from "@/utils/common.functions";
 import {membershipService, messageService, threadService} from "@/services";
+import Tooltip from "../common/Tooltip";
 
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
 const MessageSchedule = dynamic(() => import("./message-schedule").then(mod => mod.default));
@@ -188,7 +188,7 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                         {(onlineUsers && selectedThread && onlineUsers['threads'][selectedThread.id!] || [])
                             .filter((t: UserProjectOnlineStatus) => t.isOnline).slice(0, 5)
                             .map((item: UserProjectOnlineStatus, index: number) => (
-                                    <Tooltip label={item.name} placement='bottom' bg='gray.300' color='black' key={index}>
+                                    <Tooltip label={item.name || ''} placement='bottom' key={index}>
                                         <div className={'member-photo'}
                                              style={{background: '#000', border: `2px solid #${item.color}`}}>
                                             {item.avatar && <Image src={item.avatar} width="24" height="24"
@@ -201,27 +201,27 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                     </Flex>
                     {headerType === 'inbox' && <AddToProjectButton/>}
                     {!(selectedThread?.mailboxes || []).includes(MAILBOX_INBOX) && (
-                        <Tooltip label='Inbox' placement='bottom' bg='gray.300' color='black'>
+                        <Tooltip label='Inbox' placement='bottom'>
                             <button onClick={() => updateMailBox(MAILBOX_INBOX)} className='inbox-button-icon'>
                                 <InboxIcon/>
                             </button>
                         </Tooltip>
                     )}
                     {!(selectedThread?.mailboxes || []).includes(MAILBOX_ARCHIVE) && (
-                        <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
+                        <Tooltip label='Archive' placement='bottom'>
                             <button onClick={() => updateMailBox(MAILBOX_ARCHIVE)} className='archive-button-icon'>
                                 <ArchiveIcon/>
                             </button>
                         </Tooltip>
                     )}
                     {!(selectedThread?.mailboxes || []).includes(MAILBOX_TRASH) && (
-                        <Tooltip label='Trash' placement='bottom' bg='gray.300' color='black'>
+                        <Tooltip label='Trash' placement='bottom'>
                             <button onClick={() => updateMailBox(MAILBOX_TRASH)} className='trash-button-icon'>
                                 <TrashIcon/>
                             </button>
                         </Tooltip>
                     )}
-                    <Tooltip label='Snooze' placement='top' bg='gray.300' color='black'>
+                    <Tooltip label='Snooze' placement='bottom'>
                         <div>
                             <MessageSchedule
                                 isSnooze={true}
