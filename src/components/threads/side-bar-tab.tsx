@@ -64,6 +64,8 @@ export function ThreadsSideBarTab(props: TabProps) {
         }
         return projectId;
     }, [router.asPath, router.query.project])
+    let projectId = getProjectId();
+
 
     const getAllThread = useCallback((type: string = tabName) => {
         if (selectedAccount && selectedAccount.syncHistory?.mailInitSynced) {
@@ -81,7 +83,6 @@ export function ThreadsSideBarTab(props: TabProps) {
                     isLoading: false
                 })
             }
-            let projectId = getProjectId();
             if (projectId && !isSummaryApiCalled) {
                 setIsSummaryApiCalled(true);
                 dispatch(getProjectSummary({
@@ -167,6 +168,12 @@ export function ThreadsSideBarTab(props: TabProps) {
             getAllThread();
         }
     }, [account, getAllThread])
+
+    useEffect(() => {
+        if (projectId) {
+            getAllThread();
+        }
+    }, [projectId, getAllThread])
 
     useEffect(() => {
         if (tabValue && currentTab !== tabValue) {

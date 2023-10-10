@@ -10,8 +10,7 @@ import {
     Tab,
     TabList,
     TabPanels,
-    Tabs,
-    Tooltip
+    Tabs
 } from "@chakra-ui/react";
 import {ArchiveIcon, DraftIcon, EditIcon, InboxIcon, SendIcon, StarIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
 import {StateType} from "@/types";
@@ -23,6 +22,7 @@ import {SmallCloseIcon, TriangleDownIcon} from "@chakra-ui/icons";
 import {getCurrentCacheTab} from "@/utils/cache.functions";
 import {MAILBOX_ARCHIVE, MAILBOX_INBOX, MAILBOX_SNOOZED, MAILBOX_STARRED, MAILBOX_TRASH} from "@/utils/constants";
 import {threadService, commonService, socketService, draftService} from "@/services";
+import Tooltip from "../common/Tooltip";
 
 const MessageSchedule = dynamic(() => import("../messages/message-schedule").then(mod => mod.default));
 const ThreadsSideBarTab = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarTab), {ssr: false});
@@ -214,7 +214,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                     className={styles.mailTabList} overflowX={"auto"}
                 >
                     <Tab className={styles.emailTabs}>
-                        <Tooltip label='Inbox' placement='bottom' bg='gray.300' color='black'>
+                        <Tooltip label='Inbox' placement='bottom'>
                             <div
                                 className={`${tab === 'INBOX' ? styles.active : ''}`}
                                 onClick={() => changeEmailTabs('INBOX')}
@@ -226,7 +226,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                         </Tooltip>
                     </Tab>
                     <Tab className={styles.emailTabs}>
-                        <Tooltip label='Sent' placement='bottom' bg='gray.300' color='black'>
+                        <Tooltip label='Sent' placement='bottom'>
                             <div
                                 className={`${tab === 'SENT' ? styles.active : ''}`}
                                 onClick={() => changeEmailTabs('SENT')}
@@ -239,7 +239,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
 
                     {!['TRASH', 'STARRED', 'ARCHIVE', 'DRAFT'].includes(tab) &&
                     <Tab className={styles.emailTabs}>
-                        <Tooltip label='Snoozed' placement='bottom' bg='gray.300' color='black'>
+                        <Tooltip label='Snoozed' placement='bottom'>
                             <div
                                 className={`${tab === 'SNOOZED' ? styles.active : ''}`}
                                 onClick={() => changeEmailTabs('SNOOZED')}
@@ -253,7 +253,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
 
                     {tab === 'STARRED' &&
                     <Tab className={styles.emailTabs}>
-                        <Tooltip label='Starred' placement='bottom' bg='gray.300' color='black'>
+                        <Tooltip label='Starred' placement='bottom'>
                             <div
                                 className={`${tab === 'STARRED' ? styles.active : ''}`}
                                 onClick={() => changeEmailTabs('STARRED')}
@@ -268,7 +268,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                     {tab === 'TRASH' &&
 
                     <Tab className={styles.emailTabs}>
-                        <Tooltip label='Trash' placement='bottom' bg='gray.300' color='black'>
+                        <Tooltip label='Trash' placement='bottom'>
                             <div
                                 className={`${tab === 'TRASH' ? styles.active : ''}`}
                                 onClick={() => changeEmailTabs('TRASH')}
@@ -282,7 +282,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                     {tab === 'ARCHIVE' &&
 
                     <Tab className={styles.emailTabs}>
-                        <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
+                        <Tooltip label='Archive' placement='bottom'>
                             <div
                                 className={`${tab === 'ARCHIVE' ? styles.active : ''}`}
                                 onClick={() => changeEmailTabs('ARCHIVE')}
@@ -297,7 +297,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                     {tab === 'DRAFT' &&
 
                     <Tab className={styles.emailTabs}>
-                        <Tooltip label='Draft' placement='bottom' bg='gray.300' color='black'>
+                        <Tooltip label='Draft' placement='bottom'>
                             <div
                                 className={`${tab === 'DRAFT' ? styles.active : ''}`}
                                 onClick={() => changeEmailTabs('DRAFT')}

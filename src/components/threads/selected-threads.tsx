@@ -1,12 +1,13 @@
 import styles from "@/styles/Inbox.module.css";
 import {StateType} from "@/types";
-import {Box, Button, Image, Text, Tooltip} from "@chakra-ui/react";
+import {Box, Button, Image, Text} from "@chakra-ui/react";
 import {useSelector} from "react-redux";
 import {ArchiveIcon, TrashIcon} from "@/icons";
 import dynamic from "next/dynamic";
 import {MAILBOX_ARCHIVE, MAILBOX_SNOOZED, MAILBOX_TRASH} from "@/utils/constants";
 import React, {useState} from "react";
 import {threadService} from "@/services";
+import Tooltip from "../common/Tooltip";
 
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
 const MessageSchedule = dynamic(() => import("../messages/message-schedule").then(mod => mod.default));
@@ -35,17 +36,17 @@ export default function SelectedThreads() {
 
             <Box className={styles.addToProjectPlusActions}>
                 <AddToProjectButton/>
-                <Tooltip label='Archive' placement='bottom' bg='gray.300' color='black'>
+                <Tooltip label='Archive' placement='bottom'>
                     <Button variant='link' size='xs'
                             onClick={() => threadService.moveThreadToMailBox(MAILBOX_ARCHIVE)}><ArchiveIcon/></Button>
                 </Tooltip>
 
-                <Tooltip label='Trash' placement='bottom' bg='gray.300' color='black'>
+                <Tooltip label='Trash' placement='bottom'>
                     <Button variant='link' size='xs'
                             onClick={() => threadService.moveThreadToMailBox(MAILBOX_TRASH)}><TrashIcon/></Button>
                 </Tooltip>
 
-                <Tooltip label='Snooze' placement='bottom' bg='gray.300' color='black'>
+                <Tooltip label='Snooze' placement='bottom'>
                     {/*<Button variant='link' size='xs' onClick={() => moveThreadToMailBoxes(MAILBOX_SNOOZED)}><TimeSnoozeIcon /></Button>*/}
                     <div>
                         <MessageSchedule

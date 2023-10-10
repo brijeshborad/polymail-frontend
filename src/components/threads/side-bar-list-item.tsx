@@ -1,6 +1,6 @@
 import styles2 from "@/styles/common.module.css";
 import styles from "@/styles/Inbox.module.css";
-import {Box, Flex, Image, Tooltip} from "@chakra-ui/react";
+import {Box, Flex, Image} from "@chakra-ui/react";
 import {Time} from "@/components/common";
 import {DisneyIcon, DotIcon} from "@/icons";
 import {StateType, ThreadListItemProps} from "@/types";
@@ -9,6 +9,7 @@ import React, {useEffect, useRef, useState} from "react";
 import {MAILBOX_UNREAD} from "@/utils/constants";
 import {UserProjectOnlineStatus} from "@/models";
 import {keyNavigationService} from "@/services";
+import Tooltip from "../common/Tooltip";
 
 
 export function ThreadsSideBarListItem(props: ThreadListItemProps) {
@@ -74,7 +75,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                             {(onlineUsers && props.thread && onlineUsers['threads'][props.thread.id!] || [])
                                 .filter((t: UserProjectOnlineStatus) => t.isOnline).slice(0, 5)
                                 .map((item: UserProjectOnlineStatus, index: number) => (
-                                        <Tooltip label={item.name} placement='bottom' bg='gray.300' color='black'
+                                        <Tooltip label={item.name || ''} placement='bottom'
                                                  key={index}>
                                             <div className={'member-photo'}
                                                  style={{background: '#000', border: `2px solid #${item.color}`}}>

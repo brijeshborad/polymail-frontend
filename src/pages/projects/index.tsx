@@ -5,7 +5,7 @@ import {
     Button,
     Flex,
     Heading, Menu, MenuButton, MenuItem, MenuList,
-    Text, Tooltip
+    Text
 } from "@chakra-ui/react";
 import styles from "@/styles/project.module.css";
 import Image from "next/image";
@@ -18,6 +18,7 @@ import {Project, UserProjectOnlineStatus} from "@/models";
 import {POSITION_GAP} from "@/utils/constants";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import {commonService} from "@/services";
+import Tooltip from "@/components/common/Tooltip";
 
 function Index() {
     const {isLoading, projects, projectSearchedString} = useSelector((state: StateType) => state.projects);
@@ -186,8 +187,7 @@ function Index() {
                                             {onlineUsers && (onlineUsers['projects'][project.id!] || [])
                                                 .filter((t: UserProjectOnlineStatus) => t.isOnline).slice(0, 5)
                                                 .map((item: UserProjectOnlineStatus, index: number) => (
-                                                    <Tooltip label={item.name} placement='bottom' bg='gray.300'
-                                                             color='black' key={index}>
+                                                    <Tooltip label={item.name || ''} placement='bottom' key={index}>
                                                         <div className={styles.memberPhoto}
                                                              style={{border: `2px solid #${item.color}`}}>
                                                             {item.avatar &&

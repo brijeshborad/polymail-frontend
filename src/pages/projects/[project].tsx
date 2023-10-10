@@ -7,7 +7,8 @@ import {
 import {
     getProjectMembers,
     getProjectMembersInvites,
-    updateProjectMemberRole
+    updateProjectMemberRole,
+    updateProjectState
 } from "@/redux/projects/action-reducer";
 import styles from "@/styles/project.module.css";
 import {StateType} from "@/types";
@@ -19,13 +20,13 @@ import {
     Button,
     Flex,
     Grid, GridItem,
-    Heading, IconButton,
+    IconButton,
     Input,
     Menu,
     MenuButton,
     MenuItem,
     MenuList,
-    Text, Tooltip, useDisclosure
+    Text, useDisclosure
 } from "@chakra-ui/react";
 import dynamic from 'next/dynamic';
 import Image from "next/image";
@@ -34,6 +35,7 @@ import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {MenuIcon} from "@/icons";
 import {projectService, socketService} from "@/services";
+import Tooltip from "@/components/common/Tooltip";
 
 const ThreadsSideBar = dynamic(
     () => import('@/components/threads').then((mod) => mod.ThreadsSideBar)
@@ -45,6 +47,7 @@ function ProjectInbox() {
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {onlineUsers} = useSelector((state: StateType) => state.commonApis);
     const {success} = useSelector((state: StateType) => state.memberships);
+    const { projects } = useSelector((state: StateType) => state.projects);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const [isManagerMembersOpen, setIsManagerMembersOpen] = useState<boolean>(false)
 
@@ -77,6 +80,13 @@ function ProjectInbox() {
     useEffect(() => {
         if (router.query.project) {
             let projectId = router.query.project as string;
+
+            if(projects) {
+              dispatch(updateProjectState({
+                project: projects.find(p => p.id === projectId)
+              }))
+            }
+
             dispatch(getProjectMembers({
                 body: {
                     projectId: projectId
@@ -221,7 +231,30 @@ function ProjectInbox() {
                             {project?.emoji ? project.emoji :
                                 <Image src="/image/user.png" width="36" height="36" alt=""/>}
                         </Flex>
-                        <Heading as='h4' fontSize={'24px'} color={'#08162F'}>{project && project.name}</Heading>
+                        <Menu>
+                        <Tooltip label='Show all projects' placement='bottom'>
+                          <MenuButton 
+                            as={Button} 
+                            fontSize={'24px'} color={'#08162F'} 
+                            backgroundColor={'#fff'}
+                            rightIcon={<ChevronDownIcon />}
+                          >
+                            {project && project.name}
+                          </MenuButton>
+                        </Tooltip>
+                          <MenuList>
+                            {projects?.filter(proj => proj.id !== project?.id)
+                              .map(project => (
+                              <MenuItem 
+                                key={project.id}
+                                onClick={() => router.push(`/projects/${project.id}`)}
+                              >
+                                <span style={{ width: '24px' }}>{project.emoji}</span>
+                                {project.name}
+                              </MenuItem>
+                            ))}
+                          </MenuList>
+                        </Menu>
                         <Badge textTransform={'none'} color={'#000000'} fontSize={'14px'} fontWeight={'600'}
                                backgroundColor={'#E9E9E9'} marginBottom={'-2px'}
                                padding={'3px 6px'} borderRadius={'4px'}
@@ -232,7 +265,7 @@ function ProjectInbox() {
                         {project && onlineUsers && (onlineUsers['projects'][project.id!] || [])
                             .filter((t: UserProjectOnlineStatus) => t.isOnline).slice(0, maxShowingMembers)
                             .map((item: UserProjectOnlineStatus, index: number) => (
-                                <Tooltip label={item.name} placement='bottom' bg='gray.300' color='black' key={index}>
+                                <Tooltip label={item.name || ''} placement='bottom' key={index}>
                                     <div className={styles.userImage} style={{border: `2px solid #${item.color}`}}>
                                         {item.avatar && <Image src={item.avatar} width="36" height="36" alt=""/>}
                                     </div>

@@ -351,6 +351,12 @@
 
 .profile {
     margin-left: auto;
+    padding: 2px 8px;
+    border-radius: 8px;
+}
+
+.profile:hover {
+  background-color: #e2e8f0;
 }
 
 .profileButton {
