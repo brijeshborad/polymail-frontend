@@ -9,6 +9,7 @@ import {MessageAttachments} from "@/models";
 import {StateType} from "@/types";
 import {debounce} from "@/utils/common.functions";
 import {EyeSlashedIcon} from "@/icons/eye-slashed.icon";
+import Tooltip from "../common/Tooltip";
 
 
 export function MessageBox(props: any) {
@@ -191,13 +192,14 @@ export function MessageBox(props: any) {
                                 {props.threadDetails.to[0].email}&nbsp;
 
                                 <div className={styles.otherMail}>
+                                  <Tooltip 
+                                    placement="bottom"
+                                    label={(emailList || []).map((item: any, index: number) => (
+                                        <p key={index}>{item.email}</p>
+                                    ))}>
                                     <Text
                                         as='u'>{props.threadDetails.to.length - 1 > 0 && `and ${props.threadDetails.to.length - 1} others`} </Text>
-                                    <div className={styles.otherMailList}>
-                                        {(emailList || []).map((item: any, index: number) => (
-                                            <p key={index}>{item.email}</p>
-                                        ))}
-                                    </div>
+                                  </Tooltip>
                                 </div>
                             </Flex>
                             }
