@@ -170,8 +170,8 @@ class CommonService extends BaseService {
         this.setCommonState({syncingEmails: percentage});
     }
 
-    toggleCreateProjectModel(enable: boolean, shouldRedirect: boolean = false) {
-        this.setCommonState({showCreateProjectModal: enable, shouldRedirectOnCreateProject: shouldRedirect});
+    toggleCreateProjectModel(enable: boolean, shouldRedirect: boolean = false, shouldAddThread: boolean = true) {
+        this.setCommonState({showCreateProjectModal: enable, shouldRedirectOnCreateProject: shouldRedirect, shouldAddThread: shouldAddThread});
     }
 }
 

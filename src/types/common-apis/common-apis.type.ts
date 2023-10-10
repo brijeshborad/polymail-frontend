@@ -8,6 +8,7 @@ export declare type InitialCommonApisStateType = {
   error?: Error | any,
   showCreateProjectModal?: boolean,
   shouldRedirectOnCreateProject?: boolean,
+  shouldAddThread?: boolean,
   syncingEmails?: number | null,
   isComposing?: boolean,
   allowThreadSelection?: boolean,

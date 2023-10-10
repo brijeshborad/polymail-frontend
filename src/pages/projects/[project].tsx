@@ -321,16 +321,16 @@ function ProjectInbox() {
                                     </MenuItem>
                                   )
                                 })}
-                                <div className={styles.addNewProject}>
-                                    <Button backgroundColor={'transparent'} w={'100%'} borderRadius={0}
-                                            justifyContent={'flex-start'}
-                                            onClick={() => commonService.toggleCreateProjectModel(true, true)}>
-                                        <div className={inboxStyles.plusIconBlack} style={{ marginRight: 8 }}>
-                                            <SmallAddIcon/>
-                                        </div>
-                                        Create New Project
-                                    </Button>
-                                </div>
+                            </div>
+                            <div className={styles.addNewProject}>
+                                <Button backgroundColor={'transparent'} w={'100%'} borderRadius={0}
+                                        justifyContent={'flex-start'}
+                                        onClick={() => commonService.toggleCreateProjectModel(true, true, false)}>
+                                    <div className={inboxStyles.plusIconBlack} style={{ marginRight: 8 }}>
+                                        <SmallAddIcon/>
+                                    </div>
+                                    Create New Project
+                                </Button>
                             </div>
                           </MenuList>
                           </Menu>

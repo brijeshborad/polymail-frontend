@@ -29,7 +29,7 @@ function CreateNewProjectModal() {
     const dispatch = useDispatch();
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {selectedOrganization} = useSelector((state: StateType) => state.organizations);
-    const {showCreateProjectModal, shouldRedirectOnCreateProject} = useSelector((state: StateType) => state.commonApis);
+    const {showCreateProjectModal, shouldRedirectOnCreateProject, shouldAddThread} = useSelector((state: StateType) => state.commonApis);
     const [projectName, setProjectName] = useState<string>('');
     const [membersInputs, setMembersInput] = useState<{ input: string; role: string; memberArray: Array<{ item?: string; memberRole?: string }> }>({
         input: '',
@@ -63,16 +63,19 @@ function CreateNewProjectModal() {
                     groupType: 'project',
                     groupId: project?.id
                 }
-                dispatch(addItemToGroup({
-                    toaster: {
-                        success: {
-                            desc: 'Thread was added to ' + project.name?.toLowerCase() + '.',
-                            title: selectedThread?.subject || '',
-                            type: 'success'
-                        }
-                    },
-                    body: reqBody
-                }))
+                
+                if(shouldAddThread) {
+                  dispatch(addItemToGroup({
+                      toaster: {
+                          success: {
+                              desc: 'Thread was added to ' + project.name?.toLowerCase() + '.',
+                              title: selectedThread?.subject || '',
+                              type: 'success'
+                          }
+                      },
+                      body: reqBody
+                  }))
+                }
 
                 setMembersInput({
                     input: '',
