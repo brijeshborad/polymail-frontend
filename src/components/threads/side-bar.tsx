@@ -23,6 +23,7 @@ import {getCurrentCacheTab} from "@/utils/cache.functions";
 import {MAILBOX_ARCHIVE, MAILBOX_INBOX, MAILBOX_SNOOZED, MAILBOX_STARRED, MAILBOX_TRASH} from "@/utils/constants";
 import {threadService, commonService, socketService, draftService} from "@/services";
 import Tooltip from "../common/Tooltip";
+import {createDraft} from "@/redux/draft/action-reducer";
 
 const MessageSchedule = dynamic(() => import("../messages/message-schedule").then(mod => mod.default));
 const ThreadsSideBarTab = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarTab), {ssr: false});
@@ -118,6 +119,9 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
             draftService.setComposeDraft(null);
         }
         commonService.toggleComposing(true);
+        if (selectedAccount && selectedAccount.id) {
+            dispatch(createDraft({body: {accountId: selectedAccount.id, body: {}, fromCompose: true}}));
+        }
     }
 
     const moveThreadToMailBoxes = (type: string, date: string = '') => {

@@ -454,10 +454,12 @@ export function ComposeBox(props: any) {
                 allValues = [...allValues, ...emailRecipients[property].items];
             }
         }
-        if ((allValues.length > 0 && emailRecipients && emailRecipients['recipients'] && emailRecipients['recipients'].items.length > 0) || subject) {
+        console.log('attachments', attachments)
+        if ((allValues.length > 0 && emailRecipients && emailRecipients['recipients'] && emailRecipients['recipients'].items.length > 0) || subject || (attachments.length > 0)) {
+            console.log('HERE')
             sendToDraft('', false);
         }
-    }, [emailRecipients.recipients.items, emailRecipients.cc.items, emailRecipients.bcc.items, subject]);
+    }, [emailRecipients.recipients.items, emailRecipients.cc.items, emailRecipients.bcc.items, subject, attachments]);
 
 
     function handleFileUpload(files: any, event: any) {
