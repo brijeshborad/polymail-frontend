@@ -16,7 +16,7 @@ import {debounce, generateToasterId, isEmail, makeCollabId} from "@/utils/common
 import {createDraft, sendMessage, updateDraftState, updatePartialMessage} from "@/redux/draft/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import dayjs from "dayjs";
-import {deleteMessage, uploadAttachment} from "@/redux/messages/action-reducer";
+import {deleteMessage, removeAttachment, uploadAttachment} from "@/redux/messages/action-reducer";
 import {MessageAttachments, MessageRecipient, Thread} from "@/models";
 import {Toaster} from "@/components/common";
 import {RecipientsType} from "@/types/props-types/message-recipients.type";
@@ -29,6 +29,7 @@ import CollabRichTextEditor from "../common/collab-rich-text-editor";
 import Image from "next/image";
 import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
 import {commonService, draftService, globalEventService, threadService} from "@/services";
+import {getCacheMessages, setCacheMessages} from "@/utils/cache.functions";
 
 const CreateNewProject = dynamic(() => import('@/components/project/create-new-project').then(mod => mod.default));
 const Time = dynamic(() => import("@/components/common").then(mod => mod.Time));
@@ -135,6 +136,14 @@ export function ComposeBox(props: any) {
                 globalEventService.fireEvent({data: draftInfo.body, type: 'richtexteditor.forceUpdateWithOnChange'});
                 setEmailBody(draftInfo.body);
             }
+
+            if (draftInfo && draftInfo.attachments && draftInfo.attachments.length > 0) {
+                setAttachments([
+                    ...draftInfo.attachments.map(t => ({
+                        filename: t.filename,
+                        mimeType: t.mimeType
+                    }))
+                ]);            }
             setIsContentSet(true);
             if (props.isProjectView) {
                 draftService.addComposeToProject()
@@ -449,12 +458,24 @@ export function ComposeBox(props: any) {
                 allValues = [...allValues, ...emailRecipients[property].items];
             }
         }
-        console.log('attachments', attachments)
-        if ((allValues.length > 0 && emailRecipients && emailRecipients['recipients'] && emailRecipients['recipients'].items.length > 0) || subject || (attachments.length > 0)) {
-            console.log('HERE')
+        if ((allValues.length > 0 && emailRecipients && emailRecipients['recipients'] && emailRecipients['recipients'].items.length > 0) || subject) {
             sendToDraft('', false);
         }
-    }, [emailRecipients.recipients.items, emailRecipients.cc.items, emailRecipients.bcc.items, subject, attachments]);
+    }, [emailRecipients.recipients.items, emailRecipients.cc.items, emailRecipients.bcc.items, subject]);
+
+    useEffect(() => {
+        if (composeDraft && composeDraft.id) {
+            let cacheMessages = getCacheMessages();
+            setCacheMessages({
+                ...cacheMessages,
+                [composeDraft.id!]: {
+                    ...cacheMessages[composeDraft.id!],
+                    data: Buffer.from(composeDraft?.draftInfo!.body || '').toString('base64'),
+                    attachments: composeDraft?.draftInfo?.attachments || []
+                }
+            })
+        }
+    }, [composeDraft])
 
 
     function handleFileUpload(files: any, event: any) {
@@ -477,8 +498,12 @@ export function ComposeBox(props: any) {
                             mimeType: file.type
                         }
                     ]);
-                    dispatch(uploadAttachment({body: {id: composeDraft.id, file: file}}));
-                    sendToDraft('', false);
+                    dispatch(uploadAttachment({
+                        body:{ id: composeDraft.id, file: file },
+                        afterSuccessAction: () => {
+                            dispatch(updatePartialMessage({body:{ id: composeDraft.id, fromCompose: true }}));
+                        }
+                    }));
                 }
             };
             reader.onerror = function (error) {
@@ -487,10 +512,18 @@ export function ComposeBox(props: any) {
         }
     }
 
-    function removeAttachment(index: number) {
+    function removeAttachmentsData(index: number) {
         const newArr = [...attachments];
         (newArr || []).splice(index, 1);
         setAttachments([...newArr!]);
+        if (composeDraft && composeDraft.id && composeDraft.draftInfo?.attachments && composeDraft.draftInfo?.attachments[index] && composeDraft.draftInfo?.attachments[index].id) {
+            dispatch(removeAttachment({
+                body: {id: composeDraft.id!, attachment: composeDraft.draftInfo?.attachments[index].id!},
+                afterSuccessAction: () => {
+                    dispatch(updatePartialMessage({body:{ id: composeDraft.id, fromCompose: true }}));
+                }
+            }))
+        }
     }
 
 
@@ -653,7 +686,7 @@ export function ComposeBox(props: any) {
                                                 <Flex align={'center'} key={index} className={styles.attachmentsFile}>
                                                     {item.filename}
                                                     <div className={styles.closeIcon}
-                                                         onClick={() => removeAttachment(index)}><CloseIcon/></div>
+                                                         onClick={() => removeAttachmentsData(index)}><CloseIcon/></div>
                                                 </Flex>
                                             ))}
                                         </div> : null}

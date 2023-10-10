@@ -19,8 +19,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { StateType } from "@/types";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { Message, MessageAttachments, MessageRecipient, Thread } from "@/models";
-import { uploadAttachment } from "@/redux/messages/action-reducer";
+import {Message, MessageAttachments, MessageRecipient, Thread} from "@/models";
+import { removeAttachment, uploadAttachment} from "@/redux/messages/action-reducer";
 import { MessageBoxType } from "@/types/props-types/message-box.type";
 const MessageRecipients = dynamic(() => import("./message-recipients").then(mod => mod.default));
 const MessageSchedule = dynamic(() => import("./message-schedule").then(mod => mod.default));
@@ -462,6 +462,22 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     }
   }, [emailRecipients.recipients.items, emailRecipients.cc.items, emailRecipients.bcc.items, subject, emailBody]);
 
+
+  useEffect(() => {
+    if (draft && draft.id) {
+      let cacheMessages = getCacheMessages();
+      setCacheMessages({
+        ...cacheMessages,
+        [draft.id!]: {
+          ...cacheMessages[draft.id!],
+          data: Buffer.from(draft?.draftInfo!.body || '').toString('base64'),
+          attachments: draft?.draftInfo?.attachments || []
+        }
+      })
+    }
+  }, [draft])
+
+
   function handleFileUpload(files: any, event: any=null) {
     const file = files[0];
 
@@ -483,7 +499,12 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
               mimeType: file.type
             }
           ]);
-          dispatch(uploadAttachment({body:{ id: draft.id, file: file }}));
+          dispatch(uploadAttachment({
+            body:{ id: draft.id, file: file },
+            afterSuccessAction: () => {
+              dispatch(updatePartialMessage({body:{ id: draft.id }}));
+            }
+          }));
         }
       };
       reader.onerror = function (error) {
@@ -492,10 +513,18 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     }
   }
 
-  function removeAttachment(index: number) {
+  function removeAttachmentData(index: number) {
     const newArr = [...attachments];
     (newArr || []).splice(index, 1);
     setAttachments([...newArr!]);
+    if (draft && draft.id && draft.draftInfo?.attachments && draft.draftInfo?.attachments[index] && draft.draftInfo?.attachments[index].id) {
+      dispatch(removeAttachment({
+        body: {id: draft.id!, attachment: draft.draftInfo?.attachments[index].id!},
+        afterSuccessAction: () => {
+          dispatch(updatePartialMessage({body:{ id: draft.id }}));
+        }
+      }))
+    }
   }
 
   const discardMessage = () => {
@@ -912,7 +941,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 {attachments.map((item, index: number) => (
                   <Flex align={'center'} key={index} className={styles.attachmentsFile}>
                     {item.filename}
-                    <div className={styles.closeIcon} onClick={() => removeAttachment(index)}>
+                    <div className={styles.closeIcon} onClick={() => removeAttachmentData(index)}>
                       <CloseIcon />
                     </div>
                   </Flex>

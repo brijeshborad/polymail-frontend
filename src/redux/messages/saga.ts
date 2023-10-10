@@ -17,7 +17,9 @@ import {
     getAttachmentDownloadUrlSuccess,
     uploadAttachmentError,
     uploadAttachmentSuccess,
-    uploadAttachment, updateMessageSuccess, updateMessageError, updateMessage, deleteMessage
+    uploadAttachment, updateMessageSuccess, updateMessageError, updateMessage, deleteMessage,
+    removeAttachmentSuccess,
+    removeAttachmentError, removeAttachment
 } from "@/redux/messages/action-reducer";
 import { ReducerActionType } from "@/types";
 import { performSuccessActions } from "@/utils/common-redux.functions";
@@ -107,6 +109,17 @@ function* deleteMessageAPI({payload}: PayloadAction<ReducerActionType>) {
     }
 }
 
+function* removeAttachmentsData({payload}: PayloadAction<ReducerActionType>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callDelete(`messages/${payload.body.id}/attachments/${payload.body.attachment}`, {});
+        performSuccessActions(payload);
+        yield put(removeAttachmentSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        yield put(removeAttachmentError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
+    }
+}
+
 export function* watchGetMessages() {
     yield takeLatest(getAllMessages.type, getMessages);
 }
@@ -135,6 +148,10 @@ export function* watchDeleteMessage() {
     yield takeLatest(deleteMessage.type, deleteMessageAPI);
 }
 
+export function* watchRemoveAttachmentData() {
+    yield takeLatest(removeAttachment.type, removeAttachmentsData);
+}
+
 
 export default function* rootSaga() {
     yield all([
@@ -145,6 +162,7 @@ export default function* rootSaga() {
         fork(watchAddAttachmentUrlToS3),
         fork(watchUpdateMessageData),
         fork(watchDeleteMessage),
+        fork(watchRemoveAttachmentData),
     ]);
 }
 
