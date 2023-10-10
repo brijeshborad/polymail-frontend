@@ -179,7 +179,7 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
             <Flex gap={2} align={'center'} justify={'space-between'} padding={'16px 20px 12px'}
                   borderBottom={'1px solid #E5E7EB'}>
                 <Flex gap={1}>
-                    <Heading as='h6' fontSize={'15px'} color={'#0A101D'}
+                    <Heading as='h6' fontSize={'15px'} color={'#0A101D'} noOfLines={1}
                              fontWeight={600}>{selectedThread?.subject || '(no subject)'}</Heading>
                 </Flex>
 

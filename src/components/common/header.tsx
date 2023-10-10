@@ -129,6 +129,7 @@ export function Header() {
         (account: Account) => {
             if (account.syncHistory?.mailInitSynced) {
                 LocalStorageService.updateAccount('store', account);
+                accountService.setAccountState({success: true});
             }
             accountService.setSelectedAccount(account);
         },
