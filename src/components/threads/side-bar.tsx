@@ -24,6 +24,7 @@ import {MAILBOX_ARCHIVE, MAILBOX_INBOX, MAILBOX_SNOOZED, MAILBOX_STARRED, MAILBO
 import {threadService, commonService, socketService, draftService} from "@/services";
 import Tooltip from "../common/Tooltip";
 import {createDraft} from "@/redux/draft/action-reducer";
+import {clearDebounce, debounce} from "@/utils/common.functions";
 
 const MessageSchedule = dynamic(() => import("../messages/message-schedule").then(mod => mod.default));
 const ThreadsSideBarTab = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarTab), {ssr: false});
@@ -335,17 +336,34 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                             borderRadius={0} backgroundColor={'transparent'} height={'auto'}
                             fontSize={'13px'} color={'#6B7280'} as={Button} marginLeft={1}
                             rightIcon={<TriangleDownIcon/>}
-                            onMouseEnter={() => setIsMoreDropdownOpen(true)}
+                            onMouseEnter={() => {
+                                clearDebounce();
+                                setIsMoreDropdownOpen(true)
+                            }}
+                            onMouseLeave={() => {
+                                debounce(() => {
+                                    if(!isMoreClicked) {
+                                        setIsMoreDropdownOpen(false)
+                                        setIsMoreClicked(false)
+                                    }
+                                }, 100)
+                            }}
                         >
                             More
                         </MenuButton>
                         <MenuList
                           className={`${styles.tabListDropDown} drop-down-list`}
+                          onMouseEnter={() => {
+                              clearDebounce();
+                              setIsMoreDropdownOpen(true)
+                          }}
                           onMouseLeave={() => {
-                            if(!isMoreClicked) {
-                              setIsMoreDropdownOpen(false)
-                              setIsMoreClicked(false)
-                            }
+                              debounce(() => {
+                                  if(!isMoreClicked) {
+                                      setIsMoreDropdownOpen(false)
+                                      setIsMoreClicked(false)
+                                  }
+                              }, 100)
                           }}
                         >
                             {['TRASH', 'STARRED', 'ARCHIVE', 'DRAFT'].includes(tab) &&

@@ -7,6 +7,10 @@ export function debounce(fun: () => void, timeOut: number = 1500) {
     timeout = setTimeout(fun, timeOut);
     return timeout
 }
+export function clearDebounce() {
+    if (timeout)
+        clearTimeout(timeout);
+}
 
 export function debounceInterval(fun: () => void, timeOut: number = 1500) {
     if (timeoutInterval)
