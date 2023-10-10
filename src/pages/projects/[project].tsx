@@ -424,7 +424,7 @@ function ProjectInbox() {
                                             </Flex>
                                         </div>
 
-                                        <Flex backgroundColor={'rgba(8, 22, 47, 0.05)'} direction={'column'} pb={4}>
+                                        <Flex direction={'column'} pb={4}>
                                             {members && !!members.length && members.map((member, index) => (
                                                 <Flex align={'center'} gap={2} pr={3} key={index}
                                                       className={styles.projectMember}>
