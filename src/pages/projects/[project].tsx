@@ -263,6 +263,7 @@ function ProjectInbox() {
                             className={styles.projectNameDropdown}
                             padding={'0 8px'}
                             cursor={'pointer'}
+                            rounded={'md'}
                             >
                             {project?.emoji ? project.emoji : <Image src="/image/user.png" width="24" height="24" alt=""/>}
                             <span style={{ marginLeft: 12 }}>{project && project.name ? project.name : 'Loading...'}</span>
@@ -292,7 +293,7 @@ function ProjectInbox() {
                               <div className={styles.addNewProject}>
                                   <Button backgroundColor={'transparent'} w={'100%'} borderRadius={0}
                                           justifyContent={'flex-start'}
-                                          onClick={() => commonService.toggleCreateProjectModel(true, false)}>
+                                          onClick={() => commonService.toggleCreateProjectModel(true, true)}>
                                       <div className={inboxStyles.plusIconBlack} style={{ marginRight: 8 }}>
                                           <SmallAddIcon/>
                                       </div>
