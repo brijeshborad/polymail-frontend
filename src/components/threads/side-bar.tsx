@@ -163,7 +163,10 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                     {/*</Flex>*/}
                     <Flex gap={2}>
                         <AddToProjectButton/>
-                        <Menu isOpen={isMoreDropdownOpen} onClose={() => setIsMoreDropdownOpen(false)}>
+                        <Menu 
+                          isOpen={isMoreDropdownOpen} 
+                          onClose={() => setIsMoreDropdownOpen(false)}
+                        >
                             <MenuButton
                                 onClick={() => setIsMoreDropdownOpen(!isMoreDropdownOpen)}
                                 className={styles.tabListMoreButton} minWidth={'60px'} height={'auto'}
@@ -317,10 +320,14 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                             borderRadius={0} backgroundColor={'transparent'} height={'auto'}
                             fontSize={'13px'} color={'#6B7280'} as={Button} marginLeft={1}
                             rightIcon={<TriangleDownIcon/>}
+                            onMouseEnter={() => setIsMoreDropdownOpen(true)}
                         >
                             More
                         </MenuButton>
-                        <MenuList className={`${styles.tabListDropDown} drop-down-list`}>
+                        <MenuList 
+                          className={`${styles.tabListDropDown} drop-down-list`}
+                          onMouseLeave={() => setIsMoreDropdownOpen(false)}
+                        >
                             {['TRASH', 'STARRED', 'ARCHIVE', 'DRAFT'].includes(tab) &&
                             <MenuItem
                                 onClick={() => changeEmailTabs('SNOOZED')}><TimeSnoozeIcon/> Snoozed</MenuItem>
