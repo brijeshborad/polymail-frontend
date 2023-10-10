@@ -652,6 +652,7 @@ div:has(> .mailSendToaster) {
 
 .tiptap-container.compose-view{
   flex: 1;
+    cursor: text;
 }
 
 .tiptap-container .show-shadow-bottom:after {
@@ -803,6 +804,7 @@ div:has(> .mailSendToaster) {
 .tiptap-toolbar.show{
   opacity: 1;
   transition: all 1s ease-in-out;
+    cursor: auto;
 }
 
 .tiptap-toolbar button.is-active {

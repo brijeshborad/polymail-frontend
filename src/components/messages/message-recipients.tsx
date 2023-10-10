@@ -47,7 +47,7 @@ export default function MessageRecipients({
                 lazyBehavior='keepMounted'
                 placement={'bottom-start'}
             >
-                <HStack>
+                <HStack flex={1}>
                     <PopoverAnchor>
                         <Input width={'auto'} display='inline-flex' padding={0} height={'20px'} flex={'1 0 auto'}
                                fontSize={'12px'} border={0} className={styles.ccInput}
