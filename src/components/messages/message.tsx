@@ -21,7 +21,7 @@ import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import dynamic from "next/dynamic";
 import {getCacheMessages, setCacheMessages} from "@/utils/cache.functions";
 import {InboxLoader} from "@/components/loader-screen/inbox-loader";
-import {draftService, keyNavigationService, messageService, threadService} from "@/services";
+import {draftService, globalEventService, keyNavigationService, messageService, threadService} from "@/services";
 
 let preventOpen: boolean = false;
 
@@ -30,7 +30,6 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
 
     const [index, setIndex] = useState<number | null>(null);
     const [emailPart, setEmailPart] = useState<string>("");
-    const [replyType, setReplyType] = useState<string>('reply');
     const [replyTypeName, setReplyTypeName] = useState<string>('');
     const [inboxMessages, setInboxMessages] = useState<MessageModel[]>([]);
     const {
@@ -55,9 +54,9 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const {isLoading: projectsLoading} = useSelector((state: StateType) => state.projects);
     const {isLoading: summaryLoading, syncingEmails, isComposing} = useSelector((state: StateType) => state.commonApis);
-    const [messageDetailsForReplyBox, setMessageDetailsForReplyBox] = useState<MessageModel | null>(null);
     const [passSelectedThreadData, setPassSelectedThreadData] = useState<MessageModel | null>(null);
     const [isLoaderShow, setIsLoaderShow] = useState<boolean>(false);
+    const [showReplyBox, setShowReplyBox] = useState<boolean>(false);
 
     const dispatch = useDispatch();
 
@@ -72,10 +71,14 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
     useEffect(() => {
         if (selectedThread && selectedThread?.id) {
             setPassSelectedThreadData(selectedThread);
+            setShowReplyBox(false)
             setIndex(null);
-            setMessageDetailsForReplyBox(null);
-            setReplyType('reply');
+            globalEventService.fireEvent({data: null, type: 'draft.currentMessage'})
+            globalEventService.fireEvent({data: {type: 'reply'}, type: 'draft.updateType'})
             messageService.setMessages(selectedThread.messages || []);
+            setTimeout(() => {
+                setShowReplyBox(true)
+            }, 200);
         }
     }, [dispatch, selectedThread])
 
@@ -93,7 +96,7 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
             } else {
                 setIndex(currentInboxMessages.length - 1);
             }
-            setMessageDetailsForReplyBox(currentInboxMessages[currentInboxMessages.length - 1]);
+            globalEventService.fireEvent({data: currentInboxMessages[currentInboxMessages.length - 1], type: 'draft.currentMessage'})
         }
     }, [messages, dispatch])
 
@@ -212,8 +215,8 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
         } else {
             setReplyTypeName('Forward')
         }
-        setReplyType(type);
-        setMessageDetailsForReplyBox(messageData)
+        globalEventService.fireEvent({data: messageData, type: 'draft.currentMessage'})
+        globalEventService.fireEvent({type: 'draft.updateType', data: {type, messageData, emailParts: (messagePart?.data || '')}})
     }
 
     const handleRowClick = (index: any) => {
@@ -299,13 +302,11 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
                                         </div>
                                     ))}
                                 </div>
-
+                                {showReplyBox &&
                                 <MessageReplyBox
                                     isProjectView={isProjectView}
-                                    emailPart={(messagePart?.data || '')} messageData={messageDetailsForReplyBox}
-                                    threadDetails={index !== null && inboxMessages[index]}
-                                    replyType={replyType}
                                     hideAndShowReplayBox={hideAndShowReplayBox} replyTypeName={replyTypeName}/>
+                                }
                             </Flex>
                         </Flex>
                     </>

@@ -20,7 +20,7 @@ import { StateType } from "@/types";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import {Message, MessageAttachments, MessageRecipient, Thread} from "@/models";
-import { removeAttachment, uploadAttachment} from "@/redux/messages/action-reducer";
+import {deleteMessage, removeAttachment, uploadAttachment} from "@/redux/messages/action-reducer";
 import { MessageBoxType } from "@/types/props-types/message-box.type";
 const MessageRecipients = dynamic(() => import("./message-recipients").then(mod => mod.default));
 const MessageSchedule = dynamic(() => import("./message-schedule").then(mod => mod.default));
@@ -29,7 +29,6 @@ import { useRouter } from "next/router";
 import { getPlainTextFromHtml } from "@/utils/editor-common-functions";
 import dynamic from "next/dynamic";
 import { fireEvent } from "@/redux/global-events/action-reducer";
-import { updateThreadState } from "@/redux/threads/action-reducer";
 import { getCacheMessages, setCacheMessages } from "@/utils/cache.functions";
 import CollabRichTextEditor from "../common/collab-rich-text-editor";
 import { MAILBOX_DRAFT } from "@/utils/constants";
@@ -53,6 +52,7 @@ export function MessageReplyBox(props: MessageBoxType) {
   const { draft } = useSelector((state: StateType) => state.draft);
   const { selectedThread, tabValue, threads } = useSelector((state: StateType) => state.threads);
   const { event: incomingEvent } = useSelector((state: StateType) => state.globalEvents);
+  const { selectedMessage } = useSelector((state: StateType) => state.messages);
   const dispatch = useDispatch();
   const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
   const inputFile = useRef<HTMLInputElement | null>(null)
@@ -63,9 +63,11 @@ export function MessageReplyBox(props: MessageBoxType) {
   const [extraClassNames, setExtraClassNames] = useState<string>('');
   const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
   const [waitForDraft, setWaitForDraft] = useState<boolean>(false);
-  const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [collabId, setCollabId] = useState<string | undefined>(draft?.draftInfo?.collabId)
   const [isDraftUpdated, setIsDraftUpdated] = useState<boolean>(false);
+  const [isContentUpdated, setIsContentUpdated] = useState<boolean>(false);
+  const [messageData, setMessageData] = useState<any>(null);
+  const [replyType, setReplyType] = useState<string>('reply');
 
   const editorRef = useRef<any>(null);
   const { toast } = createStandaloneToast()
@@ -116,20 +118,6 @@ export function MessageReplyBox(props: MessageBoxType) {
     }
 
   }, [replyBoxHide, divHeight])
-
-  /**
-   * Detect if key navigation is set to open the reply box
-   */
-  // useEffect(() => {
-  //
-  //   if(target === 'reply-box') {
-  //     setHideEditorToolbar(true)
-  //   }
-  //
-  //   if(target !== 'reply-box' && hideEditorToolbar) {
-  //     setHideEditorToolbar(false)
-  //   }
-  // }, [target, hideEditorToolbar])
 
   const isValid = (email: string, type: string) => {
     let error = null;
@@ -275,7 +263,7 @@ export function MessageReplyBox(props: MessageBoxType) {
         body: value || emailBody,
         collabId
       },
-      messageId: props.messageData?.id,
+      messageId: messageData?.id,
       ...(props.isProjectView ? { projectId: router.query.project as string } : {}),
     }
 
@@ -303,66 +291,57 @@ export function MessageReplyBox(props: MessageBoxType) {
 
   useEffect(() => {
     // Add signature and draft to email body
-    if (draft && draft.draftInfo) {
-      if (draft.draftInfo.body) {
-        globalEventService.fireEvent({data: draft?.draftInfo?.body || '', type: 'richtexteditor.forceUpdateWithOnChange'});
-        setEmailBody(draft?.draftInfo?.body || '');
+    if (draft && draft.id && !isContentUpdated) {
+      const {subject, to, cc, bcc, draftInfo} = draft;
+      if (subject) {
+        setSubject(subject)
       }
-      if (draft?.draftInfo?.attachments?.length) {
+      if (draftInfo && draftInfo.body) {
+        let checkValue = getPlainTextFromHtml(draftInfo.body).trim();
+        if (checkValue.trim()) {
+          setIsDraftUpdated(true)
+        }
+        globalEventService.fireEvent({data: draftInfo?.body || '', type: 'richtexteditor.forceUpdateWithOnChange'});
+        setEmailBody(draftInfo?.body || '');
+      }
+      if (draftInfo?.attachments?.length) {
         setAttachments([
-          ...draft.draftInfo.attachments.map(t => ({
+          ...draftInfo.attachments.map(t => ({
             filename: t.filename,
             mimeType: t.mimeType
           }))
         ]);
       }
-    }
-  }, [draft])
-
-  useEffect(() => {
-    let messagesData = props.messageData
-    if (messagesData) {
-      let emailSubject = `${messagesData.subject}`;
-      if (props.replyType === 'forward') {
-        emailSubject = `Fwd: ${messagesData.subject}`;
-        let decoded = Buffer.from(props.emailPart || '', 'base64').toString('utf-8');
-        let sentence = '';
-        if (selectedThread?.projects && selectedThread?.projects?.length) {
-          sentence = `<p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${selectedAccount?.name || ''} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length === 1 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}`;
-        }
-        setEmailBody(getForwardContent() + (decoded || '') + (selectedAccount?.signature || '') + (`<p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p></p>`));
-          dispatch(fireEvent({
-            event: {
-              data: getForwardContent() + (decoded || '') + (selectedAccount?.signature || '') + (`${sentence}`),
-              type: 'richtexteditor.forceUpdate'
-            }
-          }));
-        debounce(() => {
-          handleEditorScroll();
-        }, 200)
-        if (draft && draft.draftInfo && draft?.draftInfo?.attachments?.length) {
-          setAttachments([
-            ...draft.draftInfo.attachments.map(t => ({
-              filename: t.filename,
-              mimeType: t.mimeType
-            }))
-          ]);
-        }
-      } else {
-        if (isInitialized) {
-          if (selectedAccount && selectedAccount.signature) {
-            let sentence = '';
-            if (selectedThread?.projects && selectedThread?.projects?.length) {
-              sentence = `${selectedAccount?.name || ''} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length === 1 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}`;
-            }
-            setEmailBody(`<p></p><p>${selectedAccount.signature}</p><p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`);
+      if (to && to.length) {
+        setEmailRecipients((prevState: any) => ({
+          ...prevState,
+          recipients: {
+            items: to,
+            value: blankRecipientValue
           }
-        }
+        }));
       }
-      // set subject when email is replied or forwarded.
-      setSubject(emailSubject || '');
+      if (cc && cc.length) {
+        setEmailRecipients((prevState: any) => ({
+          ...prevState,
+          cc: {
+            items: cc,
+            value: blankRecipientValue
+          }
+        }));
+      }
+      if (bcc && bcc.length) {
+        setEmailRecipients((prevState: any) => ({
+          ...prevState,
+          bcc: {
+            items: bcc,
+            value: blankRecipientValue
+          }
+        }));
+      }
+      setIsContentUpdated(true);
     }
-  }, [props.messageData, props.replyType, props.emailPart, selectedThread])
+  }, [draft, isContentUpdated])
 
   function formatEmailString(emailArray: any) {
     if (Array.isArray(emailArray)) {
@@ -375,64 +354,42 @@ export function MessageReplyBox(props: MessageBoxType) {
     return '';
   }
 
-  function getForwardContent() {
-    const to = props.messageData?.to;
+  const getForwardContent = useCallback((content: any) => {
+    const to = content?.to;
     const toEmailString = formatEmailString(to);
 
-    const cc = props.messageData?.cc; // Changed cc assignment to match the correct prop
+    const cc = content?.cc; // Changed cc assignment to match the correct prop
     const ccEmailString = formatEmailString(cc);
 
     const forwardContent: string = `<p></p><p></p><p></p><p></p>
              <p style="color: black; background: none">---------- Forwarded message ----------</br>
-From: ${props.messageData?.from?.email}</br>
-Date: ${dayjs(props.messageData?.created).format('ddd, MMM DD, YYYY [at] hh:mm A')}</br>
-Subject: ${props.messageData?.subject}</br>
+From: ${content?.from?.email}</br>
+Date: ${dayjs(content?.created).format('ddd, MMM DD, YYYY [at] hh:mm A')}</br>
+Subject: ${content?.subject}</br>
 To: ${toEmailString}</br>
-${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
+${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     return forwardContent;
-  }
+  }, [])
 
   useEffect(() => {
-    setHideEditorToolbar(false)
-    setScheduledDate(undefined)
-    setEmailRecipients((prevState: RecipientsType) => ({
-      ...prevState,
-      cc: {
-        items: [],
-        value: blankRecipientValue,
-      },
-      bcc: {
-        items: [],
-        value: blankRecipientValue,
-      }
-    }));
-  }, [props?.threadDetails?.id])
-
-  useEffect(() => {
-    if (props.replyType === 'forward') {
-      setEmailRecipients({
-        cc: { items: [], value: blankRecipientValue },
-        bcc: { items: [], value: blankRecipientValue },
-        recipients: { items: [], value: blankRecipientValue }
-      });
-    } else if (props.threadDetails) {
-      if (props.threadDetails?.from!) {
+    if (selectedMessage && !draft) {
+      if (selectedMessage?.from) {
         setEmailRecipients((prevState: RecipientsType) => ({
           ...prevState,
           recipients: {
-            items: (props.threadDetails?.from.email === selectedAccount?.email && props.replyType === 'reply') ? props.threadDetails?.to! : [props.threadDetails?.from!],
+            items: (selectedMessage?.from?.email === selectedAccount?.email && replyType === 'reply') ? selectedMessage?.to! : [selectedMessage?.from!],
             value: prevState.recipients.value
           }
         }));
       }
-      if (props.threadDetails?.cc?.length) {
+      if (selectedMessage?.cc?.length) {
         let items: MessageRecipient[] = []
-        if (props.replyType === 'reply-all') {
-          items.push(props.threadDetails?.from!)
-          if (props.threadDetails?.cc && props.threadDetails?.cc.length) {
-            items.push(...props.threadDetails?.cc)
-          } else if (props.threadDetails?.bcc && props.threadDetails?.bcc.length) {
-            items.push(...props.threadDetails?.bcc)
+        if (replyType === 'reply-all') {
+          items.push(selectedMessage?.from!)
+          if (selectedMessage?.cc && selectedMessage?.cc.length) {
+            items.push(...selectedMessage?.cc)
+          } else if (selectedMessage?.bcc && selectedMessage?.bcc.length) {
+            items.push(...selectedMessage?.bcc)
           }
         }
         const filteredArray = (items || []).filter(obj => obj.email !== '');
@@ -445,18 +402,18 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         }));
       }
 
-      if (props.threadDetails?.bcc?.length) {
+      if (selectedMessage?.bcc?.length) {
         setEmailRecipients((prevState: RecipientsType) => ({
           ...prevState,
           bcc: {
-            items: props.threadDetails?.bcc,
+            items: selectedMessage?.bcc,
             value: prevState.bcc.value
           }
         }));
       }
 
     }
-  }, [props.threadDetails, props.replyType])
+  }, [selectedMessage, replyType, selectedAccount?.email, draft])
 
   useEffect(() => {
     const propertiesToCheck: (keyof RecipientsType)[] = ['recipients', 'bcc', 'cc'];
@@ -468,10 +425,10 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
       }
     }
 
-    if ((allValues.length > 0 && emailRecipients && emailRecipients['recipients'] && emailRecipients['recipients'].items.length > 0) || subject || emailBody) {
+    if ((allValues.length > 0 && emailRecipients && emailRecipients['recipients'] && emailRecipients['recipients'].items.length > 0) || subject) {
       sendToDraft('', false);
     }
-  }, [emailRecipients.recipients.items, emailRecipients.cc.items, emailRecipients.bcc.items, subject, emailBody]);
+  }, [emailRecipients.recipients.items, emailRecipients.cc.items, emailRecipients.bcc.items, subject]);
 
 
   useEffect(() => {
@@ -539,17 +496,22 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   }
 
   const discardMessage = () => {
-    setIsDraftUpdated(false);
     setIsReplyDropdownOpen(false)
     setReplyBoxHide(false);
-    dispatch(fireEvent({
-      event: {
-        data: '',
-        type: 'richtexteditor.discard'
-      }
-    }));
-    setAttachments([]);
-    draftService.discardDraft(sendToDraft);
+    globalEventService.fireEvent({data: '', type: 'richtexteditor.discard'});
+    if (draft && draft.id) {
+      draftService.setReplyDraft(null);
+      dispatch(deleteMessage({
+        body: {id: draft.id},
+        afterSuccessAction: () => {
+          draftService.discardDraft(draft.id!);
+          setIsDraftUpdated(false);
+          setAttachments([]);
+        }
+      }));
+    }
+    // TODO:- Attachment hover issue.
+    // TODO:- Block until attachements are uploaded.
 
     setHideEditorToolbar(false)
   }
@@ -566,6 +528,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
 
     if (type === 'send-now') {
+      messages = messages.filter(item => item.id !== draft?.id);
       messages.push(draftData as Message);
     } else if (type === 'undo') {
       findDraft = messages.filter(item => item.id !== draft?.id);
@@ -692,22 +655,15 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
       setEmailRecipients({
         cc: { items: [], value: blankRecipientValue },
         bcc: { items: [], value: blankRecipientValue },
-        recipients: { items: props.messageData ? [props.messageData.from!] : [], value: blankRecipientValue }
+        recipients: { items: messageData ? [messageData.from!] : [], value: blankRecipientValue }
       });
       setScheduledDate(undefined)
       setEmailBody('');
       setAttachments([]);
-
-      dispatch(fireEvent({
-        event: {
-          data: '',
-          type: 'richtexteditor.forceUpdate'
-        }
-      }));
-
-      dispatch(updateDraftState({
-        draft: null,
-      }));
+      setIsContentUpdated(false);
+      setIsDraftUpdated(false);
+      globalEventService.fireEvent({data: '', type: 'richtexteditor.forceUpdate'});
+      draftService.setReplyDraft(null)
     }
   }
 
@@ -719,20 +675,8 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   }
 
   const handleFocus = () => {
-    setIsInitialized(true);
     setHideEditorToolbar(true);
-
-
-    setTimeout(() => {
-      let currentEmailBody: string = getPlainTextFromHtml(emailBody);
-      if (selectedAccount && selectedAccount.signature && props.replyType !== 'forward' && !currentEmailBody.trim()) {
-        let sentence = '';
-        if (selectedThread?.projects && selectedThread?.projects.length) {
-           sentence = `${selectedAccount?.name || ''} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length === 1 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}`;
-        }
-        setEmailBody(`<p>${selectedAccount.signature}</p><p style="padding: 5px 10px; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`);
-      }
-    }, 500)
+    globalEventService.fireEvent('iframe.clicked');
   }
 
   const showRecipientsBox = () => {
@@ -764,17 +708,6 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   }, [])
 
   useEffect(() => {
-    if (props.replyType) {
-      setTimeout(() => {
-        handleEditorScroll();
-      }, 500)
-    }
-    if(props.replyType === 'forward') {
-      setReplyBoxHide(true)
-    }
-  }, [props.replyType, handleEditorScroll])
-
-  useEffect(() => {
     handleEditorScroll();
   }, [handleEditorScroll]);
 
@@ -782,7 +715,37 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     if (incomingEvent === 'iframe.clicked') {
       setIsReplyDropdownOpen(false)
     }
-  }, [incomingEvent, setIsReplyDropdownOpen]);
+    if (typeof incomingEvent === 'object' && incomingEvent.type) {
+      if (incomingEvent.type === 'draft.updateType') {
+        setReplyType(incomingEvent.data.type);
+        if (incomingEvent.data.type === 'forward') {
+          if (!isDraftUpdated) {
+            setReplyBoxHide(true)
+            setEmailRecipients({
+              cc: { items: [], value: blankRecipientValue },
+              bcc: { items: [], value: blankRecipientValue },
+              recipients: { items: [], value: blankRecipientValue }
+            });
+            setSubject(`Fwd: ${incomingEvent.data.messageData.subject}`);
+            let decoded = Buffer.from(incomingEvent.data.emailParts || '', 'base64').toString('utf-8');
+            let sentence = '';
+            if (selectedThread && selectedThread?.projects && selectedThread?.projects?.length) {
+              sentence = `<p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${selectedAccount ? (selectedAccount?.name || ''): ""} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length === 1 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}`;
+            }
+            let content = getForwardContent(incomingEvent.data.messageData) + (decoded || '') + (selectedAccount ? (selectedAccount?.signature || ''): '') + (`${sentence}`);
+            setEmailBody(content);
+            globalEventService.fireEvent({type: 'richtexteditor.forceUpdate', data: content})
+            debounce(() => {
+              handleEditorScroll();
+            }, 200)
+          }
+        }
+      }
+      if (incomingEvent.type === 'draft.currentMessage') {
+        setMessageData(incomingEvent.data);
+      }
+    }
+  }, [getForwardContent, handleEditorScroll, incomingEvent, isDraftUpdated, selectedAccount, selectedThread]);
 
   return (
     <Flex backgroundColor={'#FFFFFF'} position={'sticky'} mt={'20px'} bottom={0} boxShadow={'0 20px 0px 0 #fff'}>
@@ -829,16 +792,16 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                   {props.replyTypeName || 'Reply'}
                 </MenuButton>
                 <MenuList className={'drop-down-list reply-dropdown'}>
-                  {props.replyType === 'reply-all' ?
-                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply', props.threadDetails) : null}> Reply</MenuItem> :
-                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply-all', props.threadDetails) : null}> Reply All</MenuItem>
+                  {replyType === 'reply-all' ?
+                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply', selectedMessage) : null}> Reply</MenuItem> :
+                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply-all', selectedMessage) : null}> Reply All</MenuItem>
                   }
-                  {props.replyType === 'forward' ?
-                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply', props.threadDetails) : null}> Reply</MenuItem> :
+                  {replyType === 'forward' ?
+                    <MenuItem onClick={() => props.hideAndShowReplayBox ? props.hideAndShowReplayBox('reply', selectedMessage) : null}> Reply</MenuItem> :
                     <MenuItem
                       onClick={() => {
                         if(props.hideAndShowReplayBox){
-                          props.hideAndShowReplayBox('forward', props.threadDetails)
+                          props.hideAndShowReplayBox('forward', selectedMessage)
                           handleFocus()
                         }
                       }}> Forward</MenuItem>

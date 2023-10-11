@@ -133,6 +133,10 @@ export function ComposeBox(props: any) {
 
 
             if (draftInfo && draftInfo.body) {
+                let checkValue = getPlainTextFromHtml(draftInfo.body).trim();
+                if (checkValue.trim()) {
+                    setIsDraftUpdated(true)
+                }
                 globalEventService.fireEvent({data: draftInfo.body, type: 'richtexteditor.forceUpdateWithOnChange'});
                 setEmailBody(draftInfo.body);
             }
@@ -661,7 +665,7 @@ export function ComposeBox(props: any) {
                                         isToolbarVisible={true}
                                         className={`compose-view ${extraClassNames} ${extraClassNamesForBottom}`}
                                         emailSignature={selectedAccount ? `<p></p>${selectedAccount?.signature}` : undefined}
-                                        projectShare={selectedThread?.projects?.length ? `<div style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">
+                                        projectShare={composeDraft?.projects?.length ? `<div style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">
                                 <p style="font-size: 13px; margin-right: 3px;"> ${selectedAccount?.name || ''} is sharing this email thread (and future replies) with</p>
                                 <p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">others</p>
                                 <p style="font-size: 13px; margin-right: 3px;">on</p>

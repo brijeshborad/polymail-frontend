@@ -77,7 +77,9 @@ export default function MessageSchedule({date, onChange, isSnooze = false, isNam
             closeOnSelect={false} placement={'bottom'}
         >
             <MenuButton
-                onClick={() => {
+                onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     const opened = isOpen
                     setOpen(!opened)
                     if (opened) {

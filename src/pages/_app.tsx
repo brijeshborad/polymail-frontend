@@ -11,7 +11,7 @@ const Header = dynamic(
     () => import('@/components/common').then((mod) => mod.Header)
 )
 import React from 'react';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import { HEADER_NOT_ALLOWED_PATHS } from '@/utils/constants';
 import {CommonApiComponents} from "@/components/common";
 import GlobalEvents from '@/components/common/global-events';
@@ -56,6 +56,9 @@ export default function App({ Component, ...rest }: AppProps) {
     setGlobalStore(store);
     const { pageProps } = props;
     const router = useRouter();
+    if (store.getState().auth?.user?.token) {
+        Router.push('/inbox');
+    }
     return (
         <Provider store={store}>
             <ChakraBaseProvider theme={theme}>

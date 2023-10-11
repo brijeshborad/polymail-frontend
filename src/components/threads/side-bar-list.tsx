@@ -134,12 +134,12 @@ export function ThreadsSideBarList(props: ThreadListProps) {
                 });
                 if (!isSameThreadClicked) {
                     messageService.setMessageState({selectedMessage: (item.messages || [])[0], messages: [], showMessageBox: isSameThreadClicked})
-
                     setTimeout(() => {
                         messageService.setMessageState({showMessageBox: true});
                     }, 10);
                 }
                 globalEventService.fireEvent({data: '', type: 'richtexteditor.discard'});
+                globalEventService.fireEvent({data: {type: 'reply'}, type: 'draft.updateType'});
             }
         }
     }, [currentThreads, selectedThread, props.tab]);

@@ -58,7 +58,8 @@ const draftSlice = createSlice({
                     composeDraft: finalUpdates,
                     updatedComposeDraft: finalUpdates,
                     resumeAbleDraft: finalUpdates
-                } : {draft: finalUpdates, finalUpdates}),
+                } : {draft: finalUpdates, updatedDraft: finalUpdates}),
+                success: true,
                 isLoading: false
             }
         },

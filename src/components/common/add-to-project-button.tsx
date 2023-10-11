@@ -17,7 +17,7 @@ import {Project} from "@/models";
 import {useSelector} from "react-redux";
 import {StateType} from "@/types";
 import Router, {useRouter} from 'next/router';
-import {commonService, globalEventService, threadService} from "@/services";
+import {commonService, draftService, globalEventService, threadService} from "@/services";
 
 export function AddToProjectButton() {
     const [isDropdownOpen, setDropDownOpen] = useState(false)
@@ -98,7 +98,7 @@ export function AddToProjectButton() {
     useEffect(() => {
         if (incomingEvent === 'iframe.clicked') {
             setDropDownOpen(false);
-            globalEventService.fireEvent('');
+            globalEventService.blankEvent();
         }
         if (typeof incomingEvent === 'object' && incomingEvent.type && incomingEvent.type === 'addToProject.remove') {
             let removeProject = threadProject.filter((project: any) => project.id !== incomingEvent.data.id);
@@ -106,12 +106,12 @@ export function AddToProjectButton() {
             let projects = [...filteredProjects];
             projects.push(incomingEvent.data);
             setFilteredProjects([...projects]);
-            globalEventService.fireEvent('');
+            globalEventService.blankEvent();
         }
         if (typeof incomingEvent === 'object' && incomingEvent.type === 'addToProject.add') {
             setThreadProject(prevState => [...prevState, incomingEvent.data]);
             setFilteredProjects((filteredProjects || []).filter((project: Project) => project.id !== incomingEvent.data.id));
-            globalEventService.fireEvent('');
+            globalEventService.blankEvent();
         }
     }, [filteredProjects, incomingEvent, setDropDownOpen, threadProject]);
 

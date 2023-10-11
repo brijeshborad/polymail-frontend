@@ -57,19 +57,6 @@ class DraftService extends BaseService {
         this.setDraftState({draft: draftUndo, draftUndo: null});
     }
 
-    updateComposeDraftWithCollabId(collabId: string) {
-        let {composeDraft} = this.getDraftState();
-        this.setDraftState({
-            composeDraft: {
-                ...composeDraft,
-                draftInfo: {
-                    ...composeDraft?.draftInfo,
-                    collabId: collabId
-                }
-            }
-        });
-    }
-
     updateDraftWithCollabId(collabId: string) {
         let {draft} = this.getDraftState();
         this.setDraftState({
@@ -114,49 +101,28 @@ class DraftService extends BaseService {
         this.dispatchAction(updateDraftState, body);
     }
 
-    discardDraft(callBackFunction: any) {
-        let {draft} = this.getDraftState();
+    discardDraft(draftId: string) {
         let {threads, selectedThread} = threadService.getThreadState();
-        let attachments = draft?.draftInfo?.attachments || [];
-        this.setDraftState({draft: {...draft, updated: '', draftInfo: {...(draft?.draftInfo || {}), attachments: []}}});
-        let draftIndex = selectedThread?.messages?.findIndex((item) => item.id === draft?.id);
+        this.setDraftState({draft: null});
+        let draftIndex = selectedThread?.messages?.findIndex((item) => item.id === draftId);
+        if (!draftIndex) {
+            return;
+        }
         if (draftIndex !== -1) {
             let currentThreads: any = [...(threads || [])];
             let selectThreadIndex: number = currentThreads.findIndex((item: Thread) => item.id === selectedThread?.id);
             if (selectThreadIndex !== -1) {
-                currentThreads[selectThreadIndex] = {...(currentThreads[selectThreadIndex] || {})};
-                currentThreads[selectThreadIndex!].messages = [...(currentThreads[selectThreadIndex!].messages || [])];
-                if (currentThreads[selectThreadIndex]!.messages![draftIndex!]) {
-                    currentThreads[selectThreadIndex!].messages![draftIndex!] = {
-                        ...currentThreads![selectThreadIndex!].messages![draftIndex!],
-                        ...{...draft, updated: '', draftInfo: {...(draft?.draftInfo || {}), attachments: []}}
-                    }
-                }
+                (currentThreads[selectThreadIndex!].messages || []).splice(draftIndex, 1);
                 threadService.setThreads(currentThreads);
                 setCacheThreads({
                     ...getCacheThreads(),
                     [getCurrentViewingCacheTab()]: currentThreads
                 })
                 let finalSelectThread: any = {...selectedThread};
-                finalSelectThread.messages = [...finalSelectThread.messages];
-                finalSelectThread.messages[draftIndex!] = {
-                    ...finalSelectThread.messages[draftIndex!],
-                    ...{...draft, updated: '', draftInfo: {...(draft?.draftInfo || {}), attachments: []}}
-                }
+                (finalSelectThread.messages || []).splice(draftIndex, 1);
                 threadService.setSelectedThread(finalSelectThread);
             }
         }
-
-        attachments.forEach((item) => {
-            this.dispatchAction(removeAttachment, {
-                body: {id: draft?.id, attachment: item.id!},
-                afterSuccessAction: () => {
-                    if (callBackFunction) {
-                        callBackFunction('', false)
-                    }
-                }
-            })
-        })
     }
 }
 

@@ -29,6 +29,8 @@ export default function CollabRichTextEditor({
                                                  onChange
                                              }: CollabRichTextEditorType) {
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
+    const {isComposing} = useSelector((state: StateType) => state.commonApis);
+    const {project} = useSelector((state: StateType) => state.projects);
     const [provider, setProvider] = useState<any>()
     const [extensions, setExtensions] = useState<any>([]);
 
@@ -98,6 +100,14 @@ export default function CollabRichTextEditor({
                         }
                         if (projectShare) {
                             finalContent += `<p></p>` + projectShare
+                        }
+                        if (!projectShare && isComposing && project) {
+                            finalContent += `<p></p><div style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">
+                                <p style="font-size: 13px; margin-right: 3px;"> ${selectedAccount?.name || ''} is sharing this email thread (and future replies) with</p>
+                                <p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">others</p>
+                                <p style="font-size: 13px; margin-right: 3px;">on</p>
+                                <p style="font-size: 13px; text-decoration: underline">Polymail</p>
+                              </div>`
                         }
 
                         editor.editor.commands.setContent(finalContent.trim(), false)
