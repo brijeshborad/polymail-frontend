@@ -11,7 +11,7 @@ const Header = dynamic(
     () => import('@/components/common').then((mod) => mod.Header)
 )
 import React from 'react';
-import Router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import { HEADER_NOT_ALLOWED_PATHS } from '@/utils/constants';
 import {CommonApiComponents} from "@/components/common";
 import GlobalEvents from '@/components/common/global-events';
