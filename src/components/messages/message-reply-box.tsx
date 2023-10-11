@@ -33,7 +33,7 @@ import { updateThreadState } from "@/redux/threads/action-reducer";
 import { getCacheMessages, setCacheMessages } from "@/utils/cache.functions";
 import CollabRichTextEditor from "../common/collab-rich-text-editor";
 import { MAILBOX_DRAFT } from "@/utils/constants";
-import {draftService} from "@/services";
+import {draftService, globalEventService, threadService} from "@/services";
 
 dayjs.extend(relativeTime)
 
@@ -305,6 +305,7 @@ export function MessageReplyBox(props: MessageBoxType) {
     // Add signature and draft to email body
     if (draft && draft.draftInfo) {
       if (draft.draftInfo.body) {
+        globalEventService.fireEvent({data: draft?.draftInfo?.body || '', type: 'richtexteditor.forceUpdateWithOnChange'});
         setEmailBody(draft?.draftInfo?.body || '');
       }
       if (draft?.draftInfo?.attachments?.length) {
@@ -316,7 +317,7 @@ export function MessageReplyBox(props: MessageBoxType) {
         ]);
       }
     }
-  }, [draft, props.replyType])
+  }, [draft])
 
   useEffect(() => {
     let messagesData = props.messageData
@@ -553,21 +554,20 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     setHideEditorToolbar(false)
   }
 
-  const updateThreadStateOpration = (type: string) =>{
+  const updateThreadStateOpration = (type: string) => {
     let draftData = {
       ...draft,
       mailboxes: type === 'undo' ? [MAILBOX_DRAFT] : [tabValue],
       snippet: draft?.subject
     }
-    let threadData: Thread = { ...selectedThread } as Thread;
+    let threadData: Thread = {...selectedThread} as Thread;
     let messages = [...(threadData?.messages || [])];
     let findDraft: Message[] = [];
 
 
-    if(type === 'send-now'){
+    if (type === 'send-now') {
       messages.push(draftData as Message);
-    }
-    else if(type === 'undo'){
+    } else if (type === 'undo') {
       findDraft = messages.filter(item => item.id !== draft?.id);
       findDraft.push(draftData as Message);
     }
@@ -576,20 +576,19 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
       messages: type === 'undo' ? findDraft : messages,
     };
 
-     let index1 = (threads || []).findIndex((item: Thread) => item.id === threadData?.id);
-        let newThreads: Thread[] = threads ?? [];
-        if (threads) {
-          newThreads = [...threads];
-          newThreads[index1] = {
-            ...newThreads[index1],
-            messages: [...(threadData.messages ?? [])]
-        }
-        };
-    dispatch(updateThreadState({
-      selectedThread: threadData,
-      threads: newThreads
-    }))
-    dispatch(updateDraftState({draft: null}));
+    let index1 = (threads || []).findIndex((item: Thread) => item.id === threadData?.id);
+    let newThreads: Thread[] = threads ?? [];
+    if (threads) {
+      newThreads = [...threads];
+      newThreads[index1] = {
+        ...newThreads[index1],
+        messages: [...(threadData.messages ?? [])]
+      }
+    }
+    threadService.setThreadState({selectedThread: threadData, threads: newThreads});
+    if (type === 'undo') {
+      draftService.restoreBackupDraft();
+    }
     let cacheMessages = getCacheMessages();
     setCacheMessages({
       ...cacheMessages,
@@ -604,6 +603,8 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
   const sendMessages = () => {
     if (draft && draft.id) {
+      draftService.backupDraftForUndo();
+      setReplyBoxHide(true);
       let params = {};
       let polyToast = generateToasterId();
       let optionType ='send-now';

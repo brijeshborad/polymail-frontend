@@ -1,12 +1,20 @@
 import {InitialDraftStateType} from "@/types";
 import {BaseService} from "@/services/base.service";
 import {updateDraftState} from "@/redux/draft/action-reducer";
-import {MessageDraft, Thread} from "@/models";
+import {Message, MessageDraft, Thread} from "@/models";
 import {addItemToGroup} from "@/redux/memberships/action-reducer";
 import {projectService} from "@/services/project.service";
 import {threadService} from "@/services/threads.service";
-import {getCacheThreads, getCurrentViewingCacheTab, setCacheThreads} from "@/utils/cache.functions";
+import {
+    getCacheMessages,
+    getCacheThreads,
+    getCurrentViewingCacheTab,
+    setCacheMessages,
+    setCacheThreads
+} from "@/utils/cache.functions";
 import {removeAttachment} from "@/redux/messages/action-reducer";
+import {MAILBOX_DRAFT} from "@/utils/constants";
+import {updateThreadState} from "@/redux/threads/action-reducer";
 
 class DraftService extends BaseService {
     constructor() {
@@ -27,6 +35,26 @@ class DraftService extends BaseService {
 
     setResumeDraft(draft: MessageDraft | null | undefined) {
         this.setDraftState({resumeAbleDraft: draft});
+    }
+
+    backupDraftForUndo() {
+        let {draft} = this.getDraftState();
+        this.setDraftState({draft: null, draftUndo: draft});
+    }
+
+    backupComposeDraftForUndo() {
+        let {composeDraft} = this.getDraftState();
+        this.setDraftState({composeDraft: null, resumeAbleDraft: null, composeDraftUndo: composeDraft});
+    }
+
+    restoreBackupComposeDraft() {
+        let {composeDraftUndo} = this.getDraftState();
+        this.setDraftState({composeDraft: composeDraftUndo, resumeAbleDraft: composeDraftUndo, composeDraftUndo: null});
+    }
+
+    restoreBackupDraft() {
+        let {draftUndo} = this.getDraftState();
+        this.setDraftState({draft: draftUndo, draftUndo: null});
     }
 
     updateComposeDraftWithCollabId(collabId: string) {

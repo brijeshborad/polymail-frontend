@@ -4,6 +4,8 @@ export declare type InitialDraftStateType = {
     draft?: MessageDraft | null,
     composeDraft?: MessageDraft | null,
     resumeAbleDraft?: MessageDraft | null,
+    composeDraftUndo?: MessageDraft | null,
+    draftUndo?: MessageDraft | null,
     updatedComposeDraft?: MessageDraft | null,
     updatedDraft?: MessageDraft | null,
     sendMessage?: MessageDraft | null,

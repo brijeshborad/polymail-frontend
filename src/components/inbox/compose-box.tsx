@@ -325,6 +325,7 @@ export function ComposeBox(props: any) {
 
     const sendMessages = () => {
         if (composeDraft && composeDraft.id) {
+            draftService.backupComposeDraftForUndo();
             let params = {};
             let polyToast = generateToasterId();
 
@@ -352,6 +353,9 @@ export function ComposeBox(props: any) {
                             params = {
                                 undo: true
                             }
+                            commonService.toggleComposing(true);
+                            draftService.restoreBackupComposeDraft();
+                            setIsContentSet(false);
                         } else if (type === 'send-now') {
                             params = {
                                 now: true
@@ -376,6 +380,9 @@ export function ComposeBox(props: any) {
                                 params = {
                                     undo: true
                                 }
+                                commonService.toggleComposing(true);
+                                draftService.restoreBackupComposeDraft();
+                                setIsContentSet(false);
                             } else if (type === 'send-now') {
                                 params = {
                                     now: true
