@@ -18,7 +18,7 @@ import {useDispatch, useSelector} from "react-redux";
 import dayjs from "dayjs";
 import {deleteMessage, removeAttachment, uploadAttachment} from "@/redux/messages/action-reducer";
 import {MessageAttachments, MessageRecipient, Thread} from "@/models";
-import {Toaster} from "@/components/common";
+import {DropZone, Toaster} from "@/components/common";
 import {RecipientsType} from "@/types/props-types/message-recipients.type";
 import dynamic from "next/dynamic";
 import {updateCommonState} from "@/redux/common-apis/action-reducer";
@@ -143,7 +143,8 @@ export function ComposeBox(props: any) {
                         filename: t.filename,
                         mimeType: t.mimeType
                     }))
-                ]);            }
+                ]);
+            }
             setIsContentSet(true);
             if (props.isProjectView) {
                 draftService.addComposeToProject()
@@ -497,9 +498,9 @@ export function ComposeBox(props: any) {
                         }
                     ]);
                     dispatch(uploadAttachment({
-                        body:{ id: composeDraft.id, file: file },
+                        body: {id: composeDraft.id, file: file},
                         afterSuccessAction: () => {
-                            dispatch(updatePartialMessage({body:{ id: composeDraft.id, fromCompose: true }}));
+                            dispatch(updatePartialMessage({body: {id: composeDraft.id, fromCompose: true}}));
                         }
                     }));
                 }
@@ -518,7 +519,7 @@ export function ComposeBox(props: any) {
             dispatch(removeAttachment({
                 body: {id: composeDraft.id!, attachment: composeDraft.draftInfo?.attachments[index].id!},
                 afterSuccessAction: () => {
-                    dispatch(updatePartialMessage({body:{ id: composeDraft.id, fromCompose: true }}));
+                    dispatch(updatePartialMessage({body: {id: composeDraft.id, fromCompose: true}}));
                 }
             }))
         }
@@ -623,7 +624,7 @@ export function ComposeBox(props: any) {
 
                     </Flex>
 
-                    <Flex padding={5} flex={1}>
+                    <DropZone onFileUpload={handleFileUpload}>
                         <Flex w={'100%'} gap={4} padding={4} direction={'column'} border={'1px solid #F3F4F6'}
                               borderRadius={8}>
                             <MessageRecipients
@@ -650,18 +651,17 @@ export function ComposeBox(props: any) {
                                         isAutoFocus={true}
                                         content={emailBody}
                                         onCreate={() => sendToDraft('')}
-                                        onFileDrop={(files) => handleFileUpload(files, null)}
                                         onChange={(value) => sendToDraft(value)}
                                         placeholder='Reply with anything you like or @mention someone to share this thread'
                                         isToolbarVisible={true}
                                         className={`compose-view ${extraClassNames} ${extraClassNamesForBottom}`}
                                         emailSignature={selectedAccount ? `<p></p>${selectedAccount?.signature}` : undefined}
                                         projectShare={selectedThread?.projects?.length ? `<div style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">
-                            <p style="font-size: 13px; margin-right: 3px;"> ${selectedAccount?.name || ''} is sharing this email thread (and future replies) with</p>
-                            <p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">others</p>
-                            <p style="font-size: 13px; margin-right: 3px;">on</p>
-                            <p style="font-size: 13px; text-decoration: underline">Polymail</p>
-                          </div>` : undefined}
+                                <p style="font-size: 13px; margin-right: 3px;"> ${selectedAccount?.name || ''} is sharing this email thread (and future replies) with</p>
+                                <p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">others</p>
+                                <p style="font-size: 13px; margin-right: 3px;">on</p>
+                                <p style="font-size: 13px; text-decoration: underline">Polymail</p>
+                              </div>` : undefined}
                                         extendToolbar={(
                                             <>
                                                 <Flex
@@ -716,7 +716,7 @@ export function ComposeBox(props: any) {
                                 </Flex>
                             </Flex>
                         </Flex>
-                    </Flex>
+                    </DropZone>
                 </Flex>
             </Box>
 

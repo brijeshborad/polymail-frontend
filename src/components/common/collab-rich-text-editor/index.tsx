@@ -9,7 +9,6 @@ import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
 import Highlight from '@tiptap/extension-highlight'
 import {TiptapCollabProvider} from '@hocuspocus/provider'
 import {CollabRichTextEditorType} from '@/types/props-types/collab-rich-text-editor.types'
-import FileHandler from '@tiptap-pro/extension-file-handler'
 import {StateType} from '@/types'
 import {useEffect, useState} from 'react'
 import ContentMonitor from './content-monitor'
@@ -21,7 +20,6 @@ export default function CollabRichTextEditor({
                                                  isAutoFocus = false,
                                                  isToolbarVisible = false,
                                                  onCreate,
-                                                 onFileDrop,
                                                  afterToolbar,
                                                  extendToolbar,
                                                  placeholder,
@@ -72,14 +70,6 @@ export default function CollabRichTextEditor({
                 user: {
                     name: selectedAccount ? selectedAccount.name : 'Uknown',
                     color: '#f783ac',
-                },
-            }),
-            FileHandler.configure({
-                onDrop: (editor, files) => {
-                    onFileDrop(files);
-                },
-                onPaste: (editor, files) => {
-                    onFileDrop(files);
                 },
             }),
             Highlight.configure({

@@ -4,7 +4,6 @@ export declare type CollabRichTextEditorType = {
     id: string;
     isAutoFocus?: boolean;
     onCreate: () => void;
-    onFileDrop: (_e: any) => void;
     beforeToolbar?: ReactElement;
     afterToolbar?: ReactElement;
     extendToolbar?: ReactElement;

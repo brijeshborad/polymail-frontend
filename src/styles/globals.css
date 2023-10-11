@@ -830,7 +830,7 @@ div:has(> .mailSendToaster) {
   stroke: #0556FF !important;
 }
 
-.prosemirror-dropcursor-inline{
+/* .prosemirror-dropcursor-inline{
   display: flex;
   justify-content: center;
   align-items: center;
@@ -843,12 +843,25 @@ div:has(> .mailSendToaster) {
   border-radius: 8px;
   width: 100% !important;
   height: 100% !important;
-}
-.prosemirror-dropcursor-inline:after{
+} */
+
+/* .prosemirror-dropcursor-inline {
+    left: 0 !important;
+    top: 0 !important;
+} */
+/* .prosemirror-dropcursor-inline:after{
   margin: 0 auto;
   text-align: center;
   content: "Release to upload attachment";
   font-size: 13px;
   font-weight: 500;
+  position: absolute;
   color: #0A101D;
+} */
+
+.uploadAttachment svg {
+    width: 16px;
+    height: 16px;
+    margin-top: -4px;
+    margin-right: 8px;
 }

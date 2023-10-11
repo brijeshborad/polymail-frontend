@@ -12,7 +12,7 @@ import Image from "next/image";
 import { ChevronDownIcon, CloseIcon } from "@chakra-ui/icons";
 import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import {debounce, generateToasterId, isEmail, makeCollabId} from "@/utils/common.functions";
-import { Toaster } from "@/components/common";
+import {DropZone, Toaster} from "@/components/common";
 const Time = dynamic(() => import("@/components/common").then(mod => mod.Time));
 import { createDraft, sendMessage, updateDraftState, updatePartialMessage } from "@/redux/draft/action-reducer";
 import { useDispatch, useSelector } from "react-redux";
@@ -886,70 +886,70 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
               </Text>
             </Flex>
           </Flex>
-          {replyBoxHide &&
+          <DropZone onFileUpload={handleFileUpload} forReply={true}>
+            {replyBoxHide &&
             <div ref={divRef}>
               <MessageRecipients
-                emailRecipients={emailRecipients}
-                handleKeyDown={handleKeyDown}
-                handleAutoCompleteSelect={handleAutoCompleteSelect}
-                handleChange={handleChange}
-                handlePaste={handlePaste}
-                handleItemDelete={handleItemDelete}
+                  emailRecipients={emailRecipients}
+                  handleKeyDown={handleKeyDown}
+                  handleAutoCompleteSelect={handleAutoCompleteSelect}
+                  handleChange={handleChange}
+                  handlePaste={handlePaste}
+                  handleItemDelete={handleItemDelete}
               />
             </div>}
 
 
-          <Flex
-            onFocus={() => handleFocus()}
-            direction={'column'} position={"relative"} flex={1} overflow={'none'}>
-            <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} zIndex={6} ref={editorRef} overflowY={'auto'} className={`editor-bottom-shadow`}
-              onScroll={() => handleEditorScroll()}>
-              {(selectedThread && collabId) && (
-                <CollabRichTextEditor
-                    id={'thread-' + collabId}
-                    onCreate={() => sendToDraft('')}
-                    onFileDrop={(files) => handleFileUpload(files)}
-                    placeholder="Hit enter to reply with anything you'd like"
-                    isToolbarVisible={hideEditorToolbar}
-                    onChange={(value) => sendToDraft(value)}
-                    className={`${extraClassNames} ${extraClassNamesForBottom}`}
-                    emailSignature={selectedAccount ? `<p></p>${selectedAccount?.signature}` : undefined}
-                    projectShare={selectedThread?.projects?.length ? `
+            <Flex
+                onFocus={() => handleFocus()}
+                direction={'column'} position={"relative"} flex={1} overflow={'none'}>
+              <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} zIndex={6} ref={editorRef} overflowY={'auto'} className={`editor-bottom-shadow`}
+                    onScroll={() => handleEditorScroll()}>
+                {(selectedThread && collabId) && (
+                    <CollabRichTextEditor
+                        id={'thread-' + collabId}
+                        onCreate={() => sendToDraft('')}
+                        placeholder="Hit enter to reply with anything you'd like"
+                        isToolbarVisible={hideEditorToolbar}
+                        onChange={(value) => sendToDraft(value)}
+                        className={`${extraClassNames} ${extraClassNamesForBottom}`}
+                        emailSignature={selectedAccount ? `<p></p>${selectedAccount?.signature}` : undefined}
+                        projectShare={selectedThread?.projects?.length ? `
                           <div style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">
                             <p style="font-size: 13px; margin-right: 3px;"> ${selectedAccount?.name || ''} is sharing this email thread (and future replies) with</p>
                             <p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">others</p>
                             <p style="font-size: 13px; margin-right: 3px;">on</p>
                             <p style="font-size: 13px; text-decoration: underline">Polymail</p>
                           </div>` : undefined}
-                    extendToolbar={(
-                        <>
-                          <Flex
-                              onClick={() => inputFile.current?.click()}
-                              align={'center'} justify={'center'} cursor={'pointer'}
-                              className={styles.attachIcon}
-                          >
-                            <Image src="/image/icon/attach.svg" alt="emoji" width={13} height={13} />
-                            Attach
-                            <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e.target.files, e)} style={{ display: 'none' }} />
-                          </Flex>
-                        </>
-                    )}
-                />
-              )}
+                        extendToolbar={(
+                            <>
+                              <Flex
+                                  onClick={() => inputFile.current?.click()}
+                                  align={'center'} justify={'center'} cursor={'pointer'}
+                                  className={styles.attachIcon}
+                              >
+                                <Image src="/image/icon/attach.svg" alt="emoji" width={13} height={13} />
+                                Attach
+                                <input type='file' id='file' ref={inputFile} onChange={(e) => handleFileUpload(e.target.files, e)} style={{ display: 'none' }} />
+                              </Flex>
+                            </>
+                        )}
+                    />
+                )}
 
-              {attachments && attachments.length > 0 ? <div style={{ marginTop: '20px' }}>
-                {attachments.map((item, index: number) => (
-                  <Flex align={'center'} key={index} className={styles.attachmentsFile}>
-                    {item.filename}
-                    <div className={styles.closeIcon} onClick={() => removeAttachmentData(index)}>
-                      <CloseIcon />
-                    </div>
-                  </Flex>
-                ))}
-              </div> : null}
-            </Flex>
+                {attachments && attachments.length > 0 ? <div style={{ marginTop: '20px' }}>
+                  {attachments.map((item, index: number) => (
+                      <Flex align={'center'} key={index} className={styles.attachmentsFile}>
+                        {item.filename}
+                        <div className={styles.closeIcon} onClick={() => removeAttachmentData(index)}>
+                          <CloseIcon />
+                        </div>
+                      </Flex>
+                  ))}
+                </div> : null}
+              </Flex>
 
-            {hideEditorToolbar &&
+              {hideEditorToolbar &&
               <Flex direction={'column'} className={styles.composeBox} width={'fit-content'} marginLeft={'auto'} mr={'6px'}>
                 <Flex align={'center'} className={styles.replyButton} position={'relative'} zIndex={6}>
                   <Button
@@ -978,8 +978,9 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                   </Flex>
                 </Flex>
               </Flex>
-            }
-          </Flex>
+              }
+            </Flex>
+          </DropZone>
         </Flex>
       </Flex>
     </Flex>
