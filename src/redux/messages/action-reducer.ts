@@ -1,6 +1,7 @@
 import {createSlice, current, PayloadAction} from "@reduxjs/toolkit";
 import {InitialMessageStateType, ReducerActionType} from "@/types";
 import {Message} from "@/models";
+import {threadService} from "@/services";
 
 const initialState: any = {
     messages: [],
@@ -81,15 +82,8 @@ const messagesSlice = createSlice({
         updateMessage: (state: InitialMessageStateType, _action: PayloadAction<ReducerActionType>) => {
             return {...state, isLoading: false, error: null}
         },
-        updateMessageSuccess: (state: InitialMessageStateType, {payload: message}: PayloadAction<{}>) => {
-            let currentMessages = [...(current(state).messages || [])] as Message[];
-            let messageData = {...(message) || {}} as Message;
-            let index1 = currentMessages.findIndex((item: Message) => item.id === messageData?.id);
-            currentMessages[index1] = {
-                ...currentMessages[index1],
-                scope: messageData.scope || 'visible'
-            };
-            return {...state, messages: [...currentMessages], isLoading: false, error: null}
+        updateMessageSuccess: (state: InitialMessageStateType, _action: PayloadAction<{}>) => {
+            return {...state, isLoading: false, error: null}
         },
         updateMessageError: (state: InitialMessageStateType, {payload: error}: PayloadAction<any>) => {
             return {...state, isLoading: false, error}

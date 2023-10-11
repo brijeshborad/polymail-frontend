@@ -289,7 +289,7 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
                                         <div key={index}>
                                             <MessageBox
                                                 preventSelectingMessage={() => preventOpen = true}
-                                                item={item} index={index} threadDetails={item}
+                                                item={item} index={index}
                                                 isLoading={messageLoading} emailPart={emailPart}
                                                 messageAttachments={messageAttachments}
                                                 hideAndShowReplayBox={hideAndShowReplayBox}

@@ -9,6 +9,8 @@ import dayjs from "dayjs";
 import {addItemToGroup} from "@/redux/memberships/action-reducer";
 import {removeThreadFromProject} from "@/redux/projects/action-reducer";
 import {commonService} from "@/services/common.service";
+import {globalEventService} from "@/services/global-event.service";
+import {current} from "@reduxjs/toolkit";
 
 declare type MailBoxTypes = 'INBOX' | 'DRAFT' | 'UNREAD' | 'ARCHIVE' | 'TRASH' | 'SNOOZED' | 'STARRED' | string;
 
@@ -204,7 +206,7 @@ class ThreadsService extends BaseService {
                         projects: [...projects, item]
                     }
                 }
-                this.setThreadState({selectedThread: addProject, threads: newThreads});
+                this.setThreadState({threads: newThreads});
             }
             this.dispatchAction(
                 addItemToGroup,
@@ -238,6 +240,7 @@ class ThreadsService extends BaseService {
                                     draftService.setComposeDraft(thread)
                                 }
                                 this.setThreadState({selectedThread: selectedThread, threads: threads});
+                                globalEventService.fireEvent({data: item, type: 'addToProject.remove'});
                             }
                         },
                         showToasterAfterUndoClick: true
@@ -300,6 +303,7 @@ class ThreadsService extends BaseService {
                                 draftService.setComposeDraft(addProject)
                             }
                             this.setThreadState({selectedThread: selectedThread, threads: threads});
+                            globalEventService.fireEvent({data: item, type: 'addToProject.add'});
                         }
                     },
                     showToasterAfterUndoClick: true
@@ -315,12 +319,17 @@ class ThreadsService extends BaseService {
                         threads: data
                     });
                 } else {
-                    let data = (selectedThread.projects || []).filter((project: Project) => project.id !== item.id);
-                    let thread = {
-                        ...selectedThread,
-                        projects: data
+                    let index1 = (threads || []).findIndex((thread: Thread) => thread.id === selectedThread?.id);
+                    let newThreads: Thread[] = threads ?? [];
+                    if (threads) {
+                        let data = (newThreads[index1]?.projects || []).filter((project: Project) => project.id !== item.id);
+                        newThreads = [...threads];
+                        newThreads[index1] = {
+                            ...newThreads[index1],
+                            projects: data
+                        }
+                        this.setThreadState({threads: newThreads});
                     }
-                    this.setSelectedThread(thread);
                 }
             } else {
                 let {composeDraft} = draftService.getDraftState();
@@ -329,13 +338,18 @@ class ThreadsService extends BaseService {
                     ...composeDraft,
                     projects: data
                 }
-                draftService.setComposeDraft(thread)
-                data = (selectedThread.projects || []).filter((project: Project) => project.id !== item.id);
-                thread = {
-                    ...selectedThread,
-                    projects: data
+                draftService.setComposeDraft(thread);
+                let index1 = (threads || []).findIndex((thread: Thread) => thread.id === selectedThread?.id);
+                let newThreads: Thread[] = threads ?? [];
+                if (threads) {
+                    let data = (newThreads[index1]?.projects || []).filter((project: Project) => project.id !== item.id);
+                    newThreads = [...threads];
+                    newThreads[index1] = {
+                        ...newThreads[index1],
+                        projects: data
+                    }
+                    this.setThreadState({threads: newThreads});
                 }
-                this.setSelectedThread(thread);
             }
         }
     }
@@ -352,6 +366,27 @@ class ThreadsService extends BaseService {
                     body: {mailboxes: mailboxes.filter(i => i !== 'UNREAD')}
                 }
             });
+        }
+    }
+
+    makeThreadScope(message: Message | null, type: string) {
+        if (!message) return;
+        let messageData = {...(message) || {}} as Message;
+        let {threads, selectedThread} = this.getThreadState()
+        let currentThreads = [...(threads || [])];
+        let threadIndex = currentThreads.findIndex((item: Thread) => item.id === selectedThread?.id);
+        if (threadIndex !== -1) {
+            currentThreads[threadIndex] = {...currentThreads[threadIndex]};
+            let currentMessages = [...(currentThreads[threadIndex].messages || [])] as Message[];
+            let index1 = currentMessages.findIndex((item: Message) => item.id === messageData?.id);
+            if (index1 !== -1) {
+                currentMessages[index1] = {
+                    ...currentMessages[index1],
+                    scope: type
+                };
+                currentThreads[threadIndex].messages = [...currentMessages];
+                this.setThreads(currentThreads);
+            }
         }
     }
 }

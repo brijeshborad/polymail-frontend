@@ -17,7 +17,7 @@ import {Project} from "@/models";
 import {useSelector} from "react-redux";
 import {StateType} from "@/types";
 import Router, {useRouter} from 'next/router';
-import {commonService, threadService} from "@/services";
+import {commonService, globalEventService, threadService} from "@/services";
 
 export function AddToProjectButton() {
     const [isDropdownOpen, setDropDownOpen] = useState(false)
@@ -91,6 +91,7 @@ export function AddToProjectButton() {
         if (e.key.toLowerCase() === 'enter' && filteredProjects.length === 1) {
             setThreadProject(prevState => [...prevState, filteredProjects[0]]);
             threadService.addThreadToProject(filteredProjects[0], addToProjectRef, isComposing);
+            setFilteredProjects((filteredProjects || []).filter((project: Project) => project.id !== filteredProjects[0].id));
         }
     }
 
@@ -98,7 +99,19 @@ export function AddToProjectButton() {
         if (incomingEvent === 'iframe.clicked') {
             setDropDownOpen(false);
         }
-    }, [incomingEvent, setDropDownOpen]);
+        if (typeof incomingEvent === 'object' && incomingEvent.type && incomingEvent.type === 'addToProject.remove') {
+            let removeProject = threadProject.filter((project: any) => project.id !== incomingEvent.data.id);
+            setThreadProject([...removeProject]);
+            let projects = [...filteredProjects];
+            projects.push(incomingEvent.data);
+            setFilteredProjects([...projects]);
+        }
+        if (typeof incomingEvent === 'object' && incomingEvent.type === 'addToProject.add') {
+            setThreadProject(prevState => [...prevState, incomingEvent.data]);
+            setFilteredProjects((filteredProjects || []).filter((project: Project) => project.id !== incomingEvent.data.id));
+        }
+        globalEventService.fireEvent('');
+    }, [filteredProjects, incomingEvent, setDropDownOpen, threadProject]);
 
     const removeProjectFromThread = (item: Project) => {
         let finalThread = isComposing ? composeDraft : selectedThread;
@@ -123,7 +136,7 @@ export function AddToProjectButton() {
 
     const addProjectToThread = (item: Project) => {
         if (selectedThread || composeDraft) {
-            setThreadProject(prevState => [...prevState, filteredProjects[0]]);
+            setThreadProject(prevState => [...prevState, item]);
             threadService.addThreadToProject(item, null, isComposing);
             setFilteredProjects((filteredProjects || []).filter((project: Project) => project.id !== item.id));
         }
