@@ -98,6 +98,7 @@ export function AddToProjectButton() {
     useEffect(() => {
         if (incomingEvent === 'iframe.clicked') {
             setDropDownOpen(false);
+            globalEventService.fireEvent('');
         }
         if (typeof incomingEvent === 'object' && incomingEvent.type && incomingEvent.type === 'addToProject.remove') {
             let removeProject = threadProject.filter((project: any) => project.id !== incomingEvent.data.id);
@@ -105,12 +106,13 @@ export function AddToProjectButton() {
             let projects = [...filteredProjects];
             projects.push(incomingEvent.data);
             setFilteredProjects([...projects]);
+            globalEventService.fireEvent('');
         }
         if (typeof incomingEvent === 'object' && incomingEvent.type === 'addToProject.add') {
             setThreadProject(prevState => [...prevState, incomingEvent.data]);
             setFilteredProjects((filteredProjects || []).filter((project: Project) => project.id !== incomingEvent.data.id));
+            globalEventService.fireEvent('');
         }
-        globalEventService.fireEvent('');
     }, [filteredProjects, incomingEvent, setDropDownOpen, threadProject]);
 
     const removeProjectFromThread = (item: Project) => {

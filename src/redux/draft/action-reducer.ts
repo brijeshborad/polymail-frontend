@@ -56,7 +56,8 @@ const draftSlice = createSlice({
                 ...state,
                 ...(isForCompose ? {
                     composeDraft: finalUpdates,
-                    updatedComposeDraft: finalUpdates
+                    updatedComposeDraft: finalUpdates,
+                    resumeAbleDraft: finalUpdates
                 } : {draft: finalUpdates, finalUpdates}),
                 isLoading: false
             }

@@ -146,6 +146,7 @@ export function ComposeBox(props: any) {
                 ]);
             }
             setIsContentSet(true);
+            setIsDraftUpdated(true);
             if (props.isProjectView) {
                 draftService.addComposeToProject()
             }
@@ -274,7 +275,6 @@ export function ComposeBox(props: any) {
 
     const validateDraft = (value: string) => {
         return !!(subject || getPlainTextFromHtml(value).trim() || emailRecipients.recipients.items.length > 0 || emailRecipients.cc.items.length > 0 || emailRecipients.bcc.items.length > 0);
-
     }
 
     const sendToDraft = (value: string, isValueUpdate: boolean = true) => {
@@ -315,7 +315,6 @@ export function ComposeBox(props: any) {
                 if (composeDraft && composeDraft.id) {
                     dispatch(updatePartialMessage({body: {id: composeDraft.id, body: body, fromCompose: true}}));
                 } else {
-                    // setIsDraftUpdated(true);
                     setWaitForDraft(true);
                     setCollabId(collaborationId)
                     dispatch(createDraft({body: {accountId: selectedAccount.id, body: body, fromCompose: true}}));
@@ -425,9 +424,8 @@ export function ComposeBox(props: any) {
                 dispatch(updateCommonState({isComposing: false, allowThreadSelection: true}));
             }
 
-            dispatch(updateDraftState({
-                composeDraft: null,
-            }));
+            draftService.setComposeDraft(null);
+            draftService.setResumeDraft(null);
         }
     }
 

@@ -82,6 +82,7 @@ class CommonService extends BaseService {
     }
 
     removeAllOtherOnlineStatusForUser(onlineMembers: any, ignoreThreadIds: string[], userId: string | undefined) {
+        onlineMembers['threads'] = {...onlineMembers['threads']};
         Object.keys(onlineMembers['threads']).forEach((threadId: string) => {
             if (!ignoreThreadIds.includes(threadId)) {
                 onlineMembers['threads'][threadId] = [...onlineMembers['threads'][threadId]];

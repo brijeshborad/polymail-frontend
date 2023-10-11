@@ -65,6 +65,7 @@ export function MessageReplyBox(props: MessageBoxType) {
   const [waitForDraft, setWaitForDraft] = useState<boolean>(false);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [collabId, setCollabId] = useState<string | undefined>(draft?.draftInfo?.collabId)
+  const [isDraftUpdated, setIsDraftUpdated] = useState<boolean>(false);
 
   const editorRef = useRef<any>(null);
   const { toast } = createStandaloneToast()
@@ -153,6 +154,9 @@ export function MessageReplyBox(props: MessageBoxType) {
     return true;
   }
   const handleChange = (evt: ChangeEvent | any, type: string) => {
+    if (evt.target.value) {
+      setIsDraftUpdated(true)
+    }
     setEmailRecipients((prevState: RecipientsType) => ({
       ...prevState,
       [type as keyof RecipientsType]: {
@@ -242,12 +246,18 @@ export function MessageReplyBox(props: MessageBoxType) {
     }));
   };
 
-  const sendToDraft = (value: string, isValueUpdate: boolean = true) => {
-    // let updateValue: string = getPlainTextFromHtml(value);
+  const validateDraft = (value: string) => {
+    return !!(subject || getPlainTextFromHtml(value).trim() || emailRecipients.recipients.items.length > 0 || emailRecipients.cc.items.length > 0 || emailRecipients.bcc.items.length > 0);
+  }
 
-    // if (!updateValue.trim()) {
-    //   return;
-    // }
+  const sendToDraft = (value: string, isValueUpdate: boolean = true) => {
+    if (!validateDraft(value)) {
+      return;
+    }
+    let checkValue = getPlainTextFromHtml(value).trim();
+    if (checkValue.trim()) {
+      setIsDraftUpdated(true)
+    }
     if (isValueUpdate) {
       if (!value.trim()) {
         setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
@@ -528,6 +538,7 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
   }
 
   const discardMessage = () => {
+    setIsDraftUpdated(false);
     setIsReplyDropdownOpen(false)
     setReplyBoxHide(false);
     dispatch(fireEvent({
@@ -877,8 +888,8 @@ ${props.messageData?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
               <Text
                 as={'h1'} fontSize='11px' color={'#6B7280'} display={'flex'} gap={'2px'}
                 className={styles.mailSaveTime}>
-                {!draft?.updated && 'Not Saved'}
-                {draft?.updated &&
+                {(!draft?.updated || !isDraftUpdated) && 'Not Saved'}
+                {(draft?.updated && isDraftUpdated) &&
                 <>
                   Saved <Time time={draft?.updated || ''} isShowFullTime={false} showTimeInShortForm={true} />&nbsp;ago
                 </>
