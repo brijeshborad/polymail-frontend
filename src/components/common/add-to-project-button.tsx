@@ -179,7 +179,7 @@ export function AddToProjectButton() {
                     </div>
                     <Flex width={'20px'} height={'20px'} alignItems={'center'} justifyContent={'center'}
                           className={styles.projectMenuIcon}><MenuIcon/></Flex>
-                </MenuButton> : <Tooltip label={'Add thread to project'} placement={'top'}>
+                </MenuButton> : <Tooltip label={'Add thread to project'} placement={'bottom'}>
                     <MenuButton
                         onClick={() => {
                             setDropDownOpen(!isDropdownOpen)
