@@ -79,7 +79,7 @@ class DraftService extends BaseService {
         let {composeDraft} = this.getDraftState();
         let {project} = projectService.getProjectState();
         let reqBody = {
-            threadIds: [composeDraft!.id],
+            threadIds: [composeDraft!.threadId],
             roles: ['n/a'],
             groupType: 'project',
             groupId: project?.id
