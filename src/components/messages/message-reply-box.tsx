@@ -512,6 +512,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     }
     // TODO:- Attachment hover issue.
     // TODO:- Block until attachements are uploaded.
+    // TODO:- show attachement loader.
 
     setHideEditorToolbar(false)
   }

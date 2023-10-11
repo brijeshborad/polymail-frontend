@@ -17,7 +17,7 @@ import {Project} from "@/models";
 import {useSelector} from "react-redux";
 import {StateType} from "@/types";
 import Router, {useRouter} from 'next/router';
-import {commonService, draftService, globalEventService, threadService} from "@/services";
+import {commonService, globalEventService, threadService} from "@/services";
 
 export function AddToProjectButton() {
     const [isDropdownOpen, setDropDownOpen] = useState(false)

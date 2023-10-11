@@ -1,20 +1,15 @@
 import {InitialDraftStateType} from "@/types";
 import {BaseService} from "@/services/base.service";
 import {updateDraftState} from "@/redux/draft/action-reducer";
-import {Message, MessageDraft, Thread} from "@/models";
+import {MessageDraft, Thread} from "@/models";
 import {addItemToGroup} from "@/redux/memberships/action-reducer";
 import {projectService} from "@/services/project.service";
 import {threadService} from "@/services/threads.service";
 import {
-    getCacheMessages,
     getCacheThreads,
     getCurrentViewingCacheTab,
-    setCacheMessages,
     setCacheThreads
 } from "@/utils/cache.functions";
-import {removeAttachment} from "@/redux/messages/action-reducer";
-import {MAILBOX_DRAFT} from "@/utils/constants";
-import {updateThreadState} from "@/redux/threads/action-reducer";
 
 class DraftService extends BaseService {
     constructor() {
