@@ -7,9 +7,11 @@ import {getAttachmentDownloadUrl, updateMessage} from "@/redux/messages/action-r
 import {useDispatch, useSelector} from "react-redux";
 import {MessageAttachments} from "@/models";
 import {StateType} from "@/types";
-import {debounce} from "@/utils/common.functions";
+import {clearDebounce, debounce} from "@/utils/common.functions";
 import {EyeSlashedIcon} from "@/icons/eye-slashed.icon";
 import Tooltip from "../common/Tooltip";
+import {AttachmentIcon} from "@chakra-ui/icons";
+import {FileIcon, defaultStyles, DefaultExtensionType} from 'react-file-icon';
 
 
 export function MessageBox(props: any) {
@@ -24,6 +26,9 @@ export function MessageBox(props: any) {
     const dispatch = useDispatch();
     const {selectedMessage, error} = useSelector((state: StateType) => state.messages);
     const [isEyeShow, setIsEyeShow] = useState<any>(false);
+    const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false)
+    const [isMoreClicked, setIsMoreClicked] = useState(false)
+
 
     useEffect(() => {
         if (props.threadDetails.to && props.threadDetails.to.length > 1) {
@@ -68,6 +73,81 @@ export function MessageBox(props: any) {
         }
     }
 
+    function showExtensionImages (item: string | undefined) {
+        if (item) {
+            const parts = item.split('.');
+            if (parts.length > 1) {
+                const extension: string = parts[parts.length - 1];
+                return extension;
+            }
+        }
+        return 'pdf'
+    }
+
+    function attachmentsMenu () {
+        return <Menu
+          isOpen={isMoreDropdownOpen}
+          onClose={() => {
+              setIsMoreDropdownOpen(false)
+              setIsMoreClicked(false)
+          }}>
+            <MenuButton
+              onClick={() => {
+                  setIsMoreDropdownOpen(!isMoreDropdownOpen)
+                  setIsMoreClicked(true)
+              }}
+              className={styles.tabListAttachmentButton} minWidth={'1px'} padding={0}
+              borderRadius={0} backgroundColor={'transparent'} height={'auto'}
+              fontSize={'13px'} color={'#6B7280'} as={Button} mx={1}
+              onMouseEnter={() => {
+                  clearDebounce();
+                  setIsMoreDropdownOpen(true)
+              }}
+              onMouseLeave={() => {
+                  debounce(() => {
+                      if(!isMoreClicked) {
+                          setIsMoreDropdownOpen(false)
+                          setIsMoreClicked(false)
+                      }
+                  }, 100)
+              }}
+            >
+                <AttachmentIcon />
+            </MenuButton>
+
+            <MenuList
+              className={`${styles.tabListDropDown} drop-down-list`}
+              onMouseEnter={() => {
+                  clearDebounce();
+                  setIsMoreDropdownOpen(true)
+              }}
+              onMouseLeave={() => {
+                  debounce(() => {
+                      if(!isMoreClicked) {
+                          setIsMoreDropdownOpen(false)
+                          setIsMoreClicked(false)
+                      }
+                  }, 100)
+              }}
+            >
+                { props.messageAttachments?.map((item: MessageAttachments, i: number) => (
+                  <MenuItem gap={2} key={i}>
+                      <FileIcon
+                        extension={showExtensionImages(item.filename) as DefaultExtensionType}
+                        {...defaultStyles[showExtensionImages(item.filename) as DefaultExtensionType]}
+                      />                      {item.filename}
+                      <div className={`${styles.closeIcon} ${styles.downloadIcon}`}
+                           onClick={() => downloadImage(item)}>
+                          <DownloadIcon/>
+                      </div>
+                  </MenuItem>
+                ))}
+
+            </MenuList>
+
+        </Menu>
+    }
+
     useEffect(() => {
         if (incomingEvent === 'iframe.clicked') {
             setIsContextMenuOpen(false)
@@ -79,67 +159,74 @@ export function MessageBox(props: any) {
               className={`${styles.oldMail} ${isExpanded ? styles.lastOpenMail : ''}`} mb={3} gap={4}
               border={'1px solid #E5E7EB'} borderRadius={12} align={'center'} key={props.index}>
             {!isExpanded &&
-            <Flex align={'center'} w={'100%'} gap={2} cursor={'pointer'} padding={4} onClick={props?.onClick}>
-                <div className={styles.mailBoxUserImage}>
+              <Flex align={'flex-start'} width={'100%'}>
+                  <Flex align={'center'} w={'100%'} gap={2} cursor={'pointer'} padding={4} onClick={props?.onClick}>
+                      <div className={styles.mailBoxUserImage}>
 
-                </div>
+                      </div>
 
-                <Flex w={'100%'} direction={'column'}>
-                    <Flex align={'center'} justify={'space-between'} mb={1} minH={5}>
-                        <Heading as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400}
-                                 letterSpacing={'-0.13px'}
-                                 lineHeight={1}>{message.from.name || message.from.email}</Heading>
-                        <Flex align={'center'} className={styles.mailBoxTime} gap={3}>
-                            {isEyeShow ?
-                                <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
-                                    <EyeSlashedIcon/>
-                                </Flex> : ''}
-                                <span style={{marginRight: '20px', marginTop: '5px'}}>
+                      <Flex w={'100%'} direction={'column'}>
+                          <Flex align={'center'} justify={'space-between'} mb={1} minH={5}>
+                              <Heading as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400}
+                                       letterSpacing={'-0.13px'}
+                                       lineHeight={1}>{message.from.name || message.from.email}</Heading>
+                          </Flex>
+                          <Text fontSize='13px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
+                                fontWeight={400}>
+                              <span dangerouslySetInnerHTML={{__html: props?.item.snippet || ''}}/>
+                          </Text>
+                      </Flex>
+                  </Flex>
+                  <Flex align={'center'} pt={4} position={'absolute'} right={0} className={styles.mailBoxTime} gap={'6px'}>
+                      {isEyeShow ?
+                        <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
+                            <EyeSlashedIcon/>
+                        </Flex> : ''}
+
+                      {props.messageAttachments && !!props.messageAttachments.length &&
+                      attachmentsMenu()
+                      }
+
+                      <span style={{whiteSpace: 'nowrap'}}>
                                     <Time time={props?.item.created || ''} isShowFullTime={true} showTimeInShortForm={false}/>
                                 </span>
 
-                            <Menu isOpen={isContextMenuOpen} onClose={() => setIsContextMenuOpen(false)}>
-                                <MenuButton
-                                    onClick={(e) => {
-                                        e.preventDefault()
-                                        e.stopPropagation()
-                                        setIsContextMenuOpen(!isContextMenuOpen)
-                                    }}
-                                    position={'absolute'} right={'10px'} top={'20px'} className={styles.menuIcon}
-                                    transition={'all 0.5s'} backgroundColor={'transparent'} fontSize={'12px'}
-                                    h={'auto'} minWidth={'24px'} padding={'0'} as={Button} rightIcon={<MenuIcon/>}>
-                                </MenuButton>
-                                <MenuList className={'drop-down-list'}>
-                                    {props.threadDetails && (
-                                        <MenuItem
-                                            onClick={(e) => {
-                                                e.preventDefault()
-                                                e.stopPropagation()
-                                                if (props.preventSelectingMessage) {
-                                                    props.preventSelectingMessage()
-                                                }
-                                                setScope(props.threadDetails.scope === 'visible' ? 'hidden' : 'visible', props.threadDetails)
-                                            }}>
-                                            {props.threadDetails.scope === 'visible' ? 'Hide from project members' : 'Show to project members'}
-                                        </MenuItem>
-                                    )}
-                                    <MenuItem
-                                        onClick={() => props.hideAndShowReplayBox('reply', props.threadDetails)}> Reply </MenuItem>
-                                    <MenuItem
-                                        onClick={() => props.hideAndShowReplayBox('reply-all', props.threadDetails)}> Reply
-                                        All </MenuItem>
-                                    <MenuItem
-                                        onClick={() => props.hideAndShowReplayBox('forward', props.threadDetails)}> Forward </MenuItem>
-                                </MenuList>
-                            </Menu>
-                        </Flex>
-                    </Flex>
-                    <Text fontSize='13px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
-                          fontWeight={400}>
-                        <span dangerouslySetInnerHTML={{__html: props?.item.snippet || ''}}/>
-                    </Text>
-                </Flex>
-            </Flex>}
+                      <Menu isOpen={isContextMenuOpen} onClose={() => setIsContextMenuOpen(false)}>
+                          <MenuButton
+                            onClick={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                setIsContextMenuOpen(!isContextMenuOpen)
+                            }} className={styles.menuIcon}
+                            transition={'all 0.5s'} backgroundColor={'transparent'} fontSize={'12px'}
+                            h={'auto'} minWidth={'24px'} padding={'0'} as={Button} rightIcon={<MenuIcon/>}>
+                          </MenuButton>
+                          <MenuList className={'drop-down-list'}>
+                              {props.threadDetails && (
+                                <MenuItem
+                                  onClick={(e) => {
+                                      e.preventDefault()
+                                      e.stopPropagation()
+                                      if (props.preventSelectingMessage) {
+                                          props.preventSelectingMessage()
+                                      }
+                                      setScope(props.threadDetails.scope === 'visible' ? 'hidden' : 'visible', props.threadDetails)
+                                  }}>
+                                    {props.threadDetails.scope === 'visible' ? 'Hide from project members' : 'Show to project members'}
+                                </MenuItem>
+                              )}
+                              <MenuItem
+                                onClick={() => props.hideAndShowReplayBox('reply', props.threadDetails)}> Reply </MenuItem>
+                              <MenuItem
+                                onClick={() => props.hideAndShowReplayBox('reply-all', props.threadDetails)}> Reply
+                                  All </MenuItem>
+                              <MenuItem
+                                onClick={() => props.hideAndShowReplayBox('forward', props.threadDetails)}> Forward </MenuItem>
+                          </MenuList>
+                      </Menu>
+                  </Flex>
+              </Flex>
+            }
 
             {props.threadDetails && isExpanded &&
             <Flex direction={'column'} w={'100%'} pb={4}>
@@ -171,30 +258,6 @@ export function MessageBox(props: any) {
                                         </>
                                     )}
                                 </Flex>
-
-                                <Flex align={'center'} gap={'6px'}>
-                                    {props?.threadDetails?.scope !== 'visible' ?
-                                        <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
-                                            <EyeSlashedIcon/>
-                                        </Flex> : ''}
-                                    {/*
-                                  <Flex className={styles.memberImages}>
-                                      <div className={styles.memberPhoto}>
-                                          <Image src="/image/user.png" width="24" height="24" alt=""/>
-                                      </div>
-                                      <div className={styles.memberPhoto}>
-                                          <Image src="/image/user.png" width="24" height="24" alt=""/>
-                                      </div>
-                                      <Flex align={'center'} justify={'center'} fontSize={'9px'} color={'#082561'}
-                                            className={styles.memberPhoto}>
-                                          +4
-                                      </Flex>
-                                  </Flex>*/}
-                                    <div className={styles.mailBoxTime} style={{marginTop: '5.5px'}}>
-                                        <Time time={props.threadDetails?.created || ''} isShowFullTime={true}
-                                              showTimeInShortForm={false}/>
-                                    </div>
-                                </Flex>
                             </Flex>
                             {props.threadDetails && props.threadDetails.to && props.threadDetails.to.length > 0 &&
                             <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
@@ -215,36 +278,63 @@ export function MessageBox(props: any) {
                             }
                         </Flex>
                     </Flex>
-                    <Menu isOpen={isContextMenuOpen} onClose={() => setIsContextMenuOpen(false)}>
-                        <MenuButton
-                            onClick={() => setIsContextMenuOpen(true)}
-                            position={'absolute'} right={'10px'} top={'20px'} className={styles.menuIcon}
-                            transition={'all 0.5s'} backgroundColor={'transparent'} fontSize={'12px'}
-                            h={'auto'} minWidth={'24px'} padding={'0'} as={Button} rightIcon={<MenuIcon/>}>
-                        </MenuButton>
-                        <MenuList className={'drop-down-list'}>
-                            {props.threadDetails && (
+                    <Flex align={'center'} gap={'6px'} pt={4} position={'absolute'} right={0}>
+                        {isEyeShow ?
+                            <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
+                                <EyeSlashedIcon/>
+                            </Flex> : ''}
+                        {props.messageAttachments && !!props.messageAttachments.length &&
+                            attachmentsMenu()
+                        }
+
+                        {/*
+                                  <Flex className={styles.memberImages}>
+                                      <div className={styles.memberPhoto}>
+                                          <Image src="/image/user.png" width="24" height="24" alt=""/>
+                                      </div>
+                                      <div className={styles.memberPhoto}>
+                                          <Image src="/image/user.png" width="24" height="24" alt=""/>
+                                      </div>
+                                      <Flex align={'center'} justify={'center'} fontSize={'9px'} color={'#082561'}
+                                            className={styles.memberPhoto}>
+                                          +4
+                                      </Flex>
+                                  </Flex>*/}
+                        <div className={styles.mailBoxTime} style={{whiteSpace: 'nowrap'}}>
+                            <Time time={props.threadDetails?.created || ''} isShowFullTime={true}
+                                  showTimeInShortForm={false}/>
+                        </div>
+                        <Menu isOpen={isContextMenuOpen} onClose={() => setIsContextMenuOpen(false)}>
+                            <MenuButton
+                                onClick={() => setIsContextMenuOpen(true)} className={styles.menuIcon}
+                                transition={'all 0.5s'} backgroundColor={'transparent'} fontSize={'12px'}
+                                h={'auto'} minWidth={'24px'} padding={'0'} as={Button} rightIcon={<MenuIcon/>}>
+                            </MenuButton>
+                            <MenuList className={'drop-down-list'}>
+                                {props.threadDetails && (
+                                    <MenuItem
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            e.stopPropagation()
+                                            if (props.preventSelectingMessage) {
+                                                props.preventSelectingMessage()
+                                            }
+                                            setScope(props.threadDetails.scope === 'visible' ? 'hidden' : 'visible', props.threadDetails)
+                                        }}>
+                                        {props.threadDetails.scope === 'visible' ? 'Hide from project members' : 'Show to project members'}
+                                    </MenuItem>
+                                )}
                                 <MenuItem
-                                    onClick={(e) => {
-                                        e.preventDefault()
-                                        e.stopPropagation()
-                                        if (props.preventSelectingMessage) {
-                                            props.preventSelectingMessage()
-                                        }
-                                        setScope(props.threadDetails.scope === 'visible' ? 'hidden' : 'visible', props.threadDetails)
-                                    }}>
-                                    {props.threadDetails.scope === 'visible' ? 'Hide from project members' : 'Show to project members'}
-                                </MenuItem>
-                            )}
-                            <MenuItem
-                                onClick={() => props.hideAndShowReplayBox('reply', props.threadDetails)}> Reply </MenuItem>
-                            <MenuItem
-                                onClick={() => props.hideAndShowReplayBox('reply-all', props.threadDetails)}> Reply
-                                All </MenuItem>
-                            <MenuItem
-                                onClick={() => props.hideAndShowReplayBox('forward', props.threadDetails)}> Forward </MenuItem>
-                        </MenuList>
-                    </Menu>
+                                    onClick={() => props.hideAndShowReplayBox('reply', props.threadDetails)}> Reply </MenuItem>
+                                <MenuItem
+                                    onClick={() => props.hideAndShowReplayBox('reply-all', props.threadDetails)}> Reply
+                                    All </MenuItem>
+                                <MenuItem
+                                    onClick={() => props.hideAndShowReplayBox('forward', props.threadDetails)}> Forward </MenuItem>
+                            </MenuList>
+                        </Menu>
+                    </Flex>
+
                 </Flex>
 
                 {(!props.isLoading && props.emailPart) &&
@@ -258,17 +348,6 @@ export function MessageBox(props: any) {
                         className={styles.mailBody}
                     />
                 </div>}
-                {props.messageAttachments && !!props.messageAttachments.length && props.messageAttachments?.map((item: MessageAttachments, i: number) => (
-                    <div className={styles.mailBodyAttachments} key={i}>
-                        <Flex align={'center'} className={styles.attachmentsFile}>
-                            {item.filename}
-                            <div className={`${styles.closeIcon} ${styles.downloadIcon}`}
-                                 onClick={() => downloadImage(item)}>
-                                <DownloadIcon/>
-                            </div>
-                        </Flex>
-                    </div>
-                ))}
             </Flex>
             }
         </Flex>
