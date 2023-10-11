@@ -132,8 +132,9 @@ export function ThreadsSideBarList(props: ThreadListProps) {
                     isThreadFocused: false,
                     multiSelection: []
                 });
-                messageService.setMessageState({selectedMessage: (item.messages || [])[0], messages: [], showMessageBox: isSameThreadClicked})
                 if (!isSameThreadClicked) {
+                    messageService.setMessageState({selectedMessage: (item.messages || [])[0], messages: [], showMessageBox: isSameThreadClicked})
+
                     setTimeout(() => {
                         messageService.setMessageState({showMessageBox: true});
                     }, 10);
