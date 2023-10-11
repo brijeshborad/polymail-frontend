@@ -89,6 +89,7 @@ export function AddToProjectButton() {
 
     function checkProjects(e: MouseEvent | any) {
         if (e.key.toLowerCase() === 'enter' && filteredProjects.length === 1) {
+            setThreadProject(prevState => [...prevState, filteredProjects[0]]);
             threadService.addThreadToProject(filteredProjects[0], addToProjectRef, isComposing);
         }
     }
@@ -103,6 +104,8 @@ export function AddToProjectButton() {
         let finalThread = isComposing ? composeDraft : selectedThread;
         if (finalThread && finalThread.id) {
             let isOnProjectView: boolean = !!(router.query.project && router.query.project === item.id);
+            let removeProject = threadProject.filter((project: any) => project.id !== item.id);
+            setThreadProject([...removeProject]);
             threadService.removeThreadFromProject(item, isOnProjectView)
             if (!isComposing) {
                 if (!(isOnProjectView && threads)) {
@@ -120,6 +123,7 @@ export function AddToProjectButton() {
 
     const addProjectToThread = (item: Project) => {
         if (selectedThread || composeDraft) {
+            setThreadProject(prevState => [...prevState, filteredProjects[0]]);
             threadService.addThreadToProject(item, null, isComposing);
             setFilteredProjects((filteredProjects || []).filter((project: Project) => project.id !== item.id));
         }
@@ -143,7 +147,7 @@ export function AddToProjectButton() {
                                                      cursor={'pointer'} className={`${styles.projectAdded}`}
                                                      borderRadius={'8px'}
                                                      backgroundColor={'#FFFFFF'} color={'#0A101D'} as={Box}
-                                                     padding={'3px 4px'}
+                                                     padding={'4px 4px'}
                                                      fontSize={'13px'} fontWeight={500} h={'fit-content'}
                                                      ref={addToProjectRef}>
                     <Flex alignItems={'center'} justify={'center'} mr={1} className={styles.projectSelectImage}>
