@@ -444,10 +444,10 @@ export function ComposeBox(props: any) {
         if (selectedAccount && selectedAccount.signature) {
             let sentence = '';
             if (selectedThread?.projects && selectedThread?.projects?.length) {
-                sentence = `${selectedAccount?.name || ''} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length === 1 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}`;
+                sentence = `<p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${selectedAccount?.name || ''} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length === 1 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}</p>`;
             }
 
-            setEmailBody(`<p></p><p>${selectedAccount.signature}</p><p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${sentence}</p>`);
+            setEmailBody(`<p></p><p>${selectedAccount.signature}</p><p></p>${sentence}`);
         }
     }, [selectedAccount, props.isOpen, selectedThread])
 
@@ -559,9 +559,6 @@ export function ComposeBox(props: any) {
     const onCloseClick = () => {
         if (!isDraftUpdated) {
             performUpdate();
-            if (composeDraft && composeDraft.id) {
-                dispatch(deleteMessage({body: {id: composeDraft.id}}));
-            }
         } else {
             onOpenDraftConformationModal()
         }
@@ -576,6 +573,9 @@ export function ComposeBox(props: any) {
             threadService.setSelectedThread(null)
         }
         changeThreadData();
+        if (composeDraft && composeDraft.id) {
+            dispatch(deleteMessage({body: {id: composeDraft.id}}));
+        }
     }
 
     const modalCloseConfirmation = (type: string) => {

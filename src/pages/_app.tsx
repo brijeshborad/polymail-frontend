@@ -56,9 +56,6 @@ export default function App({ Component, ...rest }: AppProps) {
     setGlobalStore(store);
     const { pageProps } = props;
     const router = useRouter();
-    if (store.getState().auth?.user?.token) {
-        Router.push('/inbox');
-    }
     return (
         <Provider store={store}>
             <ChakraBaseProvider theme={theme}>
