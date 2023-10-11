@@ -10,7 +10,6 @@ import {addItemToGroup} from "@/redux/memberships/action-reducer";
 import {removeThreadFromProject} from "@/redux/projects/action-reducer";
 import {commonService} from "@/services/common.service";
 import {globalEventService} from "@/services/global-event.service";
-import {current} from "@reduxjs/toolkit";
 
 declare type MailBoxTypes = 'INBOX' | 'DRAFT' | 'UNREAD' | 'ARCHIVE' | 'TRASH' | 'SNOOZED' | 'STARRED' | string;
 

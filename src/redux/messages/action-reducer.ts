@@ -1,7 +1,5 @@
-import {createSlice, current, PayloadAction} from "@reduxjs/toolkit";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {InitialMessageStateType, ReducerActionType} from "@/types";
-import {Message} from "@/models";
-import {threadService} from "@/services";
 
 const initialState: any = {
     messages: [],
