@@ -501,12 +501,12 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     globalEventService.fireEvent({data: '', type: 'richtexteditor.discard'});
     if (draft && draft.id) {
       draftService.setReplyDraft(null);
+      setAttachments([]);
       dispatch(deleteMessage({
         body: {id: draft.id},
         afterSuccessAction: () => {
           draftService.discardDraft(draft.id!);
           setIsDraftUpdated(false);
-          setAttachments([]);
         }
       }));
     }
