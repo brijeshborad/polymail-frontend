@@ -1,6 +1,6 @@
 import {Badge, Box, Drawer, DrawerContent, Flex, Text, useDisclosure} from '@chakra-ui/react';
 import styles from '@/styles/Home.module.css';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {EnergyIcon} from '@/icons';
 import {CloseIcon} from '@chakra-ui/icons';
 import dynamic from 'next/dynamic'
@@ -9,6 +9,7 @@ import {StateType} from "@/types";
 import {ActivityFeed} from "@/models/activityFeed";
 import {ACTIVITY_FEED_EVENT_TYPES} from "@/utils/constants";
 import {socketService} from "@/services";
+import {getActivityFeed} from "@/redux/common-apis/action-reducer";
 
 const FeedComponent = dynamic(
     () => import('./feedComponent').then((mod) => mod.FeedComponent)
@@ -19,9 +20,14 @@ export const FeedSidebar = () => {
     // const [selectedMenu, setSelectedMenu] = React.useState('Disney Launch');
     const btnRef = React.useRef(null);
     const {newMessage} = useSelector((state: StateType) => state.socket);
+    const {activityFeed} = useSelector((state: StateType) => state.commonApis);
     const dispatch = useDispatch();
     const [feeds, setFeeds] = useState<ActivityFeed[]>([]);
     const [unreadCount, setUnreadCount] = useState<number>(0);
+
+    const callFeedApi = useCallback(() => {
+        dispatch(getActivityFeed({}));
+    }, [dispatch])
 
     useEffect(() => {
         if (newMessage && newMessage.name === 'Activity') {
@@ -55,6 +61,12 @@ export const FeedSidebar = () => {
         setUnreadCount(feeds.filter((t: ActivityFeed) => !t.isRead).length);
     }, [feeds])
 
+    useEffect(() => {
+        if (activityFeed && activityFeed.length > 0) {
+            setFeeds([...activityFeed]);
+        }
+    }, [activityFeed])
+
     function markFeedAsRead(index: number) {
         let currentFeeds = [...feeds];
         currentFeeds[index] = {
@@ -63,6 +75,10 @@ export const FeedSidebar = () => {
         };
         setFeeds([...currentFeeds]);
     }
+
+    useEffect(() => {
+        callFeedApi()
+    }, [callFeedApi])
 
     return (
         <>

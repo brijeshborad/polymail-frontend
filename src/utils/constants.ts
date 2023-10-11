@@ -16,4 +16,4 @@ export const MONITORED_KEYS = [
     { key: 13, value: 'ENTER' },
 ];
 export const ACCOUNT_MAIL_INIT_SYNC_TIMEOUT = 5000;
-export const ACTIVITY_FEED_EVENT_TYPES = ['ThreadShared', 'ProjectCreated'];
+export const ACTIVITY_FEED_EVENT_TYPES = ['ThreadShared', 'ProjectCreated', 'ProjectInvite'];

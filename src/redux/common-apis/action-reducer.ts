@@ -52,8 +52,8 @@ const commonApisSlice = createSlice({
     getActivityFeed: (state: InitialCommonApisStateType, _action: PayloadAction<ReducerActionType>) => {
       return {...state, activityFeed: [], isLoading: true}
     },
-    getActivityFeedSuccess: (state: InitialCommonApisStateType, _action: PayloadAction<any>) => {
-      return {...state, isLoading: false, error: null}
+    getActivityFeedSuccess: (state: InitialCommonApisStateType, {payload: activityFeed}: PayloadAction<any>) => {
+      return {...state, activityFeed, isLoading: false, error: null}
     },
     getActivityFeedError: (state: InitialCommonApisStateType, _action: PayloadAction<any>) => {
       return {...state, activityFeed: [], isLoading: false}
