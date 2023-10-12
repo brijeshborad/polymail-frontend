@@ -161,7 +161,9 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
             setReplyTypeName('Forward')
         }
         globalEventService.fireEvent({data: messageData, type: 'draft.currentMessage'})
-        globalEventService.fireEvent({type: 'draft.updateType', data: {type, messageData, emailParts: (messagePart?.data || '')}})
+        setTimeout(() => {
+            globalEventService.fireEvent({type: 'draft.updateType', data: {type, messageData, emailParts: (messagePart?.data || '')}})
+        }, 100)
     }
 
     const handleRowClick = (index: any) => {
