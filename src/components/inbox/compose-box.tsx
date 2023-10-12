@@ -12,7 +12,7 @@ import styles from "@/styles/Inbox.module.css";
 import {CloseIcon} from "@chakra-ui/icons";
 import React, {ChangeEvent, useCallback, useEffect, useRef, useState} from "react";
 import {StateType} from "@/types";
-import {debounce, generateToasterId, isEmail, makeCollabId} from "@/utils/common.functions";
+import {clearDebounce, debounce, generateToasterId, isEmail, makeCollabId} from "@/utils/common.functions";
 import {createDraft, sendMessage, updatePartialMessage} from "@/redux/draft/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import dayjs from "dayjs";
@@ -30,6 +30,7 @@ import Image from "next/image";
 import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
 import {commonService, draftService, globalEventService, threadService} from "@/services";
 import {getCacheMessages, setCacheMessages} from "@/utils/cache.functions";
+import {ProgressBar} from "@/components/loader-screen/progress-bar";
 
 const CreateNewProject = dynamic(() => import('@/components/project/create-new-project').then(mod => mod.default));
 const Time = dynamic(() => import("@/components/common").then(mod => mod.Time));
@@ -41,6 +42,8 @@ const blankRecipientValue: MessageRecipient = {
     name: '',
     email: ''
 }
+
+let loaderPercentage = 10;
 
 export function ComposeBox(props: any) {
     const [emailRecipients, setEmailRecipients] = useState<RecipientsType>({
@@ -82,6 +85,7 @@ export function ComposeBox(props: any) {
     const router = useRouter();
     const [collabId, setCollabId] = useState<string | undefined>(composeDraft?.draftInfo?.collabId);
     const [isContentSet, setIsContentSet] = useState<boolean>(false);
+    const { showAttachmentLoader } = useSelector((state: StateType) => state.messages);
 
     useEffect(() => {
         if (!collabId) {
@@ -145,7 +149,9 @@ export function ComposeBox(props: any) {
                 setAttachments([
                     ...draftInfo.attachments.map(t => ({
                         filename: t.filename,
-                        mimeType: t.mimeType
+                        mimeType: t.mimeType,
+                        isUploaded: true
+
                     }))
                 ]);
             }
@@ -487,6 +493,8 @@ export function ComposeBox(props: any) {
 
 
     function handleFileUpload(files: any, event: any) {
+        loaderPercentage = 0;
+
         const file = files[0];
         if (composeDraft && composeDraft.id) {
             if (event) {
@@ -494,31 +502,58 @@ export function ComposeBox(props: any) {
                 event.preventDefault();
             }
             const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = function () {
+            if (reader) {
+                reader.readAsDataURL(file);
+                reader.onload = function () {
 
 
-                if (reader.result) {
-                    setAttachments([
-                        ...(attachments || []),
-                        {
-                            filename: file.name,
-                            mimeType: file.type
+                    if (reader.result) {
+                        setAttachments([
+                            ...(attachments || []),
+                            {
+                                filename: file.name,
+                                mimeType: file.type,
+                                isUploaded: false
+                            }
+                        ]);
+
+                        if (loaderPercentage < 100) {
+                            loaderPercentage += 20;
                         }
-                    ]);
-                    dispatch(uploadAttachment({
-                        body: {id: composeDraft.id, file: file},
-                        afterSuccessAction: () => {
-                            dispatch(updatePartialMessage({body: {id: composeDraft.id, fromCompose: true}}));
-                        }
-                    }));
-                }
-            };
-            reader.onerror = function (error) {
-                console.log('Error: ', error);
-            };
+
+                        dispatch(uploadAttachment({
+                            body: {id: composeDraft.id, file: file},
+                            afterSuccessAction: () => {
+                                dispatch(updatePartialMessage({body: {id: composeDraft.id, fromCompose: true}}));
+                            }
+                        }));
+                    }
+                };
+                reader.onerror = function (error) {
+                    console.log('Error: ', error);
+                };
+            }
         }
     }
+
+    useEffect(() => {
+        debounce(() => {
+            if (loaderPercentage < 100) {
+                loaderPercentage *= 2;
+            }
+        }, 0)
+    }, [loaderPercentage])
+
+    useEffect(() => {
+        if (!showAttachmentLoader) {
+            (attachments || []).map((item: any) => {
+                if (!item.isUploaded) {
+                    item.isUploaded = true
+                    clearDebounce();
+                }
+            })
+        }
+    }, [showAttachmentLoader ])
 
     function removeAttachmentsData(index: number) {
         const newArr = [...attachments];
@@ -674,7 +709,11 @@ export function ComposeBox(props: any) {
                                         extendToolbar={(
                                             <>
                                                 <Flex
-                                                    onClick={() => inputFile.current?.click()}
+                                                    onClick={() => {
+                                                        console.log('HERE')
+                                                        inputFile.current?.click();
+                                                        loaderPercentage = 0;
+                                                    }}
                                                     align={'center'} justify={'center'} cursor={'pointer'}
                                                     className={styles.attachIcon}
                                                 >
@@ -693,8 +732,11 @@ export function ComposeBox(props: any) {
                                             {attachments.map((item, index: number) => (
                                                 <Flex align={'center'} key={index} className={styles.attachmentsFile}>
                                                     {item.filename}
-                                                    <div className={styles.closeIcon}
-                                                         onClick={() => removeAttachmentsData(index)}><CloseIcon/></div>
+                                                    <Flex ml={'auto'} gap={3} className={'attachments-progress-bar'}>
+                                                        {(showAttachmentLoader && !item.isUploaded) && <ProgressBar loaderPercentage={loaderPercentage} />}
+                                                        <div className={styles.closeIcon}
+                                                             onClick={() => removeAttachmentsData(index)}><CloseIcon/></div>
+                                                    </Flex>
                                                 </Flex>
                                             ))}
                                         </div> : null}

@@ -32,7 +32,7 @@ class SocketService extends BaseService {
     }
 
     fireThreadViewActivity(userId: string | undefined, threadId: string | undefined) {
-        console.log('Sending activity event THREAD');
+        // console.log('Sending activity event THREAD');
         this.sendMessage({
             userId: userId || '',
             name: 'Activity',
@@ -44,7 +44,7 @@ class SocketService extends BaseService {
     }
 
     fireProjectViewActivity(userId: string | undefined, projectId: string | undefined) {
-        console.log('Sending activity event PROJECT');
+        // console.log('Sending activity event PROJECT');
         this.sendMessage({
             userId: userId || '',
             name: 'Activity',

@@ -865,3 +865,20 @@ div:has(> .mailSendToaster) {
     margin-top: -4px;
     margin-right: 8px;
 }
+
+.attachments-progress-bar .inbox-loader {
+    width: 140px;
+}
+
+.attachments-progress-bar .inbox-loader p {
+    display: none;
+}
+
+.attachments-progress-bar .inbox-loader .progress-bar {
+    height: 8px;
+    background-color: #dfdfdf;
+}
+
+.attachments-progress-bar .inbox-loader .progress-bar div {
+    background-color: #266DF0;
+}

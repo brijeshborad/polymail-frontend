@@ -105,7 +105,12 @@ export function MessageBox(props: any) {
                 onMouseLeave={() => {
                     debounce(() => {
                         setIsMoreDropdownOpen(false)
-                    }, 250)
+                    }, 200)
+                }}
+                onMouseOut={() => {
+                    debounce(() => {
+                        setIsMoreDropdownOpen(false)
+                    }, 200)
                 }}
             >
                 <AttachmentIcon/>
@@ -120,7 +125,7 @@ export function MessageBox(props: any) {
                 onMouseLeave={() => {
                     debounce(() => {
                         setIsMoreDropdownOpen(false)
-                    }, 250)
+                    }, 200)
                 }}
             >
                 {props.messageAttachments?.map((item: MessageAttachments, i: number) => (

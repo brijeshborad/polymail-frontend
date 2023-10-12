@@ -667,6 +667,10 @@
     margin-left: auto;
 }
 
+.attachmentsProgressBar div p {
+    display: none;
+}
+
 .replyBoxCC .ccInput {
     flex: 1 0 auto;
 }

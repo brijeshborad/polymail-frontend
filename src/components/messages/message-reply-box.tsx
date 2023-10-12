@@ -33,6 +33,8 @@ import { getCacheMessages, setCacheMessages } from "@/utils/cache.functions";
 import CollabRichTextEditor from "../common/collab-rich-text-editor";
 import { MAILBOX_DRAFT } from "@/utils/constants";
 import {draftService, globalEventService, threadService} from "@/services";
+import {ProgressBar} from "@/components/loader-screen/progress-bar";
+
 
 dayjs.extend(relativeTime)
 
@@ -40,6 +42,9 @@ const blankRecipientValue: MessageRecipient = {
   name: '',
   email: ''
 }
+
+let loaderPercentage = 10;
+
 export function MessageReplyBox(props: MessageBoxType) {
   const [emailRecipients, setEmailRecipients] = useState<RecipientsType | any>({
     cc: { items: [], value: blankRecipientValue },
@@ -52,7 +57,7 @@ export function MessageReplyBox(props: MessageBoxType) {
   const { draft } = useSelector((state: StateType) => state.draft);
   const { selectedThread, tabValue, threads } = useSelector((state: StateType) => state.threads);
   const { event: incomingEvent } = useSelector((state: StateType) => state.globalEvents);
-  const { selectedMessage } = useSelector((state: StateType) => state.messages);
+  const { selectedMessage, showAttachmentLoader } = useSelector((state: StateType) => state.messages);
   const dispatch = useDispatch();
   const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
   const inputFile = useRef<HTMLInputElement | null>(null)
@@ -266,7 +271,6 @@ export function MessageReplyBox(props: MessageBoxType) {
       messageId: messageData?.id,
       ...(props.isProjectView ? { projectId: router.query.project as string } : {}),
     }
-
     debounce(() => {
       if (selectedAccount && selectedAccount.id) {
         if (waitForDraft) {
@@ -308,7 +312,8 @@ export function MessageReplyBox(props: MessageBoxType) {
         setAttachments([
           ...draftInfo.attachments.map(t => ({
             filename: t.filename,
-            mimeType: t.mimeType
+            mimeType: t.mimeType,
+            isUploaded: true
           }))
         ]);
       }
@@ -447,6 +452,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
 
   function handleFileUpload(files: any, event: any=null) {
+    loaderPercentage = 0;
     const file = files[0];
 
     if (draft && draft.id) {
@@ -455,31 +461,55 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         event.preventDefault();
       }
       const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = function () {
+      if (reader) {
+        reader.readAsDataURL(file);
+        reader.onload = function () {
 
 
-        if (reader.result) {
-          setAttachments([
-            ...(attachments || []),
-            {
-              filename: file.name,
-              mimeType: file.type
+          if (reader.result) {
+            setAttachments([
+              ...(attachments || []),
+              {
+                filename: file.name,
+                mimeType: file.type,
+                isUploaded: false
+              }
+            ]);
+            if (loaderPercentage < 100) {
+              loaderPercentage += 20;
             }
-          ]);
-          dispatch(uploadAttachment({
-            body:{ id: draft.id, file: file },
-            afterSuccessAction: () => {
-              sendToDraft('', false);
-            }
-          }));
-        }
-      };
-      reader.onerror = function (error) {
-        console.log('Error: ', error);
-      };
+
+            dispatch(uploadAttachment({
+              body:{ id: draft.id, file: file },
+              afterSuccessAction: () => {
+                sendToDraft('', false);
+              }
+            }));
+          }
+        };
+        reader.onerror = function (error) {
+          console.log('Error: ', error);
+        };
+      }
     }
   }
+
+
+  useEffect(() => {
+    if (loaderPercentage < 100) {
+      loaderPercentage *= 2;
+    }
+  }, [loaderPercentage])
+
+  useEffect(() => {
+    if (!showAttachmentLoader) {
+      (attachments || []).map((item: any) => {
+          if (!item.isUploaded) {
+            item.isUploaded = true
+          }
+      })
+    }
+  }, [showAttachmentLoader ])
 
   function removeAttachmentData(index: number) {
     const newArr = [...attachments];
@@ -900,7 +930,10 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                         extendToolbar={(
                             <>
                               <Flex
-                                  onClick={() => inputFile.current?.click()}
+                                  onClick={() => {
+                                    inputFile.current?.click();
+                                    loaderPercentage = 0;
+                                  }}
                                   align={'center'} justify={'center'} cursor={'pointer'}
                                   className={styles.attachIcon}
                               >
@@ -917,12 +950,16 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                   {attachments.map((item, index: number) => (
                       <Flex align={'center'} key={index} className={styles.attachmentsFile}>
                         {item.filename}
-                        <div className={styles.closeIcon} onClick={() => removeAttachmentData(index)}>
-                          <CloseIcon />
-                        </div>
+                        <Flex ml={'auto'} gap={3} className={'attachments-progress-bar'}>
+                          {(showAttachmentLoader && !item.isUploaded) && <ProgressBar loaderPercentage={loaderPercentage} />}
+                          <div className={styles.closeIcon} onClick={() => removeAttachmentData(index)}>
+                            <CloseIcon />
+                          </div>
+                        </Flex>
                       </Flex>
                   ))}
                 </div> : null}
+
               </Flex>
 
               {hideEditorToolbar &&

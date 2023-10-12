@@ -3,5 +3,6 @@ export interface MessageAttachments {
     data?: string,
     mimeType?: string,
     id?: string
-    url?: string
+    url?: string,
+    isUploaded?: boolean
 }

@@ -11,6 +11,7 @@ const initialState: any = {
     attachmentUrl: null,
     error: null,
     showMessageBox: true,
+    showAttachmentLoader: false,
 } as InitialMessageStateType
 
 const messagesSlice = createSlice({
@@ -58,13 +59,13 @@ const messagesSlice = createSlice({
         },
 
         uploadAttachment: (state: InitialMessageStateType, _action: PayloadAction<ReducerActionType>) => {
-            return {...state, isLoading: false}
+            return {...state, isLoading: false, showAttachmentLoader: true}
         },
         uploadAttachmentSuccess: (state: InitialMessageStateType, _action: PayloadAction<{}>) => {
-            return {...state, isLoading: false}
+            return {...state, isLoading: false, showAttachmentLoader: false}
         },
         uploadAttachmentError: (state: InitialMessageStateType,  _action: PayloadAction<any>) => {
-            return {...state, isLoading: false}
+            return {...state, isLoading: false, showAttachmentLoader: false}
         },
 
         removeAttachment: (state: InitialMessageStateType, _action: PayloadAction<ReducerActionType>) => {
