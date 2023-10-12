@@ -52,14 +52,15 @@ const draftSlice = createSlice({
         }: PayloadAction<any>) => {
             let {composeDraft, draft} = current(state);
             let finalUpdates: any = {...(isForCompose ? composeDraft: draft), ...updatedDraft}
+            let finalState = {}
+            if (isForCompose) {
+                finalState = {composeDraft: finalUpdates, updatedComposeDraft: finalUpdates, resumeAbleDraft: finalUpdates, success: true};
+            } else {
+                finalState = {updatedDraft: finalUpdates, success: true}
+            }
             return {
                 ...state,
-                ...(isForCompose ? {
-                    composeDraft: finalUpdates,
-                    updatedComposeDraft: finalUpdates,
-                    resumeAbleDraft: finalUpdates
-                } : {draft: finalUpdates, updatedDraft: finalUpdates}),
-                success: true,
+                ...finalState,
                 isLoading: false
             }
         },

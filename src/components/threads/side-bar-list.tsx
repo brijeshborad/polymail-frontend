@@ -105,14 +105,12 @@ export function ThreadsSideBarList(props: ThreadListProps) {
                 threadService.setMultiSelectionThreads(currentThreads.map((thread: Thread, index: number) => getCurrentSelectedThreads().includes(index) && thread.id!).filter(t => t) as string[]);
 
             } else {
-                draftService.setReplyDraft(null);
                 let isSameThreadClicked = false;
                 if (selectedThread && item) {
                     isSameThreadClicked = selectedThread.id === item.id;
                     commonService.updateUserOnlineStatus(selectedThread!, item!);
                 }
                 commonService.toggleComposing(false);
-                draftService.saveDraftToResume();
                 if (props.tab === 'DRAFT') {
                     if (item && item.messages && item.messages[0]) {
                         setTimeout(() => {
@@ -134,13 +132,16 @@ export function ThreadsSideBarList(props: ThreadListProps) {
                     multiSelection: []
                 });
                 if (!isSameThreadClicked) {
+                    draftService.setReplyDraft(null);
                     messageService.setMessageState({selectedMessage: (item.messages || [])[0], messages: [], showMessageBox: isSameThreadClicked})
                     setTimeout(() => {
                         messageService.setMessageState({showMessageBox: true});
                     }, 10);
                 }
                 globalEventService.fireEvent({data: '', type: 'richtexteditor.discard'});
-                globalEventService.fireEvent({data: {type: 'reply'}, type: 'draft.updateType'});
+                setTimeout(() => {
+                    globalEventService.fireEvent({data: {type: 'reply'}, type: 'draft.updateType'});
+                }, 100);
             }
         }
     }, [currentThreads, selectedThread, props.tab]);
