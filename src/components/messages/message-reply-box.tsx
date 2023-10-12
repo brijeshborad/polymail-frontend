@@ -73,7 +73,6 @@ export function MessageReplyBox(props: MessageBoxType) {
     const [replyType, setReplyType] = useState<string>('reply');
 
     const editorRef = useRef<any>(null);
-    const {toast} = createStandaloneToast()
     const router = useRouter();
     const divRef = useRef<HTMLDivElement | null>(null);
     const [divHeight, setDivHeight] = useState<number>(0);

@@ -4,7 +4,7 @@ import {updateMessageState} from "@/redux/messages/action-reducer";
 import {Message, MessageAttachments, MessagePart} from "@/models";
 import {generateToasterId} from "@/utils/common.functions";
 import dayjs from "dayjs";
-import {sendMessage, updateDraftState} from "@/redux/draft/action-reducer";
+import {sendMessage} from "@/redux/draft/action-reducer";
 import {Toaster} from "@/components/common";
 import {draftService} from "@/services/draft.service";
 import {createStandaloneToast} from "@chakra-ui/react";
