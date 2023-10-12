@@ -10,6 +10,7 @@ import {ActivityFeed} from "@/models/activityFeed";
 import {ACTIVITY_FEED_EVENT_TYPES} from "@/utils/constants";
 import {globalEventService, socketService} from "@/services";
 import {getActivityFeed} from "@/redux/common-apis/action-reducer";
+import Tooltip from "@/components/common/Tooltip";
 
 const FeedComponent = dynamic(
     () => import('./feedComponent').then((mod) => mod.FeedComponent)
@@ -33,7 +34,7 @@ export const FeedSidebar = () => {
         if (newMessage && newMessage.name === 'Activity') {
             socketService.updateSocketMessage(null);
             if (ACTIVITY_FEED_EVENT_TYPES.includes(newMessage.data.type)) {
-                if (newMessage.data.type === 'ThreadShared') {
+                if (newMessage.data.type === 'ThreadShared' || newMessage.data.type === 'ProjectInvite') {
                     globalEventService.fireEvent({
                         event: {
                             type: 'show-notification',
@@ -90,11 +91,14 @@ export const FeedSidebar = () => {
 
     return (
         <>
-            <Flex align={'center'} cursor={'pointer'} justify={'center'} className={styles.notificationIcon}
-                  onClick={onOpen}>
-                <EnergyIcon/>
-                {unreadCount > 0 ? (<Badge>{unreadCount}</Badge>) : null}
-            </Flex>
+            <Tooltip label={'Activity Feed'} placement={'bottom'}>
+                <Flex align={'center'} cursor={'pointer'} justify={'center'} className={styles.notificationIcon}
+                      onClick={onOpen}>
+
+                    <EnergyIcon/>
+                    {unreadCount > 0 ? (<Badge>{unreadCount}</Badge>) : null}
+                </Flex>
+            </Tooltip>
             <Drawer isOpen={isOpen} placement="right" onClose={onClose} finalFocusRef={btnRef}>
                 {/* <DrawerOverlay /> */}
 
