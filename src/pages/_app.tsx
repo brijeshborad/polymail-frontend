@@ -17,7 +17,7 @@ import {CommonApiComponents} from "@/components/common";
 import GlobalEvents from '@/components/common/global-events';
 import {setGlobalStore} from "@/utils/common.functions";
 
-const { Input, Menu, Checkbox, Heading, Divider, Alert, Modal, Popover, Tooltip, Textarea, Spinner, List, Select, Table, Progress, Skeleton, Radio, Drawer, Badge } =
+const { Button, Input, Menu, Checkbox, Heading, Divider, Alert, Modal, Popover, Tooltip, Textarea, Spinner, List, Select, Table, Progress, Skeleton, Radio, Drawer, Badge } =
     chakraTheme.components;
 const config: ThemeConfig = {
     initialColorMode: 'light',
@@ -26,13 +26,7 @@ const config: ThemeConfig = {
 const theme = extendBaseTheme({
     config,
     components: {
-        Button: {
-          baseStyle: {
-            _focus: {
-              boxShadow: 'none'
-            }
-          }
-        },
+        Button,
         Input,
         Menu,
         Checkbox,
