@@ -58,7 +58,8 @@ export default function Notification() {
 
     new window.Notification(notification.title, {
       icon: `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_REDIRECT_URL}image/logo.png`,
-      body: notification?.data?.body || 'test...'
+      body: notification?.data?.body || 'test...',
+      tag: notification?.data?.tag || `${new Date().getMilliseconds().toString()}`
     })
   }
 

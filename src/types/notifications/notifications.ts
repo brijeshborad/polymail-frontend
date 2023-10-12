@@ -5,4 +5,5 @@ export declare type NotificationProps = {
 export declare type NotificationType = {
   icon: string
   body?: string
+  tag?: string
 }

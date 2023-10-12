@@ -38,7 +38,12 @@ export const FeedSidebar = () => {
                     globalEventService.fireEvent({
                         event: {
                             type: 'show-notification',
-                            data: {title: newMessage.data.title, data: {body: newMessage.data.subtitle}}
+                            data: {title: newMessage.data.title,
+                                data: {
+                                    body: newMessage.data.subtitle,
+                                    tag: `${newMessage.data.type}-${newMessage.data.created}`
+                                }
+                            }
                         },
                     })
                 }

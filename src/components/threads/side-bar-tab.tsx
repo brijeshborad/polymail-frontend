@@ -141,7 +141,8 @@ export function ThreadsSideBarTab(props: TabProps) {
                 data: {
                   title: _newMsg.subject || "You got a new message",
                   data: {
-                    body: `${_newMsg?.from?.name} ${_newMsg?.from?.email}`
+                    body: `${_newMsg?.from?.name} ${_newMsg?.from?.email}`,
+                    tag: `${_newMsg?.updated}`
                   }
                 }
               },
