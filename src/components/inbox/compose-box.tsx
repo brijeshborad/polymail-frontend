@@ -1,6 +1,6 @@
 import {
     Box,
-    Button, createStandaloneToast,
+    Button,
     Flex, Heading, Input,
     Modal,
     ModalBody,
@@ -12,23 +12,21 @@ import styles from "@/styles/Inbox.module.css";
 import {CloseIcon} from "@chakra-ui/icons";
 import React, {ChangeEvent, useCallback, useEffect, useRef, useState} from "react";
 import {StateType} from "@/types";
-import {clearDebounce, debounce, generateToasterId, isEmail, makeCollabId} from "@/utils/common.functions";
-import {createDraft, sendMessage, updatePartialMessage} from "@/redux/draft/action-reducer";
+import {clearDebounce, debounce, makeCollabId} from "@/utils/common.functions";
+import {createDraft, updatePartialMessage} from "@/redux/draft/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import dayjs from "dayjs";
 import {deleteMessage, removeAttachment, uploadAttachment} from "@/redux/messages/action-reducer";
 import {MessageAttachments, MessageRecipient, Thread} from "@/models";
-import {DropZone, Toaster} from "@/components/common";
+import {DropZone} from "@/components/common";
 import {RecipientsType} from "@/types/props-types/message-recipients.type";
 import dynamic from "next/dynamic";
-import {updateCommonState} from "@/redux/common-apis/action-reducer";
-import {updateThreadState} from "@/redux/threads/action-reducer";
 import {useRouter} from "next/router";
 import {fireEvent} from "@/redux/global-events/action-reducer";
 import CollabRichTextEditor from "../common/collab-rich-text-editor";
 import Image from "next/image";
 import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
-import {commonService, draftService, globalEventService, threadService} from "@/services";
+import {commonService, draftService, globalEventService, messageService, threadService} from "@/services";
 import {getCacheMessages, setCacheMessages} from "@/utils/cache.functions";
 import {ProgressBar} from "@/components/loader-screen/progress-bar";
 
@@ -66,7 +64,6 @@ export function ComposeBox(props: any) {
     const {composeDraft} = useSelector((state: StateType) => state.draft);
     const {tabValue, threads, selectedThread} = useSelector((state: StateType) => state.threads);
     const dispatch = useDispatch();
-    const {onClose} = useDisclosure();
     const {isOpen: isOpenProject, onOpen: onOpenProject, onClose: onCloseProject} = useDisclosure();
     const {
         isOpen: isDraftConformationModal,
@@ -79,7 +76,6 @@ export function ComposeBox(props: any) {
     const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
     const inputFile = useRef<HTMLInputElement | null>(null);
     const editorRef = useRef<any>(null);
-    const {toast} = createStandaloneToast();
     const [isDraftUpdated, setIsDraftUpdated] = useState<boolean>(false);
     const [waitForDraft, setWaitForDraft] = useState<boolean>(false);
     const router = useRouter();
@@ -163,118 +159,12 @@ export function ComposeBox(props: any) {
         }
     }, [composeDraft, isContentSet, props.isProjectView])
 
-    const isValid = (email: string, type: string) => {
-        let error = null;
-        if ((emailRecipients[type as keyof RecipientsType].items || []).map(r => r.email).includes(email)) {
-            error = `This email has already been added.`;
-        }
-
-        if (!isEmail(email)) {
-            error = `This email has not been valid.`;
-        }
-
-        if (error) {
-            let validationError = {
-                desc: error,
-                title: 'Email validation error',
-                type: 'error'
-            }
-            Toaster(validationError)
-            return false;
-        }
-
-        return true;
-    }
-    const handleChange = (evt: ChangeEvent | any, type: string) => {
-        if (evt.target.value) {
-            setIsDraftUpdated(true)
-        }
-        setEmailRecipients((prevState) => ({
-            ...prevState,
-            [type as keyof RecipientsType]: {
-                items: [...(prevState[type as keyof RecipientsType].items || [])],
-                value: {
-                    name: '',
-                    email: evt.target.value
-                }
-            }
-        }));
-    };
-
     useEffect(() => {
         if (waitForDraft && composeDraft && composeDraft.id) {
             setWaitForDraft(false);
             sendToDraft('', false);
         }
     }, [waitForDraft, composeDraft])
-
-    const handleAutoCompleteSelect = (value: any, type: string) => {
-        if (value.email && isValid(value.email, type)) {
-            setEmailRecipients((prevState: RecipientsType) => ({
-                ...prevState,
-                [type as keyof RecipientsType]: {
-                    items: [...prevState[type as keyof RecipientsType].items, {
-                        name: value.name,
-                        email: value.email
-                    }],
-                    value: blankRecipientValue
-                }
-            }));
-        }
-    };
-
-    const handlePaste = (evt: ClipboardEvent | any, type: string) => {
-        evt.preventDefault();
-
-        let paste = evt.clipboardData.getData("text");
-        let emails = paste.match(/[\w\d\.-]+@[\w\d\.-]+\.[\w\d\.-]+/g);
-
-        if (emails) {
-            let toBeAdded = emails.filter((item: string) => !emailRecipients[type as keyof RecipientsType].items.map(r => r.email).includes(item));
-            setEmailRecipients((prevState) => ({
-                ...prevState,
-                [type as keyof RecipientsType]: {
-                    items: [...prevState[type as keyof RecipientsType].items, ...toBeAdded],
-                    value: blankRecipientValue
-                }
-            }));
-        }
-    };
-
-
-    const handleKeyDown = (evt: KeyboardEvent | any, type: string) => {
-        if (["Enter", "Tab"].includes(evt.key)) {
-            evt.preventDefault();
-            let value = emailRecipients[type as keyof RecipientsType].value.email.trim();
-
-            let emailArray = value.split(',');
-            !!emailArray.length && emailArray.map((email: string) => {
-                if (email && isValid(email, type)) {
-                    setEmailRecipients((prevState) => ({
-                        ...prevState,
-                        [type as keyof RecipientsType]: {
-                            items: [...prevState[type as keyof RecipientsType].items, {
-                                name: '',
-                                email: email
-                            }],
-                            value: blankRecipientValue
-                        }
-                    }));
-                }
-            })
-        }
-    };
-
-
-    const handleItemDelete = (item: string, type: string) => {
-        setEmailRecipients((prevState) => ({
-            ...prevState,
-            [type as keyof RecipientsType]: {
-                items: prevState[type as keyof RecipientsType].items.map(i => i.email).filter(i => i !== item),
-                value: blankRecipientValue
-            }
-        }));
-    };
 
     const addSubject = (event: ChangeEvent | any) => {
         if (event.target.value) {
@@ -313,7 +203,6 @@ export function ComposeBox(props: any) {
                 collabId: collaborationId,
                 body: checkValue ? value : emailBody
             },
-            messageId: props.messageData?.id,
             ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
         }
 
@@ -335,83 +224,9 @@ export function ComposeBox(props: any) {
 
     const sendMessages = () => {
         if (composeDraft && composeDraft.id) {
-            draftService.backupComposeDraftForUndo();
-            let params = {};
-            let polyToast = generateToasterId();
-
-            if (scheduledDate) {
-                const targetDate = dayjs(scheduledDate)
-                // Get the current date and time
-                const currentDate = dayjs();
-                const secondsDifference = targetDate.diff(currentDate, 'second');
-                params = {
-                    delay: secondsDifference
-                }
-
-
-                dispatch(sendMessage({body: {id: composeDraft.id, ...params}}));
-
-                Toaster({
-                    desc: `Your message has been scheduled`,
-                    type: 'send_confirmation',
-                    title: 'Your message has been scheduled',
-                    id: polyToast,
-                    undoClick: (type: string) => {
-                        let params = {};
-
-                        if (type === 'undo') {
-                            params = {
-                                undo: true
-                            }
-                            commonService.toggleComposing(true);
-                            draftService.restoreBackupComposeDraft();
-                            setIsContentSet(false);
-                        } else if (type === 'send-now') {
-                            params = {
-                                now: true
-                            }
-                        }
-                        dispatch(sendMessage({body: {id: composeDraft.id!, ...params}}));
-                        toast.close(`${polyToast}`);
-                    }
-                })
-
-            } else {
-                if (composeDraft && composeDraft.to && composeDraft.to.length) {
-                    Toaster({
-                        desc: `Your message has been sent to ${composeDraft?.to && composeDraft?.to[0].email}${composeDraft?.to && composeDraft?.to?.length > 1 ? ` and ${composeDraft?.to && composeDraft?.to?.length - 1} other${composeDraft?.to && composeDraft?.to?.length === 2 ? '' : 's'}` : ''}`,
-                        type: 'send_confirmation',
-                        title: composeDraft?.subject || '',
-                        id: polyToast,
-                        undoClick: (type: string) => {
-                            let params = {};
-
-                            if (type === 'undo') {
-                                params = {
-                                    undo: true
-                                }
-                                commonService.toggleComposing(true);
-                                draftService.restoreBackupComposeDraft();
-                                setIsContentSet(false);
-                            } else if (type === 'send-now') {
-                                params = {
-                                    now: true
-                                }
-                            }
-                            dispatch(sendMessage({body: {id: composeDraft.id!, ...params}}));
-                            toast.close(`${polyToast}`);
-                        }
-                    })
-                }
-            }
-            changeThreadData();
-            dispatch(sendMessage({body: {id: composeDraft.id!, ...params}}));
-            onClose();
-
-            if (props.onClose) {
-                props.onClose();
-            }
-
+            messageService.sendMessage(true, scheduledDate, () => {
+                setIsContentSet(false);
+            })
             setEmailRecipients({
                 cc: {
                     items: [],
@@ -433,16 +248,15 @@ export function ComposeBox(props: any) {
                 (threads || []).map((item: Thread) => {
                     if (item.id === composeDraft.threadId) {
                         const newThreadArray = (threads || []).filter(obj => obj.id !== composeDraft.threadId);
-                        dispatch(updateThreadState({threads: newThreadArray, selectedThread: newThreadArray[0]}));
-                        dispatch(updateCommonState({isComposing: true}));
+                        threadService.setThreads(newThreadArray);
+                        threadService.setSelectedThread(newThreadArray[0]);
+                        commonService.toggleComposing(true);
                     }
                 })
             } else {
-                dispatch(updateCommonState({isComposing: false, allowThreadSelection: true}));
+                commonService.toggleComposingWithThreadSelection(false, true);
             }
-
-            draftService.setComposeDraft(null);
-            draftService.setResumeDraft(null);
+            draftService.backupComposeDraftForUndo();
         }
     }
 
@@ -607,7 +421,6 @@ export function ComposeBox(props: any) {
         if (tabValue === 'DRAFT') {
             threadService.setSelectedThread(null)
         }
-        changeThreadData();
         if (composeDraft && composeDraft.id) {
             dispatch(deleteMessage({body: {id: composeDraft.id}}));
         }
@@ -618,15 +431,6 @@ export function ComposeBox(props: any) {
             performUpdate();
         }
         onCloseDraftConformationModal();
-    }
-
-    const changeThreadData = () => {
-        if (props.passSelectedThreadData) {
-            let thread = (threads || []).find((thread: Thread) => thread.id === props.passSelectedThreadData.id);
-            dispatch(updateThreadState({
-                selectedThread: thread || (threads || [])[0]
-            }));
-        }
     }
 
     return (
@@ -673,11 +477,10 @@ export function ComposeBox(props: any) {
                               borderRadius={8}>
                             <MessageRecipients
                                 emailRecipients={emailRecipients}
-                                handleKeyDown={handleKeyDown}
-                                handleChange={handleChange}
-                                handlePaste={handlePaste}
-                                handleAutoCompleteSelect={handleAutoCompleteSelect}
-                                handleItemDelete={handleItemDelete}
+                                updateValues={(values) => {
+                                    setIsDraftUpdated(true);
+                                    setEmailRecipients({...values})
+                                }}
                             />
                             <Flex flex={1} direction={'column'} position={'relative'}>
                                 <Flex flex={1} direction={'column'} ref={editorRef} className={`editor-bottom-shadow`}
@@ -710,7 +513,6 @@ export function ComposeBox(props: any) {
                                             <>
                                                 <Flex
                                                     onClick={() => {
-                                                        console.log('HERE')
                                                         inputFile.current?.click();
                                                         loaderPercentage = 0;
                                                     }}

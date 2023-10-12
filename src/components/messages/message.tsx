@@ -19,7 +19,7 @@ const MessageReplyBox = dynamic(() => import('@/components/messages/message-repl
 const ComposeBox = dynamic(() => import('@/components/inbox/compose-box').then(mod => mod.ComposeBox));
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import dynamic from "next/dynamic";
-import {getCacheMessages, setCacheMessages} from "@/utils/cache.functions";
+import {getCacheMessages} from "@/utils/cache.functions";
 import {InboxLoader} from "@/components/loader-screen/inbox-loader";
 import {draftService, globalEventService, keyNavigationService, messageService, threadService} from "@/services";
 
@@ -29,14 +29,11 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
     const messagesWrapperRef = React.useRef<HTMLDivElement | null | any>(null);
 
     const [index, setIndex] = useState<number | null>(null);
-    const [emailPart, setEmailPart] = useState<string>("");
     const [replyTypeName, setReplyTypeName] = useState<string>('');
     const [inboxMessages, setInboxMessages] = useState<MessageModel[]>([]);
     const {
         messages,
         messagePart,
-        isLoading: messageLoading,
-        messageAttachments,
         selectedMessage,
         attachmentUrl,
         showMessageBox: isShowingMessageBox
@@ -54,7 +51,6 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const {isLoading: projectsLoading} = useSelector((state: StateType) => state.projects);
     const {isLoading: summaryLoading, syncingEmails, isComposing} = useSelector((state: StateType) => state.commonApis);
-    const [passSelectedThreadData, setPassSelectedThreadData] = useState<MessageModel | null>(null);
     const [isLoaderShow, setIsLoaderShow] = useState<boolean>(false);
     const [showReplyBox, setShowReplyBox] = useState<boolean>(false);
 
@@ -70,7 +66,6 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
 
     useEffect(() => {
         if (selectedThread && selectedThread?.id) {
-            setPassSelectedThreadData(selectedThread);
             setShowReplyBox(false)
             setIndex(null);
             globalEventService.fireEvent({data: null, type: 'draft.currentMessage'})
@@ -113,23 +108,6 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
         }
     }, [incomingEvent, setThreadFocus]);
 
-    const cacheMessage = useCallback((body: Object | any) => {
-        if (index === null) {
-            return;
-        }
-        let messageId = inboxMessages[index]?.id;
-        if (messageId) {
-            let cacheMessages = getCacheMessages();
-            setCacheMessages({
-                ...cacheMessages,
-                [messageId]: {
-                    ...cacheMessages[messageId],
-                    ...body
-                }
-            })
-        }
-    }, [inboxMessages, index])
-
     useEffect(() => {
         if (index !== null && inboxMessages && inboxMessages.length > 0) {
             if (inboxMessages[index]) {
@@ -150,30 +128,6 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
             }
         }
     }, [dispatch, index, inboxMessages])
-
-
-    useEffect(() => {
-        if (messagePart && messagePart.data) {
-            cacheMessage({data: messagePart.data});
-            let decoded = Buffer.from(messagePart.data || '', 'base64').toString();
-            let addTargetBlank = decoded.replace(/<a/g, '<a target="_blank"');
-            const blob = new Blob([addTargetBlank], {type: "text/html"});
-            const blobUrl = window.URL.createObjectURL(blob);
-            setEmailPart(blobUrl);
-        } else {
-            cacheMessage({data: ''});
-            setEmailPart('')
-        }
-    }, [cacheMessage, messagePart])
-
-    useEffect(() => {
-        // convert blob url to image url
-        if (messageAttachments && messageAttachments.length) {
-            cacheMessage({attachments: messageAttachments});
-        } else {
-            cacheMessage({attachments: []});
-        }
-    }, [cacheMessage, messageAttachments])
 
     useEffect(() => {
         if (attachmentUrl) {
@@ -207,7 +161,7 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
     }, [target, messageIndex])
 
 
-    const hideAndShowReplayBox = (type: string = '', messageData: MessageModel) => {
+    const hideAndShowReplyBox = (type: string = '', messageData: MessageModel) => {
         if (type === 'reply') {
             setReplyTypeName('Reply')
         } else if (type === 'reply-all') {
@@ -292,11 +246,8 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
                                         <div key={index}>
                                             <MessageBox
                                                 preventSelectingMessage={() => preventOpen = true}
-                                                item={item} index={index}
-                                                isLoading={messageLoading} emailPart={emailPart}
-                                                messageAttachments={messageAttachments}
-                                                hideAndShowReplayBox={hideAndShowReplayBox}
-                                                isExpanded={selectedMessage?.id === item.id}
+                                                item={item}
+                                                hideAndShowReplyBox={hideAndShowReplyBox}
                                                 onClick={() => handleRowClick(index)}
                                             />
                                         </div>
@@ -305,7 +256,7 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
                                 {showReplyBox &&
                                 <MessageReplyBox
                                     isProjectView={isProjectView}
-                                    hideAndShowReplayBox={hideAndShowReplayBox} replyTypeName={replyTypeName}/>
+                                    hideAndShowReplyBox={hideAndShowReplyBox} replyTypeName={replyTypeName}/>
                                 }
                             </Flex>
                         </Flex>
@@ -319,9 +270,7 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
     return (
         <>
             {!isComposing && showMessageBox()}
-            {isComposing && <ComposeBox tabValue={tabValue} isProjectView={isProjectView}
-                                        passSelectedThreadData={passSelectedThreadData}/>
-            }
+            {isComposing && <ComposeBox tabValue={tabValue} isProjectView={isProjectView}/>}
         </>
     )
 }

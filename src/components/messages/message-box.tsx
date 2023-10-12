@@ -2,7 +2,7 @@ import styles from "@/styles/Inbox.module.css";
 import {Button, Flex, Heading, Menu, MenuButton, MenuItem, MenuList, Text} from "@chakra-ui/react";
 import {Time} from "@/components/common";
 import {MenuIcon} from "@/icons";
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {getAttachmentDownloadUrl, updateMessage} from "@/redux/messages/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {MessageAttachments} from "@/models";
@@ -13,6 +13,7 @@ import Tooltip from "../common/Tooltip";
 import {AttachmentIcon} from "@chakra-ui/icons";
 import {FileIcon, defaultStyles, DefaultExtensionType} from 'react-file-icon';
 import {threadService} from "@/services";
+import {getCacheMessages, setCacheMessages} from "@/utils/cache.functions";
 
 
 export function MessageBox(props: any) {
@@ -22,12 +23,61 @@ export function MessageBox(props: any) {
     const iframeRef = React.useRef<HTMLIFrameElement | null | any>(null);
     const [iframeHeight, setIframeHeight] = React.useState("0px");
     const message = props.item
-    const {isExpanded} = props
     const [emailList, setEmailList] = useState<any>([]);
     const dispatch = useDispatch();
-    const {selectedMessage, error} = useSelector((state: StateType) => state.messages);
+    const {selectedMessage, error, messagePart, messageAttachments} = useSelector((state: StateType) => state.messages);
     const [isEyeShow, setIsEyeShow] = useState<any>(false);
     const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false)
+    const [isExpanded, setIsExpanded] = useState(false)
+    const [emailBody, setEmailBody] = useState('')
+
+    const cacheMessage = useCallback((body: Object | any) => {
+        if (selectedMessage) {
+            let messageId = selectedMessage.id;
+            if (messageId) {
+                let cacheMessages = getCacheMessages();
+                setCacheMessages({
+                    ...cacheMessages,
+                    [messageId]: {
+                        ...cacheMessages[messageId],
+                        ...body
+                    }
+                })
+            }
+        }
+    }, [selectedMessage])
+
+    useEffect(() => {
+        if (selectedMessage && message && selectedMessage.id === message.id) {
+            setIsExpanded(true);
+        } else {
+            setIsExpanded(false)
+        }
+    }, [message, selectedMessage])
+
+
+    useEffect(() => {
+        if (messagePart && messagePart.data) {
+            cacheMessage({data: messagePart.data});
+            let decoded = Buffer.from(messagePart.data || '', 'base64').toString();
+            let addTargetBlank = decoded.replace(/<a/g, '<a target="_blank"');
+            const blob = new Blob([addTargetBlank], {type: "text/html"});
+            const blobUrl = window.URL.createObjectURL(blob);
+            setEmailBody(blobUrl);
+        } else {
+            cacheMessage({data: ''});
+            setEmailBody('')
+        }
+    }, [cacheMessage, messagePart])
+
+    useEffect(() => {
+        // convert blob url to image url
+        if (messageAttachments && messageAttachments.length) {
+            cacheMessage({attachments: messageAttachments});
+        } else {
+            cacheMessage({attachments: []});
+        }
+    }, [cacheMessage, messageAttachments])
 
 
     useEffect(() => {
@@ -43,13 +93,13 @@ export function MessageBox(props: any) {
 
     // Set iframe height once content is loaded within iframe
     const onIframeLoad = () => {
-        debounce(() => {
+        setTimeout(() => {
             if (iframeRef.current && iframeRef.current.contentWindow) {
                 iframeRef.current.contentDocument.body.style.fontFamily = "'Inter', sans-serif";
                 iframeRef.current.contentDocument.body.style.fontSize = "14px";
                 setIframeHeight((iframeRef.current.contentWindow.document.body.scrollHeight + 20) + "px");
             }
-        }, 0);
+        }, 100);
 
     };
 
@@ -151,7 +201,7 @@ export function MessageBox(props: any) {
     return (
         <Flex ref={ref} position={'relative'} direction={'column'}
               className={`${styles.oldMail} ${isExpanded ? styles.lastOpenMail : ''}`} mb={3} gap={4}
-              border={'1px solid #E5E7EB'} borderRadius={12} align={'center'} key={props.index}>
+              border={'1px solid #E5E7EB'} borderRadius={12} align={'center'}>
             {!isExpanded &&
             <Flex align={'flex-start'} width={'100%'}>
                 <Flex align={'center'} w={'100%'} gap={2} cursor={'pointer'} padding={4} onClick={props?.onClick}>
@@ -212,12 +262,12 @@ export function MessageBox(props: any) {
                                 </MenuItem>
                             )}
                             <MenuItem
-                                onClick={() => props.hideAndShowReplayBox('reply', message)}> Reply </MenuItem>
+                                onClick={() => props.hideAndShowReplyBox('reply', message)}> Reply </MenuItem>
                             <MenuItem
-                                onClick={() => props.hideAndShowReplayBox('reply-all', message)}> Reply
+                                onClick={() => props.hideAndShowReplyBox('reply-all', message)}> Reply
                                 All </MenuItem>
                             <MenuItem
-                                onClick={() => props.hideAndShowReplayBox('forward', message)}> Forward </MenuItem>
+                                onClick={() => props.hideAndShowReplyBox('forward', message)}> Forward </MenuItem>
                         </MenuList>
                     </Menu>
                 </Flex>
@@ -279,7 +329,7 @@ export function MessageBox(props: any) {
                             <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
                                 <EyeSlashedIcon/>
                             </Flex> : ''}
-                        {props.messageAttachments && !!props.messageAttachments.length &&
+                        {messageAttachments && !!messageAttachments.length &&
                         attachmentsMenu()
                         }
 
@@ -321,26 +371,26 @@ export function MessageBox(props: any) {
                                     </MenuItem>
                                 )}
                                 <MenuItem
-                                    onClick={() => props.hideAndShowReplayBox('reply', message)}> Reply </MenuItem>
+                                    onClick={() => props.hideAndShowReplyBox('reply', message)}> Reply </MenuItem>
                                 <MenuItem
-                                    onClick={() => props.hideAndShowReplayBox('reply-all', message)}> Reply
+                                    onClick={() => props.hideAndShowReplyBox('reply-all', message)}> Reply
                                     All </MenuItem>
                                 <MenuItem
-                                    onClick={() => props.hideAndShowReplayBox('forward', message)}> Forward </MenuItem>
+                                    onClick={() => props.hideAndShowReplyBox('forward', message)}> Forward </MenuItem>
                             </MenuList>
                         </Menu>
                     </Flex>
 
                 </Flex>
 
-                {(!props.isLoading && props.emailPart) &&
+                {emailBody &&
                 <div className={styles.mailBodyContent}>
                     <iframe
                         ref={iframeRef}
                         scrolling="no"
                         onLoad={onIframeLoad}
                         height={iframeHeight}
-                        src={props.emailPart}
+                        src={emailBody}
                         className={styles.mailBody}
                     />
                 </div>}

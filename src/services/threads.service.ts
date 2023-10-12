@@ -3,13 +3,14 @@ import {Message, MessageDraft, Project, Thread} from "@/models";
 import {batchUpdateThreads, updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {BaseService} from "@/services/base.service";
 import {draftService} from "@/services/draft.service";
-import {MAILBOX_SNOOZED} from "@/utils/constants";
+import {MAILBOX_DRAFT, MAILBOX_SENT, MAILBOX_SNOOZED} from "@/utils/constants";
 import {generateToasterId} from "@/utils/common.functions";
 import dayjs from "dayjs";
 import {addItemToGroup} from "@/redux/memberships/action-reducer";
 import {removeThreadFromProject} from "@/redux/projects/action-reducer";
 import {commonService} from "@/services/common.service";
 import {globalEventService} from "@/services/global-event.service";
+import {getCacheMessages, getCacheThreads, setCacheMessages} from "@/utils/cache.functions";
 
 declare type MailBoxTypes = 'INBOX' | 'DRAFT' | 'UNREAD' | 'ARCHIVE' | 'TRASH' | 'SNOOZED' | 'STARRED' | string;
 
@@ -386,6 +387,64 @@ class ThreadsService extends BaseService {
                 currentThreads[threadIndex].messages = [...currentMessages];
                 this.setThreads(currentThreads);
             }
+        }
+    }
+
+    updateThreadForUndoOrSend(type: string = 'send') {
+        let {draft} = draftService.getDraftState();
+        let {threads, selectedThread} = this.getThreadState();
+        let convertMessages: Message = {
+            ...draft,
+            mailboxes: type === 'undo' ? [MAILBOX_DRAFT] : [MAILBOX_SENT],
+            snippet: draft?.draftInfo?.body
+        }
+        let mailBoxes = [...(selectedThread?.mailboxes || [])];
+        let mailBoxesIndex = mailBoxes.indexOf(MAILBOX_SENT);
+        if (type === 'send') {
+            if (mailBoxesIndex === -1) {
+                mailBoxes.push(MAILBOX_SENT);
+            }
+        } else {
+            if (mailBoxesIndex > -1) {
+                mailBoxes.splice(mailBoxesIndex, 1);
+            }
+        }
+        let currentThreads = [...(threads || [])];
+        let threadIndex = currentThreads.findIndex((item: Thread) => item.id === selectedThread?.id);
+        let currentMessages = [...(currentThreads[threadIndex].messages || [])];
+        let messageIndex = currentMessages.findIndex((item: Message) => item.id === convertMessages.id);
+        currentMessages.splice(messageIndex, 1);
+        currentMessages.push(convertMessages);
+        currentThreads[threadIndex].messages = [...currentMessages];
+        currentThreads[threadIndex].mailboxes = [...mailBoxes];
+
+        let currentSelectedThread: Thread = {...selectedThread};
+        let currentSelectedThreadMessages = [...(selectedThread?.messages || [])];
+        messageIndex = currentSelectedThreadMessages.findIndex((item: Message) => item.id === convertMessages.id);
+        currentSelectedThreadMessages.splice(messageIndex, 1);
+        currentSelectedThreadMessages.push(convertMessages);
+        currentSelectedThread.messages = [...currentSelectedThreadMessages];
+        currentSelectedThread.mailboxes = [...mailBoxes]
+        this.setThreads(currentThreads);
+        this.setSelectedThread(currentSelectedThread);
+
+        globalEventService.fireEvent('threads.refresh');
+        if (draft) {
+            let cacheMessages = getCacheMessages();
+            setCacheMessages({
+                ...cacheMessages,
+                [draft.id as string]: {
+                    ...cacheMessages[draft.id as string],
+                    data: Buffer.from(draft?.draftInfo!.body || '').toString('base64'),
+                    attachments: draft?.draftInfo?.attachments || []
+                }
+            })
+        }
+
+        if (type === 'send') {
+            draftService.backupDraftForUndo();
+        } else {
+            draftService.restoreBackupDraft();
         }
     }
 }

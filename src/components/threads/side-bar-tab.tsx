@@ -39,6 +39,7 @@ export function ThreadsSideBarTab(props: TabProps) {
     } = useSelector((state: StateType) => state.commonApis);
     const {newMessage} = useSelector((state: StateType) => state.socket);
     const {resumeAbleDraft} = useSelector((state: StateType) => state.draft);
+    const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const router = useRouter();
     const dispatch = useDispatch();
     const [tabName, setTabName] = useState<string>(() => {
@@ -160,6 +161,12 @@ export function ThreadsSideBarTab(props: TabProps) {
     useEffect(() => {
         if (updateSuccess) {
             threadService.setThreadState({updateSuccess: false});
+            getAllThread();
+        }
+    }, [updateSuccess, getAllThread])
+
+    useEffect(() => {
+        if (incomingEvent === 'threads.refresh') {
             getAllThread();
         }
     }, [updateSuccess, getAllThread])
