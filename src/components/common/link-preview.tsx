@@ -13,30 +13,30 @@ export default function LinkPreview({ isVisible, url, top, left }: LinkPreviewPr
 
   const isBlockedPattern = (): boolean => {
     let isBlockedPreview = false
-    for(let i=0; i<blockedPatterns.length; i++){
+    for (let i = 0; i < blockedPatterns.length; i++) {
 
       const matches = url?.match(blockedPatterns[i])?.length || 0
-      if(matches > 0) {
+      if (matches > 0) {
         isBlockedPreview = true
         break;
       }
     }
     return isBlockedPreview
   }
-  
+
   useEffect(() => {
     if (!url) return
 
     const isBlocked = isBlockedPattern()
 
-    if(isBlocked) {
+    if (isBlocked) {
       setIsBlocked(isBlocked)
       return
     } else {
       setIsBlocked(false)
     }
 
-    if(cache && cache[url]) {
+    if (cache && cache[url]) {
       setMeta(cache[url])
       return
     }
@@ -47,6 +47,10 @@ export default function LinkPreview({ isVisible, url, top, left }: LinkPreviewPr
     })
       .then((data: any) => {
         setLoading(false)
+
+        // eslint-disable-next-line no-unused-vars
+        // const {image, ...rest} = data
+
         setCache({
           ...cache,
           [url]: data
@@ -60,6 +64,23 @@ export default function LinkPreview({ isVisible, url, top, left }: LinkPreviewPr
         setLoading(false)
       })
   }, [url])
+
+  // const validateImage = (imgUrl, linkUrl) => {
+  //   console.log('VALIDATE', imgUrl)
+  //   axios.get(imgUrl)
+  //     .then(() => {
+  //       console.log('VALID', imgUrl)
+  //       setCache({
+  //         ...cache,
+  //         [linkUrl]: {
+  //           ...cache[linkUrl],
+  //           image: imgUrl
+  //         }
+  //       })
+  //     }, (err) => {
+  //       console.log(err)
+  //     })
+  // } 
 
   if (!url || !isVisible || isBlocked) return
 
@@ -105,6 +126,17 @@ export default function LinkPreview({ isVisible, url, top, left }: LinkPreviewPr
               <img
                 src={meta?.image}
                 alt={meta?.title || `preview of url: ${url}`}
+                onError={() => {
+                  const updatedMeta = {
+                    ...meta,
+                    image: ''
+                  }
+                  setCache({
+                    ...cache,
+                    [meta.website]: updatedMeta
+                  })
+                  setMeta(updatedMeta)
+                }}
               />
             </div>
           )}
