@@ -14,6 +14,8 @@ import {AttachmentIcon} from "@chakra-ui/icons";
 import {FileIcon, defaultStyles, DefaultExtensionType} from 'react-file-icon';
 import {threadService} from "@/services";
 import {getCacheMessages, setCacheMessages} from "@/utils/cache.functions";
+import LinkPreview from "../common/link-preview";
+import { LinkPreviewProps } from "@/types/props-types/link-preview.types";
 
 
 export function MessageBox(props: any) {
@@ -30,6 +32,11 @@ export function MessageBox(props: any) {
     const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false)
     const [isExpanded, setIsExpanded] = useState(false)
     const [emailBody, setEmailBody] = useState('')
+    const [currentLinkPreview, setCurrentLinkPreview] = useState<LinkPreviewProps>({
+      url: null,
+      top: 0,
+      left: 0
+    })
 
     const cacheMessage = useCallback((body: Object | any) => {
         if (selectedMessage) {
@@ -98,6 +105,30 @@ export function MessageBox(props: any) {
                 iframeRef.current.contentDocument.body.style.fontFamily = "'Inter', sans-serif";
                 iframeRef.current.contentDocument.body.style.fontSize = "14px";
                 setIframeHeight((iframeRef.current.contentWindow.document.body.scrollHeight + 20) + "px");
+
+                const allLinks = iframeRef.current.contentDocument.getElementsByTagName("a")
+                
+                for (let i in allLinks) {
+                  const a = allLinks[i]
+                  if(typeof a === 'object' && a.hasAttribute('href')) {
+                    const href = a.getAttribute('href')
+                    a.onmouseover=function(){
+                      setCurrentLinkPreview({
+                        url: href,
+                        top: a.offsetTop,
+                        left: a.offsetLeft
+                      })
+                    }
+                    a.onmouseout=function(){
+                      setCurrentLinkPreview({
+                        url: null,
+                        top: 0,
+                        left: 0
+                      })
+                    }
+                  }
+                }
+
             }
         }, 100);
 
@@ -119,7 +150,6 @@ export function MessageBox(props: any) {
             }))
         }
     }
-
 
     const downloadImage = (item: MessageAttachments) => {
         if (selectedMessage && selectedMessage.id) {
@@ -394,6 +424,11 @@ export function MessageBox(props: any) {
                         className={styles.mailBody}
                     />
                 </div>}
+                <LinkPreview
+                  url={currentLinkPreview?.url}
+                  top={currentLinkPreview.top}
+                  left={currentLinkPreview.left}
+                />
             </Flex>
             }
         </Flex>
