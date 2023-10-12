@@ -391,12 +391,16 @@ class ThreadsService extends BaseService {
     }
 
     updateThreadForUndoOrSend(type: string = 'send') {
-        let {draft} = draftService.getDraftState();
+        let {draft, draftUndo} = draftService.getDraftState();
+        let currentDraft = draft;
+        if (type === 'undo') {
+            currentDraft = draftUndo;
+        }
         let {threads, selectedThread} = this.getThreadState();
         let convertMessages: Message = {
-            ...draft,
+            ...currentDraft,
             mailboxes: type === 'undo' ? [MAILBOX_DRAFT] : [MAILBOX_SENT],
-            snippet: draft?.draftInfo?.body
+            snippet: currentDraft?.draftInfo?.body
         }
         let mailBoxes = [...(selectedThread?.mailboxes || [])];
         let mailBoxesIndex = mailBoxes.indexOf(MAILBOX_SENT);
@@ -431,14 +435,14 @@ class ThreadsService extends BaseService {
         this.setSelectedThread(currentSelectedThread);
 
         globalEventService.fireEvent('threads.refresh');
-        if (draft) {
+        if (currentDraft) {
             let cacheMessages = getCacheMessages();
             setCacheMessages({
                 ...cacheMessages,
-                [draft.id as string]: {
-                    ...cacheMessages[draft.id as string],
-                    data: Buffer.from(draft?.draftInfo!.body || '').toString('base64'),
-                    attachments: draft?.draftInfo?.attachments || []
+                [currentDraft.id as string]: {
+                    ...cacheMessages[currentDraft.id as string],
+                    data: Buffer.from(currentDraft?.draftInfo!.body || '').toString('base64'),
+                    attachments: currentDraft?.draftInfo?.attachments || []
                 }
             })
         }
