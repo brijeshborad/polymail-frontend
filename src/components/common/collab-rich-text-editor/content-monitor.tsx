@@ -8,6 +8,7 @@ export default function ContentMonitor() {
     const {editor} = useCurrentEditor()
 
     useEffect(() => {
+        console.log('event', event);
         if (event && event.type === 'richtexteditor.forceUpdate') {
             editor?.commands.clearContent(false);
             editor?.commands.setContent(event.data, false)
@@ -15,6 +16,11 @@ export default function ContentMonitor() {
         if (event && event.type === 'richtexteditor.forceUpdateWithOnChange') {
             editor?.commands.clearContent(false);
             editor?.commands.setContent(event.data, true)
+        }
+        if (event && event.type === 'richtexteditor.forceUpdateInitial') {
+            editor?.commands.clearContent(false);
+            editor?.commands.setContent(event.data, false)
+            editor?.commands.focus('start')
         }
 
         if (event && event.type === 'richtexteditor.focus') {

@@ -102,19 +102,24 @@ class DraftService extends BaseService {
         if (!draftIndex) {
             return;
         }
+        console.log('DRAFT INDEX', draftIndex);
         if (draftIndex !== -1) {
             let currentThreads: any = [...(threads || [])];
             let selectThreadIndex: number = currentThreads.findIndex((item: Thread) => item.id === selectedThread?.id);
+            console.log('SELECTED THREAD INDEX', selectThreadIndex);
             if (selectThreadIndex !== -1) {
-                (currentThreads[selectThreadIndex!].messages || []).splice(draftIndex, 1);
-                threadService.setThreads(currentThreads);
+                currentThreads[selectThreadIndex!] = {...currentThreads[selectThreadIndex!]};
+                currentThreads[selectThreadIndex!].messages = [...(currentThreads[selectThreadIndex!].messages || [])];
+                currentThreads[selectThreadIndex!].messages.splice(draftIndex, 1);
+                threadService.setThreads([...currentThreads]);
                 setCacheThreads({
                     ...getCacheThreads(),
-                    [getCurrentViewingCacheTab()]: currentThreads
+                    [getCurrentViewingCacheTab()]: [...currentThreads]
                 })
                 let finalSelectThread: any = {...selectedThread};
-                (finalSelectThread.messages || []).splice(draftIndex, 1);
-                threadService.setSelectedThread(finalSelectThread);
+                finalSelectThread.messages = [...(finalSelectThread.messages || [])]
+                finalSelectThread.messages.splice(draftIndex, 1);
+                threadService.setSelectedThread({...finalSelectThread});
             }
         }
     }

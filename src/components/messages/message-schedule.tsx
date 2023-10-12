@@ -21,6 +21,7 @@ export default function MessageSchedule({date, onChange, isSnooze = false, isNam
     const [customSchedule, setCustomSchedule] = useState(false)
     const [showScheduleMenu, setShowScheduleMenu] = useState(false)
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
+    const {showAttachmentLoader} = useSelector((state: StateType) => state.messages);
     const dateFormat = 'YYYY-MM-D HH:mm:ss'
 
     const quickOptions = [
@@ -78,6 +79,9 @@ export default function MessageSchedule({date, onChange, isSnooze = false, isNam
         >
             <MenuButton
                 onClick={(e) => {
+                    if (showAttachmentLoader) {
+                        return;
+                    }
                     e.preventDefault();
                     e.stopPropagation();
                     const opened = isOpen
@@ -89,7 +93,7 @@ export default function MessageSchedule({date, onChange, isSnooze = false, isNam
                         }
                     }
                 }}
-                className={`${styles.replyArrowIcon} snooze-button-icon`} as={isSnooze ? "div" : Button}
+                className={`${styles.replyArrowIcon} snooze-button-icon ${showAttachmentLoader ? 'disable' : ''}`} as={isSnooze ? "div" : Button}
                 style={{cursor: 'pointer'}}
                 aria-label='Options'
                 {...(!isSnooze ? {variant: 'outline'} : {})}

@@ -29,7 +29,7 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
     const messagesWrapperRef = React.useRef<HTMLDivElement | null | any>(null);
 
     const [index, setIndex] = useState<number | null>(null);
-    const [replyTypeName, setReplyTypeName] = useState<string>('');
+    const [replyTypeName, setReplyTypeName] = useState<string>('Reply');
     const [inboxMessages, setInboxMessages] = useState<MessageModel[]>([]);
     const {
         messages,

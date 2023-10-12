@@ -41,6 +41,7 @@ const blankRecipientValue: MessageRecipient = {
 }
 
 let loaderPercentage = 10;
+let isInitialSet = true;
 
 export function MessageReplyBox(props: MessageBoxType) {
     const [emailRecipients, setEmailRecipients] = useState<RecipientsType | any>({
@@ -147,6 +148,9 @@ export function MessageReplyBox(props: MessageBoxType) {
         if (!validateDraft(value)) {
             return;
         }
+        if (isInitialSet) {
+            return;
+        }
         let checkValue = getPlainTextFromHtml(value).trim();
         if (checkValue.trim()) {
             setIsDraftUpdated(true)
@@ -209,13 +213,13 @@ export function MessageReplyBox(props: MessageBoxType) {
                 let checkValue = getPlainTextFromHtml(draftInfo.body).trim();
                 if (checkValue.trim()) {
                     setIsDraftUpdated(true)
+                    setTimeout(() => {
+                        globalEventService.fireEvent({
+                            data: draftInfo?.body || '',
+                            type: 'richtexteditor.forceUpdateWithOnChange'
+                        });
+                    }, 500);
                 }
-                setTimeout(() => {
-                    globalEventService.fireEvent({
-                        data: draftInfo?.body || '',
-                        type: 'richtexteditor.forceUpdateWithOnChange'
-                    });
-                }, 500);
                 setEmailBody(draftInfo?.body || '');
             }
             if (draftInfo?.attachments?.length) {
@@ -254,6 +258,9 @@ export function MessageReplyBox(props: MessageBoxType) {
                     }
                 }));
             }
+            setTimeout(() => {
+                isInitialSet = false;
+            }, 500)
         }
     }, [draft, isContentUpdated])
 
@@ -423,13 +430,14 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         setShowReplyBox(false);
         setShowEditorToolbar(false)
         globalEventService.fireEvent({data: '', type: 'richtexteditor.discard'});
+        handleEditorScroll();
         if (draft && draft.id) {
             draftService.setReplyDraft(null);
             setAttachments([]);
+            draftService.discardDraft(draft.id!);
             dispatch(deleteMessage({
                 body: {id: draft.id},
                 afterSuccessAction: () => {
-                    draftService.discardDraft(draft.id!);
                     setIsDraftUpdated(false);
                 }
             }));
@@ -438,6 +446,9 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
     const sendMessages = () => {
         if (draft && draft.id) {
+            if (showAttachmentLoader) {
+                return;
+            }
             setShowReplyBox(false);
             messageService.sendMessage(false, scheduledDate, emailBody);
             draftService.setReplyDraft(null);
@@ -463,16 +474,57 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         // }, 500)
     }
 
-    const handleFocus = () => {
+    const initialValuesChanges = () => {
         const draftMessage = (selectedThread?.messages || []).findLast((msg: Message) => (msg.mailboxes || []).includes('DRAFT'));
+        console.log('SELECTED THREDS', selectedThread);
         if (draftMessage) {
             if (!draft?.id) {
+                isInitialSet = true;
+                setTimeout(() => {
+                    isInitialSet = false;
+                }, 500)
+                if (!getPlainTextFromHtml(draftMessage.draftInfo?.body || '').trim()) {
+                    setTimeout(() => {
+                        globalEventService.fireEvent({data: getBody(), type: 'richtexteditor.forceUpdateInitial'})
+                    }, 10)
+                }
                 draftService.setReplyDraft(draftMessage as MessageDraft);
                 setIsContentUpdated(false);
             }
+        } else {
+            if (!draft?.id) {
+                isInitialSet = true;
+                setTimeout(() => {
+                    isInitialSet = false;
+                }, 500)
+                draftService.setReplyDraft({...draft, draftInfo: {...(draft?.draftInfo || {}), body: getBody()}});
+                setTimeout(() => {
+                    globalEventService.fireEvent({data: getBody(), type: 'richtexteditor.forceUpdateInitial'})
+                }, 10)
+            }
         }
+    }
+
+    const handleFocus = () => {
         setShowEditorToolbar(true);
         globalEventService.fireEvent('iframe.clicked');
+    }
+
+    const getBody = () => {
+        let body = '';
+        if (selectedAccount) {
+            body += `<p></p>${selectedAccount?.signature}`;
+        }
+        if (selectedThread?.projects?.length) {
+            body += `<p></p>
+                          <div style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">
+                            <p style="font-size: 13px; margin-right: 3px;"> ${selectedAccount?.name || ''} is sharing this email thread (and future replies) with</p>
+                            ${selectedThread?.projects && selectedThread.projects.length === 1 ? `<p style="font-size: 13px; margin-right: 3px;">at </p><p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">${selectedThread.projects[0].name}</p>` : `<p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">others</p>`}                            
+                            <p style="font-size: 13px; margin-right: 3px;">on</p>
+                            <p style="font-size: 13px; text-decoration: underline">Polymail</p>
+                          </div>`
+        }
+        return body;
     }
 
     const showRecipientsBox = () => {
@@ -512,6 +564,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             setIsReplyDropdownOpen(false)
         }
         if (incomingEvent === 'draft.undo') {
+            initialValuesChanges();
             handleFocus();
         }
         if (typeof incomingEvent === 'object' && incomingEvent.type) {
@@ -537,6 +590,49 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                         debounce(() => {
                             handleEditorScroll();
                         }, 200)
+                    }
+                }
+
+                if (incomingEvent.data.type === 'reply-all') {
+                    if (!isDraftUpdated) {
+                        if (incomingEvent.data.messageData?.from) {
+                            setEmailRecipients((prevState: RecipientsType) => ({
+                                ...prevState,
+                                recipients: {
+                                    items: (incomingEvent.data.messageData?.from?.email === selectedAccount?.email && replyType === 'reply') ? incomingEvent.data.messageData?.to! : [incomingEvent.data.messageData?.from!],
+                                    value: prevState.recipients.value
+                                }
+                            }));
+                        }
+                        if (incomingEvent.data.messageData?.cc?.length) {
+                            let items: MessageRecipient[] = []
+                            if (replyType === 'reply-all') {
+                                items.push(incomingEvent.data.messageData?.from!)
+                                if (incomingEvent.data.messageData?.cc && incomingEvent.data.messageData?.cc.length) {
+                                    items.push(...incomingEvent.data.messageData?.cc)
+                                } else if (incomingEvent.data.messageData?.bcc && incomingEvent.data.messageData?.bcc.length) {
+                                    items.push(...incomingEvent.data.messageData?.bcc)
+                                }
+                            }
+                            const filteredArray = (items || []).filter(obj => obj.email !== '');
+                            setEmailRecipients((prevState: RecipientsType) => ({
+                                ...prevState,
+                                cc: {
+                                    items: filteredArray,
+                                    value: prevState.cc.value
+                                }
+                            }));
+                        }
+
+                        if (incomingEvent.data.messageData?.bcc?.length) {
+                            setEmailRecipients((prevState: RecipientsType) => ({
+                                ...prevState,
+                                bcc: {
+                                    items: incomingEvent.data.messageData?.bcc,
+                                    value: prevState.bcc.value
+                                }
+                            }));
+                        }
                     }
                 }
             }
@@ -664,6 +760,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                         isToolbarVisible={showEditorToolbar}
                                         onChange={(value) => sendToDraft(value)}
                                         className={`${extraClassNames} ${extraClassNamesForBottom}`}
+                                        onFocus={() => initialValuesChanges()}
                                         emailSignature={selectedAccount ? `<p></p>${selectedAccount?.signature}` : undefined}
                                         projectShare={selectedThread?.projects?.length ? `
                           <div style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">
@@ -726,6 +823,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                     > Discard </Button>
                                     <Flex className={styles.messageSendButton}>
                                         <Button
+                                            isDisabled={showAttachmentLoader}
                                             className={styles.replyTextButton}
                                             colorScheme='blue'
                                             fontSize={14} lineHeight={16}

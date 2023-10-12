@@ -826,6 +826,11 @@ div:has(> .mailSendToaster) {
 .snooze-button-icon:hover svg{
   stroke: #918F1F;
 }
+.snooze-button-icon.disable {
+    opacity: 0.4;
+    cursor: not-allowed !important;
+    box-shadow: var(--chakra-shadows-none);
+}
 .inbox-button-icon:hover svg{
   stroke: #0556FF !important;
 }
