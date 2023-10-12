@@ -169,7 +169,7 @@ export function ThreadsSideBarTab(props: TabProps) {
         if (incomingEvent === 'threads.refresh') {
             getAllThread();
         }
-    }, [updateSuccess, getAllThread])
+    }, [getAllThread, incomingEvent])
 
     useEffect(() => {
         if (account && account.success) {

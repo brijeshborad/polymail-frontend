@@ -104,6 +104,7 @@ class MessageService extends BaseService {
                     undoClick: (type: string) => {
                         if (type === 'undo') {
                             params = {undo: true}
+                            console.log('CHECKING', isCompose);
                             if (!isCompose) {
                                 threadService.updateThreadForUndoOrSend('undo');
                             } else {
