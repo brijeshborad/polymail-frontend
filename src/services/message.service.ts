@@ -52,6 +52,7 @@ class MessageService extends BaseService {
 
     sendMessage(isCompose: boolean = false, scheduledDate: string = '', emailBody: string = '') {
         let {draft, composeDraft} = draftService.getDraftState();
+        let {tabValue} = threadService.getThreadState();
         const {toast} = createStandaloneToast()
         let currentDraft: any = {...draft};
         if (isCompose) {

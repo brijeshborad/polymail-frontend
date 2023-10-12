@@ -1,4 +1,4 @@
-import {Summary, Contacts, UserProjectOnlineStatus} from "@/models";
+import {Summary, Contacts, UserProjectOnlineStatus, Project} from "@/models";
 import {ActivityFeed} from "@/models/activityFeed";
 
 export declare type InitialCommonApisStateType = {
@@ -8,6 +8,9 @@ export declare type InitialCommonApisStateType = {
   error?: Error | any,
   showCreateProjectModal?: boolean,
   shouldRedirectOnCreateProject?: boolean,
+  showEditProjectModal?: boolean,
+  passThroughProject?: Project | null,
+  shouldRedirectOnEditProject?: boolean,
   shouldAddThread?: boolean,
   syncingEmails?: number | null,
   isComposing?: boolean,

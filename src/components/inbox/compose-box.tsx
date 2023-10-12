@@ -17,8 +17,8 @@ import {createDraft, updatePartialMessage} from "@/redux/draft/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import dayjs from "dayjs";
 import {deleteMessage, removeAttachment, uploadAttachment} from "@/redux/messages/action-reducer";
-import {MessageAttachments, MessageRecipient, Thread} from "@/models";
-import {DropZone} from "@/components/common";
+import {MessageAttachments, MessageDraft, MessageRecipient, Thread} from "@/models";
+import {DropZone, Toaster} from "@/components/common";
 import {RecipientsType} from "@/types/props-types/message-recipients.type";
 import dynamic from "next/dynamic";
 import {useRouter} from "next/router";
@@ -229,7 +229,22 @@ export function ComposeBox(props: any) {
         }, 250);
     }
 
+    function validateSendMessage() {
+        if (emailRecipients.recipients.items.length === 0) {
+            Toaster({
+                title: 'Invalid recipients',
+                desc: 'Please enter at least 1 email in the `to` field.',
+                type: 'error'
+            })
+            return false;
+        }
+        return true;
+    }
+
     const sendMessages = () => {
+        if (!validateSendMessage()) {
+            return;
+        }
         if (composeDraft && composeDraft.id) {
             messageService.sendMessage(true, scheduledDate)
             setEmailRecipients({
@@ -250,19 +265,30 @@ export function ComposeBox(props: any) {
             setSubject('');
 
             if (props.tabValue === 'DRAFT') {
-                (threads || []).map((item: Thread) => {
-                    if (item.id === composeDraft.threadId) {
-                        const newThreadArray = (threads || []).filter(obj => obj.id !== composeDraft.threadId);
-                        threadService.setThreads(newThreadArray);
-                        threadService.setSelectedThread(newThreadArray[0]);
-                        commonService.toggleComposing(true);
-                    }
-                })
+                performDraftTabUpdate()
             } else {
                 commonService.toggleComposingWithThreadSelection(false, true);
             }
             draftService.backupComposeDraftForUndo();
         }
+    }
+
+    function performDraftTabUpdate() {
+        (threads || []).map((item: Thread) => {
+            if (composeDraft && item.id === composeDraft.threadId) {
+                const newThreadArray = (threads || []).filter(obj => obj.id !== composeDraft.threadId);
+                threadService.setThreads(newThreadArray);
+                let composeItem = newThreadArray[0];
+                threadService.setSelectedThread(composeItem);
+                commonService.toggleComposing(false);
+                setTimeout(() => {
+                    commonService.toggleComposing(true);
+                    if (composeItem && composeItem.messages && composeItem.messages[0]) {
+                        draftService.setComposeDraft(composeItem.messages[0] as MessageDraft);
+                    }
+                }, 50);
+            }
+        })
     }
 
     useEffect(() => {
@@ -303,7 +329,7 @@ export function ComposeBox(props: any) {
                 ...cacheMessages,
                 [composeDraft.id!]: {
                     ...cacheMessages[composeDraft.id!],
-                    data: Buffer.from(composeDraft?.draftInfo!.body || '').toString('base64'),
+                    data: Buffer.from(composeDraft?.draftInfo?.body || '').toString('base64'),
                     attachments: composeDraft?.draftInfo?.attachments || []
                 }
             })
@@ -425,6 +451,7 @@ export function ComposeBox(props: any) {
         globalEventService.fireEvent({data: null, type: 'richtexteditor.forceUpdate'});
         if (tabValue === 'DRAFT') {
             threadService.setSelectedThread(null)
+            performDraftTabUpdate();
         }
         if (composeDraft && composeDraft.id) {
             dispatch(deleteMessage({body: {id: composeDraft.id}}));

@@ -233,7 +233,7 @@ function Index() {
                                     </MenuButton>
                                     <MenuList minW={'126px'} className={'drop-down-list'}>
                                         <MenuItem>Mark as read</MenuItem>
-                                        <MenuItem>Edit project</MenuItem>
+                                        <MenuItem onClick={() => commonService.toggleEditProjectModel(true, false, project)}>Edit project</MenuItem>
                                         <MenuItem>Leave project</MenuItem>
                                         <MenuItem className={'delete-button'}>Delete project</MenuItem>
                                     </MenuList>

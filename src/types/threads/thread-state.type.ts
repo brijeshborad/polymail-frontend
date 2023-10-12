@@ -11,6 +11,7 @@ export declare type InitialThreadStateType = {
     isThreadSearched?: boolean
     tabValue?: string,
     isThreadFocused?: boolean
+    backupThread?: Thread | null;
 }
 
 export declare type InitialMembershipStateType = {

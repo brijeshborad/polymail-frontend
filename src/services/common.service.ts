@@ -1,7 +1,7 @@
 import {BaseService} from "@/services/base.service";
 import {InitialCommonApisStateType} from "@/types";
 import {updateCommonState} from "@/redux/common-apis/action-reducer";
-import {Thread, UserProjectOnlineStatus} from "@/models";
+import {Project, Thread, UserProjectOnlineStatus} from "@/models";
 import {getMemberStatusCache, setMemberStatusCache} from "@/utils/cache.functions";
 import dayjs from "dayjs";
 import {userService} from "@/services/user.service";
@@ -173,6 +173,10 @@ class CommonService extends BaseService {
 
     toggleCreateProjectModel(enable: boolean, shouldRedirect: boolean = false, shouldAddThread: boolean = true) {
         this.setCommonState({showCreateProjectModal: enable, shouldRedirectOnCreateProject: shouldRedirect, shouldAddThread: shouldAddThread});
+    }
+
+    toggleEditProjectModel(enable: boolean, shouldRedirect: boolean = false, passThroughProject: Project | null = null) {
+        this.setCommonState({showEditProjectModal: enable, shouldRedirectOnEditProject: shouldRedirect, passThroughProject: passThroughProject});
     }
 }
 

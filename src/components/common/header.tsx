@@ -34,6 +34,9 @@ const FeedSidebar = dynamic(
 const CreateNewProjectModal = dynamic(
     () => import('@/components/project/create-new-project').then((mod) => mod.default)
 )
+const EditProjectModal = dynamic(
+    () => import('@/components/project/edit-project').then((mod) => mod.default)
+)
 
 export function Header() {
     const {organizations} = useSelector((state: StateType) => state.organizations);
@@ -253,7 +256,12 @@ export function Header() {
                     </Menu>
                 </div>
             </Flex>
-            <CreateNewProjectModal/>
+            {router.pathname.includes('projects') &&
+                <>
+                    <CreateNewProjectModal/>
+                    <EditProjectModal/>
+                </>
+            }
         </Flex>
     );
 }

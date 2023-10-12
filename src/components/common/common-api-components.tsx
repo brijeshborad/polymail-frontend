@@ -37,7 +37,7 @@ export function CommonApiComponents() {
         share: true,
         shouldReconnect: () => true,
         reconnectInterval: 0,
-        reconnectAttempts: 1000000000000000,
+        reconnectAttempts: 1,
         onOpen: () => {
             console.log('WebSocket connection established.');
         },
