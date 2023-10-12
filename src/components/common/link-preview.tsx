@@ -64,7 +64,7 @@ export default function LinkPreview({ isVisible, url, top, left }: LinkPreviewPr
   if (!url || !isVisible || isBlocked) return
 
   return (
-    <div className='link-preview-thumbnail' style={{ top: top - 10, left: left }}>
+    <div className='link-preview-thumbnail' style={{ top: top - 18, left: left }}>
       <div className='arrow'></div>
       {isLoading ? (
         <div>
