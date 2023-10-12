@@ -74,16 +74,16 @@ export function MessageBox(props: any) {
                       setCurrentLinkPreview({
                         isVisible: true,
                         url: href,
-                        top: a.offsetTop,
-                        left: a.offsetLeft
+                        top: a.getBoundingClientRect().top + window.scrollY,
+                        left: a.getBoundingClientRect().left + window.scrollX
                       })
                     }
                     a.onmouseout=function(){
                       setCurrentLinkPreview({
                         isVisible: false,
                         url: href,
-                        top: a.offsetTop,
-                        left: a.offsetLeft
+                        top: a.getBoundingClientRect().top + window.scrollY,
+                        left: a.getBoundingClientRect().left + window.scrollX
                       })
                     }
                   }
