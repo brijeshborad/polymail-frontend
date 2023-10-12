@@ -887,3 +887,61 @@ div:has(> .mailSendToaster) {
 .attachments-progress-bar .inbox-loader .progress-bar div {
     background-color: #266DF0;
 }
+
+.link-preview-thumbnail {
+  position: absolute;
+  background-color: #000;
+  color: #fff;
+  width: 300px;
+  height: 64px;
+  z-index: 999999;
+  border-radius: 12px;
+  padding: 8px 14px;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4);
+}
+
+.link-preview-thumbnail .img {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+}
+
+.link-preview-thumbnail .info {
+  width: 245px;
+}
+.link-preview-thumbnail .title {
+  font-size: 12px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-right: 8px;
+}
+
+.link-preview-thumbnail .description {
+  font-size: 10px;
+  max-height: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: 8px;
+}
+
+.link-preview-thumbnail .url {
+  font-size: 10px;
+  color: #A9AAA9;
+}
+
+.link-preview-thumbnail .arrow-container {
+  position: relative;
+}
+.link-preview-thumbnail .arrow {
+  color: red;
+  content: "afasfs";
+  position: absolute;
+  margin-top: 56px;
+  margin-left: 8px;
+  border-width: 8px;
+  border-style: red;
+  border-color: black transparent transparent transparent;
+}
