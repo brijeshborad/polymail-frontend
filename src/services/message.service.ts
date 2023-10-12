@@ -26,7 +26,12 @@ class MessageService extends BaseService {
     }
 
     setSelectedMessage(message: Message | null | undefined) {
+        this.clearMessageBodyAndAttachments();
         this.setMessageState({selectedMessage: message});
+    }
+
+    clearMessageBodyAndAttachments() {
+        this.setMessageState({messagePart: null, messageAttachments: undefined});
     }
 
     setMessageBody(body: MessagePart | null) {

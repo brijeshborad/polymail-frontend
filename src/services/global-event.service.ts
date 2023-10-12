@@ -11,7 +11,7 @@ class GlobalEventService extends BaseService {
         return this.getState('globalEvents');
     }
 
-    fireEvent(event: string | Event) {
+    fireEvent(event: string | Event | any) {
         this.setGlobalEventState({event: event});
     }
 

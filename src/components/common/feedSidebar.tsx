@@ -8,7 +8,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {ActivityFeed} from "@/models/activityFeed";
 import {ACTIVITY_FEED_EVENT_TYPES} from "@/utils/constants";
-import {socketService} from "@/services";
+import {globalEventService, socketService} from "@/services";
 import {getActivityFeed} from "@/redux/common-apis/action-reducer";
 
 const FeedComponent = dynamic(
@@ -33,6 +33,14 @@ export const FeedSidebar = () => {
         if (newMessage && newMessage.name === 'Activity') {
             socketService.updateSocketMessage(null);
             if (ACTIVITY_FEED_EVENT_TYPES.includes(newMessage.data.type)) {
+                if (newMessage.data.type === 'ThreadShared') {
+                    globalEventService.fireEvent({
+                        event: {
+                            type: 'show-notification',
+                            data: {title: newMessage.data.title, data: {body: newMessage.data.subtitle}}
+                        },
+                    })
+                }
                 let currentFeeds: ActivityFeed[] = [...feeds];
                 if (currentFeeds.length > 0) {
                     currentFeeds.unshift({
@@ -85,7 +93,7 @@ export const FeedSidebar = () => {
             <Flex align={'center'} cursor={'pointer'} justify={'center'} className={styles.notificationIcon}
                   onClick={onOpen}>
                 <EnergyIcon/>
-                {unreadCount > 0 ? (<Badge>{unreadCount}</Badge>): null}
+                {unreadCount > 0 ? (<Badge>{unreadCount}</Badge>) : null}
             </Flex>
             <Drawer isOpen={isOpen} placement="right" onClose={onClose} finalFocusRef={btnRef}>
                 {/* <DrawerOverlay /> */}
@@ -94,7 +102,8 @@ export const FeedSidebar = () => {
                     <Box borderLeft="1px solid #F3F4F6" maxH="100vh" overflowY={'scroll'}>
                         {/* Header */}
                         <Box height="65px" borderBottom="1px solid #F3F4F6" padding="12px 16px" display="flex"
-                             justifyContent="space-between" alignItems="center" position={'sticky'} top={0} background={'#fff'}>
+                             justifyContent="space-between" alignItems="center" position={'sticky'} top={0}
+                             background={'#fff'}>
                             <Flex align={'center'} justify={'center'}>
                                 <Text fontStyle="bold">Updates</Text>
                             </Flex>

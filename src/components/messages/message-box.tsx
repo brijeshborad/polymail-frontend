@@ -2,7 +2,7 @@ import styles from "@/styles/Inbox.module.css";
 import {Button, Flex, Heading, Menu, MenuButton, MenuItem, MenuList, Text} from "@chakra-ui/react";
 import {Time} from "@/components/common";
 import {MenuIcon} from "@/icons";
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {getAttachmentDownloadUrl, updateMessage} from "@/redux/messages/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {MessageAttachments} from "@/models";
@@ -13,7 +13,6 @@ import Tooltip from "../common/Tooltip";
 import {AttachmentIcon} from "@chakra-ui/icons";
 import {FileIcon, defaultStyles, DefaultExtensionType} from 'react-file-icon';
 import {threadService} from "@/services";
-import {getCacheMessages, setCacheMessages} from "@/utils/cache.functions";
 import LinkPreview from "../common/link-preview";
 import { LinkPreviewProps } from "@/types/props-types/link-preview.types";
 
@@ -27,32 +26,15 @@ export function MessageBox(props: any) {
     const message = props.item
     const [emailList, setEmailList] = useState<any>([]);
     const dispatch = useDispatch();
-    const {selectedMessage, error, messagePart, messageAttachments} = useSelector((state: StateType) => state.messages);
+    const {selectedMessage, error} = useSelector((state: StateType) => state.messages);
     const [isEyeShow, setIsEyeShow] = useState<any>(false);
     const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false)
     const [isExpanded, setIsExpanded] = useState(false)
-    const [emailBody, setEmailBody] = useState('')
     const [currentLinkPreview, setCurrentLinkPreview] = useState<LinkPreviewProps>({
       url: null,
       top: 0,
       left: 0
     })
-
-    const cacheMessage = useCallback((body: Object | any) => {
-        if (selectedMessage) {
-            let messageId = selectedMessage.id;
-            if (messageId) {
-                let cacheMessages = getCacheMessages();
-                setCacheMessages({
-                    ...cacheMessages,
-                    [messageId]: {
-                        ...cacheMessages[messageId],
-                        ...body
-                    }
-                })
-            }
-        }
-    }, [selectedMessage])
 
     useEffect(() => {
         if (selectedMessage && message && selectedMessage.id === message.id) {
@@ -61,31 +43,6 @@ export function MessageBox(props: any) {
             setIsExpanded(false)
         }
     }, [message, selectedMessage])
-
-
-    useEffect(() => {
-        if (messagePart && messagePart.data) {
-            cacheMessage({data: messagePart.data});
-            let decoded = Buffer.from(messagePart.data || '', 'base64').toString();
-            let addTargetBlank = decoded.replace(/<a/g, '<a target="_blank"');
-            const blob = new Blob([addTargetBlank], {type: "text/html"});
-            const blobUrl = window.URL.createObjectURL(blob);
-            setEmailBody(blobUrl);
-        } else {
-            cacheMessage({data: ''});
-            setEmailBody('')
-        }
-    }, [cacheMessage, messagePart])
-
-    useEffect(() => {
-        // convert blob url to image url
-        if (messageAttachments && messageAttachments.length) {
-            cacheMessage({attachments: messageAttachments});
-        } else {
-            cacheMessage({attachments: []});
-        }
-    }, [cacheMessage, messageAttachments])
-
 
     useEffect(() => {
         if (message) {
@@ -107,7 +64,7 @@ export function MessageBox(props: any) {
                 setIframeHeight((iframeRef.current.contentWindow.document.body.scrollHeight + 20) + "px");
 
                 const allLinks = iframeRef.current.contentDocument.getElementsByTagName("a")
-                
+
                 for (let i in allLinks) {
                   const a = allLinks[i]
                   if(typeof a === 'object' && a.hasAttribute('href')) {
@@ -359,7 +316,7 @@ export function MessageBox(props: any) {
                             <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
                                 <EyeSlashedIcon/>
                             </Flex> : ''}
-                        {messageAttachments && !!messageAttachments.length &&
+                        {props.messageAttachments && !!props.messageAttachments.length &&
                         attachmentsMenu()
                         }
 
@@ -413,14 +370,14 @@ export function MessageBox(props: any) {
 
                 </Flex>
 
-                {emailBody &&
+                {props.emailPart &&
                 <div className={styles.mailBodyContent}>
                     <iframe
                         ref={iframeRef}
                         scrolling="no"
                         onLoad={onIframeLoad}
                         height={iframeHeight}
-                        src={emailBody}
+                        src={props.emailPart}
                         className={styles.mailBody}
                     />
                 </div>}
