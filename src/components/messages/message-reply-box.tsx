@@ -424,7 +424,6 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             setIsContentUpdated(false);
             setIsDraftUpdated(false);
             globalEventService.fireEvent({data: '', type: 'richtexteditor.forceUpdate'});
-            draftService.setReplyDraft(null)
         }
     }
 

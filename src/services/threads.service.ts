@@ -415,6 +415,8 @@ class ThreadsService extends BaseService {
         let messageIndex = currentMessages.findIndex((item: Message) => item.id === convertMessages.id);
         currentMessages.splice(messageIndex, 1);
         currentMessages.push(convertMessages);
+        currentThreads[threadIndex] = {...currentThreads[threadIndex]};
+        currentThreads[threadIndex].messages = [...(currentThreads[threadIndex].messages || [])];
         currentThreads[threadIndex].messages = [...currentMessages];
         currentThreads[threadIndex].mailboxes = [...mailBoxes];
 
