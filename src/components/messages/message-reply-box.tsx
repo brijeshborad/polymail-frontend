@@ -102,6 +102,25 @@ export function MessageReplyBox(props: MessageBoxType) {
         }
     }, [emailRecipients])
 
+    useEffect(() => {
+        if (selectedThread && !isContentUpdated) {
+            const draftMessage: any = (selectedThread?.messages || []).findLast((msg: Message) => (msg.mailboxes || []).includes('DRAFT'));
+            if (draftMessage) {
+                if (draftMessage.to && draftMessage.to.length) {
+                    setTimeout(() => {
+                        setEmailRecipients((prevState: any) => ({
+                            ...prevState,
+                            recipients: {
+                                items: draftMessage.to,
+                                value: blankRecipientValue
+                            }
+                        }));
+                    }, 100)
+                }
+            }
+        }
+    }, [isContentUpdated, selectedThread])
+
 
     useEffect(() => {
         if (divRef.current) {
@@ -420,7 +439,8 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     const sendMessages = () => {
         if (draft && draft.id) {
             setShowReplyBox(false);
-            messageService.sendMessage(false, scheduledDate);
+            messageService.sendMessage(false, scheduledDate, emailBody);
+            draftService.setReplyDraft(null);
             setEmailRecipients({
                 cc: {items: [], value: blankRecipientValue},
                 bcc: {items: [], value: blankRecipientValue},

@@ -45,7 +45,7 @@ class MessageService extends BaseService {
         this.dispatchAction(updateMessageState, body);
     }
 
-    sendMessage(isCompose: boolean = false, scheduledDate: string = '') {
+    sendMessage(isCompose: boolean = false, scheduledDate: string = '', emailBody: string = '') {
         let {draft, composeDraft} = draftService.getDraftState();
         const {toast} = createStandaloneToast()
         let currentDraft: any = {...draft};
@@ -80,7 +80,7 @@ class MessageService extends BaseService {
                     if (type === 'undo') {
                         params = {undo: true}
                         if (!isCompose) {
-                            threadService.updateThreadForUndoOrSend('undo');
+                            threadService.updateThreadForUndoOrSend('undo', emailBody);
                         } else {
                             commonService.toggleComposing(true);
                             draftService.restoreBackupComposeDraft();
@@ -105,7 +105,7 @@ class MessageService extends BaseService {
                             params = {undo: true}
                             console.log('CHECKING', isCompose);
                             if (!isCompose) {
-                                threadService.updateThreadForUndoOrSend('undo');
+                                threadService.updateThreadForUndoOrSend('undo', emailBody);
                             } else {
                                 commonService.toggleComposing(true);
                                 draftService.restoreBackupComposeDraft();
@@ -122,7 +122,7 @@ class MessageService extends BaseService {
         }
         this.dispatchAction(sendMessage, {body: {id: currentDraft.id!, ...params}});
         if (!isCompose) {
-            threadService.updateThreadForUndoOrSend('send');
+            threadService.updateThreadForUndoOrSend('send', emailBody);
         }
     }
 }

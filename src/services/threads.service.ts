@@ -100,9 +100,6 @@ class ThreadsService extends BaseService {
                 messages: [...currentMessages]
             };
             draftService.setDraftState({success: false, updatedDraft: null});
-            if (currentThread.id === draft.threadId) {
-                draftService.setReplyDraft(draft);
-            }
             this.setThreadState({threads: currentThreads, success: true});
         }
     }
@@ -393,7 +390,7 @@ class ThreadsService extends BaseService {
         }
     }
 
-    updateThreadForUndoOrSend(type: string = 'send') {
+    updateThreadForUndoOrSend(type: string = 'send', emailBody: string = '') {
         let {draft, draftUndo} = draftService.getDraftState();
         let currentDraft = draft;
         if (type === 'undo') {
@@ -402,6 +399,7 @@ class ThreadsService extends BaseService {
         let {threads} = this.getThreadState();
         let convertMessages: Message = {
             ...currentDraft,
+            draftInfo: {...currentDraft?.draftInfo, body: emailBody},
             mailboxes: type === 'undo' ? [MAILBOX_DRAFT] : [MAILBOX_SENT],
             snippet: currentDraft?.draftInfo?.body
         }
@@ -447,7 +445,7 @@ class ThreadsService extends BaseService {
                 ...cacheMessages,
                 [currentDraft.id as string]: {
                     ...cacheMessages[currentDraft.id as string],
-                    data: Buffer.from(currentDraft?.draftInfo!.body || '').toString('base64'),
+                    data: Buffer.from(emailBody || '').toString('base64'),
                     attachments: currentDraft?.draftInfo?.attachments || []
                 }
             })
@@ -458,10 +456,6 @@ class ThreadsService extends BaseService {
         } else {
             draftService.restoreBackupDraft();
         }
-    }
-
-    updateDraftToRespectiveThread(draft: MessageDraft | null) {
-        let {threads} = this.getThreadState();
     }
 }
 
