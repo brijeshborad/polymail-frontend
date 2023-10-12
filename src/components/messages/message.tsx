@@ -201,8 +201,8 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
                 navigator.clipboard.writeText(window.location.toString())
                 Toaster({
                   type: 'success',
-                  title: 'Thread url copied',
-                  desc: window.location.toString().substring(0,40) + '...'
+                  title: 'Thread URL has been copied to clipboard.',
+                  desc: 'Paste this wherever you please'
                 })
             }
         };
