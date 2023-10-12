@@ -1,4 +1,4 @@
-import {Thread} from "@/models";
+import {MessageDraft, Thread} from "@/models";
 import styles from "@/styles/Inbox.module.css";
 import {Flex, Input} from "@chakra-ui/react";
 import React, {useEffect, useCallback, useRef, useState, RefObject} from "react";

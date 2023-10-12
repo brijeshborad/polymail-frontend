@@ -25,6 +25,7 @@ import {threadService, commonService, socketService, draftService} from "@/servi
 import Tooltip from "../common/Tooltip";
 import {createDraft} from "@/redux/draft/action-reducer";
 import {clearDebounce, debounce} from "@/utils/common.functions";
+import {MessageDraft} from "@/models";
 
 const MessageSchedule = dynamic(() => import("../messages/message-schedule").then(mod => mod.default));
 const ThreadsSideBarTab = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarTab), {ssr: false});
