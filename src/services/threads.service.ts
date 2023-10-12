@@ -396,12 +396,14 @@ class ThreadsService extends BaseService {
         if (type === 'undo') {
             currentDraft = draftUndo;
         }
-        let {threads, selectedThread} = this.getThreadState();
+        let {threads} = this.getThreadState();
         let convertMessages: Message = {
             ...currentDraft,
             mailboxes: type === 'undo' ? [MAILBOX_DRAFT] : [MAILBOX_SENT],
             snippet: currentDraft?.draftInfo?.body
         }
+        let currentThreads = [...(threads || [])];
+        let selectedThread = currentThreads.find((item: Thread) => item.id === convertMessages.threadId);
         let mailBoxes = [...(selectedThread?.mailboxes || [])];
         let mailBoxesIndex = mailBoxes.indexOf(MAILBOX_SENT);
         if (type === 'send') {
@@ -413,7 +415,8 @@ class ThreadsService extends BaseService {
                 mailBoxes.splice(mailBoxesIndex, 1);
             }
         }
-        let currentThreads = [...(threads || [])];
+
+        console.log('^^^', [currentDraft, type, convertMessages]);
         let threadIndex = currentThreads.findIndex((item: Thread) => item.id === selectedThread?.id);
         let currentMessages = [...(currentThreads[threadIndex].messages || [])];
         let messageIndex = currentMessages.findIndex((item: Message) => item.id === convertMessages.id);

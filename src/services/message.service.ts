@@ -10,6 +10,7 @@ import {draftService} from "@/services/draft.service";
 import {createStandaloneToast} from "@chakra-ui/react";
 import {threadService} from "@/services/threads.service";
 import {commonService} from "@/services/common.service";
+import {globalEventService} from "@/services/global-event.service";
 
 class MessageService extends BaseService {
     constructor() {
@@ -44,7 +45,7 @@ class MessageService extends BaseService {
         this.dispatchAction(updateMessageState, body);
     }
 
-    sendMessage(isCompose: boolean = false, scheduledDate: string = '', undoCallback: any = null) {
+    sendMessage(isCompose: boolean = false, scheduledDate: string = '') {
         let {draft, composeDraft} = draftService.getDraftState();
         const {toast} = createStandaloneToast()
         let currentDraft: any = {...draft};
@@ -83,10 +84,8 @@ class MessageService extends BaseService {
                         } else {
                             commonService.toggleComposing(true);
                             draftService.restoreBackupComposeDraft();
-                            if (undoCallback) {
-                                undoCallback();
-                            }
                         }
+                        globalEventService.fireEvent('draft.undo');
                     } else if (type === 'send-now') {
                         params = {now: true}
                     }
@@ -110,10 +109,8 @@ class MessageService extends BaseService {
                             } else {
                                 commonService.toggleComposing(true);
                                 draftService.restoreBackupComposeDraft();
-                                if (undoCallback) {
-                                    undoCallback();
-                                }
                             }
+                            globalEventService.fireEvent('draft.undo');
                         } else if (type === 'send-now') {
                             params = {now: true}
                         }

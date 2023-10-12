@@ -11,17 +11,17 @@ import {
     getMessageAttachments,
     getMessageParts
 } from "@/redux/messages/action-reducer";
-import {Message as MessageModel, MessageDraft} from "@/models";
+import {Message as MessageModel} from "@/models";
+import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
+import dynamic from "next/dynamic";
+import {getCacheMessages} from "@/utils/cache.functions";
+import {InboxLoader} from "@/components/loader-screen/inbox-loader";
+import {globalEventService, keyNavigationService, messageService, threadService} from "@/services";
 
 const MessagesHeader = dynamic(() => import('@/components/messages/messages-header').then(mod => mod.MessagesHeader));
 const MessageBox = dynamic(() => import('@/components/messages/message-box').then(mod => mod.MessageBox));
 const MessageReplyBox = dynamic(() => import('@/components/messages/message-reply-box').then(mod => mod.MessageReplyBox));
 const ComposeBox = dynamic(() => import('@/components/inbox/compose-box').then(mod => mod.ComposeBox));
-import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
-import dynamic from "next/dynamic";
-import {getCacheMessages} from "@/utils/cache.functions";
-import {InboxLoader} from "@/components/loader-screen/inbox-loader";
-import {draftService, globalEventService, keyNavigationService, messageService, threadService} from "@/services";
 
 let preventOpen: boolean = false;
 
@@ -52,7 +52,6 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
     const {isLoading: projectsLoading} = useSelector((state: StateType) => state.projects);
     const {isLoading: summaryLoading, syncingEmails, isComposing} = useSelector((state: StateType) => state.commonApis);
     const [isLoaderShow, setIsLoaderShow] = useState<boolean>(false);
-    const [showReplyBox, setShowReplyBox] = useState<boolean>(false);
 
     const dispatch = useDispatch();
 
@@ -66,14 +65,10 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
 
     useEffect(() => {
         if (selectedThread && selectedThread?.id) {
-            setShowReplyBox(false)
             setIndex(null);
             globalEventService.fireEvent({data: null, type: 'draft.currentMessage'})
             globalEventService.fireEvent({data: {type: 'reply'}, type: 'draft.updateType'})
             messageService.setMessages(selectedThread.messages || []);
-            setTimeout(() => {
-                setShowReplyBox(true)
-            }, 200);
         }
     }, [dispatch, selectedThread])
 
@@ -82,10 +77,6 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
             // remove draft messages and set index to last inbox message
             const currentInboxMessages: MessageModel[] = messages.filter((msg: MessageModel) => !(msg.mailboxes || []).includes('DRAFT'));
             setInboxMessages([...currentInboxMessages]);
-            const draftMessage = messages.findLast((msg: MessageModel) => (msg.mailboxes || []).includes('DRAFT'));
-            if (draftMessage) {
-                draftService.setReplyDraft(draftMessage as MessageDraft);
-            }
             if (preventOpen) {
                 preventOpen = false;
             } else {
@@ -253,11 +244,9 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
                                         </div>
                                     ))}
                                 </div>
-                                {showReplyBox &&
                                 <MessageReplyBox
                                     isProjectView={isProjectView}
                                     hideAndShowReplyBox={hideAndShowReplyBox} replyTypeName={replyTypeName}/>
-                                }
                             </Flex>
                         </Flex>
                     </>

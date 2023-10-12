@@ -126,6 +126,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
                         return;
                     }
                 }
+                console.log('SELECTED THREAD', item);
                 setCurrentSelectedThreads([]);
                 threadService.setThreadState({
                     selectedThread: item,

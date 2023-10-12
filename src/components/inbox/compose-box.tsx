@@ -63,6 +63,7 @@ export function ComposeBox(props: any) {
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {composeDraft} = useSelector((state: StateType) => state.draft);
     const {tabValue, threads, selectedThread} = useSelector((state: StateType) => state.threads);
+    const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const dispatch = useDispatch();
     const {isOpen: isOpenProject, onOpen: onOpenProject, onClose: onCloseProject} = useDisclosure();
     const {
@@ -96,6 +97,12 @@ export function ComposeBox(props: any) {
             setCollabId(newCollabId)
         }
     }, [collabId])
+
+    useEffect(() => {
+        if (incomingEvent === 'draft.undo') {
+            setIsDraftUpdated(false);
+        }
+    }, [incomingEvent])
 
     useEffect(() => {
         if (composeDraft && composeDraft.id && !isContentSet) {
@@ -224,9 +231,7 @@ export function ComposeBox(props: any) {
 
     const sendMessages = () => {
         if (composeDraft && composeDraft.id) {
-            messageService.sendMessage(true, scheduledDate, () => {
-                setIsContentSet(false);
-            })
+            messageService.sendMessage(true, scheduledDate)
             setEmailRecipients({
                 cc: {
                     items: [],

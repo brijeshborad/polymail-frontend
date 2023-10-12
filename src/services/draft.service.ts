@@ -48,8 +48,7 @@ class DraftService extends BaseService {
     }
 
     restoreBackupDraft() {
-        let {draftUndo} = this.getDraftState();
-        this.setDraftState({draft: draftUndo, draftUndo: null});
+        this.setDraftState({draft: null, draftUndo: null});
     }
 
     updateDraftWithCollabId(collabId: string) {

@@ -17,7 +17,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import {MessageAttachments, MessageRecipient} from "@/models";
+import {Message, MessageAttachments, MessageDraft, MessageRecipient} from "@/models";
 import {deleteMessage, removeAttachment, uploadAttachment} from "@/redux/messages/action-reducer";
 import {MessageBoxType} from "@/types/props-types/message-box.type";
 import {useRouter} from "next/router";
@@ -54,13 +54,13 @@ export function MessageReplyBox(props: MessageBoxType) {
     const {draft} = useSelector((state: StateType) => state.draft);
     const {selectedThread} = useSelector((state: StateType) => state.threads);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
-  const { selectedMessage, showAttachmentLoader } = useSelector((state: StateType) => state.messages);
+    const {selectedMessage, showAttachmentLoader} = useSelector((state: StateType) => state.messages);
     const dispatch = useDispatch();
     const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
     const inputFile = useRef<HTMLInputElement | null>(null)
     const [scheduledDate, setScheduledDate] = useState<string | undefined>();
-    const [hideEditorToolbar, setHideEditorToolbar] = useState<boolean>(false);
-    const [replyBoxHide, setReplyBoxHide] = useState<boolean>(false);
+    const [showEditorToolbar, setShowEditorToolbar] = useState<boolean>(false);
+    const [showReplyBox, setShowReplyBox] = useState<boolean>(false);
     const [isReplyDropdownOpen, setIsReplyDropdownOpen] = useState<boolean>(false);
     const [extraClassNames, setExtraClassNames] = useState<string>('');
     const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
@@ -111,14 +111,14 @@ export function MessageReplyBox(props: MessageBoxType) {
             }, 100)
 
         }
-    }, [replyBoxHide, emailRecipients]);
+    }, [showReplyBox, emailRecipients]);
 
     useEffect(() => {
-        if (!replyBoxHide) {
+        if (!showReplyBox) {
             setDivHeight(0)
         }
 
-    }, [replyBoxHide, divHeight])
+    }, [showReplyBox, divHeight])
 
     const validateDraft = (value: string) => {
         return !!(subject || getPlainTextFromHtml(value).trim() || emailRecipients.recipients.items.length > 0 || emailRecipients.cc.items.length > 0 || emailRecipients.bcc.items.length > 0);
@@ -157,6 +157,9 @@ export function MessageReplyBox(props: MessageBoxType) {
                 if (waitForDraft) {
                     return;
                 }
+                if (!showEditorToolbar) {
+                    return;
+                }
                 if (draft && draft.id) {
                     dispatch(updatePartialMessage({body: {id: draft.id, body: body}}));
                 } else {
@@ -175,8 +178,10 @@ export function MessageReplyBox(props: MessageBoxType) {
     }, [waitForDraft, draft])
 
     useEffect(() => {
+        console.log('DRAFT SET', draft, isContentUpdated);
         // Add signature and draft to email body
         if (draft && draft.id && !isContentUpdated) {
+            setIsContentUpdated(true);
             const {subject, to, cc, bcc, draftInfo} = draft;
             if (subject) {
                 setSubject(subject)
@@ -186,15 +191,20 @@ export function MessageReplyBox(props: MessageBoxType) {
                 if (checkValue.trim()) {
                     setIsDraftUpdated(true)
                 }
-                // globalEventService.fireEvent({data: draftInfo?.body || '', type: 'richtexteditor.forceUpdateWithOnChange'});
+                setTimeout(() => {
+                    globalEventService.fireEvent({
+                        data: draftInfo?.body || '',
+                        type: 'richtexteditor.forceUpdateWithOnChange'
+                    });
+                }, 500);
                 setEmailBody(draftInfo?.body || '');
             }
             if (draftInfo?.attachments?.length) {
                 setAttachments([
                     ...draftInfo.attachments.map(t => ({
                         filename: t.filename,
-            mimeType: t.mimeType,
-            isUploaded: true
+                        mimeType: t.mimeType,
+                        isUploaded: true
                     }))
                 ]);
             }
@@ -225,7 +235,6 @@ export function MessageReplyBox(props: MessageBoxType) {
                     }
                 }));
             }
-            setIsContentUpdated(true);
         }
     }, [draft, isContentUpdated])
 
@@ -317,7 +326,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     }, [subject, emailRecipients]);
 
     function handleFileUpload(files: any, event: any = null) {
-    loaderPercentage = 0;
+        loaderPercentage = 0;
         const file = files[0];
 
         if (draft && draft.id) {
@@ -326,55 +335,55 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 event.preventDefault();
             }
             const reader = new FileReader();
-      if (reader) {
-            reader.readAsDataURL(file);
-            reader.onload = function () {
+            if (reader) {
+                reader.readAsDataURL(file);
+                reader.onload = function () {
 
 
-                if (reader.result) {
-                    setAttachments([
-                        ...(attachments || []),
-                        {
-                            filename: file.name,
-                mimeType: file.type,
-                isUploaded: false
+                    if (reader.result) {
+                        setAttachments([
+                            ...(attachments || []),
+                            {
+                                filename: file.name,
+                                mimeType: file.type,
+                                isUploaded: false
+                            }
+                        ]);
+                        if (loaderPercentage < 100) {
+                            loaderPercentage += 20;
                         }
-                    ]);
-            if (loaderPercentage < 100) {
-              loaderPercentage += 20;
+
+                        dispatch(uploadAttachment({
+                            body: {id: draft.id, file: file},
+                            afterSuccessAction: () => {
+                                sendToDraft('', false);
+                            }
+                        }));
+                    }
+                };
+                reader.onerror = function (error) {
+                    console.log('Error: ', error);
+                };
             }
-
-                    dispatch(uploadAttachment({
-                        body: {id: draft.id, file: file},
-                        afterSuccessAction: () => {
-                            sendToDraft('', false);
-                        }
-                    }));
-                }
-            };
-            reader.onerror = function (error) {
-                console.log('Error: ', error);
-            };
         }
     }
-  }
 
 
-  useEffect(() => {
-    if (loaderPercentage < 100) {
-      loaderPercentage *= 2;
-    }
-  }, [loaderPercentage])
+    useEffect(() => {
+        if (loaderPercentage < 100) {
+            loaderPercentage *= 2;
+        }
+    }, [loaderPercentage])
 
-  useEffect(() => {
-    if (!showAttachmentLoader) {
-      (attachments || []).map((item: any) => {
-          if (!item.isUploaded) {
-            item.isUploaded = true
-          }
-      })
-    }
-  }, [showAttachmentLoader ])
+    useEffect(() => {
+        if (!showAttachmentLoader) {
+            (attachments || []).map((item: any) => {
+                if (!item.isUploaded) {
+                    item.isUploaded = true
+                }
+            })
+        }
+    }, [showAttachmentLoader])
 
     function removeAttachmentData(index: number) {
         const newArr = [...attachments];
@@ -392,7 +401,8 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
     const discardMessage = () => {
         setIsReplyDropdownOpen(false)
-        setReplyBoxHide(true);
+        setShowReplyBox(false);
+        setShowEditorToolbar(false)
         globalEventService.fireEvent({data: '', type: 'richtexteditor.discard'});
         if (draft && draft.id) {
             draftService.setReplyDraft(null);
@@ -405,19 +415,18 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 }
             }));
         }
-        setHideEditorToolbar(false)
     }
-
 
     const sendMessages = () => {
         if (draft && draft.id) {
-            setReplyBoxHide(true);
+            setShowReplyBox(false);
             messageService.sendMessage(false, scheduledDate);
             setEmailRecipients({
                 cc: {items: [], value: blankRecipientValue},
                 bcc: {items: [], value: blankRecipientValue},
                 recipients: {items: messageData ? [messageData.from!] : [], value: blankRecipientValue}
             });
+            setShowEditorToolbar(false);
             setScheduledDate(undefined)
             setEmailBody('');
             setAttachments([]);
@@ -430,17 +439,24 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
     const handleBlur = () => {
         // setTimeout(() => {
-        //   setHideEditorToolbar(false)
+        //   setShowEditorToolbar(false)
         // }, 500)
     }
 
     const handleFocus = () => {
-        setHideEditorToolbar(true);
+        const draftMessage = (selectedThread?.messages || []).findLast((msg: Message) => (msg.mailboxes || []).includes('DRAFT'));
+        if (draftMessage) {
+            if (!draft?.id) {
+                draftService.setReplyDraft(draftMessage as MessageDraft);
+                setIsContentUpdated(false);
+            }
+        }
+        setShowEditorToolbar(true);
         globalEventService.fireEvent('iframe.clicked');
     }
 
     const showRecipientsBox = () => {
-        setReplyBoxHide((current) => !current);
+        setShowReplyBox((current) => !current);
     }
 
     const handleSchedule = (date: string | undefined) => {
@@ -475,12 +491,15 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         if (incomingEvent === 'iframe.clicked') {
             setIsReplyDropdownOpen(false)
         }
+        if (incomingEvent === 'draft.undo') {
+            handleFocus();
+        }
         if (typeof incomingEvent === 'object' && incomingEvent.type) {
             if (incomingEvent.type === 'draft.updateType') {
                 setReplyType(incomingEvent.data.type);
                 if (incomingEvent.data.type === 'forward') {
                     if (!isDraftUpdated) {
-                        setReplyBoxHide(true)
+                        setShowReplyBox(true);
                         setEmailRecipients({
                             cc: {items: [], value: blankRecipientValue},
                             bcc: {items: [], value: blankRecipientValue},
@@ -573,10 +592,10 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                         e.stopPropagation();
                                         e.preventDefault();
                                         showRecipientsBox()
-                                        if (!replyBoxHide) {
+                                        if (!showReplyBox) {
                                             handleFocus()
                                         }
-                                    }}> {!replyBoxHide ? 'Edit' : 'Close'} </Button>
+                                    }}> {showReplyBox ? 'Close' : 'Edit'} </Button>
                         </Flex>
                         <Flex
                             onClick={() => {
@@ -600,20 +619,17 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                         </Flex>
                     </Flex>
                     <DropZone onFileUpload={handleFileUpload} forReply={true}>
-                        {replyBoxHide &&
+                        {showReplyBox &&
                         <div ref={divRef}>
                             <MessageRecipients
                                 emailRecipients={emailRecipients}
                                 updateValues={(values) => {
-                                    console.log('COMES HERE');
                                     setIsDraftUpdated(true);
                                     setEmailRecipients({...values})
                                 }}
                             />
                         </div>
                         }
-
-
                         <Flex
                             onFocus={() => handleFocus()}
                             direction={'column'} position={"relative"} flex={1} overflow={'none'}>
@@ -625,7 +641,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                         id={'thread-' + collabId}
                                         onCreate={() => sendToDraft('')}
                                         placeholder="Hit enter to reply with anything you'd like"
-                                        isToolbarVisible={hideEditorToolbar}
+                                        isToolbarVisible={showEditorToolbar}
                                         onChange={(value) => sendToDraft(value)}
                                         className={`${extraClassNames} ${extraClassNamesForBottom}`}
                                         emailSignature={selectedAccount ? `<p></p>${selectedAccount?.signature}` : undefined}
@@ -639,10 +655,10 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                         extendToolbar={(
                                             <>
                                                 <Flex
-                                  onClick={() => {
-                                    inputFile.current?.click();
-                                    loaderPercentage = 0;
-                                  }}
+                                                    onClick={() => {
+                                                        inputFile.current?.click();
+                                                        loaderPercentage = 0;
+                                                    }}
                                                     align={'center'} justify={'center'} cursor={'pointer'}
                                                     className={styles.attachIcon}
                                                 >
@@ -662,19 +678,20 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                     {attachments.map((item, index: number) => (
                                         <Flex align={'center'} key={index} className={styles.attachmentsFile}>
                                             {item.filename}
-                        <Flex ml={'auto'} gap={3} className={'attachments-progress-bar'}>
-                          {(showAttachmentLoader && !item.isUploaded) && <ProgressBar loaderPercentage={loaderPercentage} />}
-                          <div className={styles.closeIcon} onClick={() => removeAttachmentData(index)}>
-                                                <CloseIcon/>
-                                            </div>
+                                            <Flex ml={'auto'} gap={3} className={'attachments-progress-bar'}>
+                                                {(showAttachmentLoader && !item.isUploaded) &&
+                                                <ProgressBar loaderPercentage={loaderPercentage}/>}
+                                                <div className={styles.closeIcon}
+                                                     onClick={() => removeAttachmentData(index)}>
+                                                    <CloseIcon/>
+                                                </div>
+                                            </Flex>
                                         </Flex>
-                      </Flex>
                                     ))}
                                 </div> : null}
 
                             </Flex>
-
-                            {hideEditorToolbar &&
+                            {showEditorToolbar &&
                             <Flex direction={'column'} className={styles.composeBox} width={'fit-content'}
                                   marginLeft={'auto'} mr={'6px'}>
                                 <Flex align={'center'} className={styles.replyButton} position={'relative'} zIndex={6}>
@@ -682,7 +699,8 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                         className={styles.replyTextDiscardButton}
                                         fontSize={14} lineHeight={16} height={'38px'}
                                         onClick={(e) => {
-                                            e.stopPropagation()
+                                            e.preventDefault();
+                                            e.stopPropagation();
                                             discardMessage()
                                         }}
                                     > Discard </Button>
@@ -691,7 +709,11 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                             className={styles.replyTextButton}
                                             colorScheme='blue'
                                             fontSize={14} lineHeight={16}
-                                            onClick={() => sendMessages()}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                sendMessages()
+                                            }}
                                         >
                                             {scheduledDate ? (
                                                 <>Send {dayjs(scheduledDate).from(dayjs())} @ {dayjs(scheduledDate).format('hh:mmA')}</>
