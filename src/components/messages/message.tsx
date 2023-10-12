@@ -17,6 +17,7 @@ import dynamic from "next/dynamic";
 import {getCacheMessages, setCacheMessages} from "@/utils/cache.functions";
 import {InboxLoader} from "@/components/loader-screen/inbox-loader";
 import {globalEventService, keyNavigationService, messageService, threadService} from "@/services";
+import { Toaster } from "../common";
 
 const MessagesHeader = dynamic(() => import('@/components/messages/messages-header').then(mod => mod.MessagesHeader));
 const MessageBox = dynamic(() => import('@/components/messages/message-box').then(mod => mod.MessageBox));
@@ -192,6 +193,24 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
             }, 1200)
         }
     }, [target, messageIndex])
+
+    useEffect(() => {
+        const handleShortcutKeyPress = (e: KeyboardEvent | any) => {
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key == ',') {
+                e.preventDefault();
+                navigator.clipboard.writeText(window.location.toString())
+                Toaster({
+                  type: 'success',
+                  title: 'Thread url copied',
+                  desc: window.location.toString().substring(0,40) + '...'
+                })
+            }
+        };
+        window.addEventListener('keydown', handleShortcutKeyPress);
+        return () => {
+            window.removeEventListener('keydown', handleShortcutKeyPress);
+        };
+    }, []);
 
 
     const hideAndShowReplyBox = (type: string = '', messageData: MessageModel) => {
