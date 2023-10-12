@@ -26,7 +26,13 @@ const config: ThemeConfig = {
 const theme = extendBaseTheme({
     config,
     components: {
-        Button,
+        Button: {
+          baseStyle: {
+            _focus: {
+              boxShadow: 'none'
+            }
+          }
+        },
         Input,
         Menu,
         Checkbox,
