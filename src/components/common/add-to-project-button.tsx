@@ -156,30 +156,31 @@ export function AddToProjectButton() {
                 }}
                 closeOnBlur={true}
             >
-                {threadProject?.length ? <MenuButton onClick={() => {
-                    setDropDownOpen(!isDropdownOpen)
-                    focusSearch();
-                }}
-                                                     cursor={'pointer'} className={`${styles.projectAdded}`}
-                                                     borderRadius={'8px'}
-                                                     backgroundColor={'#FFFFFF'} color={'#0A101D'} as={Box}
-                                                     padding={'4px 4px'}
-                                                     fontSize={'13px'} fontWeight={500} h={'fit-content'}
-                                                     ref={addToProjectRef}>
-                    <Flex alignItems={'center'} justify={'center'} mr={1} className={styles.projectSelectImage}>
-                        {(threadProject || []).slice(0, 5).map((item: any, index: number) => (
-                            <span className={styles.projectCount} key={index}> {item.emoji} </span>
-                        ))}
-                        {((threadProject || []).length > 5) && (
-                            <span className={styles.projectsLength}>{`+${threadProject?.length - 5}`}</span>
-                        )}
-                    </Flex>
-                    <div className={styles.projectAddedText}>
-                        {threadProject?.length === 1 ? threadProject[0]?.name : threadProject?.length + ' ' + 'Projects'}
-                    </div>
-                    <Flex width={'20px'} height={'20px'} alignItems={'center'} justifyContent={'center'}
-                          className={styles.projectMenuIcon}><MenuIcon/></Flex>
-                </MenuButton> : <Tooltip label={'Add thread to project'} placement={'bottom'}>
+                {threadProject?.length ? <Tooltip label={'Share'} placement={'bottom'}>
+                    <MenuButton onClick={() => {
+                        setDropDownOpen(!isDropdownOpen)
+                        focusSearch();
+                    }}
+                                cursor={'pointer'} className={`${styles.projectAdded}`}
+                                borderRadius={'8px'}
+                                backgroundColor={'#FFFFFF'} color={'#0A101D'} as={Box}
+                                padding={'4px 4px'}
+                                fontSize={'13px'} fontWeight={500} h={'fit-content'}
+                                ref={addToProjectRef}>
+                        <Flex alignItems={'center'} justify={'center'} mr={1} className={styles.projectSelectImage}>
+                            {(threadProject || []).slice(0, 5).map((item: any, index: number) => (
+                                <span className={styles.projectCount} key={index}> {item.emoji} </span>
+                            ))}
+                            {((threadProject || []).length > 5) && (
+                                <span className={styles.projectsLength}>{`+${threadProject?.length - 5}`}</span>
+                            )}
+                        </Flex>
+                        <div className={styles.projectAddedText}>
+                            {threadProject?.length === 1 ? threadProject[0]?.name : threadProject?.length + ' ' + 'Projects'}
+                        </div>
+                        <Flex width={'20px'} height={'20px'} alignItems={'center'} justifyContent={'center'}
+                              className={styles.projectMenuIcon}><MenuIcon/></Flex>
+                    </MenuButton></Tooltip> : <Tooltip label={'Add thread to project'} placement={'bottom'}>
                     <MenuButton
                         onClick={() => {
                             setDropDownOpen(!isDropdownOpen)

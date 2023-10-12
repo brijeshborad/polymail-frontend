@@ -243,8 +243,8 @@
 }
 
 .mailDetailsSelected {
-  border-color: #76A2FF;
-  box-shadow: 0 0 0 3px #e5e7eb;
+    border-color: #76A2FF;
+    box-shadow: 0 0 0 3px #e5e7eb;
 }
 
 .mailDetails .SenderIcon svg {
@@ -318,32 +318,33 @@
     box-shadow: 0 0 12px 0 #00000014;
 
 }
+
 .mailBox .mailBoxMailList {
     flex: 1;
 }
 
 .mailBox.mailBoxFocused {
-  border: 1px solid #000;
-  box-shadow: 0 0 0 3px #e5e7eb;
+    border: 1px solid #000;
+    box-shadow: 0 0 0 3px #e5e7eb;
 }
 
 .mailBox.mailBoxCentered {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
 }
 
 .mailBoxCenteredLabel {
-  font-size: 14px;
-  line-height: 16px;
+    font-size: 14px;
+    line-height: 16px;
 }
 
 .mailBox svg {
     width: 20px;
     height: 20px;
-    margin-right: 5px;
+    margin: 0 2px;
 }
 
 .mailBox .mailBody {
@@ -353,7 +354,7 @@
 }
 
 .mailBox .mailBodyContent {
-   width: 100%;
+    width: 100%;
     padding: 0 16px;
 }
 
@@ -482,7 +483,7 @@
 }
 
 .addToProjectList .selectedProject .selectedProjectName:hover {
-    background-color: rgba(8,22,47,.05);
+    background-color: rgba(8, 22, 47, .05);
 }
 
 .addToProjectList .addNewProject button {
@@ -787,7 +788,7 @@
     color: #00A88E;
 }
 
-.mailListTabs .composeButton:hover svg{
+.mailListTabs .composeButton:hover svg {
     stroke: #00A88E;
 }
 
@@ -900,8 +901,8 @@
 }
 
 .selectedThread .mailDetails {
-  border: 1px solid #6b7280;
-  box-shadow: 0 0 0 3px #e5e7eb;
+    border: 1px solid #6b7280;
+    box-shadow: 0 0 0 3px #e5e7eb;
 }
 
 .selectedThread .mailDetailsSelected {
@@ -1020,7 +1021,7 @@
 }
 
 .mailBox .tabListAttachmentButton:hover,
-.mailBox .tabListAttachmentButton[data-active]{
+.mailBox .tabListAttachmentButton[data-active] {
     background-color: #FFFFFF;
 }
 
@@ -1087,7 +1088,7 @@
 }
 
 .mailBox .mailBoxTime p {
-   font-weight: 400;
+    font-weight: 400;
     color: #6B7280;
     font-size: 11px;
     line-height: 15px;
@@ -1132,7 +1133,7 @@
     border-top: 1px solid #E5E7EB;
 }
 
-.mailSaveTime p  {
+.mailSaveTime p {
     font-size: 12px;
 }
 
@@ -1148,9 +1149,9 @@
 }
 
 .addToProjectPlusActions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .composeBox .composeHeader svg {
@@ -1280,13 +1281,13 @@
     display: block;
 }
 
-.attachIcon{
-  display: flex;
-  gap: 4px;
-  background-color: #F3F4F6;
-  padding: 4px 8px 4px 6px;
-  font-size: 12px;
-  line-height: 14.52px;
-  font-weight: 500;
-  border-radius: 34px;
+.attachIcon {
+    display: flex;
+    gap: 4px;
+    background-color: #F3F4F6;
+    padding: 4px 8px 4px 6px;
+    font-size: 12px;
+    line-height: 14.52px;
+    font-weight: 500;
+    border-radius: 34px;
 }

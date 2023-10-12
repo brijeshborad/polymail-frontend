@@ -94,11 +94,11 @@ class MessageService extends BaseService {
                 }
             })
         } else {
-            if (draft && draft.to && draft.to.length) {
+            if (currentDraft && currentDraft.to && currentDraft.to.length) {
                 Toaster({
-                    desc: `Your message has been sent to ${draft?.to && draft?.to[0].email}${draft?.to && draft?.to?.length > 1 ? ` and ${draft?.to && draft?.to?.length - 1} other${draft?.to && draft?.to?.length === 2 ? '' : 's'}` : ''}`,
+                    desc: `Your message has been sent to ${currentDraft?.to && currentDraft?.to[0].email}${currentDraft?.to && currentDraft?.to?.length > 1 ? ` and ${currentDraft?.to && currentDraft?.to?.length - 1} other${currentDraft?.to && currentDraft?.to?.length === 2 ? '' : 's'}` : ''}`,
                     type: 'send_confirmation',
-                    title: draft?.subject || '',
+                    title: currentDraft?.subject || '',
                     id: polyToast,
                     undoClick: (type: string) => {
                         if (type === 'undo') {

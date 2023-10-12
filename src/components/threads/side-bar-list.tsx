@@ -112,9 +112,12 @@ export function ThreadsSideBarList(props: ThreadListProps) {
                 }
                 commonService.toggleComposing(false);
                 if (props.tab === 'DRAFT') {
+                    draftService.setResumeDraft(null);
                     if (item && item.messages && item.messages[0]) {
+                        let draft = item.messages[0];
                         setTimeout(() => {
                             commonService.toggleComposing(true);
+                            draftService.setComposeDraft(draft as MessageDraft);
                         }, 50)
                         threadService.setThreadState({
                             selectedThread: item,

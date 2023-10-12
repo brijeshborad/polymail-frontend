@@ -77,7 +77,12 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                 }
                 if (tabValue === 'DRAFT') {
                     commonService.toggleComposing(true);
-                    threadService.setSelectedThread(threads[0]);
+                    let item = threads[0];
+                    threadService.setSelectedThread(item);
+                    if (item && item.messages && item.messages[0]) {
+                        draftService.setComposeDraft(item.messages[0] as MessageDraft);
+                    }
+
                 }
             }
         }
