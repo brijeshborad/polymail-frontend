@@ -1,6 +1,5 @@
 import {
     Button,
-    createStandaloneToast,
     Flex,
     Menu,
     MenuButton, MenuItem,
