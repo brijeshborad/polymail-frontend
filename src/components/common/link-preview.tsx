@@ -3,38 +3,68 @@ import ApiService from "@/utils/api.service";
 import { Flex, Skeleton } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
-export default function LinkPreview({ url, top, left }: LinkPreviewProps) {
+
+export default function LinkPreview({ isVisible, url, top, left }: LinkPreviewProps) {
+  const [isBlocked, setIsBlocked] = useState(false)
   const [meta, setMeta] = useState<PreviewResponseType | undefined>()
   const [isLoading, setLoading] = useState<boolean>(true)
+  const [cache, setCache] = useState<any>({})
+  const blockedPatterns = ['mailto:', 'localhost']
 
+  const isBlockedPattern = (): boolean => {
+    let isBlockedPreview = false
+    for(let i=0; i<blockedPatterns.length; i++){
+
+      const matches = url?.match(blockedPatterns[i])?.length || 0
+      if(matches > 0) {
+        isBlockedPreview = true
+        break;
+      }
+    }
+    return isBlockedPreview
+  }
+  
   useEffect(() => {
     if (!url) return
+
+    const isBlocked = isBlockedPattern()
+
+    if(isBlocked) {
+      setIsBlocked(isBlocked)
+      return
+    } else {
+      setIsBlocked(false)
+    }
+
+    if(cache && cache[url]) {
+      setMeta(cache[url])
+      return
+    }
+
     setLoading(true)
     ApiService.callGet(`/link/preview`, {
       url: url
     })
       .then((data: any) => {
         setLoading(false)
+        setCache({
+          ...cache,
+          [url]: data
+        })
         setMeta(data)
       })
       .catch(() => {
-        setMeta({
-          website: url,
-          title: 'Unable to load',
-          description: '',
-          image: ''
-        })
+        setIsBlocked(true)
       })
       .finally(() => {
-
         setLoading(false)
       })
   }, [url])
 
-  if (!url) return <></>
+  if (!url || !isVisible || isBlocked) return
 
   return (
-    <div className='link-preview-thumbnail' style={{ top: top - 8, left: left + 15 }}>
+    <div className='link-preview-thumbnail' style={{ top: top - 18, left: left }}>
       <div className='arrow'></div>
       {isLoading ? (
         <div>

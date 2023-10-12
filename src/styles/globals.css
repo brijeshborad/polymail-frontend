@@ -930,18 +930,22 @@ div:has(> .mailSendToaster) {
 .link-preview-thumbnail .url {
   font-size: 10px;
   color: #A9AAA9;
+  max-height: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: 8px;
 }
 
 .link-preview-thumbnail .arrow-container {
   position: relative;
 }
 .link-preview-thumbnail .arrow {
-  color: red;
-  content: "afasfs";
+  content: "";
   position: absolute;
   margin-top: 56px;
   margin-left: 8px;
   border-width: 8px;
-  border-style: red;
+  border-style: solid;
   border-color: black transparent transparent transparent;
 }

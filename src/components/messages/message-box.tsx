@@ -31,6 +31,7 @@ export function MessageBox(props: any) {
     const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false)
     const [isExpanded, setIsExpanded] = useState(false)
     const [currentLinkPreview, setCurrentLinkPreview] = useState<LinkPreviewProps>({
+      isVisible: false,
       url: null,
       top: 0,
       left: 0
@@ -71,6 +72,7 @@ export function MessageBox(props: any) {
                     const href = a.getAttribute('href')
                     a.onmouseover=function(){
                       setCurrentLinkPreview({
+                        isVisible: true,
                         url: href,
                         top: a.offsetTop,
                         left: a.offsetLeft
@@ -78,9 +80,10 @@ export function MessageBox(props: any) {
                     }
                     a.onmouseout=function(){
                       setCurrentLinkPreview({
-                        url: null,
-                        top: 0,
-                        left: 0
+                        isVisible: false,
+                        url: href,
+                        top: a.offsetTop,
+                        left: a.offsetLeft
                       })
                     }
                   }
@@ -382,6 +385,7 @@ export function MessageBox(props: any) {
                     />
                 </div>}
                 <LinkPreview
+                  isVisible={currentLinkPreview.isVisible}
                   url={currentLinkPreview?.url}
                   top={currentLinkPreview.top}
                   left={currentLinkPreview.left}
