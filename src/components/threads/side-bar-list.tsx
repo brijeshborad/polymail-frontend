@@ -70,6 +70,13 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     }, [target, threadIndex, currentThreadRef])
 
     const handleClick = useCallback((item: Thread, event: KeyboardEvent | any, index: number) => {
+
+      router.push(
+        { pathname: routePaths.includes('projects') ? `/projects/${router.query.project}` : '/inbox', query: { thread: item.id }},  
+        undefined, 
+        { shallow: true }
+      )
+
         // Check if Control key (or Command key on Mac) is held down
         if (event) {
             if (event.ctrlKey || event.metaKey || event.shiftKey) {

@@ -4,9 +4,12 @@ import {MONITORED_KEYS} from "@/utils/constants";
 import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {globalEventService, messageService, threadService} from "@/services";
+import { useRouter } from "next/router";
 
 export default function KeyboardNavigationListener() {
     const dispatch = useDispatch();
+    const router = useRouter();
+    const routePaths = router.pathname.split('/');
     const {threads, selectedThread} = useSelector((state: StateType) => state.threads);
     const {messages, selectedMessage} = useSelector((state: StateType) => state.messages);
     const {target: lastTarget, currentMessageId, isEnabled} = useSelector((state: StateType) => state.keyNavigation);
@@ -79,6 +82,12 @@ export default function KeyboardNavigationListener() {
                                 threadService.setSelectedThread(nextThread);
                                 dispatchAction.threadIndex = nextThreadIndex
                                 dispatchAction.currentThreadId = nextThread.id
+
+                                router.push(
+                                  { pathname: routePaths.includes('projects') ? `/projects/${router.query.project}` : '/inbox', query: { thread: nextThread.id }},  
+                                  undefined, 
+                                  { shallow: true }
+                                )
                             }
                         } else if (pressedKey?.value === 'UP') {
                             const currentThreadIndex = selectedThread ? threads?.findIndex(thread => thread.id === selectedThread.id) : 0
@@ -89,6 +98,12 @@ export default function KeyboardNavigationListener() {
                                 threadService.setSelectedThread(lastThread);
                                 dispatchAction.threadIndex = lastThreadIndex
                                 dispatchAction.currentThreadId = lastThread.id
+
+                                router.push(
+                                  { pathname: routePaths.includes('projects') ? `/projects/${router.query.project}` : '/inbox', query: { thread: lastThread.id }},  
+                                  undefined, 
+                                  { shallow: true }
+                                )
                             }
                         }
                     }

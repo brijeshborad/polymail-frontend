@@ -38,7 +38,7 @@ import {useRouter} from "next/router";
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {MenuIcon} from "@/icons";
-import {commonService, projectService, socketService} from "@/services";
+import {commonService, projectService, socketService, threadService} from "@/services";
 import Tooltip from "@/components/common/Tooltip";
 
 const ThreadsSideBar = dynamic(
@@ -50,7 +50,7 @@ function ProjectInbox() {
     const [searchValue, setSearchValue] = useState<string>('');
     const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
     const {members, project, invitees} = useSelector((state: StateType) => state.projects);
-    const {selectedThread} = useSelector((state: StateType) => state.threads);
+    const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {onlineUsers} = useSelector((state: StateType) => state.commonApis);
     const {success} = useSelector((state: StateType) => state.memberships);
@@ -90,7 +90,7 @@ function ProjectInbox() {
       }
   }, [searchValue, projects])
 
-    useEffect(() => {
+  useEffect(() => {
         if (router.query.project) {
             const interval = debounceInterval(() => {
                 let projectId = router.query.project as string;
@@ -99,7 +99,17 @@ function ProjectInbox() {
             return () => clearInterval(interval);
         }
         return undefined
-    }, [router.query.project, selectedAccount?.userId]);
+  }, [router.query.project, selectedAccount?.userId]);
+
+  useEffect(() => {
+    if(!router.query.thread) return
+    
+    const threadFromUrl = threads?.find(t => t.id == router.query.thread)
+
+    if(threadFromUrl) {
+      threadService.setSelectedThread(threadFromUrl);
+    }
+  }, [threads, router.query.thread])
 
 
     useEffect(() => {
@@ -120,6 +130,21 @@ function ProjectInbox() {
             dispatch(getProjectMembersInvites({body: {projectId: projectId}}));
         }
     }, [router.query.project, dispatch])
+
+    useEffect(() => {
+      let projectId = router.query.project as string;
+      if(!router.query.thread && projectId && selectedThread) {
+        router.push(
+          { pathname: `/projects/${projectId}`, query: { thread: selectedThread.id }},  
+          undefined, 
+          { shallow: true }
+        )
+      }
+      const threadFromUrl = threads?.find(t => t.id == router.query.thread)
+      if(threadFromUrl) {
+        threadService.setSelectedThread(threadFromUrl);
+      }
+    }, [threads, selectedThread, router.query.thread, router])
 
     function updateSize() {
         setSize(window.innerWidth);
