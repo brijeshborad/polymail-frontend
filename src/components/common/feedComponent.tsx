@@ -2,6 +2,7 @@ import {Box, Flex, Text} from '@chakra-ui/react';
 import React from 'react';
 import {ActivityFeed} from "@/models/activityFeed";
 import styles from '@/styles/Home.module.css';
+import {Time} from "@/components/common/time";
 
 interface FeedComponentProps {
     feedData?: ActivityFeed;
@@ -17,7 +18,9 @@ export const FeedComponent: React.FC<FeedComponentProps> = ({feedData, markFeedA
                     <Text fontSize="13px">
                         {feedData?.title}
                     </Text>
-                    <Text color="#6B7280" fontSize="13px">
+                    <Text display={'flex'} alignItems={'center'} color="#6B7280" fontSize="12px" className={styles.feedSubtitle}>
+                        <Time as={'span'} fontSize={'12px'} time={feedData?.created} isShowFullTime={false} showTimeInShortForm={true}/>
+                        <span className={styles.feedSubtitleDot}/>
                         {feedData?.subtitle}
                     </Text>
                 </Box>

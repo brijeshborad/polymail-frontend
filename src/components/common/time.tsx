@@ -54,7 +54,7 @@ export function Time(props: TimeProps) {
     };
 
     return (
-        props.as ? <Text as={props.as!} fontSize={'sm'}>{formatElapsedTime()}</Text> :
-            <Text fontSize={'sm'}>{formatElapsedTime()}</Text>
+        props.as ? <Text as={props.as!} fontSize={props.fontSize || 'sm'}>{formatElapsedTime()}</Text> :
+            <Text fontSize={props.fontSize || 'sm'}>{formatElapsedTime()}</Text>
     )
 }

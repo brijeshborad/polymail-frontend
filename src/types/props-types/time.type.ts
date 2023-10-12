@@ -5,4 +5,5 @@ export declare type TimeProps = {
     isShowFullTime: boolean
     showTimeInShortForm: boolean
     as?: As
+    fontSize?: string
 }
