@@ -1,4 +1,5 @@
 export declare type LinkPreviewProps = {
+  isVisible: boolean
   url: string | undefined | null
   top: number
   left: number
