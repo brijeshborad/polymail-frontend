@@ -513,7 +513,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     const getBody = () => {
         let body = '';
         if (selectedAccount) {
-            body += `<p></p>${selectedAccount?.signature}`;
+            body += `<p></p><p></p>${selectedAccount?.signature}`;
         }
         if (selectedThread?.projects?.length) {
             body += `<p></p>
