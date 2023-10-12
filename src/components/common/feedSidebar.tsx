@@ -154,7 +154,9 @@ export const FeedSidebar = () => {
                         {/*</Box>*/}
 
                         <Box padding="12px 16px">
-                            {feeds.map((t: ActivityFeed, index: number) => (
+                            {feeds
+                              .sort((a, b) => b.created! < a.created! ? -1 : 0)
+                              .map((t: ActivityFeed, index: number) => (
                                 <FeedComponent key={index} feedData={t} markFeedAsRead={() => markFeedAsRead(index)}/>
                             ))}
                             {/*<FeedComponent isRead={true}/>*/}
