@@ -468,6 +468,19 @@
     margin: 0 auto;
 }
 
+.addToProjectList .backToInbox:hover {
+    background-color: #266DF0;
+    color: #FFFFFF;
+}
+
+.addToProjectList .backToInbox:hover svg {
+    stroke: #FFFFFF;
+}
+
+.addToProjectList .backToInbox svg {
+    stroke: #08162F;
+}
+
 .addToProjectList .selectedProject:after {
     position: absolute;
     content: '';

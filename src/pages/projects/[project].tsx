@@ -37,7 +37,7 @@ import Image from "next/image";
 import Router, {useRouter} from "next/router";
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {MenuIcon} from "@/icons";
+import {MailIcon, MenuIcon} from "@/icons";
 import {commonService, projectService, socketService, threadService} from "@/services";
 import Tooltip from "@/components/common/Tooltip";
 
@@ -302,8 +302,6 @@ function ProjectInbox() {
         return value[0].toUpperCase() + value.slice(1)
     }
 
-    console.log("projectData?.projectMeta?.userId",projectData?.projectMeta?.userId)
-
     return (
         <>
             <Flex direction={'column'} className={styles.projectPage}
@@ -373,6 +371,16 @@ function ProjectInbox() {
                                         onChange={(e) => setSearchValue(e.target.value)}
                                         placeholder='Search project'/>
                               </InputGroup>
+                            </div>
+                            <div>
+                              <Button className={inboxStyles.backToInbox} backgroundColor={'transparent'} w={'100%'} borderRadius={0}
+                                      justifyContent={'flex-start'}
+                                      onClick={() => Router.push('/inbox')}>
+                                <div style={{ marginRight: 8 }}>
+                                  <MailIcon />
+                                </div>
+                                Back to inbox
+                              </Button>
                             </div>
                             <div className={'add-to-project-list'}>
                                 {filteredProjects && !!filteredProjects.length && (filteredProjects || []).map((project: Project) => {
