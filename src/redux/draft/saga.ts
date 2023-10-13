@@ -1,5 +1,5 @@
 import {PayloadAction} from "@reduxjs/toolkit";
-import {all, fork, put, takeLatest} from "@redux-saga/core/effects";
+import {all, fork, put, takeEvery} from "@redux-saga/core/effects";
 import ApiService from "@/utils/api.service";
 import {AxiosError, AxiosResponse} from "axios";
 import {
@@ -62,15 +62,15 @@ function* patchPartialMessage({payload}: PayloadAction<ReducerActionType>) {
 }
 
 export function* watchCreateNewDraft() {
-    yield takeLatest(createDraft.type, createNewDraft);
+    yield takeEvery(createDraft.type, createNewDraft);
 }
 
 export function* watchSendDraftMessage() {
-    yield takeLatest(sendMessage.type, sendDraftMessage);
+    yield takeEvery(sendMessage.type, sendDraftMessage);
 }
 
 export function* watchUpdateCurrentDraftMessage() {
-    yield takeLatest(updatePartialMessage.type, patchPartialMessage);
+    yield takeEvery(updatePartialMessage.type, patchPartialMessage);
 }
 
 

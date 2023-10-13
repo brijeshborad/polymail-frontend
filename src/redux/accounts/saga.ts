@@ -1,5 +1,5 @@
 import {PayloadAction} from "@reduxjs/toolkit";
-import {all, fork, put, takeLatest} from "@redux-saga/core/effects";
+import {all, fork, put, takeEvery} from "@redux-saga/core/effects";
 import {
     getAllAccountError,
     getAllAccountSuccess,
@@ -56,15 +56,15 @@ function* removeAccount({payload}: PayloadAction<ReducerActionType>) {
 }
 
 export function* watchGetAccount() {
-    yield takeLatest(getAllAccount.type, getAccountDetails);
+    yield takeEvery(getAllAccount.type, getAccountDetails);
 }
 
 export function* watchUpdateAccountDetails() {
-    yield takeLatest(updateAccountDetails.type, updateAccountDetail);
+    yield takeEvery(updateAccountDetails.type, updateAccountDetail);
 }
 
 export function* watchRemoveAccountDetails() {
-    yield takeLatest(removeAccountDetails.type, removeAccount);
+    yield takeEvery(removeAccountDetails.type, removeAccount);
 }
 
 export default function* rootSaga() {

@@ -1,5 +1,5 @@
 import {PayloadAction} from "@reduxjs/toolkit";
-import {all, fork, put, takeLatest} from "@redux-saga/core/effects";
+import {all, fork, put, takeEvery} from "@redux-saga/core/effects";
 import ApiService from "@/utils/api.service";
 import {AxiosError, AxiosResponse} from "axios";
 import {
@@ -91,30 +91,30 @@ function* updateOrganizationMembersData({payload}: PayloadAction<ReducerActionTy
 }
 
 export function* watchGetOrganizations() {
-    yield takeLatest(getAllOrganizations.type, getOrganizations);
+    yield takeEvery(getAllOrganizations.type, getOrganizations);
 }
 
 
 export function* watchPostOrganizations() {
-    yield takeLatest(addOrganization.type, addOrganizations);
+    yield takeEvery(addOrganization.type, addOrganizations);
 }
 
 
 export function* watchGetOrganizationMembers() {
-    yield takeLatest(getOrganizationMembers.type, getOrganizationMembersService);
+    yield takeEvery(getOrganizationMembers.type, getOrganizationMembersService);
 }
 
 export function* watchRemoveOrganization() {
-    yield takeLatest(removeOrganization.type, deleteOrganization);
+    yield takeEvery(removeOrganization.type, deleteOrganization);
 }
 
 export function* watchUpdateOrganization() {
-    yield takeLatest(editOrganization.type, updateOrganizations);
+    yield takeEvery(editOrganization.type, updateOrganizations);
 }
 
 
 export function* watchUpdateProjectMembersData() {
-    yield takeLatest(updateOrganizationMemberRole.type, updateOrganizationMembersData);
+    yield takeEvery(updateOrganizationMemberRole.type, updateOrganizationMembersData);
 }
 
 

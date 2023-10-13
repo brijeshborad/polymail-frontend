@@ -219,6 +219,7 @@ class ThreadsService extends BaseService {
                         projects: [...projects, item]
                     }
                 }
+                this.setSelectedThread(addProject);
                 this.setThreadState({threads: newThreads});
             }
             this.dispatchAction(

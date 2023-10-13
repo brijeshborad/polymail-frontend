@@ -20,16 +20,21 @@ import {
 } from "@chakra-ui/react";
 import Image from "next/image";
 import Router from "next/router";
-import {ChangeEvent, useEffect, useState} from "react";
+import {ChangeEvent, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {commonService, projectService, threadService} from "@/services";
+import {commonService, messageService, threadService} from "@/services";
+import {Project} from "@/models";
 
 
 function CreateNewProjectModal() {
     const dispatch = useDispatch();
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {selectedOrganization} = useSelector((state: StateType) => state.organizations);
-    const {showCreateProjectModal, shouldRedirectOnCreateProject, shouldAddThread} = useSelector((state: StateType) => state.commonApis);
+    const {
+        showCreateProjectModal,
+        shouldRedirectOnCreateProject,
+        shouldAddThread
+    } = useSelector((state: StateType) => state.commonApis);
     const [projectName, setProjectName] = useState<string>('');
     const [membersInputs, setMembersInput] = useState<{ input: string; role: string; memberArray: Array<{ item?: string; memberRole?: string }> }>({
         input: '',
@@ -38,9 +43,6 @@ function CreateNewProjectModal() {
     });
     const [projectEmoji, setProjectEmoji] = useState<string>('');
 
-    const {createProjectSuccess, project} = useSelector((state: StateType) => state.projects);
-    const {selectedThread} = useSelector((state: StateType) => state.threads);
-
     const handleChange = (event: ChangeEvent | any) => {
         setProjectName(event.target.value);
     }
@@ -48,51 +50,6 @@ function CreateNewProjectModal() {
     const emojiChange = (item: string) => {
         setProjectEmoji(item);
     }
-
-    useEffect(() => {
-        if (createProjectSuccess) {
-            projectService.setProjectState({createProjectSuccess: false})
-            if (project && selectedThread) {
-                threadService.addThreadToProject(project, null, false);
-            }
-            if (selectedAccount && selectedAccount.email && membersInputs.memberArray && membersInputs.memberArray?.length > 0 && project && project.id) {
-                let reqBody = {
-                    fromEmail: selectedAccount.email,
-                    toEmails: (membersInputs.memberArray || []).map((data: any) => data.item),
-                    roles: (membersInputs.memberArray || []).map((data: any) => data.memberRole),
-                    groupType: 'project',
-                    groupId: project?.id
-                }
-                
-                if(shouldAddThread) {
-                  dispatch(addItemToGroup({
-                      toaster: {
-                          success: {
-                              title: 'Thread was added to project' || '',
-                              desc: project.name || '',
-                              type: 'success'
-                          }
-                      },
-                      body: reqBody
-                  }))
-                }
-
-                setMembersInput({
-                    input: '',
-                    role: 'member',
-                    memberArray: []
-                });
-                if (shouldRedirectOnCreateProject && project) {
-                    Router.push(`/projects/${project.id!}`)
-                }
-            } else {
-                if (shouldRedirectOnCreateProject && project) {
-                    Router.push(`/projects/${project.id!}`);
-                }
-            }
-            commonService.toggleCreateProjectModel(false, false);
-        }
-    }, [dispatch, createProjectSuccess, selectedAccount, membersInputs.memberArray, project, shouldRedirectOnCreateProject, selectedThread])
 
 
     const addNewProject = () => {
@@ -109,8 +66,8 @@ function CreateNewProjectModal() {
             Toaster({desc: 'Your organization is not created', title: 'Organization is required!', type: 'error'})
             return;
         }
-
         if (selectedAccount && selectedOrganization) {
+            let invitedMembers = [...(membersInputs.memberArray || [])]
             dispatch(createProjects({
                 body: {
                     name: projectName,
@@ -125,8 +82,39 @@ function CreateNewProjectModal() {
                         type: 'success'
                     },
                 },
+                afterSuccessAction: (project: Project) => {
+                    if (shouldAddThread) {
+                        threadService.addThreadToProject(project, null, false);
+                    }
+                    if (selectedAccount && selectedAccount.email && invitedMembers.length > 0) {
+                        let reqBody = {
+                            fromEmail: selectedAccount.email,
+                            toEmails: invitedMembers.map((data: any) => data.item),
+                            roles: invitedMembers.map((data: any) => data.memberRole),
+                            groupType: 'project',
+                            groupId: project?.id
+                        }
+                        dispatch(addItemToGroup({
+                            toaster: {
+                                success: {
+                                    title: 'Members were added to project' || '',
+                                    desc: project.name || '',
+                                    type: 'success'
+                                }
+                            },
+                            body: reqBody
+                        }))
+                    }
+                    if (shouldRedirectOnCreateProject && project) {
+                        threadService.pageChange();
+                        messageService.pageChange();
+                        Router.push(`/projects/${project.id}`)
+                    }
+                    commonService.toggleCreateProjectModel(false, false);
+                }
             }));
         }
+        setMembersInput({input: '', role: 'member', memberArray: []});
         setProjectName('');
         setProjectEmoji('');
     }
@@ -173,7 +161,8 @@ function CreateNewProjectModal() {
     }
 
     return (
-        <Modal isOpen={!!showCreateProjectModal} onClose={() => commonService.toggleCreateProjectModel(false, false)} isCentered>
+        <Modal isOpen={!!showCreateProjectModal} onClose={() => commonService.toggleCreateProjectModel(false, false)}
+               isCentered>
             <ModalOverlay backgroundColor={'rgba(229, 231, 235, 0.50)'} backdropFilter={'blur(16px)'}/>
             <ModalContent maxWidth={'480px'} borderRadius={'12px'} className={styles.projectMemberModal}>
                 <ModalHeader padding={'12px 14px'} fontSize={'13px'} color={'#374151'}
@@ -299,7 +288,8 @@ function CreateNewProjectModal() {
                         <Flex align={'center'} justify={'flex-end'} pt={4} borderTop={'1px solid #F3F4F6'} gap={3}>
                             <Button className={styles.cancelModalButton} border={'1px solid #374151'}
                                     backgroundColor={'#FFFFFF'} borderRadius={8}
-                                    onClick={() => commonService.toggleCreateProjectModel(false, false)} fontSize={'14px'} height={'auto'} lineHeight={1} padding={'10px 12px'}
+                                    onClick={() => commonService.toggleCreateProjectModel(false, false)}
+                                    fontSize={'14px'} height={'auto'} lineHeight={1} padding={'10px 12px'}
                                     color={'#374151'}> Cancel </Button>
 
                             <Button className={styles.addMemberButton} backgroundColor={'#1F2937'} borderRadius={8}

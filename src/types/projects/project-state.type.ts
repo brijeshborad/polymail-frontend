@@ -11,7 +11,6 @@ export declare type InitialProjectState = {
     invitees?: InviteMember[],
     invitee?: InviteMember | null,
     isProjectUpdateSuccess?: boolean
-    createProjectSuccess?: boolean
     projectSearchedString?: string
     editProjectSuccess?: boolean
 }

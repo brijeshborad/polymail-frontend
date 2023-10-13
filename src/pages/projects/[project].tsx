@@ -297,7 +297,6 @@ function ProjectInbox() {
                       {!project ? (
                         <>
                           <Skeleton
-                            className={styles.mailListSkeleton}
                             startColor='#F3F4F6' endColor='#f3f3f3'
                             height={'40px'}
                             borderRadius={'8px'}
@@ -305,7 +304,6 @@ function ProjectInbox() {
                             width={'40px'}
                           />
                           <Skeleton
-                            className={styles.mailListSkeleton}
                             startColor='#F3F4F6' endColor='#f3f3f3'
                             height={'40px'}
                             borderRadius={'8px'}
@@ -313,7 +311,6 @@ function ProjectInbox() {
                             width={'380px'}
                           />
                           <Skeleton
-                            className={styles.mailListSkeleton}
                             startColor='#F3F4F6' endColor='#f3f3f3'
                             height={'23px'}
                             borderRadius={'8px'}
@@ -382,10 +379,10 @@ function ProjectInbox() {
                                   )
                                 })}
                             </div>
-                            <div className={styles.addNewProject}>
+                            <div>
                                 <Button backgroundColor={'transparent'} w={'100%'} borderRadius={0}
                                         justifyContent={'flex-start'}
-                                        onClick={() => commonService.toggleCreateProjectModel(true, true, false)}>
+                                        onClick={() => commonService.toggleCreateProjectModel(true, true)}>
                                     <div className={inboxStyles.plusIconBlack} style={{ marginRight: 8 }}>
                                         <SmallAddIcon/>
                                     </div>

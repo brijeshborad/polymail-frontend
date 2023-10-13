@@ -1,7 +1,7 @@
 import {PayloadAction} from "@reduxjs/toolkit";
 import {AxiosError, AxiosResponse} from "axios";
 import ApiService from "@/utils/api.service";
-import {all, fork, put, takeLatest} from "@redux-saga/core/effects";
+import {all, fork, put, takeEvery} from "@redux-saga/core/effects";
 import {
     addItemToGroup,
     addItemToGroupError,
@@ -64,19 +64,19 @@ function* removeMemberFromOrganization({payload}: PayloadAction<ReducerActionTyp
 }
 
 export function* watchAddItemToGroup() {
-    yield takeLatest(addItemToGroup.type, addItemToGroupService);
+    yield takeEvery(addItemToGroup.type, addItemToGroupService);
 }
 
 export function* watchDeleteMemberFromProject() {
-    yield takeLatest(deleteMemberFromProject.type, removeMemberFromProject);
+    yield takeEvery(deleteMemberFromProject.type, removeMemberFromProject);
 }
 
 export function* watchDeleteMemberShipFromProject() {
-    yield takeLatest(deleteMemberShipFromProject.type, removeMemberShipFromProject);
+    yield takeEvery(deleteMemberShipFromProject.type, removeMemberShipFromProject);
 }
 
 export function* watchDeleteMemberFromOrganization() {
-    yield takeLatest(deleteMemberFromOrganization.type, removeMemberFromOrganization);
+    yield takeEvery(deleteMemberFromOrganization.type, removeMemberFromOrganization);
 }
 
 export default function* rootSaga() {

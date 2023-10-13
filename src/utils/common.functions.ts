@@ -106,5 +106,5 @@ export function getGlobalStore() {
 }
 
 export function generateToasterId() {
-    return `poly-toast-${new Date().getMilliseconds().toString()}`;
+    return `poly-toast-${new Date().getMilliseconds().toString()}-${Math.random()}`;
 }

@@ -1,7 +1,7 @@
 import {PayloadAction} from "@reduxjs/toolkit";
 import {AxiosError, AxiosResponse} from "axios";
 import ApiService from "@/utils/api.service";
-import {all, fork, put, takeLatest} from "@redux-saga/core/effects";
+import {all, fork, put, takeEvery} from "@redux-saga/core/effects";
 import {
     getUsersDetails,
     getUsersDetailsError,
@@ -89,23 +89,23 @@ function* deleteProfilePictureUrl({payload}: PayloadAction<ReducerActionType>) {
 
 
 export function* watchUpdateCurrentDraftMessage() {
-    yield takeLatest(updateUsersDetails.type, updateUserPersonalDetails);
+    yield takeEvery(updateUsersDetails.type, updateUserPersonalDetails);
 }
 
 export function* watchGetUserDetails() {
-    yield takeLatest(getUsersDetails.type, getUsePersonalDetails);
+    yield takeEvery(getUsersDetails.type, getUsePersonalDetails);
 }
 
 export function* watchAddProfilePictureUrlToS3() {
-    yield takeLatest(uploadProfilePicture.type, generateProfilePictureUploadUrl);
+    yield takeEvery(uploadProfilePicture.type, generateProfilePictureUploadUrl);
 }
 
 export function* watchGetProfilePictureUrlFromS3() {
-    yield takeLatest(getProfilePicture.type, getProfilePictureUrl);
+    yield takeEvery(getProfilePicture.type, getProfilePictureUrl);
 }
 
 export function* watchRemoveProfilePictureUrlFromS3() {
-    yield takeLatest(removeProfilePicture.type, deleteProfilePictureUrl);
+    yield takeEvery(removeProfilePicture.type, deleteProfilePictureUrl);
 }
 
 export default function* rootSaga() {

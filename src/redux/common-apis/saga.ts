@@ -1,6 +1,6 @@
 import {AxiosError, AxiosResponse} from "axios";
 import ApiService from "@/utils/api.service";
-import {all, fork, put, takeLatest} from "@redux-saga/core/effects";
+import {all, fork, put, takeEvery} from "@redux-saga/core/effects";
 import {
   getActivityFeed, getActivityFeedError, getActivityFeedSuccess,
   getContacts, getContactsError, getContactsSuccess,
@@ -72,19 +72,19 @@ function* getAllActivityFeed() {
 
 
 export function* watchGetSummary() {
-  yield takeLatest(getSummary.type, getSummaryData);
+  yield takeEvery(getSummary.type, getSummaryData);
 }
 
 export function* watchGetProjectsSummary() {
-  yield takeLatest(getProjectSummary.type, getProjectSummaryData);
+  yield takeEvery(getProjectSummary.type, getProjectSummaryData);
 }
 
 export function* watchGetAllContacts() {
-  yield takeLatest(getContacts.type, getAllContacts);
+  yield takeEvery(getContacts.type, getAllContacts);
 }
 
 export function* watchGetAllActivityFeed() {
-  yield takeLatest(getActivityFeed.type, getAllActivityFeed);
+  yield takeEvery(getActivityFeed.type, getAllActivityFeed);
 }
 
 export default function* rootSaga() {

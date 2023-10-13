@@ -3,7 +3,7 @@ import {Toaster} from "@/components/common";
 import {createStandaloneToast} from "@chakra-ui/react";
 import {generateToasterId} from "@/utils/common.functions";
 
-export function performSuccessActions(payload: ReducerActionType) {
+export function performSuccessActions(payload: ReducerActionType, currentResponse: any | null = null) {
     const {toast} = createStandaloneToast();
 
     if (payload.toaster?.success) {
@@ -50,7 +50,7 @@ export function performSuccessActions(payload: ReducerActionType) {
     }
 
     if (payload.afterSuccessAction) {
-        payload.afterSuccessAction();
+        payload.afterSuccessAction(currentResponse);
     }
 }
 

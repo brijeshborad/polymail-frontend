@@ -1,5 +1,5 @@
 import {PayloadAction} from "@reduxjs/toolkit";
-import {all, fork, put, takeLatest} from "@redux-saga/core/effects";
+import {all, fork, put, takeEvery} from "@redux-saga/core/effects";
 import ApiService from "@/utils/api.service";
 import {AxiosError, AxiosResponse} from "axios";
 import {
@@ -121,35 +121,35 @@ function* removeAttachmentsData({payload}: PayloadAction<ReducerActionType>) {
 }
 
 export function* watchGetMessages() {
-    yield takeLatest(getAllMessages.type, getMessages);
+    yield takeEvery(getAllMessages.type, getMessages);
 }
 
 export function* watchGetMessagesPart() {
-    yield takeLatest(getMessageParts.type, getMessagePart);
+    yield takeEvery(getMessageParts.type, getMessagePart);
 }
 
 export function* watchGetMessagesAttachments() {
-    yield takeLatest(getMessageAttachments.type, getMessageAttachment);
+    yield takeEvery(getMessageAttachments.type, getMessageAttachment);
 }
 
 export function* watchGetAttachmentUrl() {
-    yield takeLatest(getAttachmentDownloadUrl.type, getAttachmentUrl);
+    yield takeEvery(getAttachmentDownloadUrl.type, getAttachmentUrl);
 }
 
 export function* watchAddAttachmentUrlToS3() {
-    yield takeLatest(uploadAttachment.type, generateAttachmentUploadUrl);
+    yield takeEvery(uploadAttachment.type, generateAttachmentUploadUrl);
 }
 
 export function* watchUpdateMessageData() {
-    yield takeLatest(updateMessage.type, updateMessageData);
+    yield takeEvery(updateMessage.type, updateMessageData);
 }
 
 export function* watchDeleteMessage() {
-    yield takeLatest(deleteMessage.type, deleteMessageAPI);
+    yield takeEvery(deleteMessage.type, deleteMessageAPI);
 }
 
 export function* watchRemoveAttachmentData() {
-    yield takeLatest(removeAttachment.type, removeAttachmentsData);
+    yield takeEvery(removeAttachment.type, removeAttachmentsData);
 }
 
 

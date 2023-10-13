@@ -4,7 +4,7 @@ import {AnyAction, Dispatch} from "@reduxjs/toolkit";
 export declare type ReducerActionType = {
     body?: any,
     toaster?: ReducerActionToasterConfig,
-    afterSuccessAction?: () => void,
+    afterSuccessAction?: (_response?: any) => void,
     undoAction?: ReducerActionUndoConfig,
 }
 

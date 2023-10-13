@@ -33,7 +33,7 @@ import {
 import { ReducerActionType } from "@/types";
 import ApiService from "@/utils/api.service";
 import { performSuccessActions } from "@/utils/common-redux.functions";
-import { all, fork, put, takeLatest } from "@redux-saga/core/effects";
+import { all, fork, put, takeEvery } from "@redux-saga/core/effects";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { AxiosError, AxiosResponse } from "axios";
 
@@ -63,7 +63,7 @@ function* addProjects({payload}: PayloadAction<ReducerActionType>) {
     try {
         const response: AxiosResponse = yield ApiService.callPost(`projects`, {name : payload.body.name,
              accountId : payload.body.accountId, organizationId : payload.body.organizationId, emoji : payload.body.emoji});
-             performSuccessActions(payload);
+             performSuccessActions(payload, response);
         yield put(createProjectsSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
@@ -180,48 +180,48 @@ function* removeProjectData({payload}: PayloadAction<ReducerActionType>) {
 }
 
 export function* watchGetProjects() {
-    yield takeLatest(getAllProjects.type, getProjects);
+    yield takeEvery(getAllProjects.type, getProjects);
 }
 
 export function* watchAddProjects() {
-    yield takeLatest(createProjects.type, addProjects);
+    yield takeEvery(createProjects.type, addProjects);
 }
 
 export function* watchGetProjectMembers() {
-    yield takeLatest(getProjectMembers.type, getProjectMembersService);
+    yield takeEvery(getProjectMembers.type, getProjectMembersService);
 }
 
 export function* watchGetProjectById() {
-    yield takeLatest(getProjectById.type, getProject);
+    yield takeEvery(getProjectById.type, getProject);
 }
 
 export function* watchGetProjectMembersInvitees() {
-    yield takeLatest(getProjectMembersInvites.type, getProjectMembersInvitees);
+    yield takeEvery(getProjectMembersInvites.type, getProjectMembersInvitees);
 }
 
 export function* watchUpdateProjectMembersData() {
-    yield takeLatest(updateProjectMemberRole.type, updateProjectMembersData);
+    yield takeEvery(updateProjectMemberRole.type, updateProjectMembersData);
 }
 
 export function* watchUpdateProjectData() {
-    yield takeLatest(updateProject.type, updateProjectData);
+    yield takeEvery(updateProject.type, updateProjectData);
 }
 
 export function* watchUpdateOptimisticProjectData() {
-    yield takeLatest(updateOptimisticProject.type, updateProjectDataWithUndo);
+    yield takeEvery(updateOptimisticProject.type, updateProjectDataWithUndo);
 }
 
 
 export function* watchRemoveProjectFromThread() {
-    yield takeLatest(removeThreadFromProject.type, removeProjectFormThreads);
+    yield takeEvery(removeThreadFromProject.type, removeProjectFormThreads);
 }
 
 export function* watchEditProjectData() {
-    yield takeLatest(editProjects.type, editProjectsData);
+    yield takeEvery(editProjects.type, editProjectsData);
 }
 
 export function* watchRemoveProjectData() {
-    yield takeLatest(removeProject.type, removeProjectData);
+    yield takeEvery(removeProject.type, removeProjectData);
 }
 
 export default function* rootSaga() {

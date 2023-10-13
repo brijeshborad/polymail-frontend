@@ -19,7 +19,7 @@ import { ReducerActionType } from "@/types";
 import ApiService from "@/utils/api.service";
 import { performSuccessActions } from "@/utils/common-redux.functions";
 import LocalStorageService from "@/utils/localstorage.service";
-import { all, fork, put, takeLatest } from "@redux-saga/core/effects";
+import { all, fork, put, takeEvery } from "@redux-saga/core/effects";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { AxiosError, AxiosResponse } from "axios";
 
@@ -140,35 +140,35 @@ function* compareCode({payload}: PayloadAction<ReducerActionType>) {
 }
 
 export function* watchLoginUser() {
-    yield takeLatest(loginUser.type, login);
+    yield takeEvery(loginUser.type, login);
 }
 
 export function* watchRegisterUser() {
-    yield takeLatest(registerUser.type, register);
+    yield takeEvery(registerUser.type, register);
 }
 
 export function* watchGoogleAuthLink() {
-    yield takeLatest(googleAuthLink.type, getGoogleAuthLink);
+    yield takeEvery(googleAuthLink.type, getGoogleAuthLink);
 }
 
 export function* watchLogoutUser() {
-    yield takeLatest(logoutUser.type, logout);
+    yield takeEvery(logoutUser.type, logout);
 }
 
 export function* watchChangePassword() {
-    yield takeLatest(changePassword.type, passwordChange);
+    yield takeEvery(changePassword.type, passwordChange);
 }
 
 export function* watchResetPassword() {
-    yield takeLatest(forgotPassword.type, forgotOldPassword);
+    yield takeEvery(forgotPassword.type, forgotOldPassword);
 }
 
 export function* watchUpdateNewPassword() {
-    yield takeLatest(resetPassword.type, updateNewPassword);
+    yield takeEvery(resetPassword.type, updateNewPassword);
 }
 
 export function* watchCompareCode() {
-    yield takeLatest(magicCode.type, compareCode);
+    yield takeEvery(magicCode.type, compareCode);
 }
 
 export default function* rootSaga() {

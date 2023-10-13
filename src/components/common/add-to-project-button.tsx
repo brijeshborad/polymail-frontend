@@ -107,8 +107,10 @@ export function AddToProjectButton() {
             let removeProject = threadProject.filter((project: any) => project.id !== incomingEvent.data.id);
             setThreadProject([...removeProject]);
             let projects = [...filteredProjects];
-            projects.push(incomingEvent.data);
-            setFilteredProjects([...projects]);
+            if (!projects.find(item => item.id === incomingEvent.data.id)) {
+                projects.push(incomingEvent.data);
+                setFilteredProjects([...projects]);
+            }
             globalEventService.blankEvent();
         }
         if (typeof incomingEvent === 'object' && incomingEvent.type === 'addToProject.add') {
@@ -256,7 +258,7 @@ export function AddToProjectButton() {
                     <div className={styles.addNewProject}>
                         <Button backgroundColor={'transparent'} w={'100%'} borderRadius={0}
                                 justifyContent={'flex-start'}
-                                onClick={() => commonService.toggleCreateProjectModel(true, false)}>
+                                onClick={() => commonService.toggleCreateProjectModel(true, false, true)}>
                             <div className={styles.plusIcon}>
                                 <SmallAddIcon/>
                             </div>

@@ -1,5 +1,5 @@
 import {PayloadAction} from "@reduxjs/toolkit";
-import {all, fork, put, takeLatest, takeEvery} from "@redux-saga/core/effects";
+import {all, fork, put, takeEvery} from "@redux-saga/core/effects";
 import ApiService from "@/utils/api.service";
 import {AxiosError, AxiosResponse} from "axios";
 import {
@@ -69,7 +69,7 @@ function* searchAndGetThreads({payload}: PayloadAction<ReducerActionType>) {
 }
 
 export function* watchGetThreads() {
-    yield takeLatest(getAllThreads.type, getThreads);
+    yield takeEvery(getAllThreads.type, getThreads);
 }
 
 export function* watchUpdateThreads() {
@@ -77,11 +77,11 @@ export function* watchUpdateThreads() {
 }
 
 export function* watchSearchAndGetThreads() {
-    yield takeLatest(searchThreads.type, searchAndGetThreads);
+    yield takeEvery(searchThreads.type, searchAndGetThreads);
   }
 
   export function* watchBatchUpdateThread() {
-    yield takeLatest(batchUpdateThreads.type, batchThreads);
+    yield takeEvery(batchUpdateThreads.type, batchThreads);
 }
 
 export default function* rootSaga() {
