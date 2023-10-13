@@ -3,11 +3,13 @@ import {ThreadsSideBar} from "@/components/threads";
 import styles from "@/styles/Home.module.css";
 import {Flex, Grid, GridItem,} from "@chakra-ui/react";
 import withAuth from "@/components/auth/withAuth";
-import {useSelector} from "react-redux";
+import { useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {User} from "@/models";
 import dynamic from 'next/dynamic'
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
+import { useRouter } from "next/router";
+import { threadService } from "@/services";
 
 const InboxHeaderProjectsList = dynamic(
     () => import('@/components/project/inbox-header-projects-list').then((mod) => mod.InboxHeaderProjectsList)
@@ -20,12 +22,14 @@ const SelectedThreads = dynamic(
 )
 
 function InboxPage() {
-    const [size, setSize] = useState<number>(0);
-    const [userData, setUserData] = useState<User | null | undefined>(null);
-    const {user} = useSelector((state: StateType) => state.auth);
-    const {selectedThread, multiSelection} = useSelector((state: StateType) => state.threads);
-    const {isLoading} = useSelector((state: StateType) => state.projects);
-
+  const [size, setSize] = useState<number>(0);
+  const [userData, setUserData] = useState<User | null | undefined>(null);
+  const {user} = useSelector((state: StateType) => state.auth);
+  const {selectedThread, multiSelection} = useSelector((state: StateType) => state.threads);
+  const {isLoading} = useSelector((state: StateType) => state.projects);
+  const {threads} = useSelector((state: StateType) => state.threads);
+  
+    const router = useRouter()
     const isMultiItemsSelected = multiSelection && multiSelection.length > 0
 
     useEffect(() => {
@@ -35,6 +39,22 @@ function InboxPage() {
     function updateSize() {
         setSize(window.innerWidth);
     }
+
+    useEffect(() => {
+      if(!router.query.thread && selectedThread) {
+        router.push(
+          { pathname: '/inbox', query: { thread: selectedThread.id }},  
+          undefined, 
+          { shallow: true }
+        )
+      }
+      
+      const threadFromUrl = threads?.find(t => t.id == router.query.thread)
+
+      if(threadFromUrl) {
+        threadService.setSelectedThread(threadFromUrl);
+      }
+    }, [threads, selectedThread, router.query.thread, router])
 
     useEffect(() => {
         if (typeof window !== "undefined") {

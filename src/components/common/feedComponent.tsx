@@ -16,7 +16,7 @@ export const FeedComponent: React.FC<FeedComponentProps> = ({feedData, markFeedA
             <Flex>
                 <Box flex={1}>
                     <Text fontSize="13px">
-                        {feedData?.title}
+                        {feedData?.username && <b style={{marginRight: '4px'}}>{feedData?.username}</b>}{feedData?.title}
                     </Text>
                     <Text display={'flex'} alignItems={'center'} color="#6B7280" fontSize="12px" className={styles.feedSubtitle}>
                         <Time as={'span'} fontSize={'12px'} time={feedData?.created} isShowFullTime={false} showTimeInShortForm={true}/>

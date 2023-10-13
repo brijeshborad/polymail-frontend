@@ -342,6 +342,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                             borderRadius={0} backgroundColor={'transparent'} height={'auto'}
                             fontSize={'13px'} color={'#6B7280'} as={Button} marginLeft={1}
                             rightIcon={<TriangleDownIcon/>}
+                            _focus={{ boxShadow: "none" }}
                             onMouseEnter={() => {
                                 clearDebounce();
                                 setIsMoreDropdownOpen(true)

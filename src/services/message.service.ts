@@ -78,7 +78,7 @@ class MessageService extends BaseService {
             this.dispatchAction(sendMessage, {body: {id: currentDraft.id, ...params}});
 
             Toaster({
-                desc: `Your message has been scheduled`,
+                desc: scheduledDate || '',
                 type: 'send_confirmation',
                 title: 'Your message has been scheduled',
                 id: polyToast,

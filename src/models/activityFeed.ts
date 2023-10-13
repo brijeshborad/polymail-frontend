@@ -10,4 +10,5 @@ export interface ActivityFeed {
     subtitle?: string,
     body?: string,
     isRead?: boolean,
+    username?: string,
 }

@@ -97,10 +97,9 @@ export const FeedSidebar = () => {
     return (
         <>
             <Tooltip label={'Activity Feed'} placement={'bottom'}>
-                <Flex align={'center'} cursor={'pointer'} justify={'center'} className={styles.notificationIcon}
+                <Flex align={'center'} cursor={'pointer'} justify={'center'} className={`${styles.notificationIcon} ${unreadCount > 0 ? styles.notificationIconUnRead: ''}`}
                       onClick={onOpen}>
-
-                    <EnergyIcon/>
+                    <EnergyIcon fill={unreadCount > 0 ? '#fff': '#08162F'}/>
                     {unreadCount > 0 ? (<Badge>{unreadCount}</Badge>) : null}
                 </Flex>
             </Tooltip>
@@ -155,7 +154,9 @@ export const FeedSidebar = () => {
                         {/*</Box>*/}
 
                         <Box padding="12px 16px">
-                            {feeds.map((t: ActivityFeed, index: number) => (
+                            {feeds
+                              .sort((a, b) => b.created! < a.created! ? -1 : 0)
+                              .map((t: ActivityFeed, index: number) => (
                                 <FeedComponent key={index} feedData={t} markFeedAsRead={() => markFeedAsRead(index)}/>
                             ))}
                             {/*<FeedComponent isRead={true}/>*/}

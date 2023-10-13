@@ -68,8 +68,8 @@ function CreateNewProjectModal() {
                   dispatch(addItemToGroup({
                       toaster: {
                           success: {
-                              desc: 'Thread was added to ' + project.name?.toLowerCase() + '.',
-                              title: selectedThread?.subject || '',
+                              title: 'Thread was added to project' || '',
+                              desc: project.name || '',
                               type: 'success'
                           }
                       },

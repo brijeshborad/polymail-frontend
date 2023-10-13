@@ -3,7 +3,7 @@ import LocalStorageService from "./localstorage.service";
 import Router from "next/router";
 import {Toaster} from "@/components/common";
 
-const axiosInstance: AxiosInstance = axios.create({
+export const axiosInstance: AxiosInstance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL,
     timeout: 120 * 1000,
     headers: {
@@ -48,7 +48,9 @@ axiosInstance.interceptors.response.use((response) => {
             apiMethod = error.config.method
         }
         if (!apiUrl.includes('avatar') || apiMethod !== 'get') {
-            Toaster(err);
+            if(error.config.url != '/link/preview') {
+              Toaster(err);
+            }
         }
 
         if (error.response.status === 401) {
