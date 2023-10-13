@@ -120,8 +120,8 @@ function CreateNewProjectModal() {
                 },
                 toaster: {
                     success: {
-                        desc: "New project added successfully",
-                        title: "Success",
+                        desc: projectName,
+                        title: "Project created",
                         type: 'success'
                     },
                 },
