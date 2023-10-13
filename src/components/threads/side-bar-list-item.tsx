@@ -1,19 +1,23 @@
 import styles2 from "@/styles/common.module.css";
 import styles from "@/styles/Inbox.module.css";
-import {Box, Flex, Image, Text} from "@chakra-ui/react";
+import {Box, Flex, Image, Menu, MenuButton, MenuItem, MenuList, Text} from "@chakra-ui/react";
 import {Time} from "@/components/common";
 import {DisneyIcon, DotIcon} from "@/icons";
 import {StateType, ThreadListItemProps} from "@/types";
 import {useSelector} from "react-redux";
 import React, {useEffect, useRef, useState} from "react";
 import {MAILBOX_UNREAD} from "@/utils/constants";
-import {UserProjectOnlineStatus} from "@/models";
+import {Project, UserProjectOnlineStatus} from "@/models";
 import {keyNavigationService} from "@/services";
 import Tooltip from "../common/Tooltip";
+import { ChevronDownIcon } from "@chakra-ui/icons";
+import { useRouter } from "next/router";
 
 
 export function ThreadsSideBarListItem(props: ThreadListItemProps) {
     const ref = useRef(null);
+    const router = useRouter()
+
     const {
         multiSelection,
         updateSuccess,
@@ -48,6 +52,10 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
         // eslint-disable-next-line
     }, [selectedThread])
 
+    const goToProject = (project: Project) => {
+      router.push(`/projects/${project.id}`)
+    }
+
     return (
         <>
             <Box
@@ -62,6 +70,48 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                     <Flex align={"center"} className={styles.senderDetails} gap={1}>
                         <DisneyIcon/> {props?.thread?.from?.name || props?.thread?.from?.email}
                     </Flex>
+                    {(props?.thread?.projects || []).length > 0 && (
+                      <Flex justifyContent={'flex-start'} flexGrow={1}>
+                        <Menu>
+                          <Tooltip label='List all' placement='bottom'>
+                            <MenuButton
+                              display={'flex'}
+                              as={Flex}
+                              fontWeight={600}
+                              backgroundColor={'#fff'}
+                              className='emoji-dropdown'
+                              padding={'0 8px'}
+                              cursor={'pointer'}
+                              rounded={'md'}
+                              >
+                              <Flex justifyContent={'flex-start'} alignItems={'center'} className='thread-emojis'>
+                                {props?.thread?.projects?.slice(0, 5).map((p, index) => {
+                                  return (
+                                    <span key={index} className='emoji'>{p.emoji}</span>
+                                    )
+                                  })}
+                                {(props?.thread?.projects || []).length > 5 && (
+                                  <span className={styles.projectsLength} style={{ height: '14px', marginLeft: 0 }}>
+                                    {`+${(props?.thread?.projects || []).length-5}`}
+                                  </span>
+                                )}
+                                <ChevronDownIcon className='icon' />
+                            </Flex>
+                            </MenuButton>
+                          </Tooltip>
+
+                          <MenuList className={`${styles.addToProjectList} drop-down-list`} zIndex={'overlay'}>
+                            <div className={'add-to-project-list'}>
+                              {props?.thread?.projects?.map(project => (
+                                <MenuItem gap={2} key={project.id} onClick={() => goToProject(project)}>
+                                    {project.emoji} {project.name}
+                                </MenuItem>
+                              ))}
+                            </div>
+                          </MenuList>
+                        </Menu>
+                      </Flex>
+                    )}
                     <Flex alignItems={'center'} className={styles2.receiveTime} justify={'flex-end'}>
                         {isClicked &&
                         <DotIcon marginRight={'5px'} className={`readThreadIcon`} color={'#9ca3af'}/>}

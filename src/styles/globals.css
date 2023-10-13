@@ -949,3 +949,32 @@ div:has(> .mailSendToaster) {
   border-style: solid;
   border-color: black transparent transparent transparent;
 }
+
+.thread-emojis .emoji {
+  min-width: 24px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  overflow: hidden;
+  text-align: center;
+}
+
+.thread-emojis .emoji + .emoji {
+  margin-left: -6px;
+}
+
+.emoji-dropdown {
+  background-color: #fff !important;
+}
+
+.emoji-dropdown .icon{
+  display: none;
+}
+
+.emoji-dropdown:hover {
+  background-color: #F6F6F6 !important;
+}
+
+.emoji-dropdown:hover .icon{
+  display: block;
+}
