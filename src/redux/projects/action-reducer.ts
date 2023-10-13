@@ -45,10 +45,17 @@ const projectsSlice = createSlice({
         },
         createProjectsSuccess: (state: InitialProjectState, {payload: project}: PayloadAction<{}>) => {
             let currentProjects = [...(current(state).projects || [])] as Project[];
+            let projectData = {
+                ...project,
+                projectMeta: {
+                    userId: currentProjects[0]?.projectMeta?.userId
+                }
+            }
+
             return {
                 ...state,
-                projects: [project, ...currentProjects],
-                project,
+                projects: [projectData, ...currentProjects],
+                project: projectData,
                 isLoading: false,
                 createProjectSuccess:true
             }
@@ -144,9 +151,8 @@ const projectsSlice = createSlice({
         },
         undoProjectUpdate: (state: InitialProjectState, {payload}: PayloadAction<ReducerActionType>) => {
 
-
             let currentProjects = [...(current(state).projects || [])] as Project[];
-            let projectData = {...({...payload.body.error.project, projectMeta: payload.body.error.project.body.undo}) || {}} as Project;
+            let projectData = {...({...payload.body.project, projectMeta: payload.body.project.body.undo}) || {}} as Project;
             let index1 = currentProjects.findIndex((item: Project) => item.id === projectData?.id);
             currentProjects[index1] = {
                 ...currentProjects[index1],
@@ -195,6 +201,16 @@ const projectsSlice = createSlice({
             return {...state, project: null, isLoading: false, editProjectSuccess: false}
         },
 
+        removeProject: (state: InitialProjectState, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, isLoading: false}
+        },
+        removeProjectSuccess: (state: InitialProjectState, _action: PayloadAction<{}>) => {
+            return {...state,isLoading: false,}
+        },
+        removeProjectError: (state: InitialProjectState, _action: PayloadAction<any>) => {
+            return {...state, isLoading: false}
+        },
+
         updateProjectState: (state: InitialProjectState, action: PayloadAction<InitialProjectState>) => {
             return {...state, ...action.payload}
         },
@@ -231,6 +247,9 @@ export const {
     editProjects,
     editProjectsSuccess,
     editProjectsError,
+    removeProject,
+    removeProjectSuccess,
+    removeProjectError,
     undoProjectUpdate
 } = projectsSlice.actions
 export default projectsSlice.reducer

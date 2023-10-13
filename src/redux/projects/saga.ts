@@ -1,7 +1,10 @@
 import {
     createProjects,
     createProjectsError,
-    createProjectsSuccess, editProjects, editProjectsError, editProjectsSuccess,
+    createProjectsSuccess,
+    editProjects,
+    editProjectsError,
+    editProjectsSuccess,
     getAllProjects,
     getAllProjectsError,
     getAllProjectsSuccess,
@@ -13,7 +16,11 @@ import {
     getProjectMembersInvites,
     getProjectMembersInvitesError,
     getProjectMembersInvitesSuccess,
-    getProjectMembersSuccess, removeThreadFromProject, removeThreadFromProjectError, removeThreadFromProjectSuccess,
+    getProjectMembersSuccess, removeProject, removeProjectError,
+    removeProjectSuccess,
+    removeThreadFromProject,
+    removeThreadFromProjectError,
+    removeThreadFromProjectSuccess,
     undoProjectUpdate,
     updateOptimisticProject,
     updateProject,
@@ -160,6 +167,18 @@ function* editProjectsData({payload}: PayloadAction<ReducerActionType>) {
     }
 }
 
+function* removeProjectData({payload}: PayloadAction<ReducerActionType>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callDelete(`projects/${payload.body.projectId}`, null);
+        performSuccessActions(payload);
+        yield put(removeProjectSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        performSuccessActions(payload);
+        yield put(removeProjectError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
+    }
+}
+
 export function* watchGetProjects() {
     yield takeLatest(getAllProjects.type, getProjects);
 }
@@ -201,6 +220,10 @@ export function* watchEditProjectData() {
     yield takeLatest(editProjects.type, editProjectsData);
 }
 
+export function* watchRemoveProjectData() {
+    yield takeLatest(removeProject.type, removeProjectData);
+}
+
 export default function* rootSaga() {
     yield all([
         fork(watchGetProjects),
@@ -213,6 +236,7 @@ export default function* rootSaga() {
         fork(watchUpdateOptimisticProjectData),
         fork(watchRemoveProjectFromThread),
         fork(watchEditProjectData),
+        fork(watchRemoveProjectData),
     ]);
 }
 

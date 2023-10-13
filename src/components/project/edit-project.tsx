@@ -65,7 +65,7 @@ function EditProject() {
     }, [editProjectSuccess])
 
 
-    const addNewProject = () => {
+    const editProject = () => {
         if (projectName.length === 0) {
             Toaster({desc: 'Please enter the project\'s name', title: 'Project name is required!', type: 'error'})
             return;
@@ -428,7 +428,7 @@ function EditProject() {
                                     color={'#374151'}> Cancel </Button>
 
                             <Button className={styles.addMemberButton} backgroundColor={'#1F2937'} borderRadius={8}
-                                    onClick={() => addNewProject()} fontSize={'14px'} height={'auto'} lineHeight={1}
+                                    onClick={() => editProject()} fontSize={'14px'} height={'auto'} lineHeight={1}
                                     padding={'11px 12px'}
                                     color={'#ffffff'}> Save Project </Button>
                         </Flex>

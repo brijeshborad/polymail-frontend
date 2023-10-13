@@ -5,10 +5,10 @@ import {
     addItemToGroup, deleteMemberFromProject, deleteMemberShipFromProject
 } from "@/redux/memberships/action-reducer";
 import {
-    getProjectMembers,
-    getProjectMembersInvites,
-    updateProjectMemberRole,
-    updateProjectState
+  getProjectMembers,
+  getProjectMembersInvites, removeProject,
+  updateProjectMemberRole,
+  updateProjectState
 } from "@/redux/projects/action-reducer";
 import styles from "@/styles/project.module.css";
 import inboxStyles from "@/styles/Inbox.module.css";
@@ -34,7 +34,7 @@ import {
 } from "@chakra-ui/react";
 import dynamic from 'next/dynamic';
 import Image from "next/image";
-import {useRouter} from "next/router";
+import Router, {useRouter} from "next/router";
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {MenuIcon} from "@/icons";
@@ -68,6 +68,8 @@ function ProjectInbox() {
     });
     const {isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose} = useDisclosure()
     const [selectedMember, setSelectedMember] = useState<any>(null);
+    const [projectData,setProjectData] = useState<Project | null>(null);
+    const [actionType,setActionType] = useState<string>('');
 
     const router = useRouter();
     const dispatch = useDispatch();
@@ -82,6 +84,11 @@ function ProjectInbox() {
       setFilteredProjects((projects || []));
   }, [projects, selectedThread])
 
+  useEffect(() => {
+    let projectData = (projects || []).filter((item: Project) => item.id === project?.id)
+    setProjectData(projectData[0])
+
+  }, [projects, project])
   useEffect(() => {
       if (searchValue.length > 0) {
           setFilteredProjects((projects || []).filter((item: Project) => item.name?.toLowerCase().includes(searchValue.toLowerCase())));
@@ -230,8 +237,11 @@ function ProjectInbox() {
     };
 
 
-    const openModel = (item: any) => {
+    const openModel = (item: any, type: string) => {
+      setActionType(type)
+      if (type === 'leave') {
         setSelectedMember(item)
+      }
         onDeleteModalOpen()
     }
 
@@ -257,10 +267,32 @@ function ProjectInbox() {
                                 title: 'Remove member form project',
                                 type: 'success'
                             }
+                        },
+                        afterSuccessAction: () => {
+                          let projectData = (projects || []).filter((item : Project) => item.id !== project.id);
+                          dispatch(updateProjectState({projects: projectData}))
+                          Router.push(`/projects`);
+
                         }
-                    }));
+                      }));
                 }
             }
+        } else {
+          if (projectData && projectData.id) {
+            dispatch(removeProject({
+                body: {
+                  projectId: projectData.id
+                },
+                toaster: {
+                  success: {
+                    desc: 'Project removed successfully',
+                    title: 'Success',
+                    type: 'success'
+                  }
+                }
+              }
+            ))
+          }
         }
         onDeleteModalClose()
     }
@@ -269,6 +301,8 @@ function ProjectInbox() {
     const capitalizeFLetter = (value: string) => {
         return value[0].toUpperCase() + value.slice(1)
     }
+
+    console.log("projectData?.projectMeta?.userId",projectData?.projectMeta?.userId)
 
     return (
         <>
@@ -485,7 +519,7 @@ function ProjectInbox() {
                                                             </MenuList>
                                                         </Menu>
                                                         <IconButton className={styles.closeIcon}
-                                                                    onClick={() => openModel(member)}
+                                                                    onClick={() => openModel(member, 'leave')}
                                                                     cursor={'pointer'} backgroundColor={'#FFFFFF'}
                                                                     padding={0}
                                                                     minWidth={'1px'} aria-label='Add to friends'
@@ -524,7 +558,7 @@ function ProjectInbox() {
                                                             </MenuList>
                                                         </Menu>
                                                         <IconButton className={styles.closeIcon}
-                                                                    onClick={() => openModel(invite)}
+                                                                    onClick={() => openModel(invite, 'leave')}
                                                                     cursor={'pointer'} backgroundColor={'#FFFFFF'}
                                                                     padding={0}
                                                                     minWidth={'1px'} aria-label='Add to friends'
@@ -548,8 +582,9 @@ function ProjectInbox() {
                             <MenuList minW={'126px'} className={'drop-down-list'}>
                                 <MenuItem>Mark as read</MenuItem>
                                 <MenuItem onClick={() => commonService.toggleEditProjectModel(true, false, project)}>Edit project</MenuItem>
-                                <MenuItem>Leave project</MenuItem>
-                                <MenuItem className={'delete-button'}>Delete project</MenuItem>
+                                <MenuItem onClick={() => openModel(selectedAccount, 'leave')}>Leave project</MenuItem>
+
+                                {(projectData?.projectMeta?.userId === selectedAccount?.userId) && <MenuItem className={'delete-button'} onClick={() => openModel(project, 'remove')}>Delete project</MenuItem> }
                             </MenuList>
                         </Menu>
                     </Flex>
@@ -570,7 +605,7 @@ function ProjectInbox() {
 
             <RemoveRecordModal onOpen={onDeleteModalOpen} isOpen={isDeleteModalOpen} onClose={onDeleteModalClose}
                                confirmDelete={removeMemberFromProject}
-                               modelTitle={'Are you sure you want to remove member from project?'}/>
+                               modelTitle={`Are you sure you want to ${actionType === 'remove' ? 'remove' : 'leave'} member from project?`}/>
 
         </>
     )

@@ -5,20 +5,22 @@ import {
     Button,
     Flex,
     Heading, Menu, MenuButton, MenuItem, MenuList,
-    Text
+    Text, useDisclosure
 } from "@chakra-ui/react";
 import styles from "@/styles/project.module.css";
 import Image from "next/image";
 import {BlueStarIcon, DragIcon, LockIcon, StarIcon, MenuIcon} from "@/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {updateProject, updateOptimisticProject} from "@/redux/projects/action-reducer";
+import {updateProject, updateOptimisticProject, removeProject} from "@/redux/projects/action-reducer";
 import Router, {useRouter} from "next/router";
 import {Project, UserProjectOnlineStatus} from "@/models";
 import {POSITION_GAP} from "@/utils/constants";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import {commonService} from "@/services";
 import Tooltip from "@/components/common/Tooltip";
+import RemoveRecordModal from "@/components/common/delete-record-modal";
+import {deleteMemberFromProject} from "@/redux/memberships/action-reducer";
 
 function Index() {
     const {isLoading, projects, projectSearchedString} = useSelector((state: StateType) => state.projects);
@@ -28,6 +30,10 @@ function Index() {
     const [isOpenByRoute, setIsOpenByRoute] = useState<boolean>(false);
 
     const [itemList, setItemList] = useState<Project[]>([]);
+    const {isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose} = useDisclosure()
+    const [projectData,setProjectData] = useState<Project | null>(null);
+    const {selectedAccount} = useSelector((state: StateType) => state.accounts);
+    const [actionType,setActionType] = useState<string>('');
 
 
     useEffect(() => {
@@ -129,6 +135,50 @@ function Index() {
         }
     }, [showCreateProjectModal, isOpenByRoute])
 
+    const openModel = (item: any, type: string) => {
+        setProjectData(item)
+        setActionType(type)
+        onDeleteModalOpen()
+    }
+
+    const removeProjectData = () => {
+        if (actionType === 'leave') {
+            if (selectedAccount) {
+                if (projectData && projectData.id && selectedAccount?.id) {
+                    dispatch(deleteMemberFromProject({
+                        body: {id: projectData.id, accountId: selectedAccount.id}, toaster: {
+                            success: {
+                                desc: 'Member is removed form project successfully',
+                                title: 'Remove member form project',
+                                type: 'success'
+                            }
+                        },
+                        afterSuccessAction: () => {
+                            let project = (itemList || []).filter((item : Project) => item.id !== projectData.id);
+                            setItemList(project);
+                        }
+                    }));
+                }
+            }
+        } else {
+            if (projectData && projectData.id) {
+                dispatch(removeProject({
+                      body: {
+                          projectId: projectData.id
+                      },
+                      toaster: {
+                          success: {
+                              desc: 'Project removed successfully',
+                              title: 'Success',
+                              type: 'success'
+                          }
+                      }
+                  }
+                ))
+            }
+        }
+        onDeleteModalClose()
+    }
 
     return (
         <>
@@ -234,8 +284,8 @@ function Index() {
                                     <MenuList minW={'126px'} className={'drop-down-list'}>
                                         <MenuItem>Mark as read</MenuItem>
                                         <MenuItem onClick={() => commonService.toggleEditProjectModel(true, false, project)}>Edit project</MenuItem>
-                                        <MenuItem>Leave project</MenuItem>
-                                        <MenuItem className={'delete-button'}>Delete project</MenuItem>
+                                        <MenuItem onClick={() => openModel(project, 'leave')}>Leave project</MenuItem>
+                                        {(project.projectMeta?.userId === selectedAccount?.userId) && <MenuItem className={'delete-button'} onClick={() => openModel(project, 'delete')}>Delete project</MenuItem>}
                                     </MenuList>
                                 </Menu>
 
@@ -245,6 +295,10 @@ function Index() {
                     </Flex>
                 </Flex>
             </Flex>
+
+            <RemoveRecordModal onOpen={onDeleteModalOpen} isOpen={isDeleteModalOpen} onClose={onDeleteModalClose}
+                               confirmDelete={removeProjectData}
+                               modelTitle={`Are you sure you want to ${actionType === 'delete' ? 'remove' : 'leave'} project?`}/>
         </>
     )
 }
