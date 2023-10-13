@@ -28,7 +28,7 @@ function InboxPage() {
   const {selectedThread, multiSelection} = useSelector((state: StateType) => state.threads);
   const {isLoading} = useSelector((state: StateType) => state.projects);
   const {threads} = useSelector((state: StateType) => state.threads);
-  
+
     const router = useRouter()
     const isMultiItemsSelected = multiSelection && multiSelection.length > 0
 
@@ -42,18 +42,18 @@ function InboxPage() {
 
     useEffect(() => {
       if(!router.query.thread && selectedThread) {
-        router.push(
-          { pathname: '/inbox', query: { thread: selectedThread.id }},  
-          undefined, 
-          { shallow: true }
-        )
+        // router.push(
+        //   { pathname: '/inbox', query: { thread: selectedThread.id }},
+        //   undefined,
+        //   { shallow: true }
+        // )
       }
-      
-      const threadFromUrl = threads?.find(t => t.id == router.query.thread)
 
-      if(threadFromUrl) {
-        threadService.setSelectedThread(threadFromUrl);
-      }
+      // const threadFromUrl = threads?.find(t => t.id == router.query.thread)
+      //
+      // if(threadFromUrl) {
+      //   threadService.setSelectedThread(threadFromUrl);
+      // }
     }, [threads, selectedThread, router.query.thread, router])
 
     useEffect(() => {

@@ -1,15 +1,32 @@
 let timeout: any = null;
 let timeoutInterval: any = null;
 let globalStore: any = null;
-export function debounce(fun: () => void, timeOut: number = 1500) {
-    if (timeout)
-        clearTimeout(timeout);
+let multiTimeout: { [key: string]: any } = {};
+
+export function debounce(fun: () => void, timeOut: number = 1500, id: string | null = null) {
+    if (id) {
+        if (multiTimeout[id])
+            clearTimeout(multiTimeout[id]);
+    } else {
+        if (timeout)
+            clearTimeout(timeout);
+    }
+    if (id) {
+        multiTimeout[id] = setTimeout(fun, timeOut);
+        return multiTimeout[id]
+    }
     timeout = setTimeout(fun, timeOut);
     return timeout
 }
-export function clearDebounce() {
-    if (timeout)
-        clearTimeout(timeout);
+
+export function clearDebounce(id: string | null = null) {
+    if (id) {
+        if (multiTimeout[id])
+            clearTimeout(multiTimeout[id]);
+    } else {
+        if (timeout)
+            clearTimeout(timeout);
+    }
 }
 
 export function debounceInterval(fun: () => void, timeOut: number = 1500) {

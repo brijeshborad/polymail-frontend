@@ -99,7 +99,6 @@ export function MessageBox(props: any) {
     }, [props?.item.scope, error])
 
     const setScope = () => {
-        setIsEyeShow(!isEyeShow);
         if (message && message.id) {
             let body = {scope: !isEyeShow ? 'hidden': 'visible'}
             dispatch(updateMessage({
@@ -109,6 +108,7 @@ export function MessageBox(props: any) {
                 }
             }))
         }
+        setIsEyeShow(!isEyeShow);
     }
 
     const downloadImage = (item: MessageAttachments) => {
@@ -139,18 +139,18 @@ export function MessageBox(props: any) {
                 borderRadius={0} backgroundColor={'transparent'} height={'auto'}
                 fontSize={'13px'} color={'#6B7280'} as={Button} mx={1}
                 onMouseEnter={() => {
-                    clearDebounce();
+                    clearDebounce(message.id);
                     setIsMoreDropdownOpen(true)
                 }}
                 onMouseLeave={() => {
                     debounce(() => {
                         setIsMoreDropdownOpen(false)
-                    }, 200)
+                    }, 200, message.id)
                 }}
                 onMouseOut={() => {
                     debounce(() => {
                         setIsMoreDropdownOpen(false)
-                    }, 200)
+                    }, 200, message.id)
                 }}
             >
                 <AttachmentIcon/>
@@ -159,13 +159,13 @@ export function MessageBox(props: any) {
             <MenuList
                 className={`${styles.tabListDropDown} drop-down-list`}
                 onMouseEnter={() => {
-                    clearDebounce();
+                    clearDebounce(message.id);
                     setIsMoreDropdownOpen(true)
                 }}
                 onMouseLeave={() => {
                     debounce(() => {
                         setIsMoreDropdownOpen(false)
-                    }, 200)
+                    }, 200, message.id)
                 }}
             >
                 {props.messageAttachments?.map((item: MessageAttachments, i: number) => (

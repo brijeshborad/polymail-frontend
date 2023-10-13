@@ -70,12 +70,14 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     }, [target, threadIndex, currentThreadRef])
 
     const handleClick = useCallback((item: Thread, event: KeyboardEvent | any, index: number) => {
-
-      router.push(
-        { pathname: routePaths.includes('projects') ? `/projects/${router.query.project}` : '/inbox', query: { thread: item.id }},
-        undefined,
-        { shallow: true }
-      )
+        // router.push(
+        //     {
+        //         pathname: routePaths.includes('projects') ? `/projects/${router.query.project}` : '/inbox',
+        //         query: {thread: item.id}
+        //     },
+        //     undefined,
+        //     {shallow: true}
+        // )
 
         // Check if Control key (or Command key on Mac) is held down
         if (event) {
@@ -125,33 +127,39 @@ export function ThreadsSideBarList(props: ThreadListProps) {
                         setTimeout(() => {
                             commonService.toggleComposing(true);
                             draftService.setComposeDraft(draft as MessageDraft);
-                        }, 50)
+                        }, 10)
                         threadService.setThreadState({
                             selectedThread: item,
                             isThreadFocused: false,
                             multiSelection: []
                         });
+                        messageService.setMessageState({
+                            showMessageBox: false
+                        });
                         return;
                     }
                 }
-                console.log('SELECTED THREAD', item);
-                setCurrentSelectedThreads([]);
-                threadService.setThreadState({
-                    selectedThread: item,
-                    isThreadFocused: false,
-                    multiSelection: []
-                });
                 if (!isSameThreadClicked) {
                     draftService.setReplyDraft(null);
-                    messageService.setMessageState({selectedMessage: (item.messages || [])[0], messages: [], showMessageBox: isSameThreadClicked})
+                    setCurrentSelectedThreads([]);
+                    threadService.setThreadState({
+                        selectedThread: item,
+                        isThreadFocused: false,
+                        multiSelection: []
+                    });
+                    messageService.setMessageState({
+                        selectedMessage: (item.messages || [])[0],
+                        messages: [],
+                        showMessageBox: isSameThreadClicked
+                    })
                     setTimeout(() => {
                         messageService.setMessageState({showMessageBox: true});
                     }, 10);
+                    globalEventService.fireEvent({data: '', type: 'richtexteditor.discard'});
+                    setTimeout(() => {
+                        globalEventService.fireEvent({data: {type: 'reply'}, type: 'draft.updateType'});
+                    }, 100);
                 }
-                globalEventService.fireEvent({data: '', type: 'richtexteditor.discard'});
-                setTimeout(() => {
-                    globalEventService.fireEvent({data: {type: 'reply'}, type: 'draft.updateType'});
-                }, 100);
             }
         }
     }, [currentThreads, selectedThread, props.tab]);

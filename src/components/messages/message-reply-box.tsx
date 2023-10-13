@@ -643,7 +643,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     }, [getForwardContent, handleEditorScroll, incomingEvent, isDraftUpdated, selectedAccount, selectedThread]);
 
     return (
-        <Flex backgroundColor={'#FFFFFF'} position={'sticky'} mt={'20px'} bottom={0} boxShadow={'0 20px 0px 0 #fff'}>
+        <Flex backgroundColor={'#FFFFFF'} position={'sticky'} mt={'20px'} bottom={0} boxShadow={'0 21px 0px 0 #fff'}>
             <Flex
                 maxHeight={'450px'} direction={'column'} backgroundColor={'#FFFFFF'} width={'100%'}
                 onBlur={() => handleBlur()}>
@@ -779,7 +779,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                                     align={'center'} justify={'center'} cursor={'pointer'}
                                                     className={styles.attachIcon}
                                                 >
-                                                    <Image src="/image/icon/attach.svg" alt="emoji" width={13}
+                                                    <Image priority src="/image/icon/attach.svg" alt="emoji" width={13}
                                                            height={13}/>
                                                     Attach
                                                     <input type='file' id='file' ref={inputFile}

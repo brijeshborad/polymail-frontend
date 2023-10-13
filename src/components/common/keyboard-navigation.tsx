@@ -83,11 +83,11 @@ export default function KeyboardNavigationListener() {
                                 dispatchAction.threadIndex = nextThreadIndex
                                 dispatchAction.currentThreadId = nextThread.id
 
-                                router.push(
-                                  { pathname: routePaths.includes('projects') ? `/projects/${router.query.project}` : '/inbox', query: { thread: nextThread.id }},  
-                                  undefined, 
-                                  { shallow: true }
-                                )
+                                // router.push(
+                                //   { pathname: routePaths.includes('projects') ? `/projects/${router.query.project}` : '/inbox', query: { thread: nextThread.id }},
+                                //   undefined,
+                                //   { shallow: true }
+                                // )
                             }
                         } else if (pressedKey?.value === 'UP') {
                             const currentThreadIndex = selectedThread ? threads?.findIndex(thread => thread.id === selectedThread.id) : 0
@@ -99,11 +99,11 @@ export default function KeyboardNavigationListener() {
                                 dispatchAction.threadIndex = lastThreadIndex
                                 dispatchAction.currentThreadId = lastThread.id
 
-                                router.push(
-                                  { pathname: routePaths.includes('projects') ? `/projects/${router.query.project}` : '/inbox', query: { thread: lastThread.id }},  
-                                  undefined, 
-                                  { shallow: true }
-                                )
+                                // router.push(
+                                //   { pathname: routePaths.includes('projects') ? `/projects/${router.query.project}` : '/inbox', query: { thread: lastThread.id }},
+                                //   undefined,
+                                //   { shallow: true }
+                                // )
                             }
                         }
                     }

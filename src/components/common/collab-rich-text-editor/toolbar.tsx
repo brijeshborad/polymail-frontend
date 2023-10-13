@@ -9,7 +9,8 @@ import ToolbarEmoji from "@/components/common/collab-rich-text-editor/toolbar-em
 export default function CollabRichTextEditorToolbar({
                                                         beforeToolbar,
                                                         afterToolbar,
-                                                        extendToolbar
+                                                        extendToolbar,
+                                                        isVisible
                                                     }: CollabRichTextEditorToolbarType) {
     const {editor} = useCurrentEditor()
     const [isLinkMenuOpen, setIsLinkMenuOpen] = useState(false);
@@ -60,7 +61,7 @@ export default function CollabRichTextEditorToolbar({
     return (
         <>
             {beforeToolbar && beforeToolbar}
-            <Box position={'absolute'} display={'flex'} gap={4} bottom={3} zIndex={9} alignItems={'center'}
+            <Box position={'absolute'} display={isVisible ? 'flex': 'none'} gap={4} bottom={3} zIndex={9} alignItems={'center'}
                  className={`tiptap-toolbar show`}>
                 <button
                     onClick={() => editor.chain().focus().toggleBold().run()}
@@ -73,7 +74,7 @@ export default function CollabRichTextEditorToolbar({
                     }
                     className={editor.isActive('bold') ? 'is-active' : ''}
                 >
-                    <Image src="/image/icon/bold.svg" alt="Bold" width={16} height={16}/>
+                    <Image priority src="/image/icon/bold.svg" alt="Bold" width={16} height={16}/>
                 </button>
                 <button
                     onClick={() => editor.chain().focus().toggleItalic().run()}
@@ -86,7 +87,7 @@ export default function CollabRichTextEditorToolbar({
                     }
                     className={editor.isActive('italic') ? 'is-active' : ''}
                 >
-                    <Image src="/image/icon/italic.svg" alt="italic" width={16} height={16}/>
+                    <Image priority src="/image/icon/italic.svg" alt="italic" width={16} height={16}/>
                 </button>
                 <button
                     onClick={() => editor.chain().focus().toggleStrike().run()}
@@ -99,19 +100,19 @@ export default function CollabRichTextEditorToolbar({
                     }
                     className={editor.isActive('strike') ? 'is-active' : ''}
                 >
-                    <Image src="/image/icon/strikethrough.svg" alt="strikethrough" width={16} height={16}/>
+                    <Image priority src="/image/icon/strikethrough.svg" alt="strikethrough" width={16} height={16}/>
                 </button>
                 <button
                     onClick={() => editor.chain().focus().toggleOrderedList().run()}
                     className={editor.isActive('orderedList') ? 'is-active' : ''}
                 >
-                    <Image src="/image/icon/ordered.svg" alt="ordered list" width={16} height={16}/>
+                    <Image priority src="/image/icon/ordered.svg" alt="ordered list" width={16} height={16}/>
                 </button>
                 <button
                     onClick={() => editor.chain().focus().toggleBulletList().run()}
                     className={editor.isActive('bulletList') ? 'is-active' : ''}
                 >
-                    <Image src="/image/icon/unordered.svg" alt="unordered list" width={16} height={16}/>
+                    <Image priority src="/image/icon/unordered.svg" alt="unordered list" width={16} height={16}/>
                 </button>
 
                 <div style={{width: 1, height: '16px', backgroundColor: '#E5E7EB'}}/>
