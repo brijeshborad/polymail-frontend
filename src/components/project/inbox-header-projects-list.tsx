@@ -56,7 +56,7 @@ export function InboxHeaderProjectsList(props: { size: number }) {
                     </div>
 
                     <Text whiteSpace={'nowrap'} overflow={'hidden'} textOverflow={'ellipsis'} fontSize='13px'
-                          color={'#374151'} flex={'1'}>{isLoading}Create Project</Text>
+                          color={'#374151'} flex={'1'}>Create Project</Text>
                 </Button>
                 {projectData && !!projectData.length && (projectData || []).map((project: Project, index: number) => (
                     <Button onClick={() => gotoProject(project.id!)} ref={projectButtonRef}

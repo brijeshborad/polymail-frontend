@@ -256,12 +256,8 @@ export function Header() {
                     </Menu>
                 </div>
             </Flex>
-            {router.pathname.includes('projects') &&
-                <>
-                    <CreateNewProjectModal/>
-                    <EditProjectModal/>
-                </>
-            }
+            <CreateNewProjectModal/>
+            <EditProjectModal/>
         </Flex>
     );
 }
