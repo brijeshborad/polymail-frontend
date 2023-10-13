@@ -12,7 +12,8 @@ const initialState: any = {
     invitees: [],
     isProjectUpdateSuccess: false,
     createProjectSuccess: false,
-    projectSearchedString: ''
+    projectSearchedString: '',
+    editProjectSuccess: false,
 } as InitialProjectState
 
 const projectsSlice = createSlice({
@@ -171,7 +172,7 @@ const projectsSlice = createSlice({
         },
 
         editProjects: (state: InitialProjectState, _action: PayloadAction<ReducerActionType>) => {
-            return {...state, project: null, isLoading: true, createProjectSuccess: false}
+            return {...state, project: null, isLoading: true, editProjectSuccess: false}
         },
         editProjectsSuccess: (state: InitialProjectState, {payload: project}: PayloadAction<{}>) => {
             let currentProjects = [...(current(state).projects || [])] as Project[];
@@ -187,11 +188,11 @@ const projectsSlice = createSlice({
                 project,
                 projects: [...currentProjects],
                 isLoading: false,
-                createProjectSuccess:true
+                editProjectSuccess:true
             }
         },
         editProjectsError: (state: InitialProjectState, _action: PayloadAction<any>) => {
-            return {...state, project: null, isLoading: false, createProjectSuccess: false}
+            return {...state, project: null, isLoading: false, editProjectSuccess: false}
         },
 
         updateProjectState: (state: InitialProjectState, action: PayloadAction<InitialProjectState>) => {

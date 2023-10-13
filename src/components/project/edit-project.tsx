@@ -1,6 +1,6 @@
 import withAuth from "@/components/auth/withAuth";
 import {Toaster} from "@/components/common";
-import {editProjects, getProjectMembersInvites, updateProjectMemberRole} from "@/redux/projects/action-reducer";
+import {editProjects, getProjectMembers, getProjectMembersInvites, updateProjectMemberRole} from "@/redux/projects/action-reducer";
 import styles from "@/styles/project.module.css";
 import {StateType} from "@/types";
 import {emojiArray} from "@/utils/common.functions";
@@ -37,7 +37,7 @@ function EditProject() {
     });
     const [projectEmoji, setProjectEmoji] = useState<string>('');
 
-    const {createProjectSuccess, invitees, members} = useSelector((state: StateType) => state.projects);
+    const {editProjectSuccess, invitees, members} = useSelector((state: StateType) => state.projects);
     const {isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose} = useDisclosure()
     const [selectedMember, setSelectedMember] = useState<any>(null);
 
@@ -57,12 +57,12 @@ function EditProject() {
     }
 
     useEffect(() => {
-        if (createProjectSuccess) {
-            projectService.setProjectState({createProjectSuccess: false})
+        if (editProjectSuccess) {
+            projectService.setProjectState({editProjectSuccess: false})
             commonService.toggleEditProjectModel(false, false);
 
         }
-    }, [createProjectSuccess])
+    }, [editProjectSuccess])
 
 
     const addNewProject = () => {
@@ -94,6 +94,10 @@ function EditProject() {
     useEffect(() => {
         if (passThroughProject?.id) {
             dispatch(getProjectMembersInvites({body: {projectId: passThroughProject?.id}}));
+            dispatch(getProjectMembers({ body: {
+                    projectId: passThroughProject?.id
+                }
+            }));
         }
         setMembersInput({
             input: '',
@@ -420,7 +424,7 @@ function EditProject() {
                         <Flex align={'center'} justify={'flex-end'} pt={4} borderTop={'1px solid #F3F4F6'} gap={3}>
                             <Button className={styles.cancelModalButton} border={'1px solid #374151'}
                                     backgroundColor={'#FFFFFF'} borderRadius={8}
-                                    onClick={() => commonService.toggleCreateProjectModel(false, false)} fontSize={'14px'} height={'auto'} lineHeight={1} padding={'10px 12px'}
+                                    onClick={() => commonService.toggleEditProjectModel(false, false)} fontSize={'14px'} height={'auto'} lineHeight={1} padding={'10px 12px'}
                                     color={'#374151'}> Cancel </Button>
 
                             <Button className={styles.addMemberButton} backgroundColor={'#1F2937'} borderRadius={8}

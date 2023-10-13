@@ -13,4 +13,5 @@ export declare type InitialProjectState = {
     isProjectUpdateSuccess?: boolean
     createProjectSuccess?: boolean
     projectSearchedString?: string
+    editProjectSuccess?: boolean
 }
