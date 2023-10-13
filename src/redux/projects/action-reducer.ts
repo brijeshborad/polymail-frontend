@@ -1,4 +1,4 @@
-import { Project, TeamMember } from "@/models";
+import {Project, TeamMember} from "@/models";
 import { InitialProjectState, ReducerActionType } from "@/types";
 import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
 
@@ -170,6 +170,30 @@ const projectsSlice = createSlice({
             return {...state, isLoading: false}
         },
 
+        editProjects: (state: InitialProjectState, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, project: null, isLoading: true, createProjectSuccess: false}
+        },
+        editProjectsSuccess: (state: InitialProjectState, {payload: project}: PayloadAction<{}>) => {
+            let currentProjects = [...(current(state).projects || [])] as Project[];
+            let projectData = {...(project) || {}} as Project;
+            let index1 = currentProjects.findIndex((item: any) => item.id === projectData?.id);
+            currentProjects[index1] = {
+                ...currentProjects[index1],
+                name: projectData.name,
+                emoji: projectData.emoji,
+            };
+            return {
+                ...state,
+                project,
+                projects: [...currentProjects],
+                isLoading: false,
+                createProjectSuccess:true
+            }
+        },
+        editProjectsError: (state: InitialProjectState, _action: PayloadAction<any>) => {
+            return {...state, project: null, isLoading: false, createProjectSuccess: false}
+        },
+
         updateProjectState: (state: InitialProjectState, action: PayloadAction<InitialProjectState>) => {
             return {...state, ...action.payload}
         },
@@ -203,6 +227,9 @@ export const {
     removeThreadFromProject,
     removeThreadFromProjectSuccess,
     removeThreadFromProjectError,
+    editProjects,
+    editProjectsSuccess,
+    editProjectsError,
     undoProjectUpdate
 } = projectsSlice.actions
 export default projectsSlice.reducer

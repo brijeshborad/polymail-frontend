@@ -213,15 +213,15 @@ function ProjectInbox() {
     }, [dispatch, membersInputs, selectedAccount, router.query.project]);
 
 
-    const updateProjectMemberRoleData = (role: string) => {
-        if (project && project.id && selectedAccount && selectedAccount.id) {
+    const updateProjectMemberRoleData = (role: string, member: any) => {
+        if (project && project.id && member && member.id) {
             let body = {
                 role: role
             }
             dispatch(updateProjectMemberRole({
                 body: {
                     projectId: project.id,
-                    accountId: selectedAccount.id,
+                    accountId: member.id,
                     body: body
                 }
             }))
@@ -477,7 +477,7 @@ function ProjectInbox() {
                                                             <MenuList className={`drop-down-list`}>
                                                                 {PROJECT_ROLES.map((role, roleIndex) => {
                                                                     return <MenuItem
-                                                                        onClick={() => updateProjectMemberRoleData(role)}
+                                                                        onClick={() => updateProjectMemberRoleData(role, member)}
                                                                         textTransform={'capitalize'} key={roleIndex}>
                                                                         {role}
                                                                     </MenuItem>
@@ -516,7 +516,7 @@ function ProjectInbox() {
                                                             <MenuList className={`drop-down-list`}>
                                                                 {PROJECT_ROLES.map((role, roleIndex) => {
                                                                     return <MenuItem
-                                                                        onClick={() => updateProjectMemberRoleData(role)}
+                                                                        onClick={() => updateProjectMemberRoleData(role, invite)}
                                                                         textTransform={'capitalize'} key={roleIndex}>
                                                                         {role}
                                                                     </MenuItem>
@@ -547,7 +547,7 @@ function ProjectInbox() {
                             </MenuButton>
                             <MenuList minW={'126px'} className={'drop-down-list'}>
                                 <MenuItem>Mark as read</MenuItem>
-                                <MenuItem>Edit project</MenuItem>
+                                <MenuItem onClick={() => commonService.toggleEditProjectModel(true, false, project)}>Edit project</MenuItem>
                                 <MenuItem>Leave project</MenuItem>
                                 <MenuItem className={'delete-button'}>Delete project</MenuItem>
                             </MenuList>

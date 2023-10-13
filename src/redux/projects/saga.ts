@@ -1,7 +1,7 @@
 import {
     createProjects,
     createProjectsError,
-    createProjectsSuccess,
+    createProjectsSuccess, editProjects, editProjectsError, editProjectsSuccess,
     getAllProjects,
     getAllProjectsError,
     getAllProjectsSuccess,
@@ -143,6 +143,23 @@ function* removeProjectFormThreads({payload}: PayloadAction<ReducerActionType>) 
     }
 }
 
+function* editProjectsData({payload}: PayloadAction<ReducerActionType>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callPatch(`projects/${payload.body.projectId}`, {
+            name : payload.body.name,
+            accountId : payload.body.accountId,
+            organizationId : payload.body.organizationId,
+            emoji : payload.body.emoji
+        });
+        performSuccessActions(payload);
+        yield put(editProjectsSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        performSuccessActions(payload);
+        yield put(editProjectsError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
+    }
+}
+
 export function* watchGetProjects() {
     yield takeLatest(getAllProjects.type, getProjects);
 }
@@ -180,6 +197,10 @@ export function* watchRemoveProjectFromThread() {
     yield takeLatest(removeThreadFromProject.type, removeProjectFormThreads);
 }
 
+export function* watchEditProjectData() {
+    yield takeLatest(editProjects.type, editProjectsData);
+}
+
 export default function* rootSaga() {
     yield all([
         fork(watchGetProjects),
@@ -191,6 +212,7 @@ export default function* rootSaga() {
         fork(watchUpdateProjectData),
         fork(watchUpdateOptimisticProjectData),
         fork(watchRemoveProjectFromThread),
+        fork(watchEditProjectData),
     ]);
 }
 
