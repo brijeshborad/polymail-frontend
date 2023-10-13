@@ -481,15 +481,19 @@
     background-color: #E9E9E9;
 }
 
-.backButton {
+.setting .backButton {
     font-size: 13px;
     font-weight: 500;
     transition: all 0.5s;
     letter-spacing: -0.13px;
 }
 
-.backButton:hover {
-    background-color: #FFFFFF;
+.setting .backButton:hover {
+    background-color: #f7f7f7;
+}
+
+.setting .backButton:focus-visible {
+    box-shadow: none;
 }
 
 .backButton svg {
