@@ -47,7 +47,8 @@ const draftSlice = createSlice({
         updatePartialMessageSuccess: (state: InitialDraftStateType, {
             payload: {
                 updatedDraft,
-                isForCompose
+                isForCompose,
+                isDraftTab
             }
         }: PayloadAction<any>) => {
             let {composeDraft, draft} = current(state);
@@ -55,6 +56,9 @@ const draftSlice = createSlice({
             let finalState = {}
             if (isForCompose) {
                 finalState = {composeDraft: finalUpdates, updatedComposeDraft: finalUpdates, resumeAbleDraft: finalUpdates, success: true};
+                if (isDraftTab) {
+                    finalState = {...finalState, updatedDraft: finalUpdates}
+                }
             } else {
                 finalState = {updatedDraft: finalUpdates, success: true}
             }

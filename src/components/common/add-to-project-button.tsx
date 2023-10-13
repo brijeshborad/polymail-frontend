@@ -58,7 +58,9 @@ export function AddToProjectButton() {
             selectedProjects = composeDraft?.projects || [];
         }
         if (selectedProjects.length) {
-            setThreadProject(selectedProjects || [])
+            setThreadProject(selectedProjects.filter((obj, index) => {
+                return index === selectedProjects.findIndex(o => obj.id === o.id);
+            }))
         } else {
             if (project) {
                 setThreadProject([project])

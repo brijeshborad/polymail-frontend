@@ -47,6 +47,12 @@ class DraftService extends BaseService {
         this.setDraftState({composeDraft: composeDraftUndo, resumeAbleDraft: composeDraftUndo, composeDraftUndo: null});
     }
 
+    getUndoDraft() {
+        let {composeDraftUndo} = this.getDraftState();
+        this.setDraftState({composeDraftUndo: null});
+        return composeDraftUndo;
+    }
+
     restoreBackupDraft() {
         this.setDraftState({draft: null, draftUndo: null});
     }

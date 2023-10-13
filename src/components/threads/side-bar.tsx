@@ -25,7 +25,7 @@ import {threadService, commonService, socketService, draftService} from "@/servi
 import Tooltip from "../common/Tooltip";
 import {createDraft} from "@/redux/draft/action-reducer";
 import {clearDebounce, debounce} from "@/utils/common.functions";
-import {MessageDraft} from "@/models";
+import {useRouter} from "next/router";
 
 const MessageSchedule = dynamic(() => import("../messages/message-schedule").then(mod => mod.default));
 const ThreadsSideBarTab = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarTab), {ssr: false});
@@ -52,6 +52,8 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     const {isComposing} = useSelector((state: StateType) => state.commonApis);
     const [scheduledDate, setScheduledDate] = useState<string | undefined>();
     const [isMoreClicked, setIsMoreClicked] = useState(false)
+    const router = useRouter();
+    const routePaths = router.pathname.split('/');
 
 
     useEffect(() => {
@@ -81,7 +83,8 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                     let item = threads[0];
                     threadService.setSelectedThread(item);
                     if (item && item.messages && item.messages[0]) {
-                        draftService.setComposeDraft(item.messages[0] as MessageDraft);
+                        let finalDraft = {...item.messages[0], projects: [...(item.projects || [])]}
+                        draftService.setComposeDraft(finalDraft);
                     }
 
                 }
@@ -105,6 +108,11 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
 
     const changeEmailTabs = (value: string) => {
         if (getCurrentCacheTab() !== value) {
+            router.push(
+                { pathname: routePaths.includes('projects') ? `/projects/${router.query.project}` : '/inbox'},
+                undefined,
+                { shallow: true }
+            )
             if (value !== 'DRAFT') {
                 commonService.toggleComposingWithThreadSelection(false, true);
                 draftService.saveDraftToResume();
@@ -125,7 +133,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
         threadService.setSelectedThread(null);
         if (!isComposing) {
             draftService.setComposeDraft(null);
-            draftService.resumeDraft();
+            draftService.setResumeDraft(null);
         }
         commonService.toggleComposing(true);
         if (selectedAccount && selectedAccount.id) {

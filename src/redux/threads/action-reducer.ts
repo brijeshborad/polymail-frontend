@@ -29,7 +29,7 @@ const threadsSlice = createSlice({
         getAllThreadsSuccess: (state: InitialThreadStateType, {payload: threads}: PayloadAction<any>) => {
             // Sort threads by latestMessage DESC
             threads = (threads || []).sort((a: Thread, b: Thread) => (new Date(b.latestMessage as string).valueOf() - new Date(a.latestMessage as string).valueOf()));
-            return {...state, threads, isLoading: false}
+            return {...state, threads, isLoading: false, success: true}
         },
         getAllThreadsError: (state: InitialThreadStateType,  _action: PayloadAction<any>) => {
             return {...state, threads: [], isLoading: false}

@@ -10,7 +10,8 @@ import {addItemToGroup} from "@/redux/memberships/action-reducer";
 import {removeThreadFromProject} from "@/redux/projects/action-reducer";
 import {commonService} from "@/services/common.service";
 import {globalEventService} from "@/services/global-event.service";
-import {getCacheMessages, setCacheMessages} from "@/utils/cache.functions";
+import {getCacheMessages, getCacheThreads, setCacheMessages, setCacheThreads} from "@/utils/cache.functions";
+import {accountService} from "@/services/account.service";
 
 declare type MailBoxTypes = 'INBOX' | 'DRAFT' | 'UNREAD' | 'ARCHIVE' | 'TRASH' | 'SNOOZED' | 'STARRED' | string;
 
@@ -81,8 +82,8 @@ class ThreadsService extends BaseService {
     pushOrUpdateDraftInThreadMessages(tab: string = '', draft: MessageDraft) {
         let currentThread: Thread | null | undefined = this.getThreadState().selectedThread;
         let threads: Thread[] = this.getThreadState().threads || [];
-        if (tab === 'DRAFT' && !currentThread) {
-            currentThread = threads.find((thread: Thread) => (thread.messages || []).find((message: Message) => message.id === draft.id));
+        if (tab === 'DRAFT') {
+            currentThread = threads.find((thread: Thread) => thread.id === draft.threadId);
         }
 
         if (currentThread && currentThread.id && threads.length > 0) {
@@ -91,7 +92,7 @@ class ThreadsService extends BaseService {
             let currentMessages = [...(currentThread.messages || [])];
             let draftIndex = currentMessages.findIndex((message: Message) => message.id === draft.id);
             if (draftIndex !== -1) {
-                currentMessages[draftIndex] = draft as Message;
+                currentMessages[draftIndex] = {...draft as Message};
             } else {
                 currentMessages.push(draft as Message);
             }
@@ -159,7 +160,7 @@ class ThreadsService extends BaseService {
     }
 
     addThreadToProject(item: Project, ref: any = null, allowComposeDraft: boolean = false) {
-        let {multiSelection, selectedThread: currentSelectedThread, threads} = this.getThreadState();
+        let {multiSelection, selectedThread: currentSelectedThread, threads, tabValue} = this.getThreadState();
         let {composeDraft} = draftService.getDraftState();
         let selectedThread: any = currentSelectedThread;
         if (allowComposeDraft) {
@@ -196,6 +197,18 @@ class ThreadsService extends BaseService {
             }
             if (allowComposeDraft) {
                 draftService.setComposeDraft(addProject)
+                if (tabValue === 'DRAFT') {
+                    let index1 = (threads || []).findIndex((thread: Thread) => thread.id === selectedThread?.id);
+                    let newThreads: Thread[] = threads ?? [];
+                    if (threads) {
+                        newThreads = [...threads];
+                        newThreads[index1] = {
+                            ...newThreads[index1],
+                            projects: [...projects, item]
+                        }
+                    }
+                    this.setThreadState({threads: newThreads});
+                }
             } else {
                 let index1 = (threads || []).findIndex((thread: Thread) => thread.id === selectedThread?.id);
                 let newThreads: Thread[] = threads ?? [];
@@ -258,20 +271,22 @@ class ThreadsService extends BaseService {
         let {isComposing} = commonService.getCommonState();
         let {composeDraft} = draftService.getDraftState();
         let selectedThread: any = thread;
+        let threadId = selectedThread.id;
         if (isComposing) {
-            selectedThread = {...thread, id: composeDraft?.threadId}
+            threadId = composeDraft?.threadId;
+            selectedThread = composeDraft;
         }
-        if (selectedThread && selectedThread.id) {
+        if (threadId) {
             let polyToast = generateToasterId();
             let reqBody = {
-                threadIds: [selectedThread!.id],
+                threadIds: [threadId],
                 roles: ['n/a'],
                 groupType: 'project',
                 groupId: item.id
             }
             this.dispatchAction(removeThreadFromProject, {
                 body: {
-                    threadId: selectedThread.id,
+                    threadId: threadId,
                     projectId: item.id,
                 },
                 toaster: {
@@ -312,14 +327,14 @@ class ThreadsService extends BaseService {
 
             if (!isComposing) {
                 if (isOnProjectRoute && threads) {
-                    let threadIndex = threads.findIndex((thread: Thread) => thread.id === selectedThread?.id);
-                    let data = threads.filter((thread: Thread) => thread.id !== selectedThread?.id);
+                    let threadIndex = threads.findIndex((thread: Thread) => thread.id === threadId);
+                    let data = threads.filter((thread: Thread) => thread.id !== threadId);
                     this.setThreadState({
                         selectedThread: threads[(threadIndex + 1 < threads.length) ? threadIndex + 1 : (threadIndex >= 0 ? threadIndex - 1 : threadIndex + 1)] || null,
                         threads: data
                     });
                 } else {
-                    let index1 = (threads || []).findIndex((thread: Thread) => thread.id === selectedThread?.id);
+                    let index1 = (threads || []).findIndex((thread: Thread) => thread.id === threadId);
                     let newThreads: Thread[] = threads ?? [];
                     if (threads) {
                         let data = (newThreads[index1]?.projects || []).filter((project: Project) => project.id !== item.id);
@@ -339,7 +354,7 @@ class ThreadsService extends BaseService {
                     projects: data
                 }
                 draftService.setComposeDraft(thread);
-                let index1 = (threads || []).findIndex((thread: Thread) => thread.id === selectedThread?.id);
+                let index1 = (threads || []).findIndex((thread: Thread) => thread.id === threadId);
                 let newThreads: Thread[] = threads ?? [];
                 if (threads) {
                     let data = (newThreads[index1]?.projects || []).filter((project: Project) => project.id !== item.id);
@@ -456,6 +471,97 @@ class ThreadsService extends BaseService {
         } else {
             draftService.restoreBackupDraft();
         }
+    }
+
+    performThreadsUpdateForDraftTab(currentDraft: MessageDraft | null | undefined) {
+        let {threads} = this.getThreadState();
+        let getDraftThreadToMove = (threads || []).find(obj => obj.id === currentDraft?.threadId);
+        const newThreadArray = (threads || []).filter(obj => obj.id !== currentDraft?.threadId);
+        this.setThreads(newThreadArray);
+        let composeItem = newThreadArray[0];
+        this.setSelectedThread(composeItem);
+        commonService.toggleComposing(false);
+        setTimeout(() => {
+            commonService.toggleComposing(true);
+            if (composeItem && composeItem.messages && composeItem.messages[0]) {
+                let finalDraft = {...composeItem.messages[0], projects: [...(composeItem.projects || [])]}
+                draftService.setComposeDraft(finalDraft);
+            }
+        }, 50);
+        if (getDraftThreadToMove) {
+            getDraftThreadToMove = {...getDraftThreadToMove};
+            getDraftThreadToMove.mailboxes = ['SENT'];
+            let cacheThreads = {...getCacheThreads()};
+            let cachePage = this.getCachePage('SENT');
+            if (!cacheThreads[cachePage]) {
+                cacheThreads[cachePage] = [];
+            }
+            let cacheTabThreads = [...cacheThreads[cachePage]];
+            cacheTabThreads.unshift(getDraftThreadToMove);
+            setCacheThreads({
+                ...cacheThreads,
+                [cachePage]: cacheTabThreads
+            })
+        }
+
+    }
+
+    performThreadsUndoForDraftTab(threadId: string) {
+        let {threads, tabValue} = threadService.getThreadState();
+        draftService.setComposeDraft(null);
+        draftService.setResumeDraft(null);
+        let cacheThreads = {...getCacheThreads()};
+        let cacheSentPage = this.getCachePage('SENT');
+        let cacheDraftPage = this.getCachePage('DRAFT');
+        let sendThreads = [...cacheThreads[cacheSentPage]];
+        let draftThreads = [...cacheThreads[cacheDraftPage]];
+        let threadIndex = sendThreads.findIndex((item) => item.id === threadId);
+        if (threadIndex !== -1) {
+            let revertThread = {...sendThreads[threadIndex]};
+            revertThread.mailboxes = ['DRAFT'];
+            if (tabValue === 'DRAFT') {
+                let draftsThreads = [...(threads || [])];
+                draftsThreads.unshift(revertThread);
+                this.setThreads(draftsThreads);
+                this.setSelectedThread(revertThread);
+                commonService.toggleComposing(false);
+                setTimeout(() => {
+                    commonService.toggleComposing(true);
+                    if (revertThread && revertThread.messages && revertThread.messages[0]) {
+                        let finalDraft = {...revertThread.messages[0], projects: [...(revertThread.projects || [])], updated: revertThread.messages[0].updated}
+                        draftService.setComposeDraft(finalDraft);
+                    }
+                }, 20);
+            }
+            sendThreads.splice(threadIndex, 1);
+            draftThreads.unshift(revertThread);
+            setCacheThreads({
+                ...cacheThreads,
+                [cacheDraftPage]: draftThreads,
+                [cacheSentPage]: sendThreads
+            })
+        }
+        if (tabValue === 'SENT') {
+            this.setThreads(sendThreads);
+        }
+    }
+
+    getCachePage(tab: string) {
+        let {selectedAccount} = accountService.getAccountState();
+        let cachePage = '';
+        let routePaths = window.location.pathname.split('/')
+        if (routePaths.includes('inbox')) {
+            cachePage = 'inbox-page'
+        } else {
+            cachePage = `project-${routePaths[2] as string}`;
+        }
+        cachePage += `-${tab}-${selectedAccount?.id}`;
+        if (cachePage.includes('project')) {
+            cachePage += '-everything';
+        } else {
+            cachePage += '-just-mine';
+        }
+        return cachePage
     }
 }
 

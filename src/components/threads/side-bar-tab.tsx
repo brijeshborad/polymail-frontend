@@ -81,7 +81,8 @@ export function ThreadsSideBarTab(props: TabProps) {
                 resetState = false
                 threadService.setThreadState({
                     threads: getCacheThreads()[`${props.cachePrefix}-${tabValue}-${selectedAccount.id}-${type}`],
-                    isLoading: false
+                    isLoading: false,
+                    selectedThread: null
                 })
             }
             if (projectId && !isSummaryApiCalled) {
@@ -266,7 +267,7 @@ export function ThreadsSideBarTab(props: TabProps) {
                         </Flex>
                     }
                     {
-                        resumeAbleDraft && !isComposing &&
+                        (resumeAbleDraft && !isComposing && tabValue !== 'DRAFT') &&
                         <Button className={styles.resumeDraft}
                                 onClick={() => {
                                     commonService.toggleComposing(true);

@@ -17,7 +17,7 @@ import {createDraft, updatePartialMessage} from "@/redux/draft/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import dayjs from "dayjs";
 import {deleteMessage, removeAttachment, uploadAttachment} from "@/redux/messages/action-reducer";
-import {MessageAttachments, MessageDraft, MessageRecipient, Thread} from "@/models";
+import {MessageAttachments, MessageRecipient} from "@/models";
 import {DropZone, Toaster} from "@/components/common";
 import {RecipientsType} from "@/types/props-types/message-recipients.type";
 import dynamic from "next/dynamic";
@@ -62,7 +62,7 @@ export function ComposeBox(props: any) {
     const [emailBody, setEmailBody] = useState<string>('');
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {composeDraft} = useSelector((state: StateType) => state.draft);
-    const {tabValue, threads, selectedThread} = useSelector((state: StateType) => state.threads);
+    const {tabValue, selectedThread} = useSelector((state: StateType) => state.threads);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const dispatch = useDispatch();
     const {isOpen: isOpenProject, onOpen: onOpenProject, onClose: onCloseProject} = useDisclosure();
@@ -219,11 +219,11 @@ export function ComposeBox(props: any) {
                     return;
                 }
                 if (composeDraft && composeDraft.id) {
-                    dispatch(updatePartialMessage({body: {id: composeDraft.id, body: body, fromCompose: true}}));
+                    dispatch(updatePartialMessage({body: {id: composeDraft.id, body: body, fromCompose: true, isDraftTab: props.tabValue === 'DRAFT'}}));
                 } else {
                     setWaitForDraft(true);
                     setCollabId(collaborationId)
-                    dispatch(createDraft({body: {accountId: selectedAccount.id, body: body, fromCompose: true}}));
+                    dispatch(createDraft({body: {accountId: selectedAccount.id, body: body, fromCompose: true, isDraftTab: props.tabValue === 'DRAFT'}}));
                 }
             }
         }, 250);
@@ -245,8 +245,12 @@ export function ComposeBox(props: any) {
         if (!validateSendMessage()) {
             return;
         }
+
+        if (showAttachmentLoader) {
+            return;
+        }
         if (composeDraft && composeDraft.id) {
-            messageService.sendMessage(true, scheduledDate)
+            messageService.sendMessage(true, scheduledDate, '', props.tabValue === 'DRAFT')
             setEmailRecipients({
                 cc: {
                     items: [],
@@ -265,30 +269,12 @@ export function ComposeBox(props: any) {
             setSubject('');
 
             if (props.tabValue === 'DRAFT') {
-                performDraftTabUpdate()
+                threadService.performThreadsUpdateForDraftTab(composeDraft)
             } else {
                 commonService.toggleComposingWithThreadSelection(false, true);
             }
             draftService.backupComposeDraftForUndo();
         }
-    }
-
-    function performDraftTabUpdate() {
-        (threads || []).map((item: Thread) => {
-            if (composeDraft && item.id === composeDraft.threadId) {
-                const newThreadArray = (threads || []).filter(obj => obj.id !== composeDraft.threadId);
-                threadService.setThreads(newThreadArray);
-                let composeItem = newThreadArray[0];
-                threadService.setSelectedThread(composeItem);
-                commonService.toggleComposing(false);
-                setTimeout(() => {
-                    commonService.toggleComposing(true);
-                    if (composeItem && composeItem.messages && composeItem.messages[0]) {
-                        draftService.setComposeDraft(composeItem.messages[0] as MessageDraft);
-                    }
-                }, 50);
-            }
-        })
     }
 
     useEffect(() => {
@@ -369,7 +355,7 @@ export function ComposeBox(props: any) {
                         dispatch(uploadAttachment({
                             body: {id: composeDraft.id, file: file},
                             afterSuccessAction: () => {
-                                dispatch(updatePartialMessage({body: {id: composeDraft.id, fromCompose: true}}));
+                                dispatch(updatePartialMessage({body: {id: composeDraft.id, fromCompose: true, isDraftTab: props.tabValue === 'DRAFT'}}));
                             }
                         }));
                     }
@@ -408,7 +394,7 @@ export function ComposeBox(props: any) {
             dispatch(removeAttachment({
                 body: {id: composeDraft.id!, attachment: composeDraft.draftInfo?.attachments[index].id!},
                 afterSuccessAction: () => {
-                    dispatch(updatePartialMessage({body: {id: composeDraft.id, fromCompose: true}}));
+                    dispatch(updatePartialMessage({body: {id: composeDraft.id, fromCompose: true, isDraftTab: props.tabValue === 'DRAFT'}}));
                 }
             }))
         }
@@ -446,13 +432,13 @@ export function ComposeBox(props: any) {
 
     function performUpdate() {
         commonService.toggleComposingWithThreadSelection(false, tabValue !== 'DRAFT');
-        draftService.setComposeDraft(null);
-        draftService.setResumeDraft(null);
         globalEventService.fireEvent({data: null, type: 'richtexteditor.forceUpdate'});
         if (tabValue === 'DRAFT') {
             threadService.setSelectedThread(null)
-            performDraftTabUpdate();
+            threadService.performThreadsUpdateForDraftTab(composeDraft)
         }
+        draftService.setComposeDraft(null);
+        draftService.setResumeDraft(null);
         if (composeDraft && composeDraft.id) {
             dispatch(deleteMessage({body: {id: composeDraft.id}}));
         }
@@ -588,7 +574,7 @@ export function ComposeBox(props: any) {
                                         >
                                             Discard
                                         </Button>
-                                        <Button className={styles.replyTextButton} colorScheme='blue'
+                                        <Button isDisabled={showAttachmentLoader} className={styles.replyTextButton} colorScheme='blue'
                                                 onClick={() => sendMessages()}>
                                             {scheduledDate ? (
                                                 <>Send {dayjs(scheduledDate).from(dayjs())} @ {dayjs(scheduledDate).format('hh:mmA')}</>

@@ -72,8 +72,8 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     const handleClick = useCallback((item: Thread, event: KeyboardEvent | any, index: number) => {
 
       router.push(
-        { pathname: routePaths.includes('projects') ? `/projects/${router.query.project}` : '/inbox', query: { thread: item.id }},  
-        undefined, 
+        { pathname: routePaths.includes('projects') ? `/projects/${router.query.project}` : '/inbox', query: { thread: item.id }},
+        undefined,
         { shallow: true }
       )
 
@@ -121,7 +121,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
                 if (props.tab === 'DRAFT') {
                     draftService.setResumeDraft(null);
                     if (item && item.messages && item.messages[0]) {
-                        let draft = item.messages[0];
+                        let draft = {...item.messages[0], projects: [...(item.projects || [])]};
                         setTimeout(() => {
                             commonService.toggleComposing(true);
                             draftService.setComposeDraft(draft as MessageDraft);

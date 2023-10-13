@@ -9,6 +9,10 @@ export class AccountService extends BaseService {
         super();
     }
 
+    public getAccountState(): InitialAccountStateType {
+        return this.getState('accounts');
+    }
+
     setSelectedAccount(account: Account | null) {
         this.setAccountState({selectedAccount: account});
     }

@@ -50,7 +50,7 @@ class MessageService extends BaseService {
         this.dispatchAction(updateMessageState, body);
     }
 
-    sendMessage(isCompose: boolean = false, scheduledDate: string = '', emailBody: string = '') {
+    sendMessage(isCompose: boolean = false, scheduledDate: string = '', emailBody: string = '', performForDraftTab: boolean = false) {
         let {draft, composeDraft} = draftService.getDraftState();
         const {toast} = createStandaloneToast()
         let currentDraft: any = {...draft};
@@ -87,8 +87,13 @@ class MessageService extends BaseService {
                         if (!isCompose) {
                             threadService.updateThreadForUndoOrSend('undo', emailBody);
                         } else {
-                            commonService.toggleComposing(true);
-                            draftService.restoreBackupComposeDraft();
+                            if (performForDraftTab) {
+                                let undoDraft = draftService.getUndoDraft();
+                                threadService.performThreadsUndoForDraftTab(undoDraft?.threadId || '');
+                            } else {
+                                commonService.toggleComposing(true);
+                                draftService.restoreBackupComposeDraft()
+                            }
                         }
                         globalEventService.fireEvent('draft.undo');
                     } else if (type === 'send-now') {
@@ -112,8 +117,13 @@ class MessageService extends BaseService {
                             if (!isCompose) {
                                 threadService.updateThreadForUndoOrSend('undo', emailBody);
                             } else {
-                                commonService.toggleComposing(true);
-                                draftService.restoreBackupComposeDraft();
+                                if (performForDraftTab) {
+                                    let undoDraft = draftService.getUndoDraft();
+                                    threadService.performThreadsUndoForDraftTab(undoDraft?.threadId || '');
+                                } else {
+                                    commonService.toggleComposing(true);
+                                    draftService.restoreBackupComposeDraft()
+                                }
                             }
                             globalEventService.fireEvent('draft.undo');
                         } else if (type === 'send-now') {
