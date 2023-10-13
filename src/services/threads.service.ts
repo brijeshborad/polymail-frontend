@@ -431,8 +431,6 @@ class ThreadsService extends BaseService {
                 mailBoxes.splice(mailBoxesIndex, 1);
             }
         }
-
-        console.log('^^^', [currentDraft, type, convertMessages]);
         let threadIndex = currentThreads.findIndex((item: Thread) => item.id === selectedThread?.id);
         let currentMessages = [...(currentThreads[threadIndex].messages || [])];
         let messageIndex = currentMessages.findIndex((item: Message) => item.id === convertMessages.id);

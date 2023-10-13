@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import {ArchiveIcon, DraftIcon, EditIcon, InboxIcon, SendIcon, StarIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
 import {StateType} from "@/types";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useLayoutEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {getAllThreads} from "@/redux/threads/action-reducer";
 import dynamic from "next/dynamic";
@@ -25,6 +25,8 @@ import {threadService, commonService, socketService, draftService, messageServic
 import Tooltip from "../common/Tooltip";
 import {createDraft} from "@/redux/draft/action-reducer";
 import {clearDebounce, debounce} from "@/utils/common.functions";
+import {useRouter} from "next/router";
+import {Thread} from "@/models";
 
 const MessageSchedule = dynamic(() => import("../messages/message-schedule").then(mod => mod.default));
 const ThreadsSideBarTab = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarTab), {ssr: false});
@@ -51,7 +53,29 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     const {isComposing} = useSelector((state: StateType) => state.commonApis);
     const [scheduledDate, setScheduledDate] = useState<string | undefined>();
     const [isMoreClicked, setIsMoreClicked] = useState(false)
+    const router = useRouter();
 
+    useLayoutEffect(() => {
+        if (threads && threads.length > 0 && !selectedThread && router.query.thread) {
+            let findThread = threads.find((item: Thread) => item.id === router.query.thread);
+            if (findThread) {
+                threadService.setSelectedThread(findThread);
+            }
+        }
+    }, [router.query.thread, selectedThread, threads])
+
+    useLayoutEffect(() => {
+        if (selectedThread) {
+            router.push(
+                {
+                    pathname: router.pathname.includes('projects') ? `/projects/${router.query.project}` : '/inbox',
+                    query: {thread: selectedThread.id}
+                },
+                undefined,
+                {shallow: true}
+            )
+        }
+    }, [router, selectedThread])
 
     useEffect(() => {
         if (draftSuccess) {
@@ -73,7 +97,9 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
         if (threads && threads.length > 0 && !selectedThread && !isLoading) {
             if (allowThreadSelection) {
                 if (!isComposing) {
-                    threadService.setSelectedThread(threads[0]);
+                    if (!router.query.thread) {
+                        threadService.setSelectedThread(threads[0]);
+                    }
                 }
                 if (tabValue === 'DRAFT') {
                     commonService.toggleComposing(true);
@@ -87,7 +113,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                 }
             }
         }
-    }, [allowThreadSelection, isComposing, isLoading, selectedThread, tabValue, threads])
+    }, [allowThreadSelection, isComposing, isLoading, router.query.thread, selectedThread, tabValue, threads])
 
     useEffect(() => {
         if (tab !== '' && getCurrentCacheTab() !== '') {
@@ -105,11 +131,6 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
 
     const changeEmailTabs = (value: string) => {
         if (getCurrentCacheTab() !== value) {
-            // router.push(
-            //     { pathname: routePaths.includes('projects') ? `/projects/${router.query.project}` : '/inbox'},
-            //     undefined,
-            //     { shallow: true }
-            // )
             if (value !== 'DRAFT') {
                 commonService.toggleComposingWithThreadSelection(false, true);
                 draftService.saveDraftToResume();
@@ -184,11 +205,13 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                     <Flex gap={2}>
                         <AddToProjectButton/>
                         <Menu
-                          isOpen={isMoreDropdownOpen}
-                          onClose={() => setIsMoreDropdownOpen(false)}
+                            isOpen={isMoreDropdownOpen}
+                            onClose={() => setIsMoreDropdownOpen(false)}
                         >
                             <MenuButton
-                                onClick={() => {setIsMoreDropdownOpen(!isMoreDropdownOpen)}}
+                                onClick={() => {
+                                    setIsMoreDropdownOpen(!isMoreDropdownOpen)
+                                }}
                                 className={styles.tabListMoreButton} minWidth={'60px'} height={'auto'}
                                 backgroundColor={'transparent'} border={'1px solid #D1D5DB'}
                                 lineHeight={1}
@@ -333,29 +356,29 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                     }
 
                     <Menu
-                      isOpen={isMoreDropdownOpen}
-                      onClose={() => {
-                        setIsMoreDropdownOpen(false)
-                        setIsMoreClicked(false)
-                      }}>
+                        isOpen={isMoreDropdownOpen}
+                        onClose={() => {
+                            setIsMoreDropdownOpen(false)
+                            setIsMoreClicked(false)
+                        }}>
                         <MenuButton
                             onClick={() => {
-                              setIsMoreDropdownOpen(!isMoreDropdownOpen)
-                              setIsMoreClicked(true)
+                                setIsMoreDropdownOpen(!isMoreDropdownOpen)
+                                setIsMoreClicked(true)
                             }}
                             className={styles.tabListMoreButton} minWidth={'80px'}
                             borderLeft={'1px solid #D1D5DB'}
                             borderRadius={0} backgroundColor={'transparent'} height={'auto'}
                             fontSize={'13px'} color={'#6B7280'} as={Button} marginLeft={1}
                             rightIcon={<TriangleDownIcon/>}
-                            _focus={{ boxShadow: "none" }}
+                            _focus={{boxShadow: "none"}}
                             onMouseEnter={() => {
                                 clearDebounce();
                                 setIsMoreDropdownOpen(true)
                             }}
                             onMouseLeave={() => {
                                 debounce(() => {
-                                    if(!isMoreClicked) {
+                                    if (!isMoreClicked) {
                                         setIsMoreDropdownOpen(false)
                                         setIsMoreClicked(false)
                                     }
@@ -365,19 +388,19 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                             More
                         </MenuButton>
                         <MenuList
-                          className={`${styles.tabListDropDown} drop-down-list`}
-                          onMouseEnter={() => {
-                              clearDebounce();
-                              setIsMoreDropdownOpen(true)
-                          }}
-                          onMouseLeave={() => {
-                              debounce(() => {
-                                  if(!isMoreClicked) {
-                                      setIsMoreDropdownOpen(false)
-                                      setIsMoreClicked(false)
-                                  }
-                              }, 100)
-                          }}
+                            className={`${styles.tabListDropDown} drop-down-list`}
+                            onMouseEnter={() => {
+                                clearDebounce();
+                                setIsMoreDropdownOpen(true)
+                            }}
+                            onMouseLeave={() => {
+                                debounce(() => {
+                                    if (!isMoreClicked) {
+                                        setIsMoreDropdownOpen(false)
+                                        setIsMoreClicked(false)
+                                    }
+                                }, 100)
+                            }}
                         >
                             {['TRASH', 'STARRED', 'ARCHIVE', 'DRAFT'].includes(tab) &&
                             <MenuItem

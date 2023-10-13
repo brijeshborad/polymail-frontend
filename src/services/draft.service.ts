@@ -108,11 +108,9 @@ class DraftService extends BaseService {
         if (!draftIndex) {
             return;
         }
-        console.log('DRAFT INDEX', draftIndex);
         if (draftIndex !== -1) {
             let currentThreads: any = [...(threads || [])];
             let selectThreadIndex: number = currentThreads.findIndex((item: Thread) => item.id === selectedThread?.id);
-            console.log('SELECTED THREAD INDEX', selectThreadIndex);
             if (selectThreadIndex !== -1) {
                 currentThreads[selectThreadIndex!] = {...currentThreads[selectThreadIndex!]};
                 currentThreads[selectThreadIndex!].messages = [...(currentThreads[selectThreadIndex!].messages || [])];

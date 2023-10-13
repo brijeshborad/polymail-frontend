@@ -154,7 +154,7 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
 
     useEffect(() => {
         const handleShortcutKeyPress = (e: KeyboardEvent | any) => {
-            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key == ',') {
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key == ',' || e.key == '<')) {
                 e.preventDefault();
                 navigator.clipboard.writeText(window.location.toString())
                 Toaster({

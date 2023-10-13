@@ -193,7 +193,6 @@ function Profile() {
 
     function handleFileUpload(event: ChangeEventHandler | any) {
         const file = event.target.files[0];
-        console.log("Upload", file)
         const contentType = file.name.split('.').pop();
         if (!['jpg', 'gif', 'png', 'jpeg', 'svg'].includes(contentType)) {
             let validationError = {
@@ -210,7 +209,6 @@ function Profile() {
         reader.readAsDataURL(file);
         reader.onload = function () {
             if (reader.result) {
-                console.log("FileIn", file)
                 dispatch(uploadProfilePicture({
                     body: {file: file}
                     ,

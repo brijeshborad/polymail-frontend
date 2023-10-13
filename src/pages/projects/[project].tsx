@@ -38,7 +38,7 @@ import Router, {useRouter} from "next/router";
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {MailIcon, MenuIcon} from "@/icons";
-import {commonService, projectService, socketService, threadService} from "@/services";
+import {commonService, messageService, projectService, socketService, threadService} from "@/services";
 import Tooltip from "@/components/common/Tooltip";
 
 const ThreadsSideBar = dynamic(
@@ -125,7 +125,6 @@ function ProjectInbox() {
 
             if(projects) {
               const targetProject = projects.find(p => p.id === projectId)
-              console.log(targetProject, projects)
               dispatch(updateProjectState({
                 project: targetProject
               }))
@@ -139,21 +138,6 @@ function ProjectInbox() {
             dispatch(getProjectMembersInvites({body: {projectId: projectId}}));
         }
     }, [router.query.project, projects, dispatch])
-
-    useEffect(() => {
-      let projectId = router.query.project as string;
-      if(!router.query.thread && projectId && selectedThread) {
-        // router.push(
-        //   { pathname: `/projects/${projectId}`, query: { thread: selectedThread.id }},
-        //   undefined,
-        //   { shallow: true }
-        // )
-      }
-      // const threadFromUrl = threads?.find(t => t.id == router.query.thread)
-      // if(threadFromUrl) {
-      //   threadService.setSelectedThread(threadFromUrl);
-      // }
-    }, [threads, selectedThread, router.query.thread, router])
 
     function updateSize() {
         setSize(window.innerWidth);
@@ -375,7 +359,14 @@ function ProjectInbox() {
                             <div>
                               <Button className={inboxStyles.backToInbox} backgroundColor={'transparent'} w={'100%'} borderRadius={0}
                                       justifyContent={'flex-start'}
-                                      onClick={() => Router.push('/inbox')}>
+                                      onClick={(e) => {
+                                          e.preventDefault();
+                                          e.stopPropagation();
+                                          threadService.pageChange();
+                                          projectService.pageChange();
+                                          messageService.pageChange();
+                                          Router.push('/inbox')
+                                      }}>
                                 <div style={{ marginRight: 8 }}>
                                   <MailIcon />
                                 </div>

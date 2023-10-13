@@ -201,7 +201,6 @@ export function MessageReplyBox(props: MessageBoxType) {
     }, [waitForDraft, draft])
 
     useEffect(() => {
-        console.log('DRAFT SET', draft, isContentUpdated);
         // Add signature and draft to email body
         if (draft && draft.id && !isContentUpdated) {
             setIsContentUpdated(true);
@@ -476,7 +475,6 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
     const initialValuesChanges = () => {
         const draftMessage = (selectedThread?.messages || []).findLast((msg: Message) => (msg.mailboxes || []).includes('DRAFT'));
-        console.log('SELECTED THREDS', selectedThread);
         if (draftMessage) {
             if (!draft?.id) {
                 isInitialSet = true;

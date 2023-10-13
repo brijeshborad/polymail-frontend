@@ -31,7 +31,7 @@ export default function SelectedThreads() {
                 alt='threads pile'
             />
 
-            <Text className={styles.mailBoxCenteredLabel}>{(selectedThreadIds || []).length} threads selected</Text>
+            <Text className={styles.mailBoxCenteredLabel}>{(selectedThreadIds || []).length} selected</Text>
 
 
             <Box className={styles.addToProjectPlusActions}>

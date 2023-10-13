@@ -10,7 +10,6 @@ export function DropZone({children, onFileUpload, forReply}: any) {
     const handleDragLeave = (e: any) => {
         e.preventDefault();
         e.stopPropagation();
-        console.log("handleDragLeave", e)
         setIsStartDroperSection(false)
     };
 
