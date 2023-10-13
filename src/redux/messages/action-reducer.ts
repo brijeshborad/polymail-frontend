@@ -6,7 +6,7 @@ const initialState: any = {
     message: null,
     selectedMessage: null,
     messagePart: null,
-    messageAttachments: [],
+    messageAttachments: null,
     isLoading: false,
     attachmentUrl: null,
     error: null,
@@ -31,8 +31,8 @@ const messagesSlice = createSlice({
         getMessageParts: (state: InitialMessageStateType, _action: PayloadAction<ReducerActionType>) => {
             return {...state, messagePart: null, isLoading: true}
         },
-        getMessagePartsSuccess: (state: InitialMessageStateType, {payload: messagePart}: PayloadAction<{}>) => {
-            return {...state, messagePart, isLoading: false}
+        getMessagePartsSuccess: (state: InitialMessageStateType, {payload: {messagePart, id}}: PayloadAction<any>) => {
+            return {...state, messagePart: {...messagePart, messageId: id}, isLoading: false}
         },
         getMessagePartsError: (state: InitialMessageStateType,  _action: PayloadAction<any>) => {
             return {...state, messagePart: null, isLoading: false}
@@ -41,8 +41,8 @@ const messagesSlice = createSlice({
         getMessageAttachments: (state: InitialMessageStateType, _action: PayloadAction<ReducerActionType>) => {
             return {...state, messageAttachments: null, isLoading: true}
         },
-        getMessageAttachmentsSuccess: (state: InitialMessageStateType, {payload: messageAttachments}: PayloadAction<{}>) => {
-            return {...state, messageAttachments, isLoading: false}
+        getMessageAttachmentsSuccess: (state: InitialMessageStateType, {payload: {messageAttachments, id}}: PayloadAction<any>) => {
+            return {...state, messageAttachments: {attachments: messageAttachments, messageId: id}, isLoading: false}
         },
         getMessageAttachmentsError: (state: InitialMessageStateType,  _action: PayloadAction<any>) => {
             return {...state, messageAttachments: null, isLoading: false}

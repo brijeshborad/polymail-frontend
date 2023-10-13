@@ -5,4 +5,5 @@ export interface MessageAttachments {
     id?: string
     url?: string,
     isUploaded?: boolean
+    messageId?: string
 }

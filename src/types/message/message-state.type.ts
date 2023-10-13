@@ -6,7 +6,10 @@ export declare type InitialMessageStateType = {
     selectedMessage?: Message | null,
     isLoading?: boolean,
     messagePart?: MessagePart | null,
-    messageAttachments?: MessageAttachments[],
+    messageAttachments?: {
+        attachments: MessageAttachments[],
+        messageId?: string
+    } | null,
     error?: Error | any,
     success?: boolean
     attachmentUrl?: MessageAttachments | null

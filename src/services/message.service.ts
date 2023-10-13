@@ -38,8 +38,8 @@ class MessageService extends BaseService {
         this.setMessageState({messagePart: body});
     }
 
-    setMessageAttachments(attachments: MessageAttachments[]) {
-        this.setMessageState({messageAttachments: attachments});
+    setMessageAttachments(attachments: MessageAttachments[], messageId: string) {
+        this.setMessageState({messageAttachments: {attachments, messageId}});
     }
 
     setMessages(messages: Message[]) {

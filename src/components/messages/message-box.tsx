@@ -2,7 +2,7 @@ import styles from "@/styles/Inbox.module.css";
 import {Button, Flex, Heading, Menu, MenuButton, MenuItem, MenuList, Text} from "@chakra-ui/react";
 import {Time} from "@/components/common";
 import {MenuIcon} from "@/icons";
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {getAttachmentDownloadUrl, updateMessage} from "@/redux/messages/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {MessageAttachments} from "@/models";
@@ -15,6 +15,7 @@ import {FileIcon, defaultStyles, DefaultExtensionType} from 'react-file-icon';
 import {threadService} from "@/services";
 import LinkPreview from "../common/link-preview";
 import { LinkPreviewProps } from "@/types/props-types/link-preview.types";
+import {getCacheMessages, setCacheMessages} from "@/utils/cache.functions";
 
 
 export function MessageBox(props: any) {
@@ -26,7 +27,7 @@ export function MessageBox(props: any) {
     const message = props.item
     const [emailList, setEmailList] = useState<any>([]);
     const dispatch = useDispatch();
-    const {selectedMessage, error} = useSelector((state: StateType) => state.messages);
+    const {selectedMessage, error, messagePart, messageAttachments} = useSelector((state: StateType) => state.messages);
     const [isEyeShow, setIsEyeShow] = useState<any>(false);
     const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false)
     const [isExpanded, setIsExpanded] = useState(false)
@@ -36,6 +37,21 @@ export function MessageBox(props: any) {
       top: 0,
       left: 0
     })
+    const [emailBody, setEmailBody] = useState('')
+    const [attachments, setAttachments] = useState<MessageAttachments[]>([])
+
+    const cacheMessage = useCallback((body: Object | any, messageId: string) => {
+        if (messageId) {
+            let cacheMessages = getCacheMessages();
+            setCacheMessages({
+                ...cacheMessages,
+                [messageId]: {
+                    ...cacheMessages[messageId],
+                    ...body
+                }
+            })
+        }
+    }, [])
 
     useEffect(() => {
         if (selectedMessage && message && selectedMessage.id === message.id) {
@@ -44,6 +60,37 @@ export function MessageBox(props: any) {
             setIsExpanded(false)
         }
     }, [message, selectedMessage])
+
+
+    useEffect(() => {
+        if (messagePart && messagePart.messageId === message.id) {
+            if (messagePart.data) {
+                cacheMessage({data: messagePart.data}, messagePart.messageId!);
+                let decoded = Buffer.from(messagePart.data || '', 'base64').toString();
+                let addTargetBlank = decoded.replace(/<a/g, '<a target="_blank"');
+                const blob = new Blob([addTargetBlank], {type: "text/html"});
+                const blobUrl = window.URL.createObjectURL(blob);
+                setEmailBody(blobUrl);
+            } else {
+                cacheMessage({data: ''}, messagePart.messageId!);
+                setEmailBody('')
+            }
+        }
+    }, [cacheMessage, message, messagePart])
+
+    useEffect(() => {
+        // convert blob url to image url
+        if (messageAttachments && messageAttachments.messageId === message.id) {
+            if (messageAttachments.attachments.length) {
+                cacheMessage({attachments: messageAttachments.attachments}, messageAttachments.messageId!);
+                setAttachments(messageAttachments.attachments)
+            } else {
+                cacheMessage({attachments: []}, messageAttachments.messageId!);
+                setAttachments([])
+            }
+        }
+    }, [cacheMessage, messageAttachments, message])
+
 
     useEffect(() => {
         if (message) {
@@ -168,7 +215,7 @@ export function MessageBox(props: any) {
                     }, 200, message.id)
                 }}
             >
-                {props.messageAttachments?.map((item: MessageAttachments, i: number) => (
+                {attachments?.map((item: MessageAttachments, i: number) => (
                     <MenuItem gap={2} key={i} onClick={() => downloadImage(item)}>
                         <FileIcon
                             extension={showExtensionImages(item.filename) as DefaultExtensionType}
@@ -218,7 +265,7 @@ export function MessageBox(props: any) {
                             <EyeSlashedIcon/>
                         </Flex> : ''}
 
-                    {props.messageAttachments && !!props.messageAttachments.length &&
+                    {attachments && !!attachments.length &&
                     attachmentsMenu()
                     }
 
@@ -319,7 +366,7 @@ export function MessageBox(props: any) {
                             <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
                                 <EyeSlashedIcon/>
                             </Flex> : ''}
-                        {props.messageAttachments && !!props.messageAttachments.length &&
+                        {attachments && !!attachments.length &&
                         attachmentsMenu()
                         }
 
@@ -373,14 +420,14 @@ export function MessageBox(props: any) {
 
                 </Flex>
 
-                {props.emailPart &&
+                {emailBody &&
                 <div className={styles.mailBodyContent}>
                     <iframe
                         ref={iframeRef}
                         scrolling="no"
                         onLoad={onIframeLoad}
                         height={iframeHeight}
-                        src={props.emailPart}
+                        src={emailBody}
                         className={styles.mailBody}
                     />
                 </div>}

@@ -41,7 +41,7 @@ function* getMessagePart({payload}: PayloadAction<ReducerActionType>) {
     try {
         const response: AxiosResponse = yield ApiService.callGet(`messages/${payload.body.id}/body`, null);
         performSuccessActions(payload);
-        yield put(getMessagePartsSuccess(response));
+        yield put(getMessagePartsSuccess({messagePart: response, id: payload.body.id}));
     } catch (error: any) {
         error = error as AxiosError;
         yield put(getMessagePartsError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
@@ -52,7 +52,7 @@ function* getMessageAttachment({payload}: PayloadAction<ReducerActionType>) {
     try {
         const response: AxiosResponse = yield ApiService.callGet(`messages/${payload.body.id}/attachments`, null);
         performSuccessActions(payload);
-        yield put(getMessageAttachmentsSuccess(response));
+        yield put(getMessageAttachmentsSuccess({messageAttachments: response, id: payload.body.id}));
     } catch (error: any) {
         error = error as AxiosError;
         yield put(getMessageAttachmentsError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
