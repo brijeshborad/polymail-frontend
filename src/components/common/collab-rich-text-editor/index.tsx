@@ -119,13 +119,12 @@ export default function CollabRichTextEditor({
                     }
                 }}
                 onUpdate={({editor}) => onChange(editor.getHTML())}
-                slotAfter={isToolbarVisible && (
-                    <CollabRichTextEditorToolbar
-                        beforeToolbar={null}
-                        afterToolbar={afterToolbar}
-                        extendToolbar={extendToolbar}
-                    />
-                )}
+                slotAfter={<CollabRichTextEditorToolbar
+                    beforeToolbar={null}
+                    isVisible={isToolbarVisible}
+                    afterToolbar={afterToolbar}
+                    extendToolbar={extendToolbar}
+                />}
                 onBlur={() => {
                     keyNavigationService.toggleKeyNavigation(true);
                 }}

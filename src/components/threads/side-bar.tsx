@@ -21,11 +21,10 @@ import dynamic from "next/dynamic";
 import {SmallCloseIcon, TriangleDownIcon} from "@chakra-ui/icons";
 import {getCurrentCacheTab} from "@/utils/cache.functions";
 import {MAILBOX_ARCHIVE, MAILBOX_INBOX, MAILBOX_SNOOZED, MAILBOX_STARRED, MAILBOX_TRASH} from "@/utils/constants";
-import {threadService, commonService, socketService, draftService} from "@/services";
+import {threadService, commonService, socketService, draftService, messageService} from "@/services";
 import Tooltip from "../common/Tooltip";
 import {createDraft} from "@/redux/draft/action-reducer";
 import {clearDebounce, debounce} from "@/utils/common.functions";
-import {useRouter} from "next/router";
 
 const MessageSchedule = dynamic(() => import("../messages/message-schedule").then(mod => mod.default));
 const ThreadsSideBarTab = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarTab), {ssr: false});
@@ -52,8 +51,6 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     const {isComposing} = useSelector((state: StateType) => state.commonApis);
     const [scheduledDate, setScheduledDate] = useState<string | undefined>();
     const [isMoreClicked, setIsMoreClicked] = useState(false)
-    const router = useRouter();
-    const routePaths = router.pathname.split('/');
 
 
     useEffect(() => {
@@ -108,14 +105,15 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
 
     const changeEmailTabs = (value: string) => {
         if (getCurrentCacheTab() !== value) {
-            router.push(
-                { pathname: routePaths.includes('projects') ? `/projects/${router.query.project}` : '/inbox'},
-                undefined,
-                { shallow: true }
-            )
+            // router.push(
+            //     { pathname: routePaths.includes('projects') ? `/projects/${router.query.project}` : '/inbox'},
+            //     undefined,
+            //     { shallow: true }
+            // )
             if (value !== 'DRAFT') {
                 commonService.toggleComposingWithThreadSelection(false, true);
                 draftService.saveDraftToResume();
+                messageService.setMessageState({showMessageBox: true});
             }
             threadService.setTabValueWithEmptyThread(tab);
             searchCancel();

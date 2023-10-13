@@ -1137,10 +1137,14 @@
     font-size: 12px;
 }
 
+.dropDownCloseIcon {
+    padding: 8px 0 8px 5px !important;
+}
+
 .dropDownCloseIcon svg {
     color: #6B7280;
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     margin-right: 0;
 }
 

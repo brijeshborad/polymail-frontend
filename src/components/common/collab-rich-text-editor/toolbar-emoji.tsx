@@ -27,7 +27,7 @@ export default function ToolbarEmoji({isOpen, onChangeVisibility, onChange, edit
                     }}
                     className={editor.isActive('emoji') ? 'is-active' : ''}
                 >
-                    <Image src="/image/icon/emoji.svg" alt="emoji" width={16} height={16}/>
+                    <Image priority src="/image/icon/emoji.svg" alt="emoji" width={16} height={16}/>
                 </button>
             </PopoverTrigger>
             <PopoverContent width={250} className={'emoji-popover'}>

@@ -110,7 +110,7 @@ function ProjectInbox() {
 
   useEffect(() => {
     if(!router.query.thread) return
-    
+
     const threadFromUrl = threads?.find(t => t.id == router.query.thread)
 
     if(threadFromUrl) {
@@ -143,16 +143,16 @@ function ProjectInbox() {
     useEffect(() => {
       let projectId = router.query.project as string;
       if(!router.query.thread && projectId && selectedThread) {
-        router.push(
-          { pathname: `/projects/${projectId}`, query: { thread: selectedThread.id }},  
-          undefined, 
-          { shallow: true }
-        )
+        // router.push(
+        //   { pathname: `/projects/${projectId}`, query: { thread: selectedThread.id }},
+        //   undefined,
+        //   { shallow: true }
+        // )
       }
-      const threadFromUrl = threads?.find(t => t.id == router.query.thread)
-      if(threadFromUrl) {
-        threadService.setSelectedThread(threadFromUrl);
-      }
+      // const threadFromUrl = threads?.find(t => t.id == router.query.thread)
+      // if(threadFromUrl) {
+      //   threadService.setSelectedThread(threadFromUrl);
+      // }
     }, [threads, selectedThread, router.query.thread, router])
 
     function updateSize() {
