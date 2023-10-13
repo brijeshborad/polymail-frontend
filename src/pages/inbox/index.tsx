@@ -9,7 +9,6 @@ import {User} from "@/models";
 import dynamic from 'next/dynamic'
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import { useRouter } from "next/router";
-import { threadService } from "@/services";
 
 const InboxHeaderProjectsList = dynamic(
     () => import('@/components/project/inbox-header-projects-list').then((mod) => mod.InboxHeaderProjectsList)

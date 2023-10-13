@@ -25,7 +25,6 @@ import {threadService, commonService, socketService, draftService, messageServic
 import Tooltip from "../common/Tooltip";
 import {createDraft} from "@/redux/draft/action-reducer";
 import {clearDebounce, debounce} from "@/utils/common.functions";
-import {useRouter} from "next/router";
 
 const MessageSchedule = dynamic(() => import("../messages/message-schedule").then(mod => mod.default));
 const ThreadsSideBarTab = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarTab), {ssr: false});
@@ -52,8 +51,6 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     const {isComposing} = useSelector((state: StateType) => state.commonApis);
     const [scheduledDate, setScheduledDate] = useState<string | undefined>();
     const [isMoreClicked, setIsMoreClicked] = useState(false)
-    const router = useRouter();
-    const routePaths = router.pathname.split('/');
 
 
     useEffect(() => {

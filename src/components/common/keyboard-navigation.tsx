@@ -4,12 +4,9 @@ import {MONITORED_KEYS} from "@/utils/constants";
 import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {globalEventService, messageService, threadService} from "@/services";
-import { useRouter } from "next/router";
 
 export default function KeyboardNavigationListener() {
     const dispatch = useDispatch();
-    const router = useRouter();
-    const routePaths = router.pathname.split('/');
     const {threads, selectedThread} = useSelector((state: StateType) => state.threads);
     const {messages, selectedMessage} = useSelector((state: StateType) => state.messages);
     const {target: lastTarget, currentMessageId, isEnabled} = useSelector((state: StateType) => state.keyNavigation);
