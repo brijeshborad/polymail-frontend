@@ -486,6 +486,7 @@
     font-weight: 500;
     transition: all 0.5s;
     letter-spacing: -0.13px;
+    border: none;
 }
 
 .setting .backButton:hover {
