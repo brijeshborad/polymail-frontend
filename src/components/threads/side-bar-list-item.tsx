@@ -70,25 +70,6 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                     <Flex align={"center"} className={styles.senderDetails} gap={1}>
                         <DisneyIcon/> {props?.thread?.from?.name || props?.thread?.from?.email}
                     </Flex>
-                    {/* {(props?.thread?.projects || []).length > 0 && (
-                      <Flex justifyContent={'flex-start'} flexGrow={1}>
-                        <Tooltip label="List all" placement="top">
-                          <Flex justifyContent={'flex-start'} alignItems={'center'} className='thread-emojis'>
-                              {props?.thread?.projects?.slice(0, 5).map((p, index) => {
-                                return (
-                                  <span key={index} className='emoji'>{p.emoji}</span>
-                                  )
-                                })}
-                              {(props?.thread?.projects || []).length > 5 && (
-                                <span className={styles.projectsLength} style={{ height: '14px', marginLeft: 0 }}>
-                                  {`+${(props?.thread?.projects || []).length-5}`}
-                                </span>
-                              )}
-                              <ChevronDownIcon />
-                          </Flex>
-                        </Tooltip>
-                      </Flex>
-                    )} */}
                     {(props?.thread?.projects || []).length > 0 && (
                       <Flex justifyContent={'flex-start'} flexGrow={1}>
                         <Menu>
