@@ -10,7 +10,7 @@ import {commonService, messageService, threadService} from "@/services";
 import Tooltip from "../common/Tooltip";
 
 export function InboxHeaderProjectsList(props: { size: number }) {
-    const {projects, isLoading} = useSelector((state: StateType) => state.projects);
+    const {projects} = useSelector((state: StateType) => state.projects);
     const {onlineUsers} = useSelector((state: StateType) => state.commonApis);
     const [projectData, setProjectData] = useState<Project[]>([]);
     const [projectDataLength, setProjectDataLength] = useState<Project[]>([]);
