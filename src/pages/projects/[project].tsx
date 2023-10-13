@@ -117,8 +117,10 @@ function ProjectInbox() {
             let projectId = router.query.project as string;
 
             if(projects) {
+              const targetProject = projects.find(p => p.id === projectId)
+              console.log(targetProject, projects)
               dispatch(updateProjectState({
-                project: projects.find(p => p.id === projectId)
+                project: targetProject
               }))
             }
 
@@ -129,7 +131,7 @@ function ProjectInbox() {
             }));
             dispatch(getProjectMembersInvites({body: {projectId: projectId}}));
         }
-    }, [router.query.project, dispatch])
+    }, [router.query.project, projects, dispatch])
 
     useEffect(() => {
       let projectId = router.query.project as string;
@@ -358,7 +360,7 @@ function ProjectInbox() {
                                 </Button>
                             </div>
                           </MenuList>
-                          </Menu>
+                        </Menu>
                           <Badge textTransform={'none'} color={'#000000'} fontSize={'14px'} fontWeight={'600'}
                                 backgroundColor={'#E9E9E9'} marginBottom={'-2px'}
                                 padding={'3px 6px'} borderRadius={'4px'}
