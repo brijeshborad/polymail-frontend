@@ -152,7 +152,7 @@ export function Header() {
             if (!LocalStorageService.updateAccount('get')) {
                 setAccounts(accounts[0]);
             } else {
-                updateValuesFromAccount(accounts[0]);
+                updateValuesFromAccount(LocalStorageService.updateAccount('get'));
             }
         }
     }, [accounts, setAccounts, updateValuesFromAccount]);
