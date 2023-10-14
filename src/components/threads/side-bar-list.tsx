@@ -110,6 +110,9 @@ export function ThreadsSideBarList(props: ThreadListProps) {
                     isSameThreadClicked = selectedThread.id === item.id;
                     commonService.updateUserOnlineStatus(selectedThread!, item!);
                 }
+                if (getCurrentSelectedThreads().length > 0) {
+                    isSameThreadClicked = false;
+                }
                 commonService.toggleComposing(false);
                 if (props.tab === 'DRAFT') {
                     draftService.setResumeDraft(null);

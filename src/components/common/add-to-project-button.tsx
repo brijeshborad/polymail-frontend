@@ -22,7 +22,7 @@ import Tooltip from "@/components/common/Tooltip";
 
 export function AddToProjectButton() {
     const [isDropdownOpen, setDropDownOpen] = useState(false)
-    const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
+    const {selectedThread, threads, multiSelection} = useSelector((state: StateType) => state.threads);
     let {projects, project} = useSelector((state: StateType) => state.projects);
     const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
     const [threadProject, setThreadProject] = useState<Project[]>([]);
@@ -57,6 +57,9 @@ export function AddToProjectButton() {
         if (isComposing) {
             selectedProjects = composeDraft?.projects || [];
         }
+        if (multiSelection && multiSelection.length > 0) {
+            selectedProjects = [];
+        }
         if (selectedProjects.length) {
             setThreadProject(selectedProjects.filter((obj, index) => {
                 return index === selectedProjects.findIndex(o => obj.id === o.id);
@@ -68,7 +71,7 @@ export function AddToProjectButton() {
                 setThreadProject([])
             }
         }
-    }, [composeDraft, isComposing, project, selectedThread])
+    }, [composeDraft, isComposing, multiSelection, project, selectedThread])
 
     useEffect(() => {
         setFilteredProjects((projects || []));
