@@ -95,7 +95,7 @@ class MessageService extends BaseService {
                     } else if (type === 'send-now') {
                         params = {now: true}
                     }
-                    this.dispatchAction(updatePartialMessage, {body: {id: currentDraft?.id, body: currentDraft, params}});
+                    this.dispatchAction(sendMessage, {body: {id: currentDraft.id!, ...params}});
                     toast.close(`${polyToast}`);
                 }
             })
@@ -124,7 +124,7 @@ class MessageService extends BaseService {
                         } else if (type === 'send-now') {
                             params = {now: true}
                         }
-                        this.dispatchAction(updatePartialMessage, {body: {id: currentDraft?.id, body: currentDraft, params}});
+                        this.dispatchAction(sendMessage, {body: {id: currentDraft.id!, ...params}});
                         toast.close(`${polyToast}`);
                     }
                 })
