@@ -112,6 +112,7 @@ class ThreadsService extends BaseService {
     moveThreadToMailBox(mailBoxType: MailBoxTypes, snoozeDate: string = '') {
         let selectedThreadIds = this.getThreadState().multiSelection || [];
         let threads = this.getThreadState().threads || [];
+        let tabValue = this.getThreadState().tabValue;
         if (selectedThreadIds.length > 0) {
             const messagePlural = selectedThreadIds.length === 1 ? 'message' : 'messages'
             let body: any = {
@@ -155,6 +156,9 @@ class ThreadsService extends BaseService {
             this.dispatchAction(batchUpdateThreads, batchUpdateMoveBody);
             let newFilteredThreads = threads.filter((thread: Thread) => !selectedThreadIds.includes(thread.id!))
             this.setThreadState({threads: newFilteredThreads, selectedThread: newFilteredThreads[0]});
+            selectedThreadIds.forEach(id => {
+                this.moveThreadFromListToListCache(tabValue || 'INBOX', mailBoxType, id);
+            })
             this.cancelThreadSearch();
         }
     }
@@ -561,6 +565,35 @@ class ThreadsService extends BaseService {
             cachePage += '-just-mine';
         }
         return cachePage
+    }
+
+    moveThreadFromListToListCache(from: string, to: string, threadId: string) {
+        let cacheThreads = {...getCacheThreads()};
+        let cacheFromPage = this.getCachePage(from);
+        let cacheToPage = this.getCachePage(to);
+        let fromThreads = [...(cacheThreads[cacheFromPage] || [])];
+        let toThreads = [...(cacheThreads[cacheToPage] || [])];
+        let threadIndex = fromThreads.findIndex((item) => item.id === threadId);
+        if (threadIndex !== -1) {
+            let mailBoxes = [...(fromThreads[threadIndex].mailboxes || [])];
+            let mailBoxesIndex = mailBoxes.indexOf(to);
+            if (mailBoxesIndex !== -1) {
+                mailBoxes.push(to);
+            }
+            mailBoxesIndex = mailBoxes.indexOf(from);
+            if (mailBoxesIndex !== -1) {
+                mailBoxes.splice(mailBoxesIndex, 1);
+            }
+            let updatingThread = {...fromThreads[threadIndex]};
+            updatingThread.mailboxes = mailBoxes;
+            fromThreads.splice(threadIndex, 1);
+            toThreads.unshift(updatingThread);
+            setCacheThreads({
+                ...cacheThreads,
+                [cacheFromPage]: fromThreads,
+                [cacheToPage]: toThreads
+            })
+        }
     }
 }
 

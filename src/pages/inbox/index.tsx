@@ -24,7 +24,7 @@ function InboxPage() {
   const [userData, setUserData] = useState<User | null | undefined>(null);
   const {user} = useSelector((state: StateType) => state.auth);
   const {selectedThread, multiSelection} = useSelector((state: StateType) => state.threads);
-  const {isLoading} = useSelector((state: StateType) => state.projects);
+  const {isLoading} = useSelector((state: StateType) => state.commonApis);
 
     const isMultiItemsSelected = multiSelection && multiSelection.length > 0
 

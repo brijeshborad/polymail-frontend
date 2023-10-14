@@ -33,7 +33,7 @@ const AddToProjectButton = dynamic(() => import("@/components/common").then(mod 
 const MessageSchedule = dynamic(() => import("./message-schedule").then(mod => mod.default));
 
 export function MessagesHeader() {
-    const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
+    const {selectedThread, threads, tabValue} = useSelector((state: StateType) => state.threads);
     let {success: membershipSuccess} = useSelector((state: StateType) => state.memberships);
     const {onlineUsers} = useSelector((state: StateType) => state.commonApis);
 
@@ -136,6 +136,7 @@ export function MessagesHeader() {
                     messageService.setMessageState({showMessageBox: true});
                 }, 5, 'MESSAGE_BOX');
                 threadService.setThreadState({threads: currentThreads, selectedThread: currentThreads[index1]});
+                threadService.moveThreadFromListToListCache(tabValue || 'INBOX', messageBox, threadData.id!)
                 let polyToast = generateToasterId();
                 dispatch(updateThreads({
                     body: {

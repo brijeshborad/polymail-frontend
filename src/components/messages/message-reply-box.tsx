@@ -27,6 +27,7 @@ import CollabRichTextEditor from "../common/collab-rich-text-editor";
 import {draftService, globalEventService, messageService} from "@/services";
 import {RecipientsType} from "@/types/props-types/message-recipients.type";
 import {ProgressBar} from "@/components/loader-screen/progress-bar";
+import Tooltip from "@/components/common/Tooltip";
 
 const MessageRecipients = dynamic(() => import("./message-recipients").then(mod => mod.default));
 const MessageSchedule = dynamic(() => import("./message-schedule").then(mod => mod.default));
@@ -687,15 +688,14 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                 <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
                                       fontWeight={400}>
                                     {emailRecipients?.recipients?.items[0].email}&nbsp;
-                                    <div className={styles.otherMail}>
-                                        <Text
-                                            as='u'>{emailRecipients?.recipients?.items?.length - 1 > 0 && `and ${emailRecipients?.recipients?.items?.length - 1} others`} </Text>
-                                        <div className={styles.otherMailList}>
-                                            {(emailList || []).map((item: any, index: number) => (
-                                                <p key={index}>{item.email}</p>
-                                            ))}
-
-                                        </div>
+                                    <div className={styles.otherMail} style={{cursor: 'pointer'}}>
+                                        <Tooltip
+                                            placement="bottom"
+                                            label={(emailList || []).map((item: any, index: number) => (<p key={index}>{item.email}</p>))}>
+                                            <Text as='u'>
+                                                {emailRecipients?.recipients?.items?.length - 1 > 0 && `and ${emailRecipients?.recipients?.items?.length - 1} others`}
+                                            </Text>
+                                        </Tooltip>
                                     </div>
                                 </Flex>
                                 }

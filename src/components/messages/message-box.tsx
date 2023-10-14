@@ -408,10 +408,10 @@ export function MessageBox(props: any) {
                                         <Tooltip
                                             placement="bottom"
                                             label={
-                                                message.to.length > 1 ?
-                                                    (message.to || []).slice(1, message.to.length - 1).map((item: any, toIndex: number) => (
+                                                (message.to.length > 1 ?
+                                                    (message.to || []).slice(1, message.to.length).map((item: any, toIndex: number) => (
                                                         <p key={toIndex}>{item.email}</p>
-                                                    )).join('') : ''
+                                                    )) : '') as any
                                             }>
                                             <Text
                                                 as='u'>{message.to.length - 1 > 0 && `and ${message.to.length - 1} others`} </Text>
