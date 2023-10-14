@@ -479,17 +479,17 @@
 
 .addToProjectList .backToInbox button:hover {
     background-color: transparent;
-    border-bottom: inherit;
-    color: #FFFFFF;
+    /*border-bottom: inherit;*/
+    /*color: #FFFFFF;*/
 }
 
 .addToProjectList .backToInbox:hover {
-    background-color: #266DF0;
+    background-color: var(--alias-bg-subtle);
     color: #FFFFFF;
 }
 
 .addToProjectList .backToInbox:hover svg {
-    stroke: #FFFFFF;
+    stroke: #266DF0;
 }
 
 .addToProjectList .backToInbox button svg {
