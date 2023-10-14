@@ -474,7 +474,19 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 return;
             }
             setShowReplyBox(false);
-            messageService.sendMessage(false, scheduledDate, emailBody);
+            let body: any = {
+                subject: subject,
+                to: emailRecipients.recipients?.items,
+                cc: emailRecipients.cc?.items && emailRecipients.cc?.items.length > 0 ? emailRecipients.cc?.items : [],
+                bcc: emailRecipients.bcc?.items && emailRecipients.bcc?.items.length > 0 ? emailRecipients.bcc?.items : [],
+                draftInfo: {
+                    body: emailBody,
+                    collabId
+                },
+                messageId: messageData?.id,
+                ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
+            }
+            messageService.sendMessage(false, scheduledDate || '', {...body, id: draft.id});
             draftService.setReplyDraft(null);
             setEmailRecipients({
                 cc: {items: [], value: blankRecipientValue},

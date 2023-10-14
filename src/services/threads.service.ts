@@ -437,24 +437,27 @@ class ThreadsService extends BaseService {
             }
         }
         let threadIndex = currentThreads.findIndex((item: Thread) => item.id === selectedThread?.id);
-        let currentMessages = [...(currentThreads[threadIndex].messages || [])];
-        let messageIndex = currentMessages.findIndex((item: Message) => item.id === convertMessages.id);
-        currentMessages.splice(messageIndex, 1);
-        currentMessages.push(convertMessages);
-        currentThreads[threadIndex] = {...currentThreads[threadIndex]};
-        currentThreads[threadIndex].messages = [...(currentThreads[threadIndex].messages || [])];
-        currentThreads[threadIndex].messages = [...currentMessages];
-        currentThreads[threadIndex].mailboxes = [...mailBoxes];
+        if (threadIndex !== -1) {
+            let currentMessages = [...(currentThreads[threadIndex].messages || [])];
+            let messageIndex = currentMessages.findIndex((item: Message) => item.id === convertMessages.id);
+            currentMessages.splice(messageIndex, 1);
+            currentMessages.push(convertMessages);
+            currentThreads[threadIndex] = {...currentThreads[threadIndex]};
+            currentThreads[threadIndex].messages = [...(currentThreads[threadIndex].messages || [])];
+            currentThreads[threadIndex].messages = [...currentMessages];
+            currentThreads[threadIndex].mailboxes = [...mailBoxes];
 
-        let currentSelectedThread: Thread = {...selectedThread};
-        let currentSelectedThreadMessages = [...(selectedThread?.messages || [])];
-        messageIndex = currentSelectedThreadMessages.findIndex((item: Message) => item.id === convertMessages.id);
-        currentSelectedThreadMessages.splice(messageIndex, 1);
-        currentSelectedThreadMessages.push(convertMessages);
-        currentSelectedThread.messages = [...currentSelectedThreadMessages];
-        currentSelectedThread.mailboxes = [...mailBoxes]
-        this.setThreads(currentThreads);
-        this.setSelectedThread(currentSelectedThread);
+            let currentSelectedThread: Thread = {...selectedThread};
+            let currentSelectedThreadMessages = [...(selectedThread?.messages || [])];
+            messageIndex = currentSelectedThreadMessages.findIndex((item: Message) => item.id === convertMessages.id);
+            currentSelectedThreadMessages.splice(messageIndex, 1);
+            currentSelectedThreadMessages.push(convertMessages);
+            currentSelectedThread.messages = [...currentSelectedThreadMessages];
+            currentSelectedThread.mailboxes = [...mailBoxes]
+            this.setThreads(currentThreads);
+            this.setSelectedThread(currentSelectedThread);
+        }
+
 
         globalEventService.fireEvent('threads.refresh');
         if (currentDraft) {

@@ -24,7 +24,7 @@ import {
 const ThreadsSideBarListItem = dynamic(() => import("./side-bar-list-item").then(mod => mod.ThreadsSideBarListItem));
 
 export function ThreadsSideBarList(props: ThreadListProps) {
-    const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
+    const {selectedThread, threads, multiSelection} = useSelector((state: StateType) => state.threads);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const [currentThreadRef, setCurrentThreadRef] = useState<RefObject<HTMLDivElement> | null>(null);
     const listRef = useRef<any>(null);
@@ -110,7 +110,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
                     isSameThreadClicked = selectedThread.id === item.id;
                     commonService.updateUserOnlineStatus(selectedThread!, item!);
                 }
-                if (getCurrentSelectedThreads().length > 0) {
+                if (multiSelection && multiSelection.length > 0) {
                     isSameThreadClicked = false;
                 }
                 commonService.toggleComposing(false);
@@ -156,7 +156,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
                 }
             }
         }
-    }, [currentThreads, selectedThread, props.tab]);
+    }, [currentThreads, selectedThread, multiSelection, props.tab]);
 
 
     const handleEditorScroll = useCallback(() => {

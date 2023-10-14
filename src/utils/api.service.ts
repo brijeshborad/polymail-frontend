@@ -95,11 +95,12 @@ class ApiService {
         });
     }
 
-    static callPatch(url: string, payload: any, headers: any = {}) {
+    static callPatch(url: string, payload: any, headers: any = {}, params: any = {}) {
         return axiosInstance.patch(url, payload, {
             headers: {
                 ...headers
-            }
+            },
+            params: params
         });
     }
 

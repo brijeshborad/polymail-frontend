@@ -250,7 +250,18 @@ export function ComposeBox(props: any) {
             return;
         }
         if (composeDraft && composeDraft.id) {
-            messageService.sendMessage(true, scheduledDate, '', props.tabValue === 'DRAFT')
+            let body = {
+                subject: subject,
+                to: emailRecipients.recipients?.items,
+                cc: emailRecipients.cc?.items && emailRecipients.cc?.items.length > 0 ? emailRecipients.cc?.items : [],
+                bcc: emailRecipients.bcc?.items && emailRecipients.bcc?.items.length > 0 ? emailRecipients.bcc?.items : [],
+                draftInfo: {
+                    collabId: collabId,
+                    body: emailBody
+                },
+                ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
+            }
+            messageService.sendMessage(true, scheduledDate || '', {...body, id: composeDraft.id}, props.tabValue === 'DRAFT')
             setEmailRecipients({
                 cc: {
                     items: [],

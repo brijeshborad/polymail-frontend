@@ -4,7 +4,7 @@ import {updateMessageState} from "@/redux/messages/action-reducer";
 import {Message, MessageAttachments, MessagePart} from "@/models";
 import {generateToasterId} from "@/utils/common.functions";
 import dayjs from "dayjs";
-import {sendMessage} from "@/redux/draft/action-reducer";
+import {sendMessage, updatePartialMessage} from "@/redux/draft/action-reducer";
 import {Toaster} from "@/components/common";
 import {draftService} from "@/services/draft.service";
 import {createStandaloneToast} from "@chakra-ui/react";
@@ -50,14 +50,10 @@ class MessageService extends BaseService {
         this.dispatchAction(updateMessageState, body);
     }
 
-    sendMessage(isCompose: boolean = false, scheduledDate: string = '', emailBody: string = '', performForDraftTab: boolean = false) {
-        let {draft, composeDraft} = draftService.getDraftState();
+    sendMessage(isCompose: boolean = false, scheduledDate: string = '', draft: any, performForDraftTab: boolean = false) {
         const {toast} = createStandaloneToast()
         let currentDraft: any = {...draft};
-        if (isCompose) {
-            currentDraft = {...composeDraft};
-        }
-        let params = {};
+        let params: any = {send: true};
         let polyToast = generateToasterId();
         if (scheduledDate) {
             const targetDate = dayjs(scheduledDate)
@@ -74,7 +70,7 @@ class MessageService extends BaseService {
                 delay: secondsDifference
             }
 
-            this.dispatchAction(sendMessage, {body: {id: currentDraft.id, ...params}});
+            this.dispatchAction(updatePartialMessage, {body: {id: currentDraft?.id, body: currentDraft, params}});
 
             Toaster({
                 desc: scheduledDate || '',
@@ -85,7 +81,7 @@ class MessageService extends BaseService {
                     if (type === 'undo') {
                         params = {undo: true}
                         if (!isCompose) {
-                            threadService.updateThreadForUndoOrSend('undo', emailBody);
+                            threadService.updateThreadForUndoOrSend('undo', currentDraft?.draftInfo?.body);
                         } else {
                             if (performForDraftTab) {
                                 let undoDraft = draftService.getUndoDraft();
@@ -99,7 +95,7 @@ class MessageService extends BaseService {
                     } else if (type === 'send-now') {
                         params = {now: true}
                     }
-                    this.dispatchAction(sendMessage, {body: {id: currentDraft.id!, ...params}});
+                    this.dispatchAction(updatePartialMessage, {body: {id: currentDraft?.id, body: currentDraft, params}});
                     toast.close(`${polyToast}`);
                 }
             })
@@ -114,7 +110,7 @@ class MessageService extends BaseService {
                         if (type === 'undo') {
                             params = {undo: true}
                             if (!isCompose) {
-                                threadService.updateThreadForUndoOrSend('undo', emailBody);
+                                threadService.updateThreadForUndoOrSend('undo', currentDraft?.draftInfo?.body);
                             } else {
                                 if (performForDraftTab) {
                                     let undoDraft = draftService.getUndoDraft();
@@ -128,15 +124,15 @@ class MessageService extends BaseService {
                         } else if (type === 'send-now') {
                             params = {now: true}
                         }
-                        this.dispatchAction(sendMessage, {body: {id: currentDraft.id!, ...params}});
+                        this.dispatchAction(updatePartialMessage, {body: {id: currentDraft?.id, body: currentDraft, params}});
                         toast.close(`${polyToast}`);
                     }
                 })
             }
         }
-        this.dispatchAction(sendMessage, {body: {id: currentDraft.id!, ...params}});
+        this.dispatchAction(updatePartialMessage, {body: {id: currentDraft?.id, body: currentDraft, params}});
         if (!isCompose) {
-            threadService.updateThreadForUndoOrSend('send', emailBody);
+            threadService.updateThreadForUndoOrSend('send', draft?.draftInfo?.body);
         }
     }
 }
