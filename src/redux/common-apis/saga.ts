@@ -22,6 +22,7 @@ function* getSummaryData() {
   try {
     const response: Summary = yield ApiService.callGet(`summary/inbox`, {});
     yield put(getAllAccountSuccess(response.accounts || []));
+    yield put(getActivityFeedSuccess(response.activities || []));
     yield put(updateUserState({userDetails: response.user || {}}));
     yield put(getSummarySuccess({}));
   } catch (error: any) {

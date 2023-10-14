@@ -1,6 +1,6 @@
 import {Badge, Box, Drawer, DrawerContent, Flex, Text, useDisclosure} from '@chakra-ui/react';
 import styles from '@/styles/Home.module.css';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {EnergyIcon} from '@/icons';
 import {CloseIcon} from '@chakra-ui/icons';
 import dynamic from 'next/dynamic'
@@ -9,7 +9,6 @@ import {StateType} from "@/types";
 import {ActivityFeed} from "@/models/activityFeed";
 import {ACTIVITY_FEED_EVENT_TYPES} from "@/utils/constants";
 import {globalEventService, socketService} from "@/services";
-import {getActivityFeed} from "@/redux/common-apis/action-reducer";
 import Tooltip from "@/components/common/Tooltip";
 
 const FeedComponent = dynamic(
@@ -25,10 +24,6 @@ export const FeedSidebar = () => {
     const dispatch = useDispatch();
     const [feeds, setFeeds] = useState<ActivityFeed[]>([]);
     const [unreadCount, setUnreadCount] = useState<number>(0);
-
-    const callFeedApi = useCallback(() => {
-        dispatch(getActivityFeed({}));
-    }, [dispatch])
 
     useEffect(() => {
         if (newMessage && newMessage.name === 'Activity') {
@@ -89,10 +84,6 @@ export const FeedSidebar = () => {
         };
         setFeeds([...currentFeeds]);
     }
-
-    useEffect(() => {
-        callFeedApi()
-    }, [callFeedApi])
 
     return (
         <>
