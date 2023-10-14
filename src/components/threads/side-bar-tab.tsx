@@ -26,7 +26,6 @@ export function ThreadsSideBarTab(props: TabProps) {
         threads,
         isLoading,
         success: threadListSuccess,
-        updateSuccess,
         tabValue,
         multiSelection,
         isThreadSearched
@@ -159,13 +158,6 @@ export function ThreadsSideBarTab(props: TabProps) {
             getAllThread();
         }
     }, [getAllThread, selectedAccount, success])
-
-    // useEffect(() => {
-    //     if (updateSuccess) {
-    //         threadService.setThreadState({updateSuccess: false});
-    //         getAllThread();
-    //     }
-    // }, [updateSuccess, getAllThread])
 
     useEffect(() => {
         if (incomingEvent === 'threads.refresh') {

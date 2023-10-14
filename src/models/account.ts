@@ -1,3 +1,7 @@
+import {Project} from "@/models/project";
+import {Organization} from "@/models/organization";
+import {Contacts} from "@/models/contacts";
+
 export interface Account {
     id?: string,
     name?: string,
@@ -11,5 +15,9 @@ export interface Account {
     syncHistory?: {
         mailInitSynced?: string | null,
         mailSynced?: string | null
-    }
+    },
+    projects?: Project[],
+    organizations?: Organization[],
+    contacts?: Contacts[]
+
 }

@@ -14,7 +14,7 @@ import {updateThreads} from "@/redux/threads/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {Toaster} from "@/components/common";
-import {Message as MessageModel, Thread, UserProjectOnlineStatus} from "@/models";
+import {Thread, UserProjectOnlineStatus} from "@/models";
 import dynamic from "next/dynamic";
 import {
     MAILBOX_ARCHIVE,
@@ -26,7 +26,7 @@ import {
 } from "@/utils/constants";
 import dayjs from "dayjs";
 import {clearDebounce, debounce, generateToasterId} from "@/utils/common.functions";
-import {globalEventService, membershipService, messageService, threadService} from "@/services";
+import {membershipService, messageService, threadService} from "@/services";
 import Tooltip from "../common/Tooltip";
 
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));

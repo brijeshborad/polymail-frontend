@@ -20,7 +20,7 @@ import {Toaster} from '@/components/common';
 import dynamic from 'next/dynamic'
 import {HeaderSearch} from "@/components/common/header-search";
 import {
-    accountService,
+    accountService, commonService,
     messageService,
     organizationService, projectService,
     socketService,
@@ -40,7 +40,6 @@ const EditProjectModal = dynamic(
 
 export function Header() {
     const {organizations} = useSelector((state: StateType) => state.organizations);
-    const {isLoading: isApiLoading} = useSelector((state: StateType) => state.commonApis);
     const {accounts, selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {threads} = useSelector((state: StateType) => state.threads);
     const {googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
@@ -103,23 +102,6 @@ export function Header() {
         }
     }, [googleAuthRedirectionLink]);
 
-    useEffect(() => {
-        let timer1 = setTimeout(() => {
-            if (!isApiLoading) {
-                if (!organizations) {
-                    Router.push('/organization/add');
-                    return;
-                }
-                if (organizations && organizations.length <= 0) {
-                    Router.push('/organization/add');
-                }
-            }
-        }, 2000);
-        return () => {
-            clearTimeout(timer1);
-        };
-    }, [isApiLoading, organizations]);
-
     const setOrganization = useCallback(
         (org: Organization) => {
             LocalStorageService.updateOrg('store', org);
@@ -128,15 +110,33 @@ export function Header() {
         [],
     );
 
+    const updateValuesFromAccount = useCallback((account: Account) => {
+        let projects = account.projects || [];
+        let organizations = (account.organizations || []).sort((a: Organization, b: Organization) => (new Date(b.created as string).valueOf() - new Date(a.created as string).valueOf()));
+        let contacts = account.contacts || [];
+        projectService.setProjectState({projects, isLoading: false});
+        organizationService.setOrganizationState({organizations, isLoading: false});
+        commonService.setCommonState({contacts, isLoading: false});
+        accountService.setAccountState({success: true});
+        if (!organizations) {
+            Router.push('/organization/add');
+            return;
+        }
+        if (organizations && organizations.length <= 0) {
+            Router.push('/organization/add');
+        }
+    }, [])
+
     const setAccounts = useCallback(
         (account: Account) => {
             if (account.syncHistory?.mailInitSynced) {
                 LocalStorageService.updateAccount('store', account);
                 accountService.setAccountState({success: true});
+                updateValuesFromAccount(account);
             }
             accountService.setSelectedAccount(account);
         },
-        [],
+        [updateValuesFromAccount],
     );
 
     useEffect(() => {
@@ -151,9 +151,11 @@ export function Header() {
         if (accounts && accounts.length > 0) {
             if (!LocalStorageService.updateAccount('get')) {
                 setAccounts(accounts[0]);
+            } else {
+                updateValuesFromAccount(accounts[0]);
             }
         }
-    }, [accounts, setAccounts]);
+    }, [accounts, setAccounts, updateValuesFromAccount]);
 
     useEffect(() => {
         if (selectedAccount && !userDetails?.id) {

@@ -9,9 +9,8 @@ import {
   getSummary,
   getSummaryError, getSummarySuccess
 } from "@/redux/common-apis/action-reducer";
-import {getAllProjectsSuccess, getProjectByIdSuccess} from "@/redux/projects/action-reducer";
+import {getProjectByIdSuccess} from "@/redux/projects/action-reducer";
 import {getAllAccountSuccess} from "@/redux/accounts/action-reducer";
-import {getAllOrganizationsSuccess} from "@/redux/organizations/action-reducer";
 import {updateUserState} from "@/redux/users/action-reducer";
 import {Summary} from "@/models/summary";
 import {PayloadAction} from "@reduxjs/toolkit";
@@ -22,9 +21,7 @@ import { performSuccessActions } from "@/utils/common-redux.functions";
 function* getSummaryData() {
   try {
     const response: Summary = yield ApiService.callGet(`summary/inbox`, {});
-    yield put(getAllProjectsSuccess(response.projects || []));
     yield put(getAllAccountSuccess(response.accounts || []));
-    yield put(getAllOrganizationsSuccess(response.organizations || []));
     yield put(updateUserState({userDetails: response.user || {}}));
     yield put(getSummarySuccess({}));
   } catch (error: any) {
