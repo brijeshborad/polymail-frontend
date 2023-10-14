@@ -468,6 +468,21 @@
     margin: 0 auto;
 }
 
+.addToProjectList .backToInbox {
+    padding: 0px 12px;
+}
+
+.addToProjectList .backToInbox button {
+    border-bottom: 1px solid #F3F4F6;
+    padding: 0;
+}
+
+.addToProjectList .backToInbox button:hover {
+    background-color: transparent;
+    border-bottom: inherit;
+    color: #FFFFFF;
+}
+
 .addToProjectList .backToInbox:hover {
     background-color: #266DF0;
     color: #FFFFFF;
@@ -477,7 +492,7 @@
     stroke: #FFFFFF;
 }
 
-.addToProjectList .backToInbox svg {
+.addToProjectList .backToInbox button svg {
     stroke: #08162F;
 }
 

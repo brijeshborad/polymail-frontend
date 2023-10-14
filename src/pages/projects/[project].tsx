@@ -353,8 +353,8 @@ function ProjectInbox() {
                                         placeholder='Search project'/>
                               </InputGroup>
                             </div>
-                            <div>
-                              <Button className={inboxStyles.backToInbox} backgroundColor={'transparent'} w={'100%'} borderRadius={0}
+                            <div className={inboxStyles.backToInbox}>
+                              <Button backgroundColor={'transparent'} w={'100%'} borderRadius={0}
                                       justifyContent={'flex-start'}
                                       onClick={(e) => {
                                           e.preventDefault();
@@ -379,7 +379,7 @@ function ProjectInbox() {
                                   )
                                 })}
                             </div>
-                            <div>
+                            <div className={inboxStyles.addNewProject}>
                                 <Button backgroundColor={'transparent'} w={'100%'} borderRadius={0}
                                         justifyContent={'flex-start'}
                                         onClick={() => commonService.toggleCreateProjectModel(true, true)}>
