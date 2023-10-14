@@ -151,12 +151,14 @@ export function MessageBox(props: any) {
         if (iframeRef.current && iframeRef.current[index] && iframeRef.current[index].contentWindow) {
             iframeRef.current[index].contentDocument.body.style.fontFamily = "'Inter', sans-serif";
             iframeRef.current[index].contentDocument.body.style.fontSize = "14px";
-            if (!iframeHeight[index]) {
-                setIframeHeight(prevState => ({
-                    ...prevState,
-                    [index]: (iframeRef.current[index].contentWindow.document.body.scrollHeight + 20) + "px"
-                }));
-            }
+            setTimeout(() => {
+                if (!iframeHeight[index]) {
+                    setIframeHeight(prevState => ({
+                        ...prevState,
+                        [index]: (iframeRef.current[index].contentWindow.document.body.scrollHeight + 20) + "px"
+                    }));
+                }
+            }, 100);
 
             const allLinks = iframeRef.current[index].contentDocument.getElementsByTagName("a")
 
