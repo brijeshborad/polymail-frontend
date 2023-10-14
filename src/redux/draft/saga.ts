@@ -23,6 +23,7 @@ function* createNewDraft({payload}: PayloadAction<ReducerActionType>) {
         delete payload.body.fromCompose;
         delete payload.body.isDraftTab;
         const response: AxiosResponse = yield ApiService.callPost(`messages`, {accountId: payload.body.accountId, ...payload.body.body});
+        performSuccessActions(payload, response);
         yield put(createDraftSuccess({draft: response, isForCompose, isDraftTab}));
     } catch (error: any) {
         error = error as AxiosError;

@@ -18,7 +18,7 @@ const draftSlice = createSlice({
     initialState,
     reducers: {
         createDraft: (state: InitialDraftStateType, {payload}: PayloadAction<ReducerActionType>) => {
-            return {...state, ...(payload.body.forCompose ? {composeDraft: null} : {draft: null}), isLoading: false}
+            return {...state, ...(payload.body.fromCompose ? {composeDraft: null} : {draft: null}), isLoading: false}
         },
         createDraftSuccess: (state: InitialDraftStateType, {payload: {draft, isForCompose}}: PayloadAction<any>) => {
             return {

@@ -354,43 +354,67 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     function handleFileUpload(files: any, event: any = null) {
         loaderPercentage = 0;
         const file = files[0];
+        if (event) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
+        const reader = new FileReader();
+        if (reader) {
+            reader.readAsDataURL(file);
+            reader.onload = function () {
+                if (reader.result) {
+                    if (inputFile.current && inputFile.current?.value) {
+                        inputFile.current.value = '';
+                    }
+                    setAttachments([
+                        ...(attachments || []),
+                        {
+                            filename: file.name,
+                            mimeType: file.type,
+                            isUploaded: false
+                        }
+                    ]);
 
-        if (draft && draft.id) {
-            if (event) {
-                event.stopPropagation();
-                event.preventDefault();
-            }
-            const reader = new FileReader();
-            if (reader) {
-                reader.readAsDataURL(file);
-                reader.onload = function () {
-
-
-                    if (reader.result) {
-                        setAttachments([
-                            ...(attachments || []),
-                            {
-                                filename: file.name,
-                                mimeType: file.type,
-                                isUploaded: false
-                            }
-                        ]);
+                    if (draft && draft.id) {
                         if (loaderPercentage < 100) {
                             loaderPercentage += 20;
                         }
-
                         dispatch(uploadAttachment({
                             body: {id: draft.id, file: file},
                             afterSuccessAction: () => {
                                 sendToDraft('', false);
                             }
                         }));
+                    } else {
+                        setWaitForDraft(true);
+                        let body: any = {
+                            subject: subject,
+                            to: emailRecipients.recipients?.items,
+                            cc: emailRecipients.cc?.items && emailRecipients.cc?.items.length > 0 ? emailRecipients.cc?.items : [],
+                            bcc: emailRecipients.bcc?.items && emailRecipients.bcc?.items.length > 0 ? emailRecipients.bcc?.items : [],
+                            draftInfo: {
+                                body: emailBody,
+                                collabId
+                            },
+                            messageId: messageData?.id,
+                            ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
+                        }
+                        dispatch(createDraft({
+                            body: {accountId: selectedAccount?.id, body: body},
+                            afterSuccessAction: (draft: any) => {
+                                draftService.setReplyDraft(draft);
+                                if (loaderPercentage < 100) {
+                                    loaderPercentage += 20;
+                                }
+                                dispatch(uploadAttachment({body: {id: draft.id, file: file}}));
+                            }
+                        }));
                     }
-                };
-                reader.onerror = function (error) {
-                    console.log('Error: ', error);
-                };
-            }
+                }
+            };
+            reader.onerror = function (error) {
+                console.log('Error: ', error);
+            };
         }
     }
 
