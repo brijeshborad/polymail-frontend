@@ -148,43 +148,41 @@ export function MessageBox(props: any) {
 
     // Set iframe height once content is loaded within iframe
     const onIframeLoad = (index: number) => {
-        setTimeout(() => {
-            if (iframeRef.current && iframeRef.current[index] && iframeRef.current[index].contentWindow) {
-                iframeRef.current[index].contentDocument.body.style.fontFamily = "'Inter', sans-serif";
-                iframeRef.current[index].contentDocument.body.style.fontSize = "14px";
+        if (iframeRef.current && iframeRef.current[index] && iframeRef.current[index].contentWindow) {
+            iframeRef.current[index].contentDocument.body.style.fontFamily = "'Inter', sans-serif";
+            iframeRef.current[index].contentDocument.body.style.fontSize = "14px";
+            if (!iframeHeight[index]) {
                 setIframeHeight(prevState => ({
                     ...prevState,
                     [index]: (iframeRef.current[index].contentWindow.document.body.scrollHeight + 20) + "px"
                 }));
+            }
 
-                const allLinks = iframeRef.current[index].contentDocument.getElementsByTagName("a")
+            const allLinks = iframeRef.current[index].contentDocument.getElementsByTagName("a")
 
-                for (let i in allLinks) {
-                    const a = allLinks[i]
-                    if (typeof a === 'object' && a.hasAttribute('href')) {
-                        const href = a.getAttribute('href')
-                        a.onmouseover = function () {
-                            setCurrentLinkPreview({
-                                isVisible: true,
-                                url: href,
-                                top: a.getBoundingClientRect().top + window.scrollY,
-                                left: a.getBoundingClientRect().left + window.scrollX
-                            })
-                        }
-                        a.onmouseout = function () {
-                            setCurrentLinkPreview({
-                                isVisible: false,
-                                url: href,
-                                top: a.getBoundingClientRect().top + window.scrollY,
-                                left: a.getBoundingClientRect().left + window.scrollX
-                            })
-                        }
+            for (let i in allLinks) {
+                const a = allLinks[i]
+                if (typeof a === 'object' && a.hasAttribute('href')) {
+                    const href = a.getAttribute('href')
+                    a.onmouseover = function () {
+                        setCurrentLinkPreview({
+                            isVisible: true,
+                            url: href,
+                            top: a.getBoundingClientRect().top + window.scrollY,
+                            left: a.getBoundingClientRect().left + window.scrollX
+                        })
+                    }
+                    a.onmouseout = function () {
+                        setCurrentLinkPreview({
+                            isVisible: false,
+                            url: href,
+                            top: a.getBoundingClientRect().top + window.scrollY,
+                            left: a.getBoundingClientRect().left + window.scrollX
+                        })
                     }
                 }
-
             }
-        }, 100);
-
+        }
     };
 
     const setScope = (message: MessageModel) => {
