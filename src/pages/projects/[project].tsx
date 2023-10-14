@@ -286,6 +286,14 @@ function ProjectInbox() {
         return value[0].toUpperCase() + value.slice(1)
     }
 
+    function focusSearch() {
+        setTimeout(() => {
+            if (searchRef.current) {
+                searchRef.current?.focus();
+            }
+        }, 300)
+    }
+
     return (
         <>
             <Flex direction={'column'} className={styles.projectPage}
@@ -320,11 +328,12 @@ function ProjectInbox() {
                         </>
                       ) : (
                         <>
-                        <Menu isOpen={isProjectDropdownOpen} onClose={() => setIsProjectDropdownOpen(false)}>
+                        <Menu isOpen={isProjectDropdownOpen} autoSelect={false} onClose={() => setIsProjectDropdownOpen(false)}>
                           <Tooltip label='Show all projects' placement='bottom'>
                             <MenuButton
                               onClick={() => {
-                                setIsProjectDropdownOpen(!isProjectDropdownOpen)
+                                setIsProjectDropdownOpen(!isProjectDropdownOpen);
+                                  focusSearch();
                               }}
                               display={'flex'}
                               as={Flex}

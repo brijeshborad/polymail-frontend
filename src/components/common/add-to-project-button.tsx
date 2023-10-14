@@ -162,6 +162,7 @@ export function AddToProjectButton() {
                     window.focus()
                 }}
                 closeOnBlur={true}
+                autoSelect={false}
             >
                 {threadProject?.length ? <Tooltip label={'Share'} placement={'bottom'}>
                     <MenuButton onClick={() => {
