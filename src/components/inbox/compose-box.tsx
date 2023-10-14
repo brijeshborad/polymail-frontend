@@ -144,7 +144,7 @@ export function ComposeBox(props: any) {
                 if (checkValue.trim()) {
                     setIsDraftUpdated(true)
                 }
-                globalEventService.fireEvent({data: draftInfo.body, type: 'richtexteditor.forceUpdateWithOnChange'});
+                globalEventService.fireEvent({data: {body: draftInfo.body || ''}, type: 'richtexteditor.forceUpdateWithOnChange'});
                 setEmailBody(draftInfo.body);
             }
 

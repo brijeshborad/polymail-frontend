@@ -215,7 +215,7 @@ export function MessageReplyBox(props: MessageBoxType) {
                     setIsDraftUpdated(true)
                     setTimeout(() => {
                         globalEventService.fireEvent({
-                            data: draftInfo?.body || '',
+                            data: {body: draftInfo?.body || '', callBack: () => setShowEditorToolbar(true)},
                             type: 'richtexteditor.forceUpdateWithOnChange'
                         });
                     }, 500);
@@ -484,7 +484,10 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 }, 500)
                 if (!getPlainTextFromHtml(draftMessage.draftInfo?.body || '').trim()) {
                     setTimeout(() => {
-                        globalEventService.fireEvent({data: getBody(), type: 'richtexteditor.forceUpdateInitial'})
+                        globalEventService.fireEvent({data: {body: getBody(), callBack: () => {
+                                setShowEditorToolbar(true);
+                            }
+                        }, type: 'richtexteditor.forceUpdateInitial'})
                     }, 10)
                 }
                 draftService.setReplyDraft(draftMessage as MessageDraft);
@@ -498,14 +501,18 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 }, 500)
                 draftService.setReplyDraft({...draft, draftInfo: {...(draft?.draftInfo || {}), body: getBody()}});
                 setTimeout(() => {
-                    globalEventService.fireEvent({data: getBody(), type: 'richtexteditor.forceUpdateInitial'})
+                    globalEventService.fireEvent({data: {body: getBody(), callBack: () => {
+                                setShowEditorToolbar(true);
+                            }
+                        }, type: 'richtexteditor.forceUpdateInitial'})
                 }, 10)
+
+
             }
         }
     }
 
     const handleFocus = () => {
-        setShowEditorToolbar(true);
         globalEventService.fireEvent('iframe.clicked');
     }
 

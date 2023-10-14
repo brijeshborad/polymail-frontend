@@ -14,12 +14,18 @@ export default function ContentMonitor() {
         }
         if (event && event.type === 'richtexteditor.forceUpdateWithOnChange') {
             editor?.commands.clearContent(false);
-            editor?.commands.setContent(event.data, true)
+            editor?.commands.setContent(event.data.body, true)
+            if (event.data.callBack) {
+                event.data.callBack()
+            }
         }
         if (event && event.type === 'richtexteditor.forceUpdateInitial') {
             editor?.commands.clearContent(false);
-            editor?.commands.setContent(event.data, false)
-            editor?.commands.focus('start')
+            editor?.commands.setContent(event.data.body, false)
+            editor?.commands.focus('start');
+            if (event.data.callBack) {
+                event.data.callBack()
+            }
         }
 
         if (event && event.type === 'richtexteditor.focus') {
