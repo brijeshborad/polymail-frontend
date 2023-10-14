@@ -27,7 +27,7 @@ export function MessageBox(props: any) {
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const [isContextMenuOpen, setIsContextMenuOpen] = useState(false)
     const iframeRef = React.useRef<any>([]);
-    const [iframeHeight, setIframeHeight] = useState<{ [key: string | number]: string }>({0: "0px"});
+    const [iframeHeight, setIframeHeight] = useState<{ [key: string | number]: string }>({});
     const dispatch = useDispatch();
     const {
         messagePart,
@@ -463,7 +463,7 @@ export function MessageBox(props: any) {
                             ref={ref => iframeRef.current[messageIndex] = ref}
                             scrolling="no"
                             onLoad={() => onIframeLoad(messageIndex)}
-                            height={iframeHeight[messageIndex]}
+                            height={iframeHeight[messageIndex] || '0px'}
                             src={message.body as string}
                             className={styles.mailBody}
                         />
