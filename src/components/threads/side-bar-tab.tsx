@@ -160,12 +160,12 @@ export function ThreadsSideBarTab(props: TabProps) {
         }
     }, [getAllThread, selectedAccount, success])
 
-    useEffect(() => {
-        if (updateSuccess) {
-            threadService.setThreadState({updateSuccess: false});
-            getAllThread();
-        }
-    }, [updateSuccess, getAllThread])
+    // useEffect(() => {
+    //     if (updateSuccess) {
+    //         threadService.setThreadState({updateSuccess: false});
+    //         getAllThread();
+    //     }
+    // }, [updateSuccess, getAllThread])
 
     useEffect(() => {
         if (incomingEvent === 'threads.refresh') {

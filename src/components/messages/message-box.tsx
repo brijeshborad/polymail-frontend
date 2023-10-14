@@ -3,42 +3,47 @@ import {Button, Flex, Heading, Menu, MenuButton, MenuItem, MenuList, Text} from 
 import {Time} from "@/components/common";
 import {MenuIcon} from "@/icons";
 import React, {useCallback, useEffect, useState} from "react";
-import {getAttachmentDownloadUrl, updateMessage} from "@/redux/messages/action-reducer";
+import {
+    getAttachmentDownloadUrl,
+    getMessageAttachments,
+    getMessageParts,
+    updateMessage
+} from "@/redux/messages/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
-import {MessageAttachments} from "@/models";
+import {Message, Message as MessageModel, MessageAttachments} from "@/models";
 import {StateType} from "@/types";
 import {clearDebounce, debounce} from "@/utils/common.functions";
 import {EyeSlashedIcon} from "@/icons/eye-slashed.icon";
 import Tooltip from "../common/Tooltip";
 import {AttachmentIcon} from "@chakra-ui/icons";
 import {FileIcon, defaultStyles, DefaultExtensionType} from 'react-file-icon';
-import {threadService} from "@/services";
+import {globalEventService, messageService, threadService} from "@/services";
 import LinkPreview from "../common/link-preview";
-import { LinkPreviewProps } from "@/types/props-types/link-preview.types";
+import {LinkPreviewProps} from "@/types/props-types/link-preview.types";
 import {getCacheMessages, setCacheMessages} from "@/utils/cache.functions";
 
 
 export function MessageBox(props: any) {
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const [isContextMenuOpen, setIsContextMenuOpen] = useState(false)
-    const ref = React.useRef(null)
-    const iframeRef = React.useRef<HTMLIFrameElement | null | any>(null);
-    const [iframeHeight, setIframeHeight] = React.useState("0px");
-    const message = props.item
-    const [emailList, setEmailList] = useState<any>([]);
+    const iframeRef = React.useRef<any>([]);
+    const [iframeHeight, setIframeHeight] = useState<{ [key: string | number]: string }>({0: "0px"});
     const dispatch = useDispatch();
-    const {selectedMessage, error, messagePart, messageAttachments} = useSelector((state: StateType) => state.messages);
-    const [isEyeShow, setIsEyeShow] = useState<any>(false);
+    const {
+        messagePart,
+        messageAttachments,
+        messages
+    } = useSelector((state: StateType) => state.messages);
+    const {selectedThread} = useSelector((state: StateType) => state.threads);
     const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false)
-    const [isExpanded, setIsExpanded] = useState(false)
     const [currentLinkPreview, setCurrentLinkPreview] = useState<LinkPreviewProps>({
-      isVisible: false,
-      url: null,
-      top: 0,
-      left: 0
+        isVisible: false,
+        url: null,
+        top: 0,
+        left: 0
     })
-    const [emailBody, setEmailBody] = useState('')
-    const [attachments, setAttachments] = useState<MessageAttachments[]>([])
+    const [inboxMessages, setInboxMessages] = useState<MessageModel[]>([]);
+    const [index, setIndex] = useState<number | null>(null);
 
     const cacheMessage = useCallback((body: Object | any, messageId: string) => {
         if (messageId) {
@@ -54,86 +59,127 @@ export function MessageBox(props: any) {
     }, [])
 
     useEffect(() => {
-        if (selectedMessage && message && selectedMessage.id === message.id) {
-            setIsExpanded(true);
-        } else {
-            setIsExpanded(false)
+        if (selectedThread && selectedThread?.id) {
+            setIndex(null);
+            globalEventService.fireEvent({data: null, type: 'draft.currentMessage'})
+            globalEventService.fireEvent({data: {type: 'reply'}, type: 'draft.updateType'})
+            messageService.setMessages(selectedThread.messages || []);
         }
-    }, [message, selectedMessage])
+    }, [dispatch, selectedThread])
+
+    useEffect(() => {
+        if (messages && messages.length > 0) {
+            // remove draft messages and set index to last inbox message
+            const currentInboxMessages: MessageModel[] = messages.filter((msg: MessageModel) => !(msg.mailboxes || []).includes('DRAFT'));
+            setInboxMessages([...currentInboxMessages]);
+            setIndex(currentInboxMessages.length - 1);
+            globalEventService.fireEvent({
+                data: currentInboxMessages[currentInboxMessages.length - 1],
+                type: 'draft.currentMessage'
+            })
+        }
+    }, [messages, dispatch])
+
+    useEffect(() => {
+        if (index !== null && inboxMessages && inboxMessages.length > 0) {
+            if (inboxMessages[index]) {
+                messageService.setSelectedMessage(inboxMessages[index]);
+                // We already set index to last inbox message
+                let cacheMessages: any = getCacheMessages();
+                if (cacheMessages[inboxMessages[index].id!] && cacheMessages[inboxMessages[index].id!].data) {
+                    messageService.setMessageBody({
+                        data: cacheMessages[inboxMessages[index].id!].data,
+                        messageId: inboxMessages[index].id!
+                    })
+                } else {
+                    dispatch(getMessageParts({body: {id: inboxMessages[index].id!}}));
+                }
+                if (cacheMessages[inboxMessages[index].id!] && cacheMessages[inboxMessages[index].id!].attachments) {
+                    messageService.setMessageAttachments(cacheMessages[inboxMessages[index].id!].attachments, inboxMessages[index].id!)
+                } else {
+                    dispatch(getMessageAttachments({body: {id: inboxMessages[index].id!}}));
+                }
+
+            }
+        }
+    }, [dispatch, index])
 
 
     useEffect(() => {
-        if (messagePart && messagePart.messageId === message.id) {
+        if (messagePart && messagePart.messageId) {
+            messageService.setMessageBody(null);
+            let messageId = inboxMessages.findIndex((item: MessageModel) => item.id === messagePart?.messageId);
+            let finalMessages = [...inboxMessages];
             if (messagePart.data) {
                 cacheMessage({data: messagePart.data}, messagePart.messageId!);
                 let decoded = Buffer.from(messagePart.data || '', 'base64').toString();
                 let addTargetBlank = decoded.replace(/<a/g, '<a target="_blank"');
                 const blob = new Blob([addTargetBlank], {type: "text/html"});
                 const blobUrl = window.URL.createObjectURL(blob);
-                setEmailBody(blobUrl);
+                finalMessages[messageId] = {
+                    ...finalMessages[messageId],
+                    body: blobUrl
+                }
             } else {
                 cacheMessage({data: ''}, messagePart.messageId!);
-                setEmailBody('')
+                finalMessages[messageId] = {...finalMessages[messageId], body: ''}
             }
+            setInboxMessages(finalMessages);
         }
-    }, [cacheMessage, message, messagePart])
+    }, [cacheMessage, inboxMessages, messagePart])
 
     useEffect(() => {
         // convert blob url to image url
-        if (messageAttachments && messageAttachments.messageId === message.id) {
+        if (messageAttachments && messageAttachments.messageId) {
+            let messageId = inboxMessages.findIndex((item: MessageModel) => item.id === messageAttachments?.messageId);
+            let finalMessages = [...inboxMessages];
             if (messageAttachments.attachments.length) {
                 cacheMessage({attachments: messageAttachments.attachments}, messageAttachments.messageId!);
-                setAttachments(messageAttachments.attachments)
+                finalMessages[messageId] = {
+                    ...finalMessages[messageId],
+                    attachments: messageAttachments.attachments
+                }
             } else {
                 cacheMessage({attachments: []}, messageAttachments.messageId!);
-                setAttachments([])
+                finalMessages[messageId] = {...finalMessages[messageId], attachments: []}
             }
         }
-    }, [cacheMessage, messageAttachments, message])
-
-
-    useEffect(() => {
-        if (message) {
-            if (message.to && message.to.length > 1) {
-                let myArray = [...message.to]
-                myArray.shift();
-                setEmailList(myArray)
-            }
-            setIsEyeShow(message.scope === 'visible');
-        }
-    }, [message])
+    }, [cacheMessage, inboxMessages, messageAttachments])
 
     // Set iframe height once content is loaded within iframe
-    const onIframeLoad = () => {
+    const onIframeLoad = (index: number) => {
         setTimeout(() => {
-            if (iframeRef.current && iframeRef.current.contentWindow) {
-                iframeRef.current.contentDocument.body.style.fontFamily = "'Inter', sans-serif";
-                iframeRef.current.contentDocument.body.style.fontSize = "14px";
-                setIframeHeight((iframeRef.current.contentWindow.document.body.scrollHeight + 20) + "px");
+            if (iframeRef.current && iframeRef.current[index] && iframeRef.current[index].contentWindow) {
+                iframeRef.current[index].contentDocument.body.style.fontFamily = "'Inter', sans-serif";
+                iframeRef.current[index].contentDocument.body.style.fontSize = "14px";
+                setIframeHeight(prevState => ({
+                    ...prevState,
+                    [index]: (iframeRef.current[index].contentWindow.document.body.scrollHeight + 20) + "px"
+                }));
 
-                const allLinks = iframeRef.current.contentDocument.getElementsByTagName("a")
+                const allLinks = iframeRef.current[index].contentDocument.getElementsByTagName("a")
 
                 for (let i in allLinks) {
-                  const a = allLinks[i]
-                  if(typeof a === 'object' && a.hasAttribute('href')) {
-                    const href = a.getAttribute('href')
-                    a.onmouseover=function(){
-                      setCurrentLinkPreview({
-                        isVisible: true,
-                        url: href,
-                        top: a.getBoundingClientRect().top + window.scrollY,
-                        left: a.getBoundingClientRect().left + window.scrollX
-                      })
+                    const a = allLinks[i]
+                    if (typeof a === 'object' && a.hasAttribute('href')) {
+                        const href = a.getAttribute('href')
+                        a.onmouseover = function () {
+                            setCurrentLinkPreview({
+                                isVisible: true,
+                                url: href,
+                                top: a.getBoundingClientRect().top + window.scrollY,
+                                left: a.getBoundingClientRect().left + window.scrollX
+                            })
+                        }
+                        a.onmouseout = function () {
+                            setCurrentLinkPreview({
+                                isVisible: false,
+                                url: href,
+                                top: a.getBoundingClientRect().top + window.scrollY,
+                                left: a.getBoundingClientRect().left + window.scrollX
+                            })
+                        }
                     }
-                    a.onmouseout=function(){
-                      setCurrentLinkPreview({
-                        isVisible: false,
-                        url: href,
-                        top: a.getBoundingClientRect().top + window.scrollY,
-                        left: a.getBoundingClientRect().left + window.scrollX
-                      })
-                    }
-                  }
                 }
 
             }
@@ -141,28 +187,43 @@ export function MessageBox(props: any) {
 
     };
 
-    useEffect(() => {
-        setIsEyeShow(props?.item.scope !== 'visible')
-    }, [props?.item.scope, error])
-
-    const setScope = () => {
+    const setScope = (message: MessageModel) => {
         if (message && message.id) {
-            let body = {scope: !isEyeShow ? 'hidden': 'visible'}
+            let body = {scope: message.scope === 'visible' ? 'hidden' : 'visible'}
             dispatch(updateMessage({
                 body: {id: message.id, body},
                 afterSuccessAction: () => {
-                    threadService.makeThreadScope(message, !isEyeShow ? 'hidden': 'visible');
+                    threadService.makeThreadScope(message, message.scope === 'visible' ? 'hidden' : 'visible');
                 }
             }))
         }
-        setIsEyeShow(!isEyeShow);
+        let messageId = inboxMessages.findIndex((item: MessageModel) => item.id === message?.id);
+        let finalMessages = [...inboxMessages];
+        finalMessages[messageId] = {
+            ...finalMessages[messageId],
+            scope: message.scope === 'visible' ? 'hidden' : 'visible'
+        };
+        setInboxMessages(finalMessages);
     }
 
-    const downloadImage = (item: MessageAttachments) => {
-        if (selectedMessage && selectedMessage.id) {
-            dispatch(getAttachmentDownloadUrl({body: {id: selectedMessage.id, attachment: item.id}}));
+    const downloadImage = (message: MessageModel, item: MessageAttachments) => {
+        if (message && message.id) {
+            dispatch(getAttachmentDownloadUrl({body: {id: message.id, attachment: item.id}}));
         }
     }
+
+    const handleRowClick = (selectIndex: any) => {
+        if (selectIndex === index) {
+            // Clicking on an already expanded row, so close it
+            messageService.setSelectedMessage(null)
+            setIndex(null)
+        } else {
+            setIndex(selectIndex);
+            // Clicking on a new row, expand it
+            const targetMessage = (messages || [])[selectIndex]
+            messageService.setSelectedMessage(targetMessage)
+        }
+    };
 
     function showExtensionImages(item: string | undefined) {
         if (item) {
@@ -175,7 +236,7 @@ export function MessageBox(props: any) {
         return 'pdf'
     }
 
-    function attachmentsMenu() {
+    function attachmentsMenu(message: Message) {
         return <Menu
             isOpen={isMoreDropdownOpen}
             onClose={() => {
@@ -215,8 +276,8 @@ export function MessageBox(props: any) {
                     }, 200, message.id)
                 }}
             >
-                {attachments?.map((item: MessageAttachments, i: number) => (
-                    <MenuItem gap={2} key={i} onClick={() => downloadImage(item)}>
+                {(message.attachments || []).map((item: MessageAttachments, i: number) => (
+                    <MenuItem gap={2} key={i} onClick={() => downloadImage(message, item)}>
                         <FileIcon
                             extension={showExtensionImages(item.filename) as DefaultExtensionType}
                             {...defaultStyles[showExtensionImages(item.filename) as DefaultExtensionType]}
@@ -236,177 +297,64 @@ export function MessageBox(props: any) {
     }, [incomingEvent]);
 
     return (
-        <Flex ref={ref} position={'relative'} direction={'column'}
-              className={`${styles.oldMail} ${isExpanded ? styles.lastOpenMail : ''}`} mb={3} gap={4}
-              border={'1px solid #E5E7EB'} borderRadius={12} align={'center'}>
-            {!isExpanded &&
-            <Flex align={'flex-start'} width={'100%'}>
-                <Flex align={'center'} w={'100%'} gap={2} cursor={'pointer'} padding={4} onClick={props?.onClick}>
-                    <div className={styles.mailBoxUserImage}>
-
-                    </div>
-
-                    <Flex w={'100%'} direction={'column'}>
-                        <Flex align={'center'} justify={'space-between'} mb={1} minH={5}>
-                            <Heading as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400}
-                                     letterSpacing={'-0.13px'}
-                                     lineHeight={1}>{message.from.name || message.from.email}</Heading>
-                        </Flex>
-                        <Text fontSize='13px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
-                              fontWeight={400}>
-                            <span dangerouslySetInnerHTML={{__html: props?.item.snippet || ''}}/>
-                        </Text>
-                    </Flex>
-                </Flex>
-                <Flex align={'center'} pt={4} position={'absolute'} right={0} className={styles.mailBoxTime}
-                      gap={'6px'}>
-                    {isEyeShow ?
-                        <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
-                            <EyeSlashedIcon/>
-                        </Flex> : ''}
-
-                    {attachments && !!attachments.length &&
-                    attachmentsMenu()
-                    }
-
-                    <span style={{whiteSpace: 'nowrap'}}>
-                                    <Time time={props?.item.created || ''} isShowFullTime={true}
-                                          showTimeInShortForm={false}/>
-                                </span>
-
-                    <Menu isOpen={isContextMenuOpen} onClose={() => setIsContextMenuOpen(false)}>
-                        <MenuButton
-                            onClick={(e) => {
-                                e.preventDefault()
-                                e.stopPropagation()
-                                setIsContextMenuOpen(!isContextMenuOpen)
-                            }} className={styles.menuIcon}
-                            transition={'all 0.5s'} backgroundColor={'transparent'} fontSize={'12px'}
-                            h={'auto'} minWidth={'24px'} padding={'0'} as={Button} rightIcon={<MenuIcon/>}>
-                        </MenuButton>
-                        <MenuList className={'drop-down-list'}>
-                            {message && (
-                                <MenuItem
-                                    onClick={(e) => {
-                                        e.preventDefault()
-                                        e.stopPropagation()
-                                        if (props.preventSelectingMessage) {
-                                            props.preventSelectingMessage()
-                                        }
-                                        setScope()
-                                    }}>
-                                    {!isEyeShow ? 'Hide from project members' : 'Show to project members'}
-                                </MenuItem>
-                            )}
-                            <MenuItem
-                                onClick={() => props.hideAndShowReplyBox('reply', message)}> Reply </MenuItem>
-                            <MenuItem
-                                onClick={() => props.hideAndShowReplyBox('reply-all', message)}> Reply
-                                All </MenuItem>
-                            <MenuItem
-                                onClick={() => props.hideAndShowReplyBox('forward', message)}> Forward </MenuItem>
-                        </MenuList>
-                    </Menu>
-                </Flex>
-            </Flex>
-            }
-
-            {message && isExpanded &&
-            <Flex direction={'column'} w={'100%'} pb={4}>
-                <Flex align={'flex-start'}>
-                    <Flex align={'center'} w={'100%'} cursor={'pointer'} gap={2} padding={4}
-                          onClick={props?.onClick}>
+        inboxMessages && inboxMessages.length > 0 && inboxMessages.map((message: Message, messageIndex) => (
+            <Flex position={'relative'} direction={'column'} key={messageIndex}
+                  className={`${styles.oldMail} ${messageIndex === index ? styles.lastOpenMail : ''}`} mb={3}
+                  gap={4}
+                  border={'1px solid #E5E7EB'} borderRadius={12} align={'center'}>
+                {messageIndex !== index &&
+                <Flex align={'flex-start'} width={'100%'}>
+                    <Flex align={'center'} w={'100%'} gap={2} cursor={'pointer'} padding={4}
+                          onClick={() => handleRowClick(messageIndex)}>
                         <div className={styles.mailBoxUserImage}>
 
                         </div>
-                        <Flex w={'100%'} direction={'column'} pr={'20px'}>
-                            <Flex align={'center'} justify={'space-between'} mb={1}>
-                                <Flex align={'flex-end'} gap={1}>
-                                    <Heading
-                                        as='h6' fontSize={'13px'} color={'#0A101D'}
-                                        fontWeight={400} letterSpacing={'-0.13px'} lineHeight={1}
-                                    >
-                                        {message.from?.name || message.from.email}
-                                    </Heading>
-                                    {message.from?.name && (
-                                        <>
-                                            <span className={'dot'}/>
-                                            <Text
-                                                fontSize='12px' letterSpacing={'-0.13px'}
-                                                color={'#6B7280'} lineHeight={1}
-                                                fontWeight={400}
-                                            >
-                                                {message.from.email}
-                                            </Text>
-                                        </>
-                                    )}
-                                </Flex>
-                            </Flex>
-                            {message && message.to && message.to.length > 0 &&
-                            <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
-                                  fontWeight={400}>to:&nbsp;
-                                {message.to[0].email}&nbsp;
 
-                                <div className={styles.otherMail}>
-                                    <Tooltip
-                                        placement="bottom"
-                                        label={(emailList || []).map((item: any, index: number) => (
-                                            <p key={index}>{item.email}</p>
-                                        ))}>
-                                        <Text
-                                            as='u'>{message.to.length - 1 > 0 && `and ${message.to.length - 1} others`} </Text>
-                                    </Tooltip>
-                                </div>
+                        <Flex w={'100%'} direction={'column'}>
+                            <Flex align={'center'} justify={'space-between'} mb={1} minH={5}>
+                                <Heading as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400}
+                                         letterSpacing={'-0.13px'}
+                                         lineHeight={1}>{message.from?.name || message.from?.email}</Heading>
                             </Flex>
-                            }
+                            <Text fontSize='13px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
+                                  fontWeight={400}>
+                                <span dangerouslySetInnerHTML={{__html: message.snippet || ''}}/>
+                            </Text>
                         </Flex>
                     </Flex>
-                    <Flex align={'center'} gap={'6px'} pt={4} position={'absolute'} right={0}>
-                        {isEyeShow ?
+                    <Flex align={'center'} pt={4} position={'absolute'} right={0} className={styles.mailBoxTime}
+                          gap={'6px'}>
+                        {message.scope === 'hidden' ?
                             <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
                                 <EyeSlashedIcon/>
                             </Flex> : ''}
-                        {attachments && !!attachments.length &&
-                        attachmentsMenu()
-                        }
 
-                        {/*
-                                  <Flex className={styles.memberImages}>
-                                      <div className={styles.memberPhoto}>
-                                          <Image src="/image/user.png" width="24" height="24" alt=""/>
-                                      </div>
-                                      <div className={styles.memberPhoto}>
-                                          <Image src="/image/user.png" width="24" height="24" alt=""/>
-                                      </div>
-                                      <Flex align={'center'} justify={'center'} fontSize={'9px'} color={'#082561'}
-                                            className={styles.memberPhoto}>
-                                          +4
-                                      </Flex>
-                                  </Flex>*/}
-                        <div className={styles.mailBoxTime} style={{whiteSpace: 'nowrap'}}>
-                            <Time time={message?.created || ''} isShowFullTime={true}
-                                  showTimeInShortForm={false}/>
-                        </div>
+                        {message.attachments && !!message.attachments.length && attachmentsMenu(message)}
+
+                        <span style={{whiteSpace: 'nowrap'}}>
+                                    <Time time={message.created || ''} isShowFullTime={true}
+                                          showTimeInShortForm={false}/>
+                                </span>
+
                         <Menu isOpen={isContextMenuOpen} onClose={() => setIsContextMenuOpen(false)}>
                             <MenuButton
-                                onClick={() => setIsContextMenuOpen(true)} className={styles.menuIcon}
+                                onClick={(e) => {
+                                    e.preventDefault()
+                                    e.stopPropagation()
+                                    setIsContextMenuOpen(!isContextMenuOpen)
+                                }} className={styles.menuIcon}
                                 transition={'all 0.5s'} backgroundColor={'transparent'} fontSize={'12px'}
                                 h={'auto'} minWidth={'24px'} padding={'0'} as={Button} rightIcon={<MenuIcon/>}>
                             </MenuButton>
                             <MenuList className={'drop-down-list'}>
-                                {message && (
-                                    <MenuItem
-                                        onClick={(e) => {
-                                            e.preventDefault()
-                                            e.stopPropagation()
-                                            if (props.preventSelectingMessage) {
-                                                props.preventSelectingMessage()
-                                            }
-                                            setScope()
-                                        }}>
-                                        {!isEyeShow ? 'Hide from project members' : 'Show to project members'}
-                                    </MenuItem>
-                                )}
+                                <MenuItem
+                                    onClick={(e) => {
+                                        e.preventDefault()
+                                        e.stopPropagation()
+                                        setScope(message)
+                                    }}>
+                                    {message.scope !== 'hidden' ? 'Hide from project members' : 'Show to project members'}
+                                </MenuItem>
                                 <MenuItem
                                     onClick={() => props.hideAndShowReplyBox('reply', message)}> Reply </MenuItem>
                                 <MenuItem
@@ -417,29 +365,121 @@ export function MessageBox(props: any) {
                             </MenuList>
                         </Menu>
                     </Flex>
-
                 </Flex>
+                }
 
-                {emailBody &&
-                <div className={styles.mailBodyContent}>
-                    <iframe
-                        ref={iframeRef}
-                        scrolling="no"
-                        onLoad={onIframeLoad}
-                        height={iframeHeight}
-                        src={emailBody}
-                        className={styles.mailBody}
+                {messageIndex === index &&
+                <Flex direction={'column'} w={'100%'} pb={4}>
+                    <Flex align={'flex-start'}>
+                        <Flex align={'center'} w={'100%'} cursor={'pointer'} gap={2} padding={4}
+                              onClick={() => handleRowClick(messageIndex)}>
+                            <div className={styles.mailBoxUserImage}>
+
+                            </div>
+                            <Flex w={'100%'} direction={'column'} pr={'20px'}>
+                                <Flex align={'center'} justify={'space-between'} mb={1}>
+                                    <Flex align={'flex-end'} gap={1}>
+                                        <Heading
+                                            as='h6' fontSize={'13px'} color={'#0A101D'}
+                                            fontWeight={400} letterSpacing={'-0.13px'} lineHeight={1}
+                                        >
+                                            {message.from?.name || message.from?.email}
+                                        </Heading>
+                                        {message.from?.name && (
+                                            <>
+                                                <span className={'dot'}/>
+                                                <Text
+                                                    fontSize='12px' letterSpacing={'-0.13px'}
+                                                    color={'#6B7280'} lineHeight={1}
+                                                    fontWeight={400}
+                                                >
+                                                    {message.from?.email}
+                                                </Text>
+                                            </>
+                                        )}
+                                    </Flex>
+                                </Flex>
+                                {message && message.to && message.to.length > 0 &&
+                                <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
+                                      fontWeight={400}>to:&nbsp;
+                                    {message.to[0].email}&nbsp;
+
+                                    <div className={styles.otherMail}>
+                                        <Tooltip
+                                            placement="bottom"
+                                            label={
+                                                message.to.length > 1 ?
+                                                    (message.to || []).slice(1, message.to.length - 1).map((item: any, toIndex: number) => (
+                                                        <p key={toIndex}>{item.email}</p>
+                                                    )).join('') : ''
+                                            }>
+                                            <Text
+                                                as='u'>{message.to.length - 1 > 0 && `and ${message.to.length - 1} others`} </Text>
+                                        </Tooltip>
+                                    </div>
+                                </Flex>
+                                }
+                            </Flex>
+                        </Flex>
+                        <Flex align={'center'} gap={'6px'} pt={4} position={'absolute'} right={0}>
+                            {message.scope === 'hidden' ?
+                                <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
+                                    <EyeSlashedIcon/>
+                                </Flex> : ''}
+                            {message.attachments && !!message.attachments.length && attachmentsMenu(message)}
+                            <div className={styles.mailBoxTime} style={{whiteSpace: 'nowrap'}}>
+                                <Time time={message?.created || ''} isShowFullTime={true}
+                                      showTimeInShortForm={false}/>
+                            </div>
+                            <Menu isOpen={isContextMenuOpen} onClose={() => setIsContextMenuOpen(false)}>
+                                <MenuButton
+                                    onClick={() => setIsContextMenuOpen(true)} className={styles.menuIcon}
+                                    transition={'all 0.5s'} backgroundColor={'transparent'} fontSize={'12px'}
+                                    h={'auto'} minWidth={'24px'} padding={'0'} as={Button} rightIcon={<MenuIcon/>}>
+                                </MenuButton>
+                                <MenuList className={'drop-down-list'}>
+                                    <MenuItem
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            e.stopPropagation()
+                                            setScope(message)
+                                        }}>
+                                        {message.scope !== 'hidden' ? 'Hide from project members' : 'Show to project members'}
+                                    </MenuItem>
+                                    <MenuItem
+                                        onClick={() => props.hideAndShowReplyBox('reply', message)}> Reply </MenuItem>
+                                    <MenuItem
+                                        onClick={() => props.hideAndShowReplyBox('reply-all', message)}> Reply
+                                        All </MenuItem>
+                                    <MenuItem
+                                        onClick={() => props.hideAndShowReplyBox('forward', message)}> Forward </MenuItem>
+                                </MenuList>
+                            </Menu>
+                        </Flex>
+
+                    </Flex>
+
+                    {message.body &&
+                    <div className={styles.mailBodyContent}>
+                        <iframe
+                            ref={ref => iframeRef.current[messageIndex] = ref}
+                            scrolling="no"
+                            onLoad={() => onIframeLoad(messageIndex)}
+                            height={iframeHeight[messageIndex]}
+                            src={message.body as string}
+                            className={styles.mailBody}
+                        />
+                    </div>}
+                    <LinkPreview
+                        isVisible={currentLinkPreview.isVisible}
+                        url={currentLinkPreview?.url}
+                        top={currentLinkPreview.top}
+                        left={currentLinkPreview.left}
                     />
-                </div>}
-                <LinkPreview
-                  isVisible={currentLinkPreview.isVisible}
-                  url={currentLinkPreview?.url}
-                  top={currentLinkPreview.top}
-                  left={currentLinkPreview.left}
-                />
+                </Flex>
+                }
             </Flex>
-            }
-        </Flex>
+        ))
     )
 }
 

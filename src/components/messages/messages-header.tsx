@@ -12,9 +12,9 @@ import {
 import React, {useEffect, useState} from "react";
 import {updateThreads} from "@/redux/threads/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
-import {StateType, MessageHeaderTypes} from "@/types";
+import {StateType} from "@/types";
 import {Toaster} from "@/components/common";
-import {Thread, UserProjectOnlineStatus} from "@/models";
+import {Message as MessageModel, Thread, UserProjectOnlineStatus} from "@/models";
 import dynamic from "next/dynamic";
 import {
     MAILBOX_ARCHIVE,
@@ -25,14 +25,14 @@ import {
     MAILBOX_UNREAD
 } from "@/utils/constants";
 import dayjs from "dayjs";
-import {generateToasterId} from "@/utils/common.functions";
-import {membershipService, messageService, threadService} from "@/services";
+import {clearDebounce, debounce, generateToasterId} from "@/utils/common.functions";
+import {globalEventService, membershipService, messageService, threadService} from "@/services";
 import Tooltip from "../common/Tooltip";
 
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
 const MessageSchedule = dynamic(() => import("./message-schedule").then(mod => mod.default));
 
-export function MessagesHeader({headerType}: MessageHeaderTypes) {
+export function MessagesHeader() {
     const {selectedThread, threads} = useSelector((state: StateType) => state.threads);
     let {success: membershipSuccess} = useSelector((state: StateType) => state.memberships);
     const {onlineUsers} = useSelector((state: StateType) => state.commonApis);
@@ -130,6 +130,11 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                 if (remove_from_list) {
                     currentThreads.splice(index1, 1)
                 }
+                messageService.setMessageState({showMessageBox: false});
+                clearDebounce('MESSAGE_BOX');
+                debounce(() => {
+                    messageService.setMessageState({showMessageBox: true});
+                }, 5, 'MESSAGE_BOX');
                 threadService.setThreadState({threads: currentThreads, selectedThread: currentThreads[index1]});
                 let polyToast = generateToasterId();
                 dispatch(updateThreads({
@@ -199,7 +204,7 @@ export function MessagesHeader({headerType}: MessageHeaderTypes) {
                             )
                         }
                     </Flex>
-                    {headerType === 'inbox' && <AddToProjectButton/>}
+                    <AddToProjectButton/>
                     {!(selectedThread?.mailboxes || []).includes(MAILBOX_INBOX) && (
                         <Tooltip label='Inbox' placement='bottom'>
                             <button onClick={() => updateMailBox(MAILBOX_INBOX)} className='inbox-button-icon'>

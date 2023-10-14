@@ -6,15 +6,10 @@ import {
 } from "@chakra-ui/react";
 import {StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
-import {
-    getMessageAttachments,
-    getMessageParts
-} from "@/redux/messages/action-reducer";
+import {useSelector} from "react-redux";
 import {Message as MessageModel} from "@/models";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import dynamic from "next/dynamic";
-import {getCacheMessages} from "@/utils/cache.functions";
 import {InboxLoader} from "@/components/loader-screen/inbox-loader";
 import {globalEventService, keyNavigationService, messageService, threadService} from "@/services";
 import { Toaster } from "../common";
@@ -24,18 +19,11 @@ const MessageBox = dynamic(() => import('@/components/messages/message-box').the
 const MessageReplyBox = dynamic(() => import('@/components/messages/message-reply-box').then(mod => mod.MessageReplyBox));
 const ComposeBox = dynamic(() => import('@/components/inbox/compose-box').then(mod => mod.ComposeBox));
 
-let preventOpen: boolean = false;
-
 export function Message({isProjectView = false}: { isProjectView?: boolean }) {
     const messagesWrapperRef = React.useRef<HTMLDivElement | null | any>(null);
-
-    const [index, setIndex] = useState<number | null>(null);
     const [replyTypeName, setReplyTypeName] = useState<string>('Reply');
-    const [inboxMessages, setInboxMessages] = useState<MessageModel[]>([]);
     const {
-        messages,
         messagePart,
-        selectedMessage,
         attachmentUrl,
         showMessageBox: isShowingMessageBox
     } = useSelector((state: StateType) => state.messages);
@@ -54,8 +42,6 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
     const {isLoading: summaryLoading, syncingEmails, isComposing} = useSelector((state: StateType) => state.commonApis);
     const [isLoaderShow, setIsLoaderShow] = useState<boolean>(false);
 
-    const dispatch = useDispatch();
-
     useEffect(() => {
         if (!threadLoading && !accountLoading && !organizationLoading && !usersProfilePictureLoading && !projectsLoading && !summaryLoading && !syncingEmails) {
             setIsLoaderShow(false)
@@ -63,29 +49,6 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
             setIsLoaderShow(true)
         }
     }, [threadLoading, accountLoading, organizationLoading, usersProfilePictureLoading, projectsLoading, summaryLoading, syncingEmails])
-
-    useEffect(() => {
-        if (selectedThread && selectedThread?.id) {
-            setIndex(null);
-            globalEventService.fireEvent({data: null, type: 'draft.currentMessage'})
-            globalEventService.fireEvent({data: {type: 'reply'}, type: 'draft.updateType'})
-            messageService.setMessages(selectedThread.messages || []);
-        }
-    }, [dispatch, selectedThread])
-
-    useEffect(() => {
-        if (messages && messages.length > 0) {
-            // remove draft messages and set index to last inbox message
-            const currentInboxMessages: MessageModel[] = messages.filter((msg: MessageModel) => !(msg.mailboxes || []).includes('DRAFT'));
-            setInboxMessages([...currentInboxMessages]);
-            if (preventOpen) {
-                preventOpen = false;
-            } else {
-                setIndex(currentInboxMessages.length - 1);
-            }
-            globalEventService.fireEvent({data: currentInboxMessages[currentInboxMessages.length - 1], type: 'draft.currentMessage'})
-        }
-    }, [messages, dispatch])
 
     const setThreadFocus = useCallback((focused: boolean) => {
         if (selectedThread) {
@@ -99,27 +62,6 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
             setThreadFocus(true)
         }
     }, [incomingEvent, setThreadFocus]);
-
-    useEffect(() => {
-        if (index !== null && inboxMessages && inboxMessages.length > 0) {
-            if (inboxMessages[index]) {
-                messageService.setSelectedMessage(inboxMessages[index]);
-                // We already set index to last inbox message
-                let cacheMessages: any = getCacheMessages();
-                if (cacheMessages[inboxMessages[index].id!] && cacheMessages[inboxMessages[index].id!].data) {
-                    messageService.setMessageBody({data: cacheMessages[inboxMessages[index].id!].data, messageId: inboxMessages[index].id!})
-                } else {
-                    dispatch(getMessageParts({body: {id: inboxMessages[index].id!}}));
-                }
-                if (cacheMessages[inboxMessages[index].id!] && cacheMessages[inboxMessages[index].id!].attachments) {
-                    messageService.setMessageAttachments(cacheMessages[inboxMessages[index].id!].attachments, inboxMessages[index].id!)
-                } else {
-                    dispatch(getMessageAttachments({body: {id: inboxMessages[index].id!}}));
-                }
-
-            }
-        }
-    }, [dispatch, index, inboxMessages])
 
     useEffect(() => {
         if (attachmentUrl) {
@@ -185,21 +127,6 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
         }, 100)
     }
 
-    const handleRowClick = (index: any) => {
-        setIndex(index);
-        const selectedMessageIndex = (messages || []).filter(msg => !(msg.mailboxes || []).includes('DRAFT')).findIndex(msg => msg.id === selectedMessage?.id)
-
-        if (selectedMessageIndex === index) {
-            // Clicking on an already expanded row, so close it
-            messageService.setSelectedMessage(null)
-            setIndex(null)
-        } else {
-            // Clicking on a new row, expand it
-            const targetMessage = (messages || [])[index]
-            messageService.setSelectedMessage(targetMessage)
-        }
-    };
-
     function showBlankPage() {
         return (
             <Flex justifyContent={'center'} alignItems={'center'} flexDir={'column'}
@@ -245,31 +172,20 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
         return (
             <>
                 {!selectedThread && showBlankPage()}
-                {selectedThread && isShowingMessageBox && <Flex flexDir={'column'} height={'100%'}>
+                {selectedThread && <Flex flexDir={'column'} height={'100%'}>
                     <>
-                        <MessagesHeader inboxMessages={inboxMessages} index={index}
-                                        headerType={'inbox'}/>
-
-                        <Flex ref={messagesWrapperRef} padding={'20px'} gap={5} direction={'column'} flex={1}
-                              overflowY={'scroll'} overflowX={'hidden'}>
+                        <MessagesHeader />
+                        {isShowingMessageBox && <Flex ref={messagesWrapperRef} padding={'20px'} gap={5} direction={'column'} flex={1}
+                                                      overflowY={'scroll'} overflowX={'hidden'}>
                             <Flex gap={2} direction={'column'} height={'100%'}>
                                 <div className={styles.mailBoxMailList}>
-                                    {inboxMessages && !!inboxMessages.length && inboxMessages.map((item: any, inboxIndex: number) => (
-                                        <div key={inboxIndex}>
-                                            <MessageBox
-                                                preventSelectingMessage={() => preventOpen = true}
-                                                item={item}
-                                                hideAndShowReplyBox={hideAndShowReplyBox}
-                                                onClick={() => handleRowClick(inboxIndex)}
-                                            />
-                                        </div>
-                                    ))}
+                                    <MessageBox hideAndShowReplyBox={hideAndShowReplyBox}/>
                                 </div>
                                 <MessageReplyBox
                                     isProjectView={isProjectView}
                                     hideAndShowReplyBox={hideAndShowReplyBox} replyTypeName={replyTypeName}/>
                             </Flex>
-                        </Flex>
+                        </Flex>}
                     </>
                 </Flex>
                 }

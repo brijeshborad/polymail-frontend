@@ -25,8 +25,8 @@ export interface Message {
     headers?: MessageHeaders[],
     contentRoot?: string,
     draftInfo?: MessageDraftInfo,
-    cachedBody?: MessagePart | null,
-    cachedAttachments?: MessageAttachments[] | [],
+    body?: MessagePart | null | string,
+    attachments?: MessageAttachments[] | [],
     scope?: string,
 }
 

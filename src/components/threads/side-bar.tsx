@@ -65,15 +65,17 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     }, [router.query.thread, selectedThread, threads])
 
     useLayoutEffect(() => {
-        if (selectedThread && !router.query.thread) {
-            router.push(
-                {
-                    pathname: router.pathname.includes('projects') ? `/projects/${router.query.project}` : '/inbox',
-                    query: {thread: selectedThread.id}
-                },
-                undefined,
-                {shallow: true}
-            )
+        if (selectedThread) {
+            if (!router.query.thread || router.query.thread !== selectedThread.id) {
+                router.push(
+                    {
+                        pathname: router.pathname.includes('projects') ? `/projects/${router.query.project}` : '/inbox',
+                        query: {thread: selectedThread.id}
+                    },
+                    undefined,
+                    {shallow: true}
+                )
+            }
         }
     }, [router, selectedThread])
 
@@ -131,6 +133,11 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
 
     const changeEmailTabs = (value: string) => {
         if (getCurrentCacheTab() !== value) {
+            router.push(
+                {pathname: router.pathname.includes('projects') ? `/projects/${router.query.project}` : '/inbox'},
+                undefined,
+                {shallow: true}
+            )
             if (value !== 'DRAFT') {
                 commonService.toggleComposingWithThreadSelection(false, true);
                 draftService.saveDraftToResume();
