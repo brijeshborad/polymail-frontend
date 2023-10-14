@@ -65,7 +65,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     }, [router.query.thread, selectedThread, threads])
 
     useLayoutEffect(() => {
-        if (selectedThread) {
+        if (selectedThread && !router.query.thread) {
             router.push(
                 {
                     pathname: router.pathname.includes('projects') ? `/projects/${router.query.project}` : '/inbox',
