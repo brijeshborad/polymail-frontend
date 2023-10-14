@@ -10,8 +10,9 @@ import {MAILBOX_UNREAD} from "@/utils/constants";
 import {Project, UserProjectOnlineStatus} from "@/models";
 import {keyNavigationService} from "@/services";
 import Tooltip from "../common/Tooltip";
-import { ChevronDownIcon } from "@chakra-ui/icons";
-import { useRouter } from "next/router";
+import {ChevronDownIcon} from "@chakra-ui/icons";
+import {useRouter} from "next/router";
+import {clearDebounce, debounce} from "@/utils/common.functions";
 
 
 export function ThreadsSideBarListItem(props: ThreadListItemProps) {
@@ -27,6 +28,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
     } = useSelector((state: StateType) => state.threads);
     const [isSelected, setIsSelected] = useState<boolean>(false);
     const [isClicked, setIsClicked] = useState<boolean>(false);
+    const [isEmojiOpen, setIsEmojiOpen] = useState<boolean>(false);
     const {onlineUsers} = useSelector((state: StateType) => state.commonApis)
 
     useEffect(() => {
@@ -53,7 +55,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
     }, [selectedThread])
 
     const goToProject = (project: Project) => {
-      router.push(`/projects/${project.id}`)
+        router.push(`/projects/${project.id}`)
     }
 
     return (
@@ -71,46 +73,77 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                         <DisneyIcon/> {props?.thread?.from?.name || props?.thread?.from?.email}
                     </Flex>
                     {(props?.thread?.projects || []).length > 0 && (
-                      <Flex justifyContent={'flex-start'} flexGrow={1}>
-                        <Menu>
-                          <Tooltip label='List all' placement='bottom'>
-                            <MenuButton
-                              display={'flex'}
-                              as={Flex}
-                              fontWeight={600}
-                              backgroundColor={'#fff'}
-                              className='emoji-dropdown'
-                              padding={'0 8px'}
-                              cursor={'pointer'}
-                              rounded={'md'}
-                              >
-                              <Flex justifyContent={'flex-start'} alignItems={'center'} className='thread-emojis'>
-                                {props?.thread?.projects?.slice(0, 5).map((p, index) => {
-                                  return (
-                                    <span key={index} className='emoji'>{p.emoji}</span>
-                                    )
-                                  })}
-                                {(props?.thread?.projects || []).length > 5 && (
-                                  <span className={styles.projectsLength} style={{ height: '14px', marginLeft: 0 }}>
-                                    {`+${(props?.thread?.projects || []).length-5}`}
+                        <Flex justifyContent={'flex-start'} flexGrow={1}>
+                            <Menu isOpen={isEmojiOpen}>
+                                <Tooltip label='List all' placement='bottom'>
+                                    <MenuButton
+                                        display={'flex'}
+                                        as={Flex}
+                                        fontWeight={600}
+                                        backgroundColor={'#fff'}
+                                        className='emoji-dropdown'
+                                        padding={'0 8px'}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            setIsEmojiOpen(true);
+                                        }}
+                                        cursor={'pointer'}
+                                        rounded={'md'}
+                                        onMouseEnter={() => {
+                                            if (isEmojiOpen) {
+                                                clearDebounce(props?.thread.id);
+                                            }
+                                        }}
+                                        onMouseLeave={() => {
+                                            if (isEmojiOpen) {
+                                                debounce(() => {
+                                                    setIsEmojiOpen(false)
+                                                }, 100, props?.thread.id)
+                                            }
+                                        }}
+                                    >
+                                        <Flex justifyContent={'flex-start'} alignItems={'center'}
+                                              className='thread-emojis'>
+                                            {props?.thread?.projects?.slice(0, 5).map((p, index) => {
+                                                return (
+                                                    <span key={index} className='emoji'>{p.emoji}</span>
+                                                )
+                                            })}
+                                            {(props?.thread?.projects || []).length > 5 && (
+                                                <span className={styles.projectsLength}
+                                                      style={{height: '14px', marginLeft: 0}}>
+                                    {`+${(props?.thread?.projects || []).length - 5}`}
                                   </span>
-                                )}
-                                <ChevronDownIcon className='icon' />
-                            </Flex>
-                            </MenuButton>
-                          </Tooltip>
+                                            )}
+                                            <ChevronDownIcon className='icon'/>
+                                        </Flex>
+                                    </MenuButton>
+                                </Tooltip>
 
-                          <MenuList className={`${styles.addToProjectList} drop-down-list`} zIndex={'overlay'}>
-                            <div className={'add-to-project-list'}>
-                              {props?.thread?.projects?.map(project => (
-                                <MenuItem gap={2} key={project.id} onClick={() => goToProject(project)}>
-                                    {project.emoji} {project.name}
-                                </MenuItem>
-                              ))}
-                            </div>
-                          </MenuList>
-                        </Menu>
-                      </Flex>
+                                <MenuList className={`${styles.addToProjectList} drop-down-list`} zIndex={'overlay'}
+                                          onMouseEnter={() => {
+                                              if (isEmojiOpen) {
+                                                  clearDebounce(props?.thread.id);
+                                              }
+                                          }}
+                                          onMouseLeave={() => {
+                                              if (isEmojiOpen) {
+                                                  debounce(() => {
+                                                      setIsEmojiOpen(false)
+                                                  }, 100, props?.thread.id)
+                                              }
+                                          }}>
+                                    <div className={'add-to-project-list'}>
+                                        {props?.thread?.projects?.map(project => (
+                                            <MenuItem gap={2} key={project.id} onClick={() => goToProject(project)}>
+                                                {project.emoji} {project.name}
+                                            </MenuItem>
+                                        ))}
+                                    </div>
+                                </MenuList>
+                            </Menu>
+                        </Flex>
                     )}
                     <Flex alignItems={'center'} className={styles2.receiveTime} justify={'flex-end'}>
                         {isClicked &&

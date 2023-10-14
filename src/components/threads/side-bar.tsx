@@ -380,7 +380,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                             rightIcon={<TriangleDownIcon/>}
                             _focus={{boxShadow: "none"}}
                             onMouseEnter={() => {
-                                clearDebounce();
+                                clearDebounce('MORE_MENU');
                                 setIsMoreDropdownOpen(true)
                             }}
                             onMouseLeave={() => {
@@ -389,7 +389,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                         setIsMoreDropdownOpen(false)
                                         setIsMoreClicked(false)
                                     }
-                                }, 100)
+                                }, 100, 'MORE_MENU')
                             }}
                         >
                             More
@@ -397,7 +397,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                         <MenuList
                             className={`${styles.tabListDropDown} drop-down-list`}
                             onMouseEnter={() => {
-                                clearDebounce();
+                                clearDebounce('MORE_MENU');
                                 setIsMoreDropdownOpen(true)
                             }}
                             onMouseLeave={() => {
@@ -406,7 +406,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                         setIsMoreDropdownOpen(false)
                                         setIsMoreClicked(false)
                                     }
-                                }, 100)
+                                }, 100, 'MORE_MENU')
                             }}
                         >
                             {['TRASH', 'STARRED', 'ARCHIVE', 'DRAFT'].includes(tab) &&
