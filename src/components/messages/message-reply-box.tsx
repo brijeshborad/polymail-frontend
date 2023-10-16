@@ -100,7 +100,7 @@ export function MessageReplyBox(props: MessageBoxType) {
 
             setCollabId(newCollabId)
         }
-    }, [dispatch, collabId])
+    }, [dispatch, collabId, selectedThread])
 
     useEffect(() => {
         if (emailRecipients?.recipients?.items && emailRecipients?.recipients?.items.length > 1) {
