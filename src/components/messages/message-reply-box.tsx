@@ -209,6 +209,9 @@ export function MessageReplyBox(props: MessageBoxType) {
             if (subject) {
                 setSubject(subject)
             }
+            if (draftInfo && draftInfo.collabId) {
+                setCollabId(draftInfo.collabId);
+            }
             if (draftInfo && draftInfo.body) {
                 let checkValue = getPlainTextFromHtml(draftInfo.body).trim();
                 if (checkValue.trim()) {

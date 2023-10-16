@@ -147,6 +147,9 @@ export function ComposeBox(props: any) {
                 globalEventService.fireEvent({data: {body: draftInfo.body || ''}, type: 'richtexteditor.forceUpdateWithOnChange'});
                 setEmailBody(draftInfo.body);
             }
+            if (draftInfo && draftInfo.collabId) {
+                setCollabId(draftInfo.collabId);
+            }
 
             if (draftInfo && draftInfo.attachments && draftInfo.attachments.length > 0) {
                 setAttachments([
