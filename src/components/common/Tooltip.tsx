@@ -1,7 +1,7 @@
 import { TooltipProps } from "@/types/props-types/tooltip.type";
 import {Tooltip as ChakraTooltip} from "@chakra-ui/react";
 
-export default function Tooltip({ label, placement='bottom', children }: TooltipProps) {
+export default function Tooltip({isOpenEvent, customeOpenHandelEvent, label, placement='bottom', children }: TooltipProps) {
   return (
     <ChakraTooltip 
       label={label} 
@@ -11,7 +11,8 @@ export default function Tooltip({ label, placement='bottom', children }: Tooltip
       padding='6px 12px'
       closeOnClick={true}
       hasArrow
-    >
+      isOpen={customeOpenHandelEvent ? isOpenEvent : undefined}
+      >
       {children}
     </ChakraTooltip>
   )

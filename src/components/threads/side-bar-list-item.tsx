@@ -29,6 +29,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
     const [isSelected, setIsSelected] = useState<boolean>(false);
     const [isClicked, setIsClicked] = useState<boolean>(false);
     const [isEmojiOpen, setIsEmojiOpen] = useState<boolean>(false);
+    const [isToolTipOpen, setIsToolTipOpen] = useState<boolean>(false);
     const {onlineUsers} = useSelector((state: StateType) => state.commonApis)
 
     useEffect(() => {
@@ -67,15 +68,16 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                     keyNavigationService.setKeyNavigationState({target: 'threads'});
                 }}
                 className={`${styles.mailDetails} ${isSelected ? styles.mailDetailsSelected : ''}`}
-            >
+                >
                 <Flex align={"center"} justify={'space-between'}>
                     <Flex align={"center"} className={styles.senderDetails} gap={1}>
                         <DisneyIcon/> {props?.thread?.from?.name || props?.thread?.from?.email}
                     </Flex>
                     {(props?.thread?.projects || []).length > 0 && (
-                        <Flex justifyContent={'flex-start'} flexGrow={1}>
+                    //If customeOpenEvent Is there must pass both the Params: customeOpenHandelEvent, isOpenEvent
+                      <Flex justifyContent={'flex-start'} flexGrow={1}>
                             <Menu isOpen={isEmojiOpen}>
-                                <Tooltip label='List all' placement='bottom'>
+                                <Tooltip label='List all' placement='bottom' customeOpenHandelEvent isOpenEvent={isToolTipOpen}>
                                     <MenuButton
                                         display={'flex'}
                                         as={Flex}
@@ -87,15 +89,22 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                                             e.preventDefault();
                                             e.stopPropagation();
                                             setIsEmojiOpen(true);
+                                            //close tooltip
+                                            setIsToolTipOpen(false);
+                                            
                                         }}
                                         cursor={'pointer'}
                                         rounded={'md'}
                                         onMouseEnter={() => {
+                                            //open tooltip
+                                            setIsToolTipOpen(true);
                                             if (isEmojiOpen) {
                                                 clearDebounce(props?.thread.id);
                                             }
                                         }}
                                         onMouseLeave={() => {
+                                            //open tooltip
+                                            setIsToolTipOpen(false);
                                             if (isEmojiOpen) {
                                                 debounce(() => {
                                                     setIsEmojiOpen(false)
