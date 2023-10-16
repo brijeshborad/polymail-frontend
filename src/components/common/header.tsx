@@ -112,7 +112,7 @@ export function Header() {
 
     const updateValuesFromAccount = useCallback((account: Account) => {
         let projects = account.projects || [];
-        let organizations = (account.organizations || []).sort((a: Organization, b: Organization) => (new Date(b.created as string).valueOf() - new Date(a.created as string).valueOf()));
+        let organizations = ([...account.organizations || []]).sort((a: Organization, b: Organization) => (new Date(b.created as string).valueOf() - new Date(a.created as string).valueOf()));
         let contacts = account.contacts || [];
         projectService.setProjectState({projects, isLoading: false});
         organizationService.setOrganizationState({organizations, isLoading: false});
