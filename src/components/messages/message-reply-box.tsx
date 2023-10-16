@@ -499,7 +499,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             setAttachments([]);
             setIsContentUpdated(false);
             setIsDraftUpdated(false);
-            globalEventService.fireEvent({data: '', type: 'richtexteditor.forceUpdate'});
+            globalEventService.fireEvent({data: {body: ''}, type: 'richtexteditor.forceUpdate'});
         }
     }
 
@@ -621,14 +621,14 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                             recipients: {items: [], value: blankRecipientValue}
                         });
                         setSubject(`Fwd: ${incomingEvent.data.messageData.subject}`);
-                        let decoded = Buffer.from(incomingEvent.data.emailParts || '', 'base64').toString('utf-8');
+                        let decoded = Buffer.from(incomingEvent.data.messageData.body.data || '', 'base64').toString('utf-8');
                         let sentence = '';
                         if (selectedThread && selectedThread?.projects && selectedThread?.projects?.length) {
                             sentence = `<p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${selectedAccount ? (selectedAccount?.name || '') : ""} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length === 1 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}`;
                         }
                         let content = getForwardContent(incomingEvent.data.messageData) + (decoded || '') + (selectedAccount ? (selectedAccount?.signature || '') : '') + (`${sentence}`);
                         setEmailBody(content);
-                        globalEventService.fireEvent({type: 'richtexteditor.forceUpdate', data: content})
+                        globalEventService.fireEvent({type: 'richtexteditor.forceUpdate', data: {body: content, callBack: () => setShowEditorToolbar(true)}})
                         debounce(() => {
                             handleEditorScroll();
                         }, 200)

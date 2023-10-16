@@ -443,7 +443,7 @@ export function ComposeBox(props: any) {
 
     function performUpdate() {
         commonService.toggleComposingWithThreadSelection(false, tabValue !== 'DRAFT');
-        globalEventService.fireEvent({data: null, type: 'richtexteditor.forceUpdate'});
+        globalEventService.fireEvent({data: {body: null}, type: 'richtexteditor.forceUpdate'});
         if (tabValue === 'DRAFT') {
             threadService.setSelectedThread(null)
             threadService.performThreadsUpdateForDraftTab(composeDraft)

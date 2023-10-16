@@ -10,7 +10,10 @@ export default function ContentMonitor() {
     useEffect(() => {
         if (event && event.type === 'richtexteditor.forceUpdate') {
             editor?.commands.clearContent(false);
-            editor?.commands.setContent(event.data, false)
+            editor?.commands.setContent(event.data.body, false)
+            if (event.data.callBack) {
+                event.data.callBack()
+            }
         }
         if (event && event.type === 'richtexteditor.forceUpdateWithOnChange') {
             editor?.commands.clearContent(false);

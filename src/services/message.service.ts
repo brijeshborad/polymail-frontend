@@ -30,6 +30,13 @@ class MessageService extends BaseService {
         this.setMessageState({selectedMessage: message});
     }
 
+    setSelectedMessageIfMessageIdMatches(message: Message | null | undefined) {
+        let {selectedMessage} = this.getMessageState();
+        if (selectedMessage?.id === message?.id) {
+            this.setMessageState({selectedMessage: message});
+        }
+    }
+
     clearMessageBodyAndAttachments() {
         this.setMessageState({messagePart: null, messageAttachments: undefined});
     }

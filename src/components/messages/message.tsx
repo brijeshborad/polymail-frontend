@@ -23,7 +23,6 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
     const messagesWrapperRef = React.useRef<HTMLDivElement | null | any>(null);
     const [replyTypeName, setReplyTypeName] = useState<string>('Reply');
     const {
-        messagePart,
         attachmentUrl,
         showMessageBox: isShowingMessageBox
     } = useSelector((state: StateType) => state.messages);
@@ -123,7 +122,7 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
         }
         globalEventService.fireEvent({data: messageData, type: 'draft.currentMessage'})
         setTimeout(() => {
-            globalEventService.fireEvent({type: 'draft.updateType', data: {type, messageData, emailParts: (messagePart?.data || '')}})
+            globalEventService.fireEvent({type: 'draft.updateType', data: {type, messageData}})
         }, 100)
     }
 

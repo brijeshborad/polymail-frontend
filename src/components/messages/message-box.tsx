@@ -116,11 +116,13 @@ export function MessageBox(props: any) {
                 let addTargetBlank = decoded.replace(/<a/g, '<a target="_blank"');
                 const blob = new Blob([addTargetBlank], {type: "text/html"});
                 const blobUrl = window.URL.createObjectURL(blob);
+                messageService.setSelectedMessageIfMessageIdMatches({...finalMessages[messageId], body: messagePart});
                 finalMessages[messageId] = {
                     ...finalMessages[messageId],
                     body: blobUrl
                 }
             } else {
+                messageService.setSelectedMessageIfMessageIdMatches({...finalMessages[messageId], body: null});
                 cacheMessage({data: ''}, messagePart.messageId!);
                 finalMessages[messageId] = {...finalMessages[messageId], body: ''}
             }
@@ -152,10 +154,12 @@ export function MessageBox(props: any) {
             iframeRef.current[index].contentDocument.body.style.fontFamily = "'Inter', sans-serif";
             iframeRef.current[index].contentDocument.body.style.fontSize = "14px";
             setTimeout(() => {
-                setIframeHeight(prevState => ({
-                    ...prevState,
-                    [index]: (iframeRef.current[index].contentWindow.document.body.scrollHeight + 20) + "px"
-                }));
+                if (iframeRef.current && iframeRef.current[index] && iframeRef.current[index].contentWindow) {
+                    setIframeHeight(prevState => ({
+                        ...prevState,
+                        [index]: (iframeRef.current[index].contentWindow.document.body.scrollHeight + 20) + "px"
+                    }));
+                }
             }, 100);
 
             const allLinks = iframeRef.current[index].contentDocument.getElementsByTagName("a")
