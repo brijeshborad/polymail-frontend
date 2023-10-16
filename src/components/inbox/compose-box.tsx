@@ -292,7 +292,8 @@ export function ComposeBox(props: any) {
         if (selectedAccount && selectedAccount.signature) {
             let sentence = '';
             if (selectedThread?.projects && selectedThread?.projects?.length) {
-                sentence = `<p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${selectedAccount?.name || ''} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length === 1 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}</p>`;
+                // sentence = `<p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${selectedAccount?.name || ''} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length === 1 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}</p>`;
+                sentence = `<p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${selectedAccount?.name || ''} is sharing this email thread (and future replies) with others on Polymail</p>`;
             }
 
             setEmailBody(`<p></p><p>${selectedAccount.signature}</p><p></p>${sentence}`);

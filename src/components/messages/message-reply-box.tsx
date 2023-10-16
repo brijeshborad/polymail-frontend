@@ -557,11 +557,12 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         if (selectedAccount) {
             body += `<p></p><p></p>${selectedAccount?.signature}`;
         }
+        // ${selectedThread?.projects && selectedThread.projects.length === 1 ? `<!--<p style="font-size: 13px; margin-right: 3px;">at </p><p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">${selectedThread.projects[0].name}</p>-->` : `<p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">others</p>`}
         if (selectedThread?.projects?.length) {
             body += `<p></p>
                           <div style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">
-                            <p style="font-size: 13px; margin-right: 3px;"> ${selectedAccount?.name || ''} is sharing this email thread (and future replies) with</p>
-                            ${selectedThread?.projects && selectedThread.projects.length === 1 ? `<p style="font-size: 13px; margin-right: 3px;">at </p><p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">${selectedThread.projects[0].name}</p>` : `<p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">others</p>`}                            
+                            <p style="font-size: 13px; margin-right: 3px;"> ${selectedAccount?.name || ''} is sharing this email thread (and future replies) with</p>                                                        
+                            <p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">others</p>                    
                             <p style="font-size: 13px; margin-right: 3px;">on</p>
                             <p style="font-size: 13px; text-decoration: underline">Polymail</p>
                           </div>`
@@ -624,7 +625,8 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                         let decoded = Buffer.from(incomingEvent.data.messageData.body.data || '', 'base64').toString('utf-8');
                         let sentence = '';
                         if (selectedThread && selectedThread?.projects && selectedThread?.projects?.length) {
-                            sentence = `<p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${selectedAccount ? (selectedAccount?.name || '') : ""} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length === 1 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}`;
+                            // sentence = `<p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${selectedAccount ? (selectedAccount?.name || '') : ""} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length === 1 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}`;
+                            sentence = `<p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${selectedAccount ? (selectedAccount?.name || '') : ""} is sharing this email thread (and future replies) with others on Polymail`;
                         }
                         let content = getForwardContent(incomingEvent.data.messageData) + (decoded || '') + (selectedAccount ? (selectedAccount?.signature || '') : '') + (`${sentence}`);
                         setEmailBody(content);
