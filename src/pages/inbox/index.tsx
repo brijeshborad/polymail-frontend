@@ -54,7 +54,7 @@ function InboxPage() {
 
     return (
         <div>
-            <Flex padding={'16px 40px 15px'} backgroundColor={'#FFFFFF'} borderBottom={'1px solid #F3F4F6'} gap={3}
+            <Flex padding={'16px 40px 15px'} backgroundColor={'#FFFFFF'} borderBottom={'1px solid rgba(8, 22, 47, 0.12)'} gap={3}
                   overflowX={'auto'}>
                 {isLoading && <SkeletonLoader height={'36px'} skeletonLength={6} width={'216px'}/>}
                 <InboxHeaderProjectsList size={size}/>

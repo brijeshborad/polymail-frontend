@@ -41,6 +41,7 @@ export default function CollabRichTextEditor({
             url: `${process.env.NEXT_PUBLIC_COLLAB_WEBSOCKET_URL}`,
             name: id, // e.g. a uuid uuidv4();
         })
+        console.log('___COLLABID____', id, prov);
         setProvider(prov)
 
         setExtensions([
