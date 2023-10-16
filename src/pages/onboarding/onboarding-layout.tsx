@@ -10,7 +10,7 @@ export default function OnboardingLayout({children}: any) {
                 <GridItem w='100%' padding={'20px'} display={'flex'} alignItems={'center'} justifyContent={'center'}>
                     <Flex className={styles.onBoardingPage} w={'400px'} h={'580px'} direction={'column'}
                           justify={'space-between'} alignItems={'flex-start'}>
-                        <OnboardingLogoIcon/>
+                        <a href="https://www.polymailteams.com/" target="_blank"><OnboardingLogoIcon/></a>
                         {children}
                         <Text className={styles.onBoardingPolicy} fontSize='13px' letterSpacing={'-0.13px'}
                               color={'#6B7280'}> By signing up, I agree to Polymail’s &nbsp;
