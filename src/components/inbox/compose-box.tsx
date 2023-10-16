@@ -82,21 +82,7 @@ export function ComposeBox(props: any) {
     const router = useRouter();
     const [collabId, setCollabId] = useState<string | undefined>(composeDraft?.draftInfo?.collabId);
     const [isContentSet, setIsContentSet] = useState<boolean>(false);
-    const { showAttachmentLoader } = useSelector((state: StateType) => state.messages);
-
-    useEffect(() => {
-        if (!collabId) {
-            const newCollabId = makeCollabId(10)
-            draftService.setComposeDraft({
-                ...composeDraft,
-                draftInfo: {
-                    ...composeDraft?.draftInfo,
-                    collabId: newCollabId
-                }
-            });
-            setCollabId(newCollabId)
-        }
-    }, [collabId])
+    const {showAttachmentLoader} = useSelector((state: StateType) => state.messages);
 
     useEffect(() => {
         if (incomingEvent === 'draft.undo') {
@@ -144,7 +130,10 @@ export function ComposeBox(props: any) {
                 if (checkValue.trim()) {
                     setIsDraftUpdated(true)
                 }
-                globalEventService.fireEvent({data: {body: draftInfo.body || ''}, type: 'richtexteditor.forceUpdateWithOnChange'});
+                globalEventService.fireEvent({
+                    data: {body: draftInfo.body || ''},
+                    type: 'richtexteditor.forceUpdateWithOnChange'
+                });
                 setEmailBody(draftInfo.body);
             }
             if (draftInfo && draftInfo.collabId) {
@@ -202,15 +191,13 @@ export function ComposeBox(props: any) {
             }
             setEmailBody(value);
         }
-
-        const collaborationId = collabId ? collabId : makeCollabId(10);
         let body = {
             subject: subject,
             to: emailRecipients.recipients?.items,
             cc: emailRecipients.cc?.items && emailRecipients.cc?.items.length > 0 ? emailRecipients.cc?.items : [],
             bcc: emailRecipients.bcc?.items && emailRecipients.bcc?.items.length > 0 ? emailRecipients.bcc?.items : [],
             draftInfo: {
-                collabId: collaborationId,
+                collabId: collabId,
                 body: checkValue ? value : emailBody
             },
             ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
@@ -222,11 +209,24 @@ export function ComposeBox(props: any) {
                     return;
                 }
                 if (composeDraft && composeDraft.id) {
-                    dispatch(updatePartialMessage({body: {id: composeDraft.id, body: body, fromCompose: true, isDraftTab: props.tabValue === 'DRAFT'}}));
+                    dispatch(updatePartialMessage({
+                        body: {
+                            id: composeDraft.id,
+                            body: body,
+                            fromCompose: true,
+                            isDraftTab: props.tabValue === 'DRAFT'
+                        }
+                    }));
                 } else {
                     setWaitForDraft(true);
-                    setCollabId(collaborationId)
-                    dispatch(createDraft({body: {accountId: selectedAccount.id, body: body, fromCompose: true, isDraftTab: props.tabValue === 'DRAFT'}}));
+                    dispatch(createDraft({
+                        body: {
+                            accountId: selectedAccount.id,
+                            body: body,
+                            fromCompose: true,
+                            isDraftTab: props.tabValue === 'DRAFT'
+                        }
+                    }));
                 }
             }
         }, 250);
@@ -264,7 +264,10 @@ export function ComposeBox(props: any) {
                 },
                 ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
             }
-            messageService.sendMessage(true, scheduledDate || '', {...body, id: composeDraft.id}, props.tabValue === 'DRAFT')
+            messageService.sendMessage(true, scheduledDate || '', {
+                ...body,
+                id: composeDraft.id
+            }, props.tabValue === 'DRAFT')
             setEmailRecipients({
                 cc: {
                     items: [],
@@ -369,7 +372,13 @@ export function ComposeBox(props: any) {
                         dispatch(uploadAttachment({
                             body: {id: composeDraft.id, file: file},
                             afterSuccessAction: () => {
-                                dispatch(updatePartialMessage({body: {id: composeDraft.id, fromCompose: true, isDraftTab: props.tabValue === 'DRAFT'}}));
+                                dispatch(updatePartialMessage({
+                                    body: {
+                                        id: composeDraft.id,
+                                        fromCompose: true,
+                                        isDraftTab: props.tabValue === 'DRAFT'
+                                    }
+                                }));
                             }
                         }));
                     }
@@ -398,7 +407,7 @@ export function ComposeBox(props: any) {
                 }
             })
         }
-    }, [showAttachmentLoader ])
+    }, [showAttachmentLoader])
 
     function removeAttachmentsData(index: number) {
         const newArr = [...attachments];
@@ -408,7 +417,13 @@ export function ComposeBox(props: any) {
             dispatch(removeAttachment({
                 body: {id: composeDraft.id!, attachment: composeDraft.draftInfo?.attachments[index].id!},
                 afterSuccessAction: () => {
-                    dispatch(updatePartialMessage({body: {id: composeDraft.id, fromCompose: true, isDraftTab: props.tabValue === 'DRAFT'}}));
+                    dispatch(updatePartialMessage({
+                        body: {
+                            id: composeDraft.id,
+                            fromCompose: true,
+                            isDraftTab: props.tabValue === 'DRAFT'
+                        }
+                    }));
                 }
             }))
         }
@@ -562,9 +577,11 @@ export function ComposeBox(props: any) {
                                                 <Flex align={'center'} key={index} className={styles.attachmentsFile}>
                                                     {item.filename}
                                                     <Flex ml={'auto'} gap={3} className={'attachments-progress-bar'}>
-                                                        {(showAttachmentLoader && !item.isUploaded) && <ProgressBar loaderPercentage={loaderPercentage} />}
+                                                        {(showAttachmentLoader && !item.isUploaded) &&
+                                                        <ProgressBar loaderPercentage={loaderPercentage}/>}
                                                         <div className={styles.closeIcon}
-                                                             onClick={() => removeAttachmentsData(index)}><CloseIcon/></div>
+                                                             onClick={() => removeAttachmentsData(index)}><CloseIcon/>
+                                                        </div>
                                                     </Flex>
                                                 </Flex>
                                             ))}
@@ -583,7 +600,8 @@ export function ComposeBox(props: any) {
                                         >
                                             Discard
                                         </Button>
-                                        <Button isDisabled={showAttachmentLoader} className={styles.replyTextButton} colorScheme='blue'
+                                        <Button isDisabled={showAttachmentLoader} className={styles.replyTextButton}
+                                                colorScheme='blue'
                                                 onClick={() => sendMessages()}>
                                             {scheduledDate ? (
                                                 <>Send {dayjs(scheduledDate).from(dayjs())} @ {dayjs(scheduledDate).format('hh:mmA')}</>

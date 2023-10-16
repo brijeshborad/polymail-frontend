@@ -300,7 +300,7 @@ function ProjectInbox() {
                   backgroundColor={'#FCFCFD'} height={'100%'} flex={1}>
 
                 <Flex align={'center'} justify={'space-between'} gap={4} padding={'16px 40px 15px'}
-                      borderBottom={'1px solid rgba(8, 22, 47, 0.12)'} backgroundColor={'#FFFFFF'}>
+                      borderBottom={'1px solid #F3F4F6'} backgroundColor={'#FFFFFF'}>
                     <Flex align={'center'} gap={2}>
                       {!project ? (
                         <>

@@ -116,8 +116,8 @@ export function getSignatureAndProjectBanner(selectedAccount: Account | null | u
 }
 
 export function getProjectBanner(selectedAccount: Account | null | undefined) {
-    return `<p></p>
-        <div style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">
+    return `<p id="project-banner-gap"></p>
+        <div id="project-banner" style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">
         <p style="font-size: 13px; margin-right: 3px;"> ${selectedAccount?.name || ''} is sharing this email thread (and future replies) with</p>
         <p style="font-size: 13px; margin-right: 3px;">others</p>
         <p style="font-size: 13px; margin-right: 3px;">on</p>

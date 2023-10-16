@@ -103,7 +103,8 @@
 
 .header {
     /*padding: 12px 40px;*/
-    border-bottom: 1px solid rgba(8, 22, 47, 0.12);
+    /*border-bottom: 1px solid rgba(8, 22, 47, 0.12);*/
+    border-bottom: 1px solid #F3F4F6;
     background-color: #FFFFFF;
 }
 

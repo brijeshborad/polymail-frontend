@@ -24,7 +24,7 @@ import {MAILBOX_ARCHIVE, MAILBOX_INBOX, MAILBOX_SNOOZED, MAILBOX_STARRED, MAILBO
 import {threadService, commonService, socketService, draftService, messageService} from "@/services";
 import Tooltip from "../common/Tooltip";
 import {createDraft} from "@/redux/draft/action-reducer";
-import {clearDebounce, debounce} from "@/utils/common.functions";
+import {clearDebounce, debounce, makeCollabId} from "@/utils/common.functions";
 import {useRouter} from "next/router";
 import {Thread} from "@/models";
 
@@ -163,7 +163,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
         }
         commonService.toggleComposing(true);
         if (selectedAccount && selectedAccount.id) {
-            dispatch(createDraft({body: {accountId: selectedAccount.id, body: {}, fromCompose: true}}));
+            dispatch(createDraft({body: {accountId: selectedAccount.id, body: {draftInfo: {collabId: makeCollabId(10)}}, fromCompose: true}}));
         }
     }
 

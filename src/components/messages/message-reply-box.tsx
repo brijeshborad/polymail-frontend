@@ -67,7 +67,7 @@ export function MessageReplyBox(props: MessageBoxType) {
     const [extraClassNames, setExtraClassNames] = useState<string>('');
     const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
     const [waitForDraft, setWaitForDraft] = useState<boolean>(false);
-    const [collabId, setCollabId] = useState<string | undefined>(draft?.draftInfo?.collabId)
+    const [collabId, setCollabId] = useState<string | undefined>(undefined)
     const [isDraftUpdated, setIsDraftUpdated] = useState<boolean>(false);
     const [isContentUpdated, setIsContentUpdated] = useState<boolean>(false);
     const [messageData, setMessageData] = useState<any>(null);
@@ -81,7 +81,13 @@ export function MessageReplyBox(props: MessageBoxType) {
 
     useEffect(() => {
         if (!collabId) {
-            const newCollabId = makeCollabId(10)
+            const draftMessage = (selectedThread?.messages || []).findLast((msg: Message) => (msg.mailboxes || []).includes('DRAFT'));
+            let newCollabId = makeCollabId(10);
+            if (draftMessage) {
+                if (draftMessage.draftInfo?.collabId) {
+                    newCollabId = draftMessage.draftInfo?.collabId;
+                }
+            }
             dispatch(updateDraftState({
                 draft: {
                     ...draft,

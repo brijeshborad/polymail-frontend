@@ -201,6 +201,9 @@ class ThreadsService extends BaseService {
             }
             if (allowComposeDraft) {
                 draftService.setComposeDraft(addProject)
+                setTimeout(() => {
+                    globalEventService.fireEvent({data: {body: 'add'}, type: 'richtexteditor.addRemoveProject'})
+                }, 10)
                 if (tabValue === 'DRAFT') {
                     let index1 = (threads || []).findIndex((thread: Thread) => thread.id === selectedThread?.id);
                     let newThreads: Thread[] = threads ?? [];
@@ -255,6 +258,9 @@ class ThreadsService extends BaseService {
                                         ...composeDraft,
                                         projects: data
                                     }
+                                    setTimeout(() => {
+                                        globalEventService.fireEvent({data: {body: 'remove'}, type: 'richtexteditor.addRemoveProject'})
+                                    }, 10)
                                     draftService.setComposeDraft(thread)
                                 }
                                 this.setThreadState({selectedThread: selectedThread, threads: threads});
@@ -320,6 +326,9 @@ class ThreadsService extends BaseService {
                                     ...selectedThread,
                                     projects: [...projects, item]
                                 }
+                                setTimeout(() => {
+                                    globalEventService.fireEvent({data: {body: 'add'}, type: 'richtexteditor.addRemoveProject'})
+                                }, 10)
                                 draftService.setComposeDraft(addProject)
                             }
                             this.setThreadState({selectedThread: selectedThread, threads: threads});
@@ -359,6 +368,9 @@ class ThreadsService extends BaseService {
                     projects: data
                 }
                 draftService.setComposeDraft(thread);
+                setTimeout(() => {
+                    globalEventService.fireEvent({data: {body: 'remove'}, type: 'richtexteditor.addRemoveProject'})
+                }, 10)
                 let index1 = (threads || []).findIndex((thread: Thread) => thread.id === threadId);
                 let newThreads: Thread[] = threads ?? [];
                 if (threads) {

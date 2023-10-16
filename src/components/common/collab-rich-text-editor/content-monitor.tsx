@@ -2,10 +2,30 @@ import {Event, StateType} from "@/types";
 import {useCurrentEditor} from "@tiptap/react";
 import {useEffect} from "react";
 import {useSelector} from "react-redux";
+import {getProjectBanner} from "@/utils/common.functions";
 
 export default function ContentMonitor() {
     const {event} = useSelector((state: StateType) => state.globalEvents) as { event: Event };
+    const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {editor} = useCurrentEditor()
+
+    function loadHtmlAndRemoveProjectBanner(body: string) {
+        let createDivElement = document.createElement('div');
+        createDivElement.id = 'content-editor-removals';
+        document.getElementsByTagName('body')[0].appendChild(createDivElement);
+        createDivElement.innerHTML = body;
+        let findPGap = createDivElement.querySelector('#project-banner-gap');
+        let findProjectBanner = createDivElement.querySelector('#project-banner');
+        if (findPGap) {
+            findPGap.remove();
+        }
+        if (findProjectBanner) {
+            findProjectBanner.remove();
+        }
+        let finalBody = createDivElement.innerHTML;
+        createDivElement.remove();
+        return finalBody;
+    }
 
     useEffect(() => {
         if (event && event.type === 'richtexteditor.forceUpdate') {
@@ -41,7 +61,19 @@ export default function ContentMonitor() {
             editor?.commands.clearContent(true);
             editor?.commands.blur()
         }
-    }, [editor, event]);
+
+        if (event && event.type === 'richtexteditor.addRemoveProject') {
+            let getHtml = editor?.getHTML() || '';
+            let updatedHtml = '';
+            if (event.data.body === 'add') {
+                updatedHtml = getHtml + getProjectBanner(selectedAccount);
+            } else {
+                updatedHtml = loadHtmlAndRemoveProjectBanner(getHtml);
+            }
+            editor?.commands.clearContent(false);
+            editor?.commands.setContent(updatedHtml, true)
+        }
+    }, [editor, event, selectedAccount]);
 
     return (
         <></>
