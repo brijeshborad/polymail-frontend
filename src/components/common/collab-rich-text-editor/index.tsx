@@ -7,7 +7,7 @@ import Placeholder from '@tiptap/extension-placeholder'
 import Collaboration from '@tiptap/extension-collaboration'
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
 import Highlight from '@tiptap/extension-highlight'
-import {TiptapCollabProvider} from '@hocuspocus/provider'
+import {HocuspocusProvider} from '@hocuspocus/provider'
 import {CollabRichTextEditorType} from '@/types/props-types/collab-rich-text-editor.types'
 import {StateType} from '@/types'
 import {useEffect, useState} from 'react'
@@ -37,11 +37,9 @@ export default function CollabRichTextEditor({
     useEffect(() => {
         if (!id) return
 
-        const prov = new TiptapCollabProvider({
-            appId: process.env.NEXT_PUBLIC_TIPTAP_APP_ID!, // get this at collab.tiptap.dev
+        const prov = new HocuspocusProvider({
+            url: `${process.env.NEXT_PUBLIC_COLLAB_WEBSOCKET_URL}`,
             name: id, // e.g. a uuid uuidv4();
-            token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2OTcwNDU2OTAsIm5iZiI6MTY5NzA0NTY5MCwiZXhwIjoxNjk3MTMyMDkwLCJpc3MiOiJodHRwczovL2NvbGxhYi50aXB0YXAuZGV2IiwiYXVkIjoibHVpekBwb2x5bWFpbC5jb20ifQ.T_10hLjqkUHyyGYqpaj7LYgUOzaP8T74Uxsdy8Z1HSY',
-            // document: new Y.Doc() // pass your existing doc, or leave this out and use provider.document
         })
         setProvider(prov)
 
