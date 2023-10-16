@@ -126,5 +126,5 @@ export function getProjectBanner(selectedAccount: Account | null | undefined) {
 }
 
 export function getSignatureBanner(selectedAccount: Account | null | undefined) {
-    return `<p></p>${selectedAccount?.signature}`;
+    return `<p></p><p></p>${selectedAccount?.signature}`;
 }
