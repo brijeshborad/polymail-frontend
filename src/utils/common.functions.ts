@@ -1,3 +1,5 @@
+import {Account} from "@/models";
+
 let timeout: any = null;
 let timeoutInterval: any = null;
 let globalStore: any = null;
@@ -107,4 +109,22 @@ export function getGlobalStore() {
 
 export function generateToasterId() {
     return `poly-toast-${new Date().getMilliseconds().toString()}-${Math.random()}`;
+}
+
+export function getSignatureAndProjectBanner(selectedAccount: Account | null | undefined) {
+    return getSignatureBanner(selectedAccount) + getProjectBanner(selectedAccount);
+}
+
+export function getProjectBanner(selectedAccount: Account | null | undefined) {
+    return `<p></p>
+        <div style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">
+        <p style="font-size: 13px; margin-right: 3px;"> ${selectedAccount?.name || ''} is sharing this email thread (and future replies) with</p>
+        <p style="font-size: 13px; margin-right: 3px;">others</p>
+        <p style="font-size: 13px; margin-right: 3px;">on</p>
+        <p style="font-size: 13px; text-decoration: underline"><a href="https://www.polymailteams.com/" style="color: #1A202C" target="_blank">Polymail</a></p>
+      </div>`
+}
+
+export function getSignatureBanner(selectedAccount: Account | null | undefined) {
+    return `<p></p>${selectedAccount?.signature}`;
 }

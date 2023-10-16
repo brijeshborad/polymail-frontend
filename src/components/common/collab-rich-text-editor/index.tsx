@@ -14,6 +14,7 @@ import {useEffect, useState} from 'react'
 import ContentMonitor from './content-monitor'
 import {getSchema} from "@/utils/editor-common-functions";
 import {keyNavigationService} from "@/services";
+import {getProjectBanner} from "@/utils/common.functions";
 
 export default function CollabRichTextEditor({
                                                  id,
@@ -104,12 +105,7 @@ export default function CollabRichTextEditor({
                                 finalContent += `<p></p>` + projectShare
                             }
                             if (!projectShare && isComposing && project) {
-                                finalContent += `<p></p><div style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">
-                                <p style="font-size: 13px; margin-right: 3px;"> ${selectedAccount?.name || ''} is sharing this email thread (and future replies) with</p>
-                                <p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">others</p>
-                                <p style="font-size: 13px; margin-right: 3px;">on</p>
-                                <p style="font-size: 13px; text-decoration: underline">Polymail</p>
-                              </div>`
+                                finalContent += getProjectBanner(selectedAccount)
                             }
 
                             editor.editor.commands.setContent(finalContent.trim(), false)

@@ -10,7 +10,7 @@ import styles from "@/styles/Inbox.module.css";
 import Image from "next/image";
 import {ChevronDownIcon, CloseIcon} from "@chakra-ui/icons";
 import React, {useCallback, useEffect, useRef, useState} from "react";
-import {debounce, makeCollabId} from "@/utils/common.functions";
+import {debounce, getProjectBanner, getSignatureBanner, makeCollabId} from "@/utils/common.functions";
 import {DropZone} from "@/components/common";
 import {createDraft, updateDraftState, updatePartialMessage} from "@/redux/draft/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
@@ -558,17 +558,11 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     const getBody = () => {
         let body = '';
         if (selectedAccount) {
-            body += `<p></p><p></p>${selectedAccount?.signature}`;
-        }
-        // ${selectedThread?.projects && selectedThread.projects.length === 1 ? `<!--<p style="font-size: 13px; margin-right: 3px;">at </p><p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">${selectedThread.projects[0].name}</p>-->` : `<p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">others</p>`}
-        if (selectedThread?.projects?.length) {
-            body += `<p></p>
-                          <div style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">
-                            <p style="font-size: 13px; margin-right: 3px;"> ${selectedAccount?.name || ''} is sharing this email thread (and future replies) with</p>                                                        
-                            <p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">others</p>                    
-                            <p style="font-size: 13px; margin-right: 3px;">on</p>
-                            <p style="font-size: 13px; text-decoration: underline">Polymail</p>
-                          </div>`
+            body += getSignatureBanner(selectedAccount);
+            // ${selectedThread?.projects && selectedThread.projects.length === 1 ? `<!--<p style="font-size: 13px; margin-right: 3px;">at </p><p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">${selectedThread.projects[0].name}</p>-->` : `<p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">others</p>`}
+            if (selectedThread?.projects?.length) {
+                body += getProjectBanner(selectedAccount);
+            }
         }
         return body;
     }
@@ -628,10 +622,9 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                         let decoded = Buffer.from(incomingEvent.data.messageData.body.data || '', 'base64').toString('utf-8');
                         let sentence = '';
                         if (selectedThread && selectedThread?.projects && selectedThread?.projects?.length) {
-                            // sentence = `<p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${selectedAccount ? (selectedAccount?.name || '') : ""} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length === 1 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}`;
-                            sentence = `<p></p><p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${selectedAccount ? (selectedAccount?.name || '') : ""} is sharing this email thread (and future replies) with others on Polymail`;
+                            sentence = getProjectBanner(selectedAccount);
                         }
-                        let content = getForwardContent(incomingEvent.data.messageData) + (decoded || '') + (selectedAccount ? (selectedAccount?.signature || '') : '') + (`${sentence}`);
+                        let content = getForwardContent(incomingEvent.data.messageData) + (decoded || '') + (selectedAccount ? getSignatureBanner(selectedAccount) : '') + (`${sentence}`);
                         setEmailBody(content);
                         globalEventService.fireEvent({type: 'richtexteditor.forceUpdate', data: {body: content, callBack: () => setShowEditorToolbar(true)}})
                         debounce(() => {
@@ -807,14 +800,8 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                         onChange={(value) => sendToDraft(value)}
                                         className={`${extraClassNames} ${extraClassNamesForBottom}`}
                                         onFocus={() => initialValuesChanges()}
-                                        emailSignature={selectedAccount ? `<p></p>${selectedAccount?.signature}` : undefined}
-                                        projectShare={selectedThread?.projects?.length ? `
-                          <div style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">
-                            <p style="font-size: 13px; margin-right: 3px;"> ${selectedAccount?.name || ''} is sharing this email thread (and future replies) with</p>
-                            <p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">others</p>
-                            <p style="font-size: 13px; margin-right: 3px;">on</p>
-                            <p style="font-size: 13px; text-decoration: underline">Polymail</p>
-                          </div>` : undefined}
+                                        emailSignature={selectedAccount ? getSignatureBanner(selectedAccount) : undefined}
+                                        projectShare={selectedThread?.projects?.length ? getProjectBanner(selectedAccount) : undefined}
                                         extendToolbar={(
                                             <>
                                                 <Flex

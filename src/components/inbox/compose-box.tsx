@@ -12,7 +12,7 @@ import styles from "@/styles/Inbox.module.css";
 import {CloseIcon} from "@chakra-ui/icons";
 import React, {ChangeEvent, useCallback, useEffect, useRef, useState} from "react";
 import {StateType} from "@/types";
-import {clearDebounce, debounce, makeCollabId} from "@/utils/common.functions";
+import {clearDebounce, debounce, getProjectBanner, getSignatureBanner, makeCollabId} from "@/utils/common.functions";
 import {createDraft, updatePartialMessage} from "@/redux/draft/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import dayjs from "dayjs";
@@ -295,11 +295,10 @@ export function ComposeBox(props: any) {
         if (selectedAccount && selectedAccount.signature) {
             let sentence = '';
             if (selectedThread?.projects && selectedThread?.projects?.length) {
-                // sentence = `<p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${selectedAccount?.name || ''} is sharing this email thread (and future replies) with others ${selectedThread?.projects && selectedThread.projects.length === 1 ? `at ${selectedThread.projects[0].name} on Polymail` : 'on Polymail'}</p>`;
-                sentence = `<p style="padding: 5px 10px !important; background-color: #EBF83E; display: block; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1;">${selectedAccount?.name || ''} is sharing this email thread (and future replies) with others on Polymail</p>`;
+                sentence = getProjectBanner(selectedAccount);
             }
 
-            setEmailBody(`<p></p><p>${selectedAccount.signature}</p><p></p>${sentence}`);
+            setEmailBody(getSignatureBanner(selectedAccount) + sentence);
         }
     }, [selectedAccount, props.isOpen, selectedThread])
 
@@ -535,13 +534,8 @@ export function ComposeBox(props: any) {
                                         placeholder='Reply with anything you like or @mention someone to share this thread'
                                         isToolbarVisible={true}
                                         className={`compose-view ${extraClassNames} ${extraClassNamesForBottom}`}
-                                        emailSignature={selectedAccount ? `<p></p>${selectedAccount?.signature}` : undefined}
-                                        projectShare={composeDraft?.projects?.length ? `<div style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D font-weight: 500; line-height: 1; padding: 5px 10px">
-                                <p style="font-size: 13px; margin-right: 3px;"> ${selectedAccount?.name || ''} is sharing this email thread (and future replies) with</p>
-                                <p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">others</p>
-                                <p style="font-size: 13px; margin-right: 3px;">on</p>
-                                <p style="font-size: 13px; text-decoration: underline">Polymail</p>
-                              </div>` : undefined}
+                                        emailSignature={selectedAccount ? getSignatureBanner(selectedAccount) : undefined}
+                                        projectShare={composeDraft?.projects?.length ? getProjectBanner(selectedAccount) : undefined}
                                         extendToolbar={(
                                             <>
                                                 <Flex
