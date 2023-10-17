@@ -79,7 +79,7 @@ export function MessageReplyBox(props: MessageBoxType) {
 
     useEffect(() => {
         if (draftIndex === null && selectedThread) {
-            const draftMessageIndex = (selectedThread?.messages || []).filter((msg: Message) => (msg.mailboxes || []).includes('DRAFT')).findLastIndex((msg: Message) => (msg.mailboxes || []).includes('DRAFT'));
+            const draftMessageIndex = (selectedThread?.messages || []).filter((msg: Message) => (msg.mailboxes || []).includes('DRAFT')).findIndex((msg: Message) => (msg.mailboxes || []).includes('DRAFT'));
             setDraftIndex(draftMessageIndex !== -1 ? draftMessageIndex : 0)
         }
     }, [selectedThread, draftIndex])
