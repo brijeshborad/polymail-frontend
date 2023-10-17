@@ -174,12 +174,12 @@ export function MessageBox(props: any) {
     // Set iframe height once content is loaded within iframe
     const onIframeLoad = (index: number) => {
         if (iframeRef.current && iframeRef.current[index] && iframeRef.current[index].contentWindow) {
-            iframeRef.current[index].contentDocument.addEventListener('wheel', function () {
-                clearDebounce('IFRAME_SCROLL');
-                debounce(() => {
-                    globalEventService.fireEvent('messagebox.scroll');
-                }, 100, 'IFRAME_SCROLL');
-            }, false)
+            // iframeRef.current[index].contentDocument.addEventListener('wheel', function () {
+            //     clearDebounce('IFRAME_SCROLL');
+            //     debounce(() => {
+            //         globalEventService.fireEvent('messagebox.scroll');
+            //     }, 10, 'IFRAME_SCROLL');
+            // }, false)
             iframeRef.current[index].contentDocument.body.style.fontFamily = "'Inter', sans-serif";
             iframeRef.current[index].contentDocument.body.style.fontSize = "14px";
 

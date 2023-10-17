@@ -13,7 +13,7 @@ import dynamic from "next/dynamic";
 import {InboxLoader} from "@/components/loader-screen/inbox-loader";
 import {globalEventService, keyNavigationService, messageService, threadService} from "@/services";
 import {Toaster} from "../common";
-import {clearDebounce, debounce} from "@/utils/common.functions";
+// import {clearDebounce, debounce} from "@/utils/common.functions";
 
 const SelectedThreads = dynamic(() => import('@/components/threads/selected-threads').then((mod) => mod.default));
 const MessagesHeader = dynamic(() => import('@/components/messages/messages-header').then(mod => mod.MessagesHeader));
@@ -43,19 +43,19 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
     const {isLoading: summaryLoading, syncingEmails, isComposing} = useSelector((state: StateType) => state.commonApis);
     const [isLoaderShow, setIsLoaderShow] = useState<boolean>(false);
 
-    const handleScroll = useCallback(() => {
-        const container = messagesWrapperRef.current;
-        const scrollHeight = container?.scrollHeight;
-        const containerHeight = container?.clientHeight;
-        const scrollBottom = scrollHeight - containerHeight - messagesWrapperRef.current.scrollTop;
-        if (scrollBottom < 2) {
-            clearDebounce('REPLY_BOX_SCROLL');
-            debounce(() => {
-                messagesWrapperRef.current.focus();
-                globalEventService.fireEvent({data: {body: null}, type: 'replybox.show'});
-            }, 100, 'REPLY_BOX_SCROLL')
-        }
-    }, []);
+    // const handleScroll = useCallback(() => {
+    //     // const container = messagesWrapperRef.current;
+    //     // const scrollHeight = container?.scrollHeight;
+    //     // const containerHeight = container?.clientHeight;
+    //     // const scrollBottom = scrollHeight - containerHeight - messagesWrapperRef.current.scrollTop;
+    //     // if (scrollBottom < 2) {
+    //     //     clearDebounce('REPLY_BOX_SCROLL');
+    //     //     debounce(() => {
+    //     //         messagesWrapperRef.current.focus();
+    //     //         globalEventService.fireEvent({data: {body: null}, type: 'replybox.show'});
+    //     //     }, 10, 'REPLY_BOX_SCROLL')
+    //     // }
+    // }, []);
 
     useEffect(() => {
         if (!threadLoading && !accountLoading && !organizationLoading && !usersProfilePictureLoading && !projectsLoading && !summaryLoading && !syncingEmails) {
@@ -73,13 +73,14 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
     }, [selectedThread])
 
     useEffect(() => {
-        if (incomingEvent === 'iframe.clicked' || incomingEvent === 'messagebox.focus') {
+        if (incomingEvent === 'iframe.clicked') {
             setThreadFocus(true)
         }
-        if (incomingEvent === 'messagebox.scroll') {
-            handleScroll()
-        }
-    }, [incomingEvent, setThreadFocus, handleScroll]);
+    // || incomingEvent === 'messagebox.focus'
+        // if (incomingEvent === 'messagebox.scroll') {
+        //     handleScroll()
+        // }
+    }, [incomingEvent, setThreadFocus]);
 
     useEffect(() => {
         if (attachmentUrl) {
@@ -192,15 +193,15 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
                 {!selectedThread && showBlankPage()}
                 {selectedThread && <Flex flexDir={'column'} height={'100%'}>
                     <>
-                        <MessagesHeader/>
-                        {isShowingMessageBox &&
-                        <Flex ref={messagesWrapperRef} padding={'20px'} gap={5} direction={'column'} flex={1}
-                              overflowY={'scroll'} overflowX={'hidden'} onScroll={() => handleScroll()}
-                              onWheel={(event) => {
-                                  if (event.deltaY > 0) {
-                                      handleScroll()
-                                  }
-                              }}>
+                    {/*    onScroll={() => handleScroll()}*/}
+                    {/*    onWheel={(event) => {*/}
+                    {/*    if (event.deltaY > 0) {*/}
+                    {/*        handleScroll()*/}
+                    {/*    }*/}
+                    {/*}}*/}
+                        <MessagesHeader />
+                        {isShowingMessageBox && <Flex ref={messagesWrapperRef} padding={'20px'} gap={5} direction={'column'} flex={1}
+                                                      overflowY={'scroll'} overflowX={'hidden'}>
                             <Flex gap={2} direction={'column'} height={'100%'}>
                                 <div className={styles.mailBoxMailList}>
                                     <MessageBox hideAndShowReplyBox={hideAndShowReplyBox}/>

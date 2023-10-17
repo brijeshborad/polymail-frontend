@@ -10,7 +10,7 @@ import styles from "@/styles/Inbox.module.css";
 import Image from "next/image";
 import {ChevronDownIcon, CloseIcon} from "@chakra-ui/icons";
 import React, {useCallback, useEffect, useRef, useState} from "react";
-import {clearDebounce, debounce, getProjectBanner, getSignatureBanner} from "@/utils/common.functions";
+import {debounce, getProjectBanner, getSignatureBanner} from "@/utils/common.functions";
 import {DropZone} from "@/components/common";
 import {updatePartialMessage} from "@/redux/draft/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
@@ -542,12 +542,12 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         } else {
             setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
         }
-        if (editorRef.current.scrollTop === 0) {
-            clearDebounce('EDITOR_SCROLL');
-            debounce(() => {
-                globalEventService.fireEvent({data: {body: null}, type: 'replybox.hide'});
-            }, 100, 'EDITOR_SCROLL')
-        }
+        // if (editorRef.current.scrollTop === 0) {
+        //     clearDebounce('EDITOR_SCROLL');
+        //     debounce(() => {
+        //         globalEventService.fireEvent({data: {body: null}, type: 'replybox.hide'});
+        //     }, 10, 'EDITOR_SCROLL')
+        // }
 
         const container = editorRef.current;
         if (container) {
@@ -649,19 +649,19 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             if (incomingEvent.type === 'draft.currentMessage') {
                 setMessageData(incomingEvent.data);
             }
-            if (incomingEvent.type === 'replybox.hide') {
-                setShowEditorToolbar(false);
-                setTimeout(() => {
-                    globalEventService.fireEvent({data: {}, type: 'richtexteditor.blur'})
-                }, 10)
-            }
-            if (incomingEvent.type === 'replybox.show') {
-                setShowEditorToolbar(true);
-                globalEventService.fireEvent('messagebox.focus');
-                setTimeout(() => {
-                    globalEventService.fireEvent({data: {}, type: 'richtexteditor.focus'})
-                }, 50)
-            }
+            // if (incomingEvent.type === 'replybox.hide') {
+            //     setShowEditorToolbar(false);
+            //     setTimeout(() => {
+            //         globalEventService.fireEvent({data: {}, type: 'richtexteditor.blur'})
+            //     }, 10)
+            // }
+            // if (incomingEvent.type === 'replybox.show') {
+            //     setShowEditorToolbar(true);
+            //     globalEventService.fireEvent('messagebox.focus');
+            //     setTimeout(() => {
+            //         globalEventService.fireEvent({data: {}, type: 'richtexteditor.focus'})
+            //     }, 50)
+            // }
         }
     }, [getForwardContent, handleEditorScroll, incomingEvent, isDraftUpdated, selectedAccount, selectedThread]);
 
@@ -774,12 +774,12 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                             direction={'column'} position={"relative"} flex={1} overflow={'none'}>
                             <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} zIndex={6} ref={editorRef}
                                   overflowY={'auto'} className={`editor-bottom-shadow`}
-                                  onScroll={() => handleEditorScroll()}
-                                  onWheel={(event) => {
-                                      if (event.deltaX <= 0) {
-                                          handleEditorScroll()
-                                      }
-                                  }}>
+                                  onScroll={() => handleEditorScroll()}>
+                                  {/*onWheel={(event) => {*/}
+                                  {/*    if (event.deltaX <= 0) {*/}
+                                  {/*        handleEditorScroll()*/}
+                                  {/*    }*/}
+                                  {/*}}*/}
                                 {(selectedThread && draftIndex !== null) && (
                                     <CollabRichTextEditor
                                         id={selectedThread.id + '-' + draftIndex}
