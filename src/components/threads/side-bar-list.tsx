@@ -52,11 +52,10 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     }, [selectedThread, currentThreads])
 
     useEffect(() => {
-        if (target === 'threads') {
+        if (target === 'threads' || target === 'thread') {
             const node = currentThreadRef ? currentThreadRef.current : null
             if (node) {
-                const topPos = (node.offsetTop - 50) || ((threadIndex || 0)) * 50
-
+                const topPos = (node.offsetTop - 110) || ((threadIndex || 0)) * 110
                 setTimeout(() => {
                     if (editorRef.current) {
                         editorRef.current.scrollTo({

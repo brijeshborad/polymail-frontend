@@ -41,6 +41,10 @@ class MessageService extends BaseService {
         this.setMessageState({messagePart: null, messageAttachments: undefined});
     }
 
+    clearMessageAndAttachments() {
+        this.setMessageState({messageAttachments: undefined});
+    }
+
     setMessageBody(body: MessagePart | null) {
         this.setMessageState({messagePart: body});
     }

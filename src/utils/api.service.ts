@@ -87,11 +87,12 @@ class ApiService {
         });
     }
 
-    static callPut(url: string, payload: any, headers: any = {}) {
+    static callPut(url: string, payload: any, headers: any = {}, params: any = {}) {
         return axiosInstance.put(url, payload, {
             headers: {
                 ...headers
-            }
+            },
+            params: params
         });
     }
 

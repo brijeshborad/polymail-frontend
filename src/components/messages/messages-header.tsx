@@ -135,7 +135,10 @@ export function MessagesHeader() {
                 debounce(() => {
                     messageService.setMessageState({showMessageBox: true});
                 }, 5, 'MESSAGE_BOX');
-                threadService.setThreadState({threads: currentThreads, selectedThread: currentThreads[index1]});
+                // Calculate the final index for an item in the 'currentThreads' array. If 'index1' is within bounds,
+                // reduce it by 1; if 'index1' is 0, keep it the same; if 'index1' is below 0, increase it by 1.
+                let finalIndex = (index1 - 1 < currentThreads.length ) ? (index1 === 0) ? index1 : index1 - 1 : (index1 <= 0 ? index1 + 1 : index1 - 1)
+                threadService.setThreadState({threads: currentThreads, selectedThread: currentThreads[finalIndex]});
                 threadService.moveThreadFromListToListCache(tabValue || 'INBOX', messageBox, threadData.id!)
                 let polyToast = generateToasterId();
                 dispatch(updateThreads({
@@ -163,8 +166,7 @@ export function MessagesHeader() {
                             tag: messageBox.toLowerCase(),
                             afterUndoAction: () => {
                                 threadService.setThreadState({
-                                    threads: threads || [],
-                                    selectedThread: (threads || [])[0]
+                                    threads: threads || []
                                 })
                             }
                         },

@@ -361,6 +361,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     }, [subject, emailRecipients]);
 
     function handleFileUpload(files: any, event: any = null) {
+        if (!files) return;
         loaderPercentage = 0;
         const file = files[0];
         if (event) {

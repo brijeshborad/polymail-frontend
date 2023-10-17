@@ -341,6 +341,7 @@ export function ComposeBox(props: any) {
 
 
     function handleFileUpload(files: any, event: any) {
+        if (!files) return;
         loaderPercentage = 0;
 
         const file = files[0];

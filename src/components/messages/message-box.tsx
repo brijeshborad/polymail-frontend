@@ -23,6 +23,8 @@ import {LinkPreviewProps} from "@/types/props-types/link-preview.types";
 import {getCacheMessages, setCacheMessages} from "@/utils/cache.functions";
 
 
+let currentInboxMessagesInstant: MessageModel[] = [];
+
 export function MessageBox(props: any) {
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const [isContextMenuOpen, setIsContextMenuOpen] = useState(false)
@@ -72,6 +74,7 @@ export function MessageBox(props: any) {
             // remove draft messages and set index to last inbox message
             const currentInboxMessages: MessageModel[] = messages.filter((msg: MessageModel) => !(msg.mailboxes || []).includes('DRAFT'));
             setInboxMessages([...currentInboxMessages]);
+            currentInboxMessagesInstant = [...currentInboxMessages];
             setIndex(currentInboxMessages.length - 1);
             globalEventService.fireEvent({
                 data: currentInboxMessages[currentInboxMessages.length - 1],
@@ -108,8 +111,8 @@ export function MessageBox(props: any) {
     useEffect(() => {
         if (messagePart && messagePart.messageId) {
             messageService.setMessageBody(null);
-            let messageId = inboxMessages.findIndex((item: MessageModel) => item.id === messagePart?.messageId);
-            let finalMessages = [...inboxMessages];
+            let messageId = currentInboxMessagesInstant.findIndex((item: MessageModel) => item.id === messagePart?.messageId);
+            let finalMessages = [...currentInboxMessagesInstant];
             if (messagePart.data) {
                 cacheMessage({data: messagePart.data}, messagePart.messageId!);
                 let decoded = Buffer.from(messagePart.data || '', 'base64').toString();
@@ -124,17 +127,19 @@ export function MessageBox(props: any) {
             } else {
                 messageService.setSelectedMessageIfMessageIdMatches({...finalMessages[messageId], body: null});
                 cacheMessage({data: ''}, messagePart.messageId!);
-                finalMessages[messageId] = {...finalMessages[messageId], body: ''}
+                finalMessages[messageId] = {...finalMessages[messageId], body: ''};
             }
-            setInboxMessages(finalMessages);
+            currentInboxMessagesInstant = [...finalMessages];
+            setInboxMessages([...finalMessages]);
         }
-    }, [cacheMessage, inboxMessages, messagePart])
+    }, [cacheMessage, messagePart])
 
     useEffect(() => {
         // convert blob url to image url
         if (messageAttachments && messageAttachments.messageId) {
-            let messageId = inboxMessages.findIndex((item: MessageModel) => item.id === messageAttachments?.messageId);
-            let finalMessages = [...inboxMessages];
+            messageService.clearMessageAndAttachments();
+            let messageId = currentInboxMessagesInstant.findIndex((item: MessageModel) => item.id === messageAttachments?.messageId);
+            let finalMessages = [...currentInboxMessagesInstant];
             if (messageAttachments.attachments.length) {
                 cacheMessage({attachments: messageAttachments.attachments}, messageAttachments.messageId!);
                 finalMessages[messageId] = {
@@ -145,22 +150,21 @@ export function MessageBox(props: any) {
                 cacheMessage({attachments: []}, messageAttachments.messageId!);
                 finalMessages[messageId] = {...finalMessages[messageId], attachments: []}
             }
+            currentInboxMessagesInstant = [...finalMessages];
+            setInboxMessages([...finalMessages]);
         }
-    }, [cacheMessage, inboxMessages, messageAttachments])
+    }, [cacheMessage, messageAttachments])
 
     // Set iframe height once content is loaded within iframe
     const onIframeLoad = (index: number) => {
         if (iframeRef.current && iframeRef.current[index] && iframeRef.current[index].contentWindow) {
             iframeRef.current[index].contentDocument.body.style.fontFamily = "'Inter', sans-serif";
             iframeRef.current[index].contentDocument.body.style.fontSize = "14px";
-            setTimeout(() => {
-                if (iframeRef.current && iframeRef.current[index] && iframeRef.current[index].contentWindow) {
-                    setIframeHeight(prevState => ({
-                        ...prevState,
-                        [index]: (iframeRef.current[index].contentWindow.document.body.scrollHeight + 20) + "px"
-                    }));
-                }
-            }, 100);
+
+            setIframeHeight(prevState => ({
+                ...prevState,
+                [index]: (iframeRef.current[index].contentWindow.document.body.scrollHeight + 20) + "px"
+            }));
 
             const allLinks = iframeRef.current[index].contentDocument.getElementsByTagName("a")
 
@@ -186,6 +190,10 @@ export function MessageBox(props: any) {
                     }
                 }
             }
+        } else {
+            setTimeout(() => {
+                onIframeLoad(index);
+            }, 100);
         }
     };
 
