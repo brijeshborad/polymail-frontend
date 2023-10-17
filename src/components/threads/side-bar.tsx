@@ -188,10 +188,10 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                     gap={2} align={'center'} w={"100%"}
                     justify={'space-between'}
                 >
-                    {isThreadSearched && <Flex align={'center'} fontSize={'13px'} fontWeight={'400'}
+                    {(isThreadSearched || multiSelection && multiSelection.length > 0) && <Flex align={'center'} fontSize={'13px'} fontWeight={'400'}
                                                color={'#374151'} gap={2} letterSpacing={'-0.13px'}
                                                whiteSpace={'nowrap'}>
-                            <span>Search Results {countUnreadMessages > 0 && (
+                                                {isThreadSearched ? <span>Search Results {countUnreadMessages > 0 && (
                                 <Badge
                                     backgroundColor={'#F3F4F6'} fontSize={'12px'} color={'#6B7280'}
                                     padding={'1px 4px'} borderRadius={4} fontWeight={500}
@@ -199,7 +199,15 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                     {countUnreadMessages}
                                 </Badge>
                             )}
-                            </span>
+                            </span> : <span style={{display: 'flex', alignItems: 'center'}}>{multiSelection && multiSelection?.length > 0 && (
+                                <Badge
+                                    backgroundColor={'#F3F4F6'} fontSize={'12px'} color={'#6B7280'}
+                                    padding={'1px 4px'} borderRadius={4} fontWeight={500}
+                                >
+                                    {multiSelection?.length}
+                                </Badge>
+                            )} Selected
+                            </span>}
                     </Flex>}
                     {/*<Flex className={styles.checkBoxLabel}>*/}
                     {/*    <Checkbox*/}
