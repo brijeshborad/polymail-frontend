@@ -53,7 +53,7 @@ function* patchPartialMessage({payload}: PayloadAction<ReducerActionType>) {
     try {
         delete payload.body.fromCompose;
         delete payload.body.isDraftTab;
-        const response: AxiosResponse = yield ApiService.callPatch(`messages/${payload.body.id}`, payload.body.body, null, payload.body.params);
+        const response: AxiosResponse = yield ApiService.callPut(`messages/${payload.body.id}`, payload.body.body, null, payload.body.params);
         performSuccessActions(payload);
         yield put(updatePartialMessageSuccess({updatedDraft: response, isForCompose, isDraftTab}));
     } catch (error: any) {
