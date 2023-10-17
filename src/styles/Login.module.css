@@ -124,10 +124,6 @@
     box-shadow: none;
 }
 
-.onBoardingPage .continueButton:hover {
-    background-color: #1F2937;
-}
-
 .onBoardingPage .backButton:hover {
     background-color: #FFFFFF;
 }

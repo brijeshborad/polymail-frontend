@@ -86,12 +86,11 @@ function OnBoardingType() {
                 <Flex direction={'column'}>
                     <Heading as='h4' size='md' fontWeight={700} color={'#0A101D'}
                              mb={4}>{router.query.type === 'login' ? 'Log into' : 'Create'} your account</Heading>
-                    <Button onClick={() => oauthWithGoogle()} className={styles.continueButton}
-                            mb={3} colorScheme='blue' padding={'4px'} height={'auto'}
-                            minWidth={'327px'} justifyContent={'flex-start'} gap={3} backgroundColor={'#2A6FFF'}
-                            fontSize={'14px'} fontWeight={'500'}>
-                        <Flex backgroundColor={'#FFFFFF'} padding={'2px'} borderRadius={'6px'}>
-                            <Image src={'/image/google-logo.png'} alt={''} width={'24px'} height={'24px'}/>
+                    <Button onClick={() => oauthWithGoogle()} backgroundColor={'#2A6FFF'} w={'fit-content'}
+                            borderRadius={'2px'} height={'46px'} border={'1px solid #2A6FFF'} mb={3} className={styles.continueButton}
+                            padding={'0 12px 0 0'} justifyContent={'flex-start'} gap={3} color={'#FFFFFF'}>
+                        <Flex backgroundColor={'#FFFFFF'} padding={'13px'}>
+                            <Image src={'/image/google-logo.png'} alt={''} width={'18px'} height={'18px'}/>
                         </Flex>
                         {router.query.type === 'login' ? 'Log in' : 'Sign Up'} with Google
                     </Button>
