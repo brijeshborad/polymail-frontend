@@ -40,7 +40,7 @@ export default function CollabRichTextEditor({
 
         const prov = new HocuspocusProvider({
             url: `${process.env.NEXT_PUBLIC_COLLAB_WEBSOCKET_URL}`,
-            name: id, // e.g. a uuid uuidv4();
+            name: id
         })
         console.log('___COLLABID____', id, prov);
         setProvider(prov)
@@ -48,7 +48,7 @@ export default function CollabRichTextEditor({
         setExtensions([
             ...getSchema,
             Collaboration.configure({
-                document: prov.document,
+                document: prov.document
             }),
             Placeholder.configure({
                 placeholder: placeholder,

@@ -12,8 +12,8 @@ import styles from "@/styles/Inbox.module.css";
 import {CloseIcon} from "@chakra-ui/icons";
 import React, {ChangeEvent, useCallback, useEffect, useRef, useState} from "react";
 import {StateType} from "@/types";
-import {clearDebounce, debounce, getProjectBanner, getSignatureBanner} from "@/utils/common.functions";
-import {createDraft, updatePartialMessage} from "@/redux/draft/action-reducer";
+import {clearDebounce, debounce, getProjectBanner, getSignatureBanner, makeCollabId} from "@/utils/common.functions";
+import {updatePartialMessage} from "@/redux/draft/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import dayjs from "dayjs";
 import {deleteMessage, removeAttachment, uploadAttachment} from "@/redux/messages/action-reducer";
@@ -78,9 +78,7 @@ export function ComposeBox(props: any) {
     const inputFile = useRef<HTMLInputElement | null>(null);
     const editorRef = useRef<any>(null);
     const [isDraftUpdated, setIsDraftUpdated] = useState<boolean>(false);
-    const [waitForDraft, setWaitForDraft] = useState<boolean>(false);
     const router = useRouter();
-    const [collabId, setCollabId] = useState<string | undefined>(composeDraft?.draftInfo?.collabId);
     const [isContentSet, setIsContentSet] = useState<boolean>(false);
     const {showAttachmentLoader} = useSelector((state: StateType) => state.messages);
 
@@ -130,14 +128,11 @@ export function ComposeBox(props: any) {
                 if (checkValue.trim()) {
                     setIsDraftUpdated(true)
                 }
-                globalEventService.fireEvent({
-                    data: {body: draftInfo.body || ''},
-                    type: 'richtexteditor.forceUpdateWithOnChange'
-                });
+                // globalEventService.fireEvent({
+                //     data: {body: draftInfo.body || ''},
+                //     type: 'richtexteditor.forceUpdateWithOnChange'
+                // });
                 setEmailBody(draftInfo.body);
-            }
-            if (draftInfo && draftInfo.collabId) {
-                setCollabId(draftInfo.collabId);
             }
 
             if (draftInfo && draftInfo.attachments && draftInfo.attachments.length > 0) {
@@ -157,13 +152,6 @@ export function ComposeBox(props: any) {
             }
         }
     }, [composeDraft, isContentSet, props.isProjectView])
-
-    useEffect(() => {
-        if (waitForDraft && composeDraft && composeDraft.id) {
-            setWaitForDraft(false);
-            sendToDraft('', false);
-        }
-    }, [waitForDraft, composeDraft])
 
     const addSubject = (event: ChangeEvent | any) => {
         if (event.target.value) {
@@ -197,38 +185,20 @@ export function ComposeBox(props: any) {
             cc: emailRecipients.cc?.items && emailRecipients.cc?.items.length > 0 ? emailRecipients.cc?.items : [],
             bcc: emailRecipients.bcc?.items && emailRecipients.bcc?.items.length > 0 ? emailRecipients.bcc?.items : [],
             draftInfo: {
-                collabId: collabId,
                 body: checkValue ? value : emailBody
             },
             ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
         }
 
         debounce(() => {
-            if (selectedAccount && selectedAccount.id) {
-                if (waitForDraft) {
-                    return;
+            dispatch(updatePartialMessage({
+                body: {
+                    id: composeDraft?.threadId + '-' + 0,
+                    body: body,
+                    fromCompose: true,
+                    isDraftTab: props.tabValue === 'DRAFT'
                 }
-                if (composeDraft && composeDraft.id) {
-                    dispatch(updatePartialMessage({
-                        body: {
-                            id: composeDraft.id,
-                            body: body,
-                            fromCompose: true,
-                            isDraftTab: props.tabValue === 'DRAFT'
-                        }
-                    }));
-                } else {
-                    setWaitForDraft(true);
-                    dispatch(createDraft({
-                        body: {
-                            accountId: selectedAccount.id,
-                            body: body,
-                            fromCompose: true,
-                            isDraftTab: props.tabValue === 'DRAFT'
-                        }
-                    }));
-                }
-            }
+            }))
         }, 250);
     }
 
@@ -259,7 +229,6 @@ export function ComposeBox(props: any) {
                 cc: emailRecipients.cc?.items && emailRecipients.cc?.items.length > 0 ? emailRecipients.cc?.items : [],
                 bcc: emailRecipients.bcc?.items && emailRecipients.bcc?.items.length > 0 ? emailRecipients.bcc?.items : [],
                 draftInfo: {
-                    collabId: collabId,
                     body: emailBody
                 },
                 ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
@@ -375,7 +344,7 @@ export function ComposeBox(props: any) {
                             afterSuccessAction: () => {
                                 dispatch(updatePartialMessage({
                                     body: {
-                                        id: composeDraft.id,
+                                        id: composeDraft.threadId + '-' + 0,
                                         fromCompose: true,
                                         isDraftTab: props.tabValue === 'DRAFT'
                                     }
@@ -420,7 +389,7 @@ export function ComposeBox(props: any) {
                 afterSuccessAction: () => {
                     dispatch(updatePartialMessage({
                         body: {
-                            id: composeDraft.id,
+                            id: composeDraft.threadId + '-' + 0,
                             fromCompose: true,
                             isDraftTab: props.tabValue === 'DRAFT'
                         }
@@ -541,8 +510,8 @@ export function ComposeBox(props: any) {
                                           }
                                       }))}
                                 >
-                                    {collabId && <CollabRichTextEditor
-                                        id={'compose-draft-' + collabId}
+                                    {composeDraft?.threadId && <CollabRichTextEditor
+                                        id={composeDraft?.threadId + '-' + 0}
                                         isAutoFocus={true}
                                         content={emailBody}
                                         onCreate={() => sendToDraft('')}

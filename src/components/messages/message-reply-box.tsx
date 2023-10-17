@@ -10,9 +10,9 @@ import styles from "@/styles/Inbox.module.css";
 import Image from "next/image";
 import {ChevronDownIcon, CloseIcon} from "@chakra-ui/icons";
 import React, {useCallback, useEffect, useRef, useState} from "react";
-import {debounce, getProjectBanner, getSignatureBanner, makeCollabId} from "@/utils/common.functions";
+import {debounce, getProjectBanner, getSignatureBanner} from "@/utils/common.functions";
 import {DropZone} from "@/components/common";
-import {createDraft, updateDraftState, updatePartialMessage} from "@/redux/draft/action-reducer";
+import {updatePartialMessage} from "@/redux/draft/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import dayjs from "dayjs";
@@ -67,7 +67,7 @@ export function MessageReplyBox(props: MessageBoxType) {
     const [extraClassNames, setExtraClassNames] = useState<string>('');
     const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
     const [waitForDraft, setWaitForDraft] = useState<boolean>(false);
-    const [collabId, setCollabId] = useState<string | undefined>(undefined)
+    const [draftIndex, setDraftIndex] = useState<number | null>(null);
     const [isDraftUpdated, setIsDraftUpdated] = useState<boolean>(false);
     const [isContentUpdated, setIsContentUpdated] = useState<boolean>(false);
     const [messageData, setMessageData] = useState<any>(null);
@@ -80,27 +80,11 @@ export function MessageReplyBox(props: MessageBoxType) {
     const [emailList, setEmailList] = useState<any>([]);
 
     useEffect(() => {
-        if (!collabId) {
-            const draftMessage = (selectedThread?.messages || []).findLast((msg: Message) => (msg.mailboxes || []).includes('DRAFT'));
-            let newCollabId = makeCollabId(10);
-            if (draftMessage) {
-                if (draftMessage.draftInfo?.collabId) {
-                    newCollabId = draftMessage.draftInfo?.collabId;
-                }
-            }
-            dispatch(updateDraftState({
-                draft: {
-                    ...draft,
-                    draftInfo: {
-                        ...draft?.draftInfo,
-                        collabId: newCollabId
-                    }
-                }
-            }))
-
-            setCollabId(newCollabId)
+        if (draftIndex === null) {
+            const draftMessageIndex = (selectedThread?.messages || []).findLastIndex((msg: Message) => (msg.mailboxes || []).includes('DRAFT'));
+            setDraftIndex(draftMessageIndex !== -1 ? draftMessageIndex : 0)
         }
-    }, [dispatch, collabId, selectedThread])
+    }, [selectedThread, draftIndex])
 
     useEffect(() => {
         if (emailRecipients?.recipients?.items && emailRecipients?.recipients?.items.length > 1) {
@@ -176,27 +160,13 @@ export function MessageReplyBox(props: MessageBoxType) {
             cc: emailRecipients.cc?.items && emailRecipients.cc?.items.length > 0 ? emailRecipients.cc?.items : [],
             bcc: emailRecipients.bcc?.items && emailRecipients.bcc?.items.length > 0 ? emailRecipients.bcc?.items : [],
             draftInfo: {
-                body: value || emailBody,
-                collabId
+                body: value || emailBody
             },
             messageId: messageData?.id,
             ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
         }
         debounce(() => {
-            if (selectedAccount && selectedAccount.id) {
-                if (waitForDraft) {
-                    return;
-                }
-                if (!showEditorToolbar) {
-                    return;
-                }
-                if (draft && draft.id) {
-                    dispatch(updatePartialMessage({body: {id: draft.id, body: body}}));
-                } else {
-                    setWaitForDraft(true);
-                    dispatch(createDraft({body: {accountId: selectedAccount.id, body: body}}));
-                }
-            }
+            dispatch(updatePartialMessage({body: {id: selectedThread?.id + '-' + draftIndex, body: body}}));
         }, 250);
     }
 
@@ -215,19 +185,16 @@ export function MessageReplyBox(props: MessageBoxType) {
             if (subject) {
                 setSubject(subject)
             }
-            if (draftInfo && draftInfo.collabId) {
-                setCollabId(draftInfo.collabId);
-            }
             if (draftInfo && draftInfo.body) {
                 let checkValue = getPlainTextFromHtml(draftInfo.body).trim();
                 if (checkValue.trim()) {
                     setIsDraftUpdated(true)
-                    setTimeout(() => {
-                        globalEventService.fireEvent({
-                            data: {body: draftInfo?.body || '', callBack: () => setShowEditorToolbar(true)},
-                            type: 'richtexteditor.forceUpdateWithOnChange'
-                        });
-                    }, 500);
+                    // setTimeout(() => {
+                    //     globalEventService.fireEvent({
+                    //         data: {body: draftInfo?.body || '', callBack: () => setShowEditorToolbar(true)},
+                    //         type: 'richtexteditor.forceUpdateWithOnChange'
+                    //     });
+                    // }, 500);
                 }
                 setEmailBody(draftInfo?.body || '');
             }
@@ -403,14 +370,13 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                             cc: emailRecipients.cc?.items && emailRecipients.cc?.items.length > 0 ? emailRecipients.cc?.items : [],
                             bcc: emailRecipients.bcc?.items && emailRecipients.bcc?.items.length > 0 ? emailRecipients.bcc?.items : [],
                             draftInfo: {
-                                body: emailBody,
-                                collabId
+                                body: emailBody
                             },
                             messageId: messageData?.id,
                             ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
                         }
-                        dispatch(createDraft({
-                            body: {accountId: selectedAccount?.id, body: body},
+                        dispatch(updatePartialMessage({
+                            body: {id: selectedThread?.id + '-' + draftIndex, body: body},
                             afterSuccessAction: (draft: any) => {
                                 draftService.setReplyDraft(draft);
                                 if (loaderPercentage < 100) {
@@ -453,7 +419,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             dispatch(removeAttachment({
                 body: {id: draft.id!, attachment: draft.draftInfo?.attachments[index].id!},
                 afterSuccessAction: () => {
-                    dispatch(updatePartialMessage({body: {id: draft.id}}));
+                    dispatch(updatePartialMessage({body: {id: selectedThread?.id + '-' + draftIndex}}));
                 }
             }))
         }
@@ -468,6 +434,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         if (draft && draft.id) {
             draftService.setReplyDraft(null);
             setAttachments([]);
+            setDraftIndex(null);
             draftService.discardDraft(draft.id!);
             dispatch(deleteMessage({
                 body: {id: draft.id},
@@ -490,8 +457,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 cc: emailRecipients.cc?.items && emailRecipients.cc?.items.length > 0 ? emailRecipients.cc?.items : [],
                 bcc: emailRecipients.bcc?.items && emailRecipients.bcc?.items.length > 0 ? emailRecipients.bcc?.items : [],
                 draftInfo: {
-                    body: emailBody,
-                    collabId
+                    body: emailBody
                 },
                 messageId: messageData?.id,
                 ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
@@ -530,10 +496,13 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 }, 500)
                 if (!getPlainTextFromHtml(draftMessage.draftInfo?.body || '').trim()) {
                     setTimeout(() => {
-                        globalEventService.fireEvent({data: {body: getBody(), callBack: () => {
-                                setShowEditorToolbar(true);
-                            }
-                        }, type: 'richtexteditor.forceUpdateInitial'})
+                        globalEventService.fireEvent({
+                            data: {
+                                body: getBody(), callBack: () => {
+                                    setShowEditorToolbar(true);
+                                }
+                            }, type: 'richtexteditor.forceUpdateInitial'
+                        })
                     }, 10)
                 }
                 draftService.setReplyDraft(draftMessage as MessageDraft);
@@ -547,15 +516,19 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 }, 500)
                 draftService.setReplyDraft({...draft, draftInfo: {...(draft?.draftInfo || {}), body: getBody()}});
                 setTimeout(() => {
-                    globalEventService.fireEvent({data: {body: getBody(), callBack: () => {
+                    globalEventService.fireEvent({
+                        data: {
+                            body: getBody(), callBack: () => {
                                 setShowEditorToolbar(true);
                             }
-                        }, type: 'richtexteditor.forceUpdateInitial'})
+                        }, type: 'richtexteditor.forceUpdateInitial'
+                    })
                 }, 10)
 
 
             }
         }
+        setShowEditorToolbar(true);
     }
 
     const handleFocus = () => {
@@ -633,7 +606,10 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                         }
                         let content = getForwardContent(incomingEvent.data.messageData) + (decoded || '') + (selectedAccount ? getSignatureBanner(selectedAccount) : '') + (`${sentence}`);
                         setEmailBody(content);
-                        globalEventService.fireEvent({type: 'richtexteditor.forceUpdate', data: {body: content, callBack: () => setShowEditorToolbar(true)}})
+                        globalEventService.fireEvent({
+                            type: 'richtexteditor.forceUpdate',
+                            data: {body: content, callBack: () => setShowEditorToolbar(true)}
+                        })
                         debounce(() => {
                             handleEditorScroll();
                         }, 200)
@@ -739,7 +715,8 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                     <div className={styles.otherMail} style={{cursor: 'pointer'}}>
                                         <Tooltip
                                             placement="bottom"
-                                            label={(emailList || []).map((item: any, index: number) => (<p key={index}>{item.email}</p>))}>
+                                            label={(emailList || []).map((item: any, index: number) => (
+                                                <p key={index}>{item.email}</p>))}>
                                             <Text as='u'>
                                                 {emailRecipients?.recipients?.items?.length - 1 > 0 && `and ${emailRecipients?.recipients?.items?.length - 1} others`}
                                             </Text>
@@ -798,9 +775,9 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                             <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} zIndex={6} ref={editorRef}
                                   overflowY={'auto'} className={`editor-bottom-shadow`}
                                   onScroll={() => handleEditorScroll()}>
-                                {(selectedThread && collabId) && (
+                                {(selectedThread && draftIndex !== null) && (
                                     <CollabRichTextEditor
-                                        id={'thread-' + collabId}
+                                        id={selectedThread.id + '-' + draftIndex}
                                         onCreate={() => sendToDraft('')}
                                         placeholder="Hit enter to reply with anything you'd like"
                                         isToolbarVisible={showEditorToolbar}
