@@ -27,7 +27,7 @@ export default function SelectedThreads() {
             height={'calc(100vh - 165px)'} overflow={'hidden'} borderRadius={'15px'}
         >
             <Image
-                src={'image/thread-pile.png'}
+                src={'/image/thread-pile.png'}
                 alt='threads pile'
             />
 
