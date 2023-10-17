@@ -436,8 +436,8 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         if (draft && draft.id) {
             draftService.setReplyDraft(null);
             setAttachments([]);
-            setDraftIndex(null);
             draftService.discardDraft(draft.id!);
+            setDraftIndex(null);
             dispatch(deleteMessage({
                 body: {id: draft.id},
                 afterSuccessAction: () => {

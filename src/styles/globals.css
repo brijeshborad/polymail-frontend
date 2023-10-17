@@ -681,9 +681,9 @@ div:has(> .mailSendToaster) {
     bottom: 60px;
 }
 
-.ProseMirror {
-  position: static !important;
-}
+/*.ProseMirror {*/
+/*  position: static !important;*/
+/*}*/
 
 /* Give a remote user a caret */
 .collaboration-cursor__caret {

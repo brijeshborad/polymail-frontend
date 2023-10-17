@@ -61,21 +61,37 @@ export function MessageBox(props: any) {
     }, [])
 
     useEffect(() => {
-        if (selectedThread && selectedThread?.id) {
+        if (selectedThread && selectedThread?.id && (!messages || messages.length <= 0)) {
             setIndex(null);
             globalEventService.fireEvent({data: null, type: 'draft.currentMessage'})
             globalEventService.fireEvent({data: {type: 'reply'}, type: 'draft.updateType'})
             messageService.setMessages(selectedThread.messages || []);
         }
-    }, [dispatch, selectedThread])
+    }, [dispatch, messages, selectedThread])
 
     useEffect(() => {
         if (messages && messages.length > 0) {
             // remove draft messages and set index to last inbox message
-            const currentInboxMessages: MessageModel[] = messages.filter((msg: MessageModel) => !(msg.mailboxes || []).includes('DRAFT'));
+            const currentInboxMessages: MessageModel[] = messages.filter((msg: MessageModel) => !(msg.mailboxes || []).includes('DRAFT')).map((item: MessageModel) => {
+                let cacheMessages: any = getCacheMessages();
+                let body = '';
+                if (cacheMessages[item.id!]) {
+                    let decoded = Buffer.from(cacheMessages[item.id!] && cacheMessages[item.id!].data || '', 'base64').toString();
+                    let addTargetBlank = decoded.replace(/<a/g, '<a target="_blank"');
+                    const blob = new Blob([addTargetBlank], {type: "text/html"});
+                    body = window.URL.createObjectURL(blob);
+                }
+                return {
+                    ...item,
+                    body,
+                    attachments: cacheMessages[item.id!] ? cacheMessages[item.id!].attachments || [] : []
+                }
+            });
             setInboxMessages([...currentInboxMessages]);
             currentInboxMessagesInstant = [...currentInboxMessages];
-            setIndex(currentInboxMessages.length - 1);
+            if (index === null) {
+                setIndex(currentInboxMessages.length - 1);
+            }
             globalEventService.fireEvent({
                 data: currentInboxMessages[currentInboxMessages.length - 1],
                 type: 'draft.currentMessage'

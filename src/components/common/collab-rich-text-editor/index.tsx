@@ -25,7 +25,7 @@ export default function CollabRichTextEditor({
                                                  extendToolbar,
                                                  placeholder,
                                                  onFocus,
-                                                emailSignature, projectShare,
+                                                 emailSignature, projectShare,
                                                  className = '',
                                                  onChange
                                              }: CollabRichTextEditorType) {
@@ -72,7 +72,7 @@ export default function CollabRichTextEditor({
                 user: {
                     name: selectedAccount ? selectedAccount.name : 'Uknown',
                     color: '#f783ac',
-                },
+                }
             }),
             Highlight.configure({
                 HTMLAttributes: {

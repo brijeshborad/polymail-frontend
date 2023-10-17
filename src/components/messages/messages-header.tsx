@@ -9,11 +9,10 @@ import {
     TrashIcon,
     InboxIcon
 } from "@/icons";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {updateThreads} from "@/redux/threads/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {Toaster} from "@/components/common";
 import {Thread, UserProjectOnlineStatus} from "@/models";
 import dynamic from "next/dynamic";
 import {
@@ -26,7 +25,7 @@ import {
 } from "@/utils/constants";
 import dayjs from "dayjs";
 import {clearDebounce, debounce, generateToasterId} from "@/utils/common.functions";
-import {membershipService, messageService, threadService} from "@/services";
+import {messageService, threadService} from "@/services";
 import Tooltip from "../common/Tooltip";
 
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
@@ -34,31 +33,10 @@ const MessageSchedule = dynamic(() => import("./message-schedule").then(mod => m
 
 export function MessagesHeader() {
     const {selectedThread, threads, tabValue} = useSelector((state: StateType) => state.threads);
-    let {success: membershipSuccess} = useSelector((state: StateType) => state.memberships);
     const {onlineUsers} = useSelector((state: StateType) => state.commonApis);
 
     const dispatch = useDispatch();
-    const [successMessage, setSuccessMessage] = useState<{ desc: string, title: string, id: string, mailboxes: string[], threads: Thread[], thread: Thread | null }[]>([]);
     const [scheduledDate, setScheduledDate] = useState<string | undefined>();
-
-
-    useEffect(() => {
-        if (membershipSuccess && successMessage) {
-            let successToastMessage: any = successMessage[0];
-            if (successToastMessage) {
-                Toaster({
-                    desc: successToastMessage.desc,
-                    title: successToastMessage.title || '',
-                    type: 'success'
-                })
-                successMessage.splice(0, 1);
-                setSuccessMessage(successMessage);
-                membershipService.setMembershipState({success: false})
-            }
-
-        }
-    }, [membershipSuccess, successMessage]);
-
 
     const updateMailBox = (messageBox: string, date: string = '') => {
         if (selectedThread && selectedThread.id) {
@@ -182,6 +160,9 @@ export function MessagesHeader() {
         updateMailBox(MAILBOX_SNOOZED, date);
     }
 
+    if (!selectedThread || !threads || threads.length === 0 || (!tabValue)) {
+        return <></>;
+    }
     return (
         <>
             <Flex gap={2} align={'center'} justify={'space-between'} padding={'16px 20px 12px'}

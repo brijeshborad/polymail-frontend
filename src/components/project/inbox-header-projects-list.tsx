@@ -8,14 +8,32 @@ import Router from "next/router";
 import {PlusIcon} from "@/icons/plus.icon";
 import {commonService, messageService, threadService} from "@/services";
 import Tooltip from "../common/Tooltip";
+import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 
-export function InboxHeaderProjectsList(props: { size: number }) {
+export function InboxHeaderProjectsList() {
     const {projects} = useSelector((state: StateType) => state.projects);
-    const {onlineUsers} = useSelector((state: StateType) => state.commonApis);
+    const {onlineUsers, isLoading} = useSelector((state: StateType) => state.commonApis);
     const [projectData, setProjectData] = useState<Project[]>([]);
     const [projectDataLength, setProjectDataLength] = useState<Project[]>([]);
     const projectButtonRef = React.useRef<HTMLDivElement | null | any>(null);
     const [maxSize, setMaxSize] = useState<number>(5);
+    const [size, setSize] = useState<number>(0);
+
+    function updateSize() {
+        setSize(window.innerWidth);
+    }
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            window.addEventListener('resize', updateSize);
+            updateSize();
+        }
+        return () => {
+            if (typeof window !== "undefined") {
+                window.removeEventListener('resize', updateSize)
+            }
+        };
+    }, []);
 
     useEffect(() => {
         if (projects && projects.length > 0) {
@@ -25,8 +43,8 @@ export function InboxHeaderProjectsList(props: { size: number }) {
     }, [projects, maxSize]);
 
     useEffect(() => {
-        setMaxSize(Math.floor(props.size / 216) - 3)
-    }, [props.size])
+        setMaxSize(Math.floor(size / 216) - 3)
+    }, [size])
 
     const changePage = () => {
         applyChanges();
@@ -46,6 +64,7 @@ export function InboxHeaderProjectsList(props: { size: number }) {
     return (
         <>
             <>
+                {isLoading && <SkeletonLoader height={'36px'} skeletonLength={6} width={'216px'}/>}
                 <Button alignItems={'center'} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
                         onClick={() => commonService.toggleCreateProjectModel(true, true)} padding={'7px'}
                         minWidth={'216px'}

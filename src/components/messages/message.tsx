@@ -14,6 +14,7 @@ import {InboxLoader} from "@/components/loader-screen/inbox-loader";
 import {globalEventService, keyNavigationService, messageService, threadService} from "@/services";
 import { Toaster } from "../common";
 
+const SelectedThreads = dynamic(() => import('@/components/threads/selected-threads').then((mod) => mod.default));
 const MessagesHeader = dynamic(() => import('@/components/messages/messages-header').then(mod => mod.MessagesHeader));
 const MessageBox = dynamic(() => import('@/components/messages/message-box').then(mod => mod.MessageBox));
 const MessageReplyBox = dynamic(() => import('@/components/messages/message-reply-box').then(mod => mod.MessageReplyBox));
@@ -30,7 +31,7 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
         selectedThread,
         isLoading: threadLoading,
         isThreadFocused,
-        tabValue
+        tabValue, multiSelection
     } = useSelector((state: StateType) => state.threads);
     const {target, messageIndex} = useSelector((state: StateType) => state.keyNavigation)
     const {isLoading: accountLoading} = useSelector((state: StateType) => state.accounts);
@@ -194,8 +195,12 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
 
     return (
         <>
-            {!isComposing && showMessageBox()}
-            {isComposing && <ComposeBox tabValue={tabValue} isProjectView={isProjectView}/>}
+            {multiSelection && multiSelection.length > 0 ? <SelectedThreads/> :
+            <>
+                {!isComposing && showMessageBox()}
+                {isComposing && <ComposeBox tabValue={tabValue} isProjectView={isProjectView}/>}
+            </>
+            }
         </>
     )
 }

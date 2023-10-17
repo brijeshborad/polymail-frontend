@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import {ArchiveIcon, DraftIcon, EditIcon, InboxIcon, SendIcon, StarIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
 import {StateType} from "@/types";
-import React, {useEffect, useLayoutEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {getAllThreads} from "@/redux/threads/action-reducer";
 import dynamic from "next/dynamic";
@@ -26,7 +26,7 @@ import Tooltip from "../common/Tooltip";
 import {createDraft} from "@/redux/draft/action-reducer";
 import {clearDebounce, debounce, makeCollabId} from "@/utils/common.functions";
 import {useRouter} from "next/router";
-import {Thread} from "@/models";
+import {UrlManager} from "@/components/threads/url-manager";
 
 const MessageSchedule = dynamic(() => import("../messages/message-schedule").then(mod => mod.default));
 const ThreadsSideBarTab = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarTab), {ssr: false});
@@ -54,30 +54,6 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     const [scheduledDate, setScheduledDate] = useState<string | undefined>();
     const [isMoreClicked, setIsMoreClicked] = useState(false)
     const router = useRouter();
-
-    useLayoutEffect(() => {
-        if (threads && threads.length > 0 && !selectedThread && router.query.thread) {
-            let findThread = threads.find((item: Thread) => item.id === router.query.thread);
-            if (findThread) {
-                threadService.setSelectedThread(findThread);
-            }
-        }
-    }, [router.query.thread, selectedThread, threads])
-
-    useLayoutEffect(() => {
-        if (selectedThread) {
-            if (!router.query.thread || router.query.thread !== selectedThread.id) {
-                router.push(
-                    {
-                        pathname: router.pathname.includes('projects') ? `/projects/${router.query.project}` : '/inbox',
-                        query: {thread: selectedThread.id}
-                    },
-                    undefined,
-                    {shallow: true}
-                )
-            }
-        }
-    }, [router, selectedThread])
 
     useEffect(() => {
         if (draftSuccess) {
@@ -453,6 +429,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
 
     return (
         <>
+            <UrlManager/>
             <Flex direction={'column'} gap={5} className={styles.mailListTabs}>
                 <Tabs>
                     {(isThreadSearched || (multiSelection && multiSelection.length > 0)) ? getHeaderForSearched() : getHeaderForNotSearched()}
