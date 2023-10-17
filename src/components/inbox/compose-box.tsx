@@ -188,6 +188,7 @@ export function ComposeBox(props: any) {
                 body: checkValue ? value : emailBody
             },
             ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
+            accountId: selectedAccount?.id
         }
 
         debounce(() => {

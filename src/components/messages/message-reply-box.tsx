@@ -164,7 +164,9 @@ export function MessageReplyBox(props: MessageBoxType) {
             },
             messageId: messageData?.id,
             ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
+            accountId: selectedAccount?.id
         }
+        console.log('COMS HERE');
         debounce(() => {
             dispatch(updatePartialMessage({body: {id: selectedThread?.id + '-' + draftIndex, body: body}}));
         }, 250);
@@ -373,6 +375,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                 body: emailBody
                             },
                             messageId: messageData?.id,
+                            accountId: selectedAccount?.id,
                             ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
                         }
                         dispatch(updatePartialMessage({
@@ -532,6 +535,8 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     }
 
     const handleFocus = () => {
+        setShowEditorToolbar(true);
+        isInitialSet = false;
         globalEventService.fireEvent('iframe.clicked');
     }
 
