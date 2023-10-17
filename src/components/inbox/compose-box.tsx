@@ -12,7 +12,7 @@ import styles from "@/styles/Inbox.module.css";
 import {CloseIcon} from "@chakra-ui/icons";
 import React, {ChangeEvent, useCallback, useEffect, useRef, useState} from "react";
 import {StateType} from "@/types";
-import {clearDebounce, debounce, getProjectBanner, getSignatureBanner, makeCollabId} from "@/utils/common.functions";
+import {clearDebounce, debounce, getProjectBanner, getSignatureBanner} from "@/utils/common.functions";
 import {updatePartialMessage} from "@/redux/draft/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import dayjs from "dayjs";
