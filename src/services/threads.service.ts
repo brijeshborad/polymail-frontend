@@ -101,6 +101,9 @@ class ThreadsService extends BaseService {
                 messages: [...currentMessages]
             };
             draftService.setDraftState({success: false, updatedDraft: null});
+            if (currentThread.id === draft.threadId) {
+                draftService.setReplyDraft(draft);
+            }
             this.setThreadState({threads: currentThreads, success: true});
         }
     }

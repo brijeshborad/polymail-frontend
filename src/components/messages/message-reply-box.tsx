@@ -42,7 +42,6 @@ const blankRecipientValue: MessageRecipient = {
 }
 
 let loaderPercentage = 10;
-let isInitialSet = true;
 
 export function MessageReplyBox(props: MessageBoxType) {
     const [emailRecipients, setEmailRecipients] = useState<RecipientsType | any>({
@@ -66,7 +65,6 @@ export function MessageReplyBox(props: MessageBoxType) {
     const [isReplyDropdownOpen, setIsReplyDropdownOpen] = useState<boolean>(false);
     const [extraClassNames, setExtraClassNames] = useState<string>('');
     const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
-    const [waitForDraft, setWaitForDraft] = useState<boolean>(false);
     const [draftIndex, setDraftIndex] = useState<number | null>(null);
     const [isDraftUpdated, setIsDraftUpdated] = useState<boolean>(false);
     const [isContentUpdated, setIsContentUpdated] = useState<boolean>(false);
@@ -139,7 +137,7 @@ export function MessageReplyBox(props: MessageBoxType) {
         if (!validateDraft(value)) {
             return;
         }
-        if (isInitialSet) {
+        if (!showEditorToolbar) {
             return;
         }
         let checkValue = getPlainTextFromHtml(value).trim();
@@ -170,13 +168,6 @@ export function MessageReplyBox(props: MessageBoxType) {
             dispatch(updatePartialMessage({body: {id: selectedThread?.id + '-' + draftIndex, body: body}}));
         }, 250);
     }
-
-    useEffect(() => {
-        if (waitForDraft && draft && draft.id) {
-            setWaitForDraft(false);
-            sendToDraft('', false);
-        }
-    }, [waitForDraft, draft])
 
     useEffect(() => {
         // Add signature and draft to email body
@@ -235,9 +226,6 @@ export function MessageReplyBox(props: MessageBoxType) {
                     }
                 }));
             }
-            setTimeout(() => {
-                isInitialSet = false;
-            }, 500)
         }
     }, [draft, isContentUpdated])
 
@@ -364,7 +352,6 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                             }
                         }));
                     } else {
-                        setWaitForDraft(true);
                         let body: any = {
                             subject: subject,
                             to: emailRecipients.recipients?.items,
@@ -477,6 +464,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             setAttachments([]);
             setIsContentUpdated(false);
             setIsDraftUpdated(false);
+            setDraftIndex(null);
             globalEventService.fireEvent({data: {body: ''}, type: 'richtexteditor.forceUpdate'});
         }
     }
@@ -492,10 +480,6 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         const draftMessage = (selectedThread?.messages || []).findLast((msg: Message) => (msg.mailboxes || []).includes('DRAFT'));
         if (draftMessage) {
             if (!draft?.id) {
-                isInitialSet = true;
-                setTimeout(() => {
-                    isInitialSet = false;
-                }, 500)
                 if (!getPlainTextFromHtml(draftMessage.draftInfo?.body || '').trim()) {
                     setTimeout(() => {
                         globalEventService.fireEvent({
@@ -512,10 +496,6 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             }
         } else {
             if (!draft?.id) {
-                isInitialSet = true;
-                setTimeout(() => {
-                    isInitialSet = false;
-                }, 500)
                 draftService.setReplyDraft({...draft, draftInfo: {...(draft?.draftInfo || {}), body: getBody()}});
                 setTimeout(() => {
                     globalEventService.fireEvent({
@@ -526,8 +506,6 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                         }, type: 'richtexteditor.forceUpdateInitial'
                     })
                 }, 10)
-
-
             }
         }
         setShowEditorToolbar(true);
@@ -535,7 +513,6 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
     const handleFocus = () => {
         setShowEditorToolbar(true);
-        isInitialSet = false;
         globalEventService.fireEvent('iframe.clicked');
     }
 
