@@ -5,7 +5,7 @@ import {Flex, RadioGroup, Radio, Text, Button, Menu, MenuButton, MenuList, MenuI
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import dynamic from "next/dynamic";
 import {StateType} from "@/types";
 import {useSelector} from "react-redux";
@@ -22,7 +22,8 @@ export default function MessageSchedule({date, onChange, isSnooze = false, isNam
     const [showScheduleMenu, setShowScheduleMenu] = useState(false)
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const {showAttachmentLoader} = useSelector((state: StateType) => state.messages);
-    const dateFormat = 'YYYY-MM-D HH:mm:ss'
+    const dateFormat = 'YYYY-MM-D HH:mm:ss';
+    const clickRef = useRef<any>(null);
 
     const quickOptions = [
         {
@@ -61,187 +62,207 @@ export default function MessageSchedule({date, onChange, isSnooze = false, isNam
         closeScheduleDropdown()
         onChange(scheduledDate)
     }
+    const handleClickOutside = (event: any) => {
+        if (clickRef.current && !clickRef.current.contains(event.target)) {
+            closeScheduleDropdown();
+        }
+    };
 
     useEffect(() => {
-        if (incomingEvent === 'iframe.clicked') {
+        if (isOpen) {
+            window.addEventListener("click", handleClickOutside, true);
+        }
+        return () => {
+            if (isOpen) {
+                window.removeEventListener("click", handleClickOutside, true);
+            }
+        };
+    }, [clickRef, isOpen])
+
+    useEffect(() => {
+        if (incomingEvent === 'idle') {
             closeScheduleDropdown()
         }
         // eslint-disable-next-line
     }, [incomingEvent]);
 
     return (
-        <Menu
-            isLazy={true}
-            lazyBehavior={"keepMounted"}
-            isOpen={isOpen}
-            onClose={() => closeScheduleDropdown}
-            closeOnSelect={false} placement={'bottom'}
-        >
-            <MenuButton
-                onClick={(e) => {
-                    if (showAttachmentLoader) {
-                        return;
-                    }
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const opened = isOpen
-                    setOpen(!opened)
-                    if (opened) {
-                        setShowScheduleMenu(false)
-                        if (!scheduleDate) {
-                            setCustomSchedule(false)
-                        }
-                    }
-                }}
-                className={`${styles.replyArrowIcon} snooze-button-icon ${showAttachmentLoader ? 'disable' : ''}`} as={isSnooze ? "div" : Button}
-                style={{cursor: 'pointer'}}
-                aria-label='Options'
-                {...(!isSnooze ? {variant: 'outline'} : {})}
+        <div ref={clickRef}>
+            <Menu
+                isLazy={true}
+                lazyBehavior={"keepMounted"}
+                isOpen={isOpen}
+                onClose={() => closeScheduleDropdown}
+                closeOnSelect={false} placement={'bottom'}
             >
-                {isSnooze ? <TimeSnoozeIcon/> : <ChevronDownIcon/>}
-                {isNameShow && 'Snooze'}
-            </MenuButton>
+                <MenuButton
+                    onClick={(e) => {
+                        if (showAttachmentLoader) {
+                            return;
+                        }
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const opened = isOpen
+                        setOpen(!opened)
+                        if (opened) {
+                            setShowScheduleMenu(false)
+                            if (!scheduleDate) {
+                                setCustomSchedule(false)
+                            }
+                        }
+                    }}
+                    className={`${styles.replyArrowIcon} snooze-button-icon ${showAttachmentLoader ? 'disable' : ''}`}
+                    as={isSnooze ? "div" : Button}
+                    style={{cursor: 'pointer'}}
+                    aria-label='Options'
+                    {...(!isSnooze ? {variant: 'outline'} : {})}
+                >
+                    {isSnooze ? <TimeSnoozeIcon/> : <ChevronDownIcon/>}
+                    {isNameShow && 'Snooze'}
+                </MenuButton>
 
-            {!showScheduleMenu && (
-                <MenuList className={'drop-down-list'}>
-                    {!scheduleDate && (
-                        <MenuItem
-                            onClick={() => {
-                                setShowScheduleMenu(true)
-                            }}
-                        >
-                            Send Later
-                        </MenuItem>
-                    )}
-
-                    {scheduleDate && (
-                        <>
-                            <MenuItem
-                                onClick={() => {
-                                    onChange(undefined)
-                                    setScheduleDate(undefined)
-                                    closeScheduleDropdown()
-                                }}
-                            >
-                                Clear
-                            </MenuItem>
+                {!showScheduleMenu && (
+                    <MenuList className={'drop-down-list'}>
+                        {!scheduleDate && (
                             <MenuItem
                                 onClick={() => {
                                     setShowScheduleMenu(true)
                                 }}
                             >
-                                Change Time/Day
+                                Send Later
                             </MenuItem>
-                        </>
-                    )}
-                </MenuList>
-            )}
+                        )}
 
-            {showScheduleMenu && (
-                <MenuList zIndex={'dropdown'} width={'360px'}>
-                    {!customSchedule && (
-                        <>
-                            <Flex
-                                padding={'7px 12px 12px'} align={'center'}
-                                justifyContent={'space-between'} borderBottom={'1px solid #F3F4F6'}
-                            >
-                                <Text
-                                    fontSize='13px' color={'#374151'} letterSpacing={'-0.13px'} lineHeight={'normal'}>
-                                    {isSnooze ? 'Snooze' : 'Schedule send'} ({dayjs.tz.guess()})
-                                </Text>
-                                <Button
-                                    onClick={closeScheduleDropdown}
-                                    h={'20px'} minW={'20px'}
-                                    className={styles.dropDownCloseIcon}
-                                    backgroundColor={'transparent'} padding={0}
-                                    color={'#6B7280'} colorScheme='blue'>
-                                    <CloseIcon/>
-                                </Button>
-                            </Flex>
-
-                            <Flex
-                                mt={4} direction={'column'} gap={4} px={3}
-                                className={'radio-group-button'}
-                            >
-                                <RadioGroup
-                                    onChange={(e) => onSetValue(dayjs(e).format())}
-                                    value={dayjs(scheduleDate)?.format(dateFormat)}
+                        {scheduleDate && (
+                            <>
+                                <MenuItem
+                                    onClick={() => {
+                                        onChange(undefined)
+                                        setScheduleDate(undefined)
+                                        closeScheduleDropdown()
+                                    }}
                                 >
-                                    {quickOptions.map((option, index) => (
-                                        <Radio
-                                            key={index}
-                                            value={option.value.format(dateFormat)}
-                                            size={'sm'}
-                                            paddingTop={1.5}
-                                            paddingBottom={1.5}
-                                        >
-                                            {option.label} {' '}
-                                            <span style={{
-                                                color: '#9CA3AF',
-                                                fontSize: '13px'
-                                            }}>({option.value.format('MMM DD, h:mmA')})</span>
-                                        </Radio>
-                                    ))}
-                                </RadioGroup>
-                            </Flex>
+                                    Clear
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() => {
+                                        setShowScheduleMenu(true)
+                                    }}
+                                >
+                                    Change Time/Day
+                                </MenuItem>
+                            </>
+                        )}
+                    </MenuList>
+                )}
 
-                            <Flex
-                                mt={4} direction={'column'} gap={4} px={3}
-                                className={'radio-group-button'}
-                            >
-                                <Flex w={'100%'} pt={4} pb={3} borderTop={'1px solid #F3F4F6'}>
+                {showScheduleMenu && (
+                    <MenuList zIndex={'dropdown'} width={'360px'}>
+                        {!customSchedule && (
+                            <>
+                                <Flex
+                                    padding={'7px 12px 12px'} align={'center'}
+                                    justifyContent={'space-between'} borderBottom={'1px solid #F3F4F6'}
+                                >
+                                    <Text
+                                        fontSize='13px' color={'#374151'} letterSpacing={'-0.13px'}
+                                        lineHeight={'normal'}>
+                                        {isSnooze ? 'Snooze' : 'Schedule send'} ({dayjs.tz.guess()})
+                                    </Text>
                                     <Button
-                                        onClick={() => setCustomSchedule(true)}
-                                        className={'custom-time-date'}
-                                        border={'1px solid #374151'}
-                                        lineHeight={1} borderRadius={8} color={'#374151'}
-                                        h={'auto'}
-                                        backgroundColor={'#FFFFFF'} fontSize={'14px'}
-                                        padding={'10px 12px'}
-                                    >
-                                        Custom time & date
+                                        onClick={closeScheduleDropdown}
+                                        h={'20px'} minW={'20px'}
+                                        className={styles.dropDownCloseIcon}
+                                        backgroundColor={'transparent'} padding={0}
+                                        color={'#6B7280'} colorScheme='blue'>
+                                        <CloseIcon/>
                                     </Button>
                                 </Flex>
-                            </Flex>
-                        </>
-                    )}
 
-                    {customSchedule && (
-                        <>
-                            <Flex
-                                padding={'7px 12px 12px'} align={'center'}
-                                justifyContent={'space-between'} borderBottom={'1px solid #F3F4F6'}
-                            >
-                                <Text
-                                    fontSize='13px' color={'#374151'}
-                                    letterSpacing={'-0.13px'} lineHeight={'normal'}
+                                <Flex
+                                    mt={4} direction={'column'} gap={4} px={3}
+                                    className={'radio-group-button'}
                                 >
-                                    Custom time & date
-                                </Text>
-                                <Button
-                                    onClick={closeScheduleDropdown}
-                                    h={'20px'} minW={'20px'}
-                                    className={styles.dropDownCloseIcon}
-                                    backgroundColor={'transparent'} padding={0}
-                                    color={'#6B7280'} colorScheme='blue'>
-                                    <CloseIcon/>
-                                </Button>
-                            </Flex>
+                                    <RadioGroup
+                                        onChange={(e) => onSetValue(dayjs(e).format())}
+                                        value={dayjs(scheduleDate)?.format(dateFormat)}
+                                    >
+                                        {quickOptions.map((option, index) => (
+                                            <Radio
+                                                key={index}
+                                                value={option.value.format(dateFormat)}
+                                                size={'sm'}
+                                                paddingTop={1.5}
+                                                paddingBottom={1.5}
+                                            >
+                                                {option.label} {' '}
+                                                <span style={{
+                                                    color: '#9CA3AF',
+                                                    fontSize: '13px'
+                                                }}>({option.value.format('MMM DD, h:mmA')})</span>
+                                            </Radio>
+                                        ))}
+                                    </RadioGroup>
+                                </Flex>
 
-                            <Flex
-                                mt={4} direction={'column'} gap={4} px={0}
-                                className={'radio-group-button'}
-                            >
-                                <MessageScheduleCustom
-                                    date={scheduleDate}
-                                    onChange={onSetValue}
-                                    onCancel={() => closeScheduleDropdown()}
-                                />
-                            </Flex>
-                        </>
-                    )}
-                </MenuList>
-            )}
-        </Menu>
+                                <Flex
+                                    mt={4} direction={'column'} gap={4} px={3}
+                                    className={'radio-group-button'}
+                                >
+                                    <Flex w={'100%'} pt={4} pb={3} borderTop={'1px solid #F3F4F6'}>
+                                        <Button
+                                            onClick={() => setCustomSchedule(true)}
+                                            className={'custom-time-date'}
+                                            border={'1px solid #374151'}
+                                            lineHeight={1} borderRadius={8} color={'#374151'}
+                                            h={'auto'}
+                                            backgroundColor={'#FFFFFF'} fontSize={'14px'}
+                                            padding={'10px 12px'}
+                                        >
+                                            Custom time & date
+                                        </Button>
+                                    </Flex>
+                                </Flex>
+                            </>
+                        )}
+
+                        {customSchedule && (
+                            <>
+                                <Flex
+                                    padding={'7px 12px 12px'} align={'center'}
+                                    justifyContent={'space-between'} borderBottom={'1px solid #F3F4F6'}
+                                >
+                                    <Text
+                                        fontSize='13px' color={'#374151'}
+                                        letterSpacing={'-0.13px'} lineHeight={'normal'}
+                                    >
+                                        Custom time & date
+                                    </Text>
+                                    <Button
+                                        onClick={closeScheduleDropdown}
+                                        h={'20px'} minW={'20px'}
+                                        className={styles.dropDownCloseIcon}
+                                        backgroundColor={'transparent'} padding={0}
+                                        color={'#6B7280'} colorScheme='blue'>
+                                        <CloseIcon/>
+                                    </Button>
+                                </Flex>
+
+                                <Flex
+                                    mt={4} direction={'column'} gap={4} px={0}
+                                    className={'radio-group-button'}
+                                >
+                                    <MessageScheduleCustom
+                                        date={scheduleDate}
+                                        onChange={onSetValue}
+                                        onCancel={() => closeScheduleDropdown()}
+                                    />
+                                </Flex>
+                            </>
+                        )}
+                    </MenuList>
+                )}
+            </Menu>
+        </div>
     )
 }

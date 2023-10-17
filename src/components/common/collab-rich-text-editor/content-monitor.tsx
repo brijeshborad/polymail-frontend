@@ -57,6 +57,12 @@ export default function ContentMonitor() {
             }
         }
 
+        if (event && event.type === 'richtexteditor.blur') {
+            if (editor && editor.isFocused) {
+                editor?.commands.blur();
+            }
+        }
+
         if (event && event.type === 'richtexteditor.discard') {
             editor?.commands.clearContent(true);
             editor?.commands.blur()
