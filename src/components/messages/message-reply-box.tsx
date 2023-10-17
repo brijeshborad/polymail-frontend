@@ -80,7 +80,7 @@ export function MessageReplyBox(props: MessageBoxType) {
     const [emailList, setEmailList] = useState<any>([]);
 
     useEffect(() => {
-        if (draftIndex === null) {
+        if (draftIndex === null && selectedThread) {
             const draftMessageIndex = (selectedThread?.messages || []).filter((msg: Message) => (msg.mailboxes || []).includes('DRAFT')).findLastIndex((msg: Message) => (msg.mailboxes || []).includes('DRAFT'));
             setDraftIndex(draftMessageIndex !== -1 ? draftMessageIndex : 0)
         }
@@ -166,7 +166,6 @@ export function MessageReplyBox(props: MessageBoxType) {
             ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
             accountId: selectedAccount?.id
         }
-        console.log('COMS HERE');
         debounce(() => {
             dispatch(updatePartialMessage({body: {id: selectedThread?.id + '-' + draftIndex, body: body}}));
         }, 250);
