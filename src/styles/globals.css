@@ -581,6 +581,7 @@ div:has(> .mailSendToaster) {
     left: 6px;
     top: 0;
     background: linear-gradient(180deg, #F9FAFB 0%, rgba(249, 250, 251, 0.00) 100%);
+    pointer-events: none;
 }
 
 .project-list-shadow .project-list-bottom-shadow:after {
@@ -591,6 +592,7 @@ div:has(> .mailSendToaster) {
     left: 6px;
     bottom: 0;
     background: linear-gradient(0deg, #F9FAFB 0%, rgba(249, 250, 251, 0.00) 100%);
+    pointer-events: none;
 }
 
 .drop-down-list.month-dropdown .month-dropdown-scrollbar {
