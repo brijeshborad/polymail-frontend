@@ -15,6 +15,7 @@ import ContentMonitor from './content-monitor'
 import {getSchema} from "@/utils/editor-common-functions";
 import {keyNavigationService} from "@/services";
 import {getProjectBanner} from "@/utils/common.functions";
+import * as Y from 'yjs'
 
 export default function CollabRichTextEditor({
                                                  id,
@@ -38,9 +39,13 @@ export default function CollabRichTextEditor({
     useEffect(() => {
         if (!id) return
 
+        const doc = new Y.Doc();
         const prov = new HocuspocusProvider({
             url: `${process.env.NEXT_PUBLIC_COLLAB_WEBSOCKET_URL}`,
-            name: id
+            name: id,
+            forceSyncInterval: 1,
+            quiet: false,
+            document: doc
         })
         console.log('___COLLABID____', id, prov);
         setProvider(prov)
@@ -127,7 +132,7 @@ export default function CollabRichTextEditor({
                     keyNavigationService.toggleKeyNavigation(true);
                 }}
                 extensions={extensions}>
-                <ContentMonitor/>
+                <ContentMonitor provider={provider}/>
             </EditorProvider>
         </div>
     )

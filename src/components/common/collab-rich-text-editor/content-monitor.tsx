@@ -3,8 +3,9 @@ import {useCurrentEditor} from "@tiptap/react";
 import {useEffect} from "react";
 import {useSelector} from "react-redux";
 import {getProjectBanner} from "@/utils/common.functions";
+import {globalEventService} from "@/services";
 
-export default function ContentMonitor() {
+export default function ContentMonitor(props: any) {
     const {event} = useSelector((state: StateType) => state.globalEvents) as { event: Event };
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {editor} = useCurrentEditor()
@@ -52,6 +53,7 @@ export default function ContentMonitor() {
         }
 
         if (event && event.type === 'richtexteditor.focus') {
+            globalEventService.fireEvent('iframe.clicked');
             if (editor && !editor.isFocused) {
                 editor?.commands.focus('start')
             }
@@ -64,6 +66,7 @@ export default function ContentMonitor() {
         }
 
         if (event && event.type === 'richtexteditor.discard') {
+            props.provider.document.destroy();
             editor?.commands.clearContent(true);
             editor?.commands.blur()
         }

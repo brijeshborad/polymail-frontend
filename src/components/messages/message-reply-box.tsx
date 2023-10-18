@@ -17,7 +17,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import {Message, MessageAttachments, MessageDraft, MessageRecipient} from "@/models";
+import {Message, MessageAttachments, MessageRecipient} from "@/models";
 import {deleteMessage, removeAttachment, uploadAttachment} from "@/redux/messages/action-reducer";
 import {MessageBoxType} from "@/types/props-types/message-box.type";
 import {useRouter} from "next/router";
@@ -79,8 +79,29 @@ export function MessageReplyBox(props: MessageBoxType) {
 
     useEffect(() => {
         if (draftIndex === null && selectedThread) {
-            const draftMessageIndex = (selectedThread?.messages || []).filter((msg: Message) => (msg.mailboxes || []).includes('DRAFT')).findIndex((msg: Message) => (msg.mailboxes || []).includes('DRAFT'));
-            setDraftIndex(draftMessageIndex !== -1 ? draftMessageIndex : 0)
+            let onlyDraftMessages = (selectedThread?.messages || []).filter((msg: Message) => (msg.mailboxes || []).includes('DRAFT'));
+            const draftMessageIndex = onlyDraftMessages.findIndex((msg: Message) => (msg.mailboxes || []).includes('DRAFT'));
+            setDraftIndex(draftMessageIndex !== -1 ? draftMessageIndex : 0);
+            if (onlyDraftMessages[draftMessageIndex]) {
+                if (!getPlainTextFromHtml(onlyDraftMessages[draftMessageIndex].draftInfo?.body || '').trim()) {
+                    setTimeout(() => {
+                        globalEventService.fireEvent({data: {body: getBody()}, type: 'richtexteditor.forceUpdateInitial'});
+                    }, 10)
+                    draftService.setReplyDraft({
+                        ...onlyDraftMessages[draftMessageIndex],
+                        draftInfo: {...(draft?.draftInfo || {}), body: getBody()}
+                    });
+                } else {
+                    setTimeout(() => {
+                        globalEventService.fireEvent({data: {body: onlyDraftMessages[draftMessageIndex].draftInfo?.body || ''}, type: 'richtexteditor.forceUpdateInitial'});
+                    }, 10)
+                    draftService.setReplyDraft({...onlyDraftMessages[draftMessageIndex]});
+                }
+            } else {
+                setTimeout(() => {
+                    globalEventService.fireEvent({data: {body: getBody()}, type: 'richtexteditor.forceUpdateInitial'});
+                }, 10)
+            }
         }
     }, [selectedThread, draftIndex])
 
@@ -476,44 +497,9 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         // }, 500)
     }
 
-    const initialValuesChanges = () => {
-        const draftMessage = (selectedThread?.messages || []).findLast((msg: Message) => (msg.mailboxes || []).includes('DRAFT'));
-        if (draftMessage) {
-            if (!draft?.id) {
-                if (!getPlainTextFromHtml(draftMessage.draftInfo?.body || '').trim()) {
-                    setTimeout(() => {
-                        globalEventService.fireEvent({
-                            data: {
-                                body: getBody(), callBack: () => {
-                                    setShowEditorToolbar(true);
-                                }
-                            }, type: 'richtexteditor.forceUpdateInitial'
-                        })
-                    }, 10)
-                }
-                draftService.setReplyDraft(draftMessage as MessageDraft);
-                setIsContentUpdated(false);
-            }
-        } else {
-            if (!draft?.id) {
-                draftService.setReplyDraft({...draft, draftInfo: {...(draft?.draftInfo || {}), body: getBody()}});
-                setTimeout(() => {
-                    globalEventService.fireEvent({
-                        data: {
-                            body: getBody(), callBack: () => {
-                                setShowEditorToolbar(true);
-                            }
-                        }, type: 'richtexteditor.forceUpdateInitial'
-                    })
-                }, 10)
-            }
-        }
-        setShowEditorToolbar(true);
-    }
-
     const handleFocus = () => {
         setShowEditorToolbar(true);
-        globalEventService.fireEvent('iframe.clicked');
+        globalEventService.fireEvent({data: {}, type: 'richtexteditor.focus'})
     }
 
     const getBody = () => {
@@ -571,7 +557,6 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             setIsReplyDropdownOpen(false)
         }
         if (incomingEvent === 'draft.undo') {
-            initialValuesChanges();
             handleFocus();
         }
         if (typeof incomingEvent === 'object' && incomingEvent.type) {
@@ -741,7 +726,6 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                 handleFocus();
                                 globalEventService.fireEvent({data: null, type: 'richtexteditor.focus'});
                             }}
-                            onFocus={() => handleFocus()}
                             grow={1} justifyContent={'flex-end'}
                         >
                             <Text
@@ -770,7 +754,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                         </div>
                         }
                         <Flex
-                            onFocus={() => handleFocus()}
+                            onClick={() => handleFocus()}
                             direction={'column'} position={"relative"} flex={1} overflow={'none'}>
                             <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} zIndex={6} ref={editorRef}
                                   overflowY={'auto'} className={`editor-bottom-shadow`}
@@ -781,12 +765,9 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                 {/*    }*/}
                                 {/*}}*/}
                                 <div style={{display: !showEditorToolbar ? 'block' : 'none'}}>
-                                    <Input padding={0} height={'fit-content'} border={"none"} cursor={'pointer'} fontSize={'13px'} _placeholder={{color: '#adb5bd'}}
-                                           placeholder={'Hit enter to reply with anything you\'d like'}
-                                           onClick={() => {
-                                               setShowEditorToolbar(true);
-                                               globalEventService.fireEvent({data: {}, type: 'richtexteditor.focus'})
-                                           }}/>
+                                    <Input padding={0} height={'fit-content'} border={"none"} cursor={'pointer'}
+                                           fontSize={'13px'} _placeholder={{color: '#adb5bd'}}
+                                           placeholder={'Hit enter to reply with anything you\'d like'}/>
                                 </div>
                                 {(selectedThread && draftIndex !== null) && (
                                     <div style={{display: showEditorToolbar ? 'block' : 'none'}}>
@@ -797,7 +778,6 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                             isToolbarVisible={showEditorToolbar}
                                             onChange={(value) => sendToDraft(value)}
                                             className={`${extraClassNames} ${extraClassNamesForBottom}`}
-                                            onFocus={() => initialValuesChanges()}
                                             emailSignature={selectedAccount ? getSignatureBanner(selectedAccount) : undefined}
                                             projectShare={selectedThread?.projects?.length ? getProjectBanner(selectedAccount) : undefined}
                                             extendToolbar={(
