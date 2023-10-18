@@ -740,6 +740,14 @@ div:has(> .mailSendToaster) {
     width: 24px;
     height: 24px;
 }
+.rdw-editor-wrapper .rdw-link-decorator-wrapper a {
+    color: rgb(0, 0, 238);
+    text-decoration: underline;
+    cursor: pointer;
+}
+.rdw-editor-wrapper .rdw-link-decorator-wrapper img {
+    display: none;
+}
 
 .email-signature.rdw-editor-wrapper .rdw-editor-toolbar .rdw-option-wrapper img {
     width: 100%;
