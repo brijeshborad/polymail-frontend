@@ -3,12 +3,11 @@ import {EmojiMenu, Toaster} from "@/components/common";
 import {editProjects, getProjectMembers, getProjectMembersInvites, updateProjectMemberRole} from "@/redux/projects/action-reducer";
 import styles from "@/styles/project.module.css";
 import {StateType} from "@/types";
-import {emojiArray} from "@/utils/common.functions";
 import {PROJECT_ROLES} from "@/utils/constants";
 import {CloseIcon, SmallAddIcon, TriangleDownIcon} from "@chakra-ui/icons";
 import {
     Button,
-    Flex, Grid, GridItem,
+    Flex,
     Heading, IconButton, Input, Menu, MenuButton, MenuItem, MenuList,
     Modal,
     ModalBody,
