@@ -43,7 +43,7 @@ export default function CollabRichTextEditor({
         const prov = new HocuspocusProvider({
             url: `${process.env.NEXT_PUBLIC_COLLAB_WEBSOCKET_URL}`,
             name: id,
-            forceSyncInterval: 1,
+            // forceSyncInterval: 1,
             quiet: false,
             document: doc
         })
