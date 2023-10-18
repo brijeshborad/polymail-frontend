@@ -73,7 +73,7 @@ function Signature() {
 
     const cancelButtonClick = () => {
         if (selectedAccount && selectedAccount.signature) {
-            globalEventService.fireEvent({data: {body: selectedAccount.signature}, type: 'richtexteditor.forceUpdate'});
+            globalEventService.fireEvent({data: {body: selectedAccount.signature}, type: 'editor.forceUpdate'});
             setSignature(selectedAccount.signature);
             setIsSignatureUpdate(false);
         }

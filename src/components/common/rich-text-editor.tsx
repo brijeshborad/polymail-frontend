@@ -105,8 +105,8 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
         if (incomingEvent === 'iframe.clicked') {
             closeEditorDropDowns()
         }
-        if (typeof incomingEvent === 'object' && incomingEvent.type === 'richtexteditor.forceUpdate') {
-            let finalHtmlValue = htmlToDraft(incomingEvent.data);
+        if (typeof incomingEvent === 'object' && incomingEvent.type === 'editor.forceUpdate') {
+            let finalHtmlValue = htmlToDraft(incomingEvent.data.body);
             setEditorState(EditorState.moveSelectionToEnd(EditorState.createWithContent(ContentState.createFromBlockArray(finalHtmlValue))));
             setIsContentEdited(false);
         }
