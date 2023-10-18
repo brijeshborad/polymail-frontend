@@ -25,6 +25,7 @@ export default function ToolbarUrl({isOpen, onChangeVisibility, onChange, editor
             onClose={() => {
                 onChangeVisibility(false)
                 setUrl('')
+                editor.chain().focus().unsetHighlight().run();
             }}
         >
             <PopoverTrigger>

@@ -501,15 +501,9 @@ export function ComposeBox(props: any) {
                                 }}
                             />
                             <Flex flex={1} direction={'column'} position={'relative'}>
-                                <Flex flex={1} direction={'column'} ref={editorRef} className={`editor-bottom-shadow`}
+                                <Flex flex={1} direction={'column'} ref={editorRef} className={`editor-bottom-shadow compose-editor`}
                                       maxH={'calc(100vh - 500px)'} overflowY={'auto'}
                                       onScroll={() => handleEditorScroll()} zIndex={6}
-                                      onClick={() => dispatch(fireEvent({
-                                          event: {
-                                              data: null,
-                                              type: 'richtexteditor.focus'
-                                          }
-                                      }))}
                                 >
                                     {composeDraft?.threadId && <CollabRichTextEditor
                                         id={composeDraft?.threadId + '-' + 0}

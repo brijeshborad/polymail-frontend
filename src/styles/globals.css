@@ -652,6 +652,22 @@ div:has(> .mailSendToaster) {
   transition: all 1s ease-in-out;
 }
 
+.compose-editor .tiptap-container{
+    width: 100%;
+    display: flex;
+    flex: 1;
+  transition: all 1s ease-in-out;
+}
+
+.compose-editor .tiptap-container > div {
+    display: flex;
+    flex: 1;
+}
+
+.compose-editor .tiptap-container > div .tiptap {
+    width: 100%;
+}
+
 .tiptap-container.compose-view{
   flex: 1;
     cursor: text;

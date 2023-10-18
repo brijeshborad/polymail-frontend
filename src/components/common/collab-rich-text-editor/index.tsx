@@ -83,8 +83,7 @@ export default function CollabRichTextEditor({
         ])
     }, [id, selectedAccount, placeholder])
 
-
-    if (!provider) return
+    if (!provider) return;
 
     return (
         <div className={`tiptap-container ${className}`}>
@@ -120,6 +119,10 @@ export default function CollabRichTextEditor({
                     afterToolbar={afterToolbar}
                     extendToolbar={extendToolbar}
                 />}
+                onSelectionUpdate={({editor})=> {
+                    const { from, to } = editor.state.selection;
+                    editor.chain().focus().setTextSelection({ from, to }).run()
+                }}
                 onBlur={() => {
                     keyNavigationService.toggleKeyNavigation(true);
                 }}

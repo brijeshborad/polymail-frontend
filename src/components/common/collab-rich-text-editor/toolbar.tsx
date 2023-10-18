@@ -51,6 +51,7 @@ export default function CollabRichTextEditorToolbar({
                 text: emoji
             }
         ])
+        editor.view.dom.focus()
     }, [editor])
 
 
