@@ -1,15 +1,14 @@
 import withAuth from "@/components/auth/withAuth";
-import {Toaster} from "@/components/common";
+import {EmojiMenu, Toaster} from "@/components/common";
 import {addItemToGroup} from "@/redux/memberships/action-reducer";
 import {createProjects} from "@/redux/projects/action-reducer";
 import styles from "@/styles/project.module.css";
 import {StateType} from "@/types";
-import {emojiArray} from "@/utils/common.functions";
 import {PROJECT_ROLES} from "@/utils/constants";
 import {CloseIcon, SmallAddIcon, TriangleDownIcon} from "@chakra-ui/icons";
 import {
     Button,
-    Flex, Grid, GridItem,
+    Flex,
     Heading, IconButton, Input, Menu, MenuButton, MenuItem, MenuList,
     Modal,
     ModalBody,
@@ -20,7 +19,7 @@ import {
 } from "@chakra-ui/react";
 import Image from "next/image";
 import Router from "next/router";
-import {ChangeEvent, useState} from "react";
+import React, {ChangeEvent, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {commonService, messageService, threadService} from "@/services";
 import {Project} from "@/models";
@@ -42,6 +41,7 @@ function CreateNewProjectModal() {
         memberArray: []
     });
     const [projectEmoji, setProjectEmoji] = useState<string>('');
+    const [isEmojiMenuOpen, setIsEmojiMenuOpen] = useState<boolean>(false);
 
     const handleChange = (event: ChangeEvent | any) => {
         setProjectName(event.target.value);
@@ -49,6 +49,7 @@ function CreateNewProjectModal() {
 
     const emojiChange = (item: string) => {
         setProjectEmoji(item);
+        setIsEmojiMenuOpen(false);
     }
 
 
@@ -173,11 +174,14 @@ function CreateNewProjectModal() {
                 <ModalBody padding={'20px 12px 12px'}>
                     <Flex direction={'column'} gap={4}>
                         <Flex align={'center'} gap={4}>
-                            <Menu>
+                            <Menu isOpen={isEmojiMenuOpen} onClose={() => setIsEmojiMenuOpen(false)}>
                                 <MenuButton className={styles.emojiModalButton} as={IconButton}
                                             backgroundColor={'#F9FAFB'}
                                             color={'#374151'} cursor={'pointer'} fontSize={'24px'} minW={'48px'}
                                             w={'48px'} h={'48px'} borderRadius={'50%'} alignItems={'center'}
+                                            onClick={() => {
+                                                setIsEmojiMenuOpen(!isEmojiMenuOpen)
+                                            }}
                                             justifyContent={'center'}>{projectEmoji ? projectEmoji :
                                     <SmallAddIcon/>} </MenuButton>
                                 <MenuList className={'drop-down-list'}>
@@ -192,14 +196,15 @@ function CreateNewProjectModal() {
                                                        border={0} padding={'5px 15px 5px 30px'} placeholder='Search emoji' />
                                             </InputGroup>
                                         </Flex>*/}
-                                    <Grid templateColumns='repeat(10, 1fr)' maxH={'175px'} overflow={'auto'} gap={2}
-                                          padding={3}>
-                                        {emojiArray.map((item: string, index: number) => (
-                                            <GridItem w='100%' key={index} onClick={() => emojiChange(item)}>
-                                                <MenuItem className={'emoji-modal-icon'}> {item} </MenuItem>
-                                            </GridItem>
-                                        ))}
-                                    </Grid>
+                                    {/*<Grid templateColumns='repeat(10, 1fr)' maxH={'175px'} overflow={'auto'} gap={2}*/}
+                                    {/*      padding={3}>*/}
+                                    {/*    {emojiArray.map((item: string, index: number) => (*/}
+                                    {/*        <GridItem w='100%' key={index} onClick={() => emojiChange(item)}>*/}
+                                    {/*            <MenuItem className={'emoji-modal-icon'}> {item} </MenuItem>*/}
+                                    {/*        </GridItem>*/}
+                                    {/*    ))}*/}
+                                    {/*</Grid>*/}
+                                    <EmojiMenu onChange={emojiChange} />
                                 </MenuList>
                             </Menu>
 

@@ -112,7 +112,7 @@
     font-weight: 500;
 }
 
-.profileAccount input {
+.profileAccount .namesInput {
     background-color: #ffffff;
     border: 1px solid #E5E5E5;
     border-radius: 8px;
@@ -121,7 +121,7 @@
     color: #000000;
 }
 
-.profileAccount input::placeholder {
+.profileAccount .namesInput::placeholder {
     color: #000000;
 }
 
@@ -504,4 +504,15 @@
 
 .backButton span {
     margin-right: 5px;
+}
+
+.emojiIcon {
+    position: absolute;
+    left: 171px;
+    bottom: 5px;
+}
+
+.emojiIcon svg {
+    width: 18px;
+    height: 18px;
 }

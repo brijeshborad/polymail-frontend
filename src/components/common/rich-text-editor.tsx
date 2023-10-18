@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import dynamic from 'next/dynamic'
 
 const Editor = dynamic(
@@ -13,16 +13,15 @@ import {
     ContentState,
 } from 'draft-js';
 import draftToHtml from "draftjs-to-html";
-import {emojiArray} from "@/utils/common.functions";
 import {useDispatch, useSelector} from "react-redux";
 import {updateKeyNavigation} from "@/redux/key-navigation/action-reducer";
 import {Flex} from "@chakra-ui/react";
+import {CustomOption} from "@/components/common/custom-emoji-option";
 
 let htmlToDraft: any = null;
 if (typeof window === 'object') {
     htmlToDraft = require('html-to-draftjs').default;
 }
-
 export function RichTextEditor({onChange, placeholder, className, value, hideToolBar}: RichTextEditorProps) {
     const containerRef: any = useRef(null)
     const dispatch = useDispatch()
@@ -145,7 +144,7 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
                 onFocus={() => dispatch(updateKeyNavigation({isEnabled: false}))}
                 onBlur={() => dispatch(updateKeyNavigation({isEnabled: true}))}
                 toolbar={{
-                    options: ['inline', 'list', 'emoji', 'link'],
+                    options: ['inline', 'list', 'link'],
                     inline: {
                         inDropdown: false,
                         options: ['bold', 'italic', 'strikethrough'],
@@ -159,12 +158,12 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
                         unordered: {icon: "/image/icon/unordered.svg"},
                         ordered: {icon: "/image/icon/ordered.svg"},
                     },
-                    emoji: {
-                        // component: EmojiMenu,
-                        icon: "/image/icon/emoji.svg",
-                        popupClassName: 'emoji-picker',
-                        emojis: emojiArray
-                    },
+                    // emoji: {
+                    //     component: EmojiMenu,
+                    //     icon: "/image/icon/emoji.svg",
+                    //     popupClassName: 'emoji-picker',
+                    //     // emojis: emojiArray1
+                    // },
 
                     link: {
                         inDropdown: false,
@@ -178,6 +177,7 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
                         link: {icon: "/image/icon/link.svg", className: 'link-class', popupClassName: 'emoji-picker'},
                     }
                 }}
+                toolbarCustomButtons={[<CustomOption  key="custom-option" onChange={onChange} editorState={editorState}/>]}
             />
         </Flex>
     )

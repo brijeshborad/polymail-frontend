@@ -1,5 +1,5 @@
 import withAuth from "@/components/auth/withAuth";
-import {Toaster} from "@/components/common";
+import {EmojiMenu, Toaster} from "@/components/common";
 import {editProjects, getProjectMembers, getProjectMembersInvites, updateProjectMemberRole} from "@/redux/projects/action-reducer";
 import styles from "@/styles/project.module.css";
 import {StateType} from "@/types";
@@ -247,14 +247,16 @@ function EditProject() {
                                                        border={0} padding={'5px 15px 5px 30px'} placeholder='Search emoji' />
                                             </InputGroup>
                                         </Flex>*/}
-                                    <Grid templateColumns='repeat(10, 1fr)' maxH={'175px'} overflow={'auto'} gap={2}
+                                    {/* <Grid templateColumns='repeat(10, 1fr)' maxH={'175px'} overflow={'auto'} gap={2}
                                           padding={3}>
                                         {emojiArray.map((item: string, index: number) => (
                                             <GridItem w='100%' key={index} onClick={() => emojiChange(item)}>
                                                 <MenuItem className={'emoji-modal-icon'}> {item} </MenuItem>
                                             </GridItem>
                                         ))}
-                                    </Grid>
+                                    </Grid> */}
+
+                                    <EmojiMenu onChange={emojiChange} />
                                 </MenuList>
                             </Menu>
 

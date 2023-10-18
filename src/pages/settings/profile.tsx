@@ -320,11 +320,11 @@ function Profile() {
                                 <Flex align={'center'} gap={6} mt={6} mb={6} maxWidth={'320px'}>
                                     <div className={styles.profileAccount}>
                                         <Text fontSize={'14px'}>First Name</Text>
-                                        <Input placeholder='Enter First Name' value={profileDetails.firstName}
+                                        <Input className={styles.namesInput} placeholder='Enter First Name' value={profileDetails.firstName}
                                                onChange={(event) => setFullName(event, 'firstName')}/>
 
                                         <Text fontSize={'14px'} mt={2}>Last Name</Text>
-                                        <Input placeholder='Enter Last Name' value={profileDetails.lastName}
+                                        <Input className={styles.namesInput} placeholder='Enter Last Name' value={profileDetails.lastName}
                                                onChange={(event) => setFullName(event, 'lastName')}/>
                                     </div>
                                 </Flex>
