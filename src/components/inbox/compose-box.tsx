@@ -22,7 +22,6 @@ import {DropZone, Toaster} from "@/components/common";
 import {RecipientsType} from "@/types/props-types/message-recipients.type";
 import dynamic from "next/dynamic";
 import {useRouter} from "next/router";
-import {fireEvent} from "@/redux/global-events/action-reducer";
 import CollabRichTextEditor from "../common/collab-rich-text-editor";
 import Image from "next/image";
 import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
