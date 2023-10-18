@@ -766,6 +766,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                 {/*}}*/}
                                 <div style={{display: !showEditorToolbar ? 'block' : 'none'}}>
                                     <Input padding={0} height={'fit-content'} border={"none"} cursor={'pointer'}
+                                           outline={'none'} boxShadow={'none'} _focusVisible={{boxShadow: 'none'}}
                                            fontSize={'13px'} _placeholder={{color: '#adb5bd'}}
                                            placeholder={'Hit enter to reply with anything you\'d like'}/>
                                 </div>
@@ -827,6 +828,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                 <Flex align={'center'} className={styles.replyButton} position={'relative'} zIndex={6}>
                                     <Button
                                         className={styles.replyTextDiscardButton}
+                                        outline={'none'} boxShadow={'none'} _focusVisible={{boxShadow: 'none'}}
                                         fontSize={14} lineHeight={16} height={'38px'}
                                         onClick={(e) => {
                                             e.preventDefault();

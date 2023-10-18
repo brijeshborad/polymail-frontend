@@ -118,13 +118,13 @@ export function Header() {
         organizationService.setOrganizationState({organizations, isLoading: false});
         commonService.setCommonState({contacts, isLoading: false});
         accountService.setAccountState({success: true});
-        if (!organizations) {
-            Router.push('/organization/add');
-            return;
-        }
-        if (organizations && organizations.length <= 0) {
-            Router.push('/organization/add');
-        }
+        // if (!organizations) {
+        //     Router.push('/organization/add');
+        //     return;
+        // }
+        // if (organizations && organizations.length <= 0) {
+        //     Router.push('/organization/add');
+        // }
     }, [])
 
     const setAccounts = useCallback(
