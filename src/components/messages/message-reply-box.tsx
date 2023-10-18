@@ -1,6 +1,6 @@
 import {
     Button,
-    Flex,
+    Flex, Input,
     Menu,
     MenuButton, MenuItem,
     MenuList,
@@ -775,42 +775,53 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                             <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} zIndex={6} ref={editorRef}
                                   overflowY={'auto'} className={`editor-bottom-shadow`}
                                   onScroll={() => handleEditorScroll()}>
-                                  {/*onWheel={(event) => {*/}
-                                  {/*    if (event.deltaX <= 0) {*/}
-                                  {/*        handleEditorScroll()*/}
-                                  {/*    }*/}
-                                  {/*}}*/}
+                                {/*onWheel={(event) => {*/}
+                                {/*    if (event.deltaX <= 0) {*/}
+                                {/*        handleEditorScroll()*/}
+                                {/*    }*/}
+                                {/*}}*/}
+                                <div style={{display: !showEditorToolbar ? 'block' : 'none'}}>
+                                    <Input padding={0} height={'fit-content'} border={"none"} cursor={'pointer'} fontSize={'13px'} _placeholder={{color: '#adb5bd'}}
+                                           placeholder={'Hit enter to reply with anything you\'d like'}
+                                           onClick={() => {
+                                               setShowEditorToolbar(true);
+                                               globalEventService.fireEvent({data: {}, type: 'richtexteditor.focus'})
+                                           }}/>
+                                </div>
                                 {(selectedThread && draftIndex !== null) && (
-                                    <CollabRichTextEditor
-                                        id={selectedThread.id + '-' + draftIndex}
-                                        onCreate={() => sendToDraft('')}
-                                        placeholder="Hit enter to reply with anything you'd like"
-                                        isToolbarVisible={showEditorToolbar}
-                                        onChange={(value) => sendToDraft(value)}
-                                        className={`${extraClassNames} ${extraClassNamesForBottom}`}
-                                        onFocus={() => initialValuesChanges()}
-                                        emailSignature={selectedAccount ? getSignatureBanner(selectedAccount) : undefined}
-                                        projectShare={selectedThread?.projects?.length ? getProjectBanner(selectedAccount) : undefined}
-                                        extendToolbar={(
-                                            <>
-                                                <Flex
-                                                    onClick={() => {
-                                                        inputFile.current?.click();
-                                                        loaderPercentage = 0;
-                                                    }}
-                                                    align={'center'} justify={'center'} cursor={'pointer'}
-                                                    className={styles.attachIcon}
-                                                >
-                                                    <Image priority src="/image/icon/attach.svg" alt="emoji" width={13}
-                                                           height={13}/>
-                                                    Attach
-                                                    <input type='file' id='file' ref={inputFile}
-                                                           onChange={(e) => handleFileUpload(e.target.files, e)}
-                                                           style={{display: 'none'}}/>
-                                                </Flex>
-                                            </>
-                                        )}
-                                    />
+                                    <div style={{display: showEditorToolbar ? 'block' : 'none'}}>
+                                        <CollabRichTextEditor
+                                            id={selectedThread.id + '-' + draftIndex}
+                                            onCreate={() => sendToDraft('')}
+                                            placeholder="Hit enter to reply with anything you'd like"
+                                            isToolbarVisible={showEditorToolbar}
+                                            onChange={(value) => sendToDraft(value)}
+                                            className={`${extraClassNames} ${extraClassNamesForBottom}`}
+                                            onFocus={() => initialValuesChanges()}
+                                            emailSignature={selectedAccount ? getSignatureBanner(selectedAccount) : undefined}
+                                            projectShare={selectedThread?.projects?.length ? getProjectBanner(selectedAccount) : undefined}
+                                            extendToolbar={(
+                                                <>
+                                                    <Flex
+                                                        onClick={() => {
+                                                            inputFile.current?.click();
+                                                            loaderPercentage = 0;
+                                                        }}
+                                                        align={'center'} justify={'center'} cursor={'pointer'}
+                                                        className={styles.attachIcon}
+                                                    >
+                                                        <Image priority src="/image/icon/attach.svg" alt="emoji"
+                                                               width={13}
+                                                               height={13}/>
+                                                        Attach
+                                                        <input type='file' id='file' ref={inputFile}
+                                                               onChange={(e) => handleFileUpload(e.target.files, e)}
+                                                               style={{display: 'none'}}/>
+                                                    </Flex>
+                                                </>
+                                            )}
+                                        />
+                                    </div>
                                 )}
 
                                 {attachments && attachments.length > 0 ? <div style={{marginTop: '20px'}}>
