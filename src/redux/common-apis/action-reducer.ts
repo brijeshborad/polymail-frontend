@@ -60,7 +60,7 @@ const commonApisSlice = createSlice({
     },
 
     markActivityAsRead: (state: InitialCommonApisStateType, _action: PayloadAction<ReducerActionType>) => {
-      return {...state, isLoading: true}
+      return {...state, isLoading: false}
     },
     markActivityAsReadSuccess: (state: InitialCommonApisStateType, _action: PayloadAction<any>) => {
       return {...state, isLoading: false, error: null}
