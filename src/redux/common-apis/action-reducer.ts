@@ -59,6 +59,16 @@ const commonApisSlice = createSlice({
       return {...state, activityFeed: [], isLoading: false}
     },
 
+    markActivityAsRead: (state: InitialCommonApisStateType, _action: PayloadAction<ReducerActionType>) => {
+      return {...state, isLoading: true}
+    },
+    markActivityAsReadSuccess: (state: InitialCommonApisStateType, _action: PayloadAction<any>) => {
+      return {...state, isLoading: false, error: null}
+    },
+    markActivityAsReadError: (state: InitialCommonApisStateType, _action: PayloadAction<any>) => {
+      return {...state, isLoading: false}
+    },
+
     updateCommonState: (state: InitialCommonApisStateType, action: PayloadAction<InitialCommonApisStateType>) => {
       return {...state, ...action.payload}
     },
@@ -76,6 +86,7 @@ export const {
   getContacts,
   getContactsSuccess,
   getContactsError,
-  updateCommonState, getActivityFeed, getActivityFeedSuccess, getActivityFeedError
+  updateCommonState, getActivityFeed, getActivityFeedSuccess, getActivityFeedError,
+  markActivityAsRead, markActivityAsReadSuccess, markActivityAsReadError
 } = commonApisSlice.actions
 export default commonApisSlice.reducer

@@ -10,6 +10,8 @@ import {ActivityFeed} from "@/models/activityFeed";
 import {ACTIVITY_FEED_EVENT_TYPES} from "@/utils/constants";
 import {globalEventService, socketService} from "@/services";
 import Tooltip from "@/components/common/Tooltip";
+import {markActivityAsRead} from "@/redux/common-apis/action-reducer";
+import dayjs from "dayjs";
 
 const FeedComponent = dynamic(
     () => import('./feedComponent').then((mod) => mod.FeedComponent)
@@ -20,6 +22,7 @@ export const FeedSidebar = () => {
     // const [selectedMenu, setSelectedMenu] = React.useState('Disney Launch');
     const btnRef = React.useRef(null);
     const {newMessage} = useSelector((state: StateType) => state.socket);
+    const {userDetails} = useSelector((state: StateType) => state.users);
     const {activityFeed} = useSelector((state: StateType) => state.commonApis);
     const dispatch = useDispatch();
     const [feeds, setFeeds] = useState<ActivityFeed[]>([]);
@@ -32,7 +35,8 @@ export const FeedSidebar = () => {
                 if (newMessage.data.Type === 'ThreadShared' || newMessage.data.Type === 'ProjectInvite' || newMessage.data.Type === 'MemberJoined') {
                     globalEventService.fireEvent({
                         type: 'show-notification',
-                        data: {title: newMessage.data.Title,
+                        data: {
+                            title: newMessage.data.Title,
                             data: {
                                 body: newMessage.data.Subtitle,
                                 tag: `${newMessage.data.Type}-${newMessage.data.Created}`
@@ -47,7 +51,7 @@ export const FeedSidebar = () => {
                         title: newMessage.data.Title,
                         subtitle: newMessage.data.Subtitle,
                         body: newMessage.data.Body,
-                        isRead: newMessage.data.Read,
+                        isRead: userDetails ? dayjs(newMessage.data.Created).isAfter(userDetails.activityRead) : false,
                     })
                 } else {
                     currentFeeds.push({
@@ -55,24 +59,28 @@ export const FeedSidebar = () => {
                         title: newMessage.data.Title,
                         subtitle: newMessage.data.Subtitle,
                         body: newMessage.data.Body,
-                        isRead: newMessage.data.Read,
+                        isRead: userDetails ? dayjs(newMessage.data.Created).isAfter(userDetails.activityRead) : false,
                     })
                 }
                 setFeeds([...currentFeeds]);
             }
 
         }
-    }, [newMessage, dispatch, feeds])
+    }, [newMessage, dispatch, feeds, userDetails])
 
     useEffect(() => {
         setUnreadCount(feeds.filter((t: ActivityFeed) => !t.isRead).length);
     }, [feeds])
 
     useEffect(() => {
-        if (activityFeed && activityFeed.length > 0) {
-            setFeeds([...activityFeed]);
+        if (activityFeed && activityFeed.length > 0 && userDetails) {
+            setFeeds([...activityFeed.map(item => {
+                let finalItem = {...item};
+                finalItem.isRead = dayjs(item.created).isAfter(userDetails.activityRead);
+                return finalItem
+            })]);
         }
-    }, [activityFeed])
+    }, [activityFeed, userDetails]);
 
     function markFeedAsRead(index: number) {
         let currentFeeds = [...feeds];
@@ -84,6 +92,7 @@ export const FeedSidebar = () => {
     }
 
     function markAllAsRead() {
+        dispatch(markActivityAsRead({}));
         let currentFeeds = [...feeds].map(item => {
             let finalItem = {...item};
             finalItem.isRead = true
@@ -95,12 +104,13 @@ export const FeedSidebar = () => {
     return (
         <>
             <Tooltip label={'Activity Feed'} placement={'bottom'}>
-                <Flex align={'center'} cursor={'pointer'} justify={'center'} className={`${styles.notificationIcon} ${unreadCount > 0 ? styles.notificationIconUnRead: ''}`}
+                <Flex align={'center'} cursor={'pointer'} justify={'center'}
+                      className={`${styles.notificationIcon} ${unreadCount > 0 ? styles.notificationIconUnRead : ''}`}
                       onClick={() => {
                           onOpen();
                           markAllAsRead();
                       }}>
-                    <EnergyIcon fill={unreadCount > 0 ? '#fff': '#08162F'}/>
+                    <EnergyIcon fill={unreadCount > 0 ? '#fff' : '#08162F'}/>
                     {unreadCount > 0 ? (<Badge>{unreadCount}</Badge>) : null}
                 </Flex>
             </Tooltip>
@@ -156,10 +166,11 @@ export const FeedSidebar = () => {
 
                         <Box padding="12px 16px">
                             {feeds
-                              .sort((a, b) => b.created! < a.created! ? -1 : 0)
-                              .map((t: ActivityFeed, index: number) => (
-                                <FeedComponent key={index} feedData={t} markFeedAsRead={() => markFeedAsRead(index)}/>
-                            ))}
+                                .sort((a, b) => b.created! < a.created! ? -1 : 0)
+                                .map((t: ActivityFeed, index: number) => (
+                                    <FeedComponent key={index} feedData={t}
+                                                   markFeedAsRead={() => markFeedAsRead(index)}/>
+                                ))}
                         </Box>
                     </Box>
                 </DrawerContent>
