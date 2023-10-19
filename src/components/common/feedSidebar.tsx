@@ -30,7 +30,6 @@ export const FeedSidebar = () => {
     const [unreadCount, setUnreadCount] = useState<number>(0);
 
     useEffect(() => {
-        console.log('DATA', newMessage);
         if (newMessage && newMessage.name === 'Activity') {
             socketService.updateSocketMessage(null);
             if (ACTIVITY_FEED_EVENT_TYPES.includes(newMessage.data.Type)) {
