@@ -51,7 +51,7 @@ export const FeedSidebar = () => {
                         title: newMessage.data.Title,
                         subtitle: newMessage.data.Subtitle,
                         body: newMessage.data.Body,
-                        isRead: userDetails ? dayjs(newMessage.data.Created).isAfter(userDetails.activityRead) : false,
+                        isRead: userDetails ? dayjs(userDetails.activityRead).isAfter(dayjs(newMessage.data.Created)) : false,
                     })
                 } else {
                     currentFeeds.push({
@@ -59,7 +59,7 @@ export const FeedSidebar = () => {
                         title: newMessage.data.Title,
                         subtitle: newMessage.data.Subtitle,
                         body: newMessage.data.Body,
-                        isRead: userDetails ? dayjs(newMessage.data.Created).isAfter(userDetails.activityRead) : false,
+                        isRead: userDetails ? dayjs(userDetails.activityRead).isAfter(dayjs(newMessage.data.Created)) : false,
                     })
                 }
                 setFeeds([...currentFeeds]);
@@ -76,7 +76,7 @@ export const FeedSidebar = () => {
         if (activityFeed && activityFeed.length > 0 && userDetails) {
             setFeeds([...activityFeed.map(item => {
                 let finalItem = {...item};
-                finalItem.isRead = userDetails ? dayjs(item.created).isAfter(userDetails.activityRead) : false;
+                finalItem.isRead = userDetails ? dayjs(userDetails.activityRead).isAfter(dayjs(item.created)) : false;
                 return finalItem
             })]);
         }
@@ -92,13 +92,15 @@ export const FeedSidebar = () => {
     }
 
     function markAllAsRead() {
-        dispatch(markActivityAsRead({}));
-        let currentFeeds = [...feeds].map(item => {
-            let finalItem = {...item};
-            finalItem.isRead = true
-            return finalItem;
-        });
-        setFeeds([...currentFeeds]);
+        if (feeds.filter(item => !item.isRead).length > 0) {
+            dispatch(markActivityAsRead({}));
+            let currentFeeds = [...feeds].map(item => {
+                let finalItem = {...item};
+                finalItem.isRead = true
+                return finalItem;
+            });
+            setFeeds([...currentFeeds]);
+        }
     }
 
     return (

@@ -74,7 +74,7 @@ export function ThreadsSideBarTab(props: TabProps) {
 
 
     const getAllThread = useCallback((type: string = tabName) => {
-        if (selectedAccount && selectedAccount.syncHistory?.mailInitSynced) {
+        if (selectedAccount && !syncingEmails) {
             let resetState = true;
             if (!tabValue) {
                 return;
@@ -123,7 +123,7 @@ export function ThreadsSideBarTab(props: TabProps) {
                 }
             }
         }
-    }, [dispatch, isSummaryApiCalled, projectId, props.cachePrefix, selectedAccount, tabName, tabValue]);
+    }, [dispatch, isSummaryApiCalled, projectId, props.cachePrefix, selectedAccount, syncingEmails, tabName, tabValue]);
 
     useEffect(() => {
         if (threadListSuccess && selectedAccount) {
