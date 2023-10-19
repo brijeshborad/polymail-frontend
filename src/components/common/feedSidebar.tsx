@@ -83,11 +83,22 @@ export const FeedSidebar = () => {
         setFeeds([...currentFeeds]);
     }
 
+    function markAllAsRead() {
+        let currentFeeds = [...feeds].map(item => {
+            item.isRead = true
+            return item;
+        });
+        setFeeds([...currentFeeds]);
+    }
+
     return (
         <>
             <Tooltip label={'Activity Feed'} placement={'bottom'}>
                 <Flex align={'center'} cursor={'pointer'} justify={'center'} className={`${styles.notificationIcon} ${unreadCount > 0 ? styles.notificationIconUnRead: ''}`}
-                      onClick={onOpen}>
+                      onClick={() => {
+                          onOpen();
+                          markAllAsRead();
+                      }}>
                     <EnergyIcon fill={unreadCount > 0 ? '#fff': '#08162F'}/>
                     {unreadCount > 0 ? (<Badge>{unreadCount}</Badge>) : null}
                 </Flex>
@@ -148,10 +159,6 @@ export const FeedSidebar = () => {
                               .map((t: ActivityFeed, index: number) => (
                                 <FeedComponent key={index} feedData={t} markFeedAsRead={() => markFeedAsRead(index)}/>
                             ))}
-                            {/*<FeedComponent isRead={true}/>*/}
-                            {/*<FeedComponent isRead={true} detail={true}/>*/}
-                            {/*<FeedComponent detail={true}/>*/}
-                            {/*<FeedComponent detail={true}/>*/}
                         </Box>
                     </Box>
                 </DrawerContent>
