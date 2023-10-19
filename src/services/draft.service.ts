@@ -72,7 +72,9 @@ class DraftService extends BaseService {
 
     saveDraftToResume() {
         let {composeDraft} = this.getDraftState();
-        this.setResumeDraft(composeDraft);
+        if (composeDraft) {
+            this.setResumeDraft(composeDraft);
+        }
     }
 
     resumeDraft() {
