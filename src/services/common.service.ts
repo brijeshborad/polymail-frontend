@@ -45,40 +45,42 @@ class CommonService extends BaseService {
         } else {
             onlineMembers['threads'][newThreadId] = [...onlineMembers['threads'][newThreadId]];
         }
-        let findOldThreadUserIndex = onlineMembers['threads'][oldThreadId].findIndex((item: UserProjectOnlineStatus) => item.userId === oldThread.user);
-        if (findOldThreadUserIndex !== -1) {
-            onlineMembers['threads'][oldThreadId][findOldThreadUserIndex] = {...onlineMembers['threads'][oldThreadId][findOldThreadUserIndex]};
-            oldThreadOnlineUser = onlineMembers['threads'][oldThreadId][findOldThreadUserIndex];
-            onlineMembers['threads'][oldThreadId][findOldThreadUserIndex].isOnline = false;
-            onlineMembers['threads'][oldThreadId][findOldThreadUserIndex].forceWait = 2;
-        }
-
-        let findNewThreadUserIndex = onlineMembers['threads'][newThreadId].findIndex((item: UserProjectOnlineStatus) => item.userId === newThread.user);
-        if (findNewThreadUserIndex !== -1) {
-            onlineMembers['threads'][newThreadId][findNewThreadUserIndex] = {...onlineMembers['threads'][newThreadId][findNewThreadUserIndex]};
-            onlineMembers['threads'][newThreadId][findNewThreadUserIndex].isOnline = true;
-            onlineMembers['threads'][newThreadId][findNewThreadUserIndex].lastOnlineStatusCheck = dayjs().format('DD/MM/YYYY hh:mm:ss a');
-            onlineMembers['threads'][newThreadId][findNewThreadUserIndex].forceWait = 0;
-        } else {
-            let {userDetails, profilePicture} = userService.getUserState();
-            if (!oldThreadOnlineUser && userDetails) {
-                oldThreadOnlineUser = {
-                    userId: userDetails.id,
-                    avatar: (profilePicture?.url || ''),
-                    color: Math.floor(Math.random() * 16777215).toString(16),
-                    name: (userDetails.firstName || '') + ' ' + (userDetails.lastName || ' '),
-                }
+        let {userDetails, profilePicture} = userService.getUserState();
+        if (userDetails) {
+            let findOldThreadUserIndex = onlineMembers['threads'][oldThreadId].findIndex((item: UserProjectOnlineStatus) => item.userId === userDetails?.id);
+            if (findOldThreadUserIndex !== -1) {
+                onlineMembers['threads'][oldThreadId][findOldThreadUserIndex] = {...onlineMembers['threads'][oldThreadId][findOldThreadUserIndex]};
+                oldThreadOnlineUser = onlineMembers['threads'][oldThreadId][findOldThreadUserIndex];
+                onlineMembers['threads'][oldThreadId][findOldThreadUserIndex].isOnline = false;
+                onlineMembers['threads'][oldThreadId][findOldThreadUserIndex].forceWait = 2;
             }
-            onlineMembers['threads'][newThreadId].push({
-                ...oldThreadOnlineUser,
-                isOnline: true,
-                lastOnlineStatusCheck: dayjs().format('DD/MM/YYYY hh:mm:ss a'),
-                forceWait: 0
-            })
+
+            let findNewThreadUserIndex = onlineMembers['threads'][newThreadId].findIndex((item: UserProjectOnlineStatus) => item.userId === userDetails?.id);
+            if (findNewThreadUserIndex !== -1) {
+                onlineMembers['threads'][newThreadId][findNewThreadUserIndex] = {...onlineMembers['threads'][newThreadId][findNewThreadUserIndex]};
+                onlineMembers['threads'][newThreadId][findNewThreadUserIndex].isOnline = true;
+                onlineMembers['threads'][newThreadId][findNewThreadUserIndex].lastOnlineStatusCheck = dayjs().format('DD/MM/YYYY hh:mm:ss a');
+                onlineMembers['threads'][newThreadId][findNewThreadUserIndex].forceWait = 0;
+            } else {
+                if (!oldThreadOnlineUser && userDetails) {
+                    oldThreadOnlineUser = {
+                        userId: userDetails.id,
+                        avatar: (profilePicture?.url || ''),
+                        color: Math.floor(Math.random() * 16777215).toString(16),
+                        name: (userDetails.firstName || '') + ' ' + (userDetails.lastName || ' '),
+                    }
+                }
+                onlineMembers['threads'][newThreadId].push({
+                    ...oldThreadOnlineUser,
+                    isOnline: true,
+                    lastOnlineStatusCheck: dayjs().format('DD/MM/YYYY hh:mm:ss a'),
+                    forceWait: 0
+                })
+            }
+            onlineMembers = {...this.removeAllOtherOnlineStatusForUser(onlineMembers, [oldThreadId, newThreadId], newThread.user)}
+            setMemberStatusCache(onlineMembers);
+            this.setCommonState({onlineUsers: onlineMembers});
         }
-        onlineMembers = {...this.removeAllOtherOnlineStatusForUser(onlineMembers, [oldThreadId, newThreadId], newThread.user)}
-        setMemberStatusCache(onlineMembers);
-        this.setCommonState({onlineUsers: onlineMembers});
     }
 
     removeAllOtherOnlineStatusForUser(onlineMembers: any, ignoreThreadIds: string[], userId: string | undefined) {
