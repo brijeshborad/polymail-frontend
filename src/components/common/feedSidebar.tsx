@@ -28,15 +28,15 @@ export const FeedSidebar = () => {
     useEffect(() => {
         if (newMessage && newMessage.name === 'Activity') {
             socketService.updateSocketMessage(null);
-            if (ACTIVITY_FEED_EVENT_TYPES.includes(newMessage.data.type)) {
-                if (newMessage.data.type === 'ThreadShared' || newMessage.data.type === 'ProjectInvite') {
+            if (ACTIVITY_FEED_EVENT_TYPES.includes(newMessage.data.Type)) {
+                if (newMessage.data.Type === 'ThreadShared' || newMessage.data.Type === 'ProjectInvite') {
                     globalEventService.fireEvent({
                         event: {
                             type: 'show-notification',
-                            data: {title: newMessage.data.title,
+                            data: {title: newMessage.data.Title,
                                 data: {
-                                    body: newMessage.data.subtitle,
-                                    tag: `${newMessage.data.type}-${newMessage.data.created}`
+                                    body: newMessage.data.Subtitle,
+                                    tag: `${newMessage.data.Type}-${newMessage.data.Created}`
                                 }
                             }
                         },
@@ -45,19 +45,19 @@ export const FeedSidebar = () => {
                 let currentFeeds: ActivityFeed[] = [...feeds];
                 if (currentFeeds.length > 0) {
                     currentFeeds.unshift({
-                        created: newMessage.data.created,
-                        title: newMessage.data.title,
-                        subtitle: newMessage.data.subtitle,
-                        body: newMessage.data.body,
-                        isRead: false,
+                        created: newMessage.data.Created,
+                        title: newMessage.data.Title,
+                        subtitle: newMessage.data.Subtitle,
+                        body: newMessage.data.Body,
+                        isRead: newMessage.data.Read,
                     })
                 } else {
                     currentFeeds.push({
-                        created: newMessage.data.created,
-                        title: newMessage.data.title,
-                        subtitle: newMessage.data.subtitle,
-                        body: newMessage.data.body,
-                        isRead: false,
+                        created: newMessage.data.Created,
+                        title: newMessage.data.Title,
+                        subtitle: newMessage.data.Subtitle,
+                        body: newMessage.data.Body,
+                        isRead: newMessage.data.Read,
                     })
                 }
                 setFeeds([...currentFeeds]);
