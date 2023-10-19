@@ -1,5 +1,5 @@
 import OnboardingLayout from "@/pages/onboarding/onboarding-layout";
-import {Box, Button, Flex, Heading, Input, Text} from "@chakra-ui/react";
+import {Box, Button, Flex, Heading, Input, Menu, MenuButton, MenuItem, MenuList, Text} from "@chakra-ui/react";
 import styles from "@/styles/Login.module.css";
 import {UploadIcon} from "@/icons";
 import Router from "next/router";
@@ -11,11 +11,12 @@ import {
     getUsersDetails,
     getProfilePicture,
     updateUsersDetails,
-    uploadProfilePicture
+    uploadProfilePicture, removeProfilePicture
 } from "@/redux/users/action-reducer";
 import {SpinnerUI, Toaster} from "@/components/common";
 import {getFileSize} from "@/utils/common.functions";
 import {useRouter} from "next/router";
+import {EditIcon} from "@chakra-ui/icons";
 
 
 function CompleteProfile() {
@@ -130,6 +131,18 @@ function CompleteProfile() {
         }
     }, [dispatch, profilePictureUpdated]);
 
+    const removePhoto = () => {
+        dispatch(removeProfilePicture({
+            toaster: {
+                success: {
+                    desc: "Profile picture removed successfully",
+                    title: "Successfully",
+                    type: 'success'
+                }
+            }
+        }));
+    }
+
     return (
         <>
             <OnboardingLayout>
@@ -151,7 +164,7 @@ function CompleteProfile() {
                             <Flex className={styles.uploadProfileImage} gap={3} alignItems={'center'} padding={'12px'}
                                   border={'1px solid #E5E7EB'} position={'relative'} borderRadius={'50px'}
                                   minWidth={'300px'}>
-                                <div className={styles.userImage} onClick={() => inputFile.current?.click()}>
+                                <div className={styles.userImage}>
                                     <Box w={'50px'} h={'50px'} bg={'#EBF2FF'} display={'flex'} alignItems={'center'}
                                          justifyContent={'center'} borderRadius={'50px'} overflow={'hidden'}>
 
@@ -163,8 +176,28 @@ function CompleteProfile() {
                                                onChange={(e) => handleFileUpload(e)}
                                                style={{display: 'none'}}/>
                                     </Box>
+                                    <Menu>
+                                        <MenuButton position={'absolute'} width={'50px'} h={'50px'}
+                                                    backgroundColor={'0,0,0, 0.5'} borderRadius={'50px'}
+                                                    color={'#FFFFFF'} bottom={0} left={0} zIndex={1} as={Button}
+                                                    className={styles.userEditIcon}>
+                                            <EditIcon/>
+                                        </MenuButton>
+                                        <MenuList className={'drop-down-list'}>
+                                            <MenuItem onClick={() => inputFile.current?.click()}>Change Photo
+                                                <input type='file' id='file' ref={inputFile} accept={'image/*'}
+                                                       onChange={(e) => handleFileUpload(e)}
+                                                       style={{display: 'none'}}/>
+                                            </MenuItem>
+                                            {profilePicture &&
+                                            <MenuItem className={'delete-button'} onClick={() => removePhoto()}>Remove
+                                                Photo
+                                            </MenuItem>
+                                            }
+                                        </MenuList>
+                                    </Menu>
                                 </div>
-                                <div>
+                                <div onClick={() => inputFile.current?.click()}>
                                     <Heading mb={1} as='h5' fontSize={'15px'} color={'#0A101D'}>Select media to
                                         upload</Heading>
                                     <Text fontSize='xs' color={'#9CA3AF'}>Max size 10MB</Text>
@@ -179,7 +212,7 @@ function CompleteProfile() {
                                 border={'1px solid #374151'} borderRadius={'8px'} fontSize={'14px'}
                                 width={'fit-content'} color={'#374151'} lineHeight={'16px'}
                                 fontWeight={'500'}>Back</Button>
-                        <Button onClick={submit}
+                        <Button onClick={() => !showLoader ? submit() : null} isDisabled={showLoader}
                                 className={styles.continueButton} height={'auto'} padding={'9px 12px'}
                                 backgroundColor={'#1F2937'} borderRadius={'8px'} fontSize={'14px'} width={'fit-content'}
                                 color={'#ffffff'} lineHeight={'16px'} fontWeight={'500'}>Finish</Button>

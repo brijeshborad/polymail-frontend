@@ -46,7 +46,7 @@ const userSlice = createSlice({
         },
 
         getProfilePicture: (state: InitialUserState, _action: PayloadAction<ReducerActionType>) => {
-            return {...state, profilePicture: null, isLoading: true}
+            return {...state, profilePicture: null, isLoading: true, profilePictureUpdated: false}
         },
         getProfilePictureSuccess: (state: InitialUserState, {payload: profilePicture}: PayloadAction<{}>) => {
             return {...state, profilePicture, isLoading: false}
@@ -56,13 +56,13 @@ const userSlice = createSlice({
         },
 
         removeProfilePicture: (state: InitialUserState, _action: PayloadAction<ReducerActionType>) => {
-            return {...state, isLoading: false, profilePictureRemoved: false}
+            return {...state, profilePicture: null, isLoading: false, profilePictureRemoved: false}
         },
         removeProfilePictureSuccess: (state: InitialUserState, _action: PayloadAction<{}>) => {
-            return {...state, isLoading: false, profilePictureRemoved: true}
+            return {...state, profilePicture: null, isLoading: false, profilePictureRemoved: true}
         },
         removeProfilePictureError: (state: InitialUserState,  _action: PayloadAction<any>) => {
-            return {...state, isLoading: false, profilePictureRemoved: false}
+            return {...state, profilePicture: null, isLoading: false, profilePictureRemoved: false}
         },
 
         removeProfileData: (state: InitialUserState, _action: PayloadAction<ReducerActionType>) => {
