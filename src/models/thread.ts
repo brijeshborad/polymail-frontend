@@ -21,6 +21,7 @@ export interface Thread {
     projects?: Project[],
     userProjectOnlineStatus?: UserProjectOnlineStatus[],
     showOnlineMembersCount?: number
+    snooze?: string
 }
 
 export interface ThreadsRequestBody {
