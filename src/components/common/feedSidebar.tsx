@@ -76,7 +76,7 @@ export const FeedSidebar = () => {
         if (activityFeed && activityFeed.length > 0 && userDetails) {
             setFeeds([...activityFeed.map(item => {
                 let finalItem = {...item};
-                finalItem.isRead = dayjs(item.created).isAfter(userDetails.activityRead);
+                finalItem.isRead = userDetails ? dayjs(item.created).isAfter(userDetails.activityRead) : false;
                 return finalItem
             })]);
         }
