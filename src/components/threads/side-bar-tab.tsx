@@ -87,7 +87,7 @@ export function ThreadsSideBarTab(props: TabProps) {
                 threadService.setThreadState({
                     threads: getCacheThreads()[`${props.cachePrefix}-${tabValue}-${selectedAccount.id}-${type}`],
                     isLoading: false,
-                    selectedThread: null
+                    selectedThread: getCacheThreads()[`${props.cachePrefix}-${tabValue}-${selectedAccount.id}-${type}`][0]
                 })
             }
             if (projectId && !isSummaryApiCalled) {
@@ -159,8 +159,13 @@ export function ThreadsSideBarTab(props: TabProps) {
                 threadService.setThreads([newMessage.data, ...(threads || [])]);
                 threadService.setThreadState({success: true})
             }
+            if (newMessage.name === 'Activity' && newMessage.data.Type === 'MemberJoined') {
+                if (tabName === 'projects') {
+                    getAllThread();
+                }
+            }
         }
-    }, [getAllThread, newMessage, dispatch])
+    }, [getAllThread, newMessage, dispatch, threads, tabName])
 
     useEffect(() => {
         if (selectedAccount && success) {

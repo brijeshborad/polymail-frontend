@@ -27,6 +27,7 @@ import dayjs from "dayjs";
 import {clearDebounce, debounce, generateToasterId} from "@/utils/common.functions";
 import {messageService, threadService} from "@/services";
 import Tooltip from "../common/Tooltip";
+import Router from "next/router";
 
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
 const MessageSchedule = dynamic(() => import("./message-schedule").then(mod => mod.default));

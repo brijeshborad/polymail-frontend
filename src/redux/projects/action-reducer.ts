@@ -19,8 +19,12 @@ const projectsSlice = createSlice({
     name: 'projects',
     initialState,
     reducers: {
-        getAllProjects: (state: InitialProjectState) => {
-            return {...state, projects: [], isLoading: true, error: null}
+        getAllProjects: (state: InitialProjectState, action: PayloadAction<any>) => {
+            let finalState = {...state, error: null}
+            if (!action.payload.hasOwnProperty('noBlank')) {
+                finalState = {...finalState, projects: [], isLoading: true};
+            }
+            return finalState
         },
         getAllProjectsSuccess: (state: InitialProjectState, {payload: projects}: PayloadAction<{}>) => {
             return {...state, projects, isLoading: false}

@@ -12,6 +12,7 @@ import {globalEventService, socketService} from "@/services";
 import Tooltip from "@/components/common/Tooltip";
 import {markActivityAsRead} from "@/redux/common-apis/action-reducer";
 import dayjs from "dayjs";
+import {getAllProjects} from "@/redux/projects/action-reducer";
 
 const FeedComponent = dynamic(
     () => import('./feedComponent').then((mod) => mod.FeedComponent)
@@ -29,6 +30,7 @@ export const FeedSidebar = () => {
     const [unreadCount, setUnreadCount] = useState<number>(0);
 
     useEffect(() => {
+        console.log('DATA', newMessage);
         if (newMessage && newMessage.name === 'Activity') {
             socketService.updateSocketMessage(null);
             if (ACTIVITY_FEED_EVENT_TYPES.includes(newMessage.data.Type)) {
@@ -43,6 +45,9 @@ export const FeedSidebar = () => {
                             }
                         }
                     })
+                }
+                if (newMessage.data.Type === 'MemberJoined') {
+                    dispatch(getAllProjects({noBlank: true}));
                 }
                 let currentFeeds: ActivityFeed[] = [...feeds];
                 if (currentFeeds.length > 0) {
