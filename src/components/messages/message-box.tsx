@@ -61,7 +61,7 @@ export function MessageBox(props: any) {
     }, [])
 
     useEffect(() => {
-        if (selectedThread && selectedThread?.id && (!messages || messages.length <= 0)) {
+        if (selectedThread && selectedThread?.id && ((!messages || messages.length <= 0) || (messages && messages.length > 0 && messages[0] && messages[0].threadId !== selectedThread.id))) {
             setIndex(null);
             globalEventService.fireEvent({data: null, type: 'draft.currentMessage'})
             globalEventService.fireEvent({data: {type: 'reply'}, type: 'draft.updateType'})
