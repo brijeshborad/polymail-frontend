@@ -61,7 +61,7 @@ export function ComposeBox(props: any) {
     const [emailBody, setEmailBody] = useState<string>('');
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {composeDraft} = useSelector((state: StateType) => state.draft);
-    const {tabValue, selectedThread} = useSelector((state: StateType) => state.threads);
+    const {tabValue} = useSelector((state: StateType) => state.threads);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const dispatch = useDispatch();
     const {isOpen: isOpenProject, onOpen: onOpenProject, onClose: onCloseProject} = useDisclosure();

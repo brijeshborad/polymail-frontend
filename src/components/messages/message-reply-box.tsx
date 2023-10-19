@@ -513,17 +513,17 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         globalEventService.fireEvent({data: {}, type: 'richtexteditor.focus'})
     }
 
-    const getBody = () => {
-        let body = '';
-        if (selectedAccount) {
-            body += getSignatureBanner(selectedAccount);
-            // ${selectedThread?.projects && selectedThread.projects.length === 1 ? `<!--<p style="font-size: 13px; margin-right: 3px;">at </p><p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">${selectedThread.projects[0].name}</p>-->` : `<p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">others</p>`}
-            if (selectedThread?.projects?.length) {
-                body += getProjectBanner(selectedAccount);
-            }
-        }
-        return body;
-    }
+    // const getBody = () => {
+    //     let body = '';
+    //     if (selectedAccount) {
+    //         body += getSignatureBanner(selectedAccount);
+    //         // ${selectedThread?.projects && selectedThread.projects.length === 1 ? `<!--<p style="font-size: 13px; margin-right: 3px;">at </p><p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">${selectedThread.projects[0].name}</p>-->` : `<p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">others</p>`}
+    //         if (selectedThread?.projects?.length) {
+    //             body += getProjectBanner(selectedAccount);
+    //         }
+    //     }
+    //     return body;
+    // }
 
     const showRecipientsBox = () => {
         setShowReplyBox((current) => !current);
