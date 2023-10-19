@@ -72,7 +72,7 @@ export default function SettingsLayout({children}: any) {
                     <GridItem display={'flex'} w='100%' className={styles.settingSideBar}
                               padding={'20px 30px 40px 40px'}
                               borderRight={'1px solid #E1E3E6'} flexDirection={'column'}>
-                        <Button className={styles.backButton} borderRadius={8} height={'auto'} padding={'5px 0px'}
+                        <Button className={styles.backButton} borderRadius={8} height={'auto'} padding={'5px 8px 5px 5px'}
                                 marginBottom={'20px'}
                                 backgroundColor={'#FFFFFF'} color={'#6B7280'} borderColor={'#6B7280'} w={'fit-content'}
                                 colorScheme='blue' variant='outline' fontSize={'14px'}
