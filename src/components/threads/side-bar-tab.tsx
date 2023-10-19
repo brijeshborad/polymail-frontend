@@ -15,8 +15,14 @@ import {
     setCurrentSelectedThreads, setCurrentViewingCacheTab
 } from "@/utils/cache.functions";
 import {getProjectSummary} from "@/redux/common-apis/action-reducer";
-import {accountService, commonService, draftService, socketService, threadService} from "@/services";
-import { fireEvent } from "@/redux/global-events/action-reducer";
+import {
+    accountService,
+    commonService,
+    draftService,
+    globalEventService,
+    socketService,
+    threadService
+} from "@/services";
 import { Thread } from "@/models";
 
 const ThreadsSideBarList = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarList), {ssr: false});
@@ -135,18 +141,16 @@ export function ThreadsSideBarTab(props: TabProps) {
         if (newMessage && newMessage.name === 'NewMessage') {
             console.log('---NEW MESSAGE---', newMessage);
             const _newMsg = Object.values(newMessage.data)[0] as Thread
-            dispatch(fireEvent({
-              event: {
+            globalEventService.fireEvent({
                 type: 'show-notification',
                 data: {
-                  title: _newMsg.subject || "You got a new message",
-                  data: {
-                    body: `${_newMsg?.from?.name} ${_newMsg?.from?.email}`,
-                    tag: `${_newMsg?.updated}`
-                  }
+                    title: _newMsg.subject || "You got a new message",
+                    data: {
+                        body: `${_newMsg?.from?.name} ${_newMsg?.from?.email}`,
+                        tag: `${_newMsg?.updated}`
+                    }
                 }
-              },
-            }))
+            });
             socketService.updateSocketMessage(null);
             getAllThread();
         }

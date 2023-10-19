@@ -31,15 +31,13 @@ export const FeedSidebar = () => {
             if (ACTIVITY_FEED_EVENT_TYPES.includes(newMessage.data.Type)) {
                 if (newMessage.data.Type === 'ThreadShared' || newMessage.data.Type === 'ProjectInvite') {
                     globalEventService.fireEvent({
-                        event: {
-                            type: 'show-notification',
-                            data: {title: newMessage.data.Title,
-                                data: {
-                                    body: newMessage.data.Subtitle,
-                                    tag: `${newMessage.data.Type}-${newMessage.data.Created}`
-                                }
+                        type: 'show-notification',
+                        data: {title: newMessage.data.Title,
+                            data: {
+                                body: newMessage.data.Subtitle,
+                                tag: `${newMessage.data.Type}-${newMessage.data.Created}`
                             }
-                        },
+                        }
                     })
                 }
                 let currentFeeds: ActivityFeed[] = [...feeds];
