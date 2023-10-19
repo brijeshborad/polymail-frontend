@@ -71,6 +71,23 @@ export function Header() {
         [],
     );
 
+    const updateValuesFromAccount = useCallback((account: Account) => {
+        let projects = account.projects || [];
+        let organizations = ([...account.organizations || []]).sort((a: Organization, b: Organization) => (new Date(b.created as string).valueOf() - new Date(a.created as string).valueOf()));
+        let contacts = account.contacts || [];
+        projectService.setProjectState({projects, isLoading: false});
+        organizationService.setOrganizationState({organizations, isLoading: false});
+        commonService.setCommonState({contacts, isLoading: false});
+        accountService.setAccountState({success: true});
+        // if (!organizations) {
+        //     Router.push('/organization/add');
+        //     return;
+        // }
+        // if (organizations && organizations.length <= 0) {
+        //     Router.push('/organization/add');
+        // }
+    }, [])
+
     useEffect(() => {
         if (newMessage) {
             socketService.updateSocketMessage(null);
@@ -93,8 +110,19 @@ export function Header() {
                     reAuthToast(accountForReAuth.email!);
                 }
             }
+            if (newMessage.name === 'InitSyncProgress' && newMessage?.data) {
+                if (selectedAccount && selectedAccount.id === newMessage.data.accountId) {
+                    if (newMessage.data.progress < 100) {
+                        commonService.updateEmailSyncPercentage(Math.floor(newMessage.data.progress));
+                    } else {
+                        commonService.updateEmailSyncPercentage(null);
+                        accountService.setSelectedAccount({...selectedAccount, syncHistory: {mailInitSynced: new Date().toString()}});
+                        updateValuesFromAccount(selectedAccount);
+                    }
+                }
+            }
         }
-    }, [accounts, newMessage, threads, reAuthToast]);
+    }, [accounts, newMessage, threads, reAuthToast, selectedAccount, updateValuesFromAccount]);
 
     useEffect(() => {
         if (googleAuthRedirectionLink) {
@@ -110,29 +138,15 @@ export function Header() {
         [],
     );
 
-    const updateValuesFromAccount = useCallback((account: Account) => {
-        let projects = account.projects || [];
-        let organizations = ([...account.organizations || []]).sort((a: Organization, b: Organization) => (new Date(b.created as string).valueOf() - new Date(a.created as string).valueOf()));
-        let contacts = account.contacts || [];
-        projectService.setProjectState({projects, isLoading: false});
-        organizationService.setOrganizationState({organizations, isLoading: false});
-        commonService.setCommonState({contacts, isLoading: false});
-        accountService.setAccountState({success: true});
-        // if (!organizations) {
-        //     Router.push('/organization/add');
-        //     return;
-        // }
-        // if (organizations && organizations.length <= 0) {
-        //     Router.push('/organization/add');
-        // }
-    }, [])
-
     const setAccounts = useCallback(
         (account: Account) => {
             if (account.syncHistory?.mailInitSynced) {
+                commonService.updateEmailSyncPercentage(null);
                 LocalStorageService.updateAccount('store', account);
                 accountService.setAccountState({success: true});
                 updateValuesFromAccount(account);
+            } else {
+                commonService.updateEmailSyncPercentage(1);
             }
             accountService.setSelectedAccount(account);
         },

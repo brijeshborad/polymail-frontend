@@ -76,10 +76,6 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
         if (incomingEvent === 'iframe.clicked') {
             setThreadFocus(true)
         }
-    // || incomingEvent === 'messagebox.focus'
-        // if (incomingEvent === 'messagebox.scroll') {
-        //     handleScroll()
-        // }
     }, [incomingEvent, setThreadFocus]);
 
     useEffect(() => {
