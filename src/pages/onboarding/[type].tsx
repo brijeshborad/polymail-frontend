@@ -97,7 +97,7 @@ function OnBoardingType() {
                     <Text fontSize='13px' letterSpacing={'-0.13px'}
                           color={'#6B7280'}>{router.query.type === 'login' ? 'If you don\'t have an account' : 'If you already have an account'}, {router.query.type === 'login' ? ' sign up ' : ' log in '}
                         <button style={{textDecoration: 'underline'}}
-                            onClick={() => Router.push(`/onboarding/${router.query.type === 'login' ? 'signup' : 'login'}`, undefined, {shallow: true})}>here.</button>
+                            onClick={() => Router.push(`/onboarding/${router.query.type === 'login' ? 'signup' : 'login'}`, undefined, {shallow: true})}>here</button>.
                     </Text>
                 </Flex>
             </OnboardingLayout>
