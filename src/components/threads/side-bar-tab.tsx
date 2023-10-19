@@ -156,7 +156,8 @@ export function ThreadsSideBarTab(props: TabProps) {
                 getAllThread();
             }
             if (newMessage.name === 'SnoozedThread') {
-                console.log('---SnoozedThread---', newMessage);
+                threadService.setThreads([newMessage.data, ...(threads || [])]);
+                threadService.setThreadState({success: true})
             }
         }
     }, [getAllThread, newMessage, dispatch])

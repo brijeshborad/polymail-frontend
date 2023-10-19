@@ -66,7 +66,7 @@ export default function KeyboardNavigationListener() {
                     if (pressedKey?.value === 'ENTER') {
                         dispatchAction.target = 'threads';
                         threadService.toggleThreadFocused(true);
-                        globalEventService.fireEvent({data: null, type: 'richtexteditor.focus'});
+                        globalEventService.fireEvent('draft.undo');
                     }
 
                     if (target === 'threads') {
