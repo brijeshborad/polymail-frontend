@@ -43,11 +43,11 @@
 }
 
 .settingSideBar .settingList li:hover {
-    background-color: rgba(0,0,0, 0.1);
+    background-color: rgba(0, 0, 0, 0.1);
 }
 
 .settingSideBar .settingList li.active {
-    background-color: rgba(0,0,0, 0.1);
+    background-color: rgba(0, 0, 0, 0.1);
 }
 
 .settingSubTitle {
@@ -73,7 +73,7 @@
 .profileImageBox .userEditIcon[data-active] {
     opacity: 1;
     visibility: visible;
-    background-color: rgba(0,0,0, 0.5);
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 .userImage .userEditIcon svg {
@@ -136,7 +136,16 @@
 }
 
 .changeProfileButton .deleteProfile {
-    opacity: 0.4;
+    /*background-color: #FF5E2C;*/
+    /*border-radius: 8px;*/
+    color: #FF5E2C;
+    /*padding: 10px 12px;*/
+}
+
+
+.changeProfileButton .deleteProfile:hover {
+    /*background-color: #FF5E2C;*/
+    color: #FF5E2C;
 }
 
 .profileButton button {
@@ -158,7 +167,7 @@
 }
 
 .settingButton button.settingCancel {
-    background-color: rgba(0,0,0, 0.1);
+    background-color: rgba(0, 0, 0, 0.1);
     color: #000000;
 }
 
@@ -240,7 +249,7 @@
 
 .settingAddedEmailAddress .closeIcon {
     margin-right: 10px;
-    color: rgba(0,0,0, 0.3);
+    color: rgba(0, 0, 0, 0.3);
     width: 12px;
     height: 12px;
 }
@@ -449,6 +458,7 @@
 .signaturePreview img {
     max-height: 200px;
 }
+
 .signaturePreview a {
     color: rgb(0, 0, 238);
     text-decoration: underline;
@@ -462,7 +472,7 @@
     height: 50px;
     top: 0;
     left: 0;
-    background: linear-gradient(180deg, rgba(252,252,253,1) 27%, rgba(252,252,253,0) 100%);
+    background: linear-gradient(180deg, rgba(252, 252, 253, 1) 27%, rgba(252, 252, 253, 0) 100%);
 }
 
 .changePasswordModal input:hover {

@@ -14,7 +14,10 @@ import {
     getProfilePictureSuccess,
     uploadProfilePicture,
     uploadProfilePictureError,
-    uploadProfilePictureSuccess, removeProfilePictureSuccess, removeProfilePictureError, removeProfilePicture
+    uploadProfilePictureSuccess, removeProfilePictureSuccess, removeProfilePictureError, removeProfilePicture,
+    removeProfileData,
+    removeProfileDataSuccess,
+    removeProfileDataError
 } from "@/redux/users/action-reducer";
 import { ReducerActionType } from "@/types";
 import { performSuccessActions } from "@/utils/common-redux.functions";
@@ -87,6 +90,17 @@ function* deleteProfilePictureUrl({payload}: PayloadAction<ReducerActionType>) {
     }
 }
 
+function* deleteProfileData({payload}: PayloadAction<ReducerActionType>) {
+    try {
+        let response: AxiosResponse = yield ApiService.callDelete(`users`, {});
+        performSuccessActions(payload);
+        yield put(removeProfileDataSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        yield put(removeProfileDataError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
+    }
+}
+
 
 export function* watchUpdateCurrentDraftMessage() {
     yield takeEvery(updateUsersDetails.type, updateUserPersonalDetails);
@@ -108,6 +122,10 @@ export function* watchRemoveProfilePictureUrlFromS3() {
     yield takeEvery(removeProfilePicture.type, deleteProfilePictureUrl);
 }
 
+export function* watchRemoveProfileData() {
+    yield takeEvery(removeProfileData.type, deleteProfileData);
+}
+
 export default function* rootSaga() {
     yield all([
         fork(watchUpdateCurrentDraftMessage),
@@ -115,5 +133,6 @@ export default function* rootSaga() {
         fork(watchAddProfilePictureUrlToS3),
         fork(watchGetProfilePictureUrlFromS3),
         fork(watchRemoveProfilePictureUrlFromS3),
+        fork(watchRemoveProfileData),
     ]);
 }

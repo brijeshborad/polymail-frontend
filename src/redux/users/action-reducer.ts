@@ -65,6 +65,16 @@ const userSlice = createSlice({
             return {...state, isLoading: false, profilePictureRemoved: false}
         },
 
+        removeProfileData: (state: InitialUserState, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, isLoading: false}
+        },
+        removeProfileDataSuccess: (state: InitialUserState, _action: PayloadAction<{}>) => {
+            return {...state, isLoading: false}
+        },
+        removeProfileDataError: (state: InitialUserState,  _action: PayloadAction<any>) => {
+            return {...state, isLoading: false}
+        },
+
 
         updateUserState: (state: InitialUserState, action: PayloadAction<InitialUserState>) => {
             return {...state, ...action.payload}
@@ -89,6 +99,9 @@ export const {
     removeProfilePicture,
     removeProfilePictureSuccess,
     removeProfilePictureError,
+    removeProfileData,
+    removeProfileDataSuccess,
+    removeProfileDataError,
     updateUserState
 } = userSlice.actions
 export default userSlice.reducer
