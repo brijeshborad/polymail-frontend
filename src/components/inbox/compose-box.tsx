@@ -263,17 +263,6 @@ export function ComposeBox(props: any) {
         }
     }
 
-    useEffect(() => {
-        if (selectedAccount && selectedAccount.signature) {
-            let sentence = '';
-            if (selectedThread?.projects && selectedThread?.projects?.length) {
-                sentence = getProjectBanner(selectedAccount);
-            }
-
-            setEmailBody(getSignatureBanner(selectedAccount) + sentence);
-        }
-    }, [selectedAccount, props.isOpen, selectedThread])
-
 
     const handleSchedule = (date: string | undefined) => {
         setScheduledDate(date);
@@ -507,7 +496,7 @@ export function ComposeBox(props: any) {
                                     {composeDraft?.threadId && <CollabRichTextEditor
                                         id={composeDraft?.threadId + '-' + 0}
                                         isAutoFocus={true}
-                                        content={emailBody}
+                                        content={composeDraft?.draftInfo?.body}
                                         onCreate={() => sendToDraft('')}
                                         onChange={(value) => sendToDraft(value)}
                                         placeholder='Reply with anything you like or @mention someone to share this thread'

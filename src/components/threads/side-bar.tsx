@@ -132,14 +132,15 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     }, [incomingEvent])
 
     const openComposeModel = () => {
-        threadService.setSelectedThread(null);
         if (!isComposing) {
+            // threadService.setSelectedThread(null);
+            // messageService.setMessageState({showMessageBox: false});
             draftService.setComposeDraft(null);
             draftService.setResumeDraft(null);
-        }
-        commonService.toggleComposing(true);
-        if (selectedAccount && selectedAccount.id) {
-            dispatch(createDraft({body: {accountId: selectedAccount.id, body: {draftInfo: {collabId: makeCollabId(10)}}, fromCompose: true}}));
+            commonService.toggleComposing(true);
+            if (selectedAccount && selectedAccount.id) {
+                dispatch(createDraft({body: {accountId: selectedAccount.id, body: {draftInfo: {collabId: makeCollabId(10)}}, fromCompose: true}}));
+            }
         }
     }
 

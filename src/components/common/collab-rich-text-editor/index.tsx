@@ -12,7 +12,7 @@ import {CollabRichTextEditorType} from '@/types/props-types/collab-rich-text-edi
 import {StateType} from '@/types'
 import {useEffect, useState} from 'react'
 import ContentMonitor from './content-monitor'
-import {getSchema} from "@/utils/editor-common-functions";
+import {getPlainTextFromHtml, getSchema} from "@/utils/editor-common-functions";
 import {keyNavigationService} from "@/services";
 import {getProjectBanner} from "@/utils/common.functions";
 import * as Y from 'yjs'
@@ -22,6 +22,7 @@ export default function CollabRichTextEditor({
                                                  isAutoFocus = false,
                                                  isToolbarVisible = false,
                                                  onCreate,
+                                                 content,
                                                  afterToolbar,
                                                  extendToolbar,
                                                  placeholder,
@@ -101,19 +102,21 @@ export default function CollabRichTextEditor({
                         if (onFocus) {
                             onFocus();
                         } else {
-                            let finalContent = '';
-                            if (emailSignature) {
-                                finalContent += `<p></p>` + emailSignature;
-                            }
-                            if (projectShare) {
-                                finalContent += `<p></p>` + projectShare
-                            }
-                            if (!projectShare && isComposing && project) {
-                                finalContent += getProjectBanner(selectedAccount)
-                            }
+                            if (!getPlainTextFromHtml(content || '').trim()) {
+                                let finalContent = '';
+                                if (emailSignature) {
+                                    finalContent += `<p></p>` + emailSignature;
+                                }
+                                if (projectShare) {
+                                    finalContent += `<p></p>` + projectShare
+                                }
+                                if (!projectShare && isComposing && project) {
+                                    finalContent += getProjectBanner(selectedAccount)
+                                }
 
-                            editor.editor.commands.setContent(finalContent.trim(), false)
-                            editor.editor.commands.focus('start')
+                                editor.editor.commands.setContent(finalContent.trim(), false)
+                                editor.editor.commands.focus('start')
+                            }
                         }
                     }
                 }}

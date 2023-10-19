@@ -1,7 +1,7 @@
 import {StateType} from "@/types";
 import React, {useEffect} from "react";
 import {useSelector} from "react-redux";
-import {threadService} from "@/services";
+import {draftService, threadService} from "@/services";
 import {useRouter} from "next/router";
 import {Thread} from "@/models";
 
@@ -10,6 +10,9 @@ export function UrlManager() {
         threads,
         selectedThread,
     } = useSelector((state: StateType) => state.threads);
+    const {
+        isComposing
+    } = useSelector((state: StateType) => state.commonApis);
     const router = useRouter();
 
     useEffect(() => {
@@ -35,6 +38,12 @@ export function UrlManager() {
             }
         }
     }, [router, selectedThread])
+
+    useEffect(() => {
+        if (isComposing) {
+            draftService.saveDraftToResume()
+        }
+    }, [isComposing, router.asPath]);
 
     return (
         <></>

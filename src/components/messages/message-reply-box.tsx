@@ -83,26 +83,26 @@ export function MessageReplyBox(props: MessageBoxType) {
             let onlyDraftMessages = (selectedThread?.messages || []).filter((msg: Message) => (msg.mailboxes || []).includes('DRAFT'));
             const draftMessageIndex = onlyDraftMessages.findIndex((msg: Message) => (msg.mailboxes || []).includes('DRAFT'));
             setDraftIndex(draftMessageIndex !== -1 ? draftMessageIndex : 0);
-            if (onlyDraftMessages[draftMessageIndex]) {
-                if (!getPlainTextFromHtml(onlyDraftMessages[draftMessageIndex].draftInfo?.body || '').trim()) {
-                    setTimeout(() => {
-                        globalEventService.fireEvent({data: {body: getBody()}, type: 'richtexteditor.forceUpdateInitial'});
-                    }, 10)
-                    draftService.setReplyDraft({
-                        ...onlyDraftMessages[draftMessageIndex],
-                        draftInfo: {...(draft?.draftInfo || {}), body: getBody()}
-                    });
-                } else {
-                    setTimeout(() => {
-                        globalEventService.fireEvent({data: {body: onlyDraftMessages[draftMessageIndex].draftInfo?.body || ''}, type: 'richtexteditor.forceUpdateInitial'});
-                    }, 10)
-                    draftService.setReplyDraft({...onlyDraftMessages[draftMessageIndex]});
-                }
-            } else {
-                setTimeout(() => {
-                    globalEventService.fireEvent({data: {body: getBody()}, type: 'richtexteditor.forceUpdateInitial'});
-                }, 10)
-            }
+            // if (onlyDraftMessages[draftMessageIndex]) {
+            //     if (!getPlainTextFromHtml(onlyDraftMessages[draftMessageIndex].draftInfo?.body || '').trim()) {
+            //         setTimeout(() => {
+            //             globalEventService.fireEvent({data: {body: getBody()}, type: 'richtexteditor.forceUpdateInitial'});
+            //         }, 10)
+            //         draftService.setReplyDraft({
+            //             ...onlyDraftMessages[draftMessageIndex],
+            //             draftInfo: {...(draft?.draftInfo || {}), body: getBody()}
+            //         });
+            //     } else {
+            //         setTimeout(() => {
+            //             globalEventService.fireEvent({data: {body: onlyDraftMessages[draftMessageIndex].draftInfo?.body || ''}, type: 'richtexteditor.forceUpdateInitial'});
+            //         }, 10)
+            //         draftService.setReplyDraft({...onlyDraftMessages[draftMessageIndex]});
+            //     }
+            // } else {
+            //     setTimeout(() => {
+            //         globalEventService.fireEvent({data: {body: getBody()}, type: 'richtexteditor.forceUpdateInitial'});
+            //     }, 10)
+            // }
         }
     }, [selectedThread, draftIndex])
 
