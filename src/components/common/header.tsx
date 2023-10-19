@@ -166,7 +166,13 @@ export function Header() {
             if (!LocalStorageService.updateAccount('get')) {
                 setAccounts(accounts[0]);
             } else {
-                updateValuesFromAccount(LocalStorageService.updateAccount('get'));
+                let findTheUpdatedAccount = LocalStorageService.updateAccount('get')
+                if (findTheUpdatedAccount) {
+                    findTheUpdatedAccount = accounts.find(item => item.id === findTheUpdatedAccount.id);
+                    if (findTheUpdatedAccount) {
+                        updateValuesFromAccount(findTheUpdatedAccount);
+                    }
+                }
             }
         }
     }, [accounts, setAccounts, updateValuesFromAccount]);

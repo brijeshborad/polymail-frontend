@@ -85,8 +85,9 @@ export const FeedSidebar = () => {
 
     function markAllAsRead() {
         let currentFeeds = [...feeds].map(item => {
-            item.isRead = true
-            return item;
+            let finalItem = {...item};
+            finalItem.isRead = true
+            return finalItem;
         });
         setFeeds([...currentFeeds]);
     }
