@@ -156,7 +156,13 @@ export function ThreadsSideBarTab(props: TabProps) {
                 getAllThread();
             }
             if (newMessage.name === 'SnoozedThread') {
-                threadService.setThreads([newMessage.data, ...(threads || [])]);
+                let finalThreads = [...(threads || [])];
+                let findThreadInList = finalThreads.findIndex((item: Thread) => item.id === newMessage.data.thread.id);
+                if (findThreadInList !== -1) {
+                    finalThreads.splice(findThreadInList, 1);
+                }
+                finalThreads.unshift(newMessage.data.thread);
+                threadService.setThreads(finalThreads);
                 threadService.setThreadState({success: true})
             }
             if (newMessage.name === 'Activity' && newMessage.data.Type === 'MemberJoined') {

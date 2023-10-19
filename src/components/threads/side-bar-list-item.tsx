@@ -91,7 +91,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                                             setIsEmojiOpen(true);
                                             //close tooltip
                                             setIsToolTipOpen(false);
-                                            
+
                                         }}
                                         cursor={'pointer'}
                                         rounded={'md'}
@@ -156,7 +156,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                     )}
                     <Flex alignItems={'center'} className={styles2.receiveTime} justify={'flex-end'}>
                         {isClicked &&
-                        <DotIcon marginRight={'5px'} className={`readThreadIcon`} color={'#9ca3af'}/>}
+                        <DotIcon marginRight={'5px'} className={`readThreadIcon`} color={props.thread.snooze ? '#FF5E2C' :'#9ca3af'}/>}
                         <Time time={props.thread.latestMessage} isShowFullTime={false} showTimeInShortForm={false}/>
                     </Flex>
                 </Flex>
