@@ -76,7 +76,7 @@ export default function SettingsLayout({children}: any) {
                                 marginBottom={'20px'}
                                 backgroundColor={'#FFFFFF'} color={'#6B7280'} borderColor={'#6B7280'} w={'fit-content'}
                                 colorScheme='blue' variant='outline' fontSize={'14px'}
-                                leftIcon={<ArrowBackIcon/>} onClick={() => router.back()}>
+                                leftIcon={<ArrowBackIcon/>} onClick={() => router.push('/inbox')}>
                             Back To Inbox
                         </Button>
                         <Heading as='h4' mb={8} className={styles.settingTitle}> Settings </Heading>
