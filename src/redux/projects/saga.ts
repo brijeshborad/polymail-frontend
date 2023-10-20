@@ -32,7 +32,7 @@ import {
 } from "@/redux/projects/action-reducer";
 import { ReducerActionType } from "@/types";
 import ApiService from "@/utils/api.service";
-import { performSuccessActions } from "@/utils/common-redux.functions";
+import {performErrorActions, performSuccessActions} from "@/utils/common-redux.functions";
 import { all, fork, put, takeEvery } from "@redux-saga/core/effects";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { AxiosError, AxiosResponse } from "axios";
@@ -162,7 +162,7 @@ function* editProjectsData({payload}: PayloadAction<ReducerActionType>) {
         yield put(editProjectsSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        performSuccessActions(payload);
+        performErrorActions(payload);
         yield put(editProjectsError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }

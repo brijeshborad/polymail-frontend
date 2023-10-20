@@ -68,7 +68,7 @@ const projectsSlice = createSlice({
         },
 
         getProjectMembers: (state: InitialProjectState, _action: PayloadAction<ReducerActionType>) => {
-            return {...state, members: [], isLoading: true}
+            return {...state, members: [], isLoading: false}
         },
         getProjectMembersSuccess: (state: InitialProjectState, {payload: members}: PayloadAction<{}>) => {
             return {...state, members, isLoading: false}
@@ -78,7 +78,7 @@ const projectsSlice = createSlice({
         },
 
         getProjectMembersInvites: (state: InitialProjectState, _action: PayloadAction<ReducerActionType>) => {
-            return {...state, invitees: [], isLoading: true}
+            return {...state, invitees: [], isLoading: false}
         },
         getProjectMembersInvitesSuccess: (state: InitialProjectState, {payload: invitees}: PayloadAction<{}>) => {
             return {...state, invitees, isLoading: false}
