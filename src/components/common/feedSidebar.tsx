@@ -64,7 +64,6 @@ export const FeedSidebar = () => {
     }, [newMessage, dispatch, feeds, userDetails])
 
     useEffect(() => {
-        console.log(feeds);
         setUnreadCount(feeds.filter((t: ActivityFeed) => !t.isRead).length);
     }, [feeds])
 
