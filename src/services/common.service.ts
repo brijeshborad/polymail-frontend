@@ -29,17 +29,72 @@ class CommonService extends BaseService {
         this.dispatchAction(updateCommonState, body);
     }
 
-    updateUserOnlineStatus(oldThread: Thread, newThread: Thread) {
-        let oldThreadOnlineUser: UserProjectOnlineStatus | null = null;
+    updateUserOnlineStatusProject(newProject: Project) {
+        let onlineMembers: any = {...getMemberStatusCache()};
+        onlineMembers['projects'] = {...onlineMembers['projects']};
+        let newProjectId: string = newProject.id!;
+        if (!onlineMembers['projects'][newProjectId]) {
+            onlineMembers['projects'][newProjectId] = [];
+        } else {
+            onlineMembers['projects'][newProjectId] = [...onlineMembers['projects'][newProjectId]];
+        }
+        let {userDetails, profilePicture} = userService.getUserState();
+        if (userDetails) {
+            let findNewThreadUserIndex = onlineMembers['projects'][newProjectId].findIndex((item: UserProjectOnlineStatus) => item.userId === userDetails?.id);
+            if (findNewThreadUserIndex !== -1) {
+                onlineMembers['projects'][newProjectId][findNewThreadUserIndex] = {...onlineMembers['projects'][newProjectId][findNewThreadUserIndex]};
+                onlineMembers['projects'][newProjectId][findNewThreadUserIndex].isOnline = true;
+                onlineMembers['projects'][newProjectId][findNewThreadUserIndex].lastOnlineStatusCheck = dayjs().format('DD/MM/YYYY hh:mm:ss a');
+                onlineMembers['projects'][newProjectId][findNewThreadUserIndex].forceWait = 0;
+            } else {
+                onlineMembers['projects'][newProjectId].push({
+                    userId: userDetails.id,
+                    avatar: (profilePicture?.url || ''),
+                    color: Math.floor(Math.random() * 16777215).toString(16),
+                    name: (userDetails.firstName || '') + ' ' + (userDetails.lastName || ' '),
+                    isOnline: true,
+                    lastOnlineStatusCheck: dayjs().format('DD/MM/YYYY hh:mm:ss a'),
+                    forceWait: 0
+                })
+            }
+            onlineMembers = {...this.removeAllOtherOnlineStatusForUserProject(onlineMembers, [newProjectId], userDetails.id)}
+            setMemberStatusCache(onlineMembers);
+            this.setCommonState({onlineUsers: onlineMembers});
+        }
+    }
+
+    removeAllOtherOnlineStatusForUserProject(onlineMembers: any, ignoreThreadIds: string[], userId: string | undefined) {
+        onlineMembers['projects'] = {...onlineMembers['projects']};
+        let {userDetails} = userService.getUserState();
+        let setStatus = false;
+        if (userId === 'me') {
+            setStatus = true;
+            userId = userDetails?.id;
+        }
+        Object.keys(onlineMembers['projects']).forEach((projectId: string) => {
+            if (!ignoreThreadIds.includes(projectId)) {
+                console.log(userId, projectId);
+                onlineMembers['projects'][projectId] = [...onlineMembers['projects'][projectId]];
+                onlineMembers['projects'][projectId].forEach((user: UserProjectOnlineStatus, index: number) => {
+                    onlineMembers['projects'][projectId][index] = {...onlineMembers['projects'][projectId][index]};
+                    if (userId && user.userId === userId) {
+                        onlineMembers['projects'][projectId][index].isOnline = false;
+                        onlineMembers['projects'][projectId][index].forceWait = 2;
+                    }
+                })
+            }
+        })
+        if (setStatus) {
+            setMemberStatusCache(onlineMembers);
+            this.setCommonState({onlineUsers: onlineMembers});
+        }
+        return onlineMembers;
+    }
+
+    updateUserOnlineStatus(newThread: Thread) {
         let onlineMembers: any = {...getMemberStatusCache()};
         onlineMembers['threads'] = {...onlineMembers['threads']};
-        let oldThreadId: string = oldThread.id!;
         let newThreadId: string = newThread.id!;
-        if (!onlineMembers['threads'][oldThreadId]) {
-            onlineMembers['threads'][oldThreadId] = [];
-        } else {
-            onlineMembers['threads'][oldThreadId] = [...onlineMembers['threads'][oldThreadId]];
-        }
         if (!onlineMembers['threads'][newThreadId]) {
             onlineMembers['threads'][newThreadId] = [];
         } else {
@@ -47,14 +102,6 @@ class CommonService extends BaseService {
         }
         let {userDetails, profilePicture} = userService.getUserState();
         if (userDetails) {
-            let findOldThreadUserIndex = onlineMembers['threads'][oldThreadId].findIndex((item: UserProjectOnlineStatus) => item.userId === userDetails?.id);
-            if (findOldThreadUserIndex !== -1) {
-                onlineMembers['threads'][oldThreadId][findOldThreadUserIndex] = {...onlineMembers['threads'][oldThreadId][findOldThreadUserIndex]};
-                oldThreadOnlineUser = onlineMembers['threads'][oldThreadId][findOldThreadUserIndex];
-                onlineMembers['threads'][oldThreadId][findOldThreadUserIndex].isOnline = false;
-                onlineMembers['threads'][oldThreadId][findOldThreadUserIndex].forceWait = 2;
-            }
-
             let findNewThreadUserIndex = onlineMembers['threads'][newThreadId].findIndex((item: UserProjectOnlineStatus) => item.userId === userDetails?.id);
             if (findNewThreadUserIndex !== -1) {
                 onlineMembers['threads'][newThreadId][findNewThreadUserIndex] = {...onlineMembers['threads'][newThreadId][findNewThreadUserIndex]};
@@ -62,22 +109,17 @@ class CommonService extends BaseService {
                 onlineMembers['threads'][newThreadId][findNewThreadUserIndex].lastOnlineStatusCheck = dayjs().format('DD/MM/YYYY hh:mm:ss a');
                 onlineMembers['threads'][newThreadId][findNewThreadUserIndex].forceWait = 0;
             } else {
-                if (!oldThreadOnlineUser && userDetails) {
-                    oldThreadOnlineUser = {
-                        userId: userDetails.id,
-                        avatar: (profilePicture?.url || ''),
-                        color: Math.floor(Math.random() * 16777215).toString(16),
-                        name: (userDetails.firstName || '') + ' ' + (userDetails.lastName || ' '),
-                    }
-                }
                 onlineMembers['threads'][newThreadId].push({
-                    ...oldThreadOnlineUser,
+                    userId: userDetails.id,
+                    avatar: (profilePicture?.url || ''),
+                    color: Math.floor(Math.random() * 16777215).toString(16),
+                    name: (userDetails.firstName || '') + ' ' + (userDetails.lastName || ' '),
                     isOnline: true,
                     lastOnlineStatusCheck: dayjs().format('DD/MM/YYYY hh:mm:ss a'),
                     forceWait: 0
                 })
             }
-            onlineMembers = {...this.removeAllOtherOnlineStatusForUser(onlineMembers, [oldThreadId, newThreadId], newThread.user)}
+            onlineMembers = {...this.removeAllOtherOnlineStatusForUser(onlineMembers, [newThreadId], newThread.user)}
             setMemberStatusCache(onlineMembers);
             this.setCommonState({onlineUsers: onlineMembers});
         }
@@ -92,6 +134,7 @@ class CommonService extends BaseService {
                     onlineMembers['threads'][threadId][index] = {...onlineMembers['threads'][threadId][index]};
                     if (userId && user.userId === userId) {
                         onlineMembers['threads'][threadId][index].isOnline = false;
+                        onlineMembers['threads'][threadId][index].forceWait = 2;
                     }
                 })
             }
@@ -151,16 +194,19 @@ class CommonService extends BaseService {
     }
 
     updateUserOnlineStatusOnInterval() {
+        let {userDetails} = userService.getUserState();
         let onlineMembers: any = {...getMemberStatusCache()};
         Object.keys(onlineMembers).forEach((item: string) => {
             onlineMembers[item] = {...onlineMembers[item]};
             Object.keys(onlineMembers[item]).forEach((itemObj: string) => {
                 onlineMembers[item][itemObj] = [...onlineMembers[item][itemObj]];
                 onlineMembers[item][itemObj].forEach((user: object, index: number) => {
-                    onlineMembers[item][itemObj][index] = {...onlineMembers[item][itemObj][index]};
-                    let lastActiveDate = dayjs(onlineMembers[item][itemObj][index].lastOnlineStatusCheck, 'DD/MM/YYYY hh:mm:ss a');
-                    if (onlineMembers[item][itemObj][index].isOnline && dayjs().diff(lastActiveDate, 'seconds') > 10) {
-                        onlineMembers[item][itemObj][index].isOnline = false;
+                    if (userDetails?.id !== onlineMembers[item][itemObj][index].userId) {
+                        onlineMembers[item][itemObj][index] = {...onlineMembers[item][itemObj][index]};
+                        let lastActiveDate = dayjs(onlineMembers[item][itemObj][index].lastOnlineStatusCheck, 'DD/MM/YYYY hh:mm:ss a');
+                        if (onlineMembers[item][itemObj][index].isOnline && dayjs().diff(lastActiveDate, 'seconds') > 10) {
+                            onlineMembers[item][itemObj][index].isOnline = false;
+                        }
                     }
                 })
             })

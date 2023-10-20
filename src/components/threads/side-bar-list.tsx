@@ -107,7 +107,6 @@ export function ThreadsSideBarList(props: ThreadListProps) {
                 let isSameThreadClicked = false;
                 if (selectedThread && item) {
                     isSameThreadClicked = selectedThread.id === item.id;
-                    commonService.updateUserOnlineStatus(selectedThread!, item!);
                 }
                 if (multiSelection && multiSelection.length > 0) {
                     isSameThreadClicked = false;

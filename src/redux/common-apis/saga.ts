@@ -17,10 +17,17 @@ import {PayloadAction} from "@reduxjs/toolkit";
 import {getAllThreadsSuccess} from "@/redux/threads/action-reducer";
 import {ReducerActionType} from "@/types";
 import {performSuccessActions} from "@/utils/common-redux.functions";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+
+dayjs.extend(customParseFormat)
 
 function* getSummaryData() {
     try {
-        const response: Summary = yield ApiService.callGet(`summary/inbox`, {});
+        const response: Summary = yield ApiService.callGet(`summary/inbox`, {
+            cutoff: dayjs().add(1, "day").format('YYYY-MM-DD'),
+            count: 100
+        });
         yield put(getAllAccountSuccess(response.accounts || []));
         yield put(getActivityFeedSuccess(response.activities || []));
         yield put(updateUserState({userDetails: response.user || {}}));
@@ -33,7 +40,11 @@ function* getSummaryData() {
 
 function* getProjectSummaryData({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: Summary = yield ApiService.callGet(`summary/project/${payload.body.id}`, {...(payload.body.mailbox ? {mailbox: payload.body.mailbox} : {}),});
+        const response: Summary = yield ApiService.callGet(`summary/project/${payload.body.id}`, {
+            ...(payload.body.mailbox ? {mailbox: payload.body.mailbox} : {}),
+            cutoff: dayjs().add(1, "day").format('YYYY-MM-DD'),
+            count: 100
+        });
         performSuccessActions(payload);
         yield put(getAllThreadsSuccess(response.threads || []));
         yield put(getProjectSummarySuccess(response));

@@ -1,7 +1,7 @@
 import {StateType} from "@/types";
 import React, {useEffect} from "react";
 import {useSelector} from "react-redux";
-import {draftService, threadService} from "@/services";
+import {commonService, draftService, threadService} from "@/services";
 import {useRouter} from "next/router";
 import {Thread} from "@/models";
 
@@ -44,6 +44,12 @@ export function UrlManager() {
             draftService.saveDraftToResume()
         }
     }, [isComposing, router.asPath]);
+
+    useEffect(() => {
+        if (selectedThread) {
+            commonService.updateUserOnlineStatus(selectedThread);
+        }
+    }, [selectedThread]);
 
     return (
         <></>

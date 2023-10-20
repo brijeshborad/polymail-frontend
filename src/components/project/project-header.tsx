@@ -32,6 +32,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import RemoveRecordModal from "@/components/common/delete-record-modal";
 import {debounceInterval, isEmail} from "@/utils/common.functions";
+import {getMemberStatusCache} from "@/utils/cache.functions";
 
 export function ProjectHeader() {
     const router = useRouter();
@@ -206,6 +207,9 @@ export function ProjectHeader() {
 
             if (projects) {
                 const targetProject = projects.find(p => p.id === projectId)
+                if (targetProject) {
+                    commonService.updateUserOnlineStatusProject(targetProject);
+                }
                 dispatch(updateProjectState({
                     project: targetProject
                 }))
@@ -217,6 +221,9 @@ export function ProjectHeader() {
                 }
             }));
             dispatch(getProjectMembersInvites({body: {projectId: projectId}}));
+        }
+        return () => {
+            commonService.removeAllOtherOnlineStatusForUserProject({...getMemberStatusCache()}, [], 'me')
         }
     }, [router.query.project, projects, dispatch])
 
@@ -331,7 +338,12 @@ export function ProjectHeader() {
                                         {filteredProjects && !!filteredProjects.length && (filteredProjects || []).map((project: Project) => {
                                             return (
                                                 <MenuItem gap={2} key={project.id}
-                                                          onClick={() => router.push(`/projects/${project.id}`)}>
+                                                          onClick={() => {
+                                                              threadService.pageChange();
+                                                              projectService.pageChange();
+                                                              messageService.pageChange();
+                                                              router.push(`/projects/${project.id}`)
+                                                          }}>
                                                     {project.emoji} {project.name}
                                                 </MenuItem>
                                             )
