@@ -31,10 +31,12 @@ const tabMenu = [
                 title: 'Approved Domains',
                 route: '/settings/preferences'
             },
+            /*
             {
                 title: 'Billing',
                 route: '/settings/billing'
             },
+            */
             {
                 title: 'Members',
                 route: '/settings/members'
