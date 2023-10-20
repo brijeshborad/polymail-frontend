@@ -101,10 +101,10 @@ export default function CollabRichTextEditor({
                         if (!getPlainTextFromHtml(content || '').trim()) {
                             let finalContent = '';
                             if (emailSignature) {
-                                finalContent += `<p></p>` + emailSignature;
+                                finalContent += emailSignature;
                             }
                             if (projectShare) {
-                                finalContent += `<p></p>` + projectShare
+                                finalContent += projectShare
                             }
                             if (!projectShare && isComposing && project) {
                                 finalContent += getProjectBanner(selectedAccount)
