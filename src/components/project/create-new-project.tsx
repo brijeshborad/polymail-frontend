@@ -84,6 +84,9 @@ function CreateNewProjectModal() {
                     },
                 },
                 afterSuccessAction: (project: Project) => {
+                    setMembersInput({input: '', role: 'member', memberArray: []});
+                    setProjectName('');
+                    setProjectEmoji('');
                     if (shouldAddThread) {
                         threadService.addThreadToProject(project, null, false);
                     }
@@ -115,9 +118,6 @@ function CreateNewProjectModal() {
                 }
             }));
         }
-        setMembersInput({input: '', role: 'member', memberArray: []});
-        setProjectName('');
-        setProjectEmoji('');
     }
 
     const addNewMembers = () => {

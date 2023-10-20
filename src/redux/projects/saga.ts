@@ -67,7 +67,7 @@ function* addProjects({payload}: PayloadAction<ReducerActionType>) {
         yield put(createProjectsSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        performSuccessActions(payload);
+        performErrorActions(payload);
         yield put(createProjectsError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
