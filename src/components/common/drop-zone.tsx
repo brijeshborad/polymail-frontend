@@ -25,31 +25,24 @@ export function DropZone({children, onFileUpload, forReply}: any) {
         e.preventDefault();
         e.stopPropagation();
         setIsStartDroperSection(false);
-        clearDebounce();
+        clearDebounce('DROP_ZONE');
+        if (!e.dataTransfer.files[0]) {
+            debounce(() => {
+                setIsStartDroperSection(false);
+            }, 10)
+            return
+        }
         if (onFileUpload) {
             onFileUpload(e.dataTransfer.files, e);
         }
     }
 
     function getDropZone() {
-        return  (
+        return (
             <>
                 {children}
-                <Flex className={'uploadAttachment'} display={isStartDroperSection ? 'flex': 'none'}
-                      onDragOver={(e) => {
-                          clearDebounce();
-                          handleDragOver(e)
-                      }}
-                      onDragEnd={(e) => {
-                          clearDebounce();
-                          handleDragOver(e)
-                      }}
-                      onDragLeave={(e) => {
-                          debounce(() => {
-                              handleDragLeave(e)
-                          }, 250)
-                      }}
-                      onDrop={(e) => handleDrop(e)} position={"absolute"} height={'calc(100% - 32px)'}
+                <Flex className={'uploadAttachment'} display={isStartDroperSection ? 'flex' : 'none'}
+                      position={"absolute"} height={'calc(100% - 32px)'}
                       width={'calc(100% - 32px)'} top={4} left={4} zIndex={7} borderRadius={8}
                       border={'1px dashed #6B7280'} backgroundColor={'#F3F4F6'} align={'center'} justify={'center'}>
                     <FileIcon/>
@@ -60,9 +53,37 @@ export function DropZone({children, onFileUpload, forReply}: any) {
     }
 
     return (
-        forReply ? <div onDragEnter={() => setIsStartDroperSection(true)}>{getDropZone()}</div> :
-        <Flex padding={5} flex={1} position={'relative'} onDragEnter={() => setIsStartDroperSection(true)}>
-            {getDropZone()}
-        </Flex>
+        forReply ? <div style={{width: '100%', position: 'relative'}} onDragEnter={() => setIsStartDroperSection(true)}
+                        onDragOver={(e) => {
+                            clearDebounce('DROP_ZONE');
+                            handleDragOver(e)
+                        }}
+                        onDragEnd={(e) => {
+                            clearDebounce('DROP_ZONE');
+                            handleDragOver(e)
+                        }}
+                        onDragLeave={(e) => {
+                            debounce(() => {
+                                handleDragLeave(e)
+                            }, 250, 'DROP_ZONE')
+                        }}
+                        onDrop={(e) => handleDrop(e)}>{getDropZone()}</div> :
+            <Flex padding={5} flex={1} position={'relative'} onDragEnter={() => setIsStartDroperSection(true)}
+                  onDragOver={(e) => {
+                      clearDebounce('DROP_ZONE');
+                      handleDragOver(e)
+                  }}
+                  onDragEnd={(e) => {
+                      clearDebounce('DROP_ZONE');
+                      handleDragOver(e)
+                  }}
+                  onDragLeave={(e) => {
+                      debounce(() => {
+                          handleDragLeave(e)
+                      }, 250, 'DROP_ZONE')
+                  }}
+                  onDrop={(e) => handleDrop(e)}>
+                {getDropZone()}
+            </Flex>
     )
 }

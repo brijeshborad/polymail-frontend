@@ -673,96 +673,96 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
     return (
         <Flex backgroundColor={'#FFFFFF'} position={'sticky'} mt={'20px'} bottom={0} boxShadow={'0 21px 0px 0 #fff'}>
-            <Flex
-                maxHeight={'450px'} direction={'column'} backgroundColor={'#FFFFFF'} width={'100%'}
-                onBlur={() => handleBlur()}>
-                <Flex borderRadius={8} gap={4} border={'1px solid #F3F4F6'} direction={'column'} padding={4}>
-                    <Flex
-                        align={'center'} justify={'space-between'} gap={4} position={"relative"}
-                        zIndex={isReplyDropdownOpen ? 8 : 6}>
-                        <Flex align={'center'} gap={1}>
-                            <Menu isOpen={isReplyDropdownOpen} onClose={() => setIsReplyDropdownOpen(false)}>
-                                <MenuButton
-                                    onClick={(e) => {
-                                        e.stopPropagation()
-                                        setIsReplyDropdownOpen(true)
-                                    }}
-                                    color={'#6B7280'} variant='link' size='xs'
-                                    as={Button} rightIcon={<ChevronDownIcon/>}
-                                >
-                                    {props.replyTypeName || 'Reply'}
-                                </MenuButton>
-                                <MenuList className={'drop-down-list reply-dropdown'}>
-                                    {replyType === 'reply-all' ?
-                                        <MenuItem
-                                            onClick={() => props.hideAndShowReplyBox ? props.hideAndShowReplyBox('reply', selectedMessage) : null}> Reply</MenuItem> :
-                                        <MenuItem
-                                            onClick={() => props.hideAndShowReplyBox ? props.hideAndShowReplyBox('reply-all', selectedMessage) : null}> Reply
-                                            All</MenuItem>
-                                    }
-                                    {replyType === 'forward' ?
-                                        <MenuItem
-                                            onClick={() => props.hideAndShowReplyBox ? props.hideAndShowReplyBox('reply', selectedMessage) : null}> Reply</MenuItem> :
-                                        <MenuItem
-                                            onClick={() => {
-                                                if (props.hideAndShowReplyBox) {
-                                                    props.hideAndShowReplyBox('forward', selectedMessage)
-                                                    handleFocus()
-                                                }
-                                            }}> Forward</MenuItem>
-                                    }
-                                </MenuList>
-                            </Menu>
-                            <Flex align={'center'} gap={1}>
-                                {!!emailRecipients?.recipients?.items?.length &&
-                                <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
-                                      fontWeight={400}>
-                                    {emailRecipients?.recipients?.items[0].email}&nbsp;
-                                    <div className={styles.otherMail} style={{cursor: 'pointer'}}>
-                                        <Tooltip
-                                            placement="bottom"
-                                            label={(emailList || []).map((item: any, index: number) => (
-                                                <p key={index}>{item.email}</p>))}>
-                                            <Text as='u'>
-                                                {emailRecipients?.recipients?.items?.length - 1 > 0 && `and ${emailRecipients?.recipients?.items?.length - 1} others`}
-                                            </Text>
-                                        </Tooltip>
-                                    </div>
-                                </Flex>
-                                }
-                            </Flex>
-                            <Button className={styles.editButton} color={'#374151'} backgroundColor={'#F3F4F6'}
-                                    borderRadius={'20px'} lineHeight={1} size='xs'
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        e.preventDefault();
-                                        showRecipientsBox()
-                                        if (!showReplyBox) {
-                                            handleFocus()
-                                        }
-                                    }}> {showReplyBox ? 'Close' : 'Edit'} </Button>
-                        </Flex>
+            <DropZone onFileUpload={handleFileUpload} forReply={true}>
+                <Flex
+                    maxHeight={'450px'} direction={'column'} backgroundColor={'#FFFFFF'} width={'100%'}
+                    onBlur={() => handleBlur()}>
+                    <Flex borderRadius={8} gap={4} border={'1px solid #F3F4F6'} direction={'column'} padding={4}>
                         <Flex
-                            onClick={() => {
-                                handleFocus();
-                                globalEventService.fireEvent({data: null, type: 'richtexteditor.focus'});
-                            }}
-                            grow={1} justifyContent={'flex-end'}
-                        >
-                            <Text
-                                as={'h1'} fontSize='11px' color={'#6B7280'} display={'flex'} gap={'2px'}
-                                className={styles.mailSaveTime}>
-                                {(!draft?.updated || !isDraftUpdated) && 'Not Saved'}
-                                {(draft?.updated && isDraftUpdated) &&
-                                <>
-                                    Saved <Time time={draft?.updated || ''} isShowFullTime={false}
-                                                showTimeInShortForm={true}/>&nbsp;ago
-                                </>
-                                }
-                            </Text>
+                            align={'center'} justify={'space-between'} gap={4} position={"relative"}
+                            zIndex={isReplyDropdownOpen ? 8 : 6}>
+                            <Flex align={'center'} gap={1}>
+                                <Menu isOpen={isReplyDropdownOpen} onClose={() => setIsReplyDropdownOpen(false)}>
+                                    <MenuButton
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            setIsReplyDropdownOpen(true)
+                                        }}
+                                        color={'#6B7280'} variant='link' size='xs'
+                                        as={Button} rightIcon={<ChevronDownIcon/>}
+                                    >
+                                        {props.replyTypeName || 'Reply'}
+                                    </MenuButton>
+                                    <MenuList className={'drop-down-list reply-dropdown'}>
+                                        {replyType === 'reply-all' ?
+                                            <MenuItem
+                                                onClick={() => props.hideAndShowReplyBox ? props.hideAndShowReplyBox('reply', selectedMessage) : null}> Reply</MenuItem> :
+                                            <MenuItem
+                                                onClick={() => props.hideAndShowReplyBox ? props.hideAndShowReplyBox('reply-all', selectedMessage) : null}> Reply
+                                                All</MenuItem>
+                                        }
+                                        {replyType === 'forward' ?
+                                            <MenuItem
+                                                onClick={() => props.hideAndShowReplyBox ? props.hideAndShowReplyBox('reply', selectedMessage) : null}> Reply</MenuItem> :
+                                            <MenuItem
+                                                onClick={() => {
+                                                    if (props.hideAndShowReplyBox) {
+                                                        props.hideAndShowReplyBox('forward', selectedMessage)
+                                                        handleFocus()
+                                                    }
+                                                }}> Forward</MenuItem>
+                                        }
+                                    </MenuList>
+                                </Menu>
+                                <Flex align={'center'} gap={1}>
+                                    {!!emailRecipients?.recipients?.items?.length &&
+                                    <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
+                                          fontWeight={400}>
+                                        {emailRecipients?.recipients?.items[0].email}&nbsp;
+                                        <div className={styles.otherMail} style={{cursor: 'pointer'}}>
+                                            <Tooltip
+                                                placement="bottom"
+                                                label={(emailList || []).map((item: any, index: number) => (
+                                                    <p key={index}>{item.email}</p>))}>
+                                                <Text as='u'>
+                                                    {emailRecipients?.recipients?.items?.length - 1 > 0 && `and ${emailRecipients?.recipients?.items?.length - 1} others`}
+                                                </Text>
+                                            </Tooltip>
+                                        </div>
+                                    </Flex>
+                                    }
+                                </Flex>
+                                <Button className={styles.editButton} color={'#374151'} backgroundColor={'#F3F4F6'}
+                                        borderRadius={'20px'} lineHeight={1} size='xs'
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            e.preventDefault();
+                                            showRecipientsBox()
+                                            if (!showReplyBox) {
+                                                handleFocus()
+                                            }
+                                        }}> {showReplyBox ? 'Close' : 'Edit'} </Button>
+                            </Flex>
+                            <Flex
+                                onClick={() => {
+                                    handleFocus();
+                                    globalEventService.fireEvent({data: null, type: 'richtexteditor.focus'});
+                                }}
+                                grow={1} justifyContent={'flex-end'}
+                            >
+                                <Text
+                                    as={'h1'} fontSize='11px' color={'#6B7280'} display={'flex'} gap={'2px'}
+                                    className={styles.mailSaveTime}>
+                                    {(!draft?.updated || !isDraftUpdated) && 'Not Saved'}
+                                    {(draft?.updated && isDraftUpdated) &&
+                                    <>
+                                        Saved <Time time={draft?.updated || ''} isShowFullTime={false}
+                                                    showTimeInShortForm={true}/>&nbsp;ago
+                                    </>
+                                    }
+                                </Text>
+                            </Flex>
                         </Flex>
-                    </Flex>
-                    <DropZone onFileUpload={handleFileUpload} forReply={true}>
                         {showReplyBox &&
                         <div ref={divRef}>
                             <MessageRecipients
@@ -777,114 +777,114 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                         <Flex
                             onClick={() => handleFocus()}
                             direction={'column'} position={"relative"} flex={1} overflow={'none'}>
-                            <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} zIndex={6} ref={editorRef}
-                                  overflowY={'auto'} className={`editor-bottom-shadow`}
-                                  onScroll={() => handleEditorScroll()}>
-                                {/*onWheel={(event) => {*/}
-                                {/*    if (event.deltaX <= 0) {*/}
-                                {/*        handleEditorScroll()*/}
-                                {/*    }*/}
-                                {/*}}*/}
-                                <div style={{display: !showEditorToolbar ? 'block' : 'none'}}>
-                                    <Input padding={0} height={'fit-content'} border={"none"} cursor={'pointer'}
-                                           outline={'none'} boxShadow={'none'} _focusVisible={{boxShadow: 'none'}}
-                                           fontSize={'13px'} _placeholder={{color: '#adb5bd'}}
-                                           placeholder={'Hit enter to reply with anything you\'d like'}/>
-                                </div>
-                                {(selectedThread && draftIndex !== null) && (
-                                    <div style={{display: showEditorToolbar ? 'block' : 'none'}}>
-                                        <CollabRichTextEditor
-                                            id={selectedThread.id + '-' + draftIndex}
-                                            onCreate={() => sendToDraft('')}
-                                            placeholder="Hit enter to reply with anything you'd like"
-                                            isToolbarVisible={showEditorToolbar}
-                                            onChange={(value) => sendToDraft(value)}
-                                            className={`${extraClassNames} ${extraClassNamesForBottom}`}
-                                            emailSignature={selectedAccount ? getSignatureBanner(selectedAccount) : undefined}
-                                            projectShare={selectedThread?.projects?.length ? getProjectBanner(selectedAccount) : undefined}
-                                            extendToolbar={(
-                                                <>
-                                                    <Flex
-                                                        onClick={() => {
-                                                            inputFile.current?.click();
-                                                            loaderPercentage = 0;
-                                                        }}
-                                                        align={'center'} justify={'center'} cursor={'pointer'}
-                                                        className={styles.attachIcon}
-                                                    >
-                                                        <Image priority src="/image/icon/attach.svg" alt="emoji"
-                                                               width={13}
-                                                               height={13}/>
-                                                        Attach
-                                                        <input type='file' id='file' ref={inputFile}
-                                                               onChange={(e) => handleFileUpload(e.target.files, e)}
-                                                               style={{display: 'none'}}/>
-                                                    </Flex>
-                                                </>
-                                            )}
-                                        />
+                                <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} zIndex={6} ref={editorRef}
+                                      overflowY={'auto'} className={`editor-bottom-shadow`}
+                                      onScroll={() => handleEditorScroll()}>
+                                    {/*onWheel={(event) => {*/}
+                                    {/*    if (event.deltaX <= 0) {*/}
+                                    {/*        handleEditorScroll()*/}
+                                    {/*    }*/}
+                                    {/*}}*/}
+                                    <div style={{display: !showEditorToolbar ? 'block' : 'none'}}>
+                                        <Input padding={0} height={'fit-content'} border={"none"} cursor={'pointer'}
+                                               outline={'none'} boxShadow={'none'} _focusVisible={{boxShadow: 'none'}}
+                                               fontSize={'13px'} _placeholder={{color: '#adb5bd'}}
+                                               placeholder={'Hit enter to reply with anything you\'d like'}/>
                                     </div>
-                                )}
+                                    {(selectedThread && draftIndex !== null) && (
+                                        <div style={{display: showEditorToolbar ? 'block' : 'none'}}>
+                                            <CollabRichTextEditor
+                                                id={selectedThread.id + '-' + draftIndex}
+                                                onCreate={() => sendToDraft('')}
+                                                placeholder="Hit enter to reply with anything you'd like"
+                                                isToolbarVisible={showEditorToolbar}
+                                                onChange={(value) => sendToDraft(value)}
+                                                className={`${extraClassNames} ${extraClassNamesForBottom}`}
+                                                emailSignature={selectedAccount ? getSignatureBanner(selectedAccount) : undefined}
+                                                projectShare={selectedThread?.projects?.length ? getProjectBanner(selectedAccount) : undefined}
+                                                extendToolbar={(
+                                                    <>
+                                                        <Flex
+                                                            onClick={() => {
+                                                                inputFile.current?.click();
+                                                                loaderPercentage = 0;
+                                                            }}
+                                                            align={'center'} justify={'center'} cursor={'pointer'}
+                                                            className={styles.attachIcon}
+                                                        >
+                                                            <Image priority src="/image/icon/attach.svg" alt="emoji"
+                                                                   width={13}
+                                                                   height={13}/>
+                                                            Attach
+                                                            <input type='file' id='file' ref={inputFile}
+                                                                   onChange={(e) => handleFileUpload(e.target.files, e)}
+                                                                   style={{display: 'none'}}/>
+                                                        </Flex>
+                                                    </>
+                                                )}
+                                            />
+                                        </div>
+                                    )}
 
-                                {attachments && attachments.length > 0 ? <div style={{marginTop: '20px'}}>
-                                    {attachments.map((item, index: number) => (
-                                        <Flex align={'center'} key={index} className={styles.attachmentsFile}>
-                                            {item.filename}
-                                            <Flex ml={'auto'} gap={3} className={'attachments-progress-bar'}>
-                                                {(showAttachmentLoader && !item.isUploaded) &&
-                                                <ProgressBar loaderPercentage={loaderPercentage}/>}
-                                                <div className={styles.closeIcon}
-                                                     onClick={() => removeAttachmentData(index)}>
-                                                    <CloseIcon/>
-                                                </div>
+                                    {attachments && attachments.length > 0 ? <div style={{marginTop: '20px'}}>
+                                        {attachments.map((item, index: number) => (
+                                            <Flex align={'center'} key={index} className={styles.attachmentsFile}>
+                                                {item.filename}
+                                                <Flex ml={'auto'} gap={3} className={'attachments-progress-bar'}>
+                                                    {(showAttachmentLoader && !item.isUploaded) &&
+                                                    <ProgressBar loaderPercentage={loaderPercentage}/>}
+                                                    <div className={styles.closeIcon}
+                                                         onClick={() => removeAttachmentData(index)}>
+                                                        <CloseIcon/>
+                                                    </div>
+                                                </Flex>
                                             </Flex>
-                                        </Flex>
-                                    ))}
-                                </div> : null}
+                                        ))}
+                                    </div> : null}
 
-                            </Flex>
-                            {showEditorToolbar &&
-                            <Flex direction={'column'} className={styles.composeBox} width={'fit-content'}
-                                  marginLeft={'auto'} mr={'6px'}>
-                                <Flex align={'center'} className={styles.replyButton} position={'relative'} zIndex={6}>
-                                    <Button
-                                        className={styles.replyTextDiscardButton}
-                                        outline={'none'} boxShadow={'none'} _focusVisible={{boxShadow: 'none'}}
-                                        fontSize={14} lineHeight={16} height={'38px'}
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            discardMessage()
-                                        }}
-                                    > Discard </Button>
-                                    <Flex className={styles.messageSendButton}>
+                                </Flex>
+                                {showEditorToolbar &&
+                                <Flex direction={'column'} className={styles.composeBox} width={'fit-content'}
+                                      marginLeft={'auto'} mr={'6px'}>
+                                    <Flex align={'center'} className={styles.replyButton} position={'relative'} zIndex={6}>
                                         <Button
-                                            isDisabled={showAttachmentLoader}
-                                            className={styles.replyTextButton}
-                                            colorScheme='blue'
-                                            fontSize={14} lineHeight={16}
+                                            className={styles.replyTextDiscardButton}
+                                            outline={'none'} boxShadow={'none'} _focusVisible={{boxShadow: 'none'}}
+                                            fontSize={14} lineHeight={16} height={'38px'}
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 e.stopPropagation();
-                                                sendMessages()
+                                                discardMessage()
                                             }}
-                                        >
-                                            {scheduledDate ? (
-                                                <>Send {dayjs(scheduledDate).from(dayjs())} @ {dayjs(scheduledDate).format('hh:mmA')}</>
-                                            ) : (
-                                                <>Send</>
-                                            )}
-                                        </Button>
+                                        > Discard </Button>
+                                        <Flex className={styles.messageSendButton}>
+                                            <Button
+                                                isDisabled={showAttachmentLoader}
+                                                className={styles.replyTextButton}
+                                                colorScheme='blue'
+                                                fontSize={14} lineHeight={16}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    sendMessages()
+                                                }}
+                                            >
+                                                {scheduledDate ? (
+                                                    <>Send {dayjs(scheduledDate).from(dayjs())} @ {dayjs(scheduledDate).format('hh:mmA')}</>
+                                                ) : (
+                                                    <>Send</>
+                                                )}
+                                            </Button>
 
-                                        <MessageSchedule date={scheduledDate} onChange={handleSchedule}/>
+                                            <MessageSchedule date={scheduledDate} onChange={handleSchedule}/>
+                                        </Flex>
                                     </Flex>
                                 </Flex>
+                                }
                             </Flex>
-                            }
-                        </Flex>
-                    </DropZone>
+                    </Flex>
                 </Flex>
-            </Flex>
+            </DropZone>
         </Flex>
     )
 }
