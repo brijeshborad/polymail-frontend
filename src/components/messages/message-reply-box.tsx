@@ -184,8 +184,18 @@ export function MessageReplyBox(props: MessageBoxType) {
             setEmailBody(value);
         }
 
+        let finalSubject = subject;
+        if (!finalSubject) {
+            if (replyType === 'reply' || replyType === 'reply-all') {
+                finalSubject = `Re: ${selectedThread?.subject}`
+            } else if (replyType === 'forward') {
+                finalSubject = `Fwd: ${selectedThread?.subject}`
+            }
+            setSubject(finalSubject);
+        }
+
         let body: any = {
-            subject: subject,
+            subject: finalSubject,
             to: emailRecipients.recipients?.items,
             cc: emailRecipients.cc?.items && emailRecipients.cc?.items.length > 0 ? emailRecipients.cc?.items : [],
             bcc: emailRecipients.bcc?.items && emailRecipients.bcc?.items.length > 0 ? emailRecipients.bcc?.items : [],
