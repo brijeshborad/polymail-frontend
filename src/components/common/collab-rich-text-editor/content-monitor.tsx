@@ -55,7 +55,9 @@ export default function ContentMonitor(props: any) {
         if (event && event.type === 'richtexteditor.focus') {
             globalEventService.fireEvent('iframe.clicked');
             if (editor && !editor.isFocused) {
-                editor?.commands.focus('start')
+                setTimeout(() => {
+                    editor?.commands.focus('start')
+                }, 100)
             }
         }
 
