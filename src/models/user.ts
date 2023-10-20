@@ -33,7 +33,7 @@ export interface UserDetails {
     preferences?: Preferences | null,
     avatar?: Avatar | null
     onboarded?: boolean,
-    activityRead?: string
+    activitiesRead?: string
 }
 
 

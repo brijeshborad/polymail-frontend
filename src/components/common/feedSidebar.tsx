@@ -28,6 +28,7 @@ export const FeedSidebar = () => {
     const dispatch = useDispatch();
     const [feeds, setFeeds] = useState<ActivityFeed[]>([]);
     const [unreadCount, setUnreadCount] = useState<number>(0);
+    const [lastActiveRead, setLastActivityRead] = useState<number>(0);
 
     useEffect(() => {
         if (newMessage && newMessage.name === 'Activity') {
@@ -49,23 +50,13 @@ export const FeedSidebar = () => {
                     dispatch(getAllProjects({noBlank: true}));
                 }
                 let currentFeeds: ActivityFeed[] = [...feeds];
-                if (currentFeeds.length > 0) {
-                    currentFeeds.unshift({
-                        created: newMessage.data.Created,
-                        title: newMessage.data.Title,
-                        subtitle: newMessage.data.Subtitle,
-                        body: newMessage.data.Body,
-                        isRead: userDetails ? dayjs(userDetails.activityRead).isAfter(dayjs(newMessage.data.Created)) : false,
-                    })
-                } else {
-                    currentFeeds.push({
-                        created: newMessage.data.Created,
-                        title: newMessage.data.Title,
-                        subtitle: newMessage.data.Subtitle,
-                        body: newMessage.data.Body,
-                        isRead: userDetails ? dayjs(userDetails.activityRead).isAfter(dayjs(newMessage.data.Created)) : false,
-                    })
-                }
+                currentFeeds.push({
+                    created: newMessage.data.Created,
+                    title: newMessage.data.Title,
+                    subtitle: newMessage.data.Subtitle,
+                    body: newMessage.data.Body,
+                    isRead: userDetails ? !dayjs(newMessage.data.Created).isAfter(dayjs(userDetails.activitiesRead)) : false,
+                })
                 setFeeds([...currentFeeds]);
             }
 
@@ -73,6 +64,7 @@ export const FeedSidebar = () => {
     }, [newMessage, dispatch, feeds, userDetails])
 
     useEffect(() => {
+        console.log(feeds);
         setUnreadCount(feeds.filter((t: ActivityFeed) => !t.isRead).length);
     }, [feeds])
 
@@ -80,11 +72,21 @@ export const FeedSidebar = () => {
         if (activityFeed && activityFeed.length > 0 && userDetails) {
             setFeeds([...activityFeed.map(item => {
                 let finalItem = {...item};
-                finalItem.isRead = userDetails ? dayjs(userDetails.activityRead).isAfter(dayjs(item.created)) : false;
+                finalItem.isRead = userDetails ? !dayjs(item.created).isAfter(dayjs(userDetails.activitiesRead)) : false;
                 return finalItem
             })]);
         }
     }, [activityFeed, userDetails]);
+
+    function getLastActivityFeed () {
+        let findLastActivityIndex = feeds.sort((a, b) => {
+            if (dayjs(b.created!).isBefore(dayjs(a.created))) {
+                return -1
+            }
+            return 0
+        }).findLastIndex(t => !t.isRead);
+        setLastActivityRead(findLastActivityIndex);
+    }
 
     function markFeedAsRead(index: number) {
         let currentFeeds = [...feeds];
@@ -114,13 +116,17 @@ export const FeedSidebar = () => {
                       className={`${styles.notificationIcon} ${unreadCount > 0 ? styles.notificationIconUnRead : ''}`}
                       onClick={() => {
                           onOpen();
+                          getLastActivityFeed();
                           markAllAsRead();
                       }}>
                     <EnergyIcon fill={unreadCount > 0 ? '#fff' : '#08162F'}/>
                     {unreadCount > 0 ? (<Badge>{unreadCount}</Badge>) : null}
                 </Flex>
             </Tooltip>
-            <Drawer isOpen={isOpen} placement="right" onClose={onClose} finalFocusRef={btnRef}>
+            <Drawer isOpen={isOpen} placement="right" onClose={() => {
+                onClose();
+                setLastActivityRead(0)
+            }} finalFocusRef={btnRef}>
                 {/* <DrawerOverlay /> */}
 
                 <DrawerContent>
@@ -134,7 +140,10 @@ export const FeedSidebar = () => {
                             </Flex>
 
                             <Box
-                                onClick={onClose}
+                                onClick={() => {
+                                    onClose();
+                                    setLastActivityRead(0)
+                                }}
                                 height="20px"
                                 width="61px"
                                 borderRadius="34px"
@@ -172,11 +181,23 @@ export const FeedSidebar = () => {
 
                         <Box padding="12px 16px">
                             {feeds
-                                .sort((a, b) => b.created! < a.created! ? -1 : 0)
-                                .map((t: ActivityFeed, index: number) => (
-                                    <FeedComponent key={index} feedData={t}
-                                                   markFeedAsRead={() => markFeedAsRead(index)}/>
-                                ))}
+                                .sort((a, b) => {
+                                    if (dayjs(b.created!).isBefore(dayjs(a.created))) {
+                                        return -1
+                                    }
+                                    return 0
+                                })
+                                .map((t: ActivityFeed, index: number) => {
+                                    return (
+                                        <React.Fragment key={index}>
+                                            <FeedComponent feedData={t}
+                                                           markFeedAsRead={() => markFeedAsRead(index)}/>
+                                            {(lastActiveRead === index) &&
+                                            <Text marginBottom={'8px'} fontSize={'13px'} color={'red'} noOfLines={1}>New
+                                                ---------------------------------------------</Text>}
+                                        </React.Fragment>
+                                    )
+                                })}
                         </Box>
                     </Box>
                 </DrawerContent>

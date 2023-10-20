@@ -197,10 +197,14 @@ class ThreadsService extends BaseService {
                 toasterSuccessMessage.desc = 'Thread was added to ' + item.name?.toLowerCase() + '.';
                 toasterSuccessMessage.title = selectedThread?.subject || 'Success';
             }
-            const projects = selectedThread?.projects || [];
+            let projects = selectedThread?.projects || [];
+            projects = [...projects, item];
+            projects = projects.filter((obj: Project, index: number) => {
+                return index === projects.findIndex((o: Project) => obj.id === o.id);
+            })
             let addProject = {
                 ...selectedThread,
-                projects: [...projects, item]
+                projects: projects
             }
             if (allowComposeDraft) {
                 draftService.setComposeDraft(addProject)
@@ -214,7 +218,7 @@ class ThreadsService extends BaseService {
                         newThreads = [...threads];
                         newThreads[index1] = {
                             ...newThreads[index1],
-                            projects: [...projects, item]
+                            projects: projects
                         }
                     }
                     this.setThreadState({threads: newThreads});
@@ -226,7 +230,7 @@ class ThreadsService extends BaseService {
                     newThreads = [...threads];
                     newThreads[index1] = {
                         ...newThreads[index1],
-                        projects: [...projects, item]
+                        projects: projects
                     }
                 }
                 this.setSelectedThread(addProject);
@@ -263,7 +267,7 @@ class ThreadsService extends BaseService {
                                     }
                                     setTimeout(() => {
                                         globalEventService.fireEvent({data: {body: 'remove'}, type: 'richtexteditor.addRemoveProject'})
-                                    }, 10)
+                                    }, 30)
                                     draftService.setComposeDraft(thread)
                                 }
                                 this.setThreadState({selectedThread: selectedThread, threads: threads});
@@ -324,14 +328,18 @@ class ThreadsService extends BaseService {
                         },
                         afterUndoAction: () => {
                             if (isComposing) {
-                                const projects = selectedThread?.projects || [];
+                                let projects = selectedThread?.projects || [];
+                                projects = [...projects, item];
+                                projects = projects.filter((obj: Project, index: number) => {
+                                    return index === projects.findIndex((o: Project) => obj.id === o.id);
+                                })
                                 let addProject = {
                                     ...selectedThread,
-                                    projects: [...projects, item]
+                                    projects: projects
                                 }
                                 setTimeout(() => {
                                     globalEventService.fireEvent({data: {body: 'add'}, type: 'richtexteditor.addRemoveProject'})
-                                }, 10)
+                                }, 30)
                                 draftService.setComposeDraft(addProject)
                             }
                             this.setThreadState({selectedThread: selectedThread, threads: threads});

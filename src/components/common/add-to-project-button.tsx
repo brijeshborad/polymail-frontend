@@ -114,10 +114,12 @@ export function AddToProjectButton() {
                 projects.push(incomingEvent.data);
                 setFilteredProjects([...projects]);
             }
+            globalEventService.blankEvent();
         }
         if (typeof incomingEvent === 'object' && incomingEvent.type === 'addToProject.add') {
             setThreadProject(prevState => [...prevState, incomingEvent.data]);
             setFilteredProjects((filteredProjects || []).filter((project: Project) => project.id !== incomingEvent.data.id));
+            globalEventService.blankEvent();
         }
     }, [filteredProjects, incomingEvent, setDropDownOpen, threadProject]);
 
@@ -131,8 +133,10 @@ export function AddToProjectButton() {
             if (!isComposing) {
                 if (!(isOnProjectView && threads)) {
                     let projects = [...filteredProjects];
-                    projects.push(item);
-                    setFilteredProjects([...projects]);
+                    if (!projects.find(pItem => pItem.id === item.id)) {
+                        projects.push(item);
+                        setFilteredProjects([...projects]);
+                    }
                 }
             }
         } else {
