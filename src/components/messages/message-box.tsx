@@ -61,13 +61,13 @@ export function MessageBox(props: any) {
     }, [])
 
     useEffect(() => {
-        if (selectedThread && selectedThread?.id && ((!messages || messages.length <= 0) || (messages && messages.length > 0 && messages[0] && messages[0].threadId !== selectedThread.id))) {
+        if (selectedThread && selectedThread?.id) {
             setIndex(null);
             globalEventService.fireEvent({data: null, type: 'draft.currentMessage'})
             globalEventService.fireEvent({data: {type: 'reply'}, type: 'draft.updateType'})
             messageService.setMessages(selectedThread.messages || []);
         }
-    }, [dispatch, messages, selectedThread])
+    }, [dispatch, selectedThread])
 
     useEffect(() => {
         if (messages && messages.length > 0) {

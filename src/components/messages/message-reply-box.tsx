@@ -18,7 +18,7 @@ import {StateType} from "@/types";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import {Message, MessageAttachments, MessageRecipient} from "@/models";
-import {deleteMessage, removeAttachment, uploadAttachment} from "@/redux/messages/action-reducer";
+import {removeAttachment, uploadAttachment} from "@/redux/messages/action-reducer";
 import {MessageBoxType} from "@/types/props-types/message-box.type";
 import {useRouter} from "next/router";
 import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
@@ -83,6 +83,9 @@ export function MessageReplyBox(props: MessageBoxType) {
             let onlyDraftMessages = (selectedThread?.messages || []).filter((msg: Message) => (msg.mailboxes || []).includes('DRAFT'));
             const draftMessageIndex = onlyDraftMessages.findIndex((msg: Message) => (msg.mailboxes || []).includes('DRAFT'));
             setDraftIndex(draftMessageIndex !== -1 ? draftMessageIndex : 0);
+            if (draftMessageIndex !== -1) {
+                draftService.setReplyDraft(onlyDraftMessages[draftMessageIndex]);
+            }
             // if (onlyDraftMessages[draftMessageIndex]) {
             //     if (!getPlainTextFromHtml(onlyDraftMessages[draftMessageIndex].draftInfo?.body || '').trim()) {
             //         setTimeout(() => {
@@ -460,20 +463,20 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         setIsReplyDropdownOpen(false)
         setShowReplyBox(false);
         setShowEditorToolbar(false)
-        globalEventService.fireEvent({data: '', type: 'richtexteditor.discard'});
+        // globalEventService.fireEvent({data: '', type: 'richtexteditor.discard'});
         handleEditorScroll();
-        if (draft && draft.id) {
-            draftService.setReplyDraft(null);
-            setAttachments([]);
-            draftService.discardDraft(draft.id!);
-            setDraftIndex(null);
-            dispatch(deleteMessage({
-                body: {id: draft.id},
-                afterSuccessAction: () => {
-                    setIsDraftUpdated(false);
-                }
-            }));
-        }
+        // if (draft && draft.id) {
+        //     draftService.setReplyDraft(null);
+        //     setAttachments([]);
+        //     draftService.discardDraft(draft.id!);
+        //     setDraftIndex(null);
+        //     dispatch(deleteMessage({
+        //         body: {id: draft.id},
+        //         afterSuccessAction: () => {
+        //             setIsDraftUpdated(false);
+        //         }
+        //     }));
+        // }
     }
 
     const sendMessages = () => {
@@ -744,7 +747,9 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                         }}> {showReplyBox ? 'Close' : 'Edit'} </Button>
                             </Flex>
                             <Flex
-                                onClick={() => {
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    e.preventDefault();
                                     handleFocus();
                                     globalEventService.fireEvent({data: null, type: 'richtexteditor.focus'});
                                 }}
@@ -775,7 +780,11 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                         </div>
                         }
                         <Flex
-                            onClick={() => handleFocus()}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                handleFocus()
+                            }}
                             direction={'column'} position={"relative"} flex={1} overflow={'none'}>
                                 <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} zIndex={6} ref={editorRef}
                                       overflowY={'auto'} className={`editor-bottom-shadow`}
@@ -796,6 +805,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                             <CollabRichTextEditor
                                                 id={selectedThread.id + '-' + draftIndex}
                                                 onCreate={() => sendToDraft('')}
+                                                content={draft?.draftInfo?.body}
                                                 placeholder="Hit enter to reply with anything you'd like"
                                                 isToolbarVisible={showEditorToolbar}
                                                 onChange={(value) => sendToDraft(value)}

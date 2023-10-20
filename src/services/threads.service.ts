@@ -399,10 +399,20 @@ class ThreadsService extends BaseService {
 
     makeThreadAsRead(thread: Thread | null) {
         if (!thread) return;
+        let {threads} = this.getThreadState();
         const mailboxes = (thread.mailboxes || [])
         const isUnread = mailboxes.includes('UNREAD');
 
         if (isUnread) {
+            let updateTheList = [...(threads || [])];
+            let findTheThreadToUpdate = updateTheList.findIndex((item: Thread) => item.id === thread.id);
+            if (findTheThreadToUpdate !== -1) {
+                updateTheList[findTheThreadToUpdate] = {
+                    ...updateTheList[findTheThreadToUpdate],
+                    mailboxes: mailboxes.filter(i => i !== 'UNREAD')
+                }
+                this.setThreads(updateTheList);
+            }
             this.dispatchAction(updateThreads, {
                 body: {
                     id: thread.id,
@@ -463,8 +473,10 @@ class ThreadsService extends BaseService {
         if (threadIndex !== -1) {
             let currentMessages = [...(currentThreads[threadIndex].messages || [])];
             let messageIndex = currentMessages.findIndex((item: Message) => item.id === convertMessages.id);
-            currentMessages.splice(messageIndex, 1);
-            currentMessages.push(convertMessages);
+            currentMessages[messageIndex] = {
+                ...currentMessages[messageIndex],
+                ...convertMessages
+            }
             currentThreads[threadIndex] = {...currentThreads[threadIndex]};
             currentThreads[threadIndex].messages = [...(currentThreads[threadIndex].messages || [])];
             currentThreads[threadIndex].messages = [...currentMessages];
@@ -473,8 +485,10 @@ class ThreadsService extends BaseService {
             let currentSelectedThread: Thread = {...selectedThread};
             let currentSelectedThreadMessages = [...(selectedThread?.messages || [])];
             messageIndex = currentSelectedThreadMessages.findIndex((item: Message) => item.id === convertMessages.id);
-            currentSelectedThreadMessages.splice(messageIndex, 1);
-            currentSelectedThreadMessages.push(convertMessages);
+            currentSelectedThreadMessages[messageIndex] = {
+                ...currentSelectedThreadMessages[messageIndex],
+                ...convertMessages
+            }
             currentSelectedThread.messages = [...currentSelectedThreadMessages];
             currentSelectedThread.mailboxes = [...mailBoxes]
             this.setThreads(currentThreads);

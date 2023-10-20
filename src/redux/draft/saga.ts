@@ -55,9 +55,9 @@ function* patchPartialMessage({payload}: PayloadAction<ReducerActionType>) {
         delete payload.body.isDraftTab;
         let response: AxiosResponse;
         if (!payload.body.params) {
-            response = yield ApiService.callPut(`messages/${payload.body.id}`, payload.body.body, null, payload.body.params);
+            response = yield ApiService.callPut(`messages/${payload.body.id}`, payload.body.body, null);
         } else {
-            response = yield ApiService.callPatch(`messages/${payload.body.id}`, payload.body.body);
+            response = yield ApiService.callPatch(`messages/${payload.body.id}`, payload.body.body, null, payload.body.params);
         }
         performSuccessActions(payload);
         yield put(updatePartialMessageSuccess({updatedDraft: response, isForCompose, isDraftTab}));
