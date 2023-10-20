@@ -192,8 +192,8 @@ export const FeedSidebar = () => {
                                             <FeedComponent feedData={t}
                                                            markFeedAsRead={() => markFeedAsRead(index)}/>
                                             {(lastActiveRead === index) &&
-                                            <Text marginBottom={'8px'} fontSize={'13px'} color={'red'} noOfLines={1}>New
-                                                ---------------------------------------------</Text>}
+                                            <Text marginBottom={'8px'} fontSize={'13px'} color={'red'}>New
+                                                <hr style={{width: '85%', marginLeft: '10px', borderColor: 'red', marginTop: '3px'}}/></Text>}
                                         </React.Fragment>
                                     )
                                 })}
