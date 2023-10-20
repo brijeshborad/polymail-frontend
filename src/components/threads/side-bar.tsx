@@ -178,7 +178,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                             )}
                             </span> : <span style={{display: 'flex', alignItems: 'center'}}>{multiSelection && multiSelection?.length > 0 && (
                                 <Badge
-                                    backgroundColor={'#F3F4F6'} fontSize={'12px'} color={'#6B7280'}
+                                    backgroundColor={'#F3F4F6'} fontSize={'12px'} color={'#6B7280'} marginRight={'5px'}
                                     padding={'1px 4px'} borderRadius={4} fontWeight={500}
                                 >
                                     {multiSelection?.length}
