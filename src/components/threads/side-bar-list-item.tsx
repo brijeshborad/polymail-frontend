@@ -145,7 +145,11 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                                           }}>
                                     <div className={'add-to-project-list'}>
                                         {props?.thread?.projects?.map(project => (
-                                            <MenuItem gap={2} key={project.id} onClick={() => goToProject(project)}>
+                                            <MenuItem gap={2} key={project.id} onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                goToProject(project)
+                                            }}>
                                                 {project.emoji} {project.name}
                                             </MenuItem>
                                         ))}
