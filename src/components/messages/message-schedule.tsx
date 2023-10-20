@@ -122,7 +122,7 @@ export default function MessageSchedule({date, onChange, isSnooze = false, isNam
                 </MenuButton>
 
                 {!showScheduleMenu && (
-                    <MenuList className={'drop-down-list'}>
+                    <MenuList zIndex={'10'} className={'drop-down-list'}>
                         {!scheduleDate && (
                             <MenuItem
                                 onClick={() => {
@@ -157,7 +157,7 @@ export default function MessageSchedule({date, onChange, isSnooze = false, isNam
                 )}
 
                 {showScheduleMenu && (
-                    <MenuList zIndex={'dropdown'} width={'360px'}>
+                    <MenuList zIndex={'10'} width={'360px'}>
                         {!customSchedule && (
                             <>
                                 <Flex
