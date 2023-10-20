@@ -397,6 +397,9 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                             }
                         }));
                     } else {
+                        if (loaderPercentage < 100) {
+                            loaderPercentage += 20;
+                        }
                         let body: any = {
                             subject: subject,
                             to: emailRecipients.recipients?.items,
@@ -413,9 +416,6 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                             body: {id: selectedThread?.id + '-' + draftIndex, body: body},
                             afterSuccessAction: (draft: any) => {
                                 draftService.setReplyDraft(draft);
-                                if (loaderPercentage < 100) {
-                                    loaderPercentage += 20;
-                                }
                                 dispatch(uploadAttachment({body: {id: draft.id, file: file}}));
                             }
                         }));
@@ -780,7 +780,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                         </div>
                         }
                         <Flex
-                            onClick={(e) => {
+                            onFocus={(e) => {
                                 e.stopPropagation();
                                 e.preventDefault();
                                 handleFocus()
@@ -815,7 +815,9 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                                 extendToolbar={(
                                                     <>
                                                         <Flex
-                                                            onClick={() => {
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
                                                                 inputFile.current?.click();
                                                                 loaderPercentage = 0;
                                                             }}
@@ -826,7 +828,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                                                    width={13}
                                                                    height={13}/>
                                                             Attach
-                                                            <input type='file' id='file' ref={inputFile}
+                                                            <input type='file' id='file' ref={inputFile} onClick={(e) => e.stopPropagation()}
                                                                    onChange={(e) => handleFileUpload(e.target.files, e)}
                                                                    style={{display: 'none'}}/>
                                                         </Flex>
