@@ -38,7 +38,7 @@ function extractBodyFromParts(contentRoot: ContentRoot | undefined): string {
     }
 }
 
-function _extractBodyFromParts(part: ContentRoot): ContentRoot {
+function _extractBodyFromParts(part: ContentRoot): ContentRoot | null {
     let returnValue: any = null;
     switch (part.mimeType) {
         case "text":
