@@ -1,7 +1,7 @@
 import {MessageDraft, Thread} from "@/models";
 import styles from "@/styles/Inbox.module.css";
 import {Flex, Input} from "@chakra-ui/react";
-import React, {useEffect, useCallback, useRef, useState, RefObject} from "react";
+import React, {useEffect, useCallback, useRef, useState} from "react";
 import {useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {ThreadListProps} from "@/types";
@@ -26,7 +26,6 @@ const ThreadsSideBarListItem = dynamic(() => import("./side-bar-list-item").then
 export function ThreadsSideBarList(props: ThreadListProps) {
     const {selectedThread, threads, multiSelection} = useSelector((state: StateType) => state.threads);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
-    const [currentThreadRef, setCurrentThreadRef] = useState<RefObject<HTMLDivElement> | null>(null);
     const listRef = useRef<any>(null);
     const router = useRouter();
     const routePaths = router.pathname.split('/');
@@ -34,7 +33,22 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     const [extraClassNames, setExtraClassNames] = useState<string>('');
     const [currentThreads, setCurrentThreads] = useState<Thread[]>([]);
     const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
-    const {target, threadIndex} = useSelector((state: StateType) => state.keyNavigation)
+    const threadsRef = useRef<any>([]);
+
+    const scrollToPosition = useCallback((thread: Thread) => {
+        const node = threadsRef.current[thread.id!]
+        if (node) {
+            const topPos = node.offsetTop - 110
+            setTimeout(() => {
+                if (editorRef.current) {
+                    editorRef.current.scrollTo({
+                        top: topPos,
+                        behavior: 'smooth'
+                    })
+                }
+            }, 1)
+        }
+    }, [])
 
     useEffect(() => {
         if (threads) {
@@ -45,28 +59,12 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     useEffect(() => {
         // Make isThreadSearched as false when multiSelection is null or blank
         if (selectedThread) {
+            scrollToPosition(selectedThread)
             let currentSelectedThreads = getCurrentSelectedThreads();
             currentSelectedThreads.push(currentThreads.findIndex((thread: Thread) => thread.id === selectedThread.id))
             setCurrentSelectedThreads(currentSelectedThreads);
         }
-    }, [selectedThread, currentThreads])
-
-    useEffect(() => {
-        if (target === 'threads' || target === 'thread') {
-            const node = currentThreadRef ? currentThreadRef.current : null
-            if (node) {
-                const topPos = (node.offsetTop - 110) || ((threadIndex || 0)) * 110
-                setTimeout(() => {
-                    if (editorRef.current) {
-                        editorRef.current.scrollTo({
-                            top: topPos,
-                            behavior: 'smooth'
-                        })
-                    }
-                }, 1)
-            }
-        }
-    }, [target, threadIndex, currentThreadRef])
+    }, [selectedThread, currentThreads, scrollToPosition])
 
     const handleClick = useCallback((item: Thread, event: KeyboardEvent | any, index: number) => {
         // Check if Control key (or Command key on Mac) is held down
@@ -211,7 +209,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
                                 thread={item}
                                 tab={props.tab}
                                 onClick={(e) => handleClick(item, e, index)}
-                                onSelect={(ref) => setCurrentThreadRef(ref)}
+                                threadsRef={threadsRef}
                             />
                         </div>
                     ))}

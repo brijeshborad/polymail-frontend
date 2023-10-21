@@ -36,6 +36,11 @@ export default function CollabRichTextEditorToolbar({
 
             // update link
             if (url) {
+                const httpValidation = new RegExp("^(http|https)://", "i"); //Check Url has Http or not
+                let validUrl = httpValidation.test(url);
+                if (!validUrl) {
+                    url = "https://" + url;
+                }
                 editor.chain().focus().extendMarkRange('link').setLink({href: url}).run()
             }
         }

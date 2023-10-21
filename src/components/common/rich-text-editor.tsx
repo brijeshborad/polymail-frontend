@@ -130,6 +130,19 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
         };
     }, [containerRef]);
 
+    const handleLinkCallback = ({
+                                    title,
+                                    target,
+                                    targetOption
+                                }: { title: string, target: string, targetOption?: string }) => {
+        let url = target
+        const httpValidation = new RegExp("^(http|https)://", "i"); //Check Url has Http or not
+        let validUrl = httpValidation.test(url);
+        if (!validUrl) {
+            url = "https://" + url;
+        }
+        return {title: title, target: url, targetOption: targetOption}
+    }
 
     return (
         <Flex ref={containerRef}>
@@ -175,9 +188,11 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
                         defaultTargetOption: '_self',
                         options: ['link'],
                         link: {icon: "/image/icon/link.svg", className: 'link-class', popupClassName: 'emoji-picker'},
+                        linkCallback: handleLinkCallback
                     }
                 }}
-                toolbarCustomButtons={[<CustomOption  key="custom-option" onChange={onChange} editorState={editorState}/>]}
+                toolbarCustomButtons={[<CustomOption key="custom-option" onChange={onChange}
+                                                     editorState={editorState}/>]}
             />
         </Flex>
     )

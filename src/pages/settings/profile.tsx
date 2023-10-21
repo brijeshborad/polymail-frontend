@@ -333,7 +333,7 @@ function Profile() {
                                         <Input className={styles.namesInput} placeholder='Enter First Name' value={profileDetails.firstName}
                                                onChange={(event) => setFullName(event, 'firstName')}/>
 
-                                        <Text fontSize={'14px'} mt={2}>Last Name</Text>
+                                        <Text fontSize={'14px'} mt={5}>Last Name</Text>
                                         <Input className={styles.namesInput} placeholder='Enter Last Name' value={profileDetails.lastName}
                                                onChange={(event) => setFullName(event, 'lastName')}/>
                                     </div>

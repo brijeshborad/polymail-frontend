@@ -5,7 +5,7 @@ import {Time} from "@/components/common";
 import {DisneyIcon, DotIcon} from "@/icons";
 import {StateType, ThreadListItemProps} from "@/types";
 import {useSelector} from "react-redux";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {MAILBOX_UNREAD} from "@/utils/constants";
 import {Project, UserProjectOnlineStatus} from "@/models";
 import {keyNavigationService} from "@/services";
@@ -16,7 +16,6 @@ import {clearDebounce, debounce} from "@/utils/common.functions";
 
 
 export function ThreadsSideBarListItem(props: ThreadListItemProps) {
-    const ref = useRef(null);
     const router = useRouter()
 
     const {
@@ -48,13 +47,6 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
         setIsClicked((props.thread.mailboxes || []).includes(MAILBOX_UNREAD));
     }, [props.thread, updateSuccess, error])
 
-    useEffect(() => {
-        if (selectedThread && selectedThread.id === props.thread.id) {
-            props.onSelect(ref)
-        }
-        // eslint-disable-next-line
-    }, [selectedThread])
-
     const goToProject = (project: Project) => {
         router.push(`/projects/${project.id}`)
     }
@@ -62,7 +54,11 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
     return (
         <>
             <Box
-                ref={ref}
+                ref={(ref) => {
+                    if (props.thread.id) {
+                        props.threadsRef.current[props.thread.id!] = ref
+                    }
+                }}
                 onClick={(e) => {
                     props.onClick(e)
                     keyNavigationService.setKeyNavigationState({target: 'threads'});
