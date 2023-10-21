@@ -71,14 +71,14 @@ export function Header() {
         [],
     );
 
-    const updateValuesFromAccount = useCallback((account: Account) => {
+    const updateValuesFromAccount = useCallback((account: Account, fireSuccess: boolean = true) => {
         let projects = account.projects || [];
         let organizations = ([...account.organizations || []]).sort((a: Organization, b: Organization) => (new Date(b.created as string).valueOf() - new Date(a.created as string).valueOf()));
         let contacts = account.contacts || [];
         projectService.setProjectState({projects, isLoading: false});
         organizationService.setOrganizationState({organizations, isLoading: false});
         commonService.setCommonState({contacts, isLoading: false});
-        accountService.setAccountState({success: true});
+        accountService.setAccountState({success: fireSuccess});
         // if (!organizations) {
         //     Router.push('/organization/add');
         //     return;
@@ -117,7 +117,7 @@ export function Header() {
                     } else {
                         commonService.updateEmailSyncPercentage(null);
                         accountService.setSelectedAccount({...selectedAccount, syncHistory: {mailInitSynced: new Date().toString()}});
-                        updateValuesFromAccount(selectedAccount);
+                        updateValuesFromAccount(selectedAccount, true);
                     }
                 }
             }
@@ -143,8 +143,7 @@ export function Header() {
             if (account.syncHistory?.mailInitSynced) {
                 commonService.updateEmailSyncPercentage(null);
                 LocalStorageService.updateAccount('store', account);
-                accountService.setAccountState({success: true});
-                updateValuesFromAccount(account);
+                updateValuesFromAccount(account, false);
             } else {
                 commonService.updateEmailSyncPercentage(1);
             }
@@ -170,7 +169,7 @@ export function Header() {
                 if (findTheUpdatedAccount) {
                     findTheUpdatedAccount = accounts.find(item => item.id === findTheUpdatedAccount.id);
                     if (findTheUpdatedAccount) {
-                        updateValuesFromAccount(findTheUpdatedAccount);
+                        updateValuesFromAccount(findTheUpdatedAccount, false);
                     }
                 }
             }

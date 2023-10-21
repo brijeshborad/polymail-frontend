@@ -10,7 +10,7 @@ import {addItemToGroup} from "@/redux/memberships/action-reducer";
 import {removeThreadFromProject} from "@/redux/projects/action-reducer";
 import {commonService} from "@/services/common.service";
 import {globalEventService} from "@/services/global-event.service";
-import {getCacheMessages, getCacheThreads, setCacheMessages, setCacheThreads} from "@/utils/cache.functions";
+import {getCacheThreads, setCacheThreads} from "@/utils/cache.functions";
 import {accountService} from "@/services/account.service";
 
 declare type MailBoxTypes = 'INBOX' | 'DRAFT' | 'UNREAD' | 'ARCHIVE' | 'TRASH' | 'SNOOZED' | 'STARRED' | string;
@@ -266,7 +266,10 @@ class ThreadsService extends BaseService {
                                         projects: data
                                     }
                                     setTimeout(() => {
-                                        globalEventService.fireEvent({data: {body: 'remove'}, type: 'richtexteditor.addRemoveProject'})
+                                        globalEventService.fireEvent({
+                                            data: {body: 'remove'},
+                                            type: 'richtexteditor.addRemoveProject'
+                                        })
                                     }, 30)
                                     draftService.setComposeDraft(thread)
                                 }
@@ -338,7 +341,10 @@ class ThreadsService extends BaseService {
                                     projects: projects
                                 }
                                 setTimeout(() => {
-                                    globalEventService.fireEvent({data: {body: 'add'}, type: 'richtexteditor.addRemoveProject'})
+                                    globalEventService.fireEvent({
+                                        data: {body: 'add'},
+                                        type: 'richtexteditor.addRemoveProject'
+                                    })
                                 }, 30)
                                 draftService.setComposeDraft(addProject)
                             }
@@ -456,6 +462,12 @@ class ThreadsService extends BaseService {
             mailboxes: type === 'undo' ? [MAILBOX_DRAFT] : [MAILBOX_SENT],
             snippet: currentDraft?.draftInfo?.body
         }
+        if (currentDraft) {
+            let addTargetBlank = emailBody.replace(/<a/g, '<a target="_blank"');
+            const blob = new Blob([addTargetBlank], {type: "text/html"});
+            convertMessages.body = window.URL.createObjectURL(blob);
+            convertMessages.attachments = currentDraft?.draftInfo?.attachments || [];
+        }
         let currentThreads = [...(threads || [])];
         let selectedThread = currentThreads.find((item: Thread) => item.id === convertMessages.threadId);
         let mailBoxes = [...(selectedThread?.mailboxes || [])];
@@ -497,17 +509,6 @@ class ThreadsService extends BaseService {
 
 
         globalEventService.fireEvent('threads.refresh');
-        if (currentDraft) {
-            let cacheMessages = getCacheMessages();
-            setCacheMessages({
-                ...cacheMessages,
-                [currentDraft.id as string]: {
-                    ...cacheMessages[currentDraft.id as string],
-                    data: Buffer.from(emailBody || '').toString('base64'),
-                    attachments: currentDraft?.draftInfo?.attachments || []
-                }
-            })
-        }
 
         if (type === 'send') {
             draftService.backupDraftForUndo();
@@ -571,7 +572,11 @@ class ThreadsService extends BaseService {
                 setTimeout(() => {
                     commonService.toggleComposing(true);
                     if (revertThread && revertThread.messages && revertThread.messages[0]) {
-                        let finalDraft = {...revertThread.messages[0], projects: [...(revertThread.projects || [])], updated: revertThread.messages[0].updated}
+                        let finalDraft = {
+                            ...revertThread.messages[0],
+                            projects: [...(revertThread.projects || [])],
+                            updated: revertThread.messages[0].updated
+                        }
                         draftService.setComposeDraft(finalDraft);
                     }
                 }, 20);

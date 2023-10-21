@@ -1,6 +1,7 @@
 import {createSlice, current, PayloadAction} from "@reduxjs/toolkit";
 import {InitialThreadStateType, ReducerActionType} from "@/types";
 import {Thread} from "@/models";
+import {extractAndMapThreadAndMessagesBody} from "@/utils/thread.functions";
 
 const initialState: any = {
     threads: [],
@@ -28,7 +29,7 @@ const threadsSlice = createSlice({
         },
         getAllThreadsSuccess: (state: InitialThreadStateType, {payload: threads}: PayloadAction<any>) => {
             // Sort threads by latestMessage DESC
-            threads = (threads || []).sort((a: Thread, b: Thread) => (new Date(b.latestMessage as string).valueOf() - new Date(a.latestMessage as string).valueOf()));
+            threads = extractAndMapThreadAndMessagesBody(threads);
             return {...state, threads, isLoading: false, success: true}
         },
         getAllThreadsError: (state: InitialThreadStateType,  _action: PayloadAction<any>) => {

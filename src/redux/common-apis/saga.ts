@@ -24,10 +24,7 @@ dayjs.extend(customParseFormat)
 
 function* getSummaryData() {
     try {
-        const response: Summary = yield ApiService.callGet(`summary/inbox`, {
-            cutoff: dayjs().add(1, "day").format('YYYY-MM-DD'),
-            count: 100
-        });
+        const response: Summary = yield ApiService.callGet(`summary/inbox`, null);
         yield put(getAllAccountSuccess(response.accounts || []));
         yield put(getActivityFeedSuccess(response.activities || []));
         yield put(updateUserState({userDetails: response.user || {}}));

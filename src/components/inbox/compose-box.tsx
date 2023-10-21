@@ -26,7 +26,6 @@ import CollabRichTextEditor from "../common/collab-rich-text-editor";
 import Image from "next/image";
 import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
 import {commonService, draftService, globalEventService, messageService, threadService} from "@/services";
-import {getCacheMessages, setCacheMessages} from "@/utils/cache.functions";
 import {ProgressBar} from "@/components/loader-screen/progress-bar";
 
 const CreateNewProject = dynamic(() => import('@/components/project/create-new-project').then(mod => mod.default));
@@ -281,22 +280,6 @@ export function ComposeBox(props: any) {
             sendToDraft('', false);
         }
     }, [emailRecipients.recipients.items, emailRecipients.cc.items, emailRecipients.bcc.items, subject]);
-
-    useEffect(() => {
-        if (composeDraft && composeDraft.id) {
-            draftService.setResumeDraft(composeDraft);
-            let cacheMessages = getCacheMessages();
-            setCacheMessages({
-                ...cacheMessages,
-                [composeDraft.id!]: {
-                    ...cacheMessages[composeDraft.id!],
-                    data: Buffer.from(composeDraft?.draftInfo?.body || '').toString('base64'),
-                    attachments: composeDraft?.draftInfo?.attachments || []
-                }
-            })
-        }
-    }, [composeDraft])
-
 
     function handleFileUpload(files: any, event: any) {
         if (!files) return;

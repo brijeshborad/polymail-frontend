@@ -23,7 +23,7 @@ export interface Message {
     cc?: MessageRecipient[],
     bcc?: MessageRecipient[],
     headers?: MessageHeaders[],
-    contentRoot?: string,
+    contentRoot?: ContentRoot,
     draftInfo?: MessageDraftInfo,
     body?: MessagePart | null | string,
     attachments?: MessageAttachments[] | [],
@@ -40,7 +40,7 @@ export interface MessageDraft {
     mailboxes?: string[],
     providerId?: string,
     draftInfo?: MessageDraftInfo,
-    contentRoot?: string,
+    contentRoot?: ContentRoot,
     created?: string,
     updated?: string,
     subject?: string,
@@ -53,10 +53,6 @@ export interface MessageHeaders {
     value?: string
 }
 
-export interface MessageAttachment {
-    filename: string,
-    data?: string
-}
 
 export interface MessageDraftInfo {
     body?: string,
@@ -64,12 +60,17 @@ export interface MessageDraftInfo {
     collabId?: string,
 }
 
-export interface MessageRequestBody {
-    subject?: string,
-    to: MessageRecipient[],
-    body?: string,
-    draftInfo?: MessageDraftInfo,
-    mailboxes?: string[] | undefined,
-    scope?: string,
-    projectId?: string
+export interface ContentRoot {
+    body?: string;
+    created?: string;
+    id?: string;
+    message?: string;
+    mimeSubtype?: string;
+    mimeType?: string;
+    providerId?: string;
+    partId?: string;
+    thread?: string;
+    parts?: ContentRoot[];
+    attachment?: MessageAttachments
+    headers?: {name?: string, value?: string}[]
 }

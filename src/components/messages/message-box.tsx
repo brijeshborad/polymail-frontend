@@ -2,11 +2,9 @@ import styles from "@/styles/Inbox.module.css";
 import {Button, Flex, Heading, Menu, MenuButton, MenuItem, MenuList, Text} from "@chakra-ui/react";
 import {Time} from "@/components/common";
 import {MenuIcon} from "@/icons";
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {
     getAttachmentDownloadUrl,
-    getMessageAttachments,
-    getMessageParts,
     updateMessage
 } from "@/redux/messages/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
@@ -20,10 +18,6 @@ import {FileIcon, defaultStyles, DefaultExtensionType} from 'react-file-icon';
 import {globalEventService, messageService, threadService} from "@/services";
 import LinkPreview from "../common/link-preview";
 import {LinkPreviewProps} from "@/types/props-types/link-preview.types";
-import {getCacheMessages, setCacheMessages} from "@/utils/cache.functions";
-
-
-let currentInboxMessagesInstant: MessageModel[] = [];
 
 export function MessageBox(props: any) {
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
@@ -32,8 +26,6 @@ export function MessageBox(props: any) {
     const [iframeHeight, setIframeHeight] = useState<{ [key: string | number]: string }>({});
     const dispatch = useDispatch();
     const {
-        messagePart,
-        messageAttachments,
         messages
     } = useSelector((state: StateType) => state.messages);
     const {selectedThread} = useSelector((state: StateType) => state.threads);
@@ -47,19 +39,6 @@ export function MessageBox(props: any) {
     const [inboxMessages, setInboxMessages] = useState<MessageModel[]>([]);
     const [index, setIndex] = useState<number | null>(null);
 
-    const cacheMessage = useCallback((body: Object | any, messageId: string) => {
-        if (messageId) {
-            let cacheMessages = getCacheMessages();
-            setCacheMessages({
-                ...cacheMessages,
-                [messageId]: {
-                    ...cacheMessages[messageId],
-                    ...body
-                }
-            })
-        }
-    }, [])
-
     useEffect(() => {
         if (selectedThread && selectedThread?.id) {
             setIndex(null);
@@ -72,23 +51,8 @@ export function MessageBox(props: any) {
     useEffect(() => {
         if (messages && messages.length > 0) {
             // remove draft messages and set index to last inbox message
-            const currentInboxMessages: MessageModel[] = messages.filter((msg: MessageModel) => !(msg.mailboxes || []).includes('DRAFT')).map((item: MessageModel) => {
-                let cacheMessages: any = getCacheMessages();
-                let body = '';
-                if (cacheMessages[item.id!]) {
-                    let decoded = Buffer.from(cacheMessages[item.id!] && cacheMessages[item.id!].data || '', 'base64').toString();
-                    let addTargetBlank = decoded.replace(/<a/g, '<a target="_blank"');
-                    const blob = new Blob([addTargetBlank], {type: "text/html"});
-                    body = window.URL.createObjectURL(blob);
-                }
-                return {
-                    ...item,
-                    body,
-                    attachments: cacheMessages[item.id!] ? cacheMessages[item.id!].attachments || [] : []
-                }
-            });
+            const currentInboxMessages: MessageModel[] = messages.filter((msg: MessageModel) => !(msg.mailboxes || []).includes('DRAFT'));
             setInboxMessages([...currentInboxMessages]);
-            currentInboxMessagesInstant = [...currentInboxMessages];
             if (index === null) {
                 setIndex(currentInboxMessages.length - 1);
             }
@@ -98,78 +62,6 @@ export function MessageBox(props: any) {
             })
         }
     }, [messages, dispatch])
-
-    useEffect(() => {
-        if (index !== null && inboxMessages && inboxMessages.length > 0) {
-            if (inboxMessages[index]) {
-                messageService.setSelectedMessage(inboxMessages[index]);
-                // We already set index to last inbox message
-                let cacheMessages: any = getCacheMessages();
-                if (cacheMessages[inboxMessages[index].id!] && cacheMessages[inboxMessages[index].id!].data) {
-                    messageService.setMessageBody({
-                        data: cacheMessages[inboxMessages[index].id!].data,
-                        messageId: inboxMessages[index].id!
-                    })
-                } else {
-                    dispatch(getMessageParts({body: {id: inboxMessages[index].id!}}));
-                }
-                if (cacheMessages[inboxMessages[index].id!] && cacheMessages[inboxMessages[index].id!].attachments) {
-                    messageService.setMessageAttachments(cacheMessages[inboxMessages[index].id!].attachments, inboxMessages[index].id!)
-                } else {
-                    dispatch(getMessageAttachments({body: {id: inboxMessages[index].id!}}));
-                }
-
-            }
-        }
-    }, [dispatch, index])
-
-
-    useEffect(() => {
-        if (messagePart && messagePart.messageId) {
-            messageService.setMessageBody(null);
-            let messageId = currentInboxMessagesInstant.findIndex((item: MessageModel) => item.id === messagePart?.messageId);
-            let finalMessages = [...currentInboxMessagesInstant];
-            if (messagePart.data) {
-                cacheMessage({data: messagePart.data}, messagePart.messageId!);
-                let decoded = Buffer.from(messagePart.data || '', 'base64').toString();
-                let addTargetBlank = decoded.replace(/<a/g, '<a target="_blank"');
-                const blob = new Blob([addTargetBlank], {type: "text/html"});
-                const blobUrl = window.URL.createObjectURL(blob);
-                messageService.setSelectedMessageIfMessageIdMatches({...finalMessages[messageId], body: messagePart});
-                finalMessages[messageId] = {
-                    ...finalMessages[messageId],
-                    body: blobUrl
-                }
-            } else {
-                messageService.setSelectedMessageIfMessageIdMatches({...finalMessages[messageId], body: null});
-                cacheMessage({data: ''}, messagePart.messageId!);
-                finalMessages[messageId] = {...finalMessages[messageId], body: ''};
-            }
-            currentInboxMessagesInstant = [...finalMessages];
-            setInboxMessages([...finalMessages]);
-        }
-    }, [cacheMessage, messagePart])
-
-    useEffect(() => {
-        // convert blob url to image url
-        if (messageAttachments && messageAttachments.messageId) {
-            messageService.clearMessageAndAttachments();
-            let messageId = currentInboxMessagesInstant.findIndex((item: MessageModel) => item.id === messageAttachments?.messageId);
-            let finalMessages = [...currentInboxMessagesInstant];
-            if (messageAttachments.attachments.length) {
-                cacheMessage({attachments: messageAttachments.attachments}, messageAttachments.messageId!);
-                finalMessages[messageId] = {
-                    ...finalMessages[messageId],
-                    attachments: messageAttachments.attachments
-                }
-            } else {
-                cacheMessage({attachments: []}, messageAttachments.messageId!);
-                finalMessages[messageId] = {...finalMessages[messageId], attachments: []}
-            }
-            currentInboxMessagesInstant = [...finalMessages];
-            setInboxMessages([...finalMessages]);
-        }
-    }, [cacheMessage, messageAttachments])
 
     // Set iframe height once content is loaded within iframe
     const onIframeLoad = (index: number) => {
