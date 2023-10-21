@@ -30,7 +30,9 @@ export default function ToolbarUrl({isOpen, onChangeVisibility, onChange, editor
         >
             <PopoverTrigger>
                 <button
-                    onClick={() => {
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
                         onChangeVisibility(!isOpen)
                         setUrl(editor.getAttributes('link').href || '')
                         editor?.chain().focus().toggleHighlight({color: '#c8c8c8'}).run()

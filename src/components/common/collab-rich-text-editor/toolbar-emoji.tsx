@@ -22,7 +22,9 @@ export default function ToolbarEmoji({isOpen, onChangeVisibility, onChange, edit
         >
             <PopoverTrigger>
                 <button
-                    onClick={() => {
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
                         onChangeVisibility(!isOpen)
                     }}
                     className={editor.isActive('emoji') ? 'is-active' : ''}

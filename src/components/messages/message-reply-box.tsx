@@ -780,7 +780,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                         </div>
                         }
                         <Flex
-                            onFocus={(e) => {
+                            onClick={(e) => {
                                 e.stopPropagation();
                                 e.preventDefault();
                                 handleFocus()
