@@ -318,12 +318,17 @@ div:has(> .mailSendToaster) {
     overflow: hidden;
     background-color: #EBF2FF;
     border: 1px solid #FFFFFF;
+    color: #FFFFFF;
 }
 
 .member-images.subheader-images .member-photo {
     min-width: 18px;
     width: 18px;
     height: 18px;
+    display: flex;
+    align-items: center;
+    font-size: 9px;
+    justify-content: center;
 }
 
 .member-images .member-photo + .member-photo {

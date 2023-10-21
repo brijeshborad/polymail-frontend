@@ -18,6 +18,7 @@ import {FileIcon, defaultStyles, DefaultExtensionType} from 'react-file-icon';
 import {globalEventService, messageService, threadService} from "@/services";
 import LinkPreview from "../common/link-preview";
 import {LinkPreviewProps} from "@/types/props-types/link-preview.types";
+import Image from "next/image";
 
 export function MessageBox(props: any) {
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
@@ -37,6 +38,7 @@ export function MessageBox(props: any) {
         left: 0
     })
     const [inboxMessages, setInboxMessages] = useState<MessageModel[]>([]);
+    const [draftMessages, setDraftMessages] = useState<MessageModel[]>([]);
     const [index, setIndex] = useState<number | null>(null);
 
     useEffect(() => {
@@ -53,6 +55,8 @@ export function MessageBox(props: any) {
             // remove draft messages and set index to last inbox message
             const currentInboxMessages: MessageModel[] = messages.filter((msg: MessageModel) => !(msg.mailboxes || []).includes('DRAFT'));
             setInboxMessages([...currentInboxMessages]);
+            const currentDraftMessages: MessageModel[] = messages.filter((msg: MessageModel) => (msg.mailboxes || []).includes('DRAFT'));
+            setDraftMessages([...currentDraftMessages]);
             if (index === null) {
                 setIndex(currentInboxMessages.length - 1);
             }
@@ -221,143 +225,53 @@ export function MessageBox(props: any) {
     }, [incomingEvent]);
 
     return (
-        inboxMessages && inboxMessages.length > 0 && inboxMessages.map((message: Message, messageIndex) => (
-            <Flex position={'relative'} direction={'column'} key={messageIndex}
-                  className={`${styles.oldMail} ${messageIndex === index ? styles.lastOpenMail : ''}`} mb={3}
-                  gap={4}
-                  border={'1px solid #E5E7EB'} borderRadius={12} align={'center'}>
-                {messageIndex !== index &&
-                <Flex align={'flex-start'} width={'100%'}>
-                    <Flex align={'center'} w={'100%'} gap={2} cursor={'pointer'} padding={4}
-                          onClick={() => handleRowClick(messageIndex)}>
-                        <div className={styles.mailBoxUserImage}>
-
-                        </div>
-
-                        <Flex w={'100%'} direction={'column'}>
-                            <Flex align={'center'} justify={'space-between'} mb={1} minH={5}>
-                                <Heading as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400}
-                                         letterSpacing={'-0.13px'}
-                                         lineHeight={1}>{message.from?.name || message.from?.email}</Heading>
-                            </Flex>
-                            <Text fontSize='13px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
-                                  fontWeight={400}>
-                                <span dangerouslySetInnerHTML={{__html: message.snippet || ''}}/>
-                            </Text>
-                        </Flex>
-                    </Flex>
-                    <Flex align={'center'} pt={4} position={'absolute'} right={0} className={styles.mailBoxTime}
-                          gap={'6px'}>
-                        {message.scope === 'hidden' ?
-                            <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
-                                <EyeSlashedIcon/>
-                            </Flex> : ''}
-
-                        {message.attachments && !!message.attachments.length && attachmentsMenu(message)}
-
-                        <span style={{whiteSpace: 'nowrap'}}>
-                                    <Time time={message.created || ''} isShowFullTime={true}
-                                          showTimeInShortForm={false}/>
-                                </span>
-
-                        <Menu isOpen={isContextMenuOpen} onClose={() => setIsContextMenuOpen(false)}>
-                            <MenuButton
-                                onClick={(e) => {
-                                    e.preventDefault()
-                                    e.stopPropagation()
-                                    setIsContextMenuOpen(!isContextMenuOpen)
-                                }} className={styles.menuIcon}
-                                transition={'all 0.5s'} backgroundColor={'transparent'} fontSize={'12px'}
-                                h={'auto'} minWidth={'24px'} padding={'0'} as={Button} rightIcon={<MenuIcon/>}>
-                            </MenuButton>
-                            <MenuList className={'drop-down-list'}>
-                                <MenuItem
-                                    onClick={(e) => {
-                                        e.preventDefault()
-                                        e.stopPropagation()
-                                        setScope(message)
-                                    }}>
-                                    {message.scope !== 'hidden' ? 'Hide from project members' : 'Show to project members'}
-                                </MenuItem>
-                                <MenuItem
-                                    onClick={() => props.hideAndShowReplyBox('reply', message)}> Reply </MenuItem>
-                                <MenuItem
-                                    onClick={() => props.hideAndShowReplyBox('reply-all', message)}> Reply
-                                    All </MenuItem>
-                                <MenuItem
-                                    onClick={() => props.hideAndShowReplyBox('forward', message)}> Forward </MenuItem>
-                            </MenuList>
-                        </Menu>
-                    </Flex>
-                </Flex>
-                }
-
-                {messageIndex === index &&
-                <Flex direction={'column'} w={'100%'} pb={4}>
-                    <Flex align={'flex-start'}>
-                        <Flex align={'center'} w={'100%'} cursor={'pointer'} gap={2} padding={4}
+        <>
+            {inboxMessages && inboxMessages.length > 0 && inboxMessages.map((message: Message, messageIndex) => (
+                <Flex position={'relative'} direction={'column'} key={messageIndex}
+                      className={`${styles.oldMail} ${messageIndex === index ? styles.lastOpenMail : ''}`} mb={3}
+                      gap={4}
+                      border={'1px solid #E5E7EB'} borderRadius={12} align={'center'}>
+                    {messageIndex !== index &&
+                    <Flex align={'flex-start'} width={'100%'}>
+                        <Flex align={'center'} w={'100%'} gap={2} cursor={'pointer'} padding={4}
                               onClick={() => handleRowClick(messageIndex)}>
                             <div className={styles.mailBoxUserImage}>
 
                             </div>
-                            <Flex w={'100%'} direction={'column'} pr={'20px'}>
-                                <Flex align={'center'} justify={'space-between'} mb={1}>
-                                    <Flex align={'flex-end'} gap={1}>
-                                        <Heading
-                                            as='h6' fontSize={'13px'} color={'#0A101D'}
-                                            fontWeight={400} letterSpacing={'-0.13px'} lineHeight={1}
-                                        >
-                                            {message.from?.name || message.from?.email}
-                                        </Heading>
-                                        {message.from?.name && (
-                                            <>
-                                                <span className={'dot'}/>
-                                                <Text
-                                                    fontSize='12px' letterSpacing={'-0.13px'}
-                                                    color={'#6B7280'} lineHeight={1}
-                                                    fontWeight={400}
-                                                >
-                                                    {message.from?.email}
-                                                </Text>
-                                            </>
-                                        )}
-                                    </Flex>
-                                </Flex>
-                                {message && message.to && message.to.length > 0 &&
-                                <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
-                                      fontWeight={400}>to:&nbsp;
-                                    {message.to[0].email}&nbsp;
 
-                                    <div className={styles.otherMail}>
-                                        <Tooltip
-                                            placement="bottom"
-                                            label={
-                                                (message.to.length > 1 ?
-                                                    (message.to || []).slice(1, message.to.length).map((item: any, toIndex: number) => (
-                                                        <p key={toIndex}>{item.email}</p>
-                                                    )) : '') as any
-                                            }>
-                                            <Text
-                                                as='u'>{message.to.length - 1 > 0 && `and ${message.to.length - 1} others`} </Text>
-                                        </Tooltip>
-                                    </div>
+                            <Flex w={'100%'} direction={'column'}>
+                                <Flex align={'center'} justify={'space-between'} mb={1} minH={5}>
+                                    <Heading as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400}
+                                             letterSpacing={'-0.13px'}
+                                             lineHeight={1}>{message.from?.name || message.from?.email}</Heading>
                                 </Flex>
-                                }
+                                <Text fontSize='13px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
+                                      fontWeight={400}>
+                                    <span dangerouslySetInnerHTML={{__html: message.snippet || ''}}/>
+                                </Text>
                             </Flex>
                         </Flex>
-                        <Flex align={'center'} gap={'6px'} pt={4} position={'absolute'} right={0}>
+                        <Flex align={'center'} pt={4} position={'absolute'} right={0} className={styles.mailBoxTime}
+                              gap={'6px'}>
                             {message.scope === 'hidden' ?
                                 <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
                                     <EyeSlashedIcon/>
                                 </Flex> : ''}
+
                             {message.attachments && !!message.attachments.length && attachmentsMenu(message)}
-                            <div className={styles.mailBoxTime} style={{whiteSpace: 'nowrap'}}>
-                                <Time time={message?.created || ''} isShowFullTime={true}
-                                      showTimeInShortForm={false}/>
-                            </div>
+
+                            <span style={{whiteSpace: 'nowrap'}}>
+                                        <Time time={message.created || ''} isShowFullTime={true}
+                                              showTimeInShortForm={false}/>
+                                    </span>
+
                             <Menu isOpen={isContextMenuOpen} onClose={() => setIsContextMenuOpen(false)}>
                                 <MenuButton
-                                    onClick={() => setIsContextMenuOpen(true)} className={styles.menuIcon}
+                                    onClick={(e) => {
+                                        e.preventDefault()
+                                        e.stopPropagation()
+                                        setIsContextMenuOpen(!isContextMenuOpen)
+                                    }} className={styles.menuIcon}
                                     transition={'all 0.5s'} backgroundColor={'transparent'} fontSize={'12px'}
                                     h={'auto'} minWidth={'24px'} padding={'0'} as={Button} rightIcon={<MenuIcon/>}>
                                 </MenuButton>
@@ -380,30 +294,145 @@ export function MessageBox(props: any) {
                                 </MenuList>
                             </Menu>
                         </Flex>
-
                     </Flex>
+                    }
 
-                    {message.body &&
-                    <div className={styles.mailBodyContent}>
-                        <iframe
-                            ref={ref => iframeRef.current[messageIndex] = ref}
-                            scrolling="no"
-                            onLoad={() => onIframeLoad(messageIndex)}
-                            height={iframeHeight[messageIndex] || '0px'}
-                            src={message.body as string}
-                            className={styles.mailBody}
+                    {messageIndex === index &&
+                    <Flex direction={'column'} w={'100%'} pb={4}>
+                        <Flex align={'flex-start'}>
+                            <Flex align={'center'} w={'100%'} cursor={'pointer'} gap={2} padding={4}
+                                  onClick={() => handleRowClick(messageIndex)}>
+                                <div className={styles.mailBoxUserImage}>
+
+                                </div>
+                                <Flex w={'100%'} direction={'column'} pr={'20px'}>
+                                    <Flex align={'center'} justify={'space-between'} mb={1}>
+                                        <Flex align={'flex-end'} gap={1}>
+                                            <Heading
+                                                as='h6' fontSize={'13px'} color={'#0A101D'}
+                                                fontWeight={400} letterSpacing={'-0.13px'} lineHeight={1}
+                                            >
+                                                {message.from?.name || message.from?.email}
+                                            </Heading>
+                                            {message.from?.name && (
+                                                <>
+                                                    <span className={'dot'}/>
+                                                    <Text
+                                                        fontSize='12px' letterSpacing={'-0.13px'}
+                                                        color={'#6B7280'} lineHeight={1}
+                                                        fontWeight={400}
+                                                    >
+                                                        {message.from?.email}
+                                                    </Text>
+                                                </>
+                                            )}
+                                        </Flex>
+                                    </Flex>
+                                    {message && message.to && message.to.length > 0 &&
+                                    <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
+                                          fontWeight={400}>to:&nbsp;
+                                        {message.to[0].email}&nbsp;
+
+                                        <div className={styles.otherMail}>
+                                            <Tooltip
+                                                placement="bottom"
+                                                label={
+                                                    (message.to.length > 1 ?
+                                                        (message.to || []).slice(1, message.to.length).map((item: any, toIndex: number) => (
+                                                            <p key={toIndex}>{item.email}</p>
+                                                        )) : '') as any
+                                                }>
+                                                <Text
+                                                    as='u'>{message.to.length - 1 > 0 && `and ${message.to.length - 1} others`} </Text>
+                                            </Tooltip>
+                                        </div>
+                                    </Flex>
+                                    }
+                                </Flex>
+                            </Flex>
+                            <Flex align={'center'} gap={'6px'} pt={4} position={'absolute'} right={0}>
+                                {message.scope === 'hidden' ?
+                                    <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
+                                        <EyeSlashedIcon/>
+                                    </Flex> : ''}
+                                {message.attachments && !!message.attachments.length && attachmentsMenu(message)}
+                                <div className={styles.mailBoxTime} style={{whiteSpace: 'nowrap'}}>
+                                    <Time time={message?.created || ''} isShowFullTime={true}
+                                          showTimeInShortForm={false}/>
+                                </div>
+                                <Menu isOpen={isContextMenuOpen} onClose={() => setIsContextMenuOpen(false)}>
+                                    <MenuButton
+                                        onClick={() => setIsContextMenuOpen(true)} className={styles.menuIcon}
+                                        transition={'all 0.5s'} backgroundColor={'transparent'} fontSize={'12px'}
+                                        h={'auto'} minWidth={'24px'} padding={'0'} as={Button} rightIcon={<MenuIcon/>}>
+                                    </MenuButton>
+                                    <MenuList className={'drop-down-list'}>
+                                        <MenuItem
+                                            onClick={(e) => {
+                                                e.preventDefault()
+                                                e.stopPropagation()
+                                                setScope(message)
+                                            }}>
+                                            {message.scope !== 'hidden' ? 'Hide from project members' : 'Show to project members'}
+                                        </MenuItem>
+                                        <MenuItem
+                                            onClick={() => props.hideAndShowReplyBox('reply', message)}> Reply </MenuItem>
+                                        <MenuItem
+                                            onClick={() => props.hideAndShowReplyBox('reply-all', message)}> Reply
+                                            All </MenuItem>
+                                        <MenuItem
+                                            onClick={() => props.hideAndShowReplyBox('forward', message)}> Forward </MenuItem>
+                                    </MenuList>
+                                </Menu>
+                            </Flex>
+
+                        </Flex>
+
+                        {message.body &&
+                        <div className={styles.mailBodyContent}>
+                            <iframe
+                                ref={ref => iframeRef.current[messageIndex] = ref}
+                                scrolling="no"
+                                onLoad={() => onIframeLoad(messageIndex)}
+                                height={iframeHeight[messageIndex] || '0px'}
+                                src={message.body as string}
+                                className={styles.mailBody}
+                            />
+                        </div>}
+                        <LinkPreview
+                            isVisible={currentLinkPreview.isVisible}
+                            url={currentLinkPreview?.url}
+                            top={currentLinkPreview.top}
+                            left={currentLinkPreview.left}
                         />
-                    </div>}
-                    <LinkPreview
-                        isVisible={currentLinkPreview.isVisible}
-                        url={currentLinkPreview?.url}
-                        top={currentLinkPreview.top}
-                        left={currentLinkPreview.left}
-                    />
+                    </Flex>
+                    }
                 </Flex>
-                }
-            </Flex>
-        ))
+                ))
+            }
+            {draftMessages && draftMessages.length > 0 && draftMessages.map((message: Message, messageIndex) => (
+                <div key={messageIndex}>
+
+                    <Flex direction={'column'} gap={2} padding={4} borderRadius={'10px'} border={'1px dashed #E5E7EB'}>
+                        <Flex align={'center'} justify={'space-between'} gap={2}>
+                            <Flex align={'center'} gap={2}>
+                                <Flex width={'20px'} height={'20px'} borderRadius={'50%'} overflow={'hidden'}>
+                                    <Image src="/image/user.png" width="36" height="36" alt=""/>
+                                </Flex>
+                                <Text fontSize={'13px'} color={'#0A101D'}> Micheal Draft </Text>
+                            </Flex>
+                            <Text fontSize={'11px'} color={'#6B7280'}> Saved 2m ago </Text>
+                        </Flex>
+
+                        <Flex>
+                            <Text fontSize={'13px'} color={'#6B7280'} noOfLines={1}>
+                                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                            </Text>
+                        </Flex>
+                    </Flex>
+                </div>
+            ))}
+        </>
     )
 }
 

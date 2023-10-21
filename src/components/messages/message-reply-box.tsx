@@ -17,7 +17,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import {Message, MessageAttachments, MessageRecipient} from "@/models";
+import {Message, MessageAttachments, MessageRecipient, UserProjectOnlineStatus} from "@/models";
 import {removeAttachment, uploadAttachment} from "@/redux/messages/action-reducer";
 import {MessageBoxType} from "@/types/props-types/message-box.type";
 import {useRouter} from "next/router";
@@ -681,6 +681,27 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                     maxHeight={'450px'} direction={'column'} backgroundColor={'#FFFFFF'} width={'100%'}
                     onBlur={() => handleBlur()}>
                     <Flex borderRadius={8} gap={4} border={'1px solid #F3F4F6'} direction={'column'} padding={4}>
+                        <Flex align={'center'} gap={2} pb={4} borderBottom={'1px solid #F3F4F6'}>
+                            <Flex alignItems={'center'} justifyContent={'end'} className={'member-images subheader-images'}>
+                                <div className={'member-photo'} style={{background: '#000', border: `1px solid #000`}}>
+                                    <Image src="/image/user.png" width="24" height="24" alt=""/>
+                                </div>
+                                <div className={'member-photo'} style={{background: '#000', border: `1px solid #000`}}>
+                                    <Image src="/image/user.png" width="24" height="24" alt=""/>
+                                </div>
+                                <div className={'member-photo'} style={{background: '#000', border: `1px solid #000`}}>
+                                    <Image src="/image/user.png" width="24" height="24" alt=""/>
+                                </div>
+                                <div className={'member-photo'} style={{background: '#000', border: `1px solid #000`}}>
+                                    +4
+                                </div>
+                            </Flex>
+
+                            <Text fontSize={'13px'} color={'#6B7280'}>
+                                Draft
+                            </Text>
+                        </Flex>
+
                         <Flex
                             align={'center'} justify={'space-between'} gap={4} position={"relative"}
                             zIndex={isReplyDropdownOpen ? 8 : 6}>
