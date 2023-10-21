@@ -11,7 +11,6 @@ export default function KeyboardNavigationListener() {
     const {threads, selectedThread} = useSelector((state: StateType) => state.threads);
     const {messages, selectedMessage} = useSelector((state: StateType) => state.messages);
     const {target: lastTarget, currentMessageId, isEnabled} = useSelector((state: StateType) => state.keyNavigation);
-    const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const [isKeyDown, setIsKeyDown] = useState(false)
 
     useEffect(() => {
@@ -161,14 +160,6 @@ export default function KeyboardNavigationListener() {
             window.removeEventListener('keyup', handleKeyUp);
         };
     }, [])
-
-    useEffect(() => {
-        if (incomingEvent === 'iframe.clicked') {
-            setTimeout(() => {
-                window.focus()
-            }, 100)
-        }
-    }, [incomingEvent])
 
     return (
         <></>
