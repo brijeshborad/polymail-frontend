@@ -315,7 +315,7 @@
     border-radius: 16px;
     height: 100%;
     background-color: white;
-    box-shadow: 0 0 12px 0 #00000014;
+    /*box-shadow: 0 0 12px 0 #00000014;*/
 
 }
 
@@ -324,8 +324,8 @@
 }
 
 .mailBox.mailBoxFocused {
-    border: 1px solid #000;
-    box-shadow: 0 0 0 3px #e5e7eb;
+    /*border: 1px solid #000;*/
+    /*box-shadow: 0 0 0 3px #e5e7eb;*/
 }
 
 .mailBox.mailBoxCentered {
@@ -1199,6 +1199,7 @@
 .composeBox {
     display: flex;
     flex-direction: column;
+    box-shadow: 0 0 12px 0 #00000014;
 }
 
 .composeBox .subjectInput::placeholder {
