@@ -24,8 +24,14 @@ import {
     threadService
 } from "@/services";
 import { Thread } from "@/models";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+
+dayjs.extend(customParseFormat)
 
 const ThreadsSideBarList = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarList), {ssr: false});
+
+let currentPage: number = 1;
 
 export function ThreadsSideBarTab(props: TabProps) {
     const {
@@ -82,13 +88,22 @@ export function ThreadsSideBarTab(props: TabProps) {
             if (getCurrentCacheTab() !== tabValue) {
                 setCurrentCacheTab(tabValue);
             }
+            let cutoffDate = dayjs().add(1, "day").format('YYYY-MM-DD');
             if (getCacheThreads()[`${props.cachePrefix}-${tabValue}-${selectedAccount.id}-${type}`]) {
+                let threads = getCacheThreads()[`${props.cachePrefix}-${tabValue}-${selectedAccount.id}-${type}`];
+                if (currentPage > 1 && threads[threads.length - 1]) {
+                    cutoffDate = dayjs(threads[threads.length - 1].latestMessage).add(1, 'day').format('YYYY-MM-DD');
+                }
                 resetState = false
                 threadService.setThreadState({
-                    threads: getCacheThreads()[`${props.cachePrefix}-${tabValue}-${selectedAccount.id}-${type}`],
-                    isLoading: false,
-                    selectedThread: getCacheThreads()[`${props.cachePrefix}-${tabValue}-${selectedAccount.id}-${type}`][0]
+                    threads: threads,
+                    isLoading: false
                 })
+            }
+            let pagination = {
+                cutoff: cutoffDate,
+                count: 100,
+                page: currentPage
             }
             if (projectId && !isSummaryApiCalled) {
                 setIsSummaryApiCalled(true);
@@ -105,18 +120,20 @@ export function ThreadsSideBarTab(props: TabProps) {
                             mailbox: tabValue,
                             project: projectId as string,
                             resetState: resetState,
-                            ...(type === 'just-mine' ? {mine: true} : {})
+                            ...(type === 'just-mine' ? {mine: true} : {}),
+                            pagination
                         }
                     }));
                 } else {
                     if (type === 'projects') {
-                        dispatch(getAllThreads({body: {project: "ALL", mailbox: tabValue, resetState: resetState}}));
+                        dispatch(getAllThreads({body: {project: "ALL", mailbox: tabValue, resetState: resetState, pagination}}));
                     } else {
                         dispatch(getAllThreads({
                             body: {
                                 mailbox: tabValue,
                                 account: selectedAccount.id,
-                                resetState: resetState
+                                resetState: resetState,
+                                pagination
                             }
                         }));
                     }
@@ -176,24 +193,28 @@ export function ThreadsSideBarTab(props: TabProps) {
     useEffect(() => {
         if (selectedAccount && success) {
             accountService.setAccountState({success: false});
+            currentPage = 1;
             getAllThread();
         }
     }, [getAllThread, selectedAccount, success])
 
     useEffect(() => {
         if (incomingEvent === 'threads.refresh') {
+            currentPage = 1;
             getAllThread();
         }
     }, [getAllThread, incomingEvent])
 
     useEffect(() => {
         if (account && account.success) {
+            currentPage = 1;
             getAllThread();
         }
     }, [account, getAllThread])
 
     useEffect(() => {
         if (projectId) {
+            currentPage = 1;
             getAllThread();
         }
     }, [projectId, getAllThread])
@@ -201,7 +222,9 @@ export function ThreadsSideBarTab(props: TabProps) {
     useEffect(() => {
         if (tabValue && currentTab !== tabValue) {
             setCurrentTab(tabValue)
+            threadService.setThreads([]);
             threadService.setSelectedThread(null);
+            currentPage = 1;
             getAllThread();
         }
     }, [getAllThread, tabValue, currentTab])
@@ -222,9 +245,15 @@ export function ThreadsSideBarTab(props: TabProps) {
 
     const changeThread = (type: string) => {
         setTabName(type);
-        threadService.setThreads(threads || [])
-        threadService.setSelectedThread(null)
+        threadService.setThreads([]);
+        threadService.setSelectedThread(null);
+        currentPage = 1;
         getAllThread(type);
+    }
+
+    function fetchNext() {
+        currentPage = currentPage + 1
+        getAllThread();
     }
 
     const toggleSelectAllThreads = (checked: boolean) => {
@@ -300,7 +329,7 @@ export function ThreadsSideBarTab(props: TabProps) {
             )}
 
 
-            <ThreadsSideBarList tab={tabValue!}/>
+            <ThreadsSideBarList tab={tabValue!} fetchNext={fetchNext}/>
         </>
     )
 }

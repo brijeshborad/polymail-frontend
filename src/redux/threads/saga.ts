@@ -11,10 +11,6 @@ import {
 } from "@/redux/threads/action-reducer";
 import { ReducerActionType } from "@/types";
 import { performSuccessActions } from "@/utils/common-redux.functions";
-import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
-
-dayjs.extend(customParseFormat)
 
 function* getThreads({payload}: PayloadAction<ReducerActionType>) {
     try {
@@ -24,11 +20,10 @@ function* getThreads({payload}: PayloadAction<ReducerActionType>) {
             ...(payload.body.account ? {account: payload.body.account}: {}),
             ...(payload.body.mine ? {mine: payload.body.mine}: {}),
             ...(payload.body.query ? {query: payload.body.query} : {}),
-            cutoff: dayjs().add(1, "day").format('YYYY-MM-DD'),
-            count: 100
+            ...payload.body.pagination
         });
         performSuccessActions(payload);
-        yield put(getAllThreadsSuccess(response));
+        yield put(getAllThreadsSuccess({threads: response, pagination: payload.body.pagination}));
     } catch (error: any) {
         error = error as AxiosError;
         yield put(getAllThreadsError(error?.response?.data || {code: '400', description: 'Something went wrong'}));

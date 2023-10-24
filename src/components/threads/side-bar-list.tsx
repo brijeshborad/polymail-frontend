@@ -20,8 +20,11 @@ import {
     socketService,
     threadService
 } from "@/services";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const ThreadsSideBarListItem = dynamic(() => import("./side-bar-list-item").then(mod => mod.ThreadsSideBarListItem));
+
+let avoidScroll: boolean = false;
 
 export function ThreadsSideBarList(props: ThreadListProps) {
     const {selectedThread, threads, multiSelection} = useSelector((state: StateType) => state.threads);
@@ -47,6 +50,10 @@ export function ThreadsSideBarList(props: ThreadListProps) {
                     })
                 }
             }, 1)
+        } else {
+            setTimeout(() => {
+                scrollToPosition(thread);
+            }, 100);
         }
     }, [])
 
@@ -59,7 +66,9 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     useEffect(() => {
         // Make isThreadSearched as false when multiSelection is null or blank
         if (selectedThread) {
-            scrollToPosition(selectedThread)
+            if (!avoidScroll) {
+                scrollToPosition(selectedThread)
+            }
             let currentSelectedThreads = getCurrentSelectedThreads();
             currentSelectedThreads.push(currentThreads.findIndex((thread: Thread) => thread.id === selectedThread.id))
             setCurrentSelectedThreads(currentSelectedThreads);
@@ -102,6 +111,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
                 threadService.setMultiSelectionThreads(currentThreads.map((thread: Thread, index: number) => getCurrentSelectedThreads().includes(index) && thread.id!).filter(t => t) as string[]);
 
             } else {
+                avoidScroll = false;
                 let isSameThreadClicked = false;
                 if (selectedThread && item) {
                     isSameThreadClicked = selectedThread.id === item.id;
@@ -191,28 +201,35 @@ export function ThreadsSideBarList(props: ThreadListProps) {
         return undefined
     }, [selectedThread, selectedAccount]);
 
+    function fetchNext() {
+        avoidScroll = true;
+        props.fetchNext();
+    }
+
     return (
         <>
             <div className={'project-list-shadow'}>
                 <Flex direction={'column'} gap={2} marginTop={5} pb={3} ref={editorRef}
-                      onScroll={() => handleEditorScroll()}
+                      onScroll={() => handleEditorScroll()} id={'scrollableDiv'}
                       className={`${styles.mailList} ${extraClassNames} ${extraClassNamesForBottom} ${routePaths.includes('projects') ? styles.projectMailList : ''}`}>
                     <Input type={'text'} opacity={0} height={0} width={0} padding={0} border={0} outline={0}
                            ref={listRef}/>
-
-                    {currentThreads.length > 0 && currentThreads.map((item: Thread, index: number) => (
-                        <div
-                            key={index}
-                            className={`${(selectedThread && selectedThread.id === item.id) ? styles.selectedThread : ''}`}
-                        >
-                            <ThreadsSideBarListItem
-                                thread={item}
-                                tab={props.tab}
-                                onClick={(e) => handleClick(item, e, index)}
-                                threadsRef={threadsRef}
-                            />
-                        </div>
-                    ))}
+                    <InfiniteScroll dataLength={currentThreads.length} hasMore={currentThreads.length === 0 ? false : (currentThreads.length % 100 === 0)}
+                                    scrollableTarget="scrollableDiv" next={() => fetchNext()} loader={null}>
+                        {currentThreads.length > 0 && currentThreads.map((item: Thread, index: number) => (
+                            <div
+                                key={index} style={{marginBottom: '10px'}}
+                                className={`${(selectedThread && selectedThread.id === item.id) ? styles.selectedThread : ''}`}
+                            >
+                                <ThreadsSideBarListItem
+                                    thread={item}
+                                    tab={props.tab}
+                                    onClick={(e) => handleClick(item, e, index)}
+                                    threadsRef={threadsRef}
+                                />
+                            </div>
+                        ))}
+                    </InfiniteScroll>
                 </Flex>
             </div>
         </>

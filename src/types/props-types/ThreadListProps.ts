@@ -1,3 +1,4 @@
 export declare type ThreadListProps = {
-  tab: string
+  tab: string;
+  fetchNext: () => void;
 }

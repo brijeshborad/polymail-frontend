@@ -27,9 +27,10 @@ const threadsSlice = createSlice({
                 isLoading: _action.payload.hasOwnProperty('resetState') ? _action.payload.body.resetState : true,
             }
         },
-        getAllThreadsSuccess: (state: InitialThreadStateType, {payload: threads}: PayloadAction<any>) => {
+        getAllThreadsSuccess: (state: InitialThreadStateType, {payload: {threads, pagination}}: PayloadAction<any>) => {
             // Sort threads by latestMessage DESC
-            threads = extractAndMapThreadAndMessagesBody(threads);
+            let currentThreads = current(state).threads;
+            threads = extractAndMapThreadAndMessagesBody(threads, pagination, currentThreads);
             return {...state, threads, isLoading: false, success: true}
         },
         getAllThreadsError: (state: InitialThreadStateType,  _action: PayloadAction<any>) => {
