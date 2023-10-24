@@ -22,7 +22,7 @@ import Image from "next/image";
 
 export function MessageBox(props: any) {
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
-    const [isContextMenuOpen, setIsContextMenuOpen] = useState(false)
+    const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean[]>([]);
     const iframeRef = React.useRef<any>([]);
     const [iframeHeight, setIframeHeight] = useState<{ [key: string | number]: string }>({});
     const dispatch = useDispatch();
@@ -30,7 +30,7 @@ export function MessageBox(props: any) {
         messages
     } = useSelector((state: StateType) => state.messages);
     const {selectedThread} = useSelector((state: StateType) => state.threads);
-    const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false)
+    const [isAttachmentOpen, setIsAttachmentOpen] = useState<boolean[]>([]);
     const [currentLinkPreview, setCurrentLinkPreview] = useState<LinkPreviewProps>({
         isVisible: false,
         url: null,
@@ -57,6 +57,12 @@ export function MessageBox(props: any) {
             setInboxMessages([...currentInboxMessages]);
             const currentDraftMessages: MessageModel[] = messages.filter((msg: MessageModel) => (msg.mailboxes || []).includes('DRAFT'));
             setDraftMessages([...currentDraftMessages]);
+            let finalArray: boolean[] = [];
+            currentInboxMessages.forEach(() => {
+                finalArray.push(false);
+            })
+            setIsMoreMenuOpen([...finalArray]);
+            setIsAttachmentOpen([...finalArray]);
             if (index === null) {
                 setIndex(currentInboxMessages.length - 1);
             }
@@ -164,11 +170,11 @@ export function MessageBox(props: any) {
         return 'pdf'
     }
 
-    function attachmentsMenu(message: Message) {
+    function attachmentsMenu(message: Message, index: number) {
         return <Menu
-            isOpen={isMoreDropdownOpen}
+            isOpen={isAttachmentOpen[index]}
             onClose={() => {
-                setIsMoreDropdownOpen(false)
+                openAttachmentMenu(index, false)
             }}>
             <MenuButton
                 className={styles.tabListAttachmentButton} minWidth={'1px'} padding={0}
@@ -176,16 +182,16 @@ export function MessageBox(props: any) {
                 fontSize={'13px'} color={'#6B7280'} as={Button} mx={1}
                 onMouseEnter={() => {
                     clearDebounce(message.id);
-                    setIsMoreDropdownOpen(true)
+                    openAttachmentMenu(index)
                 }}
                 onMouseLeave={() => {
                     debounce(() => {
-                        setIsMoreDropdownOpen(false)
+                        openAttachmentMenu(index, false)
                     }, 200, message.id)
                 }}
                 onMouseOut={() => {
                     debounce(() => {
-                        setIsMoreDropdownOpen(false)
+                        openAttachmentMenu(index, false)
                     }, 200, message.id)
                 }}
             >
@@ -196,11 +202,11 @@ export function MessageBox(props: any) {
                 className={`${styles.tabListDropDown} drop-down-list`}
                 onMouseEnter={() => {
                     clearDebounce(message.id);
-                    setIsMoreDropdownOpen(true)
+                    openAttachmentMenu(index)
                 }}
                 onMouseLeave={() => {
                     debounce(() => {
-                        setIsMoreDropdownOpen(false)
+                        openAttachmentMenu(index, false)
                     }, 200, message.id)
                 }}
             >
@@ -220,9 +226,46 @@ export function MessageBox(props: any) {
 
     useEffect(() => {
         if (incomingEvent === 'iframe.clicked') {
-            setIsContextMenuOpen(false)
+            setIsMoreMenuOpen(prevState => {
+                return prevState.map(() => false);
+            });
         }
     }, [incomingEvent]);
+
+    function openMoreMenu(index: number, open: boolean = true) {
+        let moreMenu = [];
+        if (!open) {
+            moreMenu = [...isMoreMenuOpen].map(((item: boolean, idx: number) => {
+                if (index === idx) {
+                    return false
+                }
+                return item;
+            }))
+        } else {
+            moreMenu = [...isMoreMenuOpen].map(((item: boolean, idx: number) => {
+                return index === idx;
+            }))
+        }
+        console.log('COMES HERE', moreMenu);
+        setIsMoreMenuOpen([...moreMenu]);
+    }
+
+    function openAttachmentMenu(index: number, open: boolean = true) {
+        let attachmentMenu = [];
+        if (!open) {
+            attachmentMenu = [...isAttachmentOpen].map(((item: boolean, idx: number) => {
+                if (index === idx) {
+                    return false
+                }
+                return item;
+            }))
+        } else {
+            attachmentMenu = [...isAttachmentOpen].map(((item: boolean, idx: number) => {
+                return index === idx;
+            }))
+        }
+        setIsAttachmentOpen([...attachmentMenu]);
+    }
 
     return (
         <>
@@ -258,19 +301,19 @@ export function MessageBox(props: any) {
                                     <EyeSlashedIcon/>
                                 </Flex> : ''}
 
-                            {message.attachments && !!message.attachments.length && attachmentsMenu(message)}
+                            {message.attachments && !!message.attachments.length && attachmentsMenu(message, messageIndex)}
 
                             <span style={{whiteSpace: 'nowrap'}}>
                                         <Time time={message.created || ''} isShowFullTime={true}
                                               showTimeInShortForm={false}/>
                                     </span>
 
-                            <Menu isOpen={isContextMenuOpen} onClose={() => setIsContextMenuOpen(false)}>
+                            <Menu isOpen={isMoreMenuOpen[messageIndex]} onClose={() => openMoreMenu(messageIndex, false)}>
                                 <MenuButton
                                     onClick={(e) => {
                                         e.preventDefault()
                                         e.stopPropagation()
-                                        setIsContextMenuOpen(!isContextMenuOpen)
+                                        openMoreMenu(messageIndex, !isMoreMenuOpen[messageIndex])
                                     }} className={styles.menuIcon}
                                     transition={'all 0.5s'} backgroundColor={'transparent'} fontSize={'12px'}
                                     h={'auto'} minWidth={'24px'} padding={'0'} as={Button} rightIcon={<MenuIcon/>}>
@@ -355,14 +398,14 @@ export function MessageBox(props: any) {
                                     <Flex align={'center'} justify={'center'} className={styles.hideShowIcon}>
                                         <EyeSlashedIcon/>
                                     </Flex> : ''}
-                                {message.attachments && !!message.attachments.length && attachmentsMenu(message)}
+                                {message.attachments && !!message.attachments.length && attachmentsMenu(message, messageIndex)}
                                 <div className={styles.mailBoxTime} style={{whiteSpace: 'nowrap'}}>
                                     <Time time={message?.created || ''} isShowFullTime={true}
                                           showTimeInShortForm={false}/>
                                 </div>
-                                <Menu isOpen={isContextMenuOpen} onClose={() => setIsContextMenuOpen(false)}>
+                                <Menu isOpen={isMoreMenuOpen[messageIndex]} onClose={() => openMoreMenu(messageIndex, false)}>
                                     <MenuButton
-                                        onClick={() => setIsContextMenuOpen(true)} className={styles.menuIcon}
+                                        onClick={() => openMoreMenu(messageIndex)} className={styles.menuIcon}
                                         transition={'all 0.5s'} backgroundColor={'transparent'} fontSize={'12px'}
                                         h={'auto'} minWidth={'24px'} padding={'0'} as={Button} rightIcon={<MenuIcon/>}>
                                     </MenuButton>
