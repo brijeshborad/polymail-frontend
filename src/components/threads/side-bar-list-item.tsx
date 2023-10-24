@@ -67,7 +67,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                 >
                 <Flex align={"center"} justify={'space-between'}>
                     <Flex align={"center"} className={styles.senderDetails} gap={1}>
-                        <DisneyIcon/> {props?.thread?.from?.name || props?.thread?.from?.email}
+                        {props?.thread?.from?.name || props?.thread?.from?.email}
                     </Flex>
                     {(props?.thread?.projects || []).length > 0 && (
                     //If customeOpenEvent Is there must pass both the Params: customeOpenHandelEvent, isOpenEvent
