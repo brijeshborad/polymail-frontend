@@ -2,7 +2,7 @@ import styles2 from "@/styles/common.module.css";
 import styles from "@/styles/Inbox.module.css";
 import {Box, Flex, Image, Menu, MenuButton, MenuItem, MenuList, Text} from "@chakra-ui/react";
 import {Time} from "@/components/common";
-import {DisneyIcon, DotIcon} from "@/icons";
+import {DotIcon} from "@/icons";
 import {StateType, ThreadListItemProps} from "@/types";
 import {useSelector} from "react-redux";
 import React, {useEffect, useState} from "react";
