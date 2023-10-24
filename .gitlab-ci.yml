@@ -34,5 +34,6 @@ deploy_prod:
     name: develop
     url: https://teams.polymail.com
   needs: []
+  when: manual
   only:
     - develop
