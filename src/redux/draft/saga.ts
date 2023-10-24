@@ -11,7 +11,7 @@ import {
     sendMessageError,
     updatePartialMessageSuccess,
     updatePartialMessageError,
-    updatePartialMessage
+    updatePartialMessage, discardDraft, discardDraftSuccess
 } from "@/redux/draft/action-reducer";
 import { ReducerActionType } from "@/types";
 import { performSuccessActions } from "@/utils/common-redux.functions";
@@ -67,6 +67,16 @@ function* patchPartialMessage({payload}: PayloadAction<ReducerActionType>) {
     }
 }
 
+function* discardOrRescueDraft({payload}: PayloadAction<ReducerActionType>) {
+    try {
+        let response: AxiosResponse = yield ApiService.callPatch(`messages/${payload.body.id}`, {discardedBy: payload.body.discardedBy});
+        performSuccessActions(payload);
+        yield put(discardDraftSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+    }
+}
+
 export function* watchCreateNewDraft() {
     yield takeEvery(createDraft.type, createNewDraft);
 }
@@ -79,12 +89,17 @@ export function* watchUpdateCurrentDraftMessage() {
     yield takeEvery(updatePartialMessage.type, patchPartialMessage);
 }
 
+export function* watchDiscardDraft() {
+    yield takeEvery(discardDraft.type, discardOrRescueDraft);
+}
+
 
 export default function* rootSaga() {
     yield all([
         fork(watchCreateNewDraft),
         fork(watchSendDraftMessage),
-        fork(watchUpdateCurrentDraftMessage)
+        fork(watchUpdateCurrentDraftMessage),
+        fork(watchDiscardDraft),
     ]);
 }
 

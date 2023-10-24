@@ -61,6 +61,7 @@ export interface MessageDraftInfo {
     createdBy?: string,
     createdByAvatarURL?: string,
     sendDate?: string,
+    discardedBy?: string,
 }
 
 export interface ContentRoot {

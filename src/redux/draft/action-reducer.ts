@@ -72,6 +72,14 @@ const draftSlice = createSlice({
             return {...state, isLoading: false}
         },
 
+        discardDraft: (state: InitialDraftStateType, action: PayloadAction<ReducerActionType>) => {
+            return {...state, ...action.payload}
+        },
+
+        discardDraftSuccess: (state: InitialDraftStateType, {payload: updatedDraft}: PayloadAction<any>) => {
+            return {...state, updatedDraft, success: true}
+        },
+
         updateDraftState: (state: InitialDraftStateType, action: PayloadAction<InitialDraftStateType>) => {
             return {...state, ...action.payload}
         },
@@ -88,6 +96,6 @@ export const {
     updatePartialMessage,
     updatePartialMessageSuccess,
     updatePartialMessageError,
-    updateDraftState
+    updateDraftState, discardDraft, discardDraftSuccess
 } = draftSlice.actions
 export default draftSlice.reducer

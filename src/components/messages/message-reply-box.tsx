@@ -12,7 +12,7 @@ import {ChevronDownIcon, CloseIcon} from "@chakra-ui/icons";
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import {debounce, getProjectBanner, getSignatureBanner} from "@/utils/common.functions";
 import {DropZone} from "@/components/common";
-import {updatePartialMessage} from "@/redux/draft/action-reducer";
+import {updatePartialMessage, discardDraft} from "@/redux/draft/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import dayjs from "dayjs";
@@ -466,24 +466,27 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         }
     }
 
-    const discardMessage = () => {
-        setIsReplyDropdownOpen(false)
-        setShowReplyBox(false);
-        setShowEditorToolbar(false)
-        // globalEventService.fireEvent({data: '', type: 'richtexteditor.discard'});
-        handleEditorScroll();
-        // if (draft && draft.id) {
-        //     draftService.setReplyDraft(null);
-        //     setAttachments([]);
-        //     draftService.discardDraft(draft.id!);
-        //     setDraftIndex(null);
-        //     dispatch(deleteMessage({
-        //         body: {id: draft.id},
-        //         afterSuccessAction: () => {
-        //             setIsDraftUpdated(false);
-        //         }
-        //     }));
-        // }
+    const discardMessage = (isRescue: boolean = false) => {
+        if (!isRescue) {
+            setIsReplyDropdownOpen(false)
+            setShowReplyBox(false);
+            setShowEditorToolbar(false)
+            // globalEventService.fireEvent({data: '', type: 'richtexteditor.discard'});
+            handleEditorScroll();
+        }
+        if (draft && draft.id) {
+            // draftService.setReplyDraft(null);
+            // setAttachments([]);
+            // draftService.discardDraft(draft.id!);
+            // setDraftIndex(null);
+            let discardedBy = isRescue ? '' : selectedAccount?.name;
+            dispatch(discardDraft({
+                body: {id: draft.id, discardedBy: discardedBy},
+                // afterSuccessAction: () => {
+                //     setIsDraftUpdated(false);
+                // }
+            }));
+        }
     }
 
     const sendMessages = () => {
@@ -667,11 +670,11 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             }
             if (incomingEvent.type === 'draft.updateIndex') {
                 let findMessage = (selectedThread?.messages || []).findIndex((item: Message) => item.id === incomingEvent.data.draftId);
+                setShowEditorToolbar(true);
                 if (draftIndex === findMessage) {
                     return;
                 }
                 setReloadingEditor(true);
-                setShowEditorToolbar(true);
                 setTimeout(() => {
                     setReloadingEditor(false);
                     if (findMessage !== -1) {
@@ -918,9 +921,9 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                         onClick={(e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
-                                            discardMessage()
+                                            discardMessage(!!draft?.draftInfo?.discardedBy)
                                         }}
-                                    > Discard </Button>
+                                    > {draft?.draftInfo?.discardedBy ? 'Rescue' : 'Discard'} </Button>
                                     <Flex className={styles.messageSendButton}>
                                         <Button
                                             isDisabled={showAttachmentLoader}
