@@ -23,6 +23,7 @@ import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
 
 export function MessageBox(props: any) {
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
+    const {success: draftSuccess, updatedDraft} = useSelector((state: StateType) => state.draft);
     const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean[]>([]);
     const iframeRef = React.useRef<any>([]);
     const [iframeHeight, setIframeHeight] = useState<{ [key: string | number]: string }>({});
@@ -41,6 +42,21 @@ export function MessageBox(props: any) {
     const [inboxMessages, setInboxMessages] = useState<MessageModel[]>([]);
     const [draftMessages, setDraftMessages] = useState<MessageModel[]>([]);
     const [index, setIndex] = useState<number | null>(null);
+
+    useEffect(() => {
+        if (draftSuccess) {
+            if (updatedDraft) {
+                let finalMessages = [...(draftMessages || [])]
+                let findDraft = finalMessages.findIndex((item: Message) => item.id === updatedDraft.id);
+                if (findDraft !== -1) {
+                    finalMessages[findDraft] = updatedDraft;
+                } else {
+                    finalMessages.push(updatedDraft);
+                }
+                setDraftMessages([...finalMessages]);
+            }
+        }
+    }, [draftSuccess, updatedDraft, draftMessages])
 
     useEffect(() => {
         if (selectedThread && selectedThread?.id) {
@@ -247,7 +263,6 @@ export function MessageBox(props: any) {
                 return index === idx;
             }))
         }
-        console.log('COMES HERE', moreMenu);
         setIsMoreMenuOpen([...moreMenu]);
     }
 

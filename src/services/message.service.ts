@@ -93,6 +93,7 @@ class MessageService extends BaseService {
                         params = {undo: true}
                         if (!isCompose) {
                             threadService.updateThreadForUndoOrSend('undo', currentDraft?.draftInfo?.body);
+                            globalEventService.fireEvent({data: {draftId: currentDraft.id}, type: 'draft.updateIndex'});
                         } else {
                             if (performForDraftTab) {
                                 let undoDraft = draftService.getUndoDraft();
@@ -101,8 +102,8 @@ class MessageService extends BaseService {
                                 commonService.toggleComposing(true);
                                 draftService.restoreBackupComposeDraft()
                             }
+                            globalEventService.fireEvent('draft.undo');
                         }
-                        globalEventService.fireEvent('draft.undo');
                     } else if (type === 'send-now') {
                         params = {now: true}
                     }
@@ -122,6 +123,7 @@ class MessageService extends BaseService {
                             params = {undo: true}
                             if (!isCompose) {
                                 threadService.updateThreadForUndoOrSend('undo', currentDraft?.draftInfo?.body);
+                                globalEventService.fireEvent({data: {draftId: currentDraft.id}, type: 'draft.updateIndex'});
                             } else {
                                 if (performForDraftTab) {
                                     let undoDraft = draftService.getUndoDraft();
@@ -130,8 +132,8 @@ class MessageService extends BaseService {
                                     commonService.toggleComposing(true);
                                     draftService.restoreBackupComposeDraft()
                                 }
+                                globalEventService.fireEvent('draft.undo');
                             }
-                            globalEventService.fireEvent('draft.undo');
                         } else if (type === 'send-now') {
                             params = {now: true}
                         }

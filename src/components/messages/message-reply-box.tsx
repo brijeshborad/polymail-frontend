@@ -24,7 +24,7 @@ import {useRouter} from "next/router";
 import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
 import dynamic from "next/dynamic";
 import CollabRichTextEditor from "../common/collab-rich-text-editor";
-import {draftService, globalEventService, messageService, socketService} from "@/services";
+import {draftService, globalEventService, messageService, socketService, threadService} from "@/services";
 import {RecipientsType} from "@/types/props-types/message-recipients.type";
 import {ProgressBar} from "@/components/loader-screen/progress-bar";
 import Tooltip from "@/components/common/Tooltip";
@@ -52,7 +52,7 @@ export function MessageReplyBox(props: MessageBoxType) {
     const [subject, setSubject] = useState<string>('');
     const [emailBody, setEmailBody] = useState<string>('');
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
-    const {draft} = useSelector((state: StateType) => state.draft);
+    const {draft, success: draftSuccess, updatedDraft} = useSelector((state: StateType) => state.draft);
     const {selectedThread} = useSelector((state: StateType) => state.threads);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const {selectedMessage, showAttachmentLoader} = useSelector((state: StateType) => state.messages);
@@ -79,19 +79,41 @@ export function MessageReplyBox(props: MessageBoxType) {
     const [divHeight, setDivHeight] = useState<number>(0);
     const [emailList, setEmailList] = useState<any>([]);
     const [totalDraftMessages, setTotalDraftMessages] = useState<MessageDraft[]>([]);
+    const [totalMessages, setTotalMessages] = useState<MessageDraft[] | null>(null);
 
     useEffect(() => {
-        if (draftIndex === null && selectedThread) {
-            let messages = [...(selectedThread.messages) || []];
+        if (draftSuccess) {
+            if (updatedDraft) {
+                let finalMessages = [...(totalMessages || [])]
+                let findDraft = finalMessages.findIndex((item: Message) => item.id === updatedDraft.id);
+                if (findDraft !== -1) {
+                    finalMessages[findDraft] = updatedDraft;
+                } else {
+                    finalMessages.push(updatedDraft);
+                }
+                setTotalMessages([...finalMessages]);
+            }
+        }
+    }, [draftSuccess, updatedDraft, totalMessages])
+
+    useEffect(() => {
+        if (selectedThread) {
+            setTotalMessages([...selectedThread?.messages || []]);
+        }
+    }, [selectedThread])
+
+    useEffect(() => {
+        if (draftIndex === null && totalMessages) {
+            let messages = [...totalMessages];
             let draftMessages = [...messages].filter((item: MessageDraft) => item.mailboxes?.includes('DRAFT'))
             setTotalDraftMessages([...draftMessages]);
-            let findLastIndex = messages.findLastIndex((item: Message) => item.mailboxes?.includes('DRAFT'));
-            if (findLastIndex !== -1) {
-                setDraftIndex(findLastIndex);
-                draftService.setReplyDraft(messages[findLastIndex]);
-            } else {
-                setDraftIndex(messages.length);
-            }
+            // let findLastIndex = messages.findLastIndex((item: Message) => item.mailboxes?.includes('DRAFT'));
+            // if (findLastIndex !== -1) {
+            //     setDraftIndex(findLastIndex);
+            //     draftService.setReplyDraft(messages[findLastIndex]);
+            // } else {
+            // }
+            setDraftIndex(messages.length);
 
             // if (onlyDraftMessages[draftMessageIndex]) {
             //     if (!getPlainTextFromHtml(onlyDraftMessages[draftMessageIndex].draftInfo?.body || '').trim()) {
@@ -114,7 +136,7 @@ export function MessageReplyBox(props: MessageBoxType) {
             //     }, 10)
             // }
         }
-    }, [selectedThread, draftIndex])
+    }, [totalMessages, draftIndex])
 
     useEffect(() => {
         if (newMessage) {
@@ -475,6 +497,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             handleEditorScroll();
         }
         if (draft && draft.id) {
+            setDraftIndex(null);
             // draftService.setReplyDraft(null);
             // setAttachments([]);
             // draftService.discardDraft(draft.id!);
@@ -669,7 +692,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 setMessageData(incomingEvent.data);
             }
             if (incomingEvent.type === 'draft.updateIndex') {
-                let findMessage = (selectedThread?.messages || []).findIndex((item: Message) => item.id === incomingEvent.data.draftId);
+                let findMessage = (totalMessages || []).findIndex((item: Message) => item.id === incomingEvent.data.draftId);
                 setShowEditorToolbar(true);
                 if (draftIndex === findMessage) {
                     return;
@@ -680,7 +703,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                     if (findMessage !== -1) {
                         setIsContentUpdated(false);
                         setDraftIndex(findMessage);
-                        draftService.setReplyDraft((selectedThread?.messages || [])[findMessage]);
+                        draftService.setReplyDraft((totalMessages || [])[findMessage]);
                         globalEventService.fireEvent({data: {}, type: 'richtexteditor.focus'})
                     }
                 }, 50)
@@ -702,7 +725,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             //     }, 50)
             // }
         }
-    }, [getForwardContent, handleEditorScroll, incomingEvent, isDraftUpdated, selectedAccount, selectedThread]);
+    }, [getForwardContent, handleEditorScroll, incomingEvent, isDraftUpdated, selectedAccount, totalMessages]);
 
     return (
         <Flex backgroundColor={'#FFFFFF'} position={'sticky'} mt={'20px'} bottom={0} boxShadow={'0 21px 0px 0 #fff'}>
