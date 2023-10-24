@@ -3,4 +3,5 @@ export declare type MessageScheduleProps = {
   onChange: (_date: string | undefined) => void,
   isSnooze?: boolean,
   isNameShow?: boolean
+  disabled?: boolean
 }

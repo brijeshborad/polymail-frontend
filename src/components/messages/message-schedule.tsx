@@ -15,13 +15,12 @@ const MessageScheduleCustom = dynamic(() => import("./message-schedule-custom").
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
-export default function MessageSchedule({date, onChange, isSnooze = false, isNameShow = false}: MessageScheduleProps) {
+export default function MessageSchedule({date, onChange, isSnooze = false, isNameShow = false, disabled = false}: MessageScheduleProps) {
     const [isOpen, setOpen] = useState(false)
     const [scheduleDate, setScheduleDate] = useState(date)
     const [customSchedule, setCustomSchedule] = useState(false)
     const [showScheduleMenu, setShowScheduleMenu] = useState(false)
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
-    const {showAttachmentLoader} = useSelector((state: StateType) => state.messages);
     const dateFormat = 'YYYY-MM-D HH:mm:ss';
     const clickRef = useRef<any>(null);
 
@@ -97,7 +96,7 @@ export default function MessageSchedule({date, onChange, isSnooze = false, isNam
             >
                 <MenuButton
                     onClick={(e) => {
-                        if (showAttachmentLoader) {
+                        if (disabled) {
                             return;
                         }
                         e.preventDefault();
@@ -111,7 +110,7 @@ export default function MessageSchedule({date, onChange, isSnooze = false, isNam
                             }
                         }
                     }}
-                    className={`${styles.replyArrowIcon} snooze-button-icon ${showAttachmentLoader ? 'disable' : ''}`}
+                    className={`${styles.replyArrowIcon} snooze-button-icon ${disabled ? 'disable' : ''}`}
                     as={isSnooze ? "div" : Button}
                     style={{cursor: 'pointer'}}
                     aria-label='Options'

@@ -949,7 +949,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                     > {draft?.draftInfo?.discardedBy ? 'Rescue' : 'Discard'} </Button>
                                     <Flex className={styles.messageSendButton}>
                                         <Button
-                                            isDisabled={showAttachmentLoader}
+                                            isDisabled={showAttachmentLoader || (!draft?.id)}
                                             className={styles.replyTextButton}
                                             colorScheme='blue'
                                             fontSize={14} lineHeight={16}
@@ -966,7 +966,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                             )}
                                         </Button>
 
-                                        <MessageSchedule date={scheduledDate} onChange={handleSchedule}/>
+                                        <MessageSchedule disabled={showAttachmentLoader || (!draft?.id)} date={scheduledDate} onChange={handleSchedule}/>
                                     </Flex>
                                 </Flex>
                             </Flex>
