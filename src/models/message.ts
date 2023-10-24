@@ -58,6 +58,9 @@ export interface MessageDraftInfo {
     body?: string,
     attachments?: MessageAttachments[],
     collabId?: string,
+    createdBy?: string,
+    createdByAvatarURL?: string,
+    sendDate?: string,
 }
 
 export interface ContentRoot {

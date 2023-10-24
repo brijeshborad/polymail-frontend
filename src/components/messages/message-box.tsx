@@ -19,6 +19,7 @@ import {globalEventService, messageService, threadService} from "@/services";
 import LinkPreview from "../common/link-preview";
 import {LinkPreviewProps} from "@/types/props-types/link-preview.types";
 import Image from "next/image";
+import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
 
 export function MessageBox(props: any) {
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
@@ -308,7 +309,8 @@ export function MessageBox(props: any) {
                                               showTimeInShortForm={false}/>
                                     </span>
 
-                            <Menu isOpen={isMoreMenuOpen[messageIndex]} onClose={() => openMoreMenu(messageIndex, false)}>
+                            <Menu isOpen={isMoreMenuOpen[messageIndex]}
+                                  onClose={() => openMoreMenu(messageIndex, false)}>
                                 <MenuButton
                                     onClick={(e) => {
                                         e.preventDefault()
@@ -403,7 +405,8 @@ export function MessageBox(props: any) {
                                     <Time time={message?.created || ''} isShowFullTime={true}
                                           showTimeInShortForm={false}/>
                                 </div>
-                                <Menu isOpen={isMoreMenuOpen[messageIndex]} onClose={() => openMoreMenu(messageIndex, false)}>
+                                <Menu isOpen={isMoreMenuOpen[messageIndex]}
+                                      onClose={() => openMoreMenu(messageIndex, false)}>
                                     <MenuButton
                                         onClick={() => openMoreMenu(messageIndex)} className={styles.menuIcon}
                                         transition={'all 0.5s'} backgroundColor={'transparent'} fontSize={'12px'}
@@ -451,25 +454,32 @@ export function MessageBox(props: any) {
                     </Flex>
                     }
                 </Flex>
-                ))
+            ))
             }
             {draftMessages && draftMessages.length > 0 && draftMessages.map((message: Message, messageIndex) => (
                 <div key={messageIndex}>
-
-                    <Flex direction={'column'} gap={2} padding={4} borderRadius={'10px'} border={'1px dashed #E5E7EB'}>
+                    <Flex direction={'column'} cursor={'pointer'} mb={3} onClick={() => {
+                        globalEventService.fireEvent({data: {draftId: message.id}, type: 'draft.updateIndex'})
+                    }} gap={2} padding={4} borderRadius={'10px'} border={'1px dashed #E5E7EB'}>
                         <Flex align={'center'} justify={'space-between'} gap={2}>
                             <Flex align={'center'} gap={2}>
                                 <Flex width={'20px'} height={'20px'} borderRadius={'50%'} overflow={'hidden'}>
-                                    <Image src="/image/user.png" width="36" height="36" alt=""/>
+                                    <div className={'member-photo'} key={index}
+                                         style={{background: '#000'}}>
+                                        {message?.draftInfo?.createdByAvatarURL && <Image src={message?.draftInfo?.createdByAvatarURL} width="24" height="24"
+                                                                                          alt=""/>}
+                                    </div>
                                 </Flex>
-                                <Text fontSize={'13px'} color={'#0A101D'}> Micheal Draft </Text>
+                                <Text fontSize={'13px'} color={'#0A101D'}> {message?.draftInfo?.createdBy || ''} </Text>
                             </Flex>
-                            <Text fontSize={'11px'} color={'#6B7280'}> Saved 2m ago </Text>
+                            <Text fontSize={'11px'} color={'#6B7280'}>
+                                Saved <Time fontSize={'11px'} as={'span'} time={message?.updated || ''} isShowFullTime={false}
+                                            showTimeInShortForm={true}/>&nbsp;ago </Text>
                         </Flex>
 
                         <Flex>
                             <Text fontSize={'13px'} color={'#6B7280'} noOfLines={1}>
-                                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                                {getPlainTextFromHtml(message.draftInfo?.body || '')}
                             </Text>
                         </Flex>
                     </Flex>

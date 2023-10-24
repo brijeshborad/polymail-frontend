@@ -95,18 +95,18 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
     }, [attachmentUrl])
 
     useEffect(() => {
-        if (target === 'thread') {
-            const topPos = ((messageIndex || 0)) * 95
-
-            setTimeout(() => {
-                if (messagesWrapperRef && messagesWrapperRef.current && messagesWrapperRef.current.scrollTop) {
-                    messagesWrapperRef.current.scrollTo({
-                        top: topPos,
-                        behavior: 'smooth'
-                    })
-                }
-            }, 1200)
-        }
+        // if (target === 'thread') {
+        //     const topPos = ((messageIndex || 0)) * 95
+        //
+        //     setTimeout(() => {
+        //         if (messagesWrapperRef && messagesWrapperRef.current && messagesWrapperRef.current.scrollTop) {
+        //             messagesWrapperRef.current.scrollTo({
+        //                 top: topPos,
+        //                 behavior: 'smooth'
+        //             })
+        //         }
+        //     }, 1200)
+        // }
     }, [target, messageIndex])
 
     useEffect(() => {

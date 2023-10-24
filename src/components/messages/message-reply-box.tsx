@@ -17,7 +17,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import {Message, MessageAttachments, MessageRecipient, UserProjectOnlineStatus} from "@/models";
+import {Message, MessageAttachments, MessageDraft, MessageRecipient} from "@/models";
 import {removeAttachment, uploadAttachment} from "@/redux/messages/action-reducer";
 import {MessageBoxType} from "@/types/props-types/message-box.type";
 import {useRouter} from "next/router";
@@ -71,21 +71,28 @@ export function MessageReplyBox(props: MessageBoxType) {
     const [isContentUpdated, setIsContentUpdated] = useState<boolean>(false);
     const [messageData, setMessageData] = useState<any>(null);
     const [replyType, setReplyType] = useState<string>('reply');
+    const [reloadingEditor, setReloadingEditor] = useState<boolean>(false);
 
     const editorRef = useRef<any>(null);
     const router = useRouter();
     const divRef = useRef<HTMLDivElement | null>(null);
     const [divHeight, setDivHeight] = useState<number>(0);
     const [emailList, setEmailList] = useState<any>([]);
+    const [totalDraftMessages, setTotalDraftMessages] = useState<MessageDraft[]>([]);
 
     useEffect(() => {
         if (draftIndex === null && selectedThread) {
-            let onlyDraftMessages = (selectedThread?.messages || []).filter((msg: Message) => (msg.mailboxes || []).includes('DRAFT'));
-            const draftMessageIndex = onlyDraftMessages.findIndex((msg: Message) => (msg.mailboxes || []).includes('DRAFT'));
-            setDraftIndex(draftMessageIndex !== -1 ? draftMessageIndex : 0);
-            if (draftMessageIndex !== -1) {
-                draftService.setReplyDraft(onlyDraftMessages[draftMessageIndex]);
+            let messages = [...(selectedThread.messages) || []];
+            let draftMessages = [...messages].filter((item: MessageDraft) => item.mailboxes?.includes('DRAFT'))
+            setTotalDraftMessages([...draftMessages]);
+            let findLastIndex = messages.findLastIndex((item: Message) => item.mailboxes?.includes('DRAFT'));
+            if (findLastIndex !== -1) {
+                setDraftIndex(findLastIndex);
+                draftService.setReplyDraft(messages[findLastIndex]);
+            } else {
+                setDraftIndex(messages.length);
             }
+
             // if (onlyDraftMessages[draftMessageIndex]) {
             //     if (!getPlainTextFromHtml(onlyDraftMessages[draftMessageIndex].draftInfo?.body || '').trim()) {
             //         setTimeout(() => {
@@ -658,6 +665,26 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             if (incomingEvent.type === 'draft.currentMessage') {
                 setMessageData(incomingEvent.data);
             }
+            if (incomingEvent.type === 'draft.updateIndex') {
+                let findMessage = (selectedThread?.messages || []).findIndex((item: Message) => item.id === incomingEvent.data.draftId);
+                if (draftIndex === findMessage) {
+                    return;
+                }
+                setReloadingEditor(true);
+                setShowEditorToolbar(true);
+                setTimeout(() => {
+                    setReloadingEditor(false);
+                    if (findMessage !== -1) {
+                        setIsContentUpdated(false);
+                        setDraftIndex(findMessage);
+                        draftService.setReplyDraft((selectedThread?.messages || [])[findMessage]);
+                        globalEventService.fireEvent({data: {}, type: 'richtexteditor.focus'})
+                    }
+                }, 50)
+                // setTimeout(() => {
+
+                // }, 5000);
+            }
             // if (incomingEvent.type === 'replybox.hide') {
             //     setShowEditorToolbar(false);
             //     setTimeout(() => {
@@ -681,27 +708,29 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                     maxHeight={'450px'} direction={'column'} backgroundColor={'#FFFFFF'} width={'100%'}
                     onBlur={() => handleBlur()}>
                     <Flex borderRadius={8} gap={4} border={'1px solid #F3F4F6'} direction={'column'} padding={4}>
+                        {totalDraftMessages.length > 0 &&
                         <Flex align={'center'} gap={2} pb={4} borderBottom={'1px solid #F3F4F6'}>
-                            <Flex alignItems={'center'} justifyContent={'end'} className={'member-images subheader-images'}>
-                                <div className={'member-photo'} style={{background: '#000', border: `1px solid #000`}}>
-                                    <Image src="/image/user.png" width="24" height="24" alt=""/>
-                                </div>
-                                <div className={'member-photo'} style={{background: '#000', border: `1px solid #000`}}>
-                                    <Image src="/image/user.png" width="24" height="24" alt=""/>
-                                </div>
-                                <div className={'member-photo'} style={{background: '#000', border: `1px solid #000`}}>
-                                    <Image src="/image/user.png" width="24" height="24" alt=""/>
-                                </div>
-                                <div className={'member-photo'} style={{background: '#000', border: `1px solid #000`}}>
-                                    +4
-                                </div>
+                            <Flex alignItems={'center'} justifyContent={'end'}
+                                  className={'member-images subheader-images'}>
+                                {totalDraftMessages.slice(0, 5).map((item: MessageDraft, index: number) => (
+                                    <Tooltip label={item?.draftInfo?.createdBy || ''} placement='bottom'
+                                             key={index}>
+                                        <div className={'member-photo'}
+                                             style={{background: '#000'}}>
+                                            {item?.draftInfo?.createdByAvatarURL &&
+                                            <Image src={item?.draftInfo?.createdByAvatarURL} width="24" height="24"
+                                                   alt=""/>}
+                                        </div>
+                                    </Tooltip>
+                                ))}
+                                {totalDraftMessages.slice(5, totalDraftMessages.length - 1).length > 0 && <div className={'member-photo'} style={{background: '#000', border: `1px solid #000`}}>
+                                    +{totalDraftMessages.slice(5, totalDraftMessages.length - 1).length}
+                                </div> }
                             </Flex>
-
                             <Text fontSize={'13px'} color={'#6B7280'}>
                                 Draft
                             </Text>
-                        </Flex>
-
+                        </Flex>}
                         <Flex
                             align={'center'} justify={'space-between'} gap={4} position={"relative"}
                             zIndex={isReplyDropdownOpen ? 8 : 6}>
@@ -807,114 +836,116 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                 handleFocus()
                             }}
                             direction={'column'} position={"relative"} flex={1} overflow={'none'}>
-                                <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} zIndex={6} ref={editorRef}
-                                      overflowY={'auto'} className={`editor-bottom-shadow`}
-                                      onScroll={() => handleEditorScroll()}>
-                                    {/*onWheel={(event) => {*/}
-                                    {/*    if (event.deltaX <= 0) {*/}
-                                    {/*        handleEditorScroll()*/}
-                                    {/*    }*/}
-                                    {/*}}*/}
-                                    <div style={{display: !showEditorToolbar ? 'block' : 'none'}}>
-                                        <Input padding={0} height={'fit-content'} border={"none"} cursor={'pointer'}
-                                               outline={'none'} boxShadow={'none'} _focusVisible={{boxShadow: 'none'}}
-                                               fontSize={'13px'} _placeholder={{color: '#adb5bd'}}
-                                               placeholder={'Hit enter to reply with anything you\'d like'}/>
+                            <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} zIndex={6} ref={editorRef}
+                                  overflowY={'auto'} className={`editor-bottom-shadow`}
+                                  onScroll={() => handleEditorScroll()}>
+                                {/*onWheel={(event) => {*/}
+                                {/*    if (event.deltaX <= 0) {*/}
+                                {/*        handleEditorScroll()*/}
+                                {/*    }*/}
+                                {/*}}*/}
+                                <div style={{display: !showEditorToolbar ? 'block' : 'none'}}>
+                                    <Input padding={0} height={'fit-content'} border={"none"} cursor={'pointer'}
+                                           outline={'none'} boxShadow={'none'} _focusVisible={{boxShadow: 'none'}}
+                                           fontSize={'13px'} _placeholder={{color: '#adb5bd'}}
+                                           placeholder={'Hit enter to reply with anything you\'d like'}/>
+                                </div>
+                                {!reloadingEditor &&
+                                (selectedThread && draftIndex !== null) && (
+                                    <div style={{display: showEditorToolbar ? 'block' : 'none'}}>
+                                        <CollabRichTextEditor
+                                            id={selectedThread.id + '-' + draftIndex}
+                                            onCreate={() => sendToDraft('')}
+                                            content={draft?.draftInfo?.body}
+                                            placeholder="Hit enter to reply with anything you'd like"
+                                            isToolbarVisible={showEditorToolbar}
+                                            onChange={(value) => sendToDraft(value)}
+                                            className={`${extraClassNames} ${extraClassNamesForBottom}`}
+                                            emailSignature={selectedAccount ? getSignatureBanner(selectedAccount) : undefined}
+                                            projectShare={selectedThread?.projects?.length ? getProjectBanner(selectedAccount) : undefined}
+                                            extendToolbar={(
+                                                <>
+                                                    <Flex
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
+                                                            inputFile.current?.click();
+                                                            loaderPercentage = 0;
+                                                        }}
+                                                        align={'center'} justify={'center'} cursor={'pointer'}
+                                                        className={styles.attachIcon}
+                                                    >
+                                                        <Image priority src="/image/icon/attach.svg" alt="emoji"
+                                                               width={13}
+                                                               height={13}/>
+                                                        Attach
+                                                        <input type='file' id='file' ref={inputFile}
+                                                               onClick={(e) => e.stopPropagation()}
+                                                               onChange={(e) => handleFileUpload(e.target.files, e)}
+                                                               style={{display: 'none'}}/>
+                                                    </Flex>
+                                                </>
+                                            )}
+                                        />
                                     </div>
-                                    {(selectedThread && draftIndex !== null) && (
-                                        <div style={{display: showEditorToolbar ? 'block' : 'none'}}>
-                                            <CollabRichTextEditor
-                                                id={selectedThread.id + '-' + draftIndex}
-                                                onCreate={() => sendToDraft('')}
-                                                content={draft?.draftInfo?.body}
-                                                placeholder="Hit enter to reply with anything you'd like"
-                                                isToolbarVisible={showEditorToolbar}
-                                                onChange={(value) => sendToDraft(value)}
-                                                className={`${extraClassNames} ${extraClassNamesForBottom}`}
-                                                emailSignature={selectedAccount ? getSignatureBanner(selectedAccount) : undefined}
-                                                projectShare={selectedThread?.projects?.length ? getProjectBanner(selectedAccount) : undefined}
-                                                extendToolbar={(
-                                                    <>
-                                                        <Flex
-                                                            onClick={(e) => {
-                                                                e.preventDefault();
-                                                                e.stopPropagation();
-                                                                inputFile.current?.click();
-                                                                loaderPercentage = 0;
-                                                            }}
-                                                            align={'center'} justify={'center'} cursor={'pointer'}
-                                                            className={styles.attachIcon}
-                                                        >
-                                                            <Image priority src="/image/icon/attach.svg" alt="emoji"
-                                                                   width={13}
-                                                                   height={13}/>
-                                                            Attach
-                                                            <input type='file' id='file' ref={inputFile} onClick={(e) => e.stopPropagation()}
-                                                                   onChange={(e) => handleFileUpload(e.target.files, e)}
-                                                                   style={{display: 'none'}}/>
-                                                        </Flex>
-                                                    </>
-                                                )}
-                                            />
-                                        </div>
-                                    )}
+                                )}
 
-                                    {attachments && attachments.length > 0 ? <div style={{marginTop: '20px'}}>
-                                        {attachments.map((item, index: number) => (
-                                            <Flex align={'center'} key={index} className={styles.attachmentsFile}>
-                                                {item.filename}
-                                                <Flex ml={'auto'} gap={3} className={'attachments-progress-bar'}>
-                                                    {(showAttachmentLoader && !item.isUploaded) &&
-                                                    <ProgressBar loaderPercentage={loaderPercentage}/>}
-                                                    <div className={styles.closeIcon}
-                                                         onClick={() => removeAttachmentData(index)}>
-                                                        <CloseIcon/>
-                                                    </div>
-                                                </Flex>
+                                {attachments && attachments.length > 0 ? <div style={{marginTop: '20px'}}>
+                                    {attachments.map((item, index: number) => (
+                                        <Flex align={'center'} key={index} className={styles.attachmentsFile}>
+                                            {item.filename}
+                                            <Flex ml={'auto'} gap={3} className={'attachments-progress-bar'}>
+                                                {(showAttachmentLoader && !item.isUploaded) &&
+                                                <ProgressBar loaderPercentage={loaderPercentage}/>}
+                                                <div className={styles.closeIcon}
+                                                     onClick={() => removeAttachmentData(index)}>
+                                                    <CloseIcon/>
+                                                </div>
                                             </Flex>
-                                        ))}
-                                    </div> : null}
+                                        </Flex>
+                                    ))}
+                                </div> : null}
 
-                                </Flex>
-                                {showEditorToolbar &&
-                                <Flex direction={'column'} className={styles.composeBox} width={'fit-content'}
-                                      marginLeft={'auto'} mr={'6px'}>
-                                    <Flex align={'center'} className={styles.replyButton} position={'relative'} zIndex={6}>
+                            </Flex>
+                            {showEditorToolbar &&
+                            <Flex direction={'column'} className={styles.composeBox} width={'fit-content'}
+                                  marginLeft={'auto'} mr={'6px'}>
+                                <Flex align={'center'} className={styles.replyButton} position={'relative'} zIndex={6}>
+                                    <Button
+                                        className={styles.replyTextDiscardButton}
+                                        outline={'none'} boxShadow={'none'} _focusVisible={{boxShadow: 'none'}}
+                                        fontSize={14} lineHeight={16} height={'38px'}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            discardMessage()
+                                        }}
+                                    > Discard </Button>
+                                    <Flex className={styles.messageSendButton}>
                                         <Button
-                                            className={styles.replyTextDiscardButton}
-                                            outline={'none'} boxShadow={'none'} _focusVisible={{boxShadow: 'none'}}
-                                            fontSize={14} lineHeight={16} height={'38px'}
+                                            isDisabled={showAttachmentLoader}
+                                            className={styles.replyTextButton}
+                                            colorScheme='blue'
+                                            fontSize={14} lineHeight={16}
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 e.stopPropagation();
-                                                discardMessage()
+                                                sendMessages()
                                             }}
-                                        > Discard </Button>
-                                        <Flex className={styles.messageSendButton}>
-                                            <Button
-                                                isDisabled={showAttachmentLoader}
-                                                className={styles.replyTextButton}
-                                                colorScheme='blue'
-                                                fontSize={14} lineHeight={16}
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                    sendMessages()
-                                                }}
-                                            >
-                                                {scheduledDate ? (
-                                                    <>Send {dayjs(scheduledDate).from(dayjs())} @ {dayjs(scheduledDate).format('hh:mmA')}</>
-                                                ) : (
-                                                    <>Send</>
-                                                )}
-                                            </Button>
+                                        >
+                                            {scheduledDate ? (
+                                                <>Send {dayjs(scheduledDate).from(dayjs())} @ {dayjs(scheduledDate).format('hh:mmA')}</>
+                                            ) : (
+                                                <>Send</>
+                                            )}
+                                        </Button>
 
-                                            <MessageSchedule date={scheduledDate} onChange={handleSchedule}/>
-                                        </Flex>
+                                        <MessageSchedule date={scheduledDate} onChange={handleSchedule}/>
                                     </Flex>
                                 </Flex>
-                                }
                             </Flex>
+                            }
+                        </Flex>
                     </Flex>
                 </Flex>
             </DropZone>

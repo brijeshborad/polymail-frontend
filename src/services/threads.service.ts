@@ -105,6 +105,16 @@ class ThreadsService extends BaseService {
                 draftService.setReplyDraft(draft);
             }
             this.setThreadState({threads: currentThreads, success: true});
+            // let selectedThread = {...currentThread};
+            // let selectedThreadMessages = [...(selectedThread.messages || [])];
+            // draftIndex = selectedThreadMessages.findIndex((message: Message) => message.id === draft.id);
+            // if (draftIndex !== -1) {
+            //     selectedThreadMessages[draftIndex] = {...draft as Message};
+            // } else {
+            //     selectedThreadMessages.push(draft as Message);
+            // }
+            // selectedThread.messages = [...selectedThreadMessages];
+            // this.setSelectedThread(selectedThread);
         }
     }
 
