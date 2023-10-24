@@ -218,7 +218,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
                                     scrollableTarget="scrollableDiv" next={() => fetchNext()} loader={null}>
                         {currentThreads.length > 0 && currentThreads.map((item: Thread, index: number) => (
                             <div
-                                key={index} style={{marginBottom: '10px'}}
+                                key={index} style={{marginBottom: '10px', padding: '3px 3px 0 3px'}}
                                 className={`${(selectedThread && selectedThread.id === item.id) ? styles.selectedThread : ''}`}
                             >
                                 <ThreadsSideBarListItem

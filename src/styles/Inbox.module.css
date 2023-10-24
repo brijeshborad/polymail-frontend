@@ -216,7 +216,7 @@
 .mailList {
     max-height: calc(100vh - 258px);
     overflow-y: auto;
-    padding: 0 6px;
+    /*padding: 0 6px;*/
     scrollbar-gutter: stable;
 }
 
