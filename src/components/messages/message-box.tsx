@@ -294,9 +294,9 @@ export function MessageBox(props: any) {
                     <Flex align={'flex-start'} width={'100%'}>
                         <Flex align={'center'} w={'100%'} gap={2} cursor={'pointer'} padding={4}
                               onClick={() => handleRowClick(messageIndex)}>
-                            <div className={styles.mailBoxUserImage}>
+                            {/*<div className={styles.mailBoxUserImage}>*/}
 
-                            </div>
+                            {/*</div>*/}
 
                             <Flex w={'100%'} direction={'column'}>
                                 <Flex align={'center'} justify={'space-between'} mb={1} minH={5}>
@@ -362,9 +362,9 @@ export function MessageBox(props: any) {
                         <Flex align={'flex-start'}>
                             <Flex align={'center'} w={'100%'} cursor={'pointer'} gap={2} padding={4}
                                   onClick={() => handleRowClick(messageIndex)}>
-                                <div className={styles.mailBoxUserImage}>
+                                {/*<div className={styles.mailBoxUserImage}>*/}
 
-                                </div>
+                                {/*</div>*/}
                                 <Flex w={'100%'} direction={'column'} pr={'20px'}>
                                     <Flex align={'center'} justify={'space-between'} mb={1}>
                                         <Flex align={'flex-end'} gap={1}>
