@@ -29,6 +29,7 @@ let avoidScroll: boolean = false;
 export function ThreadsSideBarList(props: ThreadListProps) {
     const {selectedThread, threads, multiSelection} = useSelector((state: StateType) => state.threads);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
+    const {newMessage} = useSelector((state: StateType) => state.socket);
     const listRef = useRef<any>(null);
     const router = useRouter();
     const routePaths = router.pathname.split('/');
@@ -56,6 +57,14 @@ export function ThreadsSideBarList(props: ThreadListProps) {
             }, 100);
         }
     }, [])
+
+    useEffect(() => {
+        if (newMessage) {
+            if (newMessage.name === 'SearchResult') {
+                avoidScroll = true;
+            }
+        }
+    }, [newMessage]);
 
     useEffect(() => {
         if (threads) {

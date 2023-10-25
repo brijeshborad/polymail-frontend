@@ -29,7 +29,7 @@ export function extractAndMapThreadAndMessagesBody(threads: Thread[], payload: a
 }
 
 
-function extractBodyFromParts(contentRoot: ContentRoot | undefined): string {
+export function extractBodyFromParts(contentRoot: ContentRoot | undefined): string {
     if (contentRoot) {
         let parts: any = _extractBodyFromParts(contentRoot);
         if (parts !== null) {
@@ -67,7 +67,7 @@ function _extractBodyFromParts(part: ContentRoot): ContentRoot | null {
     return returnValue;
 }
 
-function extractAttachments(part: ContentRoot | undefined): MessageAttachments[] {
+export function extractAttachments(part: ContentRoot | undefined): MessageAttachments[] {
     if (part) {
         let attachments: MessageAttachments[] = [];
         if (part.attachment) {

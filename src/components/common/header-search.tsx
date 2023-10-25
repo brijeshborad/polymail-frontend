@@ -8,6 +8,10 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {useRouter} from "next/router";
 import {keyNavigationService, projectService, socketService, threadService} from "@/services";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+
+dayjs.extend(customParseFormat)
 
 export function HeaderSearch() {
     const dispatch = useDispatch();
@@ -73,7 +77,15 @@ export function HeaderSearch() {
                 threadService.cancelThreadSearch(true);
             }
             setSearchString('');
-            dispatch(getAllThreads({body: {mailbox: tabValue, account: selectedAccount.id}}));
+            dispatch(getAllThreads({
+                body: {
+                    mailbox: tabValue, account: selectedAccount.id, pagination: {
+                        cutoff: dayjs().add(1, "day").format('YYYY-MM-DD'),
+                        count: 100,
+                        page: 1
+                    }
+                }
+            }));
         }
     }
 
