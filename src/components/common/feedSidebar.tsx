@@ -55,6 +55,7 @@ export const FeedSidebar = () => {
                     title: newMessage.data.Title,
                     subtitle: newMessage.data.Subtitle,
                     body: newMessage.data.Body,
+                    username: newMessage.data.Username,
                     isRead: userDetails ? !dayjs(newMessage.data.Created).isAfter(dayjs(userDetails.activitiesRead)) : false,
                 })
                 setFeeds([...currentFeeds]);
