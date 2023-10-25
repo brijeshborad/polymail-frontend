@@ -471,35 +471,40 @@ export function MessageBox(props: any) {
                 </Flex>
             ))
             }
-            {draftMessages && draftMessages.length > 0 && draftMessages.map((message: Message, messageIndex) => (
-                <div key={messageIndex}>
-                    <Flex direction={'column'} cursor={'pointer'} mb={3} onClick={() => {
-                        globalEventService.fireEvent({data: {draftId: message.id}, type: 'draft.updateIndex'})
-                    }} gap={2} padding={4} borderRadius={'10px'} border={'1px dashed #E5E7EB'}>
-                        <Flex align={'center'} justify={'space-between'} gap={2}>
-                            <Flex align={'center'} gap={2}>
-                                <Flex width={'20px'} height={'20px'} borderRadius={'50%'} overflow={'hidden'}>
-                                    <div className={'member-photo'} key={index}
-                                         style={{background: '#000'}}>
-                                        {message?.draftInfo?.createdByAvatarURL && <Image src={message?.draftInfo?.createdByAvatarURL} width="24" height="24"
-                                                                                          alt=""/>}
-                                    </div>
+            {draftMessages && draftMessages.length > 0 && draftMessages.map((message: Message, messageIndex) => {
+                if (message.draftInfo?.discardedBy) {
+                    return null
+                }
+                return (
+                    <div key={messageIndex}>
+                        <Flex direction={'column'} cursor={'pointer'} mb={3} onClick={() => {
+                            globalEventService.fireEvent({data: {draftId: message.id}, type: 'draft.updateIndex'})
+                        }} gap={2} padding={4} borderRadius={'10px'} border={'1px dashed #E5E7EB'}>
+                            <Flex align={'center'} justify={'space-between'} gap={2}>
+                                <Flex align={'center'} gap={2}>
+                                    <Flex width={'20px'} height={'20px'} borderRadius={'50%'} overflow={'hidden'}>
+                                        <div className={'member-photo'} key={index}
+                                             style={{background: '#000'}}>
+                                            {message?.draftInfo?.createdByAvatarURL && <Image src={message?.draftInfo?.createdByAvatarURL} width="24" height="24"
+                                                                                              alt=""/>}
+                                        </div>
+                                    </Flex>
+                                    <Text fontSize={'13px'} color={'#0A101D'}> {message?.draftInfo?.createdBy || ''} </Text>
                                 </Flex>
-                                <Text fontSize={'13px'} color={'#0A101D'}> {message?.draftInfo?.createdBy || ''} </Text>
+                                <Text fontSize={'11px'} color={'#6B7280'}>
+                                    Saved <Time fontSize={'11px'} as={'span'} time={message?.updated || ''} isShowFullTime={false}
+                                                showTimeInShortForm={true}/>&nbsp;ago </Text>
                             </Flex>
-                            <Text fontSize={'11px'} color={'#6B7280'}>
-                                Saved <Time fontSize={'11px'} as={'span'} time={message?.updated || ''} isShowFullTime={false}
-                                            showTimeInShortForm={true}/>&nbsp;ago </Text>
-                        </Flex>
 
-                        <Flex>
-                            <Text fontSize={'13px'} color={'#6B7280'} noOfLines={1}>
-                                {getPlainTextFromHtml(message.draftInfo?.body || '')}
-                            </Text>
+                            <Flex>
+                                <Text fontSize={'13px'} color={'#6B7280'} noOfLines={1}>
+                                    {getPlainTextFromHtml(message.draftInfo?.body || '')}
+                                </Text>
+                            </Flex>
                         </Flex>
-                    </Flex>
-                </div>
-            ))}
+                    </div>
+                )
+            })}
         </>
     )
 }
