@@ -498,10 +498,9 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         }
         if (draft && draft.id) {
             setDraftIndex(null);
-            // draftService.setReplyDraft(null);
-            // setAttachments([]);
+            draftService.setReplyDraft(null);
+            setAttachments([]);
             // draftService.discardDraft(draft.id!);
-            // setDraftIndex(null);
             let discardedBy = isRescue ? '' : selectedAccount?.name;
             dispatch(discardDraft({
                 body: {id: draft.id, discardedBy: discardedBy},
@@ -727,6 +726,18 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         }
     }, [getForwardContent, handleEditorScroll, incomingEvent, isDraftUpdated, selectedAccount, totalMessages]);
 
+
+    function createNewDraft() {
+        setReloadingEditor(true);
+        setDraftIndex(null);
+        setShowEditorToolbar(true);
+        setTimeout(() => {
+            setReloadingEditor(false);
+            setIsContentUpdated(false);
+            globalEventService.fireEvent({data: {}, type: 'richtexteditor.focus'})
+        }, 50)
+    }
+
     return (
         <Flex backgroundColor={'#FFFFFF'} position={'sticky'} mt={'20px'} bottom={0} boxShadow={'0 21px 0px 0 #fff'}>
             <DropZone onFileUpload={handleFileUpload} forReply={true}>
@@ -735,27 +746,37 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                     onBlur={() => handleBlur()}>
                     <Flex borderRadius={8} gap={4} border={'1px solid #F3F4F6'} direction={'column'} padding={4}>
                         {totalDraftMessages.length > 0 &&
-                        <Flex align={'center'} gap={2} pb={4} borderBottom={'1px solid #F3F4F6'}>
-                            <Flex alignItems={'center'} justifyContent={'end'}
-                                  className={'member-images subheader-images'}>
-                                {totalDraftMessages.slice(0, 5).map((item: MessageDraft, index: number) => (
-                                    <Tooltip label={item?.draftInfo?.createdBy || ''} placement='bottom'
-                                             key={index}>
-                                        <div className={'member-photo'}
-                                             style={{background: '#000'}}>
-                                            {item?.draftInfo?.createdByAvatarURL &&
-                                            <Image src={item?.draftInfo?.createdByAvatarURL} width="24" height="24"
-                                                   alt=""/>}
-                                        </div>
-                                    </Tooltip>
-                                ))}
-                                {totalDraftMessages.slice(5, totalDraftMessages.length - 1).length > 0 && <div className={'member-photo'} style={{background: '#000', border: `1px solid #000`}}>
-                                    +{totalDraftMessages.slice(5, totalDraftMessages.length - 1).length}
-                                </div> }
+                        <Flex align={'center'} justifyContent={'space-between'} pb={4}
+                              borderBottom={'1px solid #F3F4F6'}>
+                            <Flex gap={2}>
+                                <Flex alignItems={'center'} justifyContent={'end'}
+                                      className={'member-images subheader-images'}>
+                                    {totalDraftMessages.slice(0, 5).map((item: MessageDraft, index: number) => (
+                                        <Tooltip label={item?.draftInfo?.createdBy || ''} placement='bottom'
+                                                 key={index}>
+                                            <div className={'member-photo'}
+                                                 style={{background: '#000'}}>
+                                                {item?.draftInfo?.createdByAvatarURL &&
+                                                <Image src={item?.draftInfo?.createdByAvatarURL} width="24" height="24"
+                                                       alt=""/>}
+                                            </div>
+                                        </Tooltip>
+                                    ))}
+                                    {totalDraftMessages.slice(5, totalDraftMessages.length - 1).length > 0 &&
+                                    <div className={'member-photo'}
+                                         style={{background: '#000', border: `1px solid #000`}}>
+                                        +{totalDraftMessages.slice(5, totalDraftMessages.length - 1).length}
+                                    </div>}
+                                </Flex>
+                                <Text fontSize={'13px'} color={'#6B7280'}>
+                                    Draft
+                                </Text>
                             </Flex>
-                            <Text fontSize={'13px'} color={'#6B7280'}>
-                                Draft
-                            </Text>
+                            {props.isProjectView &&
+                            <Button fontSize={'13px'} fontWeight={'500'} border={'1px solid #FFFFFF'} onClick={() => createNewDraft()}
+                                    background={'#F3F4F6'} borderRadius={'50px'} padding={'8px'} height={'fit-content'}>
+                                Create new draft
+                            </Button>}
                         </Flex>}
                         <Flex
                             align={'center'} justify={'space-between'} gap={4} position={"relative"}
