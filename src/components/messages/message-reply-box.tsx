@@ -80,10 +80,12 @@ export function MessageReplyBox(props: MessageBoxType) {
     const [emailList, setEmailList] = useState<any>([]);
     const [totalDraftMessages, setTotalDraftMessages] = useState<MessageDraft[]>([]);
     const [totalMessages, setTotalMessages] = useState<MessageDraft[] | null>(null);
+    const [waitForDraft, setWaitForDraft] = useState<boolean>(false);
 
     useEffect(() => {
         if (draftSuccess) {
             if (updatedDraft) {
+                setWaitForDraft(false);
                 let finalMessages = [...(totalMessages || [])]
                 let findDraft = finalMessages.findIndex((item: Message) => item.id === updatedDraft.id);
                 if (findDraft !== -1) {
@@ -240,10 +242,26 @@ export function MessageReplyBox(props: MessageBoxType) {
             ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
             accountId: selectedAccount?.id
         }
-        debounce(() => {
+        if (draft?.id) {
+            setWaitForDraft(false);
+            debounce(() => {
+                dispatch(updatePartialMessage({body: {id: selectedThread?.id + '-' + draftIndex, body: body}}));
+            }, 250);
+        } else {
+            if (waitForDraft) {
+                return;
+            }
+            setWaitForDraft(true);
             dispatch(updatePartialMessage({body: {id: selectedThread?.id + '-' + draftIndex, body: body}}));
-        }, 250);
+        }
     }
+
+    useEffect(() => {
+        if (!waitForDraft) {
+            // console.log(emailBody);
+            sendToDraft('', false);
+        }
+    }, [waitForDraft])
 
     useEffect(() => {
         // Add signature and draft to email body
