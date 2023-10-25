@@ -105,7 +105,7 @@ export function MessageReplyBox(props: MessageBoxType) {
     useEffect(() => {
         if (draftIndex === null && totalMessages) {
             let messages = [...totalMessages];
-            let draftMessages = [...messages].filter((item: MessageDraft) => item.mailboxes?.includes('DRAFT'))
+            let draftMessages = [...messages].filter((item: MessageDraft) => item.mailboxes?.includes('DRAFT') && !item.draftInfo?.discardedBy)
             setTotalDraftMessages([...draftMessages]);
             // let findLastIndex = messages.findLastIndex((item: Message) => item.mailboxes?.includes('DRAFT'));
             // if (findLastIndex !== -1) {
