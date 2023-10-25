@@ -6,20 +6,7 @@ export function extractAndMapThreadAndMessagesBody(threads: Thread[], payload: a
     rawThreads = rawThreads.map((thread: Thread) => {
         let rawThread = {...thread};
         rawThread.messages = [...(thread.messages || [])];
-        rawThread.messages = rawThread.messages.map((message: Message) => {
-            if (!message.mailboxes?.includes('DRAFT')) {
-                let body = extractBodyFromParts(message.contentRoot);
-                let rawMessage = {...message};
-                let decoded = Buffer.from(body || '', 'base64').toString();
-                let addTargetBlank = decoded.replace(/<a/g, '<a target="_blank"');
-                const blob = new Blob([addTargetBlank], {type: "text/html"});
-                rawMessage.body = window.URL.createObjectURL(blob);
-                rawMessage.attachments = extractAttachments(message.contentRoot);
-                delete rawMessage.contentRoot;
-                return rawMessage;
-            }
-            return message;
-        })
+        rawThread.messages = performMessagesUpdate(rawThread.messages);
         return rawThread;
     })
     if (payload.page > 1) {
@@ -28,6 +15,23 @@ export function extractAndMapThreadAndMessagesBody(threads: Thread[], payload: a
     return rawThreads;
 }
 
+
+export function performMessagesUpdate(messages: Message[]) {
+    return messages.map((message: Message) => {
+        if (!message.mailboxes?.includes('DRAFT')) {
+            let body = extractBodyFromParts(message.contentRoot);
+            let rawMessage = {...message};
+            let decoded = Buffer.from(body || '', 'base64').toString();
+            let addTargetBlank = decoded.replace(/<a/g, '<a target="_blank"');
+            const blob = new Blob([addTargetBlank], {type: "text/html"});
+            rawMessage.body = window.URL.createObjectURL(blob);
+            rawMessage.attachments = extractAttachments(message.contentRoot);
+            delete rawMessage.contentRoot;
+            return rawMessage;
+        }
+        return message;
+    })
+}
 
 export function extractBodyFromParts(contentRoot: ContentRoot | undefined): string {
     if (contentRoot) {

@@ -10,7 +10,7 @@ import styles from "@/styles/Inbox.module.css";
 import Image from "next/image";
 import {ChevronDownIcon, CloseIcon} from "@chakra-ui/icons";
 import React, {useCallback, useEffect, useRef, useState} from "react";
-import {debounce, getProjectBanner, getSignatureBanner} from "@/utils/common.functions";
+import {clearDebounce, debounce, getProjectBanner, getSignatureBanner} from "@/utils/common.functions";
 import {DropZone} from "@/components/common";
 import {updatePartialMessage, discardDraft} from "@/redux/draft/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
@@ -252,7 +252,10 @@ export function MessageReplyBox(props: MessageBoxType) {
                 return;
             }
             setWaitForDraft(true);
-            dispatch(updatePartialMessage({body: {id: selectedThread?.id + '-' + draftIndex, body: body}}));
+            clearDebounce('DRAFT_CREATION');
+            debounce(() => {
+                dispatch(updatePartialMessage({body: {id: selectedThread?.id + '-' + draftIndex, body: body}}));
+            }, 500, 'DRAFT_CREATION');
         }
     }
 
@@ -748,14 +751,17 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         }
     }, [getForwardContent, handleEditorScroll, incomingEvent, isDraftUpdated, selectedAccount, totalMessages]);
 
-
     function createNewDraft() {
+        draftService.setReplyDraft(null);
         setReloadingEditor(true);
         setDraftIndex(null);
         setShowEditorToolbar(true);
+        handleEditorScroll();
+        setAttachments([]);
+        setEmailBody('');
+        setIsContentUpdated(false);
         setTimeout(() => {
             setReloadingEditor(false);
-            setIsContentUpdated(false);
             globalEventService.fireEvent({data: {}, type: 'richtexteditor.focus'})
         }, 50)
     }

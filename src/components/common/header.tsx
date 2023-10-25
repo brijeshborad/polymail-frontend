@@ -27,7 +27,7 @@ import {
     threadService,
     userService
 } from "@/services";
-import {extractAttachments, extractBodyFromParts} from "@/utils/thread.functions";
+import {performMessagesUpdate} from "@/utils/thread.functions";
 
 const FeedSidebar = dynamic(
     () => import('./feedSidebar').then((mod) => mod.FeedSidebar)
@@ -101,20 +101,7 @@ export function Header() {
                     if (newThread.messages && newThread.messages.length > 0) {
                         newThread.messages = newThread.messages.map((t: Message) => ({...t, id: t._id}));
                         newThread.messages = newThread.messages.sort((a: Message, b: Message) => new Date(b.created as string).valueOf() - new Date(a.created as string).valueOf());
-                        newThread.messages = newThread.messages.map((message: Message) => {
-                            if (!message.mailboxes?.includes('DRAFT')) {
-                                let body = extractBodyFromParts(message.contentRoot);
-                                let rawMessage = {...message};
-                                let decoded = Buffer.from(body || '', 'base64').toString();
-                                let addTargetBlank = decoded.replace(/<a/g, '<a target="_blank"');
-                                const blob = new Blob([addTargetBlank], {type: "text/html"});
-                                rawMessage.body = window.URL.createObjectURL(blob);
-                                rawMessage.attachments = extractAttachments(message.contentRoot);
-                                delete rawMessage.contentRoot;
-                                return rawMessage;
-                            }
-                            return message;
-                        });
+                        newThread.messages = performMessagesUpdate(newThread.messages);
                     }
                     threadService.setThreadState({threads: [...(threads || []), newThread]})
                 });
