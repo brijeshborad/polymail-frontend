@@ -116,6 +116,10 @@ class DraftService extends BaseService {
             }
         }
     }
+
+    instantDraftUpdate(draft: MessageDraft) {
+        this.setDraftState({updatedDraft: draft, success: true});
+    }
 }
 
 export const draftService = new DraftService();

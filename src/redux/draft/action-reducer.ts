@@ -68,7 +68,6 @@ const draftSlice = createSlice({
                 delete finalState.composeDraft
                 delete finalState.updatedComposeDraft
                 delete finalState.resumeAbleDraft
-                delete finalState.updatedDraft
                 if (!isForCompose) {
                     threadService.pushOrUpdateDraftInThreadMessages('', finalUpdates);
                 }

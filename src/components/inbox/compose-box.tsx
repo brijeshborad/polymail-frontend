@@ -411,6 +411,7 @@ export function ComposeBox(props: any) {
         draftService.setComposeDraft(null);
         draftService.setResumeDraft(null);
         if (composeDraft && composeDraft.id) {
+            messageService.setDraftCache(composeDraft.id);
             dispatch(deleteMessage({body: {id: composeDraft.id}}));
         }
     }

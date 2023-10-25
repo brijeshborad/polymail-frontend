@@ -103,7 +103,7 @@ export function MessageReplyBox(props: MessageBoxType) {
     }, [selectedThread])
 
     useEffect(() => {
-        if (draftIndex === null && totalMessages) {
+        if (totalMessages) {
             let messages = [...totalMessages];
             let draftMessages = [...messages].filter((item: MessageDraft) => item.mailboxes?.includes('DRAFT') && !item.draftInfo?.discardedBy)
             setTotalDraftMessages([...draftMessages]);
@@ -113,7 +113,9 @@ export function MessageReplyBox(props: MessageBoxType) {
             //     draftService.setReplyDraft(messages[findLastIndex]);
             // } else {
             // }
-            setDraftIndex(messages.length);
+            if (draftIndex === null) {
+                setDraftIndex(messages.length);
+            }
 
             // if (onlyDraftMessages[draftMessageIndex]) {
             //     if (!getPlainTextFromHtml(onlyDraftMessages[draftMessageIndex].draftInfo?.body || '').trim()) {
@@ -497,11 +499,13 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             handleEditorScroll();
         }
         if (draft && draft.id) {
+            messageService.setDraftCache(draft.id);
+            let discardedBy = isRescue ? '' : selectedAccount?.name;
+            draftService.instantDraftUpdate({...draft, draftInfo: {...draft?.draftInfo, discardedBy: discardedBy}});
             setDraftIndex(null);
             draftService.setReplyDraft(null);
             setAttachments([]);
             // draftService.discardDraft(draft.id!);
-            let discardedBy = isRescue ? '' : selectedAccount?.name;
             dispatch(discardDraft({
                 body: {id: draft.id, discardedBy: discardedBy},
                 // afterSuccessAction: () => {
