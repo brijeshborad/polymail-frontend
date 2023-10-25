@@ -1,8 +1,9 @@
 import { LinkPreviewProps, PreviewResponseType } from "@/types/props-types/link-preview.types";
 import ApiService from "@/utils/api.service";
-import { Flex, Skeleton } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
+/* eslint-disable @next/next/no-img-element */
 
 export default function LinkPreview({ isVisible, url, top, left }: LinkPreviewProps) {
   const [isBlocked, setIsBlocked] = useState(false)
@@ -47,10 +48,6 @@ export default function LinkPreview({ isVisible, url, top, left }: LinkPreviewPr
     })
       .then((data: any) => {
         setLoading(false)
-
-        // eslint-disable-next-line no-unused-vars
-        // const {image, ...rest} = data
-
         setCache({
           ...cache,
           [url]: data
@@ -65,83 +62,37 @@ export default function LinkPreview({ isVisible, url, top, left }: LinkPreviewPr
       })
   }, [url])
 
-  // const validateImage = (imgUrl, linkUrl) => {
-  //   console.log('VALIDATE', imgUrl)
-  //   axios.get(imgUrl)
-  //     .then(() => {
-  //       console.log('VALID', imgUrl)
-  //       setCache({
-  //         ...cache,
-  //         [linkUrl]: {
-  //           ...cache[linkUrl],
-  //           image: imgUrl
-  //         }
-  //       })
-  //     }, (err) => {
-  //       console.log(err)
-  //     })
-  // } 
-
-  if (!url || !isVisible || isBlocked) return
+  if (!url || !isVisible || isBlocked || isLoading) return
 
   return (
-    <div className='link-preview-thumbnail' style={{ top: top - 18, left: left }}>
+    <div className='link-preview-thumbnail' style={{ top: top, left: left, marginTop: meta?.image == '' ? 110 : 0 }}>
       <div className='arrow'></div>
-      {isLoading ? (
-        <div>
-          <Flex direction={'column'} gap={'8px'} style={{ paddingTop: 4, paddingBottom: 4 }}>
-            <Skeleton
-              startColor='#444' endColor='#666'
-              width={'100%'}
-              height={'12px'}
-              borderRadius={'8px'}
-              border={'1px solid #E5E7EB'}
+      <Flex flexDirection={'column'}>
+        {(meta && meta?.image) && (
+          <div className='img'>
+            <img
+              src={meta?.image}
+              alt={meta?.title || `preview of url: ${url}`}
+              onError={() => {
+                const updatedMeta = {
+                  ...meta,
+                  image: ''
+                }
+                setCache({
+                  ...cache,
+                  [meta.website]: updatedMeta
+                })
+                setMeta(updatedMeta)
+              }}
             />
-            <Skeleton
-              startColor='#444' endColor='#666'
-              width={'90%'}
-              height={'8px'}
-              borderRadius={'8px'}
-              border={'1px solid #E5E7EB'}
-            />
-            <Skeleton
-              startColor='#444' endColor='#666'
-              width={'50%'}
-              height={'8px'}
-              borderRadius={'8px'}
-              border={'1px solid #E5E7EB'}
-              style={{ marginTop: '-2px' }}
-            />
-          </Flex>
-        </div>
-      ) : (
-        <Flex>
-          <div className='info'>
-            <h2 className='title'>{meta?.title}</h2>
-            <p className='description'>{meta?.description}</p>
-            <p className='url'>{meta?.website}</p>
           </div>
-          {(meta && meta?.image) && (
-            <div className='img' style={{ backgroundImage: `url(${meta.image.replace(/&quot;/g, '"')})` }}>
-              <img
-                src={meta?.image}
-                alt={meta?.title || `preview of url: ${url}`}
-                onError={() => {
-                  const updatedMeta = {
-                    ...meta,
-                    image: ''
-                  }
-                  setCache({
-                    ...cache,
-                    [meta.website]: updatedMeta
-                  })
-                  setMeta(updatedMeta)
-                }}
-              />
-            </div>
-          )}
-        </Flex>
-      )}
+        )}
+        <div className='info'>
+          <h2 className='title'>{meta?.title}</h2>
+          <p className='description'>{meta?.description}</p>
+          <p className='url'>{meta?.website}</p>
+        </div>
+      </Flex>
     </div>
   )
 }
