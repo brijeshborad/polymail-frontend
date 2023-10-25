@@ -23,9 +23,10 @@ import {
     socketService,
     threadService
 } from "@/services";
-import { Thread } from "@/models";
+import {Message, Thread} from "@/models";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import {extractAttachments, extractBodyFromParts} from "@/utils/thread.functions";
 
 dayjs.extend(customParseFormat)
 
@@ -173,12 +174,34 @@ export function ThreadsSideBarTab(props: TabProps) {
                 getAllThread();
             }
             if (newMessage.name === 'SnoozedThread') {
+                console.log(newMessage);
                 let finalThreads = [...(threads || [])];
                 let findThreadInList = finalThreads.findIndex((item: Thread) => item.id === newMessage.data.thread.id);
                 if (findThreadInList !== -1) {
                     finalThreads.splice(findThreadInList, 1);
                 }
-                finalThreads.unshift(newMessage.data.thread);
+                let thread: Thread = {...newMessage.data.thread};
+                thread = {
+                    ...thread,
+                    id: thread._id,
+                };
+                let messages: Message[] = [...(thread.messages || [])];
+                messages = messages.map((message: Message) => {
+                    if (!message.mailboxes?.includes('DRAFT')) {
+                        let body = extractBodyFromParts(message.contentRoot);
+                        let rawMessage = {...message};
+                        let decoded = Buffer.from(body || '', 'base64').toString();
+                        let addTargetBlank = decoded.replace(/<a/g, '<a target="_blank"');
+                        const blob = new Blob([addTargetBlank], {type: "text/html"});
+                        rawMessage.body = window.URL.createObjectURL(blob);
+                        rawMessage.attachments = extractAttachments(message.contentRoot);
+                        delete rawMessage.contentRoot;
+                        return rawMessage;
+                    }
+                    return message;
+                });
+                thread.messages = messages;
+                finalThreads.unshift(thread);
                 threadService.setThreads(finalThreads);
                 threadService.setThreadState({success: true})
                 globalEventService.fireEvent({
