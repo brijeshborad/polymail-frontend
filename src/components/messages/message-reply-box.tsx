@@ -960,7 +960,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                             </Flex>
                             {showEditorToolbar &&
                             <Flex direction={'column'} className={styles.composeBox} width={'fit-content'}
-                                  marginLeft={'auto'} mr={'6px'}>
+                                  marginLeft={'auto'} mr={'6px'} boxShadow={'none'}>
                                 <Flex align={'center'} className={styles.replyButton} position={'relative'} zIndex={6}>
                                     <Button
                                         className={styles.replyTextDiscardButton}
