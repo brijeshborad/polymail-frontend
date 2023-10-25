@@ -933,8 +933,8 @@ div:has(> .mailSendToaster) {
   position: absolute;
   background-color: #000;
   color: #fff;
-  width: 300px;
-  height: 64px;
+  width: 200px;
+  /* height: 64px; */
   z-index: 999999;
   border-radius: 12px;
   padding: 8px 14px;
@@ -942,13 +942,15 @@ div:has(> .mailSendToaster) {
 }
 
 .link-preview-thumbnail .img {
-  width: 40px;
-  height: 40px;
+  width: 100%;
+  /* height: 80px; */
   border-radius: 8px;
+  overflow: hidden;
 }
 
+
 .link-preview-thumbnail .info {
-  width: 245px;
+  width: 100%;
 }
 .link-preview-thumbnail .title {
   font-size: 12px;
@@ -984,11 +986,11 @@ div:has(> .mailSendToaster) {
 .link-preview-thumbnail .arrow {
   content: "";
   position: absolute;
-  margin-top: 56px;
+  margin-top: -24px;
   margin-left: 8px;
   border-width: 8px;
   border-style: solid;
-  border-color: black transparent transparent transparent;
+  border-color: transparent transparent black transparent;
 }
 
 .thread-emojis .emoji {
