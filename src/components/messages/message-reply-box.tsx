@@ -783,7 +783,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                             </Button>}
                         </Flex>}
                         <Flex
-                            align={'center'} justify={'space-between'} mt={4} gap={4} position={"relative"}
+                            align={'center'} justify={'space-between'} mt={totalDraftMessages.length > 0 ? 4 : 0} gap={4} position={"relative"}
                             zIndex={isReplyDropdownOpen ? 8 : 6}>
                             <Flex align={'center'} gap={1}>
                                 <Menu isOpen={isReplyDropdownOpen} onClose={() => setIsReplyDropdownOpen(false)}>
