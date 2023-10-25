@@ -65,9 +65,9 @@ export default function LinkPreview({ isVisible, url, top, left }: LinkPreviewPr
   if (!url || !isVisible || isBlocked || isLoading) return
 
   return (
-    <div className='link-preview-thumbnail' style={{ top: top + 94, left: left + 20 }}>
+    <div className='link-preview-thumbnail' style={{ top: top, left: left, marginTop: meta?.image == '' ? 110 : 0 }}>
       <div className='arrow'></div>
-      <Flex flexDirection={'column'} gap={4}>
+      <Flex flexDirection={'column'}>
         {(meta && meta?.image) && (
           <div className='img'>
             <img
