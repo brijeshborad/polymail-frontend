@@ -181,6 +181,16 @@ export function ThreadsSideBarTab(props: TabProps) {
                 finalThreads.unshift(newMessage.data.thread);
                 threadService.setThreads(finalThreads);
                 threadService.setThreadState({success: true})
+                globalEventService.fireEvent({
+                    type: 'show-notification',
+                    data: {
+                        title: newMessage.data.thread.subject || "You got a new message",
+                        data: {
+                            body: `${newMessage.data.thread?.from?.name} ${newMessage.data.thread?.from?.email}`,
+                            tag: `${newMessage.data.thread?.updated}`
+                        }
+                    }
+                });
             }
             if (newMessage.name === 'Activity' && newMessage.data.Type === 'MemberJoined') {
                 if (tabName === 'projects') {
