@@ -11,6 +11,7 @@ import {createStandaloneToast} from "@chakra-ui/react";
 import {threadService} from "@/services/threads.service";
 import {commonService} from "@/services/common.service";
 import {globalEventService} from "@/services/global-event.service";
+import {getDraftStatus, setDraftStatus} from "@/utils/cache.functions";
 
 class MessageService extends BaseService {
     constructor() {
@@ -64,6 +65,7 @@ class MessageService extends BaseService {
     sendMessage(isCompose: boolean = false, scheduledDate: string = '', draft: any, performForDraftTab: boolean = false) {
         const {toast} = createStandaloneToast()
         let currentDraft: any = {...draft};
+        this.setDraftCache(draft.id);
         let params: any = {send: true};
         let polyToast = generateToasterId();
         if (scheduledDate) {
@@ -104,6 +106,7 @@ class MessageService extends BaseService {
                             }
                             globalEventService.fireEvent('draft.undo');
                         }
+                        this.setDraftCache(currentDraft.id, false);
                     } else if (type === 'send-now') {
                         params = {now: true}
                     }
@@ -134,6 +137,7 @@ class MessageService extends BaseService {
                                 }
                                 globalEventService.fireEvent('draft.undo');
                             }
+                            this.setDraftCache(currentDraft.id, false);
                         } else if (type === 'send-now') {
                             params = {now: true}
                         }
@@ -147,6 +151,12 @@ class MessageService extends BaseService {
         if (!isCompose) {
             threadService.updateThreadForUndoOrSend('send', draft?.draftInfo?.body);
         }
+    }
+
+    setDraftCache(messageId: string, isSent: boolean = true) {
+        let cachedDraft = {...getDraftStatus()};
+        cachedDraft[messageId] = isSent;
+        setDraftStatus(cachedDraft);
     }
 }
 

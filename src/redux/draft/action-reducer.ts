@@ -1,5 +1,7 @@
 import {createSlice, current, PayloadAction} from "@reduxjs/toolkit";
 import {InitialDraftStateType, ReducerActionType} from "@/types";
+import {getDraftStatus} from "@/utils/cache.functions";
+import {threadService} from "@/services";
 
 const initialState: any = {
     draft: null,
@@ -53,7 +55,7 @@ const draftSlice = createSlice({
         }: PayloadAction<any>) => {
             let {composeDraft, draft} = current(state);
             let finalUpdates: any = {...(isForCompose ? composeDraft: draft), ...updatedDraft}
-            let finalState = {}
+            let finalState: any = {}
             if (isForCompose) {
                 finalState = {composeDraft: finalUpdates, updatedComposeDraft: finalUpdates, resumeAbleDraft: finalUpdates, success: true};
                 if (isDraftTab) {
@@ -61,6 +63,15 @@ const draftSlice = createSlice({
                 }
             } else {
                 finalState = {updatedDraft: finalUpdates, success: true}
+            }
+            if (getDraftStatus()[finalUpdates.id]) {
+                delete finalState.composeDraft
+                delete finalState.updatedComposeDraft
+                delete finalState.resumeAbleDraft
+                delete finalState.updatedDraft
+                if (!isForCompose) {
+                    threadService.pushOrUpdateDraftInThreadMessages('', finalUpdates);
+                }
             }
             return {
                 ...state,

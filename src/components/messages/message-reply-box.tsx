@@ -24,7 +24,7 @@ import {useRouter} from "next/router";
 import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
 import dynamic from "next/dynamic";
 import CollabRichTextEditor from "../common/collab-rich-text-editor";
-import {draftService, globalEventService, messageService, socketService, threadService} from "@/services";
+import {draftService, globalEventService, messageService, socketService} from "@/services";
 import {RecipientsType} from "@/types/props-types/message-recipients.type";
 import {ProgressBar} from "@/components/loader-screen/progress-bar";
 import Tooltip from "@/components/common/Tooltip";

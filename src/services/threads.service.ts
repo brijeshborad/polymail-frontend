@@ -10,7 +10,7 @@ import {addItemToGroup} from "@/redux/memberships/action-reducer";
 import {removeThreadFromProject} from "@/redux/projects/action-reducer";
 import {commonService} from "@/services/common.service";
 import {globalEventService} from "@/services/global-event.service";
-import {getCacheThreads, setCacheThreads} from "@/utils/cache.functions";
+import {getCacheThreads, getDraftStatus, setCacheThreads} from "@/utils/cache.functions";
 import {accountService} from "@/services/account.service";
 
 declare type MailBoxTypes = 'INBOX' | 'DRAFT' | 'UNREAD' | 'ARCHIVE' | 'TRASH' | 'SNOOZED' | 'STARRED' | string;
@@ -102,7 +102,9 @@ class ThreadsService extends BaseService {
             };
             draftService.setDraftState({success: false, updatedDraft: null});
             if (currentThread.id === draft.threadId) {
-                draftService.setReplyDraft(draft);
+                if (!getDraftStatus()[draft.id!]) {
+                    draftService.setReplyDraft(draft);
+                }
             }
             this.setThreadState({threads: currentThreads, success: true});
             // let selectedThread = {...currentThread};

@@ -57,19 +57,6 @@ class DraftService extends BaseService {
         this.setDraftState({draft: null, draftUndo: null});
     }
 
-    updateDraftWithCollabId(collabId: string) {
-        let {draft} = this.getDraftState();
-        this.setDraftState({
-            draft: {
-                ...draft,
-                draftInfo: {
-                    ...draft?.draftInfo,
-                    collabId: collabId
-                }
-            }
-        });
-    }
-
     saveDraftToResume() {
         let {composeDraft} = this.getDraftState();
         if (composeDraft) {

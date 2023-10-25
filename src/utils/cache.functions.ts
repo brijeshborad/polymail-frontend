@@ -4,6 +4,7 @@ let cacheThreads: { [key: string]: Thread[] } = {};
 let currentCacheTab = 'INBOX';
 let currentViewingCacheTab = '';
 let currentSelectedThreads: number[] = [];
+let draftStatus: { [key: string]: boolean } = {};
 let memberStatus: {
     threads: { [key: string]: UserProjectOnlineStatus[] },
     projects: { [key: string]: UserProjectOnlineStatus[] }
@@ -19,6 +20,15 @@ export function getCurrentCacheTab() {
 export function setCurrentCacheTab(value: string) {
     currentCacheTab = value;
     return currentCacheTab;
+}
+
+export function getDraftStatus() {
+    return draftStatus;
+}
+
+export function setDraftStatus(value: any) {
+    draftStatus = value;
+    return draftStatus;
 }
 
 export function getCurrentViewingCacheTab() {
