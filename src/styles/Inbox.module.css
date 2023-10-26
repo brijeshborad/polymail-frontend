@@ -811,14 +811,14 @@
     width: 110px;
 }
 
-.mailListTabs .composeButton:hover {
-    background: #fff;
-    color: #00A88E;
-}
+/*.mailListTabs .composeButton:hover {*/
+/*    !*background: #fff;*!*/
+/*    !*color: #00A88E;*!*/
+/*}*/
 
-.mailListTabs .composeButton:hover svg {
-    stroke: #00A88E;
-}
+/*.mailListTabs .composeButton:hover svg {*/
+/*    !*stroke: #00A88E;*!*/
+/*}*/
 
 .mailListTabs .composeButton svg {
     transition: all 0.2s;
