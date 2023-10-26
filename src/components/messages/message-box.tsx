@@ -122,14 +122,12 @@ export function MessageBox(props: any) {
                 const a = allLinks[i]
                 if (typeof a === 'object' && a.hasAttribute('href')) {
                     const href = a.getAttribute('href')
-                    a.onmouseover = function (e: MouseEvent) {
+                    a.onmouseover = function () {
                         setCurrentLinkPreview({
                             isVisible: true,
                             url: href,
-                            top: e.pageY + 100,
-                            left: e.pageX + 395,
-                            // top: a.getBoundingClientRect().top + window.scrollY,
-                            // left: a.getBoundingClientRect().left + window.scrollX
+                            top: a.getBoundingClientRect().top + window.scrollY,
+                            left: a.getBoundingClientRect().left + window.scrollX
                         })
                     }
                     a.onmouseout = function () {
@@ -471,17 +469,18 @@ export function MessageBox(props: any) {
                                 className={styles.mailBody}
                             />
                         </div>}
+                        <LinkPreview
+                            isVisible={currentLinkPreview.isVisible}
+                            url={currentLinkPreview?.url}
+                            top={currentLinkPreview.top}
+                            left={currentLinkPreview.left}
+                        />
                     </Flex>
                     }
                 </Flex>
             ))
           }
-          <LinkPreview
-              isVisible={currentLinkPreview.isVisible}
-              url={currentLinkPreview?.url}
-              top={currentLinkPreview.top}
-              left={currentLinkPreview.left}
-          />
+          
             {draftMessages && draftMessages.length > 0 && draftMessages.map((message: Message, messageIndex) => {
                 if (message.draftInfo?.discardedBy) {
                     return null
