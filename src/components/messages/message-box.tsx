@@ -8,7 +8,7 @@ import {
     updateMessage
 } from "@/redux/messages/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
-import {Message, Message as MessageModel, MessageAttachments} from "@/models";
+import {Message, Message as MessageModel, MessageAttachments, Thread} from "@/models";
 import {StateType} from "@/types";
 import {clearDebounce, debounce} from "@/utils/common.functions";
 import {EyeSlashedIcon} from "@/icons/eye-slashed.icon";
@@ -42,6 +42,7 @@ export function MessageBox(props: any) {
     const [inboxMessages, setInboxMessages] = useState<MessageModel[]>([]);
     const [draftMessages, setDraftMessages] = useState<MessageModel[]>([]);
     const [index, setIndex] = useState<number | null>(null);
+    const [currentSelectedThread, setCurrentSelectedThread] = useState<Thread | null>(null);
 
     useEffect(() => {
         if (draftSuccess) {
@@ -60,12 +61,20 @@ export function MessageBox(props: any) {
 
     useEffect(() => {
         if (selectedThread && selectedThread?.id) {
+            if (!currentSelectedThread || currentSelectedThread.id !== selectedThread.id) {
+                setCurrentSelectedThread(selectedThread);
+            }
+        }
+    }, [currentSelectedThread, selectedThread])
+
+    useEffect(() => {
+        if (currentSelectedThread && currentSelectedThread?.id) {
             setIndex(null);
             globalEventService.fireEvent({data: null, type: 'draft.currentMessage'})
             globalEventService.fireEvent({data: {type: 'reply'}, type: 'draft.updateType'})
-            messageService.setMessages(selectedThread.messages || []);
+            messageService.setMessages(currentSelectedThread.messages || []);
         }
-    }, [dispatch, selectedThread])
+    }, [currentSelectedThread])
 
     useEffect(() => {
         if (messages && messages.length > 0) {
@@ -88,7 +97,7 @@ export function MessageBox(props: any) {
                 type: 'draft.currentMessage'
             })
         }
-    }, [messages, dispatch])
+    }, [messages, dispatch, index])
 
     // Set iframe height once content is loaded within iframe
     const onIframeLoad = (index: number) => {

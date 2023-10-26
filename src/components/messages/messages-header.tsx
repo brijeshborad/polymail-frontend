@@ -7,7 +7,7 @@ import {
 import {
     ArchiveIcon,
     TrashIcon,
-    InboxIcon
+    InboxIcon, StarIcon
 } from "@/icons";
 import React, {useState} from "react";
 import {updateThreads} from "@/redux/threads/action-reducer";
@@ -78,6 +78,12 @@ export function MessagesHeader() {
                         messageService.setSelectedMessage(null);
                         break;
                     case MAILBOX_STARRED:
+                        if (selectedThread.mailboxes?.includes(messageBox)) {
+                            body.mailboxes = body.mailboxes.filter((item: string) => item !== messageBox)
+                        } else {
+                            body.mailboxes = [...body.mailboxes, messageBox]
+                        }
+                        break;
                     case MAILBOX_UNREAD:
                         if (selectedThread.mailboxes?.includes(messageBox)) {
                             body.mailboxes = body.mailboxes.filter((item: string) => item !== messageBox)
@@ -106,13 +112,14 @@ export function MessagesHeader() {
                 }
 
                 if (remove_from_list) {
-                    currentThreads.splice(index1, 1)
+                    currentThreads.splice(index1, 1);
+
+                    messageService.setMessageState({showMessageBox: false});
+                    clearDebounce('MESSAGE_BOX');
+                    debounce(() => {
+                        messageService.setMessageState({showMessageBox: true});
+                    }, 5, 'MESSAGE_BOX');
                 }
-                messageService.setMessageState({showMessageBox: false});
-                clearDebounce('MESSAGE_BOX');
-                debounce(() => {
-                    messageService.setMessageState({showMessageBox: true});
-                }, 5, 'MESSAGE_BOX');
                 // Calculate the final index for an item in the 'currentThreads' array. If 'index1' is within bounds,
                 // reduce it by 1; if 'index1' is 0, keep it the same; if 'index1' is below 0, increase it by 1.
                 let finalIndex = (index1 - 1 < currentThreads.length ) ? (index1 === 0) ? index1 : index1 - 1 : (index1 <= 0 ? index1 + 1 : index1 - 1)
@@ -189,6 +196,11 @@ export function MessagesHeader() {
                         }
                     </Flex>
                     <AddToProjectButton/>
+                    <Tooltip label='Starred' placement='bottom'>
+                        <button onClick={() => updateMailBox(MAILBOX_STARRED)} className={`starred-button-icon ${(selectedThread?.mailboxes || []).includes(MAILBOX_STARRED) ? 'active': ''}`}>
+                            <StarIcon/>
+                        </button>
+                    </Tooltip>
                     {!(selectedThread?.mailboxes || []).includes(MAILBOX_INBOX) && (
                         <Tooltip label='Inbox' placement='bottom'>
                             <button onClick={() => updateMailBox(MAILBOX_INBOX)} className='inbox-button-icon'>

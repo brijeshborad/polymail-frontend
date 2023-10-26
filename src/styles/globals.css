@@ -864,6 +864,13 @@ div:has(> .mailSendToaster) {
 .trash-button-icon:hover path{
   stroke: #A62700;
 }
+.starred-button-icon:hover path{
+  stroke: #f7ff00;
+}
+.starred-button-icon.active svg {
+    fill: #f7ff00;
+    stroke: #f7ff00;
+}
 .snooze-button-icon:hover svg{
   stroke: #918F1F;
 }
