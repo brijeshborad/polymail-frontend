@@ -12,6 +12,28 @@ export default function LinkPreview({ isVisible, url, top, left }: LinkPreviewPr
   const [cache, setCache] = useState<any>({})
   const blockedPatterns = ['mailto:', 'localhost']
 
+  const getPlacement = (top: number, left:number) => {
+    const topOffset = 130
+    const leftOffset = 4
+
+    if (top < 130) {
+      return {
+        type: 'bottom',
+        top: 'auto',
+        bottom: (top*-1)+14,
+        left: left + leftOffset,
+      }
+    }
+    return {
+      type: 'top',
+      top: top - topOffset,
+      bottom: 'auto',
+      left: left + leftOffset,
+    }
+  }
+
+  const placement = getPlacement(top, left)
+
   const isBlockedPattern = (): boolean => {
     let isBlockedPreview = false
     for (let i = 0; i < blockedPatterns.length; i++) {
@@ -65,9 +87,16 @@ export default function LinkPreview({ isVisible, url, top, left }: LinkPreviewPr
   if (!url || !isVisible || isBlocked || isLoading) return
 
   return (
-    <div className='link-preview-thumbnail' style={{ top: top, left: left, marginTop: meta?.image == '' ? 110 : 0 }}>
+    <div 
+      className={`link-preview-thumbnail ${placement.type}`}
+      style={{ 
+        top: placement.top, 
+        left: placement.left, 
+        bottom: placement.bottom,
+        marginTop: meta?.image == '' ? 110 : 0 
+      }}>
       <div className='arrow'></div>
-      <Flex flexDirection={'column'}>
+      <Flex className='data'>
         {(meta && meta?.image) && (
           <div className='img'>
             <img
