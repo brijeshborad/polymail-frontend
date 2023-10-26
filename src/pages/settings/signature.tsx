@@ -1,6 +1,5 @@
 import styles from "@/styles/setting.module.css";
 import {Button, Flex, Heading, Text} from "@chakra-ui/react";
-import {TextIcon} from "@/icons";
 import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
