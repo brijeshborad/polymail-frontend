@@ -16,7 +16,7 @@ export default function LinkPreview({ isVisible, url, top, left }: LinkPreviewPr
     const topOffset = 130
     const leftOffset = 4
 
-    if (top < 130) {
+    if (top < topOffset) {
       return {
         type: 'bottom',
         top: 'auto',
