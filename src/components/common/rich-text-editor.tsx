@@ -171,13 +171,6 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
                         unordered: {icon: "/image/icon/unordered.svg"},
                         ordered: {icon: "/image/icon/ordered.svg"},
                     },
-                    // emoji: {
-                    //     component: EmojiMenu,
-                    //     icon: "/image/icon/emoji.svg",
-                    //     popupClassName: 'emoji-picker',
-                    //     // emojis: emojiArray1
-                    // },
-
                     link: {
                         inDropdown: false,
                         className: 'link-class',

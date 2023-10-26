@@ -179,7 +179,7 @@ a {
     background-color: transparent;
     position: absolute;
     left: -4px;
-    bottom: -4px;
+    bottom: -25px;
     gap: 8px;
 }
 
@@ -768,7 +768,7 @@ div:has(> .mailSendToaster) {
 
 .email-signature.rdw-editor-wrapper .link-class {
     margin-bottom: 0;
-    margin-left: 27px;
+    margin-left: 10px;
 }
 
 .email-signature.rdw-editor-wrapper .rdw-image-wrapper {

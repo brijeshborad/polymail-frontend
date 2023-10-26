@@ -96,10 +96,6 @@ function Signature() {
                             <RichTextEditor className={`${styles.emailSignature} email-signature`}
                                             placeholder='Add Your Email Signature'
                                             value={signature} onChange={(e) => addSignature(e)}/>
-
-                            <Flex align={'center'} gap={2} className={styles.settingSignatureIcon}>
-                                <TextIcon/>
-                            </Flex>
                         </Flex>
 
 

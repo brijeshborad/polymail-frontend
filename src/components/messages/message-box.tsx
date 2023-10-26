@@ -97,7 +97,7 @@ export function MessageBox(props: any) {
                 type: 'draft.currentMessage'
             })
         }
-    }, [messages, dispatch, index])
+    }, [messages, dispatch])
 
     // Set iframe height once content is loaded within iframe
     const onIframeLoad = (index: number) => {
