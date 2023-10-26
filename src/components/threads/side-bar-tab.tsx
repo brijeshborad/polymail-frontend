@@ -89,11 +89,11 @@ export function ThreadsSideBarTab(props: TabProps) {
             if (getCurrentCacheTab() !== tabValue) {
                 setCurrentCacheTab(tabValue);
             }
-            let cutoffDate = dayjs().add(1, "day").format('YYYY-MM-DD');
+            let cutoffDate = dayjs().add(5, "day").format('YYYY-MM-DD');
             if (getCacheThreads()[`${props.cachePrefix}-${tabValue}-${selectedAccount.id}-${type}`]) {
                 let threads = getCacheThreads()[`${props.cachePrefix}-${tabValue}-${selectedAccount.id}-${type}`];
                 if (currentPage > 1 && threads[threads.length - 1]) {
-                    cutoffDate = dayjs(threads[threads.length - 1].latestMessage).add(1, 'day').format('YYYY-MM-DD');
+                    cutoffDate = dayjs(threads[threads.length - 1].latestMessage).add(5, 'day').format('YYYY-MM-DD');
                 }
                 resetState = false
                 threadService.setThreadState({

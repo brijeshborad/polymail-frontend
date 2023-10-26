@@ -80,7 +80,7 @@ export function HeaderSearch() {
             dispatch(getAllThreads({
                 body: {
                     mailbox: tabValue, account: selectedAccount.id, pagination: {
-                        cutoff: dayjs().add(1, "day").format('YYYY-MM-DD'),
+                        cutoff: dayjs().add(15, "day").format('YYYY-MM-DD'),
                         count: 100,
                         page: 1
                     }
