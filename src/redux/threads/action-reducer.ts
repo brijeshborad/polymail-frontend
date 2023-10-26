@@ -31,7 +31,7 @@ const threadsSlice = createSlice({
             // Sort threads by latestMessage DESC
             let currentThreads = current(state).threads;
             threads = extractAndMapThreadAndMessagesBody(threads, pagination, currentThreads);
-            return {...state, threads, isLoading: false, success: true}
+            return {...state, threads, isLoading: false, success: false}
         },
         getAllThreadsError: (state: InitialThreadStateType,  _action: PayloadAction<any>) => {
             return {...state, threads: [], isLoading: false}

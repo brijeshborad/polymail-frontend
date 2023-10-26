@@ -1,7 +1,7 @@
 import {PayloadAction} from "@reduxjs/toolkit";
-import {all, fork, put, takeEvery} from "@redux-saga/core/effects";
+import {all, fork, put, takeEvery, takeLatest} from "@redux-saga/core/effects";
 import ApiService from "@/utils/api.service";
-import {AxiosError, AxiosResponse} from "axios";
+import axios, {AxiosError, AxiosResponse} from "axios";
 import {
     getAllThreadsError,
     getAllThreadsSuccess,
@@ -11,9 +11,13 @@ import {
 } from "@/redux/threads/action-reducer";
 import { ReducerActionType } from "@/types";
 import { performSuccessActions } from "@/utils/common-redux.functions";
-
+let source: any;
 function* getThreads({payload}: PayloadAction<ReducerActionType>) {
     try {
+        if (source) {
+            source.cancel();
+        }
+        source = axios.CancelToken.source();
         const response: AxiosResponse = yield ApiService.callGet(`threads`, {
             ...(payload.body.mailbox ? {mailbox: payload.body.mailbox}: {}),
             ...(payload.body.project ? {project: payload.body.project}: {}),
@@ -21,7 +25,7 @@ function* getThreads({payload}: PayloadAction<ReducerActionType>) {
             ...(payload.body.mine ? {mine: payload.body.mine}: {}),
             ...(payload.body.query ? {query: payload.body.query} : {}),
             ...payload.body.pagination
-        });
+        }, {}, source.token);
         performSuccessActions(payload);
         yield put(getAllThreadsSuccess({threads: response, pagination: payload.body.pagination}));
     } catch (error: any) {
@@ -70,7 +74,7 @@ function* searchAndGetThreads({payload}: PayloadAction<ReducerActionType>) {
 }
 
 export function* watchGetThreads() {
-    yield takeEvery(getAllThreads.type, getThreads);
+    yield takeLatest(getAllThreads.type, getThreads);
 }
 
 export function* watchUpdateThreads() {

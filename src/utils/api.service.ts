@@ -78,12 +78,13 @@ class ApiService {
         });
     }
 
-    static callGet(url: string, params: any, headers: any = {}) {
+    static callGet(url: string, params: any, headers: any = {}, cancelToken: any = undefined) {
         return axiosInstance.get(url, {
             headers: {
                 ...headers
             },
-            params: params
+            params: params,
+            cancelToken: cancelToken
         });
     }
 

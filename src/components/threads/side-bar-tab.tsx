@@ -27,6 +27,7 @@ import {Message, Thread} from "@/models";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import {performMessagesUpdate} from "@/utils/thread.functions";
+import {clearDebounce, debounce} from "@/utils/common.functions";
 
 dayjs.extend(customParseFormat)
 
@@ -278,8 +279,13 @@ export function ThreadsSideBarTab(props: TabProps) {
         setTabName(type);
         threadService.setThreads([]);
         threadService.setSelectedThread(null);
-        currentPage = 1;
-        getAllThread(type);
+        clearDebounce('THREAD_FILTER');
+        debounce(() => {
+            threadService.setThreads([]);
+            threadService.setSelectedThread(null);
+            currentPage = 1;
+            getAllThread(type);
+        }, 500, 'THREAD_FILTER');
     }
 
     function fetchNext() {
