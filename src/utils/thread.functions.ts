@@ -2,7 +2,7 @@ import {ContentRoot, Message, MessageAttachments, Thread} from "@/models";
 
 export function extractAndMapThreadAndMessagesBody(threads: Thread[], payload: any, currentThreads: Thread[] | undefined) {
     let rawThreads: Thread[] = [...(threads || [])];
-    rawThreads.sort((a: Thread, b: Thread) => (new Date(b.sortDate as string).valueOf() - new Date(a.sortDate as string).valueOf()));
+    // rawThreads.sort((a: Thread, b: Thread) => (new Date(b.sortDate as string).valueOf() - new Date(a.sortDate as string).valueOf()));
     rawThreads = rawThreads.map((thread: Thread) => {
         let rawThread = {...thread};
         rawThread.messages = [...(thread.messages || [])];
