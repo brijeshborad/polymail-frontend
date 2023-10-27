@@ -96,6 +96,9 @@ function EmailAddress() {
 
 
     function addNewGoogleAccount(mode: string) {
+        if (mode === 'authenticate') {
+            LocalStorageService.updateAccount('remove');
+        }
         let body = {
             mode: mode,
             redirectUrl: getRedirectionUrl('/settings/email-address'),
