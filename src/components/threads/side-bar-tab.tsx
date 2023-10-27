@@ -81,7 +81,7 @@ export function ThreadsSideBarTab(props: TabProps) {
     let projectId = getProjectId();
 
 
-    const getAllThread = useCallback((type: string = tabName) => {
+    const getAllThread = useCallback((type: string = tabName, useFrom: string = '') => {
         if (selectedAccount && !syncingEmails) {
             let resetState = true;
             if (!tabValue) {
@@ -93,19 +93,29 @@ export function ThreadsSideBarTab(props: TabProps) {
             let cutoffDate = dayjs().add(5, "day").format('YYYY-MM-DD');
             if (getCacheThreads()[`${props.cachePrefix}-${tabValue}-${selectedAccount.id}-${type}`]) {
                 let threads = getCacheThreads()[`${props.cachePrefix}-${tabValue}-${selectedAccount.id}-${type}`];
-                if (currentPage > 1 && threads[threads.length - 1]) {
-                    cutoffDate = dayjs(threads[threads.length - 1].latestMessage).add(5, 'day').format('YYYY-MM-DD');
-                }
                 resetState = false
                 threadService.setThreadState({
                     threads: threads,
                     isLoading: false
                 })
             }
-            let pagination = {
-                cutoff: cutoffDate,
+            let currentThreads = [...threadService.getThreadState().threads || []];
+            if (currentPage > 1 && currentThreads[currentThreads.length - 1]) {
+                cutoffDate = dayjs(currentThreads[currentThreads.length - 1].sortDate).format('YYYY-MM-DD');
+            }
+            let pagination: any = {
+                to: cutoffDate,
                 count: 100,
                 page: currentPage
+            }
+            if (currentPage === 1) {
+                delete pagination.to;
+            }
+            if (useFrom) {
+                pagination = {
+                    from: dayjs(useFrom).format('YYYY-MM-DD'),
+                    page: currentPage
+                }
             }
             if (projectId && !isSummaryApiCalled) {
                 setIsSummaryApiCalled(true);
@@ -164,7 +174,7 @@ export function ThreadsSideBarTab(props: TabProps) {
         if (callBack) {
             setTimeout(() => {
                 callBack();
-            }, 500)
+            }, 100)
         }
     }, [threads])
 
@@ -186,9 +196,9 @@ export function ThreadsSideBarTab(props: TabProps) {
 
             if (newMessage.name === 'NewMessage') {
                 console.log('---NEW MESSAGE---', newMessage);
-                const _newMsg = Object.values(newMessage.data)[0] as Thread
+                const _newMsg = newMessage.data.thread as Thread
                 updateThreads(_newMsg, () => {
-                    getAllThread();
+                    getAllThread('', newMessage.data.thread.sortDate);
                 });
                 var name = _newMsg?.from?.name || _newMsg?.from?.email
                 globalEventService.fireEvent({

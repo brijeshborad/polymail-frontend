@@ -7,6 +7,7 @@ export interface Thread {
     from?: MessageRecipient,
     firstMessage?: string,
     latestMessage?: string,
+    sortDate?: string,
     updated?: string,
     user?: string,
     account?: string,

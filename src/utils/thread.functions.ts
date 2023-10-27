@@ -2,14 +2,31 @@ import {ContentRoot, Message, MessageAttachments, Thread} from "@/models";
 
 export function extractAndMapThreadAndMessagesBody(threads: Thread[], payload: any, currentThreads: Thread[] | undefined) {
     let rawThreads: Thread[] = [...(threads || [])];
-    rawThreads.sort((a: Thread, b: Thread) => (new Date(b.latestMessage as string).valueOf() - new Date(a.latestMessage as string).valueOf()));
+    rawThreads.sort((a: Thread, b: Thread) => (new Date(b.sortDate as string).valueOf() - new Date(a.sortDate as string).valueOf()));
     rawThreads = rawThreads.map((thread: Thread) => {
         let rawThread = {...thread};
         rawThread.messages = [...(thread.messages || [])];
         rawThread.messages = performMessagesUpdate(rawThread.messages);
         return rawThread;
     })
-    if (payload.page > 1) {
+    if (payload.from) {
+        let finalThreads = [...(currentThreads || [])];
+        finalThreads = finalThreads.map((item: Thread) => {
+            let finalItem = {...item};
+            let newThread = rawThreads.findIndex((rItem: Thread) => rItem.id === item.id);
+            if (newThread !== -1) {
+                finalItem = {...rawThreads[newThread]};
+                rawThreads.splice(newThread, 1);
+            }
+            return finalItem;
+        })
+        if (rawThreads.length > 0) {
+            rawThreads.forEach((item: Thread) => {
+                finalThreads.unshift(item);
+            })
+        }
+        return [...finalThreads];
+    } else if (payload.page > 1) {
         return [...(currentThreads || []), ...rawThreads];
     }
     return rawThreads;
