@@ -73,7 +73,6 @@ class CommonService extends BaseService {
         }
         Object.keys(onlineMembers['projects']).forEach((projectId: string) => {
             if (!ignoreThreadIds.includes(projectId)) {
-                console.log(userId, projectId);
                 onlineMembers['projects'][projectId] = [...onlineMembers['projects'][projectId]];
                 onlineMembers['projects'][projectId].forEach((user: UserProjectOnlineStatus, index: number) => {
                     onlineMembers['projects'][projectId][index] = {...onlineMembers['projects'][projectId][index]};
