@@ -112,7 +112,7 @@ export function Header() {
             }
             if (newMessage.name === 'Reauthenticate' && newMessage?.data && accounts!.length > 0) {
                 let finalAccounts = [...(accounts || [])];
-                let accountForReAuth = finalAccounts.findIndex(account => account.id === newMessage.data.account)!;
+                let accountForReAuth = finalAccounts.findIndex(account => account.id === newMessage.data.account._id)!;
                 if (accountForReAuth !== -1) {
                     finalAccounts[accountForReAuth] = {
                         ...finalAccounts[accountForReAuth],

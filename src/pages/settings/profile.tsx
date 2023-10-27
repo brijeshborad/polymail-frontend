@@ -27,7 +27,6 @@ import {useDispatch, useSelector} from "react-redux";
 import {accountService, userService} from "@/services";
 import RemoveRecordModal from "@/components/common/delete-record-modal";
 import Router from "next/router";
-import {logoutUser} from "@/redux/auth/action-reducer";
 
 
 function Profile() {
@@ -274,7 +273,6 @@ function Profile() {
                 }
             },
             afterSuccessAction: () => {
-                dispatch(logoutUser());
                 LocalStorageService.clearStorage();
                 Router.push('/onboarding/login');
             }
