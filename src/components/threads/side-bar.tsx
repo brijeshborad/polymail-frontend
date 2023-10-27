@@ -58,7 +58,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     useEffect(() => {
         if (draftSuccess) {
             if (updatedDraft) {
-                threadService.pushOrUpdateDraftInThreadMessages(tab, updatedDraft);
+                threadService.pushOrUpdateDraftInThreadMessages(updatedDraft);
             }
         }
     }, [draftSuccess, tab, updatedDraft])

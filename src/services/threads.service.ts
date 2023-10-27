@@ -81,7 +81,7 @@ class ThreadsService extends BaseService {
         this.setThreadState({isThreadFocused: enable});
     }
 
-    pushOrUpdateDraftInThreadMessages(tab: string = '', draft: MessageDraft) {
+    pushOrUpdateDraftInThreadMessages(draft: MessageDraft) {
         let threads: Thread[] = this.getThreadState().threads || [];
         let currentThread = threads.find((thread: Thread) => thread.id === draft.threadId);
         if (currentThread && currentThread.id && threads.length > 0) {
