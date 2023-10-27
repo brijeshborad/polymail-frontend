@@ -12,6 +12,7 @@ import {commonService} from "@/services/common.service";
 import {globalEventService} from "@/services/global-event.service";
 import {getCacheThreads, getDraftStatus, setCacheThreads} from "@/utils/cache.functions";
 import {accountService} from "@/services/account.service";
+import {messageService} from "@/services/message.service";
 
 declare type MailBoxTypes = 'INBOX' | 'DRAFT' | 'UNREAD' | 'ARCHIVE' | 'TRASH' | 'SNOOZED' | 'STARRED' | string;
 
@@ -514,9 +515,10 @@ class ThreadsService extends BaseService {
                 ...convertMessages
             }
             currentSelectedThread.messages = [...currentSelectedThreadMessages];
-            currentSelectedThread.mailboxes = [...mailBoxes]
+            currentSelectedThread.mailboxes = [...mailBoxes];
             this.setThreads(currentThreads);
             this.setSelectedThread(currentSelectedThread);
+            messageService.setMessages(currentSelectedThread.messages || []);
         }
 
 

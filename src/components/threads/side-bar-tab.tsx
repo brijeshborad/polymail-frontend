@@ -155,16 +155,16 @@ export function ThreadsSideBarTab(props: TabProps) {
     }, [dispatch, isSummaryApiCalled, projectId, props.cachePrefix, selectedAccount, syncingEmails, tabName, tabValue]);
 
     const updateThreads = useCallback((newThread: Thread, callBack: any | null = null) => {
-        let finalThreads = [...(threads || [])];
-        let findThreadInList = finalThreads.findIndex((item: Thread) => item.id === newThread.id);
-        if (findThreadInList !== -1) {
-            finalThreads.splice(findThreadInList, 1);
-        }
         let thread: Thread = {...newThread};
         thread = {
             ...thread,
             id: thread._id,
         };
+        let finalThreads = [...(threads || [])];
+        let findThreadInList = finalThreads.findIndex((item: Thread) => item.id === thread.id);
+        if (findThreadInList !== -1) {
+            finalThreads.splice(findThreadInList, 1);
+        }
         let messages: Message[] = [...(thread.messages || [])];
         messages = performMessagesUpdate(messages);
         thread.messages = messages;
