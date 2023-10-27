@@ -106,7 +106,7 @@ export function Header() {
                     threadService.setThreadState({threads: [...(threads || []), newThread]})
                 });
             }
-            if (newMessage.name === 'authenticate' && newMessage?.data && accounts!.length > 0) {
+            if (newMessage.name === 'Reauthenticate' && newMessage?.data && accounts!.length > 0) {
                 let accountForReAuth = accounts!.find(account => account.id === newMessage.data.account)!;
                 if (accountForReAuth) {
                     reAuthToast(accountForReAuth.email!);
