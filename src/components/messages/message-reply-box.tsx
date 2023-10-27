@@ -623,6 +623,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         if (typeof incomingEvent === 'object' && incomingEvent.type) {
             if (incomingEvent.type === 'draft.updateType') {
                 setReplyType(incomingEvent.data.type);
+                globalEventService.blankEvent();
                 if (incomingEvent.data.type === 'forward') {
                     if (!isDraftUpdated) {
                         setShowReplyBox(true);
@@ -656,30 +657,26 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                             setEmailRecipients((prevState: RecipientsType) => ({
                                 ...prevState,
                                 recipients: {
-                                    items: (incomingEvent.data.messageData?.from?.email === selectedAccount?.email && replyType === 'reply') ? incomingEvent.data.messageData?.to! : [incomingEvent.data.messageData?.from!],
+                                    items: (incomingEvent.data.messageData?.from?.email === selectedAccount?.email) ? incomingEvent.data.messageData?.to! : [incomingEvent.data.messageData?.from!],
                                     value: prevState.recipients.value
                                 }
                             }));
                         }
-                        if (incomingEvent.data.messageData?.cc?.length) {
-                            let items: MessageRecipient[] = []
-                            if (replyType === 'reply-all') {
-                                items.push(incomingEvent.data.messageData?.from!)
-                                if (incomingEvent.data.messageData?.cc && incomingEvent.data.messageData?.cc.length) {
-                                    items.push(...incomingEvent.data.messageData?.cc)
-                                } else if (incomingEvent.data.messageData?.bcc && incomingEvent.data.messageData?.bcc.length) {
-                                    items.push(...incomingEvent.data.messageData?.bcc)
-                                }
-                            }
-                            const filteredArray = (items || []).filter(obj => obj.email !== '');
-                            setEmailRecipients((prevState: RecipientsType) => ({
-                                ...prevState,
-                                cc: {
-                                    items: filteredArray,
-                                    value: prevState.cc.value
-                                }
-                            }));
+                        let items: MessageRecipient[] = []
+                        items.push(...incomingEvent.data.messageData?.to!)
+                        if (incomingEvent.data.messageData?.cc && incomingEvent.data.messageData?.cc.length) {
+                            items.push(...incomingEvent.data.messageData?.cc)
+                        } else if (incomingEvent.data.messageData?.bcc && incomingEvent.data.messageData?.bcc.length) {
+                            items.push(...incomingEvent.data.messageData?.bcc)
                         }
+                        const filteredArray = (items || []).filter(obj => obj.email !== '');
+                        setEmailRecipients((prevState: RecipientsType) => ({
+                            ...prevState,
+                            cc: {
+                                items: filteredArray,
+                                value: prevState.cc.value
+                            }
+                        }));
 
                         if (incomingEvent.data.messageData?.bcc?.length) {
                             setEmailRecipients((prevState: RecipientsType) => ({
@@ -688,6 +685,22 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                     items: incomingEvent.data.messageData?.bcc,
                                     value: prevState.bcc.value
                                 }
+                            }));
+                        }
+                    }
+                }
+
+                if (incomingEvent.data.type === 'reply') {
+                    if (!isDraftUpdated) {
+                        if (incomingEvent.data.messageData?.from) {
+                            setEmailRecipients((prevState: RecipientsType) => ({
+                                ...prevState,
+                                recipients: {
+                                    items: (incomingEvent.data.messageData?.from?.email === selectedAccount?.email) ? incomingEvent.data.messageData?.to! : [incomingEvent.data.messageData?.from!],
+                                    value: prevState.recipients.value
+                                },
+                                cc: {items: [], value: blankRecipientValue},
+                                bcc: {items: [], value: blankRecipientValue},
                             }));
                         }
                     }

@@ -44,6 +44,11 @@ export function performMessagesUpdate(messages: Message[]) {
             rawMessage.body = window.URL.createObjectURL(blob);
             rawMessage.attachments = extractAttachments(message.contentRoot);
             rawMessage.rawBody = {data: body};
+            if (!rawMessage.id) {
+                if (rawMessage._id) {
+                    rawMessage.id = rawMessage._id;
+                }
+            }
             delete rawMessage.contentRoot;
             return rawMessage;
         }
