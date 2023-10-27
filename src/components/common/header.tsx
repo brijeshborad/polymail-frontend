@@ -145,7 +145,7 @@ export function Header() {
             if (account.syncHistory?.mailInitSynced) {
                 commonService.updateEmailSyncPercentage(null);
                 LocalStorageService.updateAccount('store', account);
-                updateValuesFromAccount(account, false);
+                updateValuesFromAccount(account, true);
             } else {
                 commonService.updateEmailSyncPercentage(1);
             }
