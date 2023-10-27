@@ -13,6 +13,7 @@ import {globalEventService} from "@/services/global-event.service";
 import {getCacheThreads, getDraftStatus, setCacheThreads} from "@/utils/cache.functions";
 import {accountService} from "@/services/account.service";
 import {messageService} from "@/services/message.service";
+import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
 
 declare type MailBoxTypes = 'INBOX' | 'DRAFT' | 'UNREAD' | 'ARCHIVE' | 'TRASH' | 'SNOOZED' | 'STARRED' | string;
 
@@ -480,6 +481,7 @@ class ThreadsService extends BaseService {
             const blob = new Blob([addTargetBlank], {type: "text/html"});
             convertMessages.body = window.URL.createObjectURL(blob);
             convertMessages.attachments = currentDraft?.draftInfo?.attachments || [];
+            convertMessages.snippet = getPlainTextFromHtml(emailBody);
         }
         let currentThreads = [...(threads || [])];
         let selectedThread = currentThreads.find((item: Thread) => item.id === convertMessages.threadId);
