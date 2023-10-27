@@ -70,7 +70,6 @@ export function MessageBox(props: any) {
     useEffect(() => {
         if (currentSelectedThread && currentSelectedThread?.id) {
             setIndex(null);
-            globalEventService.fireEvent({data: null, type: 'draft.currentMessage'})
             globalEventService.fireEvent({data: {type: 'reply'}, type: 'draft.updateType'})
             messageService.setMessages(currentSelectedThread.messages || []);
         }
@@ -92,10 +91,6 @@ export function MessageBox(props: any) {
             if (index === null) {
                 setIndex(currentInboxMessages.length - 1);
             }
-            globalEventService.fireEvent({
-                data: currentInboxMessages[currentInboxMessages.length - 1],
-                type: 'draft.currentMessage'
-            })
         }
     }, [messages, dispatch])
 

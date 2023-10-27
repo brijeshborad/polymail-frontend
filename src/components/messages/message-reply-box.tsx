@@ -203,6 +203,13 @@ export function MessageReplyBox(props: MessageBoxType) {
             setSubject(finalSubject);
         }
 
+        let messageId = '';
+        if (messageData && messageData.id) {
+            messageId = messageData.id;
+        } else if (selectedMessage && selectedMessage.id)  {
+            messageId = selectedMessage.id;
+        }
+
         let body: any = {
             subject: finalSubject,
             to: emailRecipients.recipients?.items,
@@ -211,7 +218,7 @@ export function MessageReplyBox(props: MessageBoxType) {
             draftInfo: {
                 body: value || emailBody
             },
-            messageId: messageData?.id,
+            messageId,
             ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
             accountId: selectedAccount?.id
         }
@@ -509,6 +516,12 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 return;
             }
             setShowReplyBox(false);
+            let messageId = '';
+            if (messageData && messageData.id) {
+                messageId = messageData.id;
+            } else if (selectedMessage && selectedMessage.id)  {
+                messageId = selectedMessage.id;
+            }
             let body: any = {
                 subject: subject,
                 to: emailRecipients.recipients?.items,
@@ -517,7 +530,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 draftInfo: {
                     body: emailBody
                 },
-                messageId: messageData?.id,
+                messageId,
                 ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
             }
             messageService.sendMessage(false, scheduledDate || '', {...body, id: draft.id});
