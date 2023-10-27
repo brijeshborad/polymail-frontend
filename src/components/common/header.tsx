@@ -62,6 +62,7 @@ export function Header() {
     const reAuthToast = useCallback(
         (email: string) => {
             Toaster({
+                id: 'REAUTH',
                 title: 'Please reauthenticate your account.',
                 desc: `Your session has expired for ${email}.`,
                 type: 'reauth',
@@ -181,6 +182,7 @@ export function Header() {
                     findTheUpdatedAccount = accounts.find(item => item.id === findTheUpdatedAccount.id);
                     if (findTheUpdatedAccount) {
                         updateValuesFromAccount(findTheUpdatedAccount, false);
+                        setAccounts(findTheUpdatedAccount);
                     }
                 }
             }
@@ -188,19 +190,24 @@ export function Header() {
     }, [accounts, setAccounts, updateValuesFromAccount]);
 
     useEffect(() => {
-        if (selectedAccount && !userDetails?.id) {
-            userService.setUserState({
-                userDetailsUpdateSuccess: false,
-                ...(userDetails ? {
-                        userDetails: {
-                            ...userDetails,
-                            id: selectedAccount.userId,
+        if (selectedAccount) {
+            if (selectedAccount.status !== 'Active') {
+                reAuthToast(selectedAccount.email!);
+            }
+            if (!userDetails?.id) {
+                userService.setUserState({
+                    userDetailsUpdateSuccess: false,
+                    ...(userDetails ? {
+                            userDetails: {
+                                ...userDetails,
+                                id: selectedAccount.userId,
+                            }
                         }
-                    }
-                    : {userDetails})
-            })
+                        : {userDetails})
+                })
+            }
         }
-    }, [selectedAccount, userDetails])
+    }, [selectedAccount, userDetails, reAuthToast])
 
     function logout() {
         Router.push(`/auth/logout`);
