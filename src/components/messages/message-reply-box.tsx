@@ -109,36 +109,9 @@ export function MessageReplyBox(props: MessageBoxType) {
             let messages = [...totalMessages];
             let draftMessages = [...messages].filter((item: MessageDraft) => item.mailboxes?.includes('DRAFT') && !item.draftInfo?.discardedBy)
             setTotalDraftMessages([...draftMessages]);
-            // let findLastIndex = messages.findLastIndex((item: Message) => item.mailboxes?.includes('DRAFT'));
-            // if (findLastIndex !== -1) {
-            //     setDraftIndex(findLastIndex);
-            //     draftService.setReplyDraft(messages[findLastIndex]);
-            // } else {
-            // }
             if (draftIndex === null) {
                 setDraftIndex(messages.length);
             }
-
-            // if (onlyDraftMessages[draftMessageIndex]) {
-            //     if (!getPlainTextFromHtml(onlyDraftMessages[draftMessageIndex].draftInfo?.body || '').trim()) {
-            //         setTimeout(() => {
-            //             globalEventService.fireEvent({data: {body: getBody()}, type: 'richtexteditor.forceUpdateInitial'});
-            //         }, 10)
-            //         draftService.setReplyDraft({
-            //             ...onlyDraftMessages[draftMessageIndex],
-            //             draftInfo: {...(draft?.draftInfo || {}), body: getBody()}
-            //         });
-            //     } else {
-            //         setTimeout(() => {
-            //             globalEventService.fireEvent({data: {body: onlyDraftMessages[draftMessageIndex].draftInfo?.body || ''}, type: 'richtexteditor.forceUpdateInitial'});
-            //         }, 10)
-            //         draftService.setReplyDraft({...onlyDraftMessages[draftMessageIndex]});
-            //     }
-            // } else {
-            //     setTimeout(() => {
-            //         globalEventService.fireEvent({data: {body: getBody()}, type: 'richtexteditor.forceUpdateInitial'});
-            //     }, 10)
-            // }
         }
     }, [totalMessages, draftIndex])
 
@@ -278,12 +251,6 @@ export function MessageReplyBox(props: MessageBoxType) {
                 let checkValue = getPlainTextFromHtml(draftInfo.body).trim();
                 if (checkValue.trim()) {
                     setIsDraftUpdated(true)
-                    // setTimeout(() => {
-                    //     globalEventService.fireEvent({
-                    //         data: {body: draftInfo?.body || '', callBack: () => setShowEditorToolbar(true)},
-                    //         type: 'richtexteditor.forceUpdateWithOnChange'
-                    //     });
-                    // }, 500);
                 }
                 setEmailBody(draftInfo?.body || '');
             }
@@ -652,7 +619,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                             recipients: {items: [], value: blankRecipientValue}
                         });
                         setSubject(`Fwd: ${incomingEvent.data.messageData.subject}`);
-                        let decoded = Buffer.from(incomingEvent.data.messageData.body.data || '', 'base64').toString('utf-8');
+                        let decoded = Buffer.from(incomingEvent.data.messageData.rawBody.data || '', 'base64').toString('utf-8');
                         let sentence = '';
                         if (selectedThread && selectedThread?.projects && selectedThread?.projects?.length) {
                             sentence = getProjectBanner(selectedAccount);
@@ -664,6 +631,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                             data: {body: content, callBack: () => setShowEditorToolbar(true)}
                         })
                         debounce(() => {
+                            globalEventService.blankEvent()
                             handleEditorScroll();
                         }, 200)
                     }
@@ -731,23 +699,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                         globalEventService.fireEvent({data: {}, type: 'richtexteditor.focus'})
                     }
                 }, 50)
-                // setTimeout(() => {
-
-                // }, 5000);
             }
-            // if (incomingEvent.type === 'replybox.hide') {
-            //     setShowEditorToolbar(false);
-            //     setTimeout(() => {
-            //         globalEventService.fireEvent({data: {}, type: 'richtexteditor.blur'})
-            //     }, 10)
-            // }
-            // if (incomingEvent.type === 'replybox.show') {
-            //     setShowEditorToolbar(true);
-            //     globalEventService.fireEvent('messagebox.focus');
-            //     setTimeout(() => {
-            //         globalEventService.fireEvent({data: {}, type: 'richtexteditor.focus'})
-            //     }, 50)
-            // }
         }
     }, [getForwardContent, handleEditorScroll, incomingEvent, isDraftUpdated, selectedAccount, totalMessages]);
 

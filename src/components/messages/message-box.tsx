@@ -174,16 +174,23 @@ export function MessageBox(props: any) {
 
     const handleRowClick = (selectIndex: any) => {
         if (selectIndex === index) {
-            // Clicking on an already expanded row, so close it
-            messageService.setSelectedMessage(null)
             setIndex(null)
         } else {
             setIndex(selectIndex);
-            // Clicking on a new row, expand it
-            const targetMessage = (messages || [])[selectIndex]
-            messageService.setSelectedMessage(targetMessage)
         }
     };
+
+    useEffect(() => {
+        if (messages && messages.length > 0) {
+            let lastIndex = index;
+            if (lastIndex === null) {
+                lastIndex = messages.length - 1;
+            }
+            // Clicking on a new row, expand it
+            const targetMessage = (messages || [])[lastIndex]
+            messageService.setSelectedMessage(targetMessage)
+        }
+    }, [index, messages])
 
     function showExtensionImages(item: string | undefined) {
         if (item) {
@@ -480,7 +487,7 @@ export function MessageBox(props: any) {
                 </Flex>
             ))
           }
-          
+
             {draftMessages && draftMessages.length > 0 && draftMessages.map((message: Message, messageIndex) => {
                 if (message.draftInfo?.discardedBy) {
                     return null

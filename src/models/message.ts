@@ -26,6 +26,7 @@ export interface Message {
     contentRoot?: ContentRoot,
     draftInfo?: MessageDraftInfo,
     body?: MessagePart | null | string,
+    rawBody?: MessagePart | null | string,
     attachments?: MessageAttachments[] | [],
     scope?: string,
 }

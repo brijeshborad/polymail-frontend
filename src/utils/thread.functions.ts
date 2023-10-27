@@ -43,6 +43,7 @@ export function performMessagesUpdate(messages: Message[]) {
             const blob = new Blob([addTargetBlank], {type: "text/html"});
             rawMessage.body = window.URL.createObjectURL(blob);
             rawMessage.attachments = extractAttachments(message.contentRoot);
+            rawMessage.rawBody = {data: body};
             delete rawMessage.contentRoot;
             return rawMessage;
         }
