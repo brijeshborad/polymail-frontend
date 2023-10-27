@@ -47,6 +47,9 @@ export function MessageBox(props: any) {
     useEffect(() => {
         if (draftSuccess) {
             if (updatedDraft) {
+                if (draftMessages && draftMessages[0] && updatedDraft.threadId !== draftMessages[0].threadId) {
+                    return;
+                }
                 let finalMessages = [...(draftMessages || [])]
                 let findDraft = finalMessages.findIndex((item: Message) => item.id === updatedDraft.id);
                 if (findDraft !== -1) {

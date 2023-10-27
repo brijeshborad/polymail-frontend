@@ -85,6 +85,9 @@ export function MessageReplyBox(props: MessageBoxType) {
     useEffect(() => {
         if (draftSuccess) {
             if (updatedDraft) {
+                if (totalMessages && totalMessages[0] && updatedDraft.threadId !== totalMessages[0].threadId) {
+                    return;
+                }
                 setWaitForDraft(false);
                 let finalMessages = [...(totalMessages || [])]
                 let findDraft = finalMessages.findIndex((item: Message) => item.id === updatedDraft.id);

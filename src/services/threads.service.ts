@@ -82,12 +82,8 @@ class ThreadsService extends BaseService {
     }
 
     pushOrUpdateDraftInThreadMessages(tab: string = '', draft: MessageDraft) {
-        let currentThread: Thread | null | undefined = this.getThreadState().selectedThread;
         let threads: Thread[] = this.getThreadState().threads || [];
-        if (tab === 'DRAFT') {
-            currentThread = threads.find((thread: Thread) => thread.id === draft.threadId);
-        }
-
+        let currentThread = threads.find((thread: Thread) => thread.id === draft.threadId);
         if (currentThread && currentThread.id && threads.length > 0) {
             let currentThreads = [...threads];
             let currentThreadIndex = currentThreads.findIndex((thread: Thread) => thread.id === currentThread?.id);
