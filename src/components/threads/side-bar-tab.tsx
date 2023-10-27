@@ -183,21 +183,23 @@ export function ThreadsSideBarTab(props: TabProps) {
     useEffect(() => {
         if (newMessage) {
             socketService.updateSocketMessage(null);
+
             if (newMessage.name === 'NewMessage') {
                 console.log('---NEW MESSAGE---', newMessage);
                 const _newMsg = Object.values(newMessage.data)[0] as Thread
+                updateThreads(_newMsg, () => {
+                    getAllThread();
+                });
+                var name = _newMsg?.from?.name || _newMsg?.from?.email
                 globalEventService.fireEvent({
                     type: 'show-notification',
                     data: {
-                        title: _newMsg.subject || "You got a new message",
+                        title: "New message from " + name,
                         data: {
-                            body: `${_newMsg?.from?.name} ${_newMsg?.from?.email}`,
+                            body: `${_newMsg?.subject}`,
                             tag: `${_newMsg?.updated}`
                         }
                     }
-                });
-                updateThreads(_newMsg, () => {
-                    getAllThread();
                 });
             }
             if (newMessage.name === 'SnoozedThread') {
