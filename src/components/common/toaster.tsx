@@ -26,7 +26,8 @@ export function Toaster(props: ToasterProps) {
                     <Box
                         display={'flex'} alignItems={'center'} color='#000000' p={3} bg='#FFFFFF'
                         borderRadius={'8px'} border={'1px solid #E5E7EB'}
-                        boxShadow={'0 0 12px 0 rgba(0,0,0, 0.08)'}
+                        boxShadow={'0 0 12px 0 rgba(0,0,0, 0.08)'} cursor={props.onClick ? 'pointer': 'inherit'}
+                        onClick={() => props.onClick ? props.onClick() : null}
                         className={styles.mailToaster} padding={'16px'} gap={2}>
                         {(['reauth', 'error']).includes(props.type) ?
                             <div className={`${styles.toastIcon} ${styles.toastCloseIcon}`}>

@@ -65,6 +65,9 @@ export function Header() {
                 title: 'Please reauthenticate your account.',
                 desc: `Your session has expired for ${email}.`,
                 type: 'reauth',
+                onClick: () => {
+                    Router.push('/settings/email-address');
+                }
             });
 
             Router.push('/settings/email-address');
@@ -107,9 +110,15 @@ export function Header() {
                 });
             }
             if (newMessage.name === 'Reauthenticate' && newMessage?.data && accounts!.length > 0) {
-                let accountForReAuth = accounts!.find(account => account.id === newMessage.data.account)!;
-                if (accountForReAuth) {
-                    reAuthToast(accountForReAuth.email!);
+                let finalAccounts = [...(accounts || [])];
+                let accountForReAuth = finalAccounts.findIndex(account => account.id === newMessage.data.account)!;
+                if (accountForReAuth !== -1) {
+                    finalAccounts[accountForReAuth] = {
+                        ...finalAccounts[accountForReAuth],
+                        status: 'invalid'
+                    }
+                    accountService.setAccounts(finalAccounts);
+                    reAuthToast(finalAccounts[accountForReAuth].email!);
                 }
             }
             if (newMessage.name === 'InitSyncProgress' && newMessage?.data) {

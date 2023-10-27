@@ -16,6 +16,7 @@ import {Toaster} from "@/components/common";
 import {getRedirectionUrl} from "@/utils/common.functions";
 import SettingsLayout from "@/pages/settings/settings-layout";
 import {accountService} from "@/services";
+import Tooltip from "@/components/common/Tooltip";
 
 
 function EmailAddress() {
@@ -145,8 +146,16 @@ function EmailAddress() {
                                                       className={styles.settingAddressSocialIcon}>
                                                     <GoogleIcon/>
                                                 </Flex>
-                                                <Link fontSize={'13px'} fontWeight={'500'}
-                                                      isExternal>{item.email} </Link>
+                                                {item.status !== 'Active' ?
+                                                    <Tooltip label={'Click to reauthenticate'} placement={'bottom'}>
+                                                        <Link onClick={() => addNewGoogleAccount('authenticate')}
+                                                              cursor={'pointer'} fontSize={'13px'} fontWeight={'500'}
+                                                              color={'red'}
+                                                              isExternal>{item.email} </Link>
+                                                    </Tooltip>
+                                                    :
+                                                    <Link fontSize={'13px'} fontWeight={'500'}
+                                                          isExternal>{item.email} </Link>}
                                             </Flex>
                                             <CloseIcon className={styles.closeIcon} cursor={"pointer"}
                                                        onClick={() => openModel(item)}/>

@@ -5,4 +5,5 @@ export declare type ToasterProps = {
     id?: string
     undoClick?: (_type: string) => void
     undoUpdateRecordClick?: () => void
+    onClick?: () => void
 }
