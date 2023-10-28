@@ -28,6 +28,7 @@ import {
     userService
 } from "@/services";
 import {performMessagesUpdate} from "@/utils/thread.functions";
+import {OnboardingLogoIcon} from "@/icons";
 
 const FeedSidebar = dynamic(
     () => import('./feedSidebar').then((mod) => mod.FeedSidebar)
@@ -251,7 +252,7 @@ export function Header() {
         <Flex className={styles.header} w="100%" align={'center'} flex={'none'} padding={'0 40px'}>
             <Flex padding={'12px 0'} align={'center'}>
                 <div>
-                    <Image width="30" height="30" src="/image/logo.png" alt="" className={styles.logo}/>
+                    <OnboardingLogoIcon/>
                 </div>
                 <Flex className={styles.headerTabs} align={'center'}>
                     <Flex align={'center'} className={router.pathname === '/inbox' ? styles.tabsActive : ''}

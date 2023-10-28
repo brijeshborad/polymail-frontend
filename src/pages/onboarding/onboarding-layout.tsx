@@ -13,9 +13,9 @@ export default function OnboardingLayout({children}: any) {
                         <OnboardingLogoIcon/>
                         {children}
                         <Text className={styles.onBoardingPolicy} fontSize='13px' letterSpacing={'-0.13px'}
-                              color={'#6B7280'}> By signing up, I agree to Polymail’s &nbsp;
-                            <Link href={'#'}>Terms</Link>&nbsp;and&nbsp;
-                            <Link href={'#'}>Privacy Policy</Link>.
+                              color={'#6B7280'}> By signing up, I agree to Polymail’s&nbsp;
+                            <Link href={'/tos.html'}>Terms</Link>&nbsp;and&nbsp;
+                            <Link href={'/privacy.html'}>Privacy Policy</Link>.
                         </Text>
                     </Flex>
                 </GridItem>

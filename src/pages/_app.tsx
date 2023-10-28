@@ -10,6 +10,7 @@ import dynamic from 'next/dynamic'
 const Header = dynamic(
     () => import('@/components/common').then((mod) => mod.Header)
 )
+import {OnboardingLogoIcon} from "@/icons";
 import React from 'react';
 import { useRouter } from 'next/router';
 import { HEADER_NOT_ALLOWED_PATHS } from '@/utils/constants';
