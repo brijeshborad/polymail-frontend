@@ -264,9 +264,7 @@ export function getSignatureAndProjectBanner(selectedAccount: Account | null | u
 export function getProjectBanner(selectedAccount: Account | null | undefined) {
     return `<p id="project-banner-gap"></p>
         <div id="project-banner" style="display: flex; background-color: #EBF83E; width: fit-content; border-radius: 4px; color: #0A101D; font-weight: 500; line-height: 1; padding: 5px 10px">
-        <p style="font-size: 13px; font-weight: 500; margin-right: 3px; display: inline-block; margin-top: 0; margin-bottom: 0"> ${selectedAccount?.name || ''} is sharing this email thread (and future replies) with</p>
-        <p style="font-size: 13px; font-weight: 500; margin-right: 3px; display: inline-block; margin-top: 0; margin-bottom: 0">others</p>
-        <p style="font-size: 13px; font-weight: 500; margin-right: 3px; display: inline-block; margin-top: 0; margin-bottom: 0">on</p>
+        <p style="font-size: 13px; font-weight: 500; margin-right: 3px; display: inline-block; margin-top: 0; margin-bottom: 0"> ${selectedAccount?.name || ''} is sharing this email thread (and future replies) with others on</p>
         <p style="font-size: 13px; font-weight: 500; text-decoration: underline; display: inline-block; margin-top: 0; margin-bottom: 0"><a href="https://www.polymailteams.com/" style="color: #1A202C" target="_blank">Polymail</a></p>
       </div>`
 }
