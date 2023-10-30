@@ -46,7 +46,6 @@ export function InboxHeaderProjectsList() {
     }, [projects, maxSize]);
 
     useEffect(() => {
-        console.log('--------------', getInboxLoadedFirstTime(), isLoading, threadIsLoading);
         if (!getInboxLoadedFirstTime()) {
             if (!isLoading && !threadIsLoading) {
                 setInboxLoadedFirstTime(true);
@@ -77,7 +76,6 @@ export function InboxHeaderProjectsList() {
     return (
         <>
             <>
-                {(!loadedFirstTime) && <SkeletonLoader height={'36px'} skeletonLength={6} width={'216px'}/>}
                 <Button alignItems={'center'} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
                         onClick={() => commonService.toggleCreateProjectModel(true, true)} padding={'7px'}
                         minWidth={'216px'}
@@ -90,6 +88,7 @@ export function InboxHeaderProjectsList() {
                     <Text whiteSpace={'nowrap'} overflow={'hidden'} textOverflow={'ellipsis'} fontSize='13px'
                           color={'#374151'} flex={'1'}>Create Project</Text>
                 </Button>
+                {(!loadedFirstTime) && <SkeletonLoader height={'36px'} skeletonLength={6} width={'216px'}/>}
                 {loadedFirstTime && <>
                     {projectData && !!projectData.length && (projectData || []).map((project: Project, index: number) => (
                         <Button onClick={() => gotoProject(project.id!)} ref={projectButtonRef}
