@@ -251,9 +251,9 @@ export function Header() {
     return (
         <Flex className={styles.header} w="100%" align={'center'} flex={'none'} padding={'0 40px'}>
             <Flex padding={'12px 0'} align={'center'}>
-                <div>
+                <Flex marginBottom={'-5px'}>
                     <OnboardingLogoIcon/>
-                </div>
+                </Flex>
                 <Flex className={styles.headerTabs} align={'center'}>
                     <Flex align={'center'} className={router.pathname === '/inbox' ? styles.tabsActive : ''}
                           onClick={() => changePage('inbox')}>
