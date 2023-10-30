@@ -5,7 +5,7 @@ import {createProjects} from "@/redux/projects/action-reducer";
 import styles from "@/styles/project.module.css";
 import {StateType} from "@/types";
 import {PROJECT_ROLES} from "@/utils/constants";
-import {CloseIcon, SmallAddIcon, TriangleDownIcon} from "@chakra-ui/icons";
+import {CloseIcon, TriangleDownIcon} from "@chakra-ui/icons";
 import {
     Button,
     Flex,
@@ -23,6 +23,7 @@ import React, {ChangeEvent, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {commonService, messageService, threadService} from "@/services";
 import {Project} from "@/models";
+import {AddEmojiIcon} from "@/icons";
 
 
 function CreateNewProjectModal() {
@@ -183,7 +184,7 @@ function CreateNewProjectModal() {
                                                 setIsEmojiMenuOpen(!isEmojiMenuOpen)
                                             }}
                                             justifyContent={'center'}>{projectEmoji ? projectEmoji :
-                                    <SmallAddIcon/>} </MenuButton>
+                                    <AddEmojiIcon/>} </MenuButton>
                                 <MenuList className={'drop-down-list'}>
                                     {/*
                                         <Flex padding={3} borderBottom={'1px solid #F3F4F6'}>

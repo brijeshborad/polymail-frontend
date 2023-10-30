@@ -33,12 +33,12 @@ const threadsSlice = createSlice({
             threads = extractAndMapThreadAndMessagesBody(threads, pagination, currentThreads);
             return {...state, threads, isLoading: false, success: true}
         },
-        getAllThreadsError: (state: InitialThreadStateType,  _action: PayloadAction<any>) => {
+        getAllThreadsError: (state: InitialThreadStateType, _action: PayloadAction<any>) => {
             return {...state, threads: [], isLoading: false}
         },
 
         updateThreads: (state: InitialThreadStateType, _action: PayloadAction<ReducerActionType>) => {
-                return {...state, isLoading: false, updateSuccess: false}
+            return {...state, isLoading: false, updateSuccess: false}
         },
         updateThreadsSuccess: (state: InitialThreadStateType, {payload: thread}: PayloadAction<{}>) => {
             let currentThreads = [...(current(state).threads || [])] as Thread[];
@@ -50,17 +50,17 @@ const threadsSlice = createSlice({
             };
             return {...state, threads: [...currentThreads], isLoading: false, updateSuccess: true}
         },
-        updateThreadsError: (state: InitialThreadStateType,  _action: PayloadAction<any>) => {
+        updateThreadsError: (state: InitialThreadStateType, _action: PayloadAction<any>) => {
             return {...state, isLoading: false, updateSuccess: false}
         },
 
         searchThreads: (state: InitialThreadStateType, _action: PayloadAction<ReducerActionType>) => {
-            return {  ...state, searchThreads: [], isLoading: false }
+            return {...state, searchThreads: [], isLoading: false}
         },
         searchThreadsSuccess: (state: InitialThreadStateType, {payload: searchThreads}: PayloadAction<any>) => {
             return {...state, searchThreads, isLoading: false}
         },
-        searchThreadsError: (state: InitialThreadStateType,  _action: PayloadAction<any>) => {
+        searchThreadsError: (state: InitialThreadStateType, _action: PayloadAction<any>) => {
             return {...state, searchThreads: [], isLoading: false}
         },
 
@@ -69,7 +69,7 @@ const threadsSlice = createSlice({
         },
 
         batchUpdateThreads: (state: InitialThreadStateType, _action: PayloadAction<ReducerActionType>) => {
-          return {...state, isLoading: false, updateSuccess: false}
+            return {...state, isLoading: false, updateSuccess: false}
         }
     }
 })
