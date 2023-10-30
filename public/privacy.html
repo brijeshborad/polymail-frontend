@@ -12,7 +12,28 @@
   }
 
   .container {
-    padding: 16px 20px;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto
+  }
+
+  @media(min-width: 768px) {
+    .container {
+      width:750px
+    }
+  }
+
+  @media(min-width: 992px) {
+    .container {
+      width:970px
+    }
+  }
+
+  @media(min-width: 1200px) {
+    .container {
+      width:1170px
+    }
   }
 
   span {
@@ -24,6 +45,7 @@
     box-shadow: 0 0 4px 0 rgba(0,0,0,0.1);
     position: sticky;
     top: 0;
+    padding: 15px 0;
   }
 
   .img-wrapper svg {
@@ -40,9 +62,65 @@
     margin-bottom: 5px;
   }
 
-  p {
-    margin-bottom: 10px;
+  section.main {
+    width: 100%;
+    padding-top: 60px;
+    color: #000;
   }
+
+  section.main .title {
+    font-size: 30px;
+  }
+
+  section.content .copy {
+    padding-top: 50px;
+    padding-bottom: 40px;
+  }
+
+  .c6 {
+    padding-top: 0;
+    padding-bottom: 0;
+    text-align: left;
+  }
+
+  .c4 {
+    color: #000;
+    font-weight: 700;
+    text-decoration: none;
+    vertical-align: baseline;
+    font-size: 11pt;
+    font-family: Helvetica,sans-serif;
+    font-style: normal;
+  }
+
+  .c1 {
+    color: #000;
+    font-weight: 400;
+    text-decoration: none;
+    vertical-align: baseline;
+    font-size: 11pt;
+    font-family: Helvetica,sans-serif;
+    font-style: normal;
+  }
+
+  .c0 {
+    padding-top: 0;
+    padding-bottom: 0;
+    text-align: left;
+    height: 11pt;
+  }
+
+  .c28 {
+    padding-top: 0;
+    padding-bottom: 8pt;
+    text-align: left;
+  }
+
+  .c8 {
+    margin-left: 36pt;
+    padding-left: 0;
+  }
+
 
 </style>
 
@@ -77,13 +155,13 @@
     </div>
   </div>
 
-  <section class="main">
-    <div class="container">
-      <div class="row">
-        <div class="col-sm-12 title"><h1>Privacy Policy</h1></div>
-      </div>
-    </div>
-  </section>
+<!--  <section class="main">-->
+<!--    <div class="container">-->
+<!--      <div class="row">-->
+<!--        <div class="col-sm-12 title"><h1>Privacy Policy</h1></div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </section>-->
 
   <section class="content">
     <div class="container">
