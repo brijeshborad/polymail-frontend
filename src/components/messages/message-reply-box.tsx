@@ -265,8 +265,12 @@ export function MessageReplyBox(props: MessageBoxType) {
                 if (checkValue.trim()) {
                     setIsDraftUpdated(true)
                 }
-                sendData[selectedThread?.id + '-' + draftIndex] = draftInfo?.body || '';
-                setEmailBody(draftInfo?.body || '');
+                if (!sendData[selectedThread?.id + '-' + draftIndex]) {
+                    sendData[selectedThread?.id + '-' + draftIndex] = draftInfo?.body || '';
+                    setEmailBody(draftInfo?.body || '');
+                } else {
+                    setEmailBody(sendData[selectedThread?.id + '-' + draftIndex]);
+                }
             }
             if (draftInfo?.attachments?.length) {
                 setAttachments([
@@ -493,6 +497,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     }
 
     const discardMessage = (isRescue: boolean = false) => {
+        delete sendData[selectedThread?.id + '-' + draftIndex];
         if (!isRescue) {
             setIsReplyDropdownOpen(false)
             setShowReplyBox(false);
@@ -555,6 +560,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             setIsContentUpdated(false);
             setIsDraftUpdated(false);
             setDraftIndex(null);
+            delete sendData[selectedThread?.id + '-' + draftIndex];
             globalEventService.fireEvent({data: {body: ''}, type: 'richtexteditor.forceUpdate'});
         }
     }
