@@ -151,7 +151,8 @@ export function MessagesHeader() {
                             tag: messageBox.toLowerCase(),
                             afterUndoAction: () => {
                                 threadService.setThreadState({
-                                    threads: threads || []
+                                    threads: threads || [],
+                                    selectedThread: threadData
                                 })
                             }
                         },
