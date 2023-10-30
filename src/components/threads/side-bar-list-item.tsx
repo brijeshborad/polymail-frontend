@@ -10,7 +10,7 @@ import {MAILBOX_UNREAD} from "@/utils/constants";
 import {MessageAttachments, Project, UserProjectOnlineStatus} from "@/models";
 import {keyNavigationService} from "@/services";
 import Tooltip from "../common/Tooltip";
-import {AttachmentIcon, ChevronDownIcon} from "@chakra-ui/icons";
+import {AttachmentIcon} from "@chakra-ui/icons";
 import {useRouter} from "next/router";
 import {clearDebounce, debounce} from "@/utils/common.functions";
 import {DefaultExtensionType, defaultStyles, FileIcon} from "react-file-icon";
@@ -99,7 +99,6 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                 >
                     <Flex alignItems={'center'}>
                         <AttachmentIcon/>
-                        <ChevronDownIcon className='icon'/>
                     </Flex>
                 </MenuButton>
             </Tooltip>
@@ -209,7 +208,6 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                                     {`+${(props?.thread?.projects || []).length - 5}`}
                                   </span>
                                             )}
-                                            <ChevronDownIcon className='icon'/>
                                         </Flex>
                                     </MenuButton>
                                 </Tooltip>
