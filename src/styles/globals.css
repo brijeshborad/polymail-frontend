@@ -1068,3 +1068,9 @@ div:has(> .mailSendToaster) {
 .signature-emoji-popover.emoji-popover > div + div {
     display: block;
 }
+
+.attachment-icon svg {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+}

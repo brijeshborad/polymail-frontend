@@ -1,18 +1,20 @@
 import styles2 from "@/styles/common.module.css";
 import styles from "@/styles/Inbox.module.css";
-import {Box, Flex, Image, Menu, MenuButton, MenuItem, MenuList, Text} from "@chakra-ui/react";
+import {Box, Button, Flex, Image, Menu, MenuButton, MenuItem, MenuList, Text} from "@chakra-ui/react";
 import {Time} from "@/components/common";
 import {DotIcon} from "@/icons";
 import {StateType, ThreadListItemProps} from "@/types";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import React, {useEffect, useState} from "react";
 import {MAILBOX_UNREAD} from "@/utils/constants";
-import {Project, UserProjectOnlineStatus} from "@/models";
+import {MessageAttachments, Project, UserProjectOnlineStatus} from "@/models";
 import {keyNavigationService} from "@/services";
 import Tooltip from "../common/Tooltip";
-import {ChevronDownIcon} from "@chakra-ui/icons";
+import {AttachmentIcon, ChevronDownIcon} from "@chakra-ui/icons";
 import {useRouter} from "next/router";
 import {clearDebounce, debounce} from "@/utils/common.functions";
+import {DefaultExtensionType, defaultStyles, FileIcon} from "react-file-icon";
+import {getAttachmentDownloadUrl} from "@/redux/messages/action-reducer";
 
 
 export function ThreadsSideBarListItem(props: ThreadListItemProps) {
@@ -30,6 +32,8 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
     const [isEmojiOpen, setIsEmojiOpen] = useState<boolean>(false);
     const [isToolTipOpen, setIsToolTipOpen] = useState<boolean>(false);
     const {onlineUsers} = useSelector((state: StateType) => state.commonApis)
+    const [isAttachmentOpen, setIsAttachmentOpen] = useState<boolean>(false);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         setIsSelected((multiSelection || [])?.includes(props.thread.id!));
@@ -49,6 +53,88 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
 
     const goToProject = (project: Project) => {
         router.push(`/projects/${project.id}`)
+    }
+
+    function showExtensionImages(item: string | undefined) {
+        if (item) {
+            const parts = item.split('.');
+            if (parts.length > 1) {
+                const extension: string = parts[parts.length - 1];
+                return extension;
+            }
+        }
+        return 'pdf'
+    }
+
+    function attachmentsMenu() {
+        return <Menu
+            isOpen={isAttachmentOpen}
+            onClose={() => {
+                setIsAttachmentOpen(false)
+            }}>
+            <MenuButton
+                className={styles.tabListAttachmentButton} minWidth={'1px'} padding={0}
+                borderRadius={0} backgroundColor={'transparent'} height={'auto'} outline={"none"}
+                _focusVisible={{boxShadow: 'none'}}
+                fontSize={'13px'} color={'#6B7280'} as={Button} mx={1}
+                onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsAttachmentOpen(true)
+
+                }}
+                onMouseEnter={() => {
+                    if (isAttachmentOpen) {
+                        clearDebounce(props.thread.id + 'attachments');
+                    }
+                }}
+                onMouseLeave={() => {
+                    debounce(() => {
+                        setIsAttachmentOpen(false)
+                    }, 200, props.thread.id + 'attachments')
+                }}
+                onMouseOut={() => {
+                    debounce(() => {
+                        setIsAttachmentOpen(false)
+                    }, 200, props.thread.id + 'attachments')
+                }}
+            >
+                <AttachmentIcon/>
+            </MenuButton>
+
+            <MenuList
+                className={`${styles.tabListDropDown} drop-down-list`}
+                onMouseEnter={() => {
+                    if (isAttachmentOpen) {
+                        clearDebounce(props.thread.id + 'attachments');
+                    }
+                }}
+                onMouseLeave={() => {
+                    debounce(() => {
+                        setIsAttachmentOpen(false)
+                    }, 200, props.thread.id + 'attachments')
+                }}
+            >
+                {(props.thread.attachments || []).map((item: MessageAttachments, i: number) => (
+                    <MenuItem gap={2} key={i} className={'attachment-icon'} onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        downloadImage(item)
+                    }}>
+                        <FileIcon
+                            extension={showExtensionImages(item.filename) as DefaultExtensionType}
+                            {...defaultStyles[showExtensionImages(item.filename) as DefaultExtensionType]}
+                        /> {item.filename}
+                    </MenuItem>
+                ))}
+
+            </MenuList>
+
+        </Menu>
+    }
+
+    const downloadImage = (item: MessageAttachments) => {
+        dispatch(getAttachmentDownloadUrl({body: {id: item.messageId, attachment: item.id}}));
     }
 
     return (
@@ -157,6 +243,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                     <Flex alignItems={'center'} className={styles2.receiveTime} justify={'flex-end'}>
                         {isClicked &&
                         <DotIcon marginRight={'5px'} className={`readThreadIcon`} color={props.thread.snooze ? '#FF5E2C' :'#9ca3af'}/>}
+                        {props.thread.attachments && props.thread.attachments?.length > 0 && attachmentsMenu()}
                         <Time time={props.thread.latestMessage} isShowFullTime={false} showTimeInShortForm={false}/>
                     </Flex>
                 </Flex>

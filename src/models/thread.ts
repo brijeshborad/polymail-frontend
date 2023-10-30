@@ -1,5 +1,6 @@
 import {Message, MessageRecipient} from "@/models/message";
 import {Project, UserProjectOnlineStatus} from "@/models/project";
+import {MessageAttachments} from "@/models/messageAttachments";
 
 export interface Thread {
     id?: string | undefined,
@@ -23,6 +24,7 @@ export interface Thread {
     userProjectOnlineStatus?: UserProjectOnlineStatus[],
     showOnlineMembersCount?: number
     snooze?: string
+    attachments?: MessageAttachments[]
 }
 
 export interface ThreadsRequestBody {

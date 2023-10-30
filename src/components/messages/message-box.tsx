@@ -209,7 +209,8 @@ export function MessageBox(props: any) {
             }}>
             <MenuButton
                 className={styles.tabListAttachmentButton} minWidth={'1px'} padding={0}
-                borderRadius={0} backgroundColor={'transparent'} height={'auto'}
+                borderRadius={0} backgroundColor={'transparent'} height={'auto'} outline={"none"}
+                _focusVisible={{boxShadow: 'none'}}
                 fontSize={'13px'} color={'#6B7280'} as={Button} mx={1}
                 onMouseEnter={() => {
                     clearDebounce(message.id);

@@ -7,6 +7,17 @@ export function extractAndMapThreadAndMessagesBody(threads: Thread[], payload: a
         let rawThread = {...thread};
         rawThread.messages = [...(thread.messages || [])];
         rawThread.messages = performMessagesUpdate(rawThread.messages);
+        let allAttachments: MessageAttachments[] = [];
+        rawThread.messages.forEach(((item: Message) => {
+            if (item.attachments && item.attachments?.length > 0) {
+                item.attachments = [...item.attachments];
+                item.attachments = item.attachments.map((attachment: MessageAttachments) => {
+                    return {...attachment, messageId: item.id}
+                })
+                allAttachments = [...allAttachments, ...(item.attachments || [])];
+            }
+        }))
+        rawThread.attachments = [...allAttachments];
         return rawThread;
     })
     if (payload.from) {
