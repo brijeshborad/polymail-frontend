@@ -79,10 +79,13 @@ function CreateNewProjectModal() {
                 },
                 toaster: {
                     success: {
-                        desc: projectName,
+                        desc: 'Click to go to project.',
                         title: "Project created",
                         type: 'success'
                     },
+                },
+                toasterClickAction: (project: any) => {
+                    Router.push(`/projects/${project.id}`);
                 },
                 afterSuccessAction: (project: Project) => {
                     setMembersInput({input: '', role: 'member', memberArray: []});

@@ -6,6 +6,7 @@ export declare type ReducerActionType = {
     toaster?: ReducerActionToasterConfig,
     afterSuccessAction?: (_response?: any) => void,
     undoAction?: ReducerActionUndoConfig,
+    toasterClickAction?: (_response?: any) => void,
 }
 
 export declare type ReducerActionToasterConfig = {

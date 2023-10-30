@@ -16,6 +16,12 @@ export function performSuccessActions(payload: ReducerActionType, currentRespons
             title: payload.toaster.success.title || '',
             type: payload.undoAction?.showUndoButton ? 'undo_changes' : 'success',
             id: polyToast,
+            ...(payload.toasterClickAction ? {
+                onClick: () => {
+                    // @ts-ignore
+                    payload.toasterClickAction(currentResponse);
+                }
+            }: {}),
             ...(payload.undoAction?.showUndoButton ? {
                 undoUpdateRecordClick: () => {
                     if (payload.undoAction?.dispatch && payload.undoAction.action) {
