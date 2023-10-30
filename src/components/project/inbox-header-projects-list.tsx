@@ -18,7 +18,7 @@ export function InboxHeaderProjectsList() {
     const [projectData, setProjectData] = useState<Project[]>([]);
     const [projectDataLength, setProjectDataLength] = useState<Project[]>([]);
     const projectButtonRef = React.useRef<HTMLDivElement | null | any>(null);
-    const [maxSize, setMaxSize] = useState<number>(5);
+    const [maxSize, setMaxSize] = useState<number>(0);
     const [size, setSize] = useState<number>(0);
     const [loadedFirstTime, setIsLoadedFirstTime] = useState<boolean>(getInboxLoadedFirstTime());
 
@@ -39,7 +39,7 @@ export function InboxHeaderProjectsList() {
     }, []);
 
     useEffect(() => {
-        if (projects && projects.length > 0) {
+        if (projects && projects.length > 0 && maxSize > 0) {
             setProjectData([...(projects || [])].reverse().slice(0, maxSize));
             setProjectDataLength(projects)
         }
@@ -121,7 +121,7 @@ export function InboxHeaderProjectsList() {
                         </Button>
                     ))}
 
-                    {projectData && projectData.length >= maxSize &&
+                    {(projectData && projectData.length >= maxSize && maxSize > 0) &&
                     <Button alignItems={'center'} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
                             onClick={() => changePage()} padding={'7px'} minWidth={'216px'}
                             border={'1px solid #F3F4F6'} borderRadius={'8px'} h={'fit-content'}
