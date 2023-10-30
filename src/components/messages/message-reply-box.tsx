@@ -43,6 +43,8 @@ const blankRecipientValue: MessageRecipient = {
 
 let loaderPercentage = 10;
 
+let sendData: { [key: string]: string} = {};
+
 export function MessageReplyBox(props: MessageBoxType) {
     const [emailRecipients, setEmailRecipients] = useState<RecipientsType | any>({
         cc: {items: [], value: blankRecipientValue},
@@ -194,6 +196,7 @@ export function MessageReplyBox(props: MessageBoxType) {
                 setExtraClassNamesForBottom(prevState => prevState.replace('show-shadow-bottom', ''));
             }
             setEmailBody(value);
+            sendData[selectedThread?.id + '-' + draftIndex] = value;
         }
 
         let finalSubject = subject;
@@ -262,6 +265,7 @@ export function MessageReplyBox(props: MessageBoxType) {
                 if (checkValue.trim()) {
                     setIsDraftUpdated(true)
                 }
+                sendData[selectedThread?.id + '-' + draftIndex] = draftInfo?.body || '';
                 setEmailBody(draftInfo?.body || '');
             }
             if (draftInfo?.attachments?.length) {
@@ -531,7 +535,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 cc: emailRecipients.cc?.items && emailRecipients.cc?.items.length > 0 ? emailRecipients.cc?.items : [],
                 bcc: emailRecipients.bcc?.items && emailRecipients.bcc?.items.length > 0 ? emailRecipients.bcc?.items : [],
                 draftInfo: {
-                    body: emailBody
+                    body: sendData[selectedThread?.id + '-' + draftIndex]
                 },
                 messageId,
                 ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
@@ -546,6 +550,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             setShowEditorToolbar(false);
             setScheduledDate(undefined)
             setEmailBody('');
+            sendData[selectedThread?.id + '-' + draftIndex] = '';
             setAttachments([]);
             setIsContentUpdated(false);
             setIsDraftUpdated(false);
@@ -643,6 +648,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                         }
                         let content = getForwardContent(incomingEvent.data.messageData) + (decoded || '') + (selectedAccount ? getSignatureBanner(selectedAccount) : '') + (`${sentence}`);
                         setEmailBody(content);
+                        sendData[selectedThread?.id + '-' + draftIndex] = content;
                         globalEventService.fireEvent({
                             type: 'richtexteditor.forceUpdate',
                             data: {body: content, callBack: () => setShowEditorToolbar(true)}
@@ -740,6 +746,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         handleEditorScroll();
         setAttachments([]);
         setEmailBody('');
+        sendData[selectedThread?.id + '-' + draftIndex] = '';
         setIsContentUpdated(false);
         setTimeout(() => {
             setReloadingEditor(false);
@@ -915,7 +922,10 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                             content={draft?.draftInfo?.body}
                                             placeholder="Hit enter to reply with anything you'd like"
                                             isToolbarVisible={showEditorToolbar}
-                                            onChange={(value) => sendToDraft(value)}
+                                            onChange={(value) => {
+                                                sendData[selectedThread?.id + '-' + draftIndex] = value;
+                                                sendToDraft(value)
+                                            }}
                                             className={`${extraClassNames} ${extraClassNamesForBottom}`}
                                             emailSignature={selectedAccount ? getSignatureBanner(selectedAccount) : undefined}
                                             projectShare={selectedThread?.projects?.length ? getProjectBanner(selectedAccount) : undefined}
