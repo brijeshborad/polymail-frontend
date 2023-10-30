@@ -17,6 +17,7 @@ export function HeaderSearch() {
     const dispatch = useDispatch();
     const {tabValue, isThreadSearched} = useSelector((state: StateType) => state.threads);
     const {userDetails} = useSelector((state: StateType) => state.users);
+    const {project} = useSelector((state: StateType) => state.projects);
     const [showCloseIcon, setShowCloseIcon] = useState(false);
     const [searchString, setSearchString] = useState<string>('');
     const searchInputRef = useRef<HTMLInputElement | null>(null);
@@ -48,14 +49,18 @@ export function HeaderSearch() {
     }, [isThreadSearched]);
 
     useEffect(() => {
-        if (router.pathname === '/projects') {
+        if (router.pathname.includes('/projects')) {
+            let currentBadges = ['Projects'];
             setIsProjectRoute(true);
-            setBadges(['Projects']);
+            if (router.query.project && project) {
+                currentBadges.push(project.name || '');
+            }
+            setBadges(currentBadges);
         } else {
             setIsProjectRoute(false);
             setBadges([]);
         }
-    }, [router.pathname]);
+    }, [router.pathname, router.query, project]);
 
     useEffect(() => {
         if (isProjectRoute) {
@@ -64,7 +69,7 @@ export function HeaderSearch() {
     }, [searchString, isProjectRoute])
 
     const searchCancel = (callAPI: boolean = false) => {
-        if (isProjectRoute) {
+        if (isProjectRoute && !project) {
             if (callAPI) {
                 setSearchString('');
                 projectService.setProjectSearchString('');
@@ -79,8 +84,10 @@ export function HeaderSearch() {
             setSearchString('');
             dispatch(getAllThreads({
                 body: {
-                    mailbox: tabValue, account: selectedAccount.id, pagination: {
-                        cutoff: dayjs().add(15, "day").format('YYYY-MM-DD'),
+                    mailbox: tabValue,
+                    ...(isProjectRoute && project ? {project: project.id}: {account: selectedAccount.id}),
+                    pagination: {
+                        cutoff: dayjs().add(5, "day").format('YYYY-MM-DD'),
                         count: 100,
                         page: 1
                     }
@@ -93,8 +100,12 @@ export function HeaderSearch() {
         if (event.key.toLowerCase() === 'enter') {
             searchCancel(false);
             if (searchString) {
+                let finalSearchString = searchString;
+                if (isProjectRoute && project) {
+                    finalSearchString = `project:${project.id} ${searchString}`;
+                }
                 threadService.searchThread();
-                socketService.searchThreads(userDetails?.id, searchString);
+                socketService.searchThreads(userDetails?.id, finalSearchString);
                 return;
             }
         }
@@ -126,7 +137,7 @@ export function HeaderSearch() {
                     ))}
                     <Input
                         type="text"
-                        placeholder={isProjectRoute ? 'Search projects' : 'Search'}
+                        placeholder={isProjectRoute ? (project ? `Search in ${project.name}` :'Search projects') : 'Search'}
                         onChange={event => {
                             setSearchString(event.target.value);
                         }}

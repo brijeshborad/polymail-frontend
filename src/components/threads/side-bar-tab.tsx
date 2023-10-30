@@ -19,7 +19,7 @@ import {
     accountService,
     commonService,
     draftService,
-    globalEventService,
+    globalEventService, messageService,
     socketService,
     threadService
 } from "@/services";
@@ -42,7 +42,8 @@ export function ThreadsSideBarTab(props: TabProps) {
         success: threadListSuccess,
         tabValue,
         multiSelection,
-        isThreadSearched
+        isThreadSearched,
+        selectedThread
     } = useSelector((state: StateType) => state.threads)
     const {selectedAccount, account, success} = useSelector((state: StateType) => state.accounts);
     const {
@@ -154,7 +155,7 @@ export function ThreadsSideBarTab(props: TabProps) {
         }
     }, [dispatch, isSummaryApiCalled, projectId, props.cachePrefix, selectedAccount, syncingEmails, tabName, tabValue]);
 
-    const updateThreads = useCallback((newThread: Thread, callBack: any | null = null) => {
+    const updateThreads = useCallback((isNewThread: boolean, newThread: Thread, callBack: any | null = null) => {
         let thread: Thread = {...newThread};
         thread = {
             ...thread,
@@ -162,13 +163,35 @@ export function ThreadsSideBarTab(props: TabProps) {
         };
         let finalThreads = [...(threads || [])];
         let findThreadInList = finalThreads.findIndex((item: Thread) => item.id === thread.id);
-        if (findThreadInList !== -1) {
-            finalThreads.splice(findThreadInList, 1);
+        if (!isNewThread) {
+            if (findThreadInList !== -1) {
+                finalThreads.splice(findThreadInList, 1);
+            }
+            let messages: Message[] = [...(thread.messages || [])];
+            messages = performMessagesUpdate(messages);
+            thread.messages = messages;
+            finalThreads.unshift(thread);
+        } else {
+            if (findThreadInList !== -1) {
+                let messages: Message[] = [...(finalThreads[findThreadInList].messages || [])];
+                let newMessages: Message[] = [...(thread.messages || [])];
+                newMessages = performMessagesUpdate(newMessages);
+                newMessages.forEach((item: Message) => {
+                    let index = messages.findIndex((t: Message) => t.id === item.id);
+                    if (index === -1) {
+                        messages.push(item);
+                    }
+                })
+                if (selectedThread && selectedThread.id === thread.id) {
+                    messageService.setMessages(messages);
+                }
+            } else {
+                let messages: Message[] = [...(thread.messages || [])];
+                messages = performMessagesUpdate(messages);
+                thread.messages = messages;
+                finalThreads.unshift(thread);
+            }
         }
-        let messages: Message[] = [...(thread.messages || [])];
-        messages = performMessagesUpdate(messages);
-        thread.messages = messages;
-        finalThreads.unshift(thread);
         threadService.setThreads(finalThreads);
         threadService.setThreadState({success: true});
         if (callBack) {
@@ -176,7 +199,7 @@ export function ThreadsSideBarTab(props: TabProps) {
                 callBack();
             }, 100)
         }
-    }, [threads])
+    }, [threads, selectedThread])
 
     useEffect(() => {
         if (threadListSuccess && selectedAccount) {
@@ -197,7 +220,7 @@ export function ThreadsSideBarTab(props: TabProps) {
             if (newMessage.name === 'NewMessage') {
                 console.log('---NEW MESSAGE---', newMessage);
                 const _newMsg = newMessage.data.thread as Thread
-                updateThreads(_newMsg, () => {
+                updateThreads(true, _newMsg, () => {
                     getAllThread('', newMessage.data.thread.sortDate);
                 });
                 var name = _newMsg?.from?.name || _newMsg?.from?.email
@@ -214,7 +237,7 @@ export function ThreadsSideBarTab(props: TabProps) {
             }
             if (newMessage.name === 'SnoozedThread') {
                 console.log(newMessage);
-                updateThreads(newMessage.data.thread);
+                updateThreads(false, newMessage.data.thread);
                 globalEventService.fireEvent({
                     type: 'show-notification',
                     data: {
