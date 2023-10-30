@@ -53,13 +53,15 @@ export function ProjectHeader() {
     const [selectedMember, setSelectedMember] = useState<any>(null);
     const [projectData, setProjectData] = useState<Project | null>(null);
     const [actionType, setActionType] = useState<string>('');
+    const [loadedFirstTime, setIsLoadedFirstTime] = useState<boolean>(false);
 
-    const {onlineUsers} = useSelector((state: StateType) => state.commonApis);
+    const {onlineUsers, isLoading} = useSelector((state: StateType) => state.commonApis);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const {projects} = useSelector((state: StateType) => state.projects);
     const {members, project, invitees} = useSelector((state: StateType) => state.projects);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {success} = useSelector((state: StateType) => state.memberships);
+    const {isLoading: threadIsLoading} = useSelector((state: StateType) => state.threads);
 
     const inviteAccountToProject = useCallback((item: Project | null) => {
         if (selectedAccount && selectedAccount.email && membersInputs.input.length > 0) {
@@ -173,6 +175,12 @@ export function ProjectHeader() {
     }, [incomingEvent]);
 
     useEffect(() => {
+        if (project && !threadIsLoading && !isLoading) {
+            setIsLoadedFirstTime(true);
+        }
+    }, [project, threadIsLoading, isLoading]);
+
+    useEffect(() => {
         if (searchValue.length > 0) {
             setFilteredProjects((projects || []).filter((item: Project) => item.name?.toLowerCase().includes(searchValue.toLowerCase())));
         } else {
@@ -253,7 +261,7 @@ export function ProjectHeader() {
             <Flex align={'center'} justify={'space-between'} gap={4} padding={'16px 40px 15px'}
                   borderBottom={'1px solid #F3F4F6'} backgroundColor={'#FFFFFF'}>
                 <Flex align={'center'} gap={2}>
-                    {!project ? (
+                    {!loadedFirstTime ? (
                         <>
                             <Skeleton
                                 startColor='#F3F4F6' endColor='#f3f3f3'
@@ -300,7 +308,7 @@ export function ProjectHeader() {
                                         {project?.emoji ? project.emoji :
                                             <Image src="/image/user.png" width="24" height="24" alt=""/>}
                                         <span
-                                            style={{marginLeft: 12}}>{project && project.name ? project.name : 'Loading...'}</span>
+                                            style={{marginLeft: 12}}>{project && project.name ? project.name : ''}</span>
                                         <ChevronDownIcon/>
                                     </MenuButton>
                                 </Tooltip>
@@ -339,10 +347,13 @@ export function ProjectHeader() {
                                             return (
                                                 <MenuItem gap={2} key={project.id}
                                                           onClick={() => {
-                                                              threadService.pageChange();
-                                                              projectService.pageChange();
-                                                              messageService.pageChange();
-                                                              router.push(`/projects/${project.id}`)
+                                                              if (router.query.project !== project.id) {
+                                                                  threadService.pageChange(false);
+                                                                  projectService.pageChange();
+                                                                  messageService.pageChange();
+                                                                  setIsLoadedFirstTime(false);
+                                                                  router.push(`/projects/${project.id}`)
+                                                              }
                                                           }}>
                                                     {project.emoji} {project.name}
                                                 </MenuItem>
@@ -369,7 +380,7 @@ export function ProjectHeader() {
                     )}
                 </Flex>
 
-                <Flex align={'center'} gap={1}>
+                {loadedFirstTime && <Flex align={'center'} gap={1}>
                     {project && onlineUsers && (onlineUsers['projects'][project.id!] || [])
                         .filter((t: UserProjectOnlineStatus) => t.isOnline).slice(0, maxShowingMembers)
                         .map((item: UserProjectOnlineStatus, index: number) => (
@@ -556,7 +567,7 @@ export function ProjectHeader() {
                                 project</MenuItem>}
                         </MenuList>
                     </Menu>
-                </Flex>
+                </Flex>}
             </Flex>
             <RemoveRecordModal onOpen={onDeleteModalOpen} isOpen={isDeleteModalOpen} onClose={onDeleteModalClose}
                                confirmDelete={removeMemberFromProject}

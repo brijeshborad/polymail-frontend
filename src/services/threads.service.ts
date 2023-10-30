@@ -63,13 +63,13 @@ class ThreadsService extends BaseService {
         });
     }
 
-    pageChange() {
+    pageChange(blankTabValue: boolean = true) {
         this.setThreadState({
             threads: [],
             success: false,
             updateSuccess: false,
             selectedThread: null,
-            tabValue: ''
+            ...(blankTabValue ? {tabValue: ''}: {})
         });
     }
 

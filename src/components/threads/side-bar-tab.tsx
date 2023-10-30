@@ -45,7 +45,7 @@ export function ThreadsSideBarTab(props: TabProps) {
         isThreadSearched,
         selectedThread
     } = useSelector((state: StateType) => state.threads)
-    const {selectedAccount, account, success} = useSelector((state: StateType) => state.accounts);
+    const {selectedAccount, success} = useSelector((state: StateType) => state.accounts);
     const {
         isLoading: summaryIsLoading,
         syncingEmails,
@@ -271,13 +271,6 @@ export function ThreadsSideBarTab(props: TabProps) {
             getAllThread();
         }
     }, [getAllThread, incomingEvent])
-
-    useEffect(() => {
-        if (account && account.success) {
-            currentPage = 1;
-            getAllThread();
-        }
-    }, [account, getAllThread])
 
     useEffect(() => {
         if (projectId) {
