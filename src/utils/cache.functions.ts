@@ -12,6 +12,7 @@ let memberStatus: {
     threads: {},
     projects: {}
 };
+let inboxLoadedFirstTime: boolean = false;
 
 export function getCurrentCacheTab() {
     return currentCacheTab;
@@ -65,4 +66,13 @@ export function getMemberStatusCache() {
 export function setMemberStatusCache(data: any) {
     memberStatus = data;
     return memberStatus;
+}
+
+export function getInboxLoadedFirstTime() {
+    return inboxLoadedFirstTime;
+}
+
+export function setInboxLoadedFirstTime(value: any) {
+    inboxLoadedFirstTime = value;
+    return inboxLoadedFirstTime;
 }

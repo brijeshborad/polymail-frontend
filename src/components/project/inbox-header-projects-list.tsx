@@ -9,6 +9,7 @@ import {PlusIcon} from "@/icons/plus.icon";
 import {commonService, messageService, threadService} from "@/services";
 import Tooltip from "../common/Tooltip";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
+import {getInboxLoadedFirstTime, setInboxLoadedFirstTime} from "@/utils/cache.functions";
 
 export function InboxHeaderProjectsList() {
     const {projects} = useSelector((state: StateType) => state.projects);
@@ -19,7 +20,7 @@ export function InboxHeaderProjectsList() {
     const projectButtonRef = React.useRef<HTMLDivElement | null | any>(null);
     const [maxSize, setMaxSize] = useState<number>(5);
     const [size, setSize] = useState<number>(0);
-    const [loadedFirstTime, setIsLoadedFirstTime] = useState<boolean>(false);
+    const [loadedFirstTime, setIsLoadedFirstTime] = useState<boolean>(getInboxLoadedFirstTime());
 
     function updateSize() {
         setSize(window.innerWidth);
@@ -45,8 +46,12 @@ export function InboxHeaderProjectsList() {
     }, [projects, maxSize]);
 
     useEffect(() => {
-        if (!isLoading && !threadIsLoading) {
-            setIsLoadedFirstTime(true);
+        console.log('--------------', getInboxLoadedFirstTime(), isLoading, threadIsLoading);
+        if (!getInboxLoadedFirstTime()) {
+            if (!isLoading && !threadIsLoading) {
+                setInboxLoadedFirstTime(true);
+                setIsLoadedFirstTime(true);
+            }
         }
     }, [isLoading, threadIsLoading]);
 
