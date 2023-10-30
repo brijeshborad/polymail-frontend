@@ -53,7 +53,7 @@ export function HeaderSearch() {
             let currentBadges = ['Projects'];
             setIsProjectRoute(true);
             if (router.query.project && project) {
-                currentBadges.push(project.name || '');
+                currentBadges = [`Project: ${project.name || ''}`];
             }
             setBadges(currentBadges);
         } else {
