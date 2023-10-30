@@ -196,7 +196,7 @@ export function MessagesHeader() {
                             )
                         }
                     </Flex>
-                    <AddToProjectButton/>
+                    <AddToProjectButton allowDefaultSelect={true}/>
                     <Tooltip label='Starred' placement='bottom'>
                         <button onClick={() => updateMailBox(MAILBOX_STARRED)} className={`starred-button-icon ${(selectedThread?.mailboxes || []).includes(MAILBOX_STARRED) ? 'active': ''}`}>
                             <StarIcon/>

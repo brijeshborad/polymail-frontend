@@ -27,6 +27,10 @@ import {createDraft} from "@/redux/draft/action-reducer";
 import {clearDebounce, debounce, makeCollabId} from "@/utils/common.functions";
 import {useRouter} from "next/router";
 import {UrlManager} from "@/components/threads/url-manager";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+
+dayjs.extend(customParseFormat)
 
 const MessageSchedule = dynamic(() => import("../messages/message-schedule").then(mod => mod.default));
 const ThreadsSideBarTab = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarTab), {ssr: false});
@@ -103,7 +107,17 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
         threadService.cancelThreadSearch();
         socketService.cancelThreadSearch(userDetails?.id);
         if (selectedAccount && selectedAccount.id && callAPI) {
-            dispatch(getAllThreads({body: {mailbox: tabValue, account: selectedAccount.id}}));
+            dispatch(getAllThreads({
+                body: {
+                    mailbox: tabValue,
+                    ...(router.query.project ? {project: router.query.project as string}: {account: selectedAccount.id}),
+                    pagination: {
+                        cutoff: dayjs().add(5, "day").format('YYYY-MM-DD'),
+                        count: 100,
+                        page: 1
+                    }
+                }
+            }));
         }
     }
 
@@ -195,7 +209,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                     {/*    </Checkbox>*/}
                     {/*</Flex>*/}
                     <Flex gap={2}>
-                        <AddToProjectButton/>
+                        <AddToProjectButton allowDefaultSelect={false}/>
                         <Menu
                             isOpen={isMoreDropdownOpen}
                             onClose={() => setIsMoreDropdownOpen(false)}
