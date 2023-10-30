@@ -167,7 +167,8 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                                         fontWeight={600}
                                         backgroundColor={'#fff'}
                                         className='emoji-dropdown'
-                                        padding={'0 8px'}
+                                        padding={0}
+                                        marginLeft={'2px'}
                                         onClick={(e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
