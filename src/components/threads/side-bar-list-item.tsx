@@ -33,6 +33,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
     const [isToolTipOpen, setIsToolTipOpen] = useState<boolean>(false);
     const {onlineUsers} = useSelector((state: StateType) => state.commonApis)
     const [isAttachmentOpen, setIsAttachmentOpen] = useState<boolean>(false);
+    const [isAttachmentToolTipOpen, setIsAttachmentToolTipOpen] = useState<boolean>(false);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -67,41 +68,41 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
     }
 
     function attachmentsMenu() {
-        return <Menu
-            isOpen={isAttachmentOpen}
-            onClose={() => {
-                setIsAttachmentOpen(false)
-            }}>
-            <MenuButton
-                className={styles.tabListAttachmentButton} minWidth={'1px'} padding={0}
-                borderRadius={0} backgroundColor={'transparent'} height={'auto'} outline={"none"}
-                _focusVisible={{boxShadow: 'none'}} _hover={{background: 'none'}} _active={{background: 'none'}}
-                fontSize={'13px'} color={'#6B7280'} as={Button} mx={1}
-                onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setIsAttachmentOpen(true)
+        return <Menu isOpen={isAttachmentOpen}>
+            <Tooltip label='List attachments' placement='bottom' customeOpenHandelEvent isOpenEvent={isAttachmentToolTipOpen}>
+                <MenuButton
+                    className={`${styles.tabListAttachmentButton} emoji-dropdown`} minWidth={'1px'} padding={'2px 6px'}
+                    cursor={'pointer'}
+                    backgroundColor={'transparent'} height={'auto'} outline={"none"}
+                    _focusVisible={{boxShadow: 'none'}} _hover={{background: 'none'}} _active={{background: 'none'}}
+                    fontSize={'13px'} color={'#6B7280'} as={Button} mx={1}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setIsAttachmentOpen(true)
+                        //close tooltip
+                        setIsAttachmentToolTipOpen(false);
 
-                }}
-                onMouseEnter={() => {
-                    if (isAttachmentOpen) {
-                        clearDebounce(props.thread.id + 'attachments');
-                    }
-                }}
-                onMouseLeave={() => {
-                    debounce(() => {
-                        setIsAttachmentOpen(false)
-                    }, 200, props.thread.id + 'attachments')
-                }}
-                onMouseOut={() => {
-                    debounce(() => {
-                        setIsAttachmentOpen(false)
-                    }, 200, props.thread.id + 'attachments')
-                }}
-            >
-                <AttachmentIcon/>
-            </MenuButton>
-
+                    }}
+                    onMouseEnter={() => {
+                        setIsAttachmentToolTipOpen(true);
+                        if (isAttachmentOpen) {
+                            clearDebounce(props.thread.id + 'attachments');
+                        }
+                    }}
+                    onMouseLeave={() => {
+                        setIsAttachmentToolTipOpen(false);
+                        debounce(() => {
+                            setIsAttachmentOpen(false)
+                        }, 200, props.thread.id + 'attachments')
+                    }}
+                >
+                    <Flex alignItems={'center'}>
+                        <AttachmentIcon/>
+                        <ChevronDownIcon className='icon'/>
+                    </Flex>
+                </MenuButton>
+            </Tooltip>
             <MenuList
                 className={`${styles.tabListDropDown} drop-down-list`}
                 onMouseEnter={() => {
@@ -112,7 +113,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                 onMouseLeave={() => {
                     debounce(() => {
                         setIsAttachmentOpen(false)
-                    }, 200, props.thread.id + 'attachments')
+                    }, 100, props.thread.id + 'attachments')
                 }}
             >
                 {(props.thread.attachments || []).map((item: MessageAttachments, i: number) => (
@@ -159,7 +160,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                     //If customeOpenEvent Is there must pass both the Params: customeOpenHandelEvent, isOpenEvent
                       <Flex justifyContent={'flex-start'} flexGrow={1}>
                             <Menu isOpen={isEmojiOpen}>
-                                <Tooltip label='List all' placement='bottom' customeOpenHandelEvent isOpenEvent={isToolTipOpen}>
+                                <Tooltip label='List projects' placement='bottom' customeOpenHandelEvent isOpenEvent={isToolTipOpen}>
                                     <MenuButton
                                         display={'flex'}
                                         as={Flex}
