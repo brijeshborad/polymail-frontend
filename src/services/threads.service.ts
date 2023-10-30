@@ -222,27 +222,31 @@ class ThreadsService extends BaseService {
                     globalEventService.fireEvent({data: {body: 'add'}, type: 'richtexteditor.addRemoveProject'})
                 }, 10)
                 if (tabValue === 'DRAFT') {
-                    let index1 = (threads || []).findIndex((thread: Thread) => thread.id === selectedThread?.id);
                     let newThreads: Thread[] = threads ?? [];
                     if (threads) {
                         newThreads = [...threads];
+                    }
+                    threadsId?.forEach((ids: string) => {
+                        let index1 = (threads || []).findIndex((thread: Thread) => thread.id === ids);
                         newThreads[index1] = {
                             ...newThreads[index1],
                             projects: projects
                         }
-                    }
+                    })
                     this.setThreadState({threads: newThreads});
                 }
             } else {
-                let index1 = (threads || []).findIndex((thread: Thread) => thread.id === selectedThread?.id);
                 let newThreads: Thread[] = threads ?? [];
                 if (threads) {
                     newThreads = [...threads];
+                }
+                threadsId?.forEach((ids: string) => {
+                    let index1 = (threads || []).findIndex((thread: Thread) => thread.id === ids);
                     newThreads[index1] = {
                         ...newThreads[index1],
                         projects: projects
                     }
-                }
+                })
                 this.setSelectedThread(addProject);
                 this.setThreadState({threads: newThreads});
             }

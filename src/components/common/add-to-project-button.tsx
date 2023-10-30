@@ -20,7 +20,7 @@ import Router, {useRouter} from 'next/router';
 import {commonService, globalEventService, threadService} from "@/services";
 import Tooltip from "@/components/common/Tooltip";
 
-export function AddToProjectButton() {
+export function AddToProjectButton({allowDefaultSelect = true}: {allowDefaultSelect: boolean}) {
     const [isDropdownOpen, setDropDownOpen] = useState(false)
     const {selectedThread, threads, multiSelection} = useSelector((state: StateType) => state.threads);
     let {projects, project} = useSelector((state: StateType) => state.projects);
@@ -53,25 +53,29 @@ export function AddToProjectButton() {
 
 
     useEffect(() => {
-        let selectedProjects = selectedThread?.projects || [];
-        if (isComposing) {
-            selectedProjects = composeDraft?.projects || [];
-        }
-        if (multiSelection && multiSelection.length > 0) {
-            selectedProjects = [];
-        }
-        if (selectedProjects.length) {
-            setThreadProject(selectedProjects.filter((obj, index) => {
-                return index === selectedProjects.findIndex(o => obj.id === o.id);
-            }))
-        } else {
-            if (project) {
-                setThreadProject([project])
-            } else {
-                setThreadProject([])
+        if (allowDefaultSelect) {
+            let selectedProjects = selectedThread?.projects || [];
+            if (isComposing) {
+                selectedProjects = composeDraft?.projects || [];
             }
+            if (multiSelection && multiSelection.length > 0) {
+                selectedProjects = [];
+            }
+            if (selectedProjects.length) {
+                setThreadProject(selectedProjects.filter((obj, index) => {
+                    return index === selectedProjects.findIndex(o => obj.id === o.id);
+                }))
+            } else {
+                if (project) {
+                    setThreadProject([project])
+                } else {
+                    setThreadProject([])
+                }
+            }
+        } else {
+            setThreadProject([])
         }
-    }, [composeDraft, isComposing, multiSelection, project, selectedThread])
+    }, [composeDraft, isComposing, multiSelection, project, selectedThread, allowDefaultSelect])
 
     useEffect(() => {
         setFilteredProjects((projects || []));

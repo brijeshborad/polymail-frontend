@@ -35,7 +35,7 @@ export default function SelectedThreads() {
 
 
             <Box className={styles.addToProjectPlusActions}>
-                <AddToProjectButton/>
+                <AddToProjectButton allowDefaultSelect={false}/>
                 <Tooltip label='Archive' placement='bottom'>
                     <Button variant='link' size='xs'
                             onClick={() => threadService.moveThreadToMailBox(MAILBOX_ARCHIVE)}><ArchiveIcon/></Button>
