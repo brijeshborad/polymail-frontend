@@ -146,7 +146,7 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
         return (
             <Flex justifyContent={'center'} alignItems={'center'} flexDir={'column'}
                   height={'100%'}>
-                <Heading as='h3' size='md' color={'rgba(0, 0, 0, 0.2)'}>No thread selected.</Heading>
+                <Heading as='h3' size='md' color={'rgba(0, 0, 0, 0.2)'}>Enjoy the beauty of white space.</Heading>
             </Flex>
         )
     }
