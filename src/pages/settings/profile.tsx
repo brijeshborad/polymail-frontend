@@ -1,5 +1,5 @@
 import withAuth from "@/components/auth/withAuth";
-import {Toaster} from "@/components/common";
+import {SpinnerUI, Toaster} from "@/components/common";
 import {Account, UserDetails} from "@/models";
 import SettingsLayout from "@/pages/settings/settings-layout";
 import {
@@ -42,6 +42,7 @@ function Profile() {
     const inputFile = useRef<HTMLInputElement | null>(null)
     let {accounts, success} = useSelector((state: StateType) => state.accounts);
     const [isDataUpdate, setIsDataUpdate] = useState<boolean>(false);
+    const [showLoader, setShowLoader] = useState<boolean>(false);
     const [accountData] = useState<Account>();
     // let {passwordChangeSuccess} = useSelector((state: StateType) => state.auth);
 
@@ -201,16 +202,19 @@ function Profile() {
         reader.onload = function () {
             if (reader.result) {
                 dispatch(uploadProfilePicture({
-                    body: {file: file}
-                    ,
+                    body: {file: file},
                     toaster: {
                         success: {
                             desc: "Profile picture Added successfully",
                             title: "Successfully",
                             type: 'success'
                         }
+                    },
+                    afterSuccessAction: () => {
+                        setShowLoader(false)
                     }
                 }));
+                setShowLoader(true)
             }
         };
         reader.onerror = function (error) {
@@ -307,6 +311,7 @@ function Profile() {
                                             <Image src={profilePicture && profilePicture.url} width="100" height="100"
                                                    alt=""/>}
                                         </div>
+                                        {showLoader && <div className={styles.spinner}> <SpinnerUI/></div>}
                                         <Menu>
                                             <MenuButton position={'absolute'} width={'72px'} h={'72px'}
                                                         backgroundColor={'0,0,0, 0.5'} borderRadius={'50px'}
@@ -352,7 +357,7 @@ function Profile() {
                             {isDataUpdate &&
                             <>
                                 <Flex align={'center'} gap={2} mt={10} className={styles.settingButton}>
-                                    <Button className={styles.settingSave} onClick={submit}>Save</Button>
+                                    <Button className={styles.settingSave} isDisabled={showLoader} onClick={() => !showLoader ? submit() : null}>Save</Button>
                                     <Button className={styles.settingCancel} onClick={cancelButtonClick}>Cancel</Button>
                                 </Flex>
                             </>

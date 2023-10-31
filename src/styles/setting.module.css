@@ -531,3 +531,21 @@
     width: 18px;
     height: 18px;
 }
+
+.spinner {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    top: 0;
+    background: rgba(0,0,0, 0.5);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.spinner > div > div {
+margin: 0;
+}
