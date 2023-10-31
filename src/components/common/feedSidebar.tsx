@@ -51,6 +51,7 @@ export const FeedSidebar = () => {
                 }
                 let currentFeeds: ActivityFeed[] = [...feeds];
                 currentFeeds.push({
+                    projectId: newMessage.data.ProjectID,
                     created: newMessage.data.Created,
                     title: newMessage.data.Title,
                     subtitle: newMessage.data.Subtitle,
