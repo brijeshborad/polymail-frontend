@@ -182,6 +182,7 @@ export function MessageBox(props: any) {
     };
 
     useEffect(() => {
+        console.log('-------------index updates', index);
         if (messages && messages.length > 0) {
             let lastIndex = index;
             if (lastIndex === null) {
