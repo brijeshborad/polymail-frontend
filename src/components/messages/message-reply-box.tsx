@@ -841,8 +841,12 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                     <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
                                           fontWeight={400}>
                                         {emailRecipients?.recipients?.items[0].email}&nbsp;
-                                        <div className={styles.otherMail} style={{cursor: 'pointer'}}>
+                                        <div className={styles.otherMail} style={{cursor: 'pointer'}} onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                        }}>
                                             <Tooltip
+                                                closeOnClick={'no'}
                                                 placement="bottom"
                                                 label={(emailList || []).map((item: any, index: number) => (
                                                     <p key={index}>{item.email}</p>))}>

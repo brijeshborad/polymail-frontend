@@ -6,4 +6,5 @@ export declare type TooltipProps = {
   children: ReactNode
   isOpenEvent?: boolean
   customeOpenHandelEvent?: boolean
+  closeOnClick?: string
 }

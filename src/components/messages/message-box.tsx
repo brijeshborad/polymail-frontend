@@ -179,7 +179,6 @@ export function MessageBox(props: any) {
     };
 
     useEffect(() => {
-        console.log('-------------index updates', index);
         if (messages && messages.length > 0) {
             let lastIndex = index;
             if (lastIndex === null) {
@@ -409,8 +408,12 @@ export function MessageBox(props: any) {
                                           fontWeight={400}>to:&nbsp;
                                         {message.to[0].email}&nbsp;
 
-                                        <div className={styles.otherMail}>
+                                        <div className={styles.otherMail} onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                        }}>
                                             <Tooltip
+                                                closeOnClick={'no'}
                                                 placement="bottom"
                                                 label={
                                                     (message.to.length > 1 ?
