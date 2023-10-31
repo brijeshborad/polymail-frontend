@@ -180,8 +180,9 @@ function Members() {
                                                     <Flex gap={3} align={'center'}>
                                                         <Checkbox className={styles.tableCheckBox}/>
                                                         <div className={styles.tableUserImage}>
-                                                            <Image src="/image/user.png" width="40" height="40"
-                                                                   alt=""/>
+                                                            {member.avatar && member.avatar.url ?
+                                                                <Image src={member.avatar.url} width="40" height="40"
+                                                                       alt=""/> : null}
                                                         </div>
                                                         <Text fontSize='sm' fontWeight={500}
                                                               color={'#101828'}>{member.name}</Text>

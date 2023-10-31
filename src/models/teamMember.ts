@@ -1,3 +1,5 @@
+import {Avatar} from "@/models/user";
+
 export interface TeamMember {
     id?: string,
     userId?: string,
@@ -13,4 +15,5 @@ export interface TeamMember {
     updated?: string,
     role?: string,
     itemId?: string
+    avatar?: Avatar
 }
