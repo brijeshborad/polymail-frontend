@@ -24,7 +24,7 @@ import {
 import Image from "next/image";
 import React, {ChangeEvent, ChangeEventHandler, useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {accountService, userService} from "@/services";
+import {accountService, authService, organizationService, userService} from "@/services";
 import RemoveRecordModal from "@/components/common/delete-record-modal";
 import Router from "next/router";
 
@@ -273,8 +273,13 @@ function Profile() {
                 }
             },
             afterSuccessAction: () => {
-                LocalStorageService.clearStorage();
-                Router.push('/onboarding/login');
+                authService.setUser(null);
+                accountService.setSelectedAccount(null);
+                organizationService.setSelectedOrganization(null);
+                setTimeout(() => {
+                    LocalStorageService.clearStorage();
+                    Router.push('/onboarding/login');
+                }, 1000);
             }
         }));
         onClose();
