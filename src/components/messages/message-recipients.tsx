@@ -1,23 +1,14 @@
 import {
     Flex,
-    Heading,
-    Input,
-    PopoverBody,
-    PopoverContent,
-    Popover,
-    PopoverAnchor,
-    HStack, Text, Box
+    Heading
 } from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
 import {Chip, Toaster} from "@/components/common";
 import {MessageRecipientsType, RecipientsType} from "@/types/props-types/message-recipients.type";
 import {MessageRecipient} from "@/models/message";
-import {useSelector} from "react-redux";
-import {StateType} from "@/types";
-import {matchSorter} from "match-sorter";
-import {Contacts} from "@/models";
 import {ChangeEvent, useEffect, useState} from "react";
 import {isEmail} from "@/utils/common.functions";
+import {AutoComplete} from "@/components/common/auto-complete";
 
 const blankRecipientValue: MessageRecipient = {
     name: '',
@@ -25,7 +16,6 @@ const blankRecipientValue: MessageRecipient = {
 }
 
 export default function MessageRecipients({emailRecipients: values, updateValues}: MessageRecipientsType) {
-    const {contacts} = useSelector((state: StateType) => state.commonApis);
     const [emailRecipients, setEmailRecipients] = useState<RecipientsType | any>({
         cc: {items: [], value: blankRecipientValue},
         bcc: {items: [], value: blankRecipientValue},
@@ -38,14 +28,6 @@ export default function MessageRecipients({emailRecipients: values, updateValues
         }
     }, [values])
 
-    function filterContacts(value: string) {
-        if (!value) {
-            return [];
-        }
-        let finalContacts: Contacts[] = matchSorter((contacts || []), value, {keys: ['email.email', 'email.name']});
-        finalContacts = finalContacts.slice(0, finalContacts.length > 5 ? 5 : finalContacts.length);
-        return finalContacts.map((contact: Contacts) => ({email: contact.email.email, name: contact.email.name}));
-    }
 
     const handleChange = (evt: ChangeEvent | any, type: string) => {
         let finalValues = {
@@ -169,47 +151,6 @@ export default function MessageRecipients({emailRecipients: values, updateValues
         updateValues(finalValues);
     };
 
-    function renderInputWithAutoComplete(value: string, type: string) {
-        let finalContacts = filterContacts(value);
-        return (
-            <Popover
-                autoFocus={false}
-                isOpen={value.length > 0 && finalContacts.length > 0}
-                closeOnBlur={false}
-                isLazy
-                lazyBehavior='keepMounted'
-                placement={'bottom-start'}
-            >
-                <HStack flex={1}>
-                    <PopoverAnchor>
-                        <Input width={'auto'} display='inline-flex' padding={0} height={'20px'} flex={'1 0 auto'}
-                               fontSize={'12px'} border={0} className={styles.ccInput}
-                               value={value}
-                               onKeyDown={(e) => handleKeyDown(e, type)}
-                               onChange={(e) => handleChange(e, type)}
-                               onPaste={(e) => handlePaste(e, type)}
-                               placeholder={`${type}\'s Email`}
-                        />
-                    </PopoverAnchor>
-                </HStack>
-                <PopoverContent>
-                    <PopoverBody p={0}>
-                        {finalContacts.map((contact, index) => (
-                            <Box onClick={() => handleAutoCompleteSelect(contact, type)}
-                                 className={styles.emailRecipientsAutoComplete} key={index} cursor={'pointer'} px={4}>
-                                {contact.name && <Text
-                                    title={`${contact.name} <${contact.email}>`}>{contact.name} &#60;{contact.email}&gt;</Text>}
-                                {!contact.name && <Text
-                                    title={`${contact.email} <${contact.email}>`}>{contact.email} &#60;{contact.email}&gt;</Text>}
-
-                            </Box>
-                        ))}
-                    </PopoverBody>
-                </PopoverContent>
-            </Popover>
-        )
-    }
-
     return (
         <Flex className={styles.mailRecipientsBox} flex={'none'} backgroundColor={'#FFFFFF'}
               border={'1px solid #E5E7EB'} direction={'column'}
@@ -221,7 +162,12 @@ export default function MessageRecipients({emailRecipients: values, updateValues
                     {!!emailRecipients?.recipients?.items?.length && emailRecipients.recipients.items.map((item: MessageRecipient, i: number) => (
                         <Chip text={item.email} key={i} click={() => handleItemDelete(item.email!, 'recipients')}/>
                     ))}
-                    {renderInputWithAutoComplete(emailRecipients.recipients.value.email, 'recipients')}
+                    <AutoComplete value={emailRecipients.recipients.value.email} placeholder={`Recipients's Email`}
+                                  handleChange={(e) => handleChange(e, 'recipients')}
+                                  openAutoComplete={emailRecipients.recipients.value.email.length > 0}
+                                  handleKeyDown={(e) => handleKeyDown(e, 'recipients')}
+                                  handlePaste={(e) => handlePaste(e, 'recipients')}
+                                  handleAutoCompleteSelect={(e) => handleAutoCompleteSelect(e, 'recipients')}/>
                 </Flex>
             </Flex>
             <Flex width={'100%'} gap={2} padding={'4px 16px'} className={styles.replyBoxCC}>
@@ -231,7 +177,12 @@ export default function MessageRecipients({emailRecipients: values, updateValues
                     {!!emailRecipients?.cc?.items?.length && emailRecipients.cc.items.map((item: MessageRecipient, i: number) => (
                         <Chip text={item.email} key={i} click={() => handleItemDelete(item.email!, 'cc')}/>
                     ))}
-                    {renderInputWithAutoComplete(emailRecipients.cc.value.email, 'cc')}
+                    <AutoComplete value={emailRecipients.cc.value.email} placeholder={`Cc's Email`}
+                                  handleChange={(e) => handleChange(e, 'cc')}
+                                  openAutoComplete={emailRecipients.cc.value.email.length > 0}
+                                  handleKeyDown={(e) => handleKeyDown(e, 'cc')}
+                                  handlePaste={(e) => handlePaste(e, 'cc')}
+                                  handleAutoCompleteSelect={(e) => handleAutoCompleteSelect(e, 'cc')}/>
                 </Flex>
             </Flex>
             <Flex width={'100%'} gap={2} padding={'4px 16px'} className={styles.replyBoxCC}>
@@ -241,7 +192,12 @@ export default function MessageRecipients({emailRecipients: values, updateValues
                     {!!emailRecipients?.bcc?.items?.length && emailRecipients.bcc.items.map((item: MessageRecipient, i: number) => (
                         <Chip text={item.email} key={i} click={() => handleItemDelete(item.email!, 'bcc')}/>
                     ))}
-                    {renderInputWithAutoComplete(emailRecipients.bcc.value.email, 'bcc')}
+                    <AutoComplete value={emailRecipients.bcc.value.email} placeholder={`Bcc's Email`}
+                                  handleChange={(e) => handleChange(e, 'bcc')}
+                                  openAutoComplete={emailRecipients.bcc.value.email.length > 0}
+                                  handleKeyDown={(e) => handleKeyDown(e, 'bcc')}
+                                  handlePaste={(e) => handlePaste(e, 'bcc')}
+                                  handleAutoCompleteSelect={(e) => handleAutoCompleteSelect(e, 'bcc')}/>
                 </Flex>
             </Flex>
         </Flex>

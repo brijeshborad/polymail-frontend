@@ -33,6 +33,7 @@ import {StateType} from "@/types";
 import RemoveRecordModal from "@/components/common/delete-record-modal";
 import {debounceInterval, isEmail} from "@/utils/common.functions";
 import {getMemberStatusCache} from "@/utils/cache.functions";
+import {AutoComplete} from "@/components/common/auto-complete";
 
 export function ProjectHeader() {
     const router = useRouter();
@@ -54,6 +55,7 @@ export function ProjectHeader() {
     const [projectData, setProjectData] = useState<Project | null>(null);
     const [actionType, setActionType] = useState<string>('');
     const [loadedFirstTime, setIsLoadedFirstTime] = useState<boolean>(false);
+    const [autoCompleteOpen, setAutoCompleteOpen] = useState<boolean>(false);
 
     const {onlineUsers, isLoading} = useSelector((state: StateType) => state.commonApis);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
@@ -428,19 +430,25 @@ export function ProjectHeader() {
                                             <Flex w={'100%'} backgroundColor={'#FFFFFF'}
                                                   border={'1px solid #E5E7EB'}
                                                   borderRadius={8} padding={'10px 10px 10px 16px'}>
-                                                <Input padding={'0'} fontSize={'13px'} border={0} h={'auto'}
-                                                       lineHeight={1}
-                                                       fontWeight={400} borderRadius={'0'}
-                                                       placeholder='Name or email address' onChange={(e) => {
-                                                    membersInputs.input = e.target.value;
-                                                    setMembersInput({...membersInputs})
-                                                }}/>
+                                                <AutoComplete value={membersInputs.input} placeholder={`Name or email address`}
+                                                              openAutoComplete={autoCompleteOpen}
+                                                              handleChange={(e) => {
+                                                                  setAutoCompleteOpen(true)
+                                                                  membersInputs.input = e.target.value;
+                                                                  setMembersInput({...membersInputs})
+                                                              }}
+                                                              handleKeyDown={() => null}
+                                                              handlePaste={() => null}
+                                                              handleAutoCompleteSelect={(e) => {
+                                                                  setAutoCompleteOpen(false)
+                                                                  membersInputs.input = e.email;
+                                                                  setMembersInput({...membersInputs})
+                                                              }}/>
 
                                                 <Menu isLazy>
                                                     <MenuButton className={styles.addMemberDropDownButton}
-                                                                minWidth={'65px'}
                                                                 color={'#374151'} backgroundColor={'transparent'}
-                                                                h={'auto'}
+                                                                h={'auto'} _active={{background: 'none'}}
                                                                 padding={0} as={Button}
                                                                 rightIcon={
                                                                     <ChevronDownIcon/>}> {capitalizeFLetter(membersInputs.role)} </MenuButton>

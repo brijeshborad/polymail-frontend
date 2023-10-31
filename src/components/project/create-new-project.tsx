@@ -24,6 +24,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {commonService, messageService, threadService} from "@/services";
 import {Project} from "@/models";
 import {AddEmojiIcon} from "@/icons";
+import {AutoComplete} from "@/components/common/auto-complete";
 
 
 function CreateNewProjectModal() {
@@ -36,6 +37,7 @@ function CreateNewProjectModal() {
         shouldAddThread
     } = useSelector((state: StateType) => state.commonApis);
     const [projectName, setProjectName] = useState<string>('');
+    const [autoCompleteOpen, setAutoCompleteOpen] = useState<boolean>(false);
     const [membersInputs, setMembersInput] = useState<{ input: string; role: string; memberArray: Array<{ item?: string; memberRole?: string }> }>({
         input: '',
         role: 'member',
@@ -208,7 +210,7 @@ function CreateNewProjectModal() {
                                     {/*        </GridItem>*/}
                                     {/*    ))}*/}
                                     {/*</Grid>*/}
-                                    <EmojiMenu onChange={emojiChange} />
+                                    <EmojiMenu onChange={emojiChange}/>
                                 </MenuList>
                             </Menu>
 
@@ -225,14 +227,20 @@ function CreateNewProjectModal() {
                                 <Flex align={'center'} position={"relative"} borderRadius={'8px'}
                                       padding={'10px 10px 10px 16px'} width={'100%'} backgroundColor={'#ffffff'}
                                       border={'1px solid #E5E7EB'}>
-                                    <Input p={0} h={'auto'} borderRadius={0} fontSize={'13px'} lineHeight={1}
-                                           letterSpacing={'-0.13px'} border={0} placeholder='Name or email address'
-                                           size='md'
-                                           value={membersInputs.input}
-                                           onChange={(e) => {
-                                               membersInputs.input = e.target.value;
-                                               setMembersInput({...membersInputs})
-                                           }}/>
+                                    <AutoComplete value={membersInputs.input} placeholder={`Name or email address`}
+                                                  openAutoComplete={autoCompleteOpen}
+                                                  handleChange={(e) => {
+                                                      setAutoCompleteOpen(true)
+                                                      membersInputs.input = e.target.value;
+                                                      setMembersInput({...membersInputs})
+                                                  }}
+                                                  handleKeyDown={() => null}
+                                                  handlePaste={() => null}
+                                                  handleAutoCompleteSelect={(e) => {
+                                                      setAutoCompleteOpen(false)
+                                                      membersInputs.input = e.email;
+                                                      setMembersInput({...membersInputs})
+                                                  }}/>
                                     <Menu isLazy>
                                         <MenuButton className={styles.memberRoleDropDown} minWidth={'65px'}
                                                     fontSize={'12px'} lineHeight={1}
@@ -253,7 +261,10 @@ function CreateNewProjectModal() {
                                     </Menu>
                                 </Flex>
                                 <Button className={styles.addMemberButton} backgroundColor={'#1F2937'}
-                                        fontSize={'14px'} onClick={() => addNewMembers()}
+                                        fontSize={'14px'} onClick={() => {
+                                    setAutoCompleteOpen(false)
+                                    addNewMembers()
+                                }}
                                         borderRadius={'8px'} minW={'52px'} height={'auto'} lineHeight={'1'}
                                         color={'#FFFFFF'} padding={'11px 12px'}>Add</Button>
                             </Flex>

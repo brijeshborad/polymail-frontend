@@ -335,7 +335,9 @@
 
 .manageMemberDropDown .addMemberDropDownButton {
     padding: 0;
-    min-width: 70px;
+    min-width: 65px;
+    flex: unset;
+    gap: 0;
 }
 
 .manageMemberDropDown .addMemberDropDownButton:hover {
