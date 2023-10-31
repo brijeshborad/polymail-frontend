@@ -2,6 +2,7 @@ import {ReducerActionType} from "@/types";
 import {Toaster} from "@/components/common";
 import {createStandaloneToast} from "@chakra-ui/react";
 import {generateToasterId} from "@/utils/common.functions";
+import {getPreviousToastId, setPreviousToastId} from "@/utils/cache.functions";
 
 export function performSuccessActions(payload: ReducerActionType, currentResponse: any | null = null) {
     const {toast} = createStandaloneToast();
@@ -11,6 +12,12 @@ export function performSuccessActions(payload: ReducerActionType, currentRespons
         if (payload.toaster.success.id) {
             polyToast = payload.toaster.success.id;
         }
+        if (payload.closePreviousToast) {
+            if (getPreviousToastId()) {
+                toast.close(getPreviousToastId());
+            }
+        }
+        setPreviousToastId(polyToast)
         Toaster({
             desc: payload.toaster.success.desc,
             title: payload.toaster.success.title || '',

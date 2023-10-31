@@ -131,6 +131,7 @@ export function MessagesHeader() {
                         id: selectedThread.id,
                         body: body
                     },
+                    closePreviousToast: true,
                     toaster: {
                         success: {
                             type: 'undo_changes',
