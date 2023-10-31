@@ -470,7 +470,9 @@ export function ProjectHeader() {
                                                   className={styles.projectMember}>
                                                 <MenuItem>
                                                     <div className={styles.imgWrapper}>
-                                                        <Image src="/image/user.png" width="36" height="36" alt=""/>
+                                                        {member.avatar && member.avatar.url ?
+                                                            <Image src={member.avatar.url} width="36" height="36"
+                                                                   alt=""/> : null}
                                                     </div>
                                                     {member.name}
                                                 </MenuItem>
@@ -508,8 +510,8 @@ export function ProjectHeader() {
                                             <Flex align={'center'} pr={3} gap={3} key={index}
                                                   className={styles.projectMember}>
                                                 <MenuItem>
-                                                    <div className={styles.imgWrapper}>
-                                                        <Image src="/image/user.png" width="36" height="36" alt=""/>
+                                                    <div style={{background: '#000'}} className={styles.imgWrapper}>
+                                                        {/*<Image src="/image/user.png" width="36" height="36" alt=""/>*/}
                                                     </div>
                                                     {invite?.invite?.toEmail}
                                                 </MenuItem>
