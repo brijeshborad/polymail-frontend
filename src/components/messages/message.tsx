@@ -1,6 +1,6 @@
 import styles from "@/styles/Inbox.module.css";
 import {
-    Box,
+    Box, createStandaloneToast,
     Flex,
     Heading,
 } from "@chakra-ui/react";
@@ -13,6 +13,7 @@ import dynamic from "next/dynamic";
 import {InboxLoader} from "@/components/loader-screen/inbox-loader";
 import {globalEventService, keyNavigationService, messageService, threadService} from "@/services";
 import {Toaster} from "../common";
+import {generateToasterId} from "@/utils/common.functions";
 // import {clearDebounce, debounce} from "@/utils/common.functions";
 
 const SelectedThreads = dynamic(() => import('@/components/threads/selected-threads').then((mod) => mod.default));
@@ -20,7 +21,8 @@ const MessagesHeader = dynamic(() => import('@/components/messages/messages-head
 const MessageBox = dynamic(() => import('@/components/messages/message-box').then(mod => mod.MessageBox));
 const MessageReplyBox = dynamic(() => import('@/components/messages/message-reply-box').then(mod => mod.MessageReplyBox));
 const ComposeBox = dynamic(() => import('@/components/inbox/compose-box').then(mod => mod.ComposeBox));
-
+const {toast} = createStandaloneToast()
+let previousToastId: string = '';
 export function Message({isProjectView = false}: { isProjectView?: boolean }) {
     const messagesWrapperRef = React.useRef<HTMLDivElement | null | any>(null);
     const [replyTypeName, setReplyTypeName] = useState<string>('Reply');
@@ -114,7 +116,12 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
             if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key == ',' || e.key == '<')) {
                 e.preventDefault();
                 navigator.clipboard.writeText(window.location.toString())
+                if (previousToastId) {
+                    toast.close(previousToastId);
+                }
+                previousToastId = generateToasterId();
                 Toaster({
+                    id: previousToastId,
                     type: 'success',
                     title: 'Thread URL has been copied to clipboard.',
                     desc: 'Paste this wherever you please'
