@@ -135,10 +135,6 @@ export const FeedSidebar = () => {
                         <Box height="65px" borderBottom="1px solid #F3F4F6" padding="12px 16px" display="flex"
                              justifyContent="space-between" alignItems="center" position={'sticky'} top={0}
                              background={'#fff'}>
-                            <Flex align={'center'} justify={'center'}>
-                                <Text fontStyle="bold">Updates</Text>
-                            </Flex>
-
                             <Box
                                 onClick={() => {
                                     onClose();
@@ -157,6 +153,10 @@ export const FeedSidebar = () => {
                                     Close
                                 </Text>
                             </Box>
+
+                            <Flex align={'center'} justify={'center'}>
+                                <Text fontStyle="bold">Updates</Text>
+                            </Flex>
                         </Box>
                         {/* Content */}
                         {/*<Box margin="12px 16px" mb="6px" height="36px" display={'flex'}*/}
