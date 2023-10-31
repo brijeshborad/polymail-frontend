@@ -881,7 +881,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                 <Text
                                     as={'h1'} fontSize='11px' color={'#6B7280'} display={'flex'} gap={'2px'}
                                     className={styles.mailSaveTime}>
-                                    {(!draft?.updated || !isDraftUpdated) && 'Not Saved'}
+                                    {(!draft?.updated || !isDraftUpdated) && ''}
                                     {(draft?.updated && isDraftUpdated) &&
                                     <>
                                         Saved <Time time={draft?.updated || ''} isShowFullTime={false}

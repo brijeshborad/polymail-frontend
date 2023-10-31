@@ -435,7 +435,7 @@ export function ComposeBox(props: any) {
                                  lineHeight={1}>Draft </Heading>
                         <Text fontSize='xs' lineHeight={1} color={'#6B7280'} display={'flex'} alignItems={'center'}
                               fontWeight={400}>
-                            {!composeDraft && !isDraftUpdated && 'Not Saved'}
+                            {!composeDraft && !isDraftUpdated && ''}
                             {composeDraft && isDraftUpdated &&
                             <>
                                 (Saved to drafts&nbsp;{(composeDraft?.updated) ?
