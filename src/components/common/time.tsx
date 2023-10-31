@@ -24,10 +24,29 @@ export function Time(props: TimeProps) {
         // eslint-disable-next-line
     }, []);
 
+    function getNumeralEnding(num: string) {
+        let ending = 'th';
+        switch (num[1]) {
+            case "1":
+                ending = 'st';
+                break;
+            case "2":
+                ending = 'nd';
+                break;
+            case "3":
+                ending = 'rd';
+                break;
+            default:
+                ending = 'th';
+                break;
+        }
+        return ending;
+    }
+
     const formatElapsedTime = () => {
         const infoDate = dayjs(props.time);
         const currentDate = dayjs();
-        let numberOfDaysBetweenTwoDates: number = currentDate.diff(infoDate, 'day');
+        let numberOfDaysBetweenTwoDates: number = Math.round(currentDate.diff(infoDate, 'day', true));
         let timeString: string = '';
         let fullTime: string = '';
         if (props.isShowFullTime) {
@@ -47,15 +66,18 @@ export function Time(props: TimeProps) {
                 timeString = `${numberOfHoursBetweenTwoDates} ${props.showTimeInShortForm ? 'h' : 'hours ago'}`;
             }
             fullTime = 'Today at ' + infoDate.format('hh:mm:ss A');
+        } else if (numberOfDaysBetweenTwoDates < 2) {
+            timeString = dayjs(props.time).format('MMM DD');
+            fullTime = 'Yesterday at ' + infoDate.format('hh:mm:ss A');
         } else if (currentDate.format('YYYY') === infoDate.format('YYYY')) {
             timeString = dayjs(props.time).format('MMM DD');
-            fullTime = infoDate.format('DD/MM/YYYY') + ' at ' + infoDate.format('hh:mm:ss A');
+            fullTime = infoDate.format('MMM DD') + getNumeralEnding(infoDate.format('DD')) +',' + ' at ' + infoDate.format('hh:mm:ss A');
         } else {
             timeString = dayjs(props.time).format('MM/DD/YYYY')
-            fullTime = infoDate.format('DD/MM/YYYY') + ' at ' + infoDate.format('hh:mm:ss A');
+            fullTime = infoDate.format('MMM DD') + getNumeralEnding(infoDate.format('DD')) +', ' + infoDate.format('YYYY') + ' at ' + infoDate.format('hh:mm:ss A');
         }
 
-        return <Tooltip label={fullTime} placement={'top'}>{timeString}</Tooltip>;
+        return <Tooltip label={fullTime} placement={'top'}><span tabIndex={-1}>{timeString}</span></Tooltip>;
     };
 
     return (
