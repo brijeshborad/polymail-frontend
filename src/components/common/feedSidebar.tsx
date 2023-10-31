@@ -190,7 +190,7 @@ export const FeedSidebar = () => {
                                 .map((t: ActivityFeed, index: number) => {
                                     return (
                                         <React.Fragment key={index}>
-                                            <FeedComponent feedData={t}
+                                            <FeedComponent feedData={t} close={onClose}
                                                            markFeedAsRead={() => markFeedAsRead(index)}/>
                                             {(lastActiveRead === index) &&
                                             <Text marginBottom={'8px'} fontSize={'13px'} color={'red'} display={'flex'} alignItems={'center'}>New

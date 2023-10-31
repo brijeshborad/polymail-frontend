@@ -3,16 +3,26 @@ import React from 'react';
 import {ActivityFeed} from "@/models/activityFeed";
 import styles from '@/styles/Home.module.css';
 import {Time} from "@/components/common/time";
+import Router from "next/router";
 
 interface FeedComponentProps {
     feedData?: ActivityFeed;
     markFeedAsRead?: () => void;
+    close?: () => void;
 }
 
-export const FeedComponent: React.FC<FeedComponentProps> = ({feedData, markFeedAsRead}) => {
+export const FeedComponent: React.FC<FeedComponentProps> = ({feedData, markFeedAsRead, close}) => {
     return (
         <Box className={`${styles.feedBox} ${feedData?.isRead ? styles.feedBoxRead: ''}`}
-             onClick={() => markFeedAsRead ? markFeedAsRead() : null}>
+             onClick={() => {
+                 if (feedData?.projectId) {
+                     Router.push(`/projects/${feedData?.projectId}`);
+                     if (close) {
+                         close();
+                     }
+                 }
+                 markFeedAsRead ? markFeedAsRead() : null
+             }}>
             <Flex>
                 <Box flex={1}>
                     <Text fontSize="13px">
