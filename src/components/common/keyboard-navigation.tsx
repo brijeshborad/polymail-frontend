@@ -77,6 +77,7 @@ export default function KeyboardNavigationListener() {
 
                             if (nextThread) {
                                 threadService.setSelectedThread(nextThread);
+                                messageService.setMessages([]);
                                 messageService.setMessageState({showMessageBox: false});
                                 clearDebounce('THREAD_SELECTION_BY_KEY');
                                 debounce(() => {
@@ -92,6 +93,7 @@ export default function KeyboardNavigationListener() {
 
                             if (lastThread) {
                                 threadService.setSelectedThread(lastThread);
+                                messageService.setMessages([]);
                                 messageService.setMessageState({showMessageBox: false});
                                 clearDebounce('THREAD_SELECTION_BY_KEY');
                                 debounce(() => {

@@ -64,7 +64,6 @@ export function MessageBox(props: any) {
 
     useEffect(() => {
         if (selectedThread && selectedThread?.id) {
-            console.log('COMES HERE', selectedThread, currentSelectedThread);
             if (!currentSelectedThread || currentSelectedThread.id !== selectedThread.id) {
                 setCurrentSelectedThread(selectedThread);
             }
@@ -81,8 +80,6 @@ export function MessageBox(props: any) {
 
     useEffect(() => {
         if (messages && messages.length > 0) {
-
-            console.log('COMES HERE', index);
             // remove draft messages and set index to last inbox message
             const currentInboxMessages: MessageModel[] = messages.filter((msg: MessageModel) => !(msg.mailboxes || []).includes('DRAFT'));
             setInboxMessages([...currentInboxMessages]);
