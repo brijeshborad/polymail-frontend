@@ -761,7 +761,11 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         }, 50)
     }
 
-    function createDraft() {
+    function createDraft(value: string) {
+        let checkValue = getPlainTextFromHtml(value).trim();
+        if (!checkValue) {
+            return;
+        }
         if (!isCreating[selectedThread?.id + '-' + draftIndex]) {
             isCreating[selectedThread?.id + '-' + draftIndex] = true;
             let body: any = {
@@ -955,7 +959,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                             onChange={(value) => {
                                                 sendData[selectedThread?.id + '-' + draftIndex] = value;
                                                 if (!draft?.id) {
-                                                    createDraft();
+                                                    createDraft(value);
                                                 } else {
                                                     draftService.liveUpdateDraft(draft, value);
                                                 }
