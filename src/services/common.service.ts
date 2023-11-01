@@ -9,6 +9,7 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat)
 
 class CommonService extends BaseService {
+    userColorStatus: {[key: string]: string} = {};
     constructor() {
         super();
     }
@@ -27,6 +28,13 @@ class CommonService extends BaseService {
 
     setCommonState(body: InitialCommonApisStateType) {
         this.dispatchAction(updateCommonState, body);
+    }
+
+    getUserColor(userId: string) {
+        if (!this.userColorStatus[userId]) {
+            this.userColorStatus[userId] = Math.floor(Math.random() * 16777215).toString(16);
+        }
+        return this.userColorStatus[userId];
     }
 
     updateUserOnlineStatusProject(newProject: Project) {
@@ -50,7 +58,7 @@ class CommonService extends BaseService {
                 onlineMembers['projects'][newProjectId].push({
                     userId: userDetails.id,
                     avatar: (profilePicture?.url || ''),
-                    color: Math.floor(Math.random() * 16777215).toString(16),
+                    color: this.getUserColor(userDetails.id!),
                     name: (userDetails.firstName || '') + ' ' + (userDetails.lastName || ' '),
                     isOnline: true,
                     lastOnlineStatusCheck: dayjs().format('DD/MM/YYYY hh:mm:ss a'),
@@ -111,7 +119,7 @@ class CommonService extends BaseService {
                 onlineMembers['threads'][newThreadId].push({
                     userId: userDetails.id,
                     avatar: (profilePicture?.url || ''),
-                    color: Math.floor(Math.random() * 16777215).toString(16),
+                    color: this.getUserColor(userDetails.id!),
                     name: (userDetails.firstName || '') + ' ' + (userDetails.lastName || ' '),
                     isOnline: true,
                     lastOnlineStatusCheck: dayjs().format('DD/MM/YYYY hh:mm:ss a'),
@@ -182,7 +190,7 @@ class CommonService extends BaseService {
                     isOnline: true,
                     lastOnlineStatusCheck: dayjs().format('DD/MM/YYYY hh:mm:ss a'),
                     avatar: newMessage.data.avatar,
-                    color: Math.floor(Math.random() * 16777215).toString(16),
+                    color: this.getUserColor(newMessage.data.userId),
                     name: newMessage.data.name,
                     forceWait: 0
                 })
