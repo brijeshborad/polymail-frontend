@@ -542,8 +542,8 @@ class ThreadsService extends BaseService {
         this.setSelectedThread(composeItem);
         commonService.toggleComposing(false);
         setTimeout(() => {
-            commonService.toggleComposing(true);
             if (composeItem && composeItem.messages && composeItem.messages[0]) {
+                commonService.toggleComposing(true);
                 let finalDraft = {...composeItem.messages[0], projects: [...(composeItem.projects || [])]}
                 draftService.setComposeDraft(finalDraft);
             }
