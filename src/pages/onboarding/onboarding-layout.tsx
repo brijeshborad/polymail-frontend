@@ -2,13 +2,8 @@ import {Flex, Grid, GridItem, Heading, Link, Text} from "@chakra-ui/react";
 import {CheckIcon} from "@chakra-ui/icons";
 import styles from "@/styles/Login.module.css";
 import {OnboardingLogoIcon} from "@/icons";
-import {useEffect} from "react";
-import {commonService} from "@/services";
 
 export default function OnboardingLayout({children}: any) {
-    useEffect(() => {
-        commonService.clearEverything()
-    }, [])
     return (
         <>
             <Grid templateColumns='auto 600px' gap={6} h={'100vh'} bg={'#FFFFFF'}>
