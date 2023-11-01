@@ -182,9 +182,9 @@ export function ComposeBox(props: any) {
             to: emailRecipients.recipients?.items,
             cc: emailRecipients.cc?.items && emailRecipients.cc?.items.length > 0 ? emailRecipients.cc?.items : [],
             bcc: emailRecipients.bcc?.items && emailRecipients.bcc?.items.length > 0 ? emailRecipients.bcc?.items : [],
-            draftInfo: {
-                body: checkValue ? value : emailBody
-            },
+            // draftInfo: {
+            //     body: checkValue ? value : emailBody
+            // },
             ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
             accountId: selectedAccount?.id
         }
@@ -481,8 +481,11 @@ export function ComposeBox(props: any) {
                                         id={composeDraft?.threadId + '-' + 0}
                                         isAutoFocus={true}
                                         content={composeDraft?.draftInfo?.body}
-                                        onCreate={() => sendToDraft('')}
-                                        onChange={(value) => sendToDraft(value)}
+                                        // onCreate={() => sendToDraft('')}
+                                        onChange={(value) => {
+                                            setEmailBody(value);
+                                            draftService.setComposeDraft({...composeDraft, draftInfo: {...composeDraft.draftInfo, body: value}});
+                                        }}
                                         placeholder='Reply with anything you like or @mention someone to share this thread'
                                         isToolbarVisible={true}
                                         className={`compose-view ${extraClassNames} ${extraClassNamesForBottom}`}

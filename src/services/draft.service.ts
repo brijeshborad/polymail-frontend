@@ -10,6 +10,7 @@ import {
     getCurrentViewingCacheTab,
     setCacheThreads
 } from "@/utils/cache.functions";
+import {debounce} from "@/utils/common.functions";
 
 class DraftService extends BaseService {
     constructor() {
@@ -119,6 +120,12 @@ class DraftService extends BaseService {
 
     instantDraftUpdate(draft: MessageDraft) {
         this.setDraftState({updatedDraft: draft, success: true});
+    }
+
+    liveUpdateDraft(draft: MessageDraft, value: string) {
+        debounce(() => {
+            this.setDraftState({liveUpdate: {...draft, draftInfo: {...draft.draftInfo, body: value}}});
+        }, 500, 'LIVE_DRAFT')
     }
 }
 

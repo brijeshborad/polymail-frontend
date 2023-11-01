@@ -2,7 +2,7 @@ import styles from "@/styles/Inbox.module.css";
 import {Button, Flex, Heading, Menu, MenuButton, MenuItem, MenuList, Text} from "@chakra-ui/react";
 import {Time} from "@/components/common";
 import {MenuIcon} from "@/icons";
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {
     getAttachmentDownloadUrl,
     updateMessage
@@ -23,7 +23,7 @@ import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
 
 export function MessageBox(props: any) {
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
-    const {success: draftSuccess, updatedDraft} = useSelector((state: StateType) => state.draft);
+    const {success: draftSuccess, updatedDraft, liveUpdate} = useSelector((state: StateType) => state.draft);
     const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean[]>([]);
     const iframeRef = React.useRef<any>([]);
     const [iframeHeight, setIframeHeight] = useState<{ [key: string | number]: string }>({});
@@ -44,23 +44,33 @@ export function MessageBox(props: any) {
     const [index, setIndex] = useState<number | null>(null);
     const [currentSelectedThread, setCurrentSelectedThread] = useState<Thread | null>(null);
 
+    const updateDraft = useCallback((updatedDraft: MessageModel) => {
+        if (draftMessages && draftMessages[0] && updatedDraft.threadId !== draftMessages[0].threadId) {
+            return;
+        }
+        let finalMessages = [...(draftMessages || [])]
+        let findDraft = finalMessages.findIndex((item: Message) => item.id === updatedDraft.id);
+        if (findDraft !== -1) {
+            finalMessages[findDraft] = updatedDraft;
+        } else {
+            finalMessages.push(updatedDraft);
+        }
+        setDraftMessages([...finalMessages]);
+    }, [draftMessages])
+
     useEffect(() => {
         if (draftSuccess) {
             if (updatedDraft) {
-                if (draftMessages && draftMessages[0] && updatedDraft.threadId !== draftMessages[0].threadId) {
-                    return;
-                }
-                let finalMessages = [...(draftMessages || [])]
-                let findDraft = finalMessages.findIndex((item: Message) => item.id === updatedDraft.id);
-                if (findDraft !== -1) {
-                    finalMessages[findDraft] = updatedDraft;
-                } else {
-                    finalMessages.push(updatedDraft);
-                }
-                setDraftMessages([...finalMessages]);
+                updateDraft(updatedDraft);
             }
         }
-    }, [draftSuccess, updatedDraft, draftMessages])
+    }, [draftSuccess, updatedDraft, updateDraft])
+
+    useEffect(() => {
+        if (liveUpdate) {
+            updateDraft(liveUpdate);
+        }
+    }, [liveUpdate, updateDraft])
 
     useEffect(() => {
         if (selectedThread && selectedThread?.id) {

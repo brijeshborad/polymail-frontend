@@ -8,6 +8,7 @@ export declare type InitialDraftStateType = {
     draftUndo?: MessageDraft | null,
     updatedComposeDraft?: MessageDraft | null,
     updatedDraft?: MessageDraft | null,
+    liveUpdate?: MessageDraft | null,
     sendMessage?: MessageDraft | null,
     isLoading?: boolean,
     error?: Error | any,

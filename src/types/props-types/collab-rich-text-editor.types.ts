@@ -3,7 +3,7 @@ import { ReactElement } from 'react';
 export declare type CollabRichTextEditorType = {
     id: string;
     isAutoFocus?: boolean;
-    onCreate: () => void;
+    // onCreate: () => void;
     beforeToolbar?: ReactElement;
     afterToolbar?: ReactElement;
     extendToolbar?: ReactElement;
