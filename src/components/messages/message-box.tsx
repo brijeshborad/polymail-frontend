@@ -2,7 +2,7 @@ import styles from "@/styles/Inbox.module.css";
 import {Button, Flex, Heading, Menu, MenuButton, MenuItem, MenuList, Text} from "@chakra-ui/react";
 import {Time} from "@/components/common";
 import {MenuIcon} from "@/icons";
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {
     getAttachmentDownloadUrl,
     updateMessage
