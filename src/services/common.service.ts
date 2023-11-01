@@ -6,6 +6,10 @@ import {getMemberStatusCache, setMemberStatusCache} from "@/utils/cache.function
 import dayjs from "dayjs";
 import {userService} from "@/services/user.service";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import {authService} from "@/services/auth.service";
+import {accountService} from "@/services/account.service";
+import {organizationService} from "@/services/organization.service";
+import LocalStorageService from "@/utils/localstorage.service";
 dayjs.extend(customParseFormat)
 
 class CommonService extends BaseService {
@@ -232,6 +236,13 @@ class CommonService extends BaseService {
 
     toggleEditProjectModel(enable: boolean, shouldRedirect: boolean = false, passThroughProject: Project | null = null) {
         this.setCommonState({showEditProjectModal: enable, shouldRedirectOnEditProject: shouldRedirect, passThroughProject: passThroughProject});
+    }
+
+    clearEverything() {
+        authService.setUser(null);
+        accountService.setSelectedAccount(null);
+        organizationService.setSelectedOrganization(null);
+        LocalStorageService.clearStorage();
     }
 }
 
