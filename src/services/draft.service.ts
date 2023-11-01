@@ -124,8 +124,8 @@ class DraftService extends BaseService {
 
     liveUpdateDraft(draft: MessageDraft, value: string) {
         debounce(() => {
-            this.setDraftState({liveUpdate: {...draft, draftInfo: {...draft.draftInfo, body: value}}});
-        }, 500, 'LIVE_DRAFT')
+            this.setDraftState({updatedDraft: {...draft, draftInfo: {...draft.draftInfo, body: value}}, success: true});
+        }, 1000, 'LIVE_DRAFT')
     }
 }
 

@@ -768,6 +768,12 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         }
         if (!isCreating[selectedThread?.id + '-' + draftIndex]) {
             isCreating[selectedThread?.id + '-' + draftIndex] = true;
+            let messageId = '';
+            if (messageData && messageData.id) {
+                messageId = messageData.id;
+            } else if (selectedMessage && selectedMessage.id)  {
+                messageId = selectedMessage.id;
+            }
             let body: any = {
                 subject: subject,
                 to: emailRecipients.recipients?.items,
@@ -776,7 +782,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 // draftInfo: {
                 //     // body: emailBody
                 // },
-                messageId: messageData?.id,
+                messageId,
                 accountId: selectedAccount?.id,
                 ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
             }
