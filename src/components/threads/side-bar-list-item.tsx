@@ -152,13 +152,13 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                 }}
                 className={`${styles.mailDetails} ${isSelected ? styles.mailDetailsSelected : ''}`}
             >
-                <Flex align={"center"} justify={'space-between'}>
+                <Flex align={"center"} justify={'space-between'} gap={2}>
                     <Flex align={"center"} className={styles.senderDetails} gap={1}>
                         {props?.thread?.from?.name || props?.thread?.from?.email}
                     </Flex>
                     {(props?.thread?.projects || []).length > 0 && (
                         //If customeOpenEvent Is there must pass both the Params: customeOpenHandelEvent, isOpenEvent
-                        <Flex justifyContent={'flex-start'} flexGrow={1}>
+                        <Flex justifyContent={'flex-start'} mr={'auto'}>
                             <Menu isOpen={isEmojiOpen}>
                                 <Tooltip label='List projects' placement='bottom' customeOpenHandelEvent
                                          isOpenEvent={isToolTipOpen}>
