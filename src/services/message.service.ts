@@ -82,9 +82,6 @@ class MessageService extends BaseService {
             params = {
                 delay: secondsDifference
             }
-
-            this.dispatchAction(updatePartialMessage, {body: {id: currentDraft?.id, body: currentDraft, params}});
-
             Toaster({
                 desc: scheduledDate || '',
                 type: 'send_confirmation',

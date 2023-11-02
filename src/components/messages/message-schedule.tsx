@@ -124,7 +124,9 @@ export default function MessageSchedule({date, onChange, isSnooze = false, isNam
                     <MenuList zIndex={'10'} className={'drop-down-list'}>
                         {!scheduleDate && (
                             <MenuItem
-                                onClick={() => {
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
                                     setShowScheduleMenu(true)
                                 }}
                             >
@@ -183,6 +185,10 @@ export default function MessageSchedule({date, onChange, isSnooze = false, isNam
                                     className={'radio-group-button'}
                                 >
                                     <RadioGroup
+                                        name={'schedule-quick'}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                        }}
                                         onChange={(e) => onSetValue(dayjs(e).format())}
                                         value={dayjs(scheduleDate)?.format(dateFormat)}
                                     >

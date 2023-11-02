@@ -963,6 +963,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                             placeholder="Hit enter to reply with anything you'd like"
                                             isToolbarVisible={showEditorToolbar}
                                             onChange={(value) => {
+                                                handleEditorScroll();
                                                 sendData[selectedThread?.id + '-' + draftIndex] = value;
                                                 if (!draft?.id) {
                                                     createDraft(value);
