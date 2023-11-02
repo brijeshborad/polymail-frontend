@@ -69,11 +69,12 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
 
     function attachmentsMenu() {
         return <Menu isOpen={isAttachmentOpen}>
-            <Tooltip label='List attachments' placement='bottom' customeOpenHandelEvent isOpenEvent={isAttachmentToolTipOpen}>
+            <Tooltip label='List attachments' placement='bottom' customeOpenHandelEvent
+                     isOpenEvent={isAttachmentToolTipOpen}>
                 <MenuButton
                     className={`${styles.tabListAttachmentButton} emoji-dropdown`} minWidth={'1px'} padding={'2px 6px'}
                     cursor={'pointer'}
-                    backgroundColor={'transparent'} height={'auto'} outline={"none"}
+                    backgroundColor={'inherit !important'} height={'auto'} outline={"none"}
                     _focusVisible={{boxShadow: 'none'}} _hover={{background: 'none'}} _active={{background: 'none'}}
                     fontSize={'13px'} color={'#6B7280'} as={Button} mx={1}
                     onClick={(e) => {
@@ -150,21 +151,22 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                     keyNavigationService.setKeyNavigationState({target: 'threads'});
                 }}
                 className={`${styles.mailDetails} ${isSelected ? styles.mailDetailsSelected : ''}`}
-                >
+            >
                 <Flex align={"center"} justify={'space-between'}>
                     <Flex align={"center"} className={styles.senderDetails} gap={1}>
                         {props?.thread?.from?.name || props?.thread?.from?.email}
                     </Flex>
                     {(props?.thread?.projects || []).length > 0 && (
-                    //If customeOpenEvent Is there must pass both the Params: customeOpenHandelEvent, isOpenEvent
-                      <Flex justifyContent={'flex-start'} flexGrow={1}>
+                        //If customeOpenEvent Is there must pass both the Params: customeOpenHandelEvent, isOpenEvent
+                        <Flex justifyContent={'flex-start'} flexGrow={1}>
                             <Menu isOpen={isEmojiOpen}>
-                                <Tooltip label='List projects' placement='bottom' customeOpenHandelEvent isOpenEvent={isToolTipOpen}>
+                                <Tooltip label='List projects' placement='bottom' customeOpenHandelEvent
+                                         isOpenEvent={isToolTipOpen}>
                                     <MenuButton
                                         display={'flex'}
                                         as={Flex}
                                         fontWeight={600}
-                                        backgroundColor={'#fff'}
+                                        backgroundColor={'inherit !important'}
                                         className='emoji-dropdown'
                                         padding={0}
                                         marginLeft={'2px'}
@@ -242,7 +244,8 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                     )}
                     <Flex alignItems={'center'} className={styles2.receiveTime} justify={'flex-end'}>
                         {isClicked &&
-                        <DotIcon marginRight={'5px'} className={`readThreadIcon`} color={props.thread.snooze ? '#FF5E2C' :'#9ca3af'}/>}
+                        <DotIcon marginRight={'5px'} className={`readThreadIcon`}
+                                 color={props.thread.snooze ? '#FF5E2C' : '#9ca3af'}/>}
                         {props.thread.attachments && props.thread.attachments?.length > 0 && attachmentsMenu()}
                         <Time time={props.thread.latestMessage} isShowFullTime={false} showTimeInShortForm={false}/>
                     </Flex>
