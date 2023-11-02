@@ -14,7 +14,7 @@ import {
     setCurrentCacheTab,
     setCurrentSelectedThreads, setCurrentViewingCacheTab
 } from "@/utils/cache.functions";
-import {getProjectSummary} from "@/redux/common-apis/action-reducer";
+// import {getProjectSummary} from "@/redux/common-apis/action-reducer";
 import {
     accountService,
     commonService,
