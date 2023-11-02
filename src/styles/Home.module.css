@@ -216,7 +216,7 @@
     border: 1px solid #E5E7EB;
     border-radius: 50px;
     height: auto;
-    width: auto;
+    /*width: auto;*/
     padding: 4px 12px 3px 8px;
 }
 
@@ -239,11 +239,22 @@
 .headerSearch .headerSearchInput {
     align-items: center;
     border: 1px solid #cbd5e0;
-    padding: 8px;
+    padding: 6px 35px 6px 8px;
     width: 100%;
     gap: 12px;
     background-color: #F5F5F5;
     border-radius: 50px;
+}
+
+.headerSearch .headerSearchInput .headerSearchChip button {
+    background-color: #FFFFFF;
+    border: 0;
+    font-size: 14px;
+    line-height: 1;
+    padding: 4px 8px 4px 12px;
+    color: #6B7280;
+    font-weight: 500;
+    margin: 0;
 }
 
 .headerSearch svg {
@@ -273,6 +284,13 @@
 
 .headerSearch input::placeholder {
     color: rgba(8, 22, 47, 0.5);
+}
+
+.headerButton div {
+    height: fit-content !important;
+}
+.headerButton .headerSearchbarList:hover {
+    background-color: rgba(0,0,0, 0.05);
 }
 
 .headerSearch .inputRight {
@@ -724,4 +742,37 @@ div:has(> .mailToaster) {
     text-align: center;
     right: -5px;
     top: -5px;
+}
+
+.headerSearchListDropdown .selectedProjectName {
+    cursor: pointer;
+}
+
+.headerSearchListDropdown .selectedProjectName:hover {
+    background-color: rgba(8, 22, 47, .05);
+}
+
+.headerSearchListDropdown .dropDownCloseIcon {
+    padding: 8px 0 8px 5px !important;
+}
+
+.headerSearchListDropdown .dropDownCloseIcon svg {
+    color: #6B7280;
+    width: 10px;
+    height: 10px;
+    margin-right: 0;
+}
+
+.headerSearchListDropdown .dropDownCloseIcon:hover {
+    background: transparent !important;
+}
+
+.headerSearchListDropdown .selectedProjectName:after {
+    position: absolute;
+    content: '';
+    width: calc(100% - 24px);
+    height: 1px;
+    background-color: #F3F4F6;
+    bottom: 0;
+    left: 12px;
 }
