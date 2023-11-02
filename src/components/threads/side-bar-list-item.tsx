@@ -7,19 +7,16 @@ import {StateType, ThreadListItemProps} from "@/types";
 import {useDispatch, useSelector} from "react-redux";
 import React, {useEffect, useState} from "react";
 import {MAILBOX_UNREAD} from "@/utils/constants";
-import {MessageAttachments, Project, UserProjectOnlineStatus} from "@/models";
+import {MessageAttachments, UserProjectOnlineStatus} from "@/models";
 import {keyNavigationService} from "@/services";
 import Tooltip from "../common/Tooltip";
 import {AttachmentIcon} from "@chakra-ui/icons";
-import {useRouter} from "next/router";
 import {clearDebounce, debounce} from "@/utils/common.functions";
 import {DefaultExtensionType, defaultStyles, FileIcon} from "react-file-icon";
 import {getAttachmentDownloadUrl} from "@/redux/messages/action-reducer";
 
 
 export function ThreadsSideBarListItem(props: ThreadListItemProps) {
-    const router = useRouter()
-
     const {
         multiSelection,
         updateSuccess,
@@ -29,8 +26,6 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
     } = useSelector((state: StateType) => state.threads);
     const [isSelected, setIsSelected] = useState<boolean>(false);
     const [isClicked, setIsClicked] = useState<boolean>(false);
-    const [isEmojiOpen, setIsEmojiOpen] = useState<boolean>(false);
-    const [isToolTipOpen, setIsToolTipOpen] = useState<boolean>(false);
     const {onlineUsers} = useSelector((state: StateType) => state.commonApis)
     const [isAttachmentOpen, setIsAttachmentOpen] = useState<boolean>(false);
     const [isAttachmentToolTipOpen, setIsAttachmentToolTipOpen] = useState<boolean>(false);
@@ -51,10 +46,6 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
     useEffect(() => {
         setIsClicked((props.thread.mailboxes || []).includes(MAILBOX_UNREAD));
     }, [props.thread, updateSuccess, error])
-
-    const goToProject = (project: Project) => {
-        router.push(`/projects/${project.id}`)
-    }
 
     function showExtensionImages(item: string | undefined) {
         if (item) {
