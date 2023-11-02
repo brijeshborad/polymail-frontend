@@ -157,90 +157,32 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                         {props?.thread?.from?.name || props?.thread?.from?.email}
                     </Flex>
                     {(props?.thread?.projects || []).length > 0 && (
-                        //If customeOpenEvent Is there must pass both the Params: customeOpenHandelEvent, isOpenEvent
-                        <Flex justifyContent={'flex-start'} mr={'auto'}>
-                            <Menu isOpen={isEmojiOpen}>
-                                <Tooltip label='List projects' placement='bottom' customeOpenHandelEvent
-                                         isOpenEvent={isToolTipOpen}>
-                                    <MenuButton
-                                        display={'flex'}
-                                        as={Flex}
-                                        fontWeight={600}
-                                        backgroundColor={'inherit !important'}
-                                        className='emoji-dropdown'
-                                        padding={0}
-                                        marginLeft={'2px'}
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            setIsEmojiOpen(true);
-                                            //close tooltip
-                                            setIsToolTipOpen(false);
-
-                                        }}
-                                        cursor={'pointer'}
-                                        rounded={'md'}
-                                        onMouseEnter={() => {
-                                            //open tooltip
-                                            setIsToolTipOpen(true);
-                                            if (isEmojiOpen) {
-                                                clearDebounce(props?.thread.id);
-                                            }
-                                        }}
-                                        onMouseLeave={() => {
-                                            //open tooltip
-                                            setIsToolTipOpen(false);
-                                            if (isEmojiOpen) {
-                                                debounce(() => {
-                                                    setIsEmojiOpen(false)
-                                                }, 100, props?.thread.id)
-                                            }
-                                        }}
-                                    >
-                                        <Flex justifyContent={'flex-start'} alignItems={'center'}
-                                              className='thread-emojis'>
-                                            {props?.thread?.projects?.slice(0, 5).map((p, index) => {
-                                                return (
-                                                    <span key={index} className='emoji'>{p.emoji}</span>
-                                                )
-                                            })}
-                                            {(props?.thread?.projects || []).length > 5 && (
-                                                <span className={styles.projectsLength}
-                                                      style={{height: '14px', marginLeft: 0}}>
-                                    {`+${(props?.thread?.projects || []).length - 5}`}
+                        <Tooltip label={
+                            <Flex flexDir={'column'}>
+                                {props?.thread?.projects?.map((p, index) => {
+                                    return (
+                                        <span key={index} style={{marginBottom: '5px'}} className='emoji'>
+                                        {p.emoji} {p.name}
+                                    </span>
+                                    )
+                                })}
+                            </Flex>
+                        } placement={'bottom'}>
+                            <Flex justifyContent={'flex-start'} alignItems={'center'}
+                                  className='thread-emojis' marginRight={'auto'}>
+                                {props?.thread?.projects?.slice(0, 3).map((p, index) => {
+                                    return (
+                                        <span key={index} className='emoji'>{p.emoji}</span>
+                                    )
+                                })}
+                                {(props?.thread?.projects || []).length > 3 && (
+                                    <span className={styles.projectsLength}
+                                          style={{height: '14px', marginLeft: 0}}>
+                                    {`+${(props?.thread?.projects || []).length - 3}`}
                                   </span>
-                                            )}
-                                        </Flex>
-                                    </MenuButton>
-                                </Tooltip>
-
-                                <MenuList className={`${styles.addToProjectList} drop-down-list`} zIndex={'overlay'}
-                                          onMouseEnter={() => {
-                                              if (isEmojiOpen) {
-                                                  clearDebounce(props?.thread.id);
-                                              }
-                                          }}
-                                          onMouseLeave={() => {
-                                              if (isEmojiOpen) {
-                                                  debounce(() => {
-                                                      setIsEmojiOpen(false)
-                                                  }, 100, props?.thread.id)
-                                              }
-                                          }}>
-                                    <div className={'add-to-project-list'}>
-                                        {props?.thread?.projects?.map(project => (
-                                            <MenuItem gap={2} key={project.id} onClick={(e) => {
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                                goToProject(project)
-                                            }}>
-                                                {project.emoji} {project.name}
-                                            </MenuItem>
-                                        ))}
-                                    </div>
-                                </MenuList>
-                            </Menu>
-                        </Flex>
+                                )}
+                            </Flex>
+                        </Tooltip>
                     )}
                     <Flex alignItems={'center'} className={styles2.receiveTime} justify={'flex-end'}>
                         {isClicked &&
