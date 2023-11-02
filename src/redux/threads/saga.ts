@@ -26,8 +26,7 @@ function* getThreads({payload}: PayloadAction<ReducerActionType>) {
             ...(payload.body.query ? {query: payload.body.query} : {}),
             ...payload.body.pagination
         }, {}, source.token);
-        performSuccessActions(payload);
-        yield put(getAllThreadsSuccess({threads: response, pagination: payload.body.pagination}));
+        yield put(getAllThreadsSuccess({threads: response, fullPayload: payload}));
     } catch (error: any) {
         error = error as AxiosError;
         yield put(getAllThreadsError(error?.response?.data || {code: '400', description: 'Something went wrong'}));

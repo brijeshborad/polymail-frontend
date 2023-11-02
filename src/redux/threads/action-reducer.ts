@@ -2,6 +2,7 @@ import {createSlice, current, PayloadAction} from "@reduxjs/toolkit";
 import {InitialThreadStateType, ReducerActionType} from "@/types";
 import {Thread} from "@/models";
 import {extractAndMapThreadAndMessagesBody} from "@/utils/thread.functions";
+import {performSuccessActions} from "@/utils/common-redux.functions";
 
 const initialState: any = {
     threads: [],
@@ -27,11 +28,12 @@ const threadsSlice = createSlice({
                 isLoading: _action.payload.hasOwnProperty('resetState') ? _action.payload.body.resetState : true,
             }
         },
-        getAllThreadsSuccess: (state: InitialThreadStateType, {payload: {threads, pagination}}: PayloadAction<any>) => {
+        getAllThreadsSuccess: (state: InitialThreadStateType, {payload: {threads, fullPayload}}: PayloadAction<any>) => {
             // Sort threads by latestMessage DESC
             let currentThreads = current(state).threads;
-            threads = extractAndMapThreadAndMessagesBody(threads, pagination, currentThreads);
-            return {...state, threads, isLoading: false, success: true}
+            threads = extractAndMapThreadAndMessagesBody(threads, fullPayload.body.pagination, currentThreads);
+            performSuccessActions(fullPayload, threads);
+            return {...state, threads, isLoading: false, success: false}
         },
         getAllThreadsError: (state: InitialThreadStateType, _action: PayloadAction<any>) => {
             return {...state, threads: [], isLoading: false}

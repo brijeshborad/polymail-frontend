@@ -67,19 +67,7 @@ export function ThreadsSideBarTab(props: TabProps) {
     });
     const [currentTab, setCurrentTab] = useState<string>('');
     const isMultiItemsSelected = multiSelection && multiSelection.length > 0
-
-    const getProjectId = useCallback(() => {
-        const routePaths = window.location.pathname.split('/');
-        let projectId: string = '';
-        if (router.query.project) {
-            projectId = router.query.project as string;
-        } else if (router.asPath === "/projects/[project]") {
-            projectId = routePaths[2] as string;
-        }
-        return projectId;
-    }, [router.asPath, router.query.project])
-    let projectId = getProjectId();
-
+    const [projectId, setProjectId] = useState<string>('');
 
     const getAllThread = useCallback((type: string = tabName, useFrom: string = '') => {
         if (selectedAccount && !syncingEmails) {
@@ -117,30 +105,36 @@ export function ThreadsSideBarTab(props: TabProps) {
                     page: currentPage
                 }
             }
+            let buildBody = {};
             if (projectId) {
-                dispatch(getAllThreads({
-                    body: {
-                        mailbox: tabValue,
-                        project: projectId as string,
-                        resetState: resetState,
-                        ...(type === 'just-mine' ? {mine: true} : {}),
-                        pagination
-                    }
-                }));
+                buildBody = {
+                    mailbox: tabValue,
+                    project: projectId as string,
+                    resetState: resetState, ...(type === 'just-mine' ? {mine: true} : {}),
+                    pagination
+                }
             } else {
                 if (type === 'projects') {
-                    dispatch(getAllThreads({body: {project: "ALL", mailbox: tabValue, resetState: resetState, pagination}}));
+                    buildBody = {project: "ALL", mailbox: tabValue, resetState: resetState, pagination}
                 } else {
-                    dispatch(getAllThreads({
-                        body: {
-                            mailbox: tabValue,
-                            account: selectedAccount.id,
-                            resetState: resetState,
-                            pagination
-                        }
-                    }));
+                    buildBody = {
+                        mailbox: tabValue,
+                        account: selectedAccount.id,
+                        resetState: resetState,
+                        pagination
+                    }
                 }
             }
+            dispatch(getAllThreads({
+                body: buildBody,
+                afterSuccessAction: (threads: any) => {
+                    setCurrentViewingCacheTab(`${props.cachePrefix}-${tabValue!}-${selectedAccount?.id}-${tabName}`);
+                    setCacheThreads({
+                        ...getCacheThreads(),
+                        [`${props.cachePrefix}-${tabValue!}-${selectedAccount?.id}-${tabName}`]: threads ? [...threads] : []
+                    });
+                }
+            }));
         }
     }, [dispatch, projectId, props.cachePrefix, selectedAccount, syncingEmails, tabName, tabValue]);
 
@@ -182,7 +176,6 @@ export function ThreadsSideBarTab(props: TabProps) {
             }
         }
         threadService.setThreads(finalThreads);
-        threadService.setThreadState({success: true});
         if (callBack) {
             setTimeout(() => {
                 callBack();
@@ -192,8 +185,6 @@ export function ThreadsSideBarTab(props: TabProps) {
 
     useEffect(() => {
         if (threadListSuccess && selectedAccount) {
-            setCurrentCacheTab(tabValue!);
-            setCurrentViewingCacheTab(`${props.cachePrefix}-${tabValue!}-${selectedAccount?.id}-${tabName}`);
             setCacheThreads({
                 ...getCacheThreads(),
                 [`${props.cachePrefix}-${tabValue!}-${selectedAccount?.id}-${tabName}`]: threads ? [...threads] : []
@@ -247,12 +238,18 @@ export function ThreadsSideBarTab(props: TabProps) {
     }, [getAllThread, newMessage, dispatch, threads, tabName, updateThreads])
 
     useEffect(() => {
-        if (selectedAccount && success) {
+        if (projectId !== router.query.project) {
+            setProjectId(router.query.project as string);
+        }
+    }, [projectId, router.query.project])
+
+    useEffect(() => {
+        if (selectedAccount && success && !projectId) {
             accountService.setAccountState({success: false});
             currentPage = 1;
             getAllThread();
         }
-    }, [getAllThread, selectedAccount, success])
+    }, [getAllThread, projectId, selectedAccount, success])
 
     useEffect(() => {
         if (incomingEvent === 'threads.refresh') {
@@ -266,7 +263,7 @@ export function ThreadsSideBarTab(props: TabProps) {
             currentPage = 1;
             getAllThread();
         }
-    }, [projectId, getAllThread])
+    }, [projectId])
 
     useEffect(() => {
         if (tabValue && currentTab !== tabValue) {
