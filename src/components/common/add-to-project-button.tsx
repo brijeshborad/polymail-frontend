@@ -194,29 +194,27 @@ export function AddToProjectButton({allowDefaultSelect = true}: {allowDefaultSel
                         </div>
                         <Flex width={'20px'} height={'20px'} alignItems={'center'} justifyContent={'center'}
                               className={styles.projectMenuIcon}><MenuIcon/></Flex>
-                    </MenuButton></Tooltip> : <Tooltip label={'Add thread to project'} placement={'bottom'}>
-                    <MenuButton
-                        onClick={() => {
-                            setDropDownOpen(!isDropdownOpen)
-                            focusSearch();
-                        }}
-                        cursor={'pointer'}
-                        className={`${styles.addToProject} ${styles.projectAdded}`}
-                        borderRadius={'50px'}
-                        backgroundColor={'#2A6FFF'}
-                        color={'#FFFFFF'}
-                        as={Box}
-                        boxShadow={'0 0 3px 0 rgba(38, 109, 240, 0.12)'}
-                        padding={'4px 4px 4px 8px'}
-                        fontSize={'12px'} fontWeight={500}
-                        h={'fit-content'}
-                        ref={addToProjectRef}
-                    >
-                        <span style={{marginRight: 4}}><FolderIcon/></span>
-                        Add to Project
-                        <span className={styles.RightContent}>⌘P</span>
-                    </MenuButton>
-                </Tooltip>}
+                    </MenuButton></Tooltip> : <MenuButton
+                    onClick={() => {
+                        setDropDownOpen(!isDropdownOpen)
+                        focusSearch();
+                    }}
+                    cursor={'pointer'}
+                    className={`${styles.addToProject} ${styles.projectAdded}`}
+                    borderRadius={'50px'}
+                    backgroundColor={'#2A6FFF'}
+                    color={'#FFFFFF'}
+                    as={Box}
+                    boxShadow={'0 0 3px 0 rgba(38, 109, 240, 0.12)'}
+                    padding={'4px 4px 4px 8px'}
+                    fontSize={'12px'} fontWeight={500}
+                    h={'fit-content'}
+                    ref={addToProjectRef}
+                >
+                    <span style={{marginRight: 4}}><FolderIcon/></span>
+                    Add to Project
+                    <span className={styles.RightContent}>⌘P</span>
+                </MenuButton>}
 
 
                 <MenuList className={`${styles.addToProjectList} drop-down-list`} zIndex={'overlay'}>
