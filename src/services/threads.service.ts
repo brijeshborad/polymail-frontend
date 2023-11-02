@@ -435,6 +435,7 @@ class ThreadsService extends BaseService {
                     mailboxes: mailboxes.filter(i => i !== 'UNREAD')
                 }
                 this.setThreads(updateTheList);
+                this.setThreadState({success: true});
             }
             this.dispatchAction(updateThreads, {
                 body: {
