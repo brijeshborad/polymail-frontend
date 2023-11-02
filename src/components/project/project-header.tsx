@@ -23,7 +23,6 @@ import {PROJECT_ROLES} from "@/utils/constants";
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import {addItemToGroup, deleteMemberFromProject, deleteMemberShipFromProject} from "@/redux/memberships/action-reducer";
 import {
-    getProjectMembers,
     getProjectMembersInvites, removeProject,
     updateProjectMemberRole,
     updateProjectState
@@ -224,13 +223,6 @@ export function ProjectHeader() {
                     project: targetProject
                 }))
             }
-
-            dispatch(getProjectMembers({
-                body: {
-                    projectId: projectId
-                }
-            }));
-            dispatch(getProjectMembersInvites({body: {projectId: projectId}}));
         }
         return () => {
             commonService.removeAllOtherOnlineStatusForUserProject({...getMemberStatusCache()}, [], 'me')

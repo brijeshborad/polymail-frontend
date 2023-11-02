@@ -120,12 +120,7 @@ export function ThreadsSideBarTab(props: TabProps) {
             }
             if (projectId && !isSummaryApiCalled) {
                 setIsSummaryApiCalled(true);
-                dispatch(getProjectSummary({
-                    body: {
-                        id: projectId as string,
-                        mailbox: tabValue,
-                    }
-                }))
+                // dispatch(getProjectSummary({body: {id: projectId as string}}));
             } else {
                 if (projectId) {
                     dispatch(getAllThreads({

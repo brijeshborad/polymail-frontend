@@ -50,9 +50,14 @@ function* getProjects() {
 
 function* getProject({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callGet(`projects/${payload.body.id}`, null);
+        const response: AxiosResponse = yield ApiService.callGet(`projects/${payload.body.id}`, {enriched: true});
         performSuccessActions(payload);
-        yield put(getProjectByIdSuccess(response));
+        let finalResponse: any = response;
+        yield put(getProjectMembersSuccess(finalResponse.accounts));
+        yield put(getProjectMembersInvitesSuccess(finalResponse.invites));
+        delete finalResponse.invites;
+        delete finalResponse.accounts;
+        yield put(getProjectByIdSuccess(finalResponse));
     } catch (error: any) {
         error = error as AxiosError;
         yield put(getProjectByIdError(error?.response?.data || {code: '400', description: 'Something went wrong'}));

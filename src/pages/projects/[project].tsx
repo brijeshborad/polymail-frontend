@@ -6,6 +6,9 @@ import {
 import dynamic from 'next/dynamic';
 import {useRouter} from "next/router";
 import {ProjectHeader} from "@/components/project/project-header";
+import {useEffect} from "react";
+import {useDispatch} from "react-redux";
+import {getProjectById} from "@/redux/projects/action-reducer";
 
 const ThreadsSideBar = dynamic(
     () => import('@/components/threads').then((mod) => mod.ThreadsSideBar)
@@ -16,6 +19,13 @@ const Message = dynamic(
 
 function ProjectInbox() {
     const router = useRouter();
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (router.query.project) {
+            dispatch(getProjectById({body: {id: router.query.project}}));
+        }
+    }, [dispatch, router.query.project])
 
     return (
         <>
