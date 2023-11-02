@@ -65,7 +65,6 @@ export function ThreadsSideBarTab(props: TabProps) {
         }
         return defaultTab;
     });
-    const [isSummaryApiCalled, setIsSummaryApiCalled] = useState<boolean>(false);
     const [currentTab, setCurrentTab] = useState<string>('');
     const isMultiItemsSelected = multiSelection && multiSelection.length > 0
 
@@ -118,37 +117,32 @@ export function ThreadsSideBarTab(props: TabProps) {
                     page: currentPage
                 }
             }
-            if (projectId && !isSummaryApiCalled) {
-                setIsSummaryApiCalled(true);
-                // dispatch(getProjectSummary({body: {id: projectId as string}}));
+            if (projectId) {
+                dispatch(getAllThreads({
+                    body: {
+                        mailbox: tabValue,
+                        project: projectId as string,
+                        resetState: resetState,
+                        ...(type === 'just-mine' ? {mine: true} : {}),
+                        pagination
+                    }
+                }));
             } else {
-                if (projectId) {
+                if (type === 'projects') {
+                    dispatch(getAllThreads({body: {project: "ALL", mailbox: tabValue, resetState: resetState, pagination}}));
+                } else {
                     dispatch(getAllThreads({
                         body: {
                             mailbox: tabValue,
-                            project: projectId as string,
+                            account: selectedAccount.id,
                             resetState: resetState,
-                            ...(type === 'just-mine' ? {mine: true} : {}),
                             pagination
                         }
                     }));
-                } else {
-                    if (type === 'projects') {
-                        dispatch(getAllThreads({body: {project: "ALL", mailbox: tabValue, resetState: resetState, pagination}}));
-                    } else {
-                        dispatch(getAllThreads({
-                            body: {
-                                mailbox: tabValue,
-                                account: selectedAccount.id,
-                                resetState: resetState,
-                                pagination
-                            }
-                        }));
-                    }
                 }
             }
         }
-    }, [dispatch, isSummaryApiCalled, projectId, props.cachePrefix, selectedAccount, syncingEmails, tabName, tabValue]);
+    }, [dispatch, projectId, props.cachePrefix, selectedAccount, syncingEmails, tabName, tabValue]);
 
     const updateThreads = useCallback((isNewThread: boolean, newThread: Thread, callBack: any | null = null) => {
         let thread: Thread = {...newThread};

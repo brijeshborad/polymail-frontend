@@ -13,6 +13,7 @@ let memberStatus: {
     projects: {}
 };
 let inboxLoadedFirstTime: boolean = false;
+let projectLoadedFirstTime: boolean = false;
 let previousToast: string = '';
 
 export function getCurrentCacheTab() {
@@ -76,6 +77,15 @@ export function getInboxLoadedFirstTime() {
 export function setInboxLoadedFirstTime(value: any) {
     inboxLoadedFirstTime = value;
     return inboxLoadedFirstTime;
+}
+
+export function getProjectLoadedFirstTime() {
+    return projectLoadedFirstTime;
+}
+
+export function setProjectLoadedFirstTime(value: any) {
+    projectLoadedFirstTime = value;
+    return projectLoadedFirstTime;
 }
 
 export function getPreviousToastId() {

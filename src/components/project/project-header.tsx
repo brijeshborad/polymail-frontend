@@ -31,7 +31,11 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import RemoveRecordModal from "@/components/common/delete-record-modal";
 import {debounceInterval, isEmail} from "@/utils/common.functions";
-import {getMemberStatusCache} from "@/utils/cache.functions";
+import {
+    getMemberStatusCache,
+    getProjectLoadedFirstTime,
+    setProjectLoadedFirstTime
+} from "@/utils/cache.functions";
 import {AutoComplete} from "@/components/common/auto-complete";
 
 export function ProjectHeader() {
@@ -53,13 +57,12 @@ export function ProjectHeader() {
     const [selectedMember, setSelectedMember] = useState<any>(null);
     const [projectData, setProjectData] = useState<Project | null>(null);
     const [actionType, setActionType] = useState<string>('');
-    const [loadedFirstTime, setIsLoadedFirstTime] = useState<boolean>(false);
+    const [loadedFirstTime, setIsLoadedFirstTime] = useState<boolean>(getProjectLoadedFirstTime());
     const [autoCompleteOpen, setAutoCompleteOpen] = useState<boolean>(false);
 
-    const {onlineUsers, isLoading} = useSelector((state: StateType) => state.commonApis);
+    const {onlineUsers} = useSelector((state: StateType) => state.commonApis);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
-    const {projects} = useSelector((state: StateType) => state.projects);
-    const {members, project, invitees} = useSelector((state: StateType) => state.projects);
+    const {projects, members, project, invitees} = useSelector((state: StateType) => state.projects);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {success} = useSelector((state: StateType) => state.memberships);
     const {isLoading: threadIsLoading} = useSelector((state: StateType) => state.threads);
@@ -176,10 +179,13 @@ export function ProjectHeader() {
     }, [incomingEvent]);
 
     useEffect(() => {
-        if (project && !threadIsLoading && !isLoading) {
-            setIsLoadedFirstTime(true);
+        if (!getProjectLoadedFirstTime()) {
+            if (!threadIsLoading && projects && projects.length > 0) {
+                setProjectLoadedFirstTime(true);
+                setIsLoadedFirstTime(true);
+            }
         }
-    }, [project, threadIsLoading, isLoading]);
+    }, [threadIsLoading, projects]);
 
     useEffect(() => {
         if (searchValue.length > 0) {
@@ -218,10 +224,12 @@ export function ProjectHeader() {
                 const targetProject = projects.find(p => p.id === projectId)
                 if (targetProject) {
                     commonService.updateUserOnlineStatusProject(targetProject);
+                    dispatch(updateProjectState({
+                        project: targetProject,
+                        members: targetProject.accounts,
+                        invitees: targetProject.invites
+                    }))
                 }
-                dispatch(updateProjectState({
-                    project: targetProject
-                }))
             }
         }
         return () => {
@@ -299,11 +307,14 @@ export function ProjectHeader() {
                                         cursor={'pointer'}
                                         rounded={'md'}
                                     >
-                                        {project?.emoji ? project.emoji :
-                                            <Image src="/image/user.png" width="24" height="24" alt=""/>}
-                                        <span
-                                            style={{marginLeft: 12}}>{project && project.name ? project.name : ''}</span>
-                                        <ChevronDownIcon/>
+                                        {project && <>
+                                            {project?.emoji ? project.emoji :
+                                                <Image src="/image/user.png" width="24" height="24" alt=""/>}
+                                            <span style={{marginLeft: 12}}>
+                                                {project && project.name ? project.name : ''}
+                                            </span>
+                                            <ChevronDownIcon/>
+                                        </>}
                                     </MenuButton>
                                 </Tooltip>
 
@@ -345,7 +356,6 @@ export function ProjectHeader() {
                                                                   threadService.pageChange(false);
                                                                   projectService.pageChange();
                                                                   messageService.pageChange();
-                                                                  setIsLoadedFirstTime(false);
                                                                   router.push(`/projects/${project.id}`)
                                                               }
                                                           }}>
@@ -366,15 +376,15 @@ export function ProjectHeader() {
                                     </div>
                                 </MenuList>
                             </Menu>
-                            <Badge textTransform={'none'} color={'#000000'} fontSize={'14px'} fontWeight={'600'}
-                                   backgroundColor={'#E9E9E9'} marginBottom={'-2px'}
-                                   padding={'3px 6px'} borderRadius={'4px'}
-                                   lineHeight={'1.19'}>{members && members.length === 1 ? `1 member` : `${members && members.length} members`}</Badge>
+                            {project && members && <Badge textTransform={'none'} color={'#000000'} fontSize={'14px'} fontWeight={'600'}
+                                               backgroundColor={'#E9E9E9'} marginBottom={'-2px'}
+                                               padding={'3px 6px'} borderRadius={'4px'}
+                                               lineHeight={'1.19'}>{members && members.length === 1 ? `1 member` : `${members && members.length} members`}</Badge>}
                         </>
                     )}
                 </Flex>
 
-                {loadedFirstTime && <Flex align={'center'} gap={1}>
+                {(loadedFirstTime && project) && <Flex align={'center'} gap={1}>
                     {project && onlineUsers && (onlineUsers['projects'][project.id!] || [])
                         .filter((t: UserProjectOnlineStatus) => t.isOnline).slice(0, maxShowingMembers)
                         .map((item: UserProjectOnlineStatus, index: number) => (

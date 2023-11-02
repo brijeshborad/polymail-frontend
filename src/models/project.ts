@@ -1,3 +1,6 @@
+import {TeamMember} from "@/models/teamMember";
+import {InviteMember} from "@/models/inviteMember";
+
 export interface Project {
     id?: string,
     name?: string,
@@ -10,7 +13,9 @@ export interface Project {
     scope?: string,
     projectMeta?: ProjectMetaData
     userProjectOnlineStatus?: UserProjectOnlineStatus[],
-    showOnlineMembersCount?: number
+    showOnlineMembersCount?: number,
+    accounts: TeamMember[],
+    invites: InviteMember[],
 }
 
 export interface ProjectRequestBody {
@@ -29,12 +34,12 @@ export interface UserProjectOnlineStatus {
 
 
 export interface ProjectRequestBodyWithUndo {
-  do: {
-    projectMeta: ProjectMetaData
-  }
-  undo: {
-    projectMeta: ProjectMetaData
-  }
+    do: {
+        projectMeta: ProjectMetaData
+    }
+    undo: {
+        projectMeta: ProjectMetaData
+    }
 }
 
 export interface ProjectMetaData {

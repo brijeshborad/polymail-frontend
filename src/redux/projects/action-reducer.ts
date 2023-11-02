@@ -34,13 +34,23 @@ const projectsSlice = createSlice({
         },
 
         getProjectById: (state: InitialProjectState, _action: PayloadAction<ReducerActionType>) => {
-            return {...state, project: {}, isLoading: true}
+            return {...state, isLoading: true}
         },
-        getProjectByIdSuccess: (state: InitialProjectState, {payload: project}: PayloadAction<{}>) => {
-            return {...state, project, isLoading: false}
+        getProjectByIdSuccess: (state: InitialProjectState, {payload: project}: PayloadAction<any>) => {
+            let currentProjects = [...(current(state).projects || [])] as Project[];
+            let projectData = currentProjects.findIndex((item: Project) => item.id === project.id);
+            let finalState = {...state, project, isLoading: false};
+            if (projectData !== -1) {
+                currentProjects[projectData] = {
+                    ...currentProjects[projectData],
+                    ...project
+                }
+                finalState.projects = [...currentProjects];
+            }
+            return finalState
         },
         getProjectByIdError: (state: InitialProjectState,  _action: PayloadAction<any>) => {
-            return {...state, project: {}, isLoading: false}
+            return {...state, project: null, isLoading: false}
         },
 
         createProjects: (state: InitialProjectState, _action: PayloadAction<ReducerActionType>) => {

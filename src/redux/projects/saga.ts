@@ -55,8 +55,6 @@ function* getProject({payload}: PayloadAction<ReducerActionType>) {
         let finalResponse: any = response;
         yield put(getProjectMembersSuccess(finalResponse.accounts));
         yield put(getProjectMembersInvitesSuccess(finalResponse.invites));
-        delete finalResponse.invites;
-        delete finalResponse.accounts;
         yield put(getProjectByIdSuccess(finalResponse));
     } catch (error: any) {
         error = error as AxiosError;
