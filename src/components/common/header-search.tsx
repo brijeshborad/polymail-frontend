@@ -10,11 +10,10 @@ import {
 import {CloseIcon, SearchIcon} from "@chakra-ui/icons";
 import {FolderIcon, UserIcon} from "@/icons";
 import React, {useEffect, useRef, useState} from "react";
-import {getAllThreads} from "@/redux/threads/action-reducer";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import {StateType} from "@/types";
 import Router, {useRouter} from "next/router";
-import {keyNavigationService, projectService, socketService, threadService} from "@/services";
+import {globalEventService, keyNavigationService, projectService, socketService, threadService} from "@/services";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import {Contacts, Project} from "@/models";
@@ -23,8 +22,7 @@ import {matchSorter} from "match-sorter";
 dayjs.extend(customParseFormat)
 
 export function HeaderSearch() {
-    const dispatch = useDispatch();
-    const {tabValue, isThreadSearched} = useSelector((state: StateType) => state.threads);
+    const {isThreadSearched} = useSelector((state: StateType) => state.threads);
     const {userDetails} = useSelector((state: StateType) => state.users);
     const {project, projects} = useSelector((state: StateType) => state.projects);
     const [showCloseIcon, setShowCloseIcon] = useState(false);
@@ -94,21 +92,9 @@ export function HeaderSearch() {
         setShowCloseIcon(false);
         if (selectedAccount && selectedAccount.id && callAPI) {
             setPeopleArray(null);
-            if (searchString) {
-                threadService.cancelThreadSearch(true);
-            }
+            threadService.cancelThreadSearch(true);
             setSearchString('');
-            dispatch(getAllThreads({
-                body: {
-                    mailbox: tabValue,
-                    ...(isProjectRoute && project ? {project: project.id} : {account: selectedAccount.id}),
-                    pagination: {
-                        cutoff: dayjs().add(5, "day").format('YYYY-MM-DD'),
-                        count: 100,
-                        page: 1
-                    }
-                }
-            }));
+            globalEventService.fireEvent('threads.refresh');
         }
     }
 
@@ -161,7 +147,6 @@ export function HeaderSearch() {
     useEffect(() => {
         const clickBox = document.getElementById('clickBox');
         document.addEventListener('click', function (e) {
-            e.preventDefault();
             if (clickBox && e.target && clickBox.contains(e.target as Node)) {
                 setShowCloseIcon(true);
             } else {
