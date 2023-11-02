@@ -64,6 +64,7 @@ export function ThreadsSideBarTab(props: TabProps) {
     const [currentTab, setCurrentTab] = useState<string>('');
     const isMultiItemsSelected = multiSelection && multiSelection.length > 0
     const [projectId, setProjectId] = useState<string>('');
+    const [waitForProjectRoute, setWaitForProjectRoute] = useState<boolean>(true);
 
     const getAllThread = useCallback((type: string = tabName, useFrom: string = '') => {
         if (selectedAccount && !syncingEmails) {
@@ -255,12 +256,14 @@ export function ThreadsSideBarTab(props: TabProps) {
             setCurrentTab(tabValue)
             threadService.setThreads([]);
             threadService.setSelectedThread(null);
-            if (!window.location.pathname.includes('projects')) {
-                currentPage = 1;
-                getAllThread();
+            if (window.location.pathname.includes('projects') && waitForProjectRoute) {
+                setWaitForProjectRoute(false);
+                return;
             }
+            currentPage = 1;
+            getAllThread();
         }
-    }, [getAllThread, tabValue, currentTab])
+    }, [getAllThread, tabValue, currentTab, waitForProjectRoute])
 
     useEffect(() => {
         if (threadListSuccess) {
