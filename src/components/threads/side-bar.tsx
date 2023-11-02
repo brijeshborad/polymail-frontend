@@ -19,7 +19,6 @@ import {useDispatch, useSelector} from "react-redux";
 import {getAllThreads} from "@/redux/threads/action-reducer";
 import dynamic from "next/dynamic";
 import {SmallCloseIcon, TriangleDownIcon} from "@chakra-ui/icons";
-import {getCurrentCacheTab} from "@/utils/cache.functions";
 import {MAILBOX_ARCHIVE, MAILBOX_INBOX, MAILBOX_SNOOZED, MAILBOX_STARRED, MAILBOX_TRASH} from "@/utils/constants";
 import {threadService, commonService, socketService, draftService, messageService} from "@/services";
 import Tooltip from "../common/Tooltip";
@@ -65,7 +64,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                 threadService.pushOrUpdateDraftInThreadMessages(updatedDraft);
             }
         }
-    }, [draftSuccess, tab, updatedDraft])
+    }, [draftSuccess, updatedDraft])
 
     useEffect(() => {
         if (isThreadSearched) {
@@ -98,7 +97,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     }, [allowThreadSelection, isComposing, isLoading, router.query.thread, selectedThread, tabValue, threads])
 
     useEffect(() => {
-        if (tab !== '' && getCurrentCacheTab() !== '') {
+        if (tab !== '') {
             threadService.setTabValue(tab);
         }
     }, [tab])
@@ -122,7 +121,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     }
 
     const changeEmailTabs = (value: string) => {
-        if (getCurrentCacheTab() !== value) {
+        if (tab !== value) {
             router.push(
                 {pathname: router.pathname.includes('projects') ? `/projects/${router.query.project}` : '/inbox'},
                 undefined,

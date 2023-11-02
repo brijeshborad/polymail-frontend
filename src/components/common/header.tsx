@@ -20,7 +20,7 @@ import {Toaster} from '@/components/common';
 import dynamic from 'next/dynamic'
 import {HeaderSearch} from "@/components/common/header-search";
 import {
-    accountService, commonService,
+    accountService, commonService, globalEventService,
     messageService,
     organizationService, projectService,
     socketService,
@@ -84,7 +84,9 @@ export function Header() {
         projectService.setProjectState({projects, isLoading: false});
         organizationService.setOrganizationState({organizations, isLoading: false});
         commonService.setCommonState({contacts, isLoading: false});
-        accountService.setAccountState({success: fireSuccess});
+        if (fireSuccess) {
+            globalEventService.fireEvent('threads.refresh');
+        }
         // if (!organizations) {
         //     Router.push('/organization/add');
         //     return;
@@ -155,8 +157,8 @@ export function Header() {
         (account: Account) => {
             if (account.syncHistory?.mailInitSynced) {
                 commonService.updateEmailSyncPercentage(null);
+                updateValuesFromAccount(account, !LocalStorageService.updateAccount('get'));
                 LocalStorageService.updateAccount('store', account);
-                updateValuesFromAccount(account, true);
             } else {
                 commonService.updateEmailSyncPercentage(1);
             }

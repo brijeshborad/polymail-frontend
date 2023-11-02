@@ -9,14 +9,10 @@ import {useRouter} from "next/router";
 import dynamic from "next/dynamic";
 import {
     getCacheThreads,
-    getCurrentCacheTab,
     setCacheThreads,
-    setCurrentCacheTab,
     setCurrentSelectedThreads, setCurrentViewingCacheTab
 } from "@/utils/cache.functions";
-// import {getProjectSummary} from "@/redux/common-apis/action-reducer";
 import {
-    accountService,
     commonService,
     draftService,
     globalEventService, messageService,
@@ -45,7 +41,7 @@ export function ThreadsSideBarTab(props: TabProps) {
         isThreadSearched,
         selectedThread
     } = useSelector((state: StateType) => state.threads)
-    const {selectedAccount, success} = useSelector((state: StateType) => state.accounts);
+    const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {
         isLoading: summaryIsLoading,
         syncingEmails,
@@ -74,9 +70,6 @@ export function ThreadsSideBarTab(props: TabProps) {
             let resetState = true;
             if (!tabValue) {
                 return;
-            }
-            if (getCurrentCacheTab() !== tabValue) {
-                setCurrentCacheTab(tabValue);
             }
             let cutoffDate = dayjs().add(5, "day").format('YYYY-MM-DD');
             if (getCacheThreads()[`${props.cachePrefix}-${tabValue}-${selectedAccount.id}-${type}`]) {
@@ -244,14 +237,6 @@ export function ThreadsSideBarTab(props: TabProps) {
     }, [projectId, router.query.project])
 
     useEffect(() => {
-        if (selectedAccount && success && !projectId) {
-            accountService.setAccountState({success: false});
-            currentPage = 1;
-            getAllThread();
-        }
-    }, [getAllThread, projectId, selectedAccount, success])
-
-    useEffect(() => {
         if (incomingEvent === 'threads.refresh') {
             currentPage = 1;
             getAllThread();
@@ -270,8 +255,10 @@ export function ThreadsSideBarTab(props: TabProps) {
             setCurrentTab(tabValue)
             threadService.setThreads([]);
             threadService.setSelectedThread(null);
-            currentPage = 1;
-            getAllThread();
+            if (!window.location.pathname.includes('projects')) {
+                currentPage = 1;
+                getAllThread();
+            }
         }
     }, [getAllThread, tabValue, currentTab])
 
