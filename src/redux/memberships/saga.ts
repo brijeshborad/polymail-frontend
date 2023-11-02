@@ -21,7 +21,7 @@ import { performSuccessActions } from "@/utils/common-redux.functions";
 function* addItemToGroupService({payload}: PayloadAction<ReducerActionType>) {
     try {
         const response: AxiosResponse = yield ApiService.callPost(`memberships`, payload.body.body || payload.body);
-        performSuccessActions(payload);
+        performSuccessActions(payload, response);
         yield put(addItemToGroupSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;

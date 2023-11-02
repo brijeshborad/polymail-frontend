@@ -399,7 +399,7 @@ function EditProject() {
                                                       border={'1px solid #D1D5DB'}
                                                       borderRadius={'50px'} fontWeight={500}
                                                       as={Button} rightIcon={<TriangleDownIcon/>}>
-                                              {invite.role}
+                                              {invite?.role}
                                           </MenuButton>
                                           <MenuList className={`drop-down-list`}>
                                               {PROJECT_ROLES.map((role, roleIndex) => {

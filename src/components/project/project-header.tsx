@@ -18,12 +18,16 @@ import inboxStyles from "@/styles/Inbox.module.css";
 import {commonService, messageService, projectService, socketService, threadService} from "@/services";
 import Router, {useRouter} from "next/router";
 import {MailIcon, MenuIcon} from "@/icons";
-import {InviteMember, Project, TeamMember, UserProjectOnlineStatus} from "@/models";
+import {Project, UserProjectOnlineStatus} from "@/models";
 import {PROJECT_ROLES} from "@/utils/constants";
 import React, {useCallback, useEffect, useRef, useState} from "react";
-import {addItemToGroup, deleteMemberFromProject, deleteMemberShipFromProject} from "@/redux/memberships/action-reducer";
 import {
-    getProjectMembersInvites, removeProject,
+    addItemToGroup,
+    deleteMemberFromProject,
+    deleteMemberShipFromProject
+} from "@/redux/memberships/action-reducer";
+import {
+    removeProject,
     updateProjectMemberRole,
     updateProjectState
 } from "@/redux/projects/action-reducer";
@@ -64,7 +68,6 @@ export function ProjectHeader() {
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const {projects, members, project, invitees} = useSelector((state: StateType) => state.projects);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
-    const {success} = useSelector((state: StateType) => state.memberships);
     const {isLoading: threadIsLoading} = useSelector((state: StateType) => state.threads);
 
     const inviteAccountToProject = useCallback((item: Project | null) => {
@@ -76,13 +79,15 @@ export function ProjectHeader() {
                 groupType: 'project',
                 groupId: item?.id
             }
-            dispatch(addItemToGroup({body: reqBody}))
-
-            let projectId = router.query.project as string;
-            dispatch(getProjectMembersInvites({body: {projectId: projectId}}));
+            dispatch(addItemToGroup({
+                body: reqBody,
+                afterSuccessAction: (invite: any) => {
+                    projectService.addOrUpdateProjectMemberOrInvites('add', 'invite', invite[0]);
+                }
+            }));
             setMembersInput({input: '', role: 'member'});
         }
-    }, [dispatch, membersInputs, selectedAccount, router.query.project]);
+    }, [dispatch, membersInputs, selectedAccount]);
 
     const updateProjectMemberRoleData = (role: string, member: any) => {
         if (project && project.id && member && member.id) {
@@ -123,6 +128,7 @@ export function ProjectHeader() {
     const removeMemberFromProject = () => {
         if (selectedMember) {
             if (selectedMember?.invite) {
+                projectService.addOrUpdateProjectMemberOrInvites('delete', 'invite', selectedMember);
                 dispatch(deleteMemberShipFromProject({
                     body: {id: selectedMember.id}, toaster: {
                         success: {
@@ -134,6 +140,7 @@ export function ProjectHeader() {
                 }));
             } else {
                 if (project && project.id && selectedMember?.id) {
+                    projectService.addOrUpdateProjectMemberOrInvites('delete', 'member', selectedMember);
                     dispatch(deleteMemberFromProject({
                         body: {id: project.id, accountId: selectedMember.id}, toaster: {
                             success: {
@@ -146,7 +153,6 @@ export function ProjectHeader() {
                             let projectData = (projects || []).filter((item: Project) => item.id !== project.id);
                             dispatch(updateProjectState({projects: projectData}))
                             Router.push(`/projects`);
-
                         }
                     }));
                 }
@@ -245,18 +251,18 @@ export function ProjectHeader() {
     }, [invitees, membersInputs])
 
 
-    useEffect(() => {
-        if (success && selectedMember && selectedMember?.id) {
-            if (selectedMember && selectedMember?.invite) {
-                let data = (invitees || []).filter((item: InviteMember) => item.id !== selectedMember.id);
-                projectService.setInvitees(data);
-            } else {
-                let data = (members || []).filter((item: TeamMember) => item.id !== selectedMember.id);
-                projectService.setMembers(data);
-            }
-            setSelectedMember(null);
-        }
-    }, [success, selectedMember, invitees, members])
+    // useEffect(() => {
+    //     if (success && selectedMember && selectedMember?.id) {
+    //         if (selectedMember && selectedMember?.invite) {
+    //             let data = (invitees || []).filter((item: InviteMember) => item.id !== selectedMember.id);
+    //             projectService.setInvitees(data);
+    //         } else {
+    //             let data = (members || []).filter((item: TeamMember) => item.id !== selectedMember.id);
+    //             projectService.setMembers(data);
+    //         }
+    //         setSelectedMember(null);
+    //     }
+    // }, [success, selectedMember, invitees, members])
 
     return (
         <>
@@ -500,7 +506,10 @@ export function ProjectHeader() {
                                                         <MenuList className={`drop-down-list`}>
                                                             {PROJECT_ROLES.map((role, roleIndex) => {
                                                                 return <MenuItem
-                                                                    onClick={() => updateProjectMemberRoleData(role, member)}
+                                                                    onClick={() => {
+                                                                        projectService.addOrUpdateProjectMemberOrInvites('update', 'member', {...member, role});
+                                                                        updateProjectMemberRoleData(role, member)
+                                                                    }}
                                                                     textTransform={'capitalize'} key={roleIndex}>
                                                                     {role}
                                                                 </MenuItem>
@@ -539,7 +548,10 @@ export function ProjectHeader() {
                                                         <MenuList className={`drop-down-list`}>
                                                             {PROJECT_ROLES.map((role, roleIndex) => {
                                                                 return <MenuItem
-                                                                    onClick={() => updateProjectMemberRoleData(role, invite)}
+                                                                    onClick={() => {
+                                                                        projectService.addOrUpdateProjectMemberOrInvites('update', 'invite', {...invite, role});
+                                                                        updateProjectMemberRoleData(role, invite)
+                                                                    }}
                                                                     textTransform={'capitalize'} key={roleIndex}>
                                                                     {role}
                                                                 </MenuItem>
