@@ -18,6 +18,7 @@ import {keyNavigationService, projectService, socketService, threadService} from
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import {Contacts, Project} from "@/models";
+import {matchSorter} from "match-sorter";
 
 dayjs.extend(customParseFormat)
 
@@ -145,13 +146,22 @@ export function HeaderSearch() {
         }, 300)
     };
 
+    function filterContacts(value: string) {
+        if (!value) {
+            return [];
+        }
+        let finalContacts: Contacts[] = matchSorter((selectedAccount?.contacts || []), value, {keys: ['email.email', 'email.name']});
+        finalContacts = finalContacts.slice(0, finalContacts.length > 5 ? 5 : finalContacts.length);
+        return finalContacts.map((contact: Contacts) => ({email: contact.email.email, name: contact.email.name}));
+    }
+
     useEffect(() => {
         if (!searchString) {
             setFilteredPeoples([])
             setFilteredProjectsAndPeoples([])
         } else {
             setFilteredProjectsAndPeoples((projects || []).filter((item: Project) => item.name?.toLowerCase().includes(searchString.toLowerCase())));
-            setFilteredPeoples((selectedAccount?.contacts || []).filter((item: Contacts) => (item.email.name || item.email.email)?.toLowerCase().includes(searchString.toLowerCase())));
+            setFilteredPeoples(filterContacts(searchString));
         }
     }, [projects, searchString, selectedAccount?.contacts])
 
@@ -258,10 +268,10 @@ export function HeaderSearch() {
                                     <Text color={'#374151'} fontSize={'13px'} fontWeight={'500'} width={'100%'}
                                           lineHeight={1}
                                           letterSpacing={'-0.13px'}>
-                                        {item?.email?.name ? <>
-                                            {item?.email?.name || ''}
-                                            {item?.email?.email ? <>{' <' + item?.email?.email + '>'}</> : ''}
-                                        </> : <>{item?.email?.email || ''}</>}
+                                        {item?.name ? <>
+                                            {item?.name || ''}
+                                            {item?.email ? <>{' <' + item?.email + '>'}</> : ''}
+                                        </> : <>{item?.email || ''}</>}
                                     </Text>
                                 </Flex>
                             ))}
