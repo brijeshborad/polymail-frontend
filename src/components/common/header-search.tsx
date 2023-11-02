@@ -18,7 +18,6 @@ import {keyNavigationService, projectService, socketService, threadService} from
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import {Contacts, Project} from "@/models";
-import {Chip} from "@/components/common/chip";
 
 dayjs.extend(customParseFormat)
 
