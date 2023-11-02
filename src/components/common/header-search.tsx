@@ -120,13 +120,6 @@ export function HeaderSearch() {
                 if (isProjectRoute && project) {
                     finalSearchString = `project:${project.id} ${searchString}`;
                 }
-                if (peopleArray) {
-                    if (peopleArray.email.name) {
-                        finalSearchString = `${peopleArray.email.name} ${searchString}`;
-                    } else {
-                        finalSearchString = `${peopleArray.email.email} ${searchString}`;
-                    }
-                }
                 threadService.searchThread();
                 socketService.searchThreads(userDetails?.id, finalSearchString);
                 return;
@@ -197,7 +190,7 @@ export function HeaderSearch() {
                         <Badge textTransform={'none'} backgroundColor={'#ffffff'} color={'#08162F'}
                                borderRadius={'4px'} display={'flex'} alignItems={'center'}
                                fontSize={'12px'} fontWeight={'500'} padding={'4px 10px'} lineHeight={1}>
-                            {peopleArray.email.name || peopleArray.email.email}
+                            {peopleArray.name || peopleArray.email}
                             <CloseIcon cursor={'pointer'} width={'8px'} height={'8px'} marginLeft={'5px'}
                                        onClick={(e) => {
                                            e.preventDefault()
@@ -263,8 +256,12 @@ export function HeaderSearch() {
                             {filteredPeoples && filteredPeoples.slice(0, 5).map((item: any, index: number) => (
                                 <Flex className={styles.headerSearchbarList} key={index} padding={'8px 12px'}
                                       cursor={'pointer'} borderRadius={'3px'} onClick={() => {
+                                    setSearchString('');
+                                    threadService.searchThread();
+                                    socketService.searchThreads(userDetails?.id, `${item.email}`);
                                     setPeopleArray(item);
-                                }}>
+                                }}
+                                >
                                     <Text color={'#374151'} fontSize={'13px'} fontWeight={'500'} width={'100%'}
                                           lineHeight={1}
                                           letterSpacing={'-0.13px'}>
