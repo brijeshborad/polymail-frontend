@@ -306,7 +306,7 @@ export function MessageBox(props: any) {
                       gap={4}
                       border={'1px solid #E5E7EB'} borderRadius={12} align={'center'}>
                     {messageIndex !== index &&
-                    <Flex align={'flex-start'} width={'100%'}>
+                    <Flex align={'flex-start'} width={'100%'} _hover={{backgroundColor: 'rgba(0, 0, 0, 0.02)'}}>
                         <Flex align={'center'} w={'100%'} gap={2} cursor={'pointer'} padding={4}
                               onClick={() => handleRowClick(messageIndex)}>
                             {/*<div className={styles.mailBoxUserImage}>*/}

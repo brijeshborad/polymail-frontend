@@ -243,6 +243,10 @@
     cursor: pointer;
 }
 
+.mailDetails:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
 .mailDetailsSelected {
     border-color: #76A2FF;
     box-shadow: 0 0 0 3px #e5e7eb;
