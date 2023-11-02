@@ -152,7 +152,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                             <Flex flexDir={'column'}>
                                 {props?.thread?.projects?.map((p, index) => {
                                     return (
-                                        <span key={index} style={{marginBottom: '5px'}} className='emoji'>
+                                        <span key={index} style={{marginBottom: props.thread!.projects!.length! - 1 === index ? 0 :'5px'}} className='emoji'>
                                         {p.emoji} {p.name}
                                     </span>
                                     )
