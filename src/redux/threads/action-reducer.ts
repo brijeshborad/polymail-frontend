@@ -31,6 +31,10 @@ const threadsSlice = createSlice({
         getAllThreadsSuccess: (state: InitialThreadStateType, {payload: {threads, fullPayload}}: PayloadAction<any>) => {
             // Sort threads by latestMessage DESC
             let currentThreads = current(state).threads;
+            let isThreadSearched = current(state).isThreadSearched;
+            if (isThreadSearched) {
+                return {...state};
+            }
             threads = extractAndMapThreadAndMessagesBody(threads, fullPayload.body.pagination, currentThreads);
             performSuccessActions(fullPayload, threads);
             return {...state, threads, isLoading: false, success: false}

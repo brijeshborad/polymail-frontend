@@ -56,6 +56,7 @@ export function HeaderSearch() {
     useEffect(() => {
         if (!isThreadSearched) {
             setSearchString('');
+            setPeopleArray(null);
         }
     }, [isThreadSearched]);
 

@@ -16,11 +16,17 @@ import {ArchiveIcon, DraftIcon, EditIcon, InboxIcon, SendIcon, StarIcon, TimeSno
 import {StateType} from "@/types";
 import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {getAllThreads} from "@/redux/threads/action-reducer";
 import dynamic from "next/dynamic";
 import {SmallCloseIcon, TriangleDownIcon} from "@chakra-ui/icons";
 import {MAILBOX_ARCHIVE, MAILBOX_INBOX, MAILBOX_SNOOZED, MAILBOX_STARRED, MAILBOX_TRASH} from "@/utils/constants";
-import {threadService, commonService, socketService, draftService, messageService} from "@/services";
+import {
+    threadService,
+    commonService,
+    socketService,
+    draftService,
+    messageService,
+    globalEventService
+} from "@/services";
 import Tooltip from "../common/Tooltip";
 import {createDraft} from "@/redux/draft/action-reducer";
 import {clearDebounce, debounce, makeCollabId} from "@/utils/common.functions";
@@ -103,20 +109,10 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
     }, [tab])
 
     const searchCancel = (callAPI: boolean = false) => {
-        threadService.cancelThreadSearch();
+        threadService.cancelThreadSearch(true);
         socketService.cancelThreadSearch(userDetails?.id);
         if (selectedAccount && selectedAccount.id && callAPI) {
-            dispatch(getAllThreads({
-                body: {
-                    mailbox: tabValue,
-                    ...(router.query.project ? {project: router.query.project as string}: {account: selectedAccount.id}),
-                    pagination: {
-                        cutoff: dayjs().add(5, "day").format('YYYY-MM-DD'),
-                        count: 100,
-                        page: 1
-                    }
-                }
-            }));
+            globalEventService.fireEvent('threads.refresh');
         }
     }
 
