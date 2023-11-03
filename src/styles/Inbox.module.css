@@ -1329,3 +1329,41 @@
     font-weight: 500;
     border-radius: 34px;
 }
+
+@media (min-width: 991px) and (max-width: 1431px) {
+    .mailListTabs .composeButton .composeButtonText {
+        display: none;
+    }
+
+    .mailListTabs .composeButton {
+        min-width: 1px;
+        width: fit-content;
+    }
+
+    .mailListTabs .composeButton span {
+        margin: 0;
+    }
+}
+
+
+@media (min-width: 992px) and (max-width: 1431px) {
+    .mailTabList .emailTabs .active .mailboxText {
+        display: none;
+    }
+
+    .mailTabList .tabListMoreButton {
+        min-width: 1px;
+        padding-left: 10px;
+    }
+
+    .mailTabList .tabListMoreButton span:first-child {
+        display: none;
+    }
+}
+
+@media (min-width: 991px) and (max-width: 1035px) {
+    .mailTabList .emailTabs > div {
+        padding: 9px;
+    }
+}
+

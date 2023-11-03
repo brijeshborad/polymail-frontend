@@ -269,8 +269,9 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                 onClick={() => changeEmailTabs('INBOX')}
                             >
                                 <InboxIcon/>
-                                <span>Inbox {countUnreadMessages > 0 &&
-                                <Badge>{countUnreadMessages}</Badge>}</span>
+                                <span className={styles.mailboxText}>Inbox</span>
+                                {countUnreadMessages > 0 &&
+                                <Badge>{countUnreadMessages}</Badge>}
                             </div>
                         </Tooltip>
                     </Tab>
@@ -281,7 +282,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                 onClick={() => changeEmailTabs('SENT')}
                             >
                                 <SendIcon/>
-                                <span>Sent</span>
+                                <span className={styles.mailboxText}>Sent</span>
                             </div>
                         </Tooltip>
                     </Tab>
@@ -294,7 +295,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                 onClick={() => changeEmailTabs('SNOOZED')}
                             >
                                 <TimeSnoozeIcon/>
-                                <span>Snoozed</span>
+                                <span className={styles.mailboxText}>Snoozed</span>
                             </div>
                         </Tooltip>
                     </Tab>
@@ -308,7 +309,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                 onClick={() => changeEmailTabs('STARRED')}
                             >
                                 <StarIcon/>
-                                <span>Starred</span>
+                                <span className={styles.mailboxText}>Starred</span>
                             </div>
                         </Tooltip>
                     </Tab>
@@ -323,7 +324,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                 onClick={() => changeEmailTabs('TRASH')}
                             >
                                 <TrashIcon/>
-                                <span>Trash</span>
+                                <span className={styles.mailboxText}>Trash</span>
                             </div>
                         </Tooltip>
                     </Tab>
@@ -337,7 +338,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                 onClick={() => changeEmailTabs('ARCHIVE')}
                             >
                                 <ArchiveIcon/>
-                                <span>Archive</span>
+                                <span className={styles.mailboxText}>Archive</span>
                             </div>
                         </Tooltip>
                     </Tab>
@@ -352,7 +353,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                 onClick={() => changeEmailTabs('DRAFT')}
                             >
                                 <DraftIcon/>
-                                <span>Draft</span>
+                                <span className={styles.mailboxText}>Draft</span>
                             </div>
                         </Tooltip>
                     </Tab>
@@ -427,14 +428,16 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                         </MenuList>
                     </Menu>
                 </TabList>
-                <Button
-                    className={styles.composeButton} borderRadius={8} height={'auto'} padding={'10px'}
-                    minWidth={'101px'} backgroundColor={'#FFFFFF'} color={'#374151'} borderColor={'#E5E7EB'}
-                    leftIcon={<EditIcon/>} colorScheme='blue' variant='outline'
-                    onClick={() => openComposeModel()}
-                >
-                    Compose
-                </Button>
+                <Tooltip label={'Compose'} placement={'bottom'} customClass={'text-tooltip'}>
+                    <Button
+                        className={styles.composeButton} borderRadius={8} height={'auto'} padding={'10px'}
+                        minWidth={'101px'} backgroundColor={'#FFFFFF'} color={'#374151'} borderColor={'#E5E7EB'}
+                        leftIcon={<EditIcon/>} colorScheme='blue' variant='outline'
+                        onClick={() => openComposeModel()}
+                    >
+                        <span className={styles.composeButtonText}>Compose</span>
+                    </Button>
+                </Tooltip>
             </Flex>
         )
     }

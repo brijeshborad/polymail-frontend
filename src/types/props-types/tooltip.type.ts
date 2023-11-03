@@ -7,4 +7,5 @@ export declare type TooltipProps = {
   isOpenEvent?: boolean
   customeOpenHandelEvent?: boolean
   closeOnClick?: string
+  customClass?: string
 }

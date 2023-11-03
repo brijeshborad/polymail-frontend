@@ -7,10 +7,12 @@ export default function Tooltip({
                                     label,
                                     placement = 'bottom',
                                     children,
-                                    closeOnClick
+                                    closeOnClick,
+                                    customClass
                                 }: TooltipProps) {
     return (
         <ChakraTooltip
+            className={customClass || ''}
             label={label}
             placement={placement}
             bg='#000' color='#fff'

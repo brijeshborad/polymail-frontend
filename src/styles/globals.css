@@ -654,15 +654,15 @@ div:has(> .mailSendToaster) {
     pointer-events: none;
 }
 
-.tiptap-container{
-  transition: all 1s ease-in-out;
+.tiptap-container {
+    transition: all 1s ease-in-out;
 }
 
-.compose-editor .tiptap-container{
+.compose-editor .tiptap-container {
     width: 100%;
     display: flex;
     flex: 1;
-  transition: all 1s ease-in-out;
+    transition: all 1s ease-in-out;
 }
 
 .compose-editor .tiptap-container > div {
@@ -674,8 +674,8 @@ div:has(> .mailSendToaster) {
     width: 100%;
 }
 
-.tiptap-container.compose-view{
-  flex: 1;
+.tiptap-container.compose-view {
+    flex: 1;
     cursor: text;
 }
 
@@ -711,46 +711,48 @@ div:has(> .mailSendToaster) {
 
 /* Give a remote user a caret */
 .collaboration-cursor__caret {
-  content: "x";
-  width: 1px;
-  height: 18px;
-  border-left: 1px solid #0d0d0d;
-  border-right: 1px solid #0d0d0d;
-  margin-top: 0px;
-  margin-left: -1px;
-  margin-right: -1px;
-  pointer-events: none;
-  position: absolute;
-  word-break: normal;
-  z-index: 10000;
+    content: "x";
+    width: 1px;
+    height: 18px;
+    border-left: 1px solid #0d0d0d;
+    border-right: 1px solid #0d0d0d;
+    margin-top: 0px;
+    margin-left: -1px;
+    margin-right: -1px;
+    pointer-events: none;
+    position: absolute;
+    word-break: normal;
+    z-index: 10000;
 }
 
 /* Render the username above the caret */
 .collaboration-cursor__label {
-  border-radius: 3px 3px 3px 0;
-  color: #0d0d0d;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 600;
-  left: -1px;
-  line-height: normal;
-  padding: 0.1rem 0.3rem;
-  position: absolute;
-  top: -1.3em;
-  user-select: none;
-  white-space: nowrap;
-  z-index: 10000;
+    border-radius: 3px 3px 3px 0;
+    color: #0d0d0d;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 600;
+    left: -1px;
+    line-height: normal;
+    padding: 0.1rem 0.3rem;
+    position: absolute;
+    top: -1.3em;
+    user-select: none;
+    white-space: nowrap;
+    z-index: 10000;
 }
 
 .email-signature.rdw-editor-wrapper .rdw-editor-toolbar .rdw-option-wrapper {
     width: 24px;
     height: 24px;
 }
+
 .rdw-editor-wrapper .rdw-link-decorator-wrapper a {
     color: rgb(0, 0, 238);
     text-decoration: underline;
     cursor: pointer;
 }
+
 .rdw-editor-wrapper .rdw-link-decorator-wrapper img {
     display: none;
 }
@@ -762,7 +764,7 @@ div:has(> .mailSendToaster) {
 }
 
 .email-signature.rdw-editor-wrapper .rdw-editor-toolbar .rdw-list-wrapper {
-    border-right: 1px solid rgba(8,22,47,.1);
+    border-right: 1px solid rgba(8, 22, 47, .1);
     padding-right: 8px;
 }
 
@@ -820,8 +822,8 @@ div:has(> .mailSendToaster) {
 }
 
 .emoji-popover {
-  background-color: white;
-  z-index: 10 !important;
+    background-color: white;
+    z-index: 10 !important;
 }
 
 .emoji-popover.chakra-popover__content {
@@ -837,14 +839,14 @@ div:has(> .mailSendToaster) {
 }
 
 .tiptap-toolbar {
-  opacity: 0;
-  background-color: #fff;
-  transition: all 1s ease-in-out;
+    opacity: 0;
+    background-color: #fff;
+    transition: all 1s ease-in-out;
 }
 
-.tiptap-toolbar.show{
-  opacity: 1;
-  transition: all 1s ease-in-out;
+.tiptap-toolbar.show {
+    opacity: 1;
+    transition: all 1s ease-in-out;
     cursor: auto;
 }
 
@@ -857,30 +859,36 @@ div:has(> .mailSendToaster) {
     background-color: rgba(32, 33, 36, 0.1);
 }
 
-.archive-button-icon:hover path{
-  opacity: 1;
-  stroke: #00A88E;
+.archive-button-icon:hover path {
+    opacity: 1;
+    stroke: #00A88E;
 }
-.trash-button-icon:hover path{
-  stroke: #A62700;
+
+.trash-button-icon:hover path {
+    stroke: #A62700;
 }
-.starred-button-icon:hover path{
-  stroke: #f7ff00;
+
+.starred-button-icon:hover path {
+    stroke: #f7ff00;
 }
+
 .starred-button-icon.active svg {
     fill: #f7ff00;
     stroke: #f7ff00;
 }
-.snooze-button-icon:hover svg{
-  stroke: #918F1F;
+
+.snooze-button-icon:hover svg {
+    stroke: #918F1F;
 }
+
 .snooze-button-icon.disable {
     opacity: 0.4;
     cursor: not-allowed !important;
     box-shadow: var(--chakra-shadows-none);
 }
-.inbox-button-icon:hover svg{
-  stroke: #0556FF !important;
+
+.inbox-button-icon:hover svg {
+    stroke: #0556FF !important;
 }
 
 /* .prosemirror-dropcursor-inline{
@@ -937,113 +945,115 @@ div:has(> .mailSendToaster) {
 }
 
 .link-preview-thumbnail {
-  position: absolute;
-  background-color: #000;
-  color: #fff;
-  width: 160px;
-  z-index: 999999 !important;
-  border-radius: 12px;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4);
+    position: absolute;
+    background-color: #000;
+    color: #fff;
+    width: 160px;
+    z-index: 999999 !important;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4);
 }
 
-.link-preview-thumbnail .data{
-  display: flex;
-  flex-direction: column;
+.link-preview-thumbnail .data {
+    display: flex;
+    flex-direction: column;
 }
 
-.link-preview-thumbnail.bottom .data{
-  flex-direction: column-reverse;
+.link-preview-thumbnail.bottom .data {
+    flex-direction: column-reverse;
 }
 
-.link-preview-thumbnail.bottom .data .img{
-  border-radius: 0px 0px 12px 12px ;
+.link-preview-thumbnail.bottom .data .img {
+    border-radius: 0px 0px 12px 12px;
 }
 
 .link-preview-thumbnail .img {
-  width: 100%;
-  max-height: 100px;
-  border-radius: 12px 12px 0px 0px;
-  overflow: hidden;
+    width: 100%;
+    max-height: 100px;
+    border-radius: 12px 12px 0px 0px;
+    overflow: hidden;
 }
 
 .link-preview-thumbnail .info {
-  width: 100%;
-  padding: 8px 8px;
+    width: 100%;
+    padding: 8px 8px;
 }
+
 .link-preview-thumbnail .title {
-  font-size: 12px;
-  font-weight: 600;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-  margin-right: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    margin-right: 8px;
 }
 
 .link-preview-thumbnail .description {
-  font-size: 10px;
-  max-height: 16px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  margin-right: 8px;
+    font-size: 10px;
+    max-height: 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-right: 8px;
 }
 
 .link-preview-thumbnail .url {
-  font-size: 10px;
-  color: #A9AAA9;
-  max-height: 16px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  margin-right: 8px;
+    font-size: 10px;
+    color: #A9AAA9;
+    max-height: 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-right: 8px;
 }
 
 .link-preview-thumbnail .arrow-container {
-  position: relative;
+    position: relative;
 }
+
 .link-preview-thumbnail .arrow {
-  content: "";
-  position: absolute;
-  bottom: -15px;
-  margin-left: 18px;
-  border-width: 8px;
-  border-style: solid;
-  border-color: black transparent transparent transparent;
+    content: "";
+    position: absolute;
+    bottom: -15px;
+    margin-left: 18px;
+    border-width: 8px;
+    border-style: solid;
+    border-color: black transparent transparent transparent;
 }
 
 .link-preview-thumbnail.bottom .arrow {
-  top: -15px;
-  bottom: auto;
-  border-color: transparent transparent black transparent;
+    top: -15px;
+    bottom: auto;
+    border-color: transparent transparent black transparent;
 }
 
 .thread-emojis .emoji {
-  min-width: 24px;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  overflow: hidden;
-  text-align: center;
+    min-width: 24px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    overflow: hidden;
+    text-align: center;
 }
 
 .thread-emojis .emoji + .emoji {
-  margin-left: -6px;
+    margin-left: -6px;
 }
 
 .emoji-dropdown {
-  background-color: #fff !important;
+    background-color: #fff !important;
 }
 
-.emoji-dropdown .icon{
-  display: none;
+.emoji-dropdown .icon {
+    display: none;
 }
 
 .emoji-dropdown:hover {
-  background-color: #F6F6F6 !important;
+    background-color: #F6F6F6 !important;
 }
 
-.emoji-dropdown:hover .icon{
-  display: block;
+.emoji-dropdown:hover .icon {
+    display: block;
 }
 
 .emoji-popover .emoji-search-group svg {
@@ -1055,7 +1065,7 @@ div:has(> .mailSendToaster) {
 .emoji-popover .emoji-search-group input {
     /*background-color:#F3F4F6;*/
     /*height:auto;*/
-    font-size:14px;
+    font-size: 14px;
     padding: 3px 16px 3px 30px;
     /*border-radius: 50px;*/
 }
@@ -1073,4 +1083,14 @@ div:has(> .mailSendToaster) {
     width: 20px;
     height: 20px;
     margin: 0;
+}
+
+.text-tooltip {
+    display: none;
+}
+
+@media (min-width: 991px) and (max-width: 1431px) {
+    .text-tooltip {
+        display: block;
+    }
 }
