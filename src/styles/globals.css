@@ -322,9 +322,9 @@ div:has(> .mailSendToaster) {
 }
 
 .member-images.subheader-images .member-photo {
-    min-width: 18px;
-    width: 18px;
-    height: 18px;
+    min-width: 16px;
+    width: 16px;
+    height: 16px;
     display: flex;
     align-items: center;
     font-size: 9px;
