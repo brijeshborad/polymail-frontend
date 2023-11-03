@@ -192,10 +192,10 @@ export function ThreadsSideBarTab(props: TabProps) {
                     }
                 });
             }
-            if (newMessage.name === 'ThreadUpdated') {
-                console.log('---NEW EVENT', newMessage);
-                threadService.threadUpdated(newMessage.data.thread, tabName);
-            }
+            // if (newMessage.name === 'ThreadUpdated') {
+            //     console.log('---NEW EVENT', newMessage);
+            //     threadService.threadUpdated(newMessage.data.thread, tabName);
+            // }
             if (newMessage.name === 'Activity' && newMessage.data.Type === 'MemberJoined') {
                 if (tabName === 'projects') {
                     getAllThread();
