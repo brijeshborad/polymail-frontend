@@ -4,10 +4,9 @@ import {batchUpdateThreads, updateThreads, updateThreadState} from "@/redux/thre
 import {BaseService} from "@/services/base.service";
 import {draftService} from "@/services/draft.service";
 import {
-    MAILBOX_ARCHIVE,
-    MAILBOX_DRAFT, MAILBOX_INBOX,
+    MAILBOX_DRAFT,
     MAILBOX_SENT,
-    MAILBOX_SNOOZED, MAILBOX_STARRED, MAILBOX_TRASH,
+    MAILBOX_SNOOZED, MAILBOX_STARRED,
     MAILBOX_UNREAD
 } from "@/utils/constants";
 import {generateToasterId} from "@/utils/common.functions";
