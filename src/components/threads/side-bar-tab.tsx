@@ -19,10 +19,9 @@ import {
     socketService,
     threadService
 } from "@/services";
-import {Message, Thread} from "@/models";
+import {Thread} from "@/models";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import {performMessagesUpdate} from "@/utils/thread.functions";
 import {clearDebounce, debounce} from "@/utils/common.functions";
 import {INFINITE_LIST_PER_COUNT} from "@/utils/constants";
 
@@ -192,6 +191,10 @@ export function ThreadsSideBarTab(props: TabProps) {
                         }
                     }
                 });
+            }
+            if (newMessage.name === 'ThreadUpdated') {
+                console.log('---NEW EVENT', newMessage);
+                threadService.threadUpdated(newMessage.data.thread, tabName);
             }
             if (newMessage.name === 'Activity' && newMessage.data.Type === 'MemberJoined') {
                 if (tabName === 'projects') {
