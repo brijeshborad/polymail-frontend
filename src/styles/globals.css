@@ -878,7 +878,7 @@ div:has(> .mailSendToaster) {
 }
 
 .snooze-button-icon:hover svg {
-    stroke: #918F1F;
+    stroke: #640064;
 }
 
 .snooze-button-icon.disable {
