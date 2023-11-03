@@ -1,4 +1,4 @@
-import {Badge, Box, Drawer, DrawerContent, Flex, Text, useDisclosure} from '@chakra-ui/react';
+import {Badge, Box, Flex, Slide, Text, useDisclosure, useOutsideClick} from '@chakra-ui/react';
 import styles from '@/styles/Home.module.css';
 import React, {useEffect, useState} from 'react';
 import {EnergyIcon} from '@/icons';
@@ -19,7 +19,7 @@ const FeedComponent = dynamic(
 )
 
 export const FeedSidebar = () => {
-    const {isOpen, onOpen, onClose} = useDisclosure();
+    const {isOpen, onToggle} = useDisclosure();
     // const [selectedMenu, setSelectedMenu] = React.useState('Disney Launch');
     const btnRef = React.useRef(null);
     const {newMessage} = useSelector((state: StateType) => state.socket);
@@ -29,6 +29,11 @@ export const FeedSidebar = () => {
     const [feeds, setFeeds] = useState<ActivityFeed[]>([]);
     const [unreadCount, setUnreadCount] = useState<number>(0);
     const [lastActiveRead, setLastActivityRead] = useState<number>(0);
+    useOutsideClick({
+        ref: btnRef,
+        handler: () => isOpen ? onToggle() : null,
+    })
+
 
     useEffect(() => {
         if (newMessage && newMessage.name === 'Activity') {
@@ -73,14 +78,14 @@ export const FeedSidebar = () => {
         if (activityFeed && activityFeed.length > 0 && userDetails) {
             setFeeds([...activityFeed.map(item => {
                 let finalItem = {...item};
-                finalItem.username = userDetails && userDetails.id === item.userId ? 'You': item.username;
+                finalItem.username = userDetails && userDetails.id === item.userId ? 'You' : item.username;
                 finalItem.isRead = userDetails ? !dayjs(item.created).isAfter(dayjs(userDetails.activitiesRead)) : false;
                 return finalItem
             })]);
         }
     }, [activityFeed, userDetails]);
 
-    function getLastActivityFeed () {
+    function getLastActivityFeed() {
         let findLastActivityIndex = feeds.sort((a, b) => {
             if (dayjs(b.created!).isBefore(dayjs(a.created))) {
                 return -1
@@ -117,7 +122,7 @@ export const FeedSidebar = () => {
                 <Flex align={'center'} cursor={'pointer'} justify={'center'}
                       className={`${styles.notificationIcon} ${unreadCount > 0 ? styles.notificationIconUnRead : ''}`}
                       onClick={() => {
-                          onOpen();
+                          onToggle();
                           getLastActivityFeed();
                           markAllAsRead();
                       }}>
@@ -125,85 +130,91 @@ export const FeedSidebar = () => {
                     {unreadCount > 0 ? (<Badge>{unreadCount}</Badge>) : null}
                 </Flex>
             </Tooltip>
-            <Drawer isOpen={isOpen} placement="right" onClose={() => {
-                onClose();
-                setLastActivityRead(0)
-            }} finalFocusRef={btnRef}>
+            <Slide in={isOpen} direction="right"
+                   style={{
+                       zIndex: 10, maxWidth: '20rem', maxHeight: '100vh', background: '#ffffff',
+                       boxShadow: 'var(--chakra-shadows-lg)', transition: 'all .05s'
+                   }} ref={btnRef}>
                 {/* <DrawerOverlay /> */}
-
-                <DrawerContent>
-                    <Box borderLeft="1px solid #F3F4F6" maxH="100vh" overflowY={'scroll'}>
-                        {/* Header */}
-                        <Box height="65px" borderBottom="1px solid #F3F4F6" padding="12px 16px" display="flex"
-                             justifyContent="space-between" alignItems="center" position={'sticky'} top={0}
-                             background={'#fff'}>
-                            <Box
-                                onClick={() => {
-                                    onClose();
-                                    setLastActivityRead(0)
-                                }}
-                                height="20px"
-                                width="61px"
-                                borderRadius="34px"
-                                backgroundColor=" var(--alias-bg-subtle)"
-                                display="flex"
-                                justifyContent="center"
-                                alignItems="center"
-                                cursor="pointer">
-                                <CloseIcon color="#6B7280" boxSize={2}/>
-                                <Text fontSize="12px" ms="3px">
-                                    Close
-                                </Text>
-                            </Box>
-
-                            <Flex align={'center'} justify={'center'}>
-                                <Text fontStyle="bold">Updates</Text>
-                            </Flex>
+                <Box borderLeft="1px solid #F3F4F6" maxH="100vh" overflowY={'scroll'}>
+                    {/* Header */}
+                    <Box height="65px" borderBottom="1px solid #F3F4F6" padding="12px 16px" display="flex"
+                         justifyContent="space-between" alignItems="center" position={'sticky'} top={0}
+                         background={'#fff'}>
+                        <Box
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                onToggle();
+                                setLastActivityRead(-1)
+                            }}
+                            height="20px"
+                            width="61px"
+                            borderRadius="34px"
+                            backgroundColor=" var(--alias-bg-subtle)"
+                            display="flex"
+                            justifyContent="center"
+                            alignItems="center"
+                            cursor="pointer">
+                            <CloseIcon color="#6B7280" boxSize={2}/>
+                            <Text fontSize="12px" ms="3px">
+                                Close
+                            </Text>
                         </Box>
-                        {/* Content */}
-                        {/*<Box margin="12px 16px" mb="6px" height="36px" display={'flex'}*/}
-                        {/*     backgroundColor=" var(--alias-bg-subtle)" borderRadius="6px">*/}
-                        {/*    {['Disney Launch', 'Everything'].map(item => (*/}
-                        {/*        <Box*/}
-                        {/*            key={item}*/}
-                        {/*            onClick={() => setSelectedMenu(item)}*/}
-                        {/*            color={item === selectedMenu ? 'black' : '#6B7280'}*/}
-                        {/*            width="50%"*/}
-                        {/*            alignItems={'center'}*/}
-                        {/*            display="flex"*/}
-                        {/*            justifyContent="center"*/}
-                        {/*            backgroundColor={item === selectedMenu ? 'white' : 'var(--alias-bg-subtle)'}*/}
-                        {/*            borderRadius="6px"*/}
-                        {/*            cursor="pointer"*/}
-                        {/*            margin="2px">*/}
-                        {/*            <Text fontSize="13px">{item}</Text>*/}
-                        {/*        </Box>*/}
-                        {/*    ))}*/}
-                        {/*</Box>*/}
 
-                        <Box padding="12px 16px">
-                            {feeds
-                                .sort((a, b) => {
-                                    if (dayjs(b.created!).isBefore(dayjs(a.created))) {
-                                        return -1
-                                    }
-                                    return 0
-                                })
-                                .map((t: ActivityFeed, index: number) => {
-                                    return (
-                                        <React.Fragment key={index}>
-                                            <FeedComponent feedData={t} close={onClose}
-                                                           markFeedAsRead={() => markFeedAsRead(index)}/>
-                                            {(lastActiveRead === index) &&
-                                            <Text marginBottom={'8px'} fontSize={'13px'} color={'red'} display={'flex'} alignItems={'center'}>New
-                                                <hr style={{width: '100%', marginLeft: '5px', borderColor: 'red', marginTop: '3px'}}/></Text>}
-                                        </React.Fragment>
-                                    )
-                                })}
-                        </Box>
+                        <Flex align={'center'} justify={'center'}>
+                            <Text fontStyle="bold" fontSize={'14px'}>Updates</Text>
+                        </Flex>
                     </Box>
-                </DrawerContent>
-            </Drawer>
+                    {/* Content */}
+                    {/*<Box margin="12px 16px" mb="6px" height="36px" display={'flex'}*/}
+                    {/*     backgroundColor=" var(--alias-bg-subtle)" borderRadius="6px">*/}
+                    {/*    {['Disney Launch', 'Everything'].map(item => (*/}
+                    {/*        <Box*/}
+                    {/*            key={item}*/}
+                    {/*            onClick={() => setSelectedMenu(item)}*/}
+                    {/*            color={item === selectedMenu ? 'black' : '#6B7280'}*/}
+                    {/*            width="50%"*/}
+                    {/*            alignItems={'center'}*/}
+                    {/*            display="flex"*/}
+                    {/*            justifyContent="center"*/}
+                    {/*            backgroundColor={item === selectedMenu ? 'white' : 'var(--alias-bg-subtle)'}*/}
+                    {/*            borderRadius="6px"*/}
+                    {/*            cursor="pointer"*/}
+                    {/*            margin="2px">*/}
+                    {/*            <Text fontSize="13px">{item}</Text>*/}
+                    {/*        </Box>*/}
+                    {/*    ))}*/}
+                    {/*</Box>*/}
+
+                    <Box padding="12px 16px">
+                        {feeds
+                            .sort((a, b) => {
+                                if (dayjs(b.created!).isBefore(dayjs(a.created))) {
+                                    return -1
+                                }
+                                return 0
+                            })
+                            .map((t: ActivityFeed, index: number) => {
+                                return (
+                                    <React.Fragment key={index}>
+                                        <FeedComponent feedData={t} close={onToggle}
+                                                       markFeedAsRead={() => markFeedAsRead(index)}/>
+                                        {(lastActiveRead === index) &&
+                                        <Text marginBottom={'8px'} fontSize={'13px'} color={'red'} display={'flex'}
+                                              alignItems={'center'}>New
+                                            <hr style={{
+                                                width: '100%',
+                                                marginLeft: '5px',
+                                                borderColor: 'red',
+                                                marginTop: '3px'
+                                            }}/></Text>}
+                                    </React.Fragment>
+                                )
+                            })}
+                    </Box>
+                </Box>
+            </Slide>
         </>
     );
 };
