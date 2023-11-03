@@ -227,9 +227,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                 <MenuItem
                                     onClick={() => moveThreadToMailBoxes(MAILBOX_INBOX)}><InboxIcon/> Move to
                                     Inbox</MenuItem>
-                                <MenuItem
-                                    onClick={() => moveThreadToMailBoxes(MAILBOX_ARCHIVE)}><ArchiveIcon/> Move to
-                                    Archive</MenuItem>
+
                                 <div className={styles.tabListSnoozeButton}>
                                     <MessageSchedule
                                         isSnooze={true}
@@ -242,6 +240,9 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                 <MenuItem
                                     onClick={() => moveThreadToMailBoxes(MAILBOX_TRASH)}><TrashIcon/> Move to
                                     Trash</MenuItem>
+                                <MenuItem
+                                    onClick={() => moveThreadToMailBoxes(MAILBOX_ARCHIVE)}><ArchiveIcon/> Move to
+                                    Archive</MenuItem>
                             </MenuList>
                         </Menu>
 
