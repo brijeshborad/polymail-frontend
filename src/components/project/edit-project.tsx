@@ -1,6 +1,11 @@
 import withAuth from "@/components/auth/withAuth";
 import {EmojiMenu, Toaster} from "@/components/common";
-import {editProjects, getProjectMembers, getProjectMembersInvites, updateProjectMemberRole} from "@/redux/projects/action-reducer";
+import {
+    editProjects,
+    getProjectMembers,
+    getProjectMembersInvites,
+    updateProjectMemberRole
+} from "@/redux/projects/action-reducer";
 import styles from "@/styles/project.module.css";
 import {StateType} from "@/types";
 import {PROJECT_ROLES} from "@/utils/constants";
@@ -22,6 +27,8 @@ import {useDispatch, useSelector} from "react-redux";
 import {commonService, projectService} from "@/services";
 import {addItemToGroup, deleteMemberFromProject, deleteMemberShipFromProject} from "@/redux/memberships/action-reducer";
 import RemoveRecordModal from "@/components/common/delete-record-modal";
+import {AutoComplete} from "@/components/common/auto-complete";
+import {InviteMember, TeamMember} from "@/models";
 
 
 function EditProject() {
@@ -29,21 +36,29 @@ function EditProject() {
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {showEditProjectModal, passThroughProject} = useSelector((state: StateType) => state.commonApis);
     const [projectName, setProjectName] = useState<string>('');
-    const [membersInputs, setMembersInput] = useState<{ input: string; role: string; memberArray: Array<{ item?: string; memberRole?: string }> }>({
+    const [membersInputs, setMembersInput] = useState<{ input: string; role: string }>({
         input: '',
-        role: 'member',
-        memberArray: []
+        role: 'member'
     });
     const [projectEmoji, setProjectEmoji] = useState<string>('');
 
-    const {editProjectSuccess, invitees, members} = useSelector((state: StateType) => state.projects);
+    const {
+        editProjectSuccess,
+        invitees: invitessFromApi,
+        members: membersFromApi
+    } = useSelector((state: StateType) => state.projects);
     const {isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose} = useDisclosure()
     const [selectedMember, setSelectedMember] = useState<any>(null);
+    const [members, setMembers] = useState<TeamMember[]>([]);
+    const [invitees, setInvitees] = useState<InviteMember[]>([]);
+    const [autoCompleteOpen, setAutoCompleteOpen] = useState<boolean>(false);
 
     useEffect(() => {
         if (passThroughProject) {
             setProjectName(passThroughProject.name || '');
             setProjectEmoji(passThroughProject.emoji || '');
+            setMembers(passThroughProject.accounts || []);
+            setInvitees(passThroughProject.invites || []);
         }
     }, [passThroughProject])
 
@@ -59,7 +74,6 @@ function EditProject() {
         if (editProjectSuccess) {
             projectService.setProjectState({editProjectSuccess: false})
             commonService.toggleEditProjectModel(false, false);
-
         }
     }, [editProjectSuccess])
 
@@ -91,37 +105,39 @@ function EditProject() {
     }
 
     useEffect(() => {
-        if (passThroughProject?.id) {
-            dispatch(getProjectMembersInvites({body: {projectId: passThroughProject?.id}}));
-            dispatch(getProjectMembers({ body: {
-                    projectId: passThroughProject?.id
-                }
-            }));
+        if (invitessFromApi) {
+            setInvitees(invitessFromApi);
+        }
+        if (membersFromApi) {
+            setMembers(membersFromApi);
+        }
+    }, [invitessFromApi, membersFromApi])
+
+    useEffect(() => {
+        if (passThroughProject && passThroughProject?.id) {
+            if (!passThroughProject.accounts || passThroughProject.accounts.length <= 0) {
+                dispatch(getProjectMembersInvites({body: {projectId: passThroughProject?.id}}));
+            }
+            if (!passThroughProject.invites || passThroughProject.invites.length <= 0) {
+                dispatch(getProjectMembers({
+                    body: {
+                        projectId: passThroughProject?.id
+                    }
+                }));
+            }
         }
         setMembersInput({
             input: '',
-            role: 'member',
-            memberArray: []
+            role: 'member'
         });
-    }, [passThroughProject?.id])
+    }, [dispatch, passThroughProject])
 
     const addNewMembers = () => {
         if (!membersInputs.input) {
             Toaster({desc: 'Please add member\'s email', title: 'Add member\'s email required!', type: 'error'})
             return;
         }
-        setMembersInput(prevState => ({
-                ...prevState,
-                memberArray: [
-                    {
-                        item: membersInputs.input,
-                        memberRole: membersInputs.role
-                    },
-                    ...prevState.memberArray,
-                ],
-                input: '',
-            })
-        )
+        setMembersInput({role: 'member', input: ''})
         if (selectedAccount && selectedAccount.email && passThroughProject && passThroughProject.id) {
             let reqBody = {
                 fromEmail: selectedAccount.email,
@@ -131,41 +147,23 @@ function EditProject() {
                 groupId: passThroughProject?.id
             }
 
-                dispatch(addItemToGroup({
-                    toaster: {
-                        success: {
-                            title: 'Member added successfully',
-                            desc: passThroughProject?.name || '',
-                            type: 'success'
-                        }
-                    },
-                    body: reqBody
-                }))
-            dispatch(getProjectMembersInvites({body: {projectId: passThroughProject.id}}));
+            dispatch(addItemToGroup({
+                toaster: {
+                    success: {
+                        title: 'Member added successfully',
+                        desc: passThroughProject?.name || '',
+                        type: 'success'
+                    }
+                },
+                body: reqBody,
+                afterSuccessAction: (invite: any) => {
+                    projectService.addOrUpdateProjectMemberOrInvites('add', 'invite', invite[0], passThroughProject);
+                }
+            }))
         }
     }
 
-    const handleItemDelete = (item: string) => {
-        setMembersInput((prevState) => ({
-            ...prevState,
-            memberArray: prevState.memberArray?.filter(i => i.item !== item),
-        }));
-    };
-
     const updateProjectMemberRoleData = (role: string, memberEmail: any) => {
-        const updatedMemberArray = membersInputs.memberArray?.map((member) => {
-            if (member.item === memberEmail.item) {
-                return {...member, memberRole: role};
-            }
-            return member;
-        });
-
-
-        setMembersInput({
-            ...membersInputs,
-            memberArray: updatedMemberArray,
-        });
-
         if (passThroughProject && passThroughProject.id && memberEmail && memberEmail.id) {
             let body = {
                 role: role
@@ -188,6 +186,7 @@ function EditProject() {
     const removeMemberFromProject = () => {
         if (selectedMember) {
             if (selectedMember?.invite) {
+                projectService.addOrUpdateProjectMemberOrInvites('delete', 'invite', selectedMember, passThroughProject);
                 dispatch(deleteMemberShipFromProject({
                     body: {id: selectedMember.id}, toaster: {
                         success: {
@@ -199,6 +198,7 @@ function EditProject() {
                 }));
             } else {
                 if (passThroughProject && passThroughProject.id && selectedMember?.id) {
+                    projectService.addOrUpdateProjectMemberOrInvites('delete', 'member', selectedMember, passThroughProject);
                     dispatch(deleteMemberFromProject({
                         body: {id: passThroughProject.id, accountId: selectedMember.id}, toaster: {
                             success: {
@@ -216,7 +216,8 @@ function EditProject() {
 
 
     return (
-        <Modal isOpen={!!showEditProjectModal} onClose={() => commonService.toggleEditProjectModel(false, false)} isCentered>
+        <Modal isOpen={!!showEditProjectModal} onClose={() => commonService.toggleEditProjectModel(false, false)}
+               isCentered>
             <ModalOverlay backgroundColor={'rgba(229, 231, 235, 0.50)'} backdropFilter={'blur(16px)'}/>
             <ModalContent maxWidth={'480px'} borderRadius={'12px'} className={styles.projectMemberModal}>
                 <ModalHeader padding={'12px 14px'} fontSize={'13px'} color={'#374151'}
@@ -255,7 +256,7 @@ function EditProject() {
                                         ))}
                                     </Grid> */}
 
-                                    <EmojiMenu onChange={emojiChange} />
+                                    <EmojiMenu onChange={emojiChange}/>
                                 </MenuList>
                             </Menu>
 
@@ -272,14 +273,20 @@ function EditProject() {
                                 <Flex align={'center'} position={"relative"} borderRadius={'8px'}
                                       padding={'10px 10px 10px 16px'} width={'100%'} backgroundColor={'#ffffff'}
                                       border={'1px solid #E5E7EB'}>
-                                    <Input p={0} h={'auto'} borderRadius={0} fontSize={'13px'} lineHeight={1}
-                                           letterSpacing={'-0.13px'} border={0} placeholder='Name or email address'
-                                           size='md'
-                                           value={membersInputs.input}
-                                           onChange={(e) => {
-                                               membersInputs.input = e.target.value;
-                                               setMembersInput({...membersInputs})
-                                           }}/>
+                                    <AutoComplete value={membersInputs.input} placeholder={`Name or email address`}
+                                                  openAutoComplete={autoCompleteOpen}
+                                                  handleChange={(e) => {
+                                                      setAutoCompleteOpen(true)
+                                                      membersInputs.input = e.target.value;
+                                                      setMembersInput({...membersInputs})
+                                                  }}
+                                                  handleKeyDown={() => null}
+                                                  handlePaste={() => null}
+                                                  handleAutoCompleteSelect={(e) => {
+                                                      setAutoCompleteOpen(false)
+                                                      membersInputs.input = e.email;
+                                                      setMembersInput({...membersInputs})
+                                                  }}/>
                                     <Menu isLazy>
                                         <MenuButton className={styles.memberRoleDropDown} minWidth={'65px'}
                                                     fontSize={'12px'} lineHeight={1}
@@ -306,126 +313,109 @@ function EditProject() {
                             </Flex>
                         </div>
                         <Flex direction={'column'} className={styles.manageMemberDropDown}>
-                            {membersInputs.memberArray && !!membersInputs.memberArray.length && membersInputs.memberArray.map((member, index) => (
-                              <Flex justify={'space-between'} align={'center'} pr={3} key={index} className={styles.projectMember}>
-                                  <Flex align={'center'} gap={3} color={'#0A101D'} fontSize={'13px'} padding={'8px 12px'}
-                                        letterSpacing={'-0.13px'}>
-                                      <div className={styles.imgWrapper}>
-                                          <Image src="/image/user.png" width="36" height="36" alt=""/>
-                                      </div>
-                                      {member.item}
-                                  </Flex>
-                                  <Flex align={'center'} gap={1}>
-                                      <Menu>
-                                          <MenuButton className={styles.memberDropDown} fontSize={'12px'}
-                                                      color={'#374151'} textTransform={'capitalize'} fontWeight={500}
-                                                      backgroundColor={'#FFFFFF'} h={'auto'} p={'5px 10px'}
-                                                      border={'1px solid #D1D5DB'} borderRadius={'50px'}
-                                                      as={Button} rightIcon={<TriangleDownIcon/>}>
-                                              {member.memberRole}
-                                          </MenuButton>
-                                          <MenuList className={`drop-down-list`}>
-                                              {PROJECT_ROLES.map((role, roleIndex) => {
-                                                  return <MenuItem
-                                                    onClick={() => updateProjectMemberRoleData(role, member)}
-                                                    textTransform={'capitalize'} key={roleIndex}>
-                                                      {role}
-                                                  </MenuItem>
-                                              })}
-                                          </MenuList>
-                                      </Menu>
-                                      <IconButton className={styles.closeIcon}
-                                                  cursor={'pointer'} backgroundColor={'#FFFFFF'} padding={0}
-                                                  minWidth={'1px'} aria-label='Add to friends'
-                                                  onClick={() => handleItemDelete(member.item!)}
-                                                  icon={<CloseIcon/>}/>
-                                  </Flex>
-                              </Flex>
-                            ))}
                             {members && !!members.length && members.map((member, index) => (
-                              <Flex align={'center'} justifyContent={"space-between"} borderRadius={'5px'} gap={2} pr={3} key={index}
-                                    className={styles.projectMember}>
-                                  <Flex align={'center'} gap={3} padding={'8px 12px'} fontSize={'13px'} color={'#0a101d'}>
-                                      <div className={styles.imgWrapper}>
-                                          <Image src="/image/user.png" width="36" height="36" alt=""/>
-                                      </div>
-                                      {member.name}
-                                  </Flex>
-                                  <Flex align={'center'} gap={1} >
-                                      <Menu>
-                                          <MenuButton className={styles.memberDropDown}
-                                                      fontSize={'12px'}
-                                                      color={'#374151'} textTransform={'capitalize'}
-                                                      backgroundColor={'#FFFFFF'} h={'auto'}
-                                                      border={'1px solid #D1D5DB'}
-                                                      borderRadius={'50px'} fontWeight={500}
-                                                      as={Button} rightIcon={<TriangleDownIcon/>}>
-                                              {member.role}
-                                          </MenuButton>
-                                          <MenuList className={`drop-down-list`}>
-                                              {PROJECT_ROLES.map((role, roleIndex) => {
-                                                  return <MenuItem
-                                                    onClick={() => updateProjectMemberRoleData(role, member)}
-                                                    textTransform={'capitalize'} key={roleIndex}>
-                                                      {role}
-                                                  </MenuItem>
-                                              })}
-                                          </MenuList>
-                                      </Menu>
-                                      <IconButton className={styles.closeIcon}
-                                                  onClick={() => openModel(member)}
-                                                  cursor={'pointer'} backgroundColor={'#FFFFFF'}
-                                                  padding={0}
-                                                  minWidth={'1px'} aria-label='Add to friends'
-                                                  icon={<CloseIcon/>}/>
-                                  </Flex>
-                              </Flex>
+                                <Flex align={'center'} justifyContent={"space-between"} borderRadius={'5px'} gap={2}
+                                      pr={3} key={index}
+                                      className={styles.projectMember}>
+                                    <Flex align={'center'} gap={3} padding={'8px 12px'} fontSize={'13px'}
+                                          color={'#0a101d'}>
+                                        <div className={styles.imgWrapper}>
+                                            {member.avatar && member.avatar.url ?
+                                                <Image src={member.avatar.url} width="36" height="36"
+                                                       alt=""/> : null}
+                                        </div>
+                                        {member.name}
+                                    </Flex>
+                                    <Flex align={'center'} gap={1}>
+                                        <Menu>
+                                            <MenuButton className={styles.memberDropDown}
+                                                        fontSize={'12px'}
+                                                        color={'#374151'} textTransform={'capitalize'}
+                                                        backgroundColor={'#FFFFFF'} h={'auto'}
+                                                        border={'1px solid #D1D5DB'}
+                                                        borderRadius={'50px'} fontWeight={500}
+                                                        as={Button} rightIcon={<TriangleDownIcon/>}>
+                                                {member.role}
+                                            </MenuButton>
+                                            <MenuList className={`drop-down-list`}>
+                                                {PROJECT_ROLES.map((role, roleIndex) => {
+                                                    return <MenuItem
+                                                        onClick={() => {
+                                                            projectService.addOrUpdateProjectMemberOrInvites('update', 'invite', {
+                                                                ...member,
+                                                                role
+                                                            }, passThroughProject);
+                                                            updateProjectMemberRoleData(role, member)
+                                                        }}
+                                                        textTransform={'capitalize'} key={roleIndex}>
+                                                        {role}
+                                                    </MenuItem>
+                                                })}
+                                            </MenuList>
+                                        </Menu>
+                                        <IconButton className={styles.closeIcon}
+                                                    onClick={() => openModel(member)}
+                                                    cursor={'pointer'} backgroundColor={'#FFFFFF'}
+                                                    padding={0}
+                                                    minWidth={'1px'} aria-label='Add to friends'
+                                                    icon={<CloseIcon/>}/>
+                                    </Flex>
+                                </Flex>
                             ))}
                             {invitees && !!invitees.length && invitees.map((invite, index) => (
-                              <Flex align={'center'} justifyContent={'space-between'} borderRadius={5} pr={3} gap={3} key={index}
-                                    className={styles.projectMember}>
-                                  <Flex align={'center'} gap={3} padding={'8px 12px'} fontSize={'13px'} color={'#0a101d'}>
-                                      <div className={styles.imgWrapper}>
-                                          <Image src="/image/user.png" width="36" height="36" alt=""/>
-                                      </div>
-                                      {invite?.invite?.toEmail}
-                                  </Flex>
-                                  <Flex align={'center'} gap={1}>
-                                      <Menu>
-                                          <MenuButton className={styles.memberDropDown}
-                                                      fontSize={'12px'}
-                                                      color={'#374151'} textTransform={'capitalize'}
-                                                      backgroundColor={'#FFFFFF'} h={'auto'}
-                                                      border={'1px solid #D1D5DB'}
-                                                      borderRadius={'50px'} fontWeight={500}
-                                                      as={Button} rightIcon={<TriangleDownIcon/>}>
-                                              {invite?.role}
-                                          </MenuButton>
-                                          <MenuList className={`drop-down-list`}>
-                                              {PROJECT_ROLES.map((role, roleIndex) => {
-                                                  return <MenuItem
-                                                    onClick={() => updateProjectMemberRoleData(role, invite)}
-                                                    textTransform={'capitalize'} key={roleIndex}>
-                                                      {role}
-                                                  </MenuItem>
-                                              })}
-                                          </MenuList>
-                                      </Menu>
-                                      <IconButton className={styles.closeIcon}
-                                                  onClick={() => openModel(invite)}
-                                                  cursor={'pointer'} backgroundColor={'#FFFFFF'}
-                                                  padding={0}
-                                                  minWidth={'1px'} aria-label='Add to friends'
-                                                  icon={<CloseIcon/>}/>
-                                  </Flex>
-                              </Flex>
+                                <Flex align={'center'} justifyContent={'space-between'} borderRadius={5} pr={3} gap={3}
+                                      key={index}
+                                      className={styles.projectMember}>
+                                    <Flex align={'center'} gap={3} padding={'8px 12px'} fontSize={'13px'}
+                                          color={'#0a101d'}>
+                                        <div style={{background: '#000'}} className={styles.imgWrapper}>
+                                            {/*<Image src="/image/user.png" width="36" height="36" alt=""/>*/}
+                                        </div>
+                                        {invite?.invite?.toEmail}
+                                    </Flex>
+                                    <Flex align={'center'} gap={1}>
+                                        <Menu>
+                                            <MenuButton className={styles.memberDropDown}
+                                                        fontSize={'12px'}
+                                                        color={'#374151'} textTransform={'capitalize'}
+                                                        backgroundColor={'#FFFFFF'} h={'auto'}
+                                                        border={'1px solid #D1D5DB'}
+                                                        borderRadius={'50px'} fontWeight={500}
+                                                        as={Button} rightIcon={<TriangleDownIcon/>}>
+                                                {invite?.role}
+                                            </MenuButton>
+                                            <MenuList className={`drop-down-list`}>
+                                                {PROJECT_ROLES.map((role, roleIndex) => {
+                                                    return <MenuItem
+                                                        onClick={() => {
+                                                            projectService.addOrUpdateProjectMemberOrInvites('update', 'invite', {
+                                                                ...invite,
+                                                                role
+                                                            }, passThroughProject);
+                                                            updateProjectMemberRoleData(role, invite)
+                                                        }}
+                                                        textTransform={'capitalize'} key={roleIndex}>
+                                                        {role}
+                                                    </MenuItem>
+                                                })}
+                                            </MenuList>
+                                        </Menu>
+                                        <IconButton className={styles.closeIcon}
+                                                    onClick={() => openModel(invite)}
+                                                    cursor={'pointer'} backgroundColor={'#FFFFFF'}
+                                                    padding={0}
+                                                    minWidth={'1px'} aria-label='Add to friends'
+                                                    icon={<CloseIcon/>}/>
+                                    </Flex>
+                                </Flex>
                             ))}
                         </Flex>
 
                         <Flex align={'center'} justify={'flex-end'} pt={4} borderTop={'1px solid #F3F4F6'} gap={3}>
                             <Button className={styles.cancelModalButton} border={'1px solid #374151'}
                                     backgroundColor={'#FFFFFF'} borderRadius={8}
-                                    onClick={() => commonService.toggleEditProjectModel(false, false)} fontSize={'14px'} height={'auto'} lineHeight={1} padding={'10px 12px'}
+                                    onClick={() => commonService.toggleEditProjectModel(false, false)} fontSize={'14px'}
+                                    height={'auto'} lineHeight={1} padding={'10px 12px'}
                                     color={'#374151'}> Cancel </Button>
 
                             <Button className={styles.addMemberButton} backgroundColor={'#1F2937'} borderRadius={8}

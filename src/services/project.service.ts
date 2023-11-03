@@ -2,6 +2,7 @@ import {InitialProjectState} from "@/types";
 import {BaseService} from "@/services/base.service";
 import {updateProjectState} from "@/redux/projects/action-reducer";
 import {InviteMember, Project, TeamMember} from "@/models";
+import {commonService} from "@/services/common.service";
 
 class ProjectService extends BaseService {
     constructor() {
@@ -34,8 +35,12 @@ class ProjectService extends BaseService {
         this.dispatchAction(updateProjectState, body);
     }
 
-    addOrUpdateProjectMemberOrInvites(type: string, memberType: string, member: TeamMember | InviteMember) {
-        let {projects, project} = this.getProjectState();
+    addOrUpdateProjectMemberOrInvites(type: string, memberType: string, member: TeamMember | InviteMember, passedProject: Project | null = null) {
+        let {projects, project: currentOpenProject} = this.getProjectState();
+        let project = currentOpenProject;
+        if (passedProject) {
+            project = passedProject;
+        }
         let currentProject: Project = {...(project || {})} as Project;
         let currentProjects = [...(projects || [])];
         let findProjectIndex = currentProjects.findIndex((item: Project) => item.id === currentProject.id);
@@ -128,7 +133,11 @@ class ProjectService extends BaseService {
         }
 
         this.setProjectState({projects: currentProjects});
-        this.setProjectState({project: currentProject});
+        if (passedProject) {
+            commonService.setCommonState({passThroughProject: currentProject});
+        } else {
+            this.setProjectState({project: currentProject});
+        }
         this.setMembers(currentProject.accounts);
         this.setInvitees(currentProject.invites);
     }
