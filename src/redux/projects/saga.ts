@@ -79,7 +79,7 @@ function* addProjects({payload}: PayloadAction<ReducerActionType>) {
 function* getProjectMembersService({payload}: PayloadAction<ReducerActionType>) {
     try {
         const response: AxiosResponse = yield ApiService.callGet(`projects/${payload.body.projectId}/accounts`, {});
-        performSuccessActions(payload);
+        performSuccessActions(payload, response);
         yield put(getProjectMembersSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
@@ -91,7 +91,7 @@ function* getProjectMembersService({payload}: PayloadAction<ReducerActionType>) 
 function* getProjectMembersInvitees({payload}: PayloadAction<ReducerActionType>) {
     try {
         const response: AxiosResponse = yield ApiService.callGet(`projects/${payload.body.projectId}/invites`, {});
-        performSuccessActions(payload);
+        performSuccessActions(payload, response);
         yield put(getProjectMembersInvitesSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;

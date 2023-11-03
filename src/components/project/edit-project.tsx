@@ -28,7 +28,8 @@ import {commonService, projectService} from "@/services";
 import {addItemToGroup, deleteMemberFromProject, deleteMemberShipFromProject} from "@/redux/memberships/action-reducer";
 import RemoveRecordModal from "@/components/common/delete-record-modal";
 import {AutoComplete} from "@/components/common/auto-complete";
-import {InviteMember, TeamMember} from "@/models";
+import {InviteMember, Project, TeamMember} from "@/models";
+import {current} from "@reduxjs/toolkit";
 
 
 function EditProject() {
@@ -59,8 +60,46 @@ function EditProject() {
             setProjectEmoji(passThroughProject.emoji || '');
             setMembers(passThroughProject.accounts || []);
             setInvitees(passThroughProject.invites || []);
+            console.log(passThroughProject);
+            if (!passThroughProject.accounts || passThroughProject.accounts.length <= 0) {
+                dispatch(getProjectMembers({
+                    body: {projectId: passThroughProject?.id},
+                    afterSuccessAction: (inviteData: any) => {
+                        let {projects} = projectService.getProjectState();
+                        let finalProjects = [...(projects || [])];
+                        let projectData = finalProjects.findIndex((item: Project) => item.id === passThroughProject.id);
+                        if (projectData !== -1) {
+                            finalProjects[projectData] = {
+                                ...finalProjects[projectData],
+                                accounts: inviteData
+                            }
+                            projectService.setProjectState({projects: finalProjects});
+                        }
+                    }
+                }));
+            }
+            if (!passThroughProject.invites || passThroughProject.invites.length <= 0) {
+                dispatch(getProjectMembersInvites({
+                    body: {
+                        projectId: passThroughProject?.id
+                    },
+                    afterSuccessAction: (inviteData: any) => {
+                        let {projects} = projectService.getProjectState();
+                        let finalProjects = [...(projects || [])];
+                        let projectData = finalProjects.findIndex((item: Project) => item.id === passThroughProject.id);
+                        if (projectData !== -1) {
+                            console.log('DD', projectData, inviteData);
+                            finalProjects[projectData] = {
+                                ...finalProjects[projectData],
+                                invites: inviteData
+                            }
+                            projectService.setProjectState({projects: finalProjects});
+                        }
+                    }
+                }));
+            }
         }
-    }, [passThroughProject])
+    }, [dispatch, passThroughProject])
 
     const handleChange = (event: ChangeEvent | any) => {
         setProjectName(event.target.value);
@@ -112,25 +151,6 @@ function EditProject() {
             setMembers(membersFromApi);
         }
     }, [invitessFromApi, membersFromApi])
-
-    useEffect(() => {
-        if (passThroughProject && passThroughProject?.id) {
-            if (!passThroughProject.accounts || passThroughProject.accounts.length <= 0) {
-                dispatch(getProjectMembersInvites({body: {projectId: passThroughProject?.id}}));
-            }
-            if (!passThroughProject.invites || passThroughProject.invites.length <= 0) {
-                dispatch(getProjectMembers({
-                    body: {
-                        projectId: passThroughProject?.id
-                    }
-                }));
-            }
-        }
-        setMembersInput({
-            input: '',
-            role: 'member'
-        });
-    }, [dispatch, passThroughProject])
 
     const addNewMembers = () => {
         if (!membersInputs.input) {
@@ -216,7 +236,11 @@ function EditProject() {
 
 
     return (
-        <Modal isOpen={!!showEditProjectModal} onClose={() => commonService.toggleEditProjectModel(false, false)}
+        <Modal isOpen={!!showEditProjectModal} onClose={() => {
+            setMembers([]);
+            setInvitees([]);
+            commonService.toggleEditProjectModel(false, false)
+        }}
                isCentered>
             <ModalOverlay backgroundColor={'rgba(229, 231, 235, 0.50)'} backdropFilter={'blur(16px)'}/>
             <ModalContent maxWidth={'480px'} borderRadius={'12px'} className={styles.projectMemberModal}>
