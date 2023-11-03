@@ -220,7 +220,7 @@ export function MessagesHeader() {
                     mute
                 }
                 threadService.setThreadState({
-                    threads: threads || [],
+                    threads: finalThreads || [],
                     selectedThread: {...selectedThread, mute}
                 })
                 threadService.setThreadState({success: true});
@@ -282,7 +282,11 @@ export function MessagesHeader() {
                                 </button>
                             </Tooltip>
                             <Tooltip label={selectedThread?.mute ? 'Unmute' : 'Mute'} placement='bottom'>
-                                <button onClick={() => muteThread(!selectedThread?.mute)}
+                                <button onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    muteThread(!selectedThread?.mute)
+                                }}
                                         className={`mute-button-icon`}>
                                     {!selectedThread?.mute ? <MuteIcon/> : <UnmuteIcon/>}
                                 </button>
