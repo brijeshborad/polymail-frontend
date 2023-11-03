@@ -29,7 +29,7 @@ import {
 } from "@/services";
 import Tooltip from "../common/Tooltip";
 import {createDraft} from "@/redux/draft/action-reducer";
-import {clearDebounce, debounce, makeCollabId} from "@/utils/common.functions";
+import {clearDebounce, debounce} from "@/utils/common.functions";
 import {useRouter} from "next/router";
 import {UrlManager} from "@/components/threads/url-manager";
 import dayjs from "dayjs";
@@ -149,7 +149,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
             draftService.setResumeDraft(null);
             commonService.toggleComposing(true);
             if (selectedAccount && selectedAccount.id) {
-                dispatch(createDraft({body: {accountId: selectedAccount.id, body: {draftInfo: {collabId: makeCollabId(10)}}, fromCompose: true}}));
+                dispatch(createDraft({body: {accountId: selectedAccount.id, body: {}, fromCompose: true}}));
             }
         }
     }
