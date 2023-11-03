@@ -165,6 +165,9 @@ export function ThreadsSideBarTab(props: TabProps) {
                 updateThreads(true, _newMsg, () => {
                     getAllThread(tabName, newMessage.data.thread.sortDate);
                 });
+                if (_newMsg.mute) {
+                    return;
+                }
                 var name = _newMsg?.from?.name || _newMsg?.from?.email
                 globalEventService.fireEvent({
                     type: 'show-notification',
@@ -180,6 +183,10 @@ export function ThreadsSideBarTab(props: TabProps) {
             if (newMessage.name === 'SnoozedThread') {
                 console.log(newMessage);
                 updateThreads(false, newMessage.data.thread);
+                const _newMsg = newMessage.data.thread as Thread
+                if (_newMsg.mute) {
+                    return;
+                }
                 globalEventService.fireEvent({
                     type: 'show-notification',
                     data: {

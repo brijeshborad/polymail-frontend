@@ -25,6 +25,7 @@ export interface Thread {
     showOnlineMembersCount?: number
     snooze?: string
     attachments?: MessageAttachments[]
+    mute?: boolean
 }
 
 export interface ThreadsRequestBody {

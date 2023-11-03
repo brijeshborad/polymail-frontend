@@ -7,7 +7,7 @@ import {
 import {
     ArchiveIcon,
     TrashIcon,
-    InboxIcon, StarIcon, InboxOpenIcon
+    InboxIcon, StarIcon, InboxOpenIcon, UnmuteIcon
 } from "@/icons";
 import React, {useState} from "react";
 import {updateThreads} from "@/redux/threads/action-reducer";
@@ -27,6 +27,7 @@ import dayjs from "dayjs";
 import {clearDebounce, debounce, generateToasterId} from "@/utils/common.functions";
 import {messageService, threadService} from "@/services";
 import Tooltip from "../common/Tooltip";
+import {MuteIcon} from "@/icons/mute.icon";
 
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
 const MessageSchedule = dynamic(() => import("./message-schedule").then(mod => mod.default));
@@ -123,7 +124,7 @@ export function MessagesHeader() {
                     }, 5, 'MESSAGE_BOX');
                     // Calculate the final index for an item in the 'currentThreads' array. If 'index1' is within bounds,
                     // reduce it by 1; if 'index1' is 0, keep it the same; if 'index1' is below 0, increase it by 1.
-                    let finalIndex = (index1 - 1 < currentThreads.length ) ? (index1 === 0) ? index1 : index1 - 1 : (index1 <= 0 ? index1 + 1 : index1 - 1)
+                    let finalIndex = (index1 - 1 < currentThreads.length) ? (index1 === 0) ? index1 : index1 - 1 : (index1 <= 0 ? index1 + 1 : index1 - 1)
                     threadService.setSelectedThread(currentThreads[finalIndex]);
                     messageService.setMessages([]);
                     threadService.moveThreadFromListToListCache(tabValue || 'INBOX', messageBox, threadData.id!)
@@ -165,8 +166,64 @@ export function MessagesHeader() {
                             },
                             showToasterAfterUndoClick: true
                         }
-                    }: {})
+                    } : {})
                 }));
+            }
+        }
+    }
+
+    function muteThread(mute: boolean) {
+        if (selectedThread) {
+            dispatch(updateThreads({
+                body: {
+                    id: selectedThread.id,
+                    body: {mute}
+                },
+                toaster: {
+                    success: {
+                        type: 'undo_changes',
+                        desc: mute ? 'You won`t receive new notifications for this thread.' : 'You will receive new notifications for this thread.',
+                        title: selectedThread?.subject || '',
+                        id: generateToasterId(),
+                    },
+                },
+                undoAction: {
+                    showUndoButton: true,
+                    dispatch,
+                    action: updateThreads,
+                    undoBody: {
+                        id: selectedThread.id,
+                        body: {
+                            mute: !mute,
+                        },
+                        success: {
+                            type: 'success',
+                            desc: 'You will receive new notifications for this thread.',
+                            title: 'Thread un-muted'
+                        },
+                        afterUndoAction: () => {
+                            threadService.setThreadState({
+                                threads: threads || [],
+                                selectedThread: selectedThread
+                            })
+                            threadService.setThreadState({success: true});
+                        }
+                    },
+                    showToasterAfterUndoClick: true
+                }
+            }));
+            let finalThreads = [...(threads || [])];
+            let index1 = finalThreads.findIndex((item: Thread) => item.id === selectedThread.id);
+            if (index1 !== -1) {
+                finalThreads[index1] = {
+                    ...finalThreads[index1],
+                    mute
+                }
+                threadService.setThreadState({
+                    threads: threads || [],
+                    selectedThread: {...selectedThread, mute}
+                })
+                threadService.setThreadState({success: true});
             }
         }
     }
@@ -212,14 +269,22 @@ export function MessagesHeader() {
                         <div>
                             {!(selectedThread?.mailboxes || []).includes(MAILBOX_UNREAD) && (
                                 <Tooltip label='Unread' placement='bottom'>
-                                    <button onClick={() => updateMailBox(MAILBOX_UNREAD)} className={`unread-button-icon`}>
+                                    <button onClick={() => updateMailBox(MAILBOX_UNREAD)}
+                                            className={`unread-button-icon`}>
                                         <InboxOpenIcon/>
                                     </button>
                                 </Tooltip>
                             )}
                             <Tooltip label='Starred' placement='bottom'>
-                                <button onClick={() => updateMailBox(MAILBOX_STARRED)} className={`starred-button-icon ${(selectedThread?.mailboxes || []).includes(MAILBOX_STARRED) ? 'active': ''}`}>
+                                <button onClick={() => updateMailBox(MAILBOX_STARRED)}
+                                        className={`starred-button-icon ${(selectedThread?.mailboxes || []).includes(MAILBOX_STARRED) ? 'active' : ''}`}>
                                     <StarIcon/>
+                                </button>
+                            </Tooltip>
+                            <Tooltip label={selectedThread?.mute ? 'Unmute' : 'Mute'} placement='bottom'>
+                                <button onClick={() => muteThread(!selectedThread?.mute)}
+                                        className={`mute-button-icon`}>
+                                    {!selectedThread?.mute ? <MuteIcon/> : <UnmuteIcon/>}
                                 </button>
                             </Tooltip>
                         </div>
@@ -235,7 +300,8 @@ export function MessagesHeader() {
                             )}
                             {!(selectedThread?.mailboxes || []).includes(MAILBOX_ARCHIVE) && (
                                 <Tooltip label='Archive' placement='bottom'>
-                                    <button onClick={() => updateMailBox(MAILBOX_ARCHIVE)} className='archive-button-icon'>
+                                    <button onClick={() => updateMailBox(MAILBOX_ARCHIVE)}
+                                            className='archive-button-icon'>
                                         <ArchiveIcon/>
                                     </button>
                                 </Tooltip>

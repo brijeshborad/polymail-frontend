@@ -17,7 +17,7 @@ import {
     DraftIcon,
     EditIcon,
     InboxIcon,
-    InboxOpenIcon,
+    InboxOpenIcon, MuteIcon,
     SendIcon,
     StarIcon,
     TimeSnoozeIcon,
@@ -192,25 +192,29 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                     gap={2} align={'center'} w={"100%"}
                     justify={'space-between'}
                 >
-                    {(isThreadSearched || multiSelection && multiSelection.length > 0) && <Flex align={'center'} fontSize={'13px'} fontWeight={'400'}
-                                               color={'#374151'} gap={2} letterSpacing={'-0.13px'}
-                                               whiteSpace={'nowrap'}>
-                                                {isThreadSearched ? <span>Search Results {countUnreadMessages > 0 && (
-                                <Badge
-                                    backgroundColor={'#F3F4F6'} fontSize={'12px'} color={'#6B7280'}
-                                    padding={'1px 4px'} borderRadius={4} fontWeight={500}
-                                >
-                                    {countUnreadMessages}
-                                </Badge>
-                            )}
-                            </span> : <span style={{display: 'flex', alignItems: 'center'}}>{multiSelection && multiSelection?.length > 0 && (
-                                <Badge
-                                    backgroundColor={'#F3F4F6'} fontSize={'12px'} color={'#6B7280'} marginRight={'5px'}
-                                    padding={'1px 4px'} borderRadius={4} fontWeight={500}
-                                >
-                                    {multiSelection?.length}
-                                </Badge>
-                            )} Selected
+                    {(isThreadSearched || multiSelection && multiSelection.length > 0) &&
+                    <Flex align={'center'} fontSize={'13px'} fontWeight={'400'}
+                          color={'#374151'} gap={2} letterSpacing={'-0.13px'}
+                          whiteSpace={'nowrap'}>
+                        {isThreadSearched ? <span>Search Results {countUnreadMessages > 0 && (
+                            <Badge
+                                backgroundColor={'#F3F4F6'} fontSize={'12px'} color={'#6B7280'}
+                                padding={'1px 4px'} borderRadius={4} fontWeight={500}
+                            >
+                                {countUnreadMessages}
+                            </Badge>
+                        )}
+                            </span> : <span style={{
+                            display: 'flex',
+                            alignItems: 'center'
+                        }}>{multiSelection && multiSelection?.length > 0 && (
+                            <Badge
+                                backgroundColor={'#F3F4F6'} fontSize={'12px'} color={'#6B7280'} marginRight={'5px'}
+                                padding={'1px 4px'} borderRadius={4} fontWeight={500}
+                            >
+                                {multiSelection?.length}
+                            </Badge>
+                        )} Selected
                             </span>}
                     </Flex>}
                     {/*<Flex className={styles.checkBoxLabel}>*/}
@@ -263,6 +267,9 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                 <MenuItem
                                     onClick={() => moveThreadToMailBoxes(MAILBOX_UNREAD)}><InboxOpenIcon/> Mark
                                     Unread</MenuItem>
+                                <MenuItem
+                                    onClick={() => threadService.markMultipleThreadsAsMute()}><MuteIcon/> Toggle
+                                    Mute</MenuItem>
                             </MenuList>
                         </Menu>
 

@@ -46,11 +46,7 @@ function* patchThreads({payload}: PayloadAction<ReducerActionType>) {
 
 function* batchThreads({payload}: PayloadAction<ReducerActionType>){
   try {
-    const response: AxiosResponse = yield ApiService.callPatch(`batch`, {
-        threadIds: payload.body.body.threadIds,
-        mailboxes: payload.body.body.mailboxes,
-        snooze: payload.body.body.snooze
-    })
+    const response: AxiosResponse = yield ApiService.callPatch(`batch`, payload.body.body)
     performSuccessActions(payload);
     yield put(updateThreadsSuccess(response))
   } catch (error: any) {
