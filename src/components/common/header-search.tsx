@@ -169,13 +169,13 @@ export function HeaderSearch() {
                     {badges.map((badge: string, index: number) => (
                         <Badge key={index} textTransform={'none'} backgroundColor={'#ffffff'} color={'#08162F'}
                                borderRadius={'4px'}
-                               fontSize={'12px'} fontWeight={'500'} padding={'4px 10px'} lineHeight={1}>{badge}</Badge>
+                               fontSize={'11px'} fontWeight={'500'} padding={'3px 10px'} lineHeight={1}>{badge}</Badge>
                     ))}
                     <Flex className={styles.headerSearchChip} alignItems={'center'} wrap={'wrap'} gap={1}>
                         {peopleArray &&
                         <Badge textTransform={'none'} backgroundColor={'#ffffff'} color={'#08162F'}
                                borderRadius={'4px'} display={'flex'} alignItems={'center'}
-                               fontSize={'12px'} fontWeight={'500'} padding={'4px 10px'} lineHeight={1}>
+                               fontSize={'11px'} fontWeight={'500'} padding={'3px 10px'} lineHeight={1}>
                             {peopleArray.name || peopleArray.email}
                             <CloseIcon cursor={'pointer'} width={'8px'} height={'8px'} marginLeft={'5px'}
                                        onClick={(e) => {
