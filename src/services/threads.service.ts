@@ -43,8 +43,8 @@ class ThreadsService extends BaseService {
     }
 
     cancelThreadSearch(isFromHeader: boolean = false) {
-        let {isThreadSearched} = this.getThreadState();
-        if (isThreadSearched) {
+        let {isThreadSearched, multiSelection} = this.getThreadState();
+        if (isThreadSearched || (multiSelection || []).length > 0) {
             this.setThreadState({
                 isThreadSearched: false, multiSelection: [],
                 ...(isFromHeader ? {
