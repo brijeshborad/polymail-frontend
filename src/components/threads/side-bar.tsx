@@ -129,6 +129,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                 messageService.setMessageState({showMessageBox: true});
             }
             threadService.setTabValueWithEmptyThread(tab);
+            messageService.setMessages([]);
             searchCancel();
         }
         setTab(value);

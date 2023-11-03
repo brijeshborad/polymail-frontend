@@ -283,6 +283,7 @@ export function ThreadsSideBarTab(props: TabProps) {
         setTabName(type);
         threadService.setThreads([]);
         threadService.setSelectedThread(null);
+        messageService.setMessages([]);
         clearDebounce('THREAD_FILTER');
         debounce(() => {
             threadService.setThreads([]);
