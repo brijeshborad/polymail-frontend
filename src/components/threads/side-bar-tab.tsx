@@ -38,8 +38,7 @@ export function ThreadsSideBarTab(props: TabProps) {
         success: threadListSuccess,
         tabValue,
         multiSelection,
-        isThreadSearched,
-        selectedThread
+        isThreadSearched
     } = useSelector((state: StateType) => state.threads)
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {
