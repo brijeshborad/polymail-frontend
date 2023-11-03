@@ -87,7 +87,7 @@ export function ThreadsSideBarTab(props: TabProps) {
             }
             let pagination: any = {
                 to: cutoffDate,
-                count: 100,
+                count: 50,
                 page: currentPage
             }
             if (currentPage === 1) {
