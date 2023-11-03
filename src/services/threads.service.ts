@@ -3,7 +3,12 @@ import {Message, MessageDraft, Project, Thread} from "@/models";
 import {batchUpdateThreads, updateThreads, updateThreadState} from "@/redux/threads/action-reducer";
 import {BaseService} from "@/services/base.service";
 import {draftService} from "@/services/draft.service";
-import {MAILBOX_DRAFT, MAILBOX_SENT, MAILBOX_SNOOZED} from "@/utils/constants";
+import {
+    MAILBOX_DRAFT,
+    MAILBOX_SENT,
+    MAILBOX_SNOOZED, MAILBOX_STARRED,
+    MAILBOX_UNREAD
+} from "@/utils/constants";
 import {generateToasterId} from "@/utils/common.functions";
 import dayjs from "dayjs";
 import {addItemToGroup} from "@/redux/memberships/action-reducer";
@@ -14,6 +19,7 @@ import {getCacheThreads, getDraftStatus, setCacheThreads} from "@/utils/cache.fu
 import {accountService} from "@/services/account.service";
 import {messageService} from "@/services/message.service";
 import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
+import {performMessagesUpdate} from "@/utils/thread.functions";
 
 declare type MailBoxTypes = 'INBOX' | 'DRAFT' | 'UNREAD' | 'ARCHIVE' | 'TRASH' | 'SNOOZED' | 'STARRED' | string;
 
@@ -72,7 +78,7 @@ class ThreadsService extends BaseService {
             success: false,
             updateSuccess: false,
             selectedThread: null,
-            ...(blankTabValue ? {tabValue: ''}: {})
+            ...(blankTabValue ? {tabValue: ''} : {})
         });
     }
 
@@ -659,6 +665,131 @@ class ThreadsService extends BaseService {
                 [cacheToPage]: toThreads
             })
         }
+    }
+
+    updateCacheWithThread(isNewThread: boolean, threadsToUpdate: Thread[], thread: Thread, selectedThread: Thread | null = null) {
+        threadsToUpdate = [...threadsToUpdate];
+        let findThreadIndex = threadsToUpdate.findIndex((item: Thread) => item.id === thread.id);
+        if (findThreadIndex !== -1) {
+            threadsToUpdate[findThreadIndex] = {...threadsToUpdate[findThreadIndex]};
+        }
+        if (isNewThread) {
+            if (findThreadIndex !== -1) {
+                threadsToUpdate[findThreadIndex].messages = [...(threadsToUpdate[findThreadIndex].messages || [])];
+                let messages: Message[] = [...(threadsToUpdate[findThreadIndex].messages || [])];
+                let newMessages: Message[] = [...(thread.messages || [])];
+                newMessages = performMessagesUpdate(newMessages);
+                newMessages.forEach((item: Message) => {
+                    let index = messages.findIndex((t: Message) => t.id === item.id);
+                    if (index === -1) {
+                        messages.push(item);
+                    }
+                })
+                threadsToUpdate[findThreadIndex].messages = [...messages];
+                if (selectedThread && selectedThread.id === thread.id) {
+                    messageService.setMessages(messages);
+                }
+            } else {
+                let messages: Message[] = [...(thread.messages || [])];
+                messages = performMessagesUpdate(messages);
+                thread.messages = messages;
+                threadsToUpdate.unshift(thread);
+            }
+        } else {
+            if (findThreadIndex !== -1) {
+                threadsToUpdate.splice(findThreadIndex, 1);
+            }
+            let messages: Message[] = [...(thread.messages || [])];
+            messages = performMessagesUpdate(messages);
+            thread.messages = messages;
+            threadsToUpdate.unshift(thread);
+        }
+        return threadsToUpdate;
+    }
+
+    updateInboxPageCacheList(cacheThreads: any, cacheKey: any, thread: Thread, isNewThread: boolean) {
+        let allMailboxToFindIn = (thread.mailboxes || []).filter((t: string) => ![MAILBOX_UNREAD, MAILBOX_STARRED].includes(t));
+        let isProjectThread = (thread.projects || []).length > 0;
+        let findThreadIndex = cacheThreads[cacheKey].findIndex((item: Thread) => item.id === thread.id);
+        let tabValueFromCacheKey = cacheKey.split('-')[2];
+        if (!allMailboxToFindIn.includes(tabValueFromCacheKey)) {
+            if (findThreadIndex !== -1) {
+                cacheThreads[cacheKey].splice(findThreadIndex, 1);
+            }
+        } else {
+            if (isProjectThread && cacheKey.includes('projects')) {
+                cacheThreads[cacheKey] = [...this.updateCacheWithThread(isNewThread, cacheThreads[cacheKey], thread)];
+            } else {
+                if (cacheKey.includes('just-mine')) {
+                    cacheThreads[cacheKey] = [...this.updateCacheWithThread(isNewThread, cacheThreads[cacheKey], thread)];
+                }
+            }
+        }
+        return cacheThreads[cacheKey];
+    }
+
+    updateProjectPageCacheList(cacheThreads: any, cacheKey: any, thread: Thread, isNewThread: boolean) {
+        let allMailboxToFindIn = (thread.mailboxes || []).filter((t: string) => ![MAILBOX_UNREAD, MAILBOX_STARRED].includes(t));
+        let isProjectThread = (thread.projects || []).length > 0;
+        let findThreadIndex = cacheThreads[cacheKey].findIndex((item: Thread) => item.id === thread.id);
+        let tabValueFromCacheKey = cacheKey.split('-')[2];
+        if (!allMailboxToFindIn.includes(tabValueFromCacheKey)) {
+            if (findThreadIndex !== -1) {
+                cacheThreads[cacheKey].splice(findThreadIndex, 1);
+            }
+        } else {
+            let projectIds = [...(thread.projects || [])].map((p: Project) => p.id);
+            if (projectIds.includes(cacheKey.split('-')[1])) {
+                if (isProjectThread && cacheKey.includes('everything')) {
+                    cacheThreads[cacheKey] = [...this.updateCacheWithThread(isNewThread, cacheThreads[cacheKey], thread)];
+                } else {
+                    if (cacheKey.includes('just-mine')) {
+                        cacheThreads[cacheKey] = cacheThreads[cacheKey];
+                    }
+                }
+            }
+        }
+        return cacheThreads[cacheKey];
+    }
+
+    findThreadInAllCacheListAndRemoveOrUpdateIt(thread: Thread, isNewThread: boolean) {
+        let cacheThreads = {...getCacheThreads()};
+        Object.keys(cacheThreads).forEach((cacheKey: string) => {
+            if (cacheKey.startsWith('inbox-')) {
+                cacheThreads[cacheKey] = [...this.updateInboxPageCacheList(cacheThreads, cacheKey, thread, isNewThread)];
+            } else {
+                cacheThreads[cacheKey] = [...this.updateProjectPageCacheList(cacheThreads, cacheKey, thread, isNewThread)];
+            }
+
+        })
+        setCacheThreads(cacheThreads);
+    }
+
+    pushEventThreadToAppropriateList(thread: Thread, isNewThread: boolean, tabName: string) {
+        let {tabValue, threads, selectedThread} = this.getThreadState();
+        let currentTabValue = 'INBOX';
+        if (tabValue) {
+            currentTabValue = tabValue;
+        }
+        let allMailboxToFindIn = (thread.mailboxes || []).filter((t: string) => ![MAILBOX_UNREAD, MAILBOX_STARRED].includes(t));
+        this.findThreadInAllCacheListAndRemoveOrUpdateIt(thread, isNewThread);
+        let allowCallBack = false;
+        if (allMailboxToFindIn.includes(currentTabValue)) {
+            let finalThreads = [...(threads || [])];
+            let isProjectThread = (thread.projects || []).length > 0;
+            if (isProjectThread && tabName === 'projects') {
+                allowCallBack = true;
+                finalThreads = this.updateCacheWithThread(isNewThread, finalThreads, thread, selectedThread);
+                threadService.setThreads(finalThreads);
+            } else {
+                if (tabName === 'just-mine') {
+                    allowCallBack = true;
+                    finalThreads = this.updateCacheWithThread(isNewThread, finalThreads, thread, selectedThread);
+                    threadService.setThreads(finalThreads);
+                }
+            }
+        }
+        return allowCallBack;
     }
 }
 

@@ -123,10 +123,10 @@ export function ThreadsSideBarTab(props: TabProps) {
             dispatch(getAllThreads({
                 body: buildBody,
                 afterSuccessAction: (threads: any) => {
-                    setCurrentViewingCacheTab(`${props.cachePrefix}-${tabValue!}-${selectedAccount?.id}-${tabName}`);
+                    setCurrentViewingCacheTab(`${props.cachePrefix}-${tabValue!}-${selectedAccount?.id}-${type}`);
                     setCacheThreads({
                         ...getCacheThreads(),
-                        [`${props.cachePrefix}-${tabValue!}-${selectedAccount?.id}-${tabName}`]: threads ? [...threads] : []
+                        [`${props.cachePrefix}-${tabValue!}-${selectedAccount?.id}-${type}`]: threads ? [...threads] : []
                     });
                 }
             }));
@@ -139,44 +139,13 @@ export function ThreadsSideBarTab(props: TabProps) {
             ...thread,
             id: thread._id,
         };
-        let finalThreads = [...(threads || [])];
-        let findThreadInList = finalThreads.findIndex((item: Thread) => item.id === thread.id);
-        if (!isNewThread) {
-            if (findThreadInList !== -1) {
-                finalThreads.splice(findThreadInList, 1);
-            }
-            let messages: Message[] = [...(thread.messages || [])];
-            messages = performMessagesUpdate(messages);
-            thread.messages = messages;
-            finalThreads.unshift(thread);
-        } else {
-            if (findThreadInList !== -1) {
-                let messages: Message[] = [...(finalThreads[findThreadInList].messages || [])];
-                let newMessages: Message[] = [...(thread.messages || [])];
-                newMessages = performMessagesUpdate(newMessages);
-                newMessages.forEach((item: Message) => {
-                    let index = messages.findIndex((t: Message) => t.id === item.id);
-                    if (index === -1) {
-                        messages.push(item);
-                    }
-                })
-                if (selectedThread && selectedThread.id === thread.id) {
-                    messageService.setMessages(messages);
-                }
-            } else {
-                let messages: Message[] = [...(thread.messages || [])];
-                messages = performMessagesUpdate(messages);
-                thread.messages = messages;
-                finalThreads.unshift(thread);
-            }
-        }
-        threadService.setThreads(finalThreads);
-        if (callBack) {
+        let allowCallBack = threadService.pushEventThreadToAppropriateList(thread, isNewThread, tabName);
+        if (allowCallBack && callBack) {
             setTimeout(() => {
                 callBack();
             }, 100)
         }
-    }, [threads, selectedThread])
+    }, [tabName])
 
     useEffect(() => {
         if (threadListSuccess && selectedAccount) {
@@ -196,7 +165,7 @@ export function ThreadsSideBarTab(props: TabProps) {
                 console.log('---NEW MESSAGE---', newMessage);
                 const _newMsg = newMessage.data.thread as Thread
                 updateThreads(true, _newMsg, () => {
-                    getAllThread('', newMessage.data.thread.sortDate);
+                    getAllThread(tabName, newMessage.data.thread.sortDate);
                 });
                 var name = _newMsg?.from?.name || _newMsg?.from?.email
                 globalEventService.fireEvent({
