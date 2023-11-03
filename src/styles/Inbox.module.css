@@ -241,6 +241,7 @@
     border-radius: 8px;
     padding: 8px;
     cursor: pointer;
+    height: 62px;
 }
 
 .mailDetails:hover {
