@@ -24,6 +24,7 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import {performMessagesUpdate} from "@/utils/thread.functions";
 import {clearDebounce, debounce} from "@/utils/common.functions";
+import {INFINITE_LIST_PER_COUNT} from "@/utils/constants";
 
 dayjs.extend(customParseFormat)
 
@@ -87,7 +88,7 @@ export function ThreadsSideBarTab(props: TabProps) {
             }
             let pagination: any = {
                 to: cutoffDate,
-                count: 50,
+                count: INFINITE_LIST_PER_COUNT,
                 page: currentPage
             }
             if (currentPage === 1) {

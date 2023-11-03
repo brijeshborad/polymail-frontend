@@ -18,3 +18,4 @@ export const MONITORED_KEYS = [
 ];
 export const ACCOUNT_MAIL_INIT_SYNC_TIMEOUT = 5000;
 export const ACTIVITY_FEED_EVENT_TYPES = ['ThreadShared', 'ProjectCreated', 'ProjectInvite', 'ReplySent', 'MemberJoined'];
+export const INFINITE_LIST_PER_COUNT = 50;

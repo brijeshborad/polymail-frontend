@@ -21,6 +21,7 @@ import {
     threadService
 } from "@/services";
 import InfiniteScroll from "react-infinite-scroll-component";
+import {INFINITE_LIST_PER_COUNT} from "@/utils/constants";
 
 const ThreadsSideBarListItem = dynamic(() => import("./side-bar-list-item").then(mod => mod.ThreadsSideBarListItem));
 
@@ -223,7 +224,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
                       className={`${styles.mailList} ${extraClassNames} ${extraClassNamesForBottom} ${routePaths.includes('projects') ? styles.projectMailList : ''}`}>
                     <Input type={'text'} opacity={0} height={0} width={0} padding={0} border={0} outline={0}
                            ref={listRef}/>
-                    <InfiniteScroll dataLength={currentThreads.length} hasMore={currentThreads.length === 0 ? false : (currentThreads.length % 50 === 0)}
+                    <InfiniteScroll dataLength={currentThreads.length} hasMore={currentThreads.length === 0 ? false : (currentThreads.length % INFINITE_LIST_PER_COUNT === 0)}
                                     scrollableTarget="scrollableDiv" next={() => fetchNext()} loader={null}>
                         {currentThreads.length > 0 && currentThreads.map((item: Thread, index: number) => (
                             <div
