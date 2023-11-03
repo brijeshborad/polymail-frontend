@@ -29,7 +29,6 @@ import {addItemToGroup, deleteMemberFromProject, deleteMemberShipFromProject} fr
 import RemoveRecordModal from "@/components/common/delete-record-modal";
 import {AutoComplete} from "@/components/common/auto-complete";
 import {InviteMember, Project, TeamMember} from "@/models";
-import {current} from "@reduxjs/toolkit";
 
 
 function EditProject() {
@@ -88,7 +87,6 @@ function EditProject() {
                         let finalProjects = [...(projects || [])];
                         let projectData = finalProjects.findIndex((item: Project) => item.id === passThroughProject.id);
                         if (projectData !== -1) {
-                            console.log('DD', projectData, inviteData);
                             finalProjects[projectData] = {
                                 ...finalProjects[projectData],
                                 invites: inviteData
