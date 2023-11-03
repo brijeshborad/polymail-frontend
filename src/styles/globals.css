@@ -864,6 +864,11 @@ div:has(> .mailSendToaster) {
     stroke: #00A88E;
 }
 
+.unread-button-icon:hover path {
+    opacity: 1;
+    stroke: #5D5F62;
+}
+
 .trash-button-icon:hover path {
     stroke: #A62700;
 }

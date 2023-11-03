@@ -135,6 +135,8 @@ class ThreadsService extends BaseService {
         let selectedThreadIds = this.getThreadState().multiSelection || [];
         let threads = this.getThreadState().threads || [];
         let tabValue = this.getThreadState().tabValue;
+        let showToaster = true;
+        let remove_from_list = true;
         if (selectedThreadIds.length > 0) {
             const messagePlural = selectedThreadIds.length === 1 ? 'message' : 'messages'
             let body: any = {
@@ -147,41 +149,60 @@ class ThreadsService extends BaseService {
                 const currentDate = dayjs();
                 body.snooze = targetDate.diff(currentDate, 'second')
             }
+            if (mailBoxType === MAILBOX_UNREAD) {
+                showToaster = false;
+                remove_from_list = false;
+            }
             let movingThreads = threads.filter((thread: Thread) => selectedThreadIds.includes(thread.id!));
             let batchUpdateMoveBody = {
                 body: {body},
-                toaster: {
-                    success: {
-                        desc: `Your message has been moved to ${mailBoxType.toString().toLowerCase()}`,
-                        title: `${selectedThreadIds.length} ${messagePlural} has been ${mailBoxType.toString().toLowerCase()}`,
-                        type: 'undo_changes',
-                        id: toastId,
-                    }
-                },
-                undoAction: {
-                    showUndoButton: true,
-                    dispatch: this.getDispatch(),
-                    action: batchUpdateThreads,
-                    undoBody: {
-                        body: {
-                            threadIds: selectedThreadIds,
-                            mailboxes: movingThreads[0].mailboxes || [],
-                        },
-                        tag: mailBoxType.toString().toLowerCase(),
-                        afterUndoAction: () => {
-                            this.setThreadState({threads: threads, selectedThread: threads[0]});
+                ...(showToaster ? {
+                    toaster: {
+                        success: {
+                            desc: `Your message has been moved to ${mailBoxType.toString().toLowerCase()}`,
+                            title: `${selectedThreadIds.length} ${messagePlural} has been ${mailBoxType.toString().toLowerCase()}`,
+                            type: 'undo_changes',
+                            id: toastId,
                         }
-                    }
-                },
-                showToasterAfterUndoClick: true
+                    },
+                    undoAction: {
+                        showUndoButton: true,
+                        dispatch: this.getDispatch(),
+                        action: batchUpdateThreads,
+                        undoBody: {
+                            body: {
+                                threadIds: selectedThreadIds,
+                                mailboxes: movingThreads[0].mailboxes || [],
+                            },
+                            tag: mailBoxType.toString().toLowerCase(),
+                            afterUndoAction: () => {
+                                this.setThreadState({threads: threads, selectedThread: threads[0]});
+                            }
+                        }
+                    },
+                    showToasterAfterUndoClick: true
+                }: {})
             }
             this.dispatchAction(batchUpdateThreads, batchUpdateMoveBody);
-            let newFilteredThreads = threads.filter((thread: Thread) => !selectedThreadIds.includes(thread.id!))
-            this.setThreadState({threads: newFilteredThreads, selectedThread: newFilteredThreads[0]});
-            selectedThreadIds.forEach(id => {
-                this.moveThreadFromListToListCache(tabValue || 'INBOX', mailBoxType, id);
-            })
-            this.cancelThreadSearch();
+            if (remove_from_list) {
+                let newFilteredThreads = threads.filter((thread: Thread) => !selectedThreadIds.includes(thread.id!))
+                this.setThreadState({threads: newFilteredThreads, selectedThread: newFilteredThreads[0]});
+                selectedThreadIds.forEach(id => {
+                    this.moveThreadFromListToListCache(tabValue || 'INBOX', mailBoxType, id);
+                })
+                this.cancelThreadSearch();
+            } else {
+                let newFilteredThreads = threads.map((thread: Thread) => {
+                    if (selectedThreadIds.includes(thread.id!)) {
+                        return {...thread, mailboxes: [...(thread.mailboxes || []), mailBoxType]}
+                    }
+                    return thread;
+                })
+                this.setThreadState({threads: newFilteredThreads});
+                selectedThreadIds.forEach(id => {
+                    this.makeThreadAsReadCache(id);
+                })
+            }
         }
     }
 
@@ -441,6 +462,7 @@ class ThreadsService extends BaseService {
                     mailboxes: mailboxes.filter(i => i !== 'UNREAD')
                 }
                 this.setThreads(updateTheList);
+                this.setSelectedThread({...updateTheList[findTheThreadToUpdate]});
                 this.setThreadState({success: true});
             }
             this.dispatchAction(updateThreads, {
@@ -449,6 +471,32 @@ class ThreadsService extends BaseService {
                     body: {mailboxes: mailboxes.filter(i => i !== 'UNREAD')}
                 }
             });
+            this.makeThreadAsReadCache(thread.id!);
+        }
+    }
+
+    makeThreadAsReadCache(threadId: string) {
+        let {tabValue} = this.getThreadState();
+        let currentTabValue = tabValue || 'INBOX';
+        let cacheThreads = {...getCacheThreads()};
+        let cacheFromPage = this.getCachePage(currentTabValue);
+        let fromThreads = [...(cacheThreads[cacheFromPage] || [])];
+        let threadIndex = fromThreads.findIndex((item) => item.id === threadId);
+        if (threadIndex !== -1) {
+            let mailBoxes = [...(fromThreads[threadIndex].mailboxes || [])];
+            let mailBoxesIndex = mailBoxes.indexOf(MAILBOX_UNREAD);
+            if (mailBoxesIndex !== -1) {
+                mailBoxes.push(MAILBOX_UNREAD);
+            } else {
+                mailBoxes = mailBoxes.filter(i => i !== MAILBOX_UNREAD);
+            }
+            let updatingThread = {...fromThreads[threadIndex]};
+            updatingThread.mailboxes = mailBoxes;
+            fromThreads[threadIndex] = updatingThread;
+            setCacheThreads({
+                ...cacheThreads,
+                [cacheFromPage]: fromThreads
+            })
         }
     }
 

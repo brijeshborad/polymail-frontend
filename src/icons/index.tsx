@@ -36,3 +36,4 @@ export * from './upload.icon';
 export * from './disney-d.icon';
 export * from './rep.icon';
 export * from './add-emoji.icon';
+export * from './inbox-open.icon';

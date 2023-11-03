@@ -7,7 +7,7 @@ import {
 import {
     ArchiveIcon,
     TrashIcon,
-    InboxIcon, StarIcon
+    InboxIcon, StarIcon, InboxOpenIcon
 } from "@/icons";
 import React, {useState} from "react";
 import {updateThreads} from "@/redux/threads/action-reducer";
@@ -49,6 +49,7 @@ export function MessagesHeader() {
                     mailboxes: selectedThread.mailboxes || []
                 };
                 let remove_from_list = false
+                let showToast = true;
                 switch (messageBox) {
                     case MAILBOX_INBOX:
                         if (selectedThread.mailboxes?.includes(messageBox)) {
@@ -90,6 +91,7 @@ export function MessagesHeader() {
                         } else {
                             body.mailboxes = [...body.mailboxes, messageBox]
                         }
+                        showToast = false;
                         break;
                     case MAILBOX_SNOOZED:
                         if (selectedThread.mailboxes?.includes(messageBox)) {
@@ -119,47 +121,51 @@ export function MessagesHeader() {
                     debounce(() => {
                         messageService.setMessageState({showMessageBox: true});
                     }, 5, 'MESSAGE_BOX');
+                    // Calculate the final index for an item in the 'currentThreads' array. If 'index1' is within bounds,
+                    // reduce it by 1; if 'index1' is 0, keep it the same; if 'index1' is below 0, increase it by 1.
+                    let finalIndex = (index1 - 1 < currentThreads.length ) ? (index1 === 0) ? index1 : index1 - 1 : (index1 <= 0 ? index1 + 1 : index1 - 1)
+                    threadService.setSelectedThread(currentThreads[finalIndex]);
+                    messageService.setMessages([]);
+                    threadService.moveThreadFromListToListCache(tabValue || 'INBOX', messageBox, threadData.id!)
+                } else {
+                    threadService.setSelectedThread({...currentThreads[index1]});
                 }
-                // Calculate the final index for an item in the 'currentThreads' array. If 'index1' is within bounds,
-                // reduce it by 1; if 'index1' is 0, keep it the same; if 'index1' is below 0, increase it by 1.
-                let finalIndex = (index1 - 1 < currentThreads.length ) ? (index1 === 0) ? index1 : index1 - 1 : (index1 <= 0 ? index1 + 1 : index1 - 1)
-                threadService.setThreadState({threads: currentThreads, selectedThread: currentThreads[finalIndex]});
-                messageService.setMessages([]);
-                threadService.moveThreadFromListToListCache(tabValue || 'INBOX', messageBox, threadData.id!)
-                let polyToast = generateToasterId();
+                threadService.setThreadState({threads: currentThreads});
                 dispatch(updateThreads({
                     body: {
                         id: selectedThread.id,
                         body: body
                     },
-                    closePreviousToast: true,
-                    toaster: {
-                        success: {
-                            type: 'undo_changes',
-                            desc: 'Thread was moved to ' + messageBox.toLowerCase() + '.',
-                            title: selectedThread?.subject || '',
-                            id: polyToast,
-                        },
-                    },
-                    undoAction: {
-                        showUndoButton: true,
-                        dispatch,
-                        action: updateThreads,
-                        undoBody: {
-                            id: threadData.id,
-                            body: {
-                                mailboxes: threadData.mailboxes || [],
+                    ...(showToast ? {
+                        closePreviousToast: true,
+                        toaster: {
+                            success: {
+                                type: 'undo_changes',
+                                desc: 'Thread was moved to ' + messageBox.toLowerCase() + '.',
+                                title: selectedThread?.subject || '',
+                                id: generateToasterId(),
                             },
-                            tag: messageBox.toLowerCase(),
-                            afterUndoAction: () => {
-                                threadService.setThreadState({
-                                    threads: threads || [],
-                                    selectedThread: threadData
-                                })
-                            }
                         },
-                        showToasterAfterUndoClick: true
-                    }
+                        undoAction: {
+                            showUndoButton: true,
+                            dispatch,
+                            action: updateThreads,
+                            undoBody: {
+                                id: threadData.id,
+                                body: {
+                                    mailboxes: threadData.mailboxes || [],
+                                },
+                                tag: messageBox.toLowerCase(),
+                                afterUndoAction: () => {
+                                    threadService.setThreadState({
+                                        threads: threads || [],
+                                        selectedThread: threadData
+                                    })
+                                }
+                            },
+                            showToasterAfterUndoClick: true
+                        }
+                    }: {})
                 }));
             }
         }
@@ -204,6 +210,13 @@ export function MessagesHeader() {
 
                     <Flex align={'center'} className={'header-right-icon'}>
                         <div>
+                            {!(selectedThread?.mailboxes || []).includes(MAILBOX_UNREAD) && (
+                                <Tooltip label='Unread' placement='bottom'>
+                                    <button onClick={() => updateMailBox(MAILBOX_UNREAD)} className={`unread-button-icon`}>
+                                        <InboxOpenIcon/>
+                                    </button>
+                                </Tooltip>
+                            )}
                             <Tooltip label='Starred' placement='bottom'>
                                 <button onClick={() => updateMailBox(MAILBOX_STARRED)} className={`starred-button-icon ${(selectedThread?.mailboxes || []).includes(MAILBOX_STARRED) ? 'active': ''}`}>
                                     <StarIcon/>

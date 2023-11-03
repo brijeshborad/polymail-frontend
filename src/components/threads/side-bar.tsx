@@ -12,13 +12,30 @@ import {
     TabPanels,
     Tabs
 } from "@chakra-ui/react";
-import {ArchiveIcon, DraftIcon, EditIcon, InboxIcon, SendIcon, StarIcon, TimeSnoozeIcon, TrashIcon} from "@/icons";
+import {
+    ArchiveIcon,
+    DraftIcon,
+    EditIcon,
+    InboxIcon,
+    InboxOpenIcon,
+    SendIcon,
+    StarIcon,
+    TimeSnoozeIcon,
+    TrashIcon
+} from "@/icons";
 import {StateType} from "@/types";
 import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import dynamic from "next/dynamic";
 import {SmallCloseIcon, TriangleDownIcon} from "@chakra-ui/icons";
-import {MAILBOX_ARCHIVE, MAILBOX_INBOX, MAILBOX_SNOOZED, MAILBOX_STARRED, MAILBOX_TRASH} from "@/utils/constants";
+import {
+    MAILBOX_ARCHIVE,
+    MAILBOX_INBOX,
+    MAILBOX_SNOOZED,
+    MAILBOX_STARRED,
+    MAILBOX_TRASH,
+    MAILBOX_UNREAD
+} from "@/utils/constants";
 import {
     threadService,
     commonService,
@@ -243,6 +260,9 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                 <MenuItem
                                     onClick={() => moveThreadToMailBoxes(MAILBOX_ARCHIVE)}><ArchiveIcon/> Move to
                                     Archive</MenuItem>
+                                <MenuItem
+                                    onClick={() => moveThreadToMailBoxes(MAILBOX_UNREAD)}><InboxOpenIcon/> Mark
+                                    Unread</MenuItem>
                             </MenuList>
                         </Menu>
 
