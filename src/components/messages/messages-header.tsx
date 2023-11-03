@@ -182,58 +182,63 @@ export function MessagesHeader() {
                              fontWeight={600}>{selectedThread?.subject || '(no subject)'}</Heading>
                 </Flex>
 
-                <Flex gap={3} align={'center'}>
-                    <Flex alignItems={'center'} justifyContent={'end'} className={'member-images'}>
-                        {(onlineUsers && selectedThread && onlineUsers['threads'][selectedThread.id!] || [])
-                            .filter((t: UserProjectOnlineStatus) => t.isOnline).slice(0, 5)
-                            .map((item: UserProjectOnlineStatus, index: number) => (
-                                    <Tooltip label={item.name || ''} placement='bottom' key={index}>
-                                        <div className={'member-photo'}
-                                             style={{background: '#000', border: `2px solid #${item.color}`}}>
-                                            {item.avatar && <Image src={item.avatar} width="24" height="24"
-                                                                   alt=""/>}
-                                        </div>
-                                    </Tooltip>
+                <Flex align={'center'}>
+                    <Flex gap={3} align={'center'}>
+                        <Flex alignItems={'center'} justifyContent={'end'} className={'member-images'}>
+                            {(onlineUsers && selectedThread && onlineUsers['threads'][selectedThread.id!] || [])
+                                .filter((t: UserProjectOnlineStatus) => t.isOnline).slice(0, 5)
+                                .map((item: UserProjectOnlineStatus, index: number) => (
+                                        <Tooltip label={item.name || ''} placement='bottom' key={index}>
+                                            <div className={'member-photo'}
+                                                 style={{background: '#000', border: `2px solid #${item.color}`}}>
+                                                {item.avatar && <Image src={item.avatar} width="24" height="24"
+                                                                       alt=""/>}
+                                            </div>
+                                        </Tooltip>
+                                    )
                                 )
-                            )
-                        }
+                            }
+                        </Flex>
+                        <AddToProjectButton allowDefaultSelect={true}/>
                     </Flex>
-                    <AddToProjectButton allowDefaultSelect={true}/>
-                    <Tooltip label='Starred' placement='bottom'>
-                        <button onClick={() => updateMailBox(MAILBOX_STARRED)} className={`starred-button-icon ${(selectedThread?.mailboxes || []).includes(MAILBOX_STARRED) ? 'active': ''}`}>
-                            <StarIcon/>
-                        </button>
-                    </Tooltip>
-                    {!(selectedThread?.mailboxes || []).includes(MAILBOX_INBOX) && (
-                        <Tooltip label='Inbox' placement='bottom'>
-                            <button onClick={() => updateMailBox(MAILBOX_INBOX)} className='inbox-button-icon'>
-                                <InboxIcon/>
+
+                    <Flex align={'center'} className={'header-right-icon'}>
+                        <Tooltip label='Starred' placement='bottom'>
+                            <button onClick={() => updateMailBox(MAILBOX_STARRED)} className={`starred-button-icon ${(selectedThread?.mailboxes || []).includes(MAILBOX_STARRED) ? 'active': ''}`}>
+                                <StarIcon/>
                             </button>
                         </Tooltip>
-                    )}
-                    {!(selectedThread?.mailboxes || []).includes(MAILBOX_ARCHIVE) && (
-                        <Tooltip label='Archive' placement='bottom'>
-                            <button onClick={() => updateMailBox(MAILBOX_ARCHIVE)} className='archive-button-icon'>
-                                <ArchiveIcon/>
-                            </button>
+                        {!(selectedThread?.mailboxes || []).includes(MAILBOX_INBOX) && (
+                            <Tooltip label='Inbox' placement='bottom'>
+                                <button onClick={() => updateMailBox(MAILBOX_INBOX)} className='inbox-button-icon'>
+                                    <InboxIcon/>
+                                </button>
+                            </Tooltip>
+                        )}
+                        {!(selectedThread?.mailboxes || []).includes(MAILBOX_ARCHIVE) && (
+                            <Tooltip label='Archive' placement='bottom'>
+                                <button onClick={() => updateMailBox(MAILBOX_ARCHIVE)} className='archive-button-icon'>
+                                    <ArchiveIcon/>
+                                </button>
+                            </Tooltip>
+                        )}
+                        {!(selectedThread?.mailboxes || []).includes(MAILBOX_TRASH) && (
+                            <Tooltip label='Trash' placement='bottom'>
+                                <button onClick={() => updateMailBox(MAILBOX_TRASH)} className='trash-button-icon'>
+                                    <TrashIcon/>
+                                </button>
+                            </Tooltip>
+                        )}
+                        <Tooltip label='Snooze' placement='bottom'>
+                            <div>
+                                <MessageSchedule
+                                    isSnooze={true}
+                                    date={scheduledDate}
+                                    onChange={handleSchedule}
+                                />
+                            </div>
                         </Tooltip>
-                    )}
-                    {!(selectedThread?.mailboxes || []).includes(MAILBOX_TRASH) && (
-                        <Tooltip label='Trash' placement='bottom'>
-                            <button onClick={() => updateMailBox(MAILBOX_TRASH)} className='trash-button-icon'>
-                                <TrashIcon/>
-                            </button>
-                        </Tooltip>
-                    )}
-                    <Tooltip label='Snooze' placement='bottom'>
-                        <div>
-                            <MessageSchedule
-                                isSnooze={true}
-                                date={scheduledDate}
-                                onChange={handleSchedule}
-                            />
-                        </div>
-                    </Tooltip>
+                    </Flex>
                 </Flex>
             </Flex>
         </>

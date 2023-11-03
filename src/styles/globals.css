@@ -1085,6 +1085,13 @@ div:has(> .mailSendToaster) {
     margin: 0;
 }
 
+.header-right-icon button,
+.header-right-icon > div{
+    padding-left: 5px;
+    margin-left: 5px;
+    border-left: 1px solid #E2E8F0;
+}
+
 .text-tooltip {
     display: none;
 }
