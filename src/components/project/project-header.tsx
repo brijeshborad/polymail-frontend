@@ -409,16 +409,14 @@ export function ProjectHeader() {
                     <Menu isOpen={isManagerMembersOpen} onClose={() => setIsManagerMembersOpen(false)}>
                         {({onClose}) => (
                             <>
-                                <Tooltip label={'Manage members'} placement={'bottom'}>
-                                    <MenuButton
-                                        onClick={() => setIsManagerMembersOpen(!isManagerMembersOpen)}
-                                        as={Button} className={styles.manageMembers} ml={2} backgroundColor={'#000000'}
-                                        color={'#ffffff'} lineHeight={'1'} fontSize={'14px'} borderRadius={'8px'}
-                                        height={'auto'} padding={'11px 16px'}
-                                    >
-                                        Share
-                                    </MenuButton>
-                                </Tooltip>
+                                <MenuButton
+                                    onClick={() => setIsManagerMembersOpen(!isManagerMembersOpen)}
+                                    as={Button} className={styles.manageMembers} ml={2} backgroundColor={'#000000'}
+                                    color={'#ffffff'} lineHeight={'1'} fontSize={'14px'} borderRadius={'8px'}
+                                    height={'auto'} padding={'11px 16px'}
+                                >
+                                    Share
+                                </MenuButton>
                                 <MenuList className={`${styles.manageMemberDropDown} drop-down-list`}>
                                     <Flex color={'#374151'} fontWeight={'500'} fontSize={'13px'} padding={'12px'}
                                           justifyContent={'space-between'} alignItems={'center'}
