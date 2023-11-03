@@ -668,6 +668,7 @@ class ThreadsService extends BaseService {
     }
 
     updateCacheWithThread(isNewThread: boolean, threadsToUpdate: Thread[], thread: Thread, selectedThread: Thread | null = null) {
+        thread = {...thread};
         threadsToUpdate = [...threadsToUpdate];
         let findThreadIndex = threadsToUpdate.findIndex((item: Thread) => item.id === thread.id);
         if (findThreadIndex !== -1) {
@@ -777,7 +778,7 @@ class ThreadsService extends BaseService {
         if (allMailboxToFindIn.includes(currentTabValue)) {
             let finalThreads = [...(threads || [])];
             let isProjectThread = (thread.projects || []).length > 0;
-            if (isProjectThread && tabName === 'projects') {
+            if (isProjectThread && (tabName === 'projects' || tabName === 'everything')) {
                 allowCallBack = true;
                 finalThreads = this.updateCacheWithThread(isNewThread, finalThreads, thread, selectedThread);
                 threadService.setThreads(finalThreads);
@@ -790,6 +791,122 @@ class ThreadsService extends BaseService {
             }
         }
         return allowCallBack;
+    }
+
+    threadUpdated(thread: Thread) {
+        let {tabValue, threads, selectedThread} = this.getThreadState();
+        let currentTabValue = 'INBOX';
+        if (tabValue) {
+            currentTabValue = tabValue;
+        }
+        let allMailboxToFindIn = (thread.mailboxes || []);
+        let removableThread = this.updateThreadToProperPlaceInCache(thread);
+        let finalThreads = [...(threads || [])];
+        let findThreadIndex = finalThreads.findIndex((item: Thread) => item.id === thread.id);
+        if (allMailboxToFindIn.includes(currentTabValue)) {
+            if (findThreadIndex !== -1) {
+                finalThreads[findThreadIndex] = {
+                    ...finalThreads[findThreadIndex],
+                    mailboxes: thread.mailboxes
+                }
+            } else {
+                if (removableThread) {
+                    finalThreads.unshift({...removableThread, mailboxes: thread.mailboxes});
+                } else {
+                    let messages: Message[] = [...(thread.messages || [])];
+                    messages = performMessagesUpdate(messages);
+                    thread.messages = messages;
+                    finalThreads.unshift(thread);
+                }
+            }
+            if (selectedThread && selectedThread.id === thread.id) {
+                this.setSelectedThread({...selectedThread, mailboxes: thread.mailboxes});
+            }
+        } else {
+            if (findThreadIndex !== -1) {
+                if (selectedThread && selectedThread.id === thread.id) {
+                    let finalIndex = (findThreadIndex - 1 < finalThreads.length ) ? (findThreadIndex === 0) ? findThreadIndex : findThreadIndex - 1 : (findThreadIndex <= 0 ? findThreadIndex + 1 : findThreadIndex - 1)
+                    this.setSelectedThread(finalThreads[finalIndex]);
+                }
+                finalThreads.splice(findThreadIndex, 1);
+            }
+        }
+        this.setThreads(finalThreads);
+    }
+
+    updateThreadToProperPlaceInCache(thread: Thread) {
+        let cacheThreads = {...getCacheThreads()};
+        let threadsToRemove: any = {...this.getThreadsToRemoveFromCache(cacheThreads, thread)};
+        let removableThread: Thread | null = null;
+        if (Object.keys(threadsToRemove).length > 0) {
+            removableThread = threadsToRemove[Object.keys(threadsToRemove)[0]];
+        }
+        cacheThreads = this.updateThreadsToCache(cacheThreads, thread, removableThread);
+        setCacheThreads(cacheThreads);
+        return removableThread;
+    }
+
+    getThreadsToRemoveFromCache(cacheThreads: any, thread: Thread) {
+        let threadsToRemove: any = {};
+        let allMailboxToFindIn = (thread.mailboxes || []);
+        Object.keys(cacheThreads).forEach((cacheKey: string) => {
+            let findThreadIndex = cacheThreads[cacheKey].findIndex((item: Thread) => item.id === thread.id);
+            let tabValueFromCacheKey = cacheKey.split('-')[2];
+            if (!allMailboxToFindIn.includes(tabValueFromCacheKey)) {
+                if (findThreadIndex !== -1) {
+                    threadsToRemove[cacheKey] = {...cacheThreads[cacheKey][findThreadIndex]};
+                }
+            }
+        })
+        return threadsToRemove;
+    }
+
+    updateThreadsToCache(cacheThreads: any, thread: Thread, removeThead: Thread | null) {
+        let allMailboxToFindIn = (thread.mailboxes || []);
+        let isProjectThread = (thread.projects || []).length > 0;
+        Object.keys(cacheThreads).forEach((cacheKey: string) => {
+            cacheThreads[cacheKey] = [...cacheThreads[cacheKey]];
+            let findThreadIndex = cacheThreads[cacheKey].findIndex((item: Thread) => item.id === thread.id);
+            let tabValueFromCacheKey = cacheKey.split('-')[2];
+            if (allMailboxToFindIn.includes(tabValueFromCacheKey)) {
+                if (isProjectThread && (cacheKey.includes('projects') || cacheKey.includes('everything'))) {
+                    if (findThreadIndex !== -1) {
+                        cacheThreads[cacheKey][findThreadIndex] = {
+                            ...cacheThreads[cacheKey][findThreadIndex],
+                            mailboxes: thread.mailboxes
+                        };
+                    } else {
+                        if (removeThead) {
+                            cacheThreads[cacheKey].unshift({...removeThead, mailboxes: thread.mailboxes});
+                        } else {
+                            let messages: Message[] = [...(thread.messages || [])];
+                            messages = performMessagesUpdate(messages);
+                            thread.messages = messages;
+                            cacheThreads[cacheKey].unshift(thread);
+                        }
+                    }
+                } else {
+                    if (cacheKey.includes('just-mine')) {
+                        if (findThreadIndex !== -1) {
+                            cacheThreads[cacheKey][findThreadIndex] = {
+                                ...cacheThreads[cacheKey][findThreadIndex],
+                                mailboxes: thread.mailboxes
+                            };
+                        } else {
+                            if (removeThead) {
+                                cacheThreads[cacheKey].unshift({...removeThead, mailboxes: thread.mailboxes});
+                            } else {
+                                let messages: Message[] = [...(thread.messages || [])];
+                                messages = performMessagesUpdate(messages);
+                                thread.messages = messages;
+                                cacheThreads[cacheKey].unshift(thread);
+                            }
+                        }
+                    }
+                }
+            }
+        })
+        return cacheThreads
     }
 }
 
