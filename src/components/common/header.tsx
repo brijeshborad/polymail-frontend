@@ -253,7 +253,7 @@ export function Header() {
     return (
         <Flex className={styles.header} w="100%" align={'center'} flex={'none'} padding={'0 40px'}>
             <Flex padding={'12px 0'} align={'center'}>
-                <Flex marginBottom={'-5px'}>
+                <Flex marginBottom={'-5px'} cursor={'pointer'} onClick={() => changePage('inbox')}>
                     <OnboardingLogoIcon/>
                 </Flex>
                 <Flex className={styles.headerTabs} align={'center'}>
