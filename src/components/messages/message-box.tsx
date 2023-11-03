@@ -511,9 +511,9 @@ export function MessageBox(props: any) {
                                     </Flex>
                                     <Text fontSize={'13px'} color={'#0A101D'}> {message?.draftInfo?.createdBy || ''} </Text>
                                 </Flex>
-                                <Text fontSize={'11px'} color={'#6B7280'}>
-                                    Saved <Time fontSize={'11px'} as={'span'} time={message?.updated || ''} isShowFullTime={false}
-                                                showTimeInShortForm={true}/>&nbsp;ago </Text>
+                                {/*<Text fontSize={'11px'} color={'#6B7280'}>*/}
+                                {/*    Saved <Time fontSize={'11px'} as={'span'} time={message?.updated || ''} isShowFullTime={false}*/}
+                                {/*                showTimeInShortForm={true}/>&nbsp;ago </Text>*/}
                             </Flex>
 
                             <Flex>

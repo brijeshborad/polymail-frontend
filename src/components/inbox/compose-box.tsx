@@ -29,7 +29,7 @@ import {commonService, draftService, globalEventService, messageService, threadS
 import {ProgressBar} from "@/components/loader-screen/progress-bar";
 
 const CreateNewProject = dynamic(() => import('@/components/project/create-new-project').then(mod => mod.default));
-const Time = dynamic(() => import("@/components/common").then(mod => mod.Time));
+// const Time = dynamic(() => import("@/components/common").then(mod => mod.Time));
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
 const MessageRecipients = dynamic(() => import("../messages/message-recipients").then(mod => mod.default));
 const MessageSchedule = dynamic(() => import("../messages/message-schedule").then(mod => mod.default));
@@ -433,17 +433,17 @@ export function ComposeBox(props: any) {
                     <Flex gap={1} align={'center'}>
                         <Heading as='h6' fontSize={'12px'} color={'#0A101D'} fontWeight={500}
                                  lineHeight={1}>Draft </Heading>
-                        <Text fontSize='xs' lineHeight={1} color={'#6B7280'} display={'flex'} alignItems={'center'}
-                              fontWeight={400}>
-                            {!composeDraft && !isDraftUpdated && ''}
-                            {composeDraft && isDraftUpdated &&
-                            <>
-                                (Saved to drafts&nbsp;{(composeDraft?.updated) ?
-                                <Time as={'span'} time={composeDraft?.updated || ''} isShowFullTime={false}
-                                      showTimeInShortForm={true}/> : '0s'}&nbsp;ago)
-                            </>
-                            }
-                        </Text>
+                        {/*<Text fontSize='xs' lineHeight={1} color={'#6B7280'} display={'flex'} alignItems={'center'}*/}
+                        {/*      fontWeight={400}>*/}
+                        {/*    {!composeDraft && !isDraftUpdated && ''}*/}
+                        {/*    {composeDraft && isDraftUpdated &&*/}
+                        {/*    <>*/}
+                        {/*        (Saved to drafts&nbsp;{(composeDraft?.updated) ?*/}
+                        {/*        <Time as={'span'} time={composeDraft?.updated || ''} isShowFullTime={false}*/}
+                        {/*              showTimeInShortForm={true}/> : '0s'}&nbsp;ago)*/}
+                        {/*    </>*/}
+                        {/*    }*/}
+                        {/*</Text>*/}
                     </Flex>
                     <Flex color={'#6B7280'} fontSize={'13px'} h={'20px'} w={'20px'} align={'center'} justify={'center'}
                           cursor={'pointer'} onClick={() => onCloseClick()}> <CloseIcon/> </Flex>

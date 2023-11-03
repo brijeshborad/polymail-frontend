@@ -31,7 +31,7 @@ import Tooltip from "@/components/common/Tooltip";
 
 const MessageRecipients = dynamic(() => import("./message-recipients").then(mod => mod.default));
 const MessageSchedule = dynamic(() => import("./message-schedule").then(mod => mod.default));
-const Time = dynamic(() => import("@/components/common").then(mod => mod.Time));
+// const Time = dynamic(() => import("@/components/common").then(mod => mod.Time));
 
 
 dayjs.extend(relativeTime)
@@ -908,17 +908,17 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                 }}
                                 grow={1} justifyContent={'flex-end'}
                             >
-                                <Text
-                                    as={'h1'} fontSize='11px' color={'#6B7280'} display={'flex'} gap={'2px'}
-                                    className={styles.mailSaveTime}>
-                                    {(!draft?.updated || !isDraftUpdated) && ''}
-                                    {(draft?.updated && isDraftUpdated) &&
-                                    <>
-                                        Saved <Time time={draft?.updated || ''} isShowFullTime={false}
-                                                    showTimeInShortForm={true}/>&nbsp;ago
-                                    </>
-                                    }
-                                </Text>
+                                {/*<Text*/}
+                                {/*    as={'h1'} fontSize='11px' color={'#6B7280'} display={'flex'} gap={'2px'}*/}
+                                {/*    className={styles.mailSaveTime}>*/}
+                                {/*    {(!draft?.updated || !isDraftUpdated) && ''}*/}
+                                {/*    {(draft?.updated && isDraftUpdated) &&*/}
+                                {/*    <>*/}
+                                {/*        Saved <Time time={draft?.updated || ''} isShowFullTime={false}*/}
+                                {/*                    showTimeInShortForm={true}/>&nbsp;ago*/}
+                                {/*    </>*/}
+                                {/*    }*/}
+                                {/*</Text>*/}
                             </Flex>
                         </Flex>
                         {showReplyBox &&
