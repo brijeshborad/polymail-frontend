@@ -1,6 +1,6 @@
 import {
     Button,
-    Flex, Input,
+    Flex, Heading, Input,
     Menu,
     MenuButton, MenuItem,
     MenuList,
@@ -207,7 +207,7 @@ export function MessageReplyBox(props: MessageBoxType) {
             } else if (replyType === 'forward') {
                 finalSubject = `Fwd: ${selectedThread?.subject}`
             }
-            setSubject(finalSubject);
+            // setSubject(finalSubject);
         }
 
         let messageId = '';
@@ -798,7 +798,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                     onBlur={() => handleBlur()}>
                     <Flex borderRadius={8} border={'1px solid #F3F4F6'} direction={'column'} padding={4}>
                         {totalDraftMessages.length > 0 &&
-                        <Flex align={'center'} justifyContent={'space-between'} pb={4}
+                        <Flex align={'center'} justifyContent={'space-between'} pb={2}
                               borderBottom={'1px solid #F3F4F6'}>
                             <Flex gap={2}>
                                 <Flex alignItems={'center'} justifyContent={'end'}
@@ -831,7 +831,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                             </Button>}
                         </Flex>}
                         <Flex
-                            align={'center'} justify={'space-between'} mt={totalDraftMessages.length > 0 ? 4 : 0} gap={4} position={"relative"}
+                            align={'center'} justify={'space-between'} mt={'5px'} gap={4} position={"relative"}
                             zIndex={isReplyDropdownOpen ? 8 : 6}>
                             <Flex align={'center'} gap={1}>
                                 <Menu isOpen={isReplyDropdownOpen} onClose={() => setIsReplyDropdownOpen(false)}>
@@ -922,7 +922,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                             </Flex>
                         </Flex>
                         {showReplyBox &&
-                        <div ref={divRef}>
+                        <div ref={divRef} style={{marginTop: '5px'}}>
                             <MessageRecipients
                                 emailRecipients={emailRecipients}
                                 updateValues={(values) => {
@@ -932,6 +932,18 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                             />
                         </div>
                         }
+                        <Flex width={'100%'} mt={1} flex={'none'} backgroundColor={'#FFFFFF'}
+                              border={'1px solid #E5E7EB'} borderRadius={8} gap={2} padding={'4px 16px'} className={styles.replyBoxCC}>
+                            <Heading as={'h6'} fontSize={'13px'} paddingTop={1} fontWeight={500} lineHeight={1}
+                                     color={'#374151'}>Subject:</Heading>
+                            <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
+                                <Input width={'auto'} display='inline-flex' padding={0} height={'20px'} flex={'1 0 auto'}
+                                       fontSize={'12px'} border={0} className={styles.ccInput}
+                                       value={subject} onChange={(e) => setSubject(e.target.value)}
+                                       placeholder={`Enter Subject`}
+                                />
+                            </Flex>
+                        </Flex>
                         <Flex
                             onClick={(e) => {
                                 e.stopPropagation();
