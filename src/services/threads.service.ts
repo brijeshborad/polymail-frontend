@@ -973,45 +973,45 @@ class ThreadsService extends BaseService {
             whatToMark = true;
         }
         if (selectedThreadIds.length > 0) {
-            const messagePlural = selectedThreadIds.length === 1 ? 'message' : 'messages'
+            // const messagePlural = selectedThreadIds.length === 1 ? 'message' : 'messages'
             let body: any = {
                 mute: whatToMark,
                 threadIds: selectedThreadIds,
             }
-            let toastId = generateToasterId();
+            // let toastId = generateToasterId();
             let batchUpdateMoveBody = {
                 body: {body},
-                toaster: {
-                    success: {
-                        desc: `Your threads has been ${whatToMark ? 'muted' : 'Un muted'}`,
-                        title: `${selectedThreadIds.length} ${messagePlural} has been ${whatToMark ? 'muted' : 'Un muted'}`,
-                        type: 'undo_changes',
-                        id: toastId,
-                    }
-                },
-                undoAction: {
-                    showUndoButton: true,
-                    dispatch: this.getDispatch(),
-                    action: batchUpdateThreads,
-                    success: {
-                        type: 'success',
-                        desc: `Your threads has been ${whatToMark ? 'un-muted' : 'muted'}`,
-                        title: `${selectedThreadIds.length} ${messagePlural} has been ${whatToMark ? 'un-muted' : 'muted'}`
-                    },
-                    undoBody: {
-                        body: {mute: !whatToMark, threadIds: selectedThreadIds},
-                        afterUndoAction: () => {
-                            this.setThreadState({threads: threads});
-                            if (selectedThread && selectedThreadIds.includes(selectedThread.id!)) {
-                                this.setSelectedThread({...selectedThread, mute: !whatToMark})
-                            }
-                            selectedThreadIds.forEach(id => {
-                                this.makeThreadAsMuteCache(id, !whatToMark);
-                            })
-                        }
-                    },
-                    showToasterAfterUndoClick: true
-                }
+                // toaster: {
+                //     success: {
+                //         desc: `Your threads has been ${whatToMark ? 'muted' : 'Un muted'}`,
+                //         title: `${selectedThreadIds.length} ${messagePlural} has been ${whatToMark ? 'muted' : 'Un muted'}`,
+                //         type: 'undo_changes',
+                //         id: toastId,
+                //     }
+                // },
+                // undoAction: {
+                //     showUndoButton: true,
+                //     dispatch: this.getDispatch(),
+                //     action: batchUpdateThreads,
+                //     success: {
+                //         type: 'success',
+                //         desc: `Your threads has been ${whatToMark ? 'un-muted' : 'muted'}`,
+                //         title: `${selectedThreadIds.length} ${messagePlural} has been ${whatToMark ? 'un-muted' : 'muted'}`
+                //     },
+                //     undoBody: {
+                //         body: {mute: !whatToMark, threadIds: selectedThreadIds},
+                //         afterUndoAction: () => {
+                //             this.setThreadState({threads: threads});
+                //             if (selectedThread && selectedThreadIds.includes(selectedThread.id!)) {
+                //                 this.setSelectedThread({...selectedThread, mute: !whatToMark})
+                //             }
+                //             selectedThreadIds.forEach(id => {
+                //                 this.makeThreadAsMuteCache(id, !whatToMark);
+                //             })
+                //         }
+                //     },
+                //     showToasterAfterUndoClick: true
+                // }
             }
             this.dispatchAction(batchUpdateThreads, batchUpdateMoveBody);
             let newFilteredThreads = threads.map((thread: Thread) => {

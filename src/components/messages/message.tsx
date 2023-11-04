@@ -2,7 +2,7 @@ import styles from "@/styles/Inbox.module.css";
 import {
     Box, createStandaloneToast,
     Flex,
-    Heading,
+    Heading, Text,
 } from "@chakra-ui/react";
 import {StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
@@ -14,6 +14,7 @@ import {InboxLoader} from "@/components/loader-screen/inbox-loader";
 import {globalEventService, keyNavigationService, messageService, threadService} from "@/services";
 import {Toaster} from "../common";
 import {generateToasterId} from "@/utils/common.functions";
+import {MuteIcon} from "@/icons";
 // import {clearDebounce, debounce} from "@/utils/common.functions";
 
 const SelectedThreads = dynamic(() => import('@/components/threads/selected-threads').then((mod) => mod.default));
@@ -23,6 +24,7 @@ const MessageReplyBox = dynamic(() => import('@/components/messages/message-repl
 const ComposeBox = dynamic(() => import('@/components/inbox/compose-box').then(mod => mod.ComposeBox));
 const {toast} = createStandaloneToast()
 let previousToastId: string = '';
+
 export function Message({isProjectView = false}: { isProjectView?: boolean }) {
     const messagesWrapperRef = React.useRef<HTMLDivElement | null | any>(null);
     const [replyTypeName, setReplyTypeName] = useState<string>('Reply');
@@ -179,8 +181,8 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
                     if (!isThreadFocused) {
                         setThreadFocus(true);
                         keyNavigationService.setKeyNavigationState({
-                          action: 'RIGHT',
-                          target: 'thread'
+                            action: 'RIGHT',
+                            target: 'thread'
                         })
                     }
                 }}>
@@ -190,21 +192,35 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
         )
     }
 
+    function getMuteStatus() {
+        if (selectedThread && selectedThread.mute) {
+            return <Flex align={'center'} px={'20px'} pt={'20px'}>
+                <MuteIcon color={'#67074A'}/>
+                <Text fontSize={'13px'} color={'#67074A'} mt={'1px'}>
+                    This conversation has been muted. You will not receive notifications for new messages.
+                </Text>
+            </Flex>
+        }
+        return null
+    }
+
     function showMessage() {
         return (
             <>
                 {!selectedThread && showBlankPage()}
                 {selectedThread && <Flex flexDir={'column'} height={'100%'}>
                     <>
-                    {/*    onScroll={() => handleScroll()}*/}
-                    {/*    onWheel={(event) => {*/}
-                    {/*    if (event.deltaY > 0) {*/}
-                    {/*        handleScroll()*/}
-                    {/*    }*/}
-                    {/*}}*/}
-                        <MessagesHeader />
-                        {isShowingMessageBox && <Flex ref={messagesWrapperRef} padding={'20px'} gap={5} direction={'column'} flex={1}
-                                                      overflowY={'scroll'} overflowX={'hidden'}>
+                        {/*    onScroll={() => handleScroll()}*/}
+                        {/*    onWheel={(event) => {*/}
+                        {/*    if (event.deltaY > 0) {*/}
+                        {/*        handleScroll()*/}
+                        {/*    }*/}
+                        {/*}}*/}
+                        <MessagesHeader/>
+                        {getMuteStatus()}
+                        {isShowingMessageBox &&
+                        <Flex ref={messagesWrapperRef} padding={'20px'} gap={5} direction={'column'} flex={1}
+                              overflowY={'scroll'} overflowX={'hidden'}>
                             <Flex gap={2} direction={'column'} height={'100%'}>
                                 <div className={styles.mailBoxMailList}>
                                     <MessageBox hideAndShowReplyBox={hideAndShowReplyBox}/>

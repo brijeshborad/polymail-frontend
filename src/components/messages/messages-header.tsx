@@ -178,38 +178,6 @@ export function MessagesHeader() {
                 body: {
                     id: selectedThread.id,
                     body: {mute}
-                },
-                toaster: {
-                    success: {
-                        type: 'undo_changes',
-                        desc: mute ? 'You won`t receive new notifications for this thread.' : 'You will receive new notifications for this thread.',
-                        title: selectedThread?.subject || '',
-                        id: generateToasterId(),
-                    },
-                },
-                undoAction: {
-                    showUndoButton: true,
-                    dispatch,
-                    action: updateThreads,
-                    undoBody: {
-                        id: selectedThread.id,
-                        body: {
-                            mute: !mute,
-                        },
-                        success: {
-                            type: 'success',
-                            desc: 'You will receive new notifications for this thread.',
-                            title: 'Thread un-muted'
-                        },
-                        afterUndoAction: () => {
-                            threadService.setThreadState({
-                                threads: threads || [],
-                                selectedThread: selectedThread
-                            })
-                            threadService.setThreadState({success: true});
-                        }
-                    },
-                    showToasterAfterUndoClick: true
                 }
             }));
             let finalThreads = [...(threads || [])];
