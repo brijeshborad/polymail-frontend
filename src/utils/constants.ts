@@ -9,6 +9,7 @@ export const MAILBOX_TRASH = 'TRASH'
 export const MAILBOX_SNOOZED = 'SNOOZED'
 export const MAILBOX_STARRED = 'STARRED'
 export const MAILBOX_SENT = 'SENT'
+export const MAILBOX_SPAM = 'SPAM'
 export const MONITORED_KEYS = [
     { key: 37, value: 'LEFT' },
     { key: 38, value: 'UP' },

@@ -18,7 +18,7 @@ import {
     EditIcon,
     InboxIcon,
     InboxOpenIcon, MuteIcon,
-    SendIcon,
+    SendIcon, SpamIcon,
     StarIcon,
     TimeSnoozeIcon,
     TrashIcon
@@ -29,9 +29,9 @@ import {useDispatch, useSelector} from "react-redux";
 import dynamic from "next/dynamic";
 import {SmallCloseIcon, TriangleDownIcon} from "@chakra-ui/icons";
 import {
-    MAILBOX_ARCHIVE,
-    MAILBOX_INBOX,
-    MAILBOX_SNOOZED,
+    MAILBOX_ARCHIVE, MAILBOX_DRAFT,
+    MAILBOX_INBOX, MAILBOX_SENT,
+    MAILBOX_SNOOZED, MAILBOX_SPAM,
     MAILBOX_STARRED,
     MAILBOX_TRASH,
     MAILBOX_UNREAD
@@ -270,6 +270,8 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                 <MenuItem
                                     onClick={() => threadService.markMultipleThreadsAsMute()}><MuteIcon/> Toggle
                                     Mute</MenuItem>
+                                <MenuItem
+                                    onClick={() => moveThreadToMailBoxes(MAILBOX_SPAM)}><SpamIcon/> Mark Spam</MenuItem>
                             </MenuList>
                         </Menu>
 
@@ -292,8 +294,8 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                     <Tab className={styles.emailTabs}>
                         <Tooltip label='Inbox' placement='bottom'>
                             <div
-                                className={`${tab === 'INBOX' ? styles.active : ''}`}
-                                onClick={() => changeEmailTabs('INBOX')}
+                                className={`${tab === MAILBOX_INBOX ? styles.active : ''}`}
+                                onClick={() => changeEmailTabs(MAILBOX_INBOX)}
                             >
                                 <InboxIcon/>
                                 <span className={styles.mailboxText}>Inbox</span>
@@ -305,8 +307,8 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                     <Tab className={styles.emailTabs}>
                         <Tooltip label='Sent' placement='bottom'>
                             <div
-                                className={`${tab === 'SENT' ? styles.active : ''}`}
-                                onClick={() => changeEmailTabs('SENT')}
+                                className={`${tab === MAILBOX_SENT ? styles.active : ''}`}
+                                onClick={() => changeEmailTabs(MAILBOX_SENT)}
                             >
                                 <SendIcon/>
                                 <span className={styles.mailboxText}>Sent</span>
@@ -314,12 +316,12 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                         </Tooltip>
                     </Tab>
 
-                    {!['TRASH', 'STARRED', 'ARCHIVE', 'DRAFT'].includes(tab) &&
+                    {![MAILBOX_TRASH, MAILBOX_STARRED, MAILBOX_ARCHIVE, MAILBOX_DRAFT, MAILBOX_SPAM].includes(tab) &&
                     <Tab className={styles.emailTabs}>
                         <Tooltip label='Snoozed' placement='bottom'>
                             <div
-                                className={`${tab === 'SNOOZED' ? styles.active : ''}`}
-                                onClick={() => changeEmailTabs('SNOOZED')}
+                                className={`${tab === MAILBOX_SNOOZED ? styles.active : ''}`}
+                                onClick={() => changeEmailTabs(MAILBOX_SNOOZED)}
                             >
                                 <TimeSnoozeIcon/>
                                 <span className={styles.mailboxText}>Snoozed</span>
@@ -328,12 +330,12 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                     </Tab>
                     }
 
-                    {tab === 'STARRED' &&
+                    {tab === MAILBOX_STARRED &&
                     <Tab className={styles.emailTabs}>
                         <Tooltip label='Starred' placement='bottom'>
                             <div
-                                className={`${tab === 'STARRED' ? styles.active : ''}`}
-                                onClick={() => changeEmailTabs('STARRED')}
+                                className={`${tab === MAILBOX_STARRED ? styles.active : ''}`}
+                                onClick={() => changeEmailTabs(MAILBOX_STARRED)}
                             >
                                 <StarIcon/>
                                 <span className={styles.mailboxText}>Starred</span>
@@ -342,13 +344,12 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                     </Tab>
                     }
 
-                    {tab === 'TRASH' &&
-
+                    {tab === MAILBOX_TRASH &&
                     <Tab className={styles.emailTabs}>
                         <Tooltip label='Trash' placement='bottom'>
                             <div
-                                className={`${tab === 'TRASH' ? styles.active : ''}`}
-                                onClick={() => changeEmailTabs('TRASH')}
+                                className={`${tab === MAILBOX_TRASH ? styles.active : ''}`}
+                                onClick={() => changeEmailTabs(MAILBOX_TRASH)}
                             >
                                 <TrashIcon/>
                                 <span className={styles.mailboxText}>Trash</span>
@@ -356,13 +357,12 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                         </Tooltip>
                     </Tab>
                     }
-                    {tab === 'ARCHIVE' &&
-
+                    {tab === MAILBOX_ARCHIVE &&
                     <Tab className={styles.emailTabs}>
                         <Tooltip label='Archive' placement='bottom'>
                             <div
-                                className={`${tab === 'ARCHIVE' ? styles.active : ''}`}
-                                onClick={() => changeEmailTabs('ARCHIVE')}
+                                className={`${tab === MAILBOX_ARCHIVE ? styles.active : ''}`}
+                                onClick={() => changeEmailTabs(MAILBOX_ARCHIVE)}
                             >
                                 <ArchiveIcon/>
                                 <span className={styles.mailboxText}>Archive</span>
@@ -371,16 +371,29 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                     </Tab>
                     }
 
-                    {tab === 'DRAFT' &&
-
+                    {tab === MAILBOX_DRAFT &&
                     <Tab className={styles.emailTabs}>
                         <Tooltip label='Draft' placement='bottom'>
                             <div
-                                className={`${tab === 'DRAFT' ? styles.active : ''}`}
-                                onClick={() => changeEmailTabs('DRAFT')}
+                                className={`${tab === MAILBOX_DRAFT ? styles.active : ''}`}
+                                onClick={() => changeEmailTabs(MAILBOX_DRAFT)}
                             >
                                 <DraftIcon/>
                                 <span className={styles.mailboxText}>Draft</span>
+                            </div>
+                        </Tooltip>
+                    </Tab>
+                    }
+
+                    {tab === MAILBOX_SPAM &&
+                    <Tab className={styles.emailTabs}>
+                        <Tooltip label='Spam' placement='bottom'>
+                            <div
+                                className={`${tab === MAILBOX_SPAM ? styles.active : ''}`}
+                                onClick={() => changeEmailTabs(MAILBOX_SPAM)}
+                            >
+                                <SpamIcon/>
+                                <span className={styles.mailboxText}>Spam</span>
                             </div>
                         </Tooltip>
                     </Tab>
@@ -433,24 +446,26 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                 }, 100, 'MORE_MENU')
                             }}
                         >
-                            {['TRASH', 'STARRED', 'ARCHIVE', 'DRAFT'].includes(tab) &&
+                            {[MAILBOX_TRASH, MAILBOX_STARRED, MAILBOX_ARCHIVE, MAILBOX_DRAFT, MAILBOX_SPAM].includes(tab) &&
                             <MenuItem
-                                onClick={() => changeEmailTabs('SNOOZED')}><TimeSnoozeIcon/> Snoozed</MenuItem>
+                                onClick={() => changeEmailTabs(MAILBOX_SNOOZED)}><TimeSnoozeIcon/> Snoozed</MenuItem>
                             }
-
-                            {tab !== 'TRASH' &&
-                            <MenuItem onClick={() => changeEmailTabs('TRASH')}><TrashIcon/> Trash</MenuItem>
+                            {tab !== MAILBOX_TRASH &&
+                            <MenuItem onClick={() => changeEmailTabs(MAILBOX_TRASH)}><TrashIcon/> Trash</MenuItem>
                             }
-                            {tab !== 'STARRED' &&
+                            {tab !== MAILBOX_STARRED &&
                             <MenuItem
-                                onClick={() => changeEmailTabs('STARRED')}><StarIcon/> Starred</MenuItem>
+                                onClick={() => changeEmailTabs(MAILBOX_STARRED)}><StarIcon/> Starred</MenuItem>
                             }
-                            {tab !== 'ARCHIVE' &&
+                            {tab !== MAILBOX_ARCHIVE &&
                             <MenuItem
-                                onClick={() => changeEmailTabs('ARCHIVE')}><ArchiveIcon/> Archive</MenuItem>
+                                onClick={() => changeEmailTabs(MAILBOX_ARCHIVE)}><ArchiveIcon/> Archive</MenuItem>
                             }
-                            {tab !== 'DRAFT' &&
-                            <MenuItem onClick={() => changeEmailTabs('DRAFT')}><DraftIcon/> Draft</MenuItem>
+                            {tab !== MAILBOX_DRAFT &&
+                            <MenuItem onClick={() => changeEmailTabs(MAILBOX_DRAFT)}><DraftIcon/> Draft</MenuItem>
+                            }
+                            {tab !== MAILBOX_SPAM &&
+                            <MenuItem onClick={() => changeEmailTabs(MAILBOX_SPAM)}><SpamIcon/> Spam</MenuItem>
                             }
                         </MenuList>
                     </Menu>

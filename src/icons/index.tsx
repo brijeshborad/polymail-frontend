@@ -39,3 +39,4 @@ export * from './add-emoji.icon';
 export * from './inbox-open.icon';
 export * from './mute.icon';
 export * from './unmute.icon';
+export * from './spam.icon';

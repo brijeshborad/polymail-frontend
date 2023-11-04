@@ -7,7 +7,7 @@ import {
 import {
     ArchiveIcon,
     TrashIcon,
-    InboxIcon, StarIcon, InboxOpenIcon, UnmuteIcon
+    InboxIcon, StarIcon, InboxOpenIcon, UnmuteIcon, SpamIcon
 } from "@/icons";
 import React, {useState} from "react";
 import {updateThreads} from "@/redux/threads/action-reducer";
@@ -18,7 +18,7 @@ import dynamic from "next/dynamic";
 import {
     MAILBOX_ARCHIVE,
     MAILBOX_INBOX,
-    MAILBOX_SNOOZED,
+    MAILBOX_SNOOZED, MAILBOX_SPAM,
     MAILBOX_STARRED,
     MAILBOX_TRASH,
     MAILBOX_UNREAD
@@ -76,6 +76,14 @@ export function MessagesHeader() {
                         }
                         body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_INBOX, MAILBOX_TRASH].includes(item))
                         body.mailboxes = [...body.mailboxes, messageBox]
+                        remove_from_list = true
+                        messageService.setSelectedMessage(null);
+                        break;
+                    case MAILBOX_SPAM:
+                        if (selectedThread.mailboxes?.includes(messageBox)) {
+                            return
+                        }
+                        body.mailboxes = [messageBox]
                         remove_from_list = true
                         messageService.setSelectedMessage(null);
                         break;
@@ -237,14 +245,22 @@ export function MessagesHeader() {
                         <div>
                             {!(selectedThread?.mailboxes || []).includes(MAILBOX_UNREAD) && (
                                 <Tooltip label='Unread' placement='bottom'>
-                                    <button onClick={() => updateMailBox(MAILBOX_UNREAD)}
+                                    <button onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        updateMailBox(MAILBOX_UNREAD)
+                                    }}
                                             className={`unread-button-icon`}>
                                         <InboxOpenIcon/>
                                     </button>
                                 </Tooltip>
                             )}
                             <Tooltip label='Starred' placement='bottom'>
-                                <button onClick={() => updateMailBox(MAILBOX_STARRED)}
+                                <button onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    updateMailBox(MAILBOX_STARRED)
+                                }}
                                         className={`starred-button-icon ${(selectedThread?.mailboxes || []).includes(MAILBOX_STARRED) ? 'active' : ''}`}>
                                     <StarIcon/>
                                 </button>
@@ -265,14 +281,22 @@ export function MessagesHeader() {
                         <div>
                             {!(selectedThread?.mailboxes || []).includes(MAILBOX_INBOX) && (
                                 <Tooltip label='Inbox' placement='bottom'>
-                                    <button onClick={() => updateMailBox(MAILBOX_INBOX)} className='inbox-button-icon'>
+                                    <button onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        updateMailBox(MAILBOX_INBOX)
+                                    }} className='inbox-button-icon'>
                                         <InboxIcon/>
                                     </button>
                                 </Tooltip>
                             )}
                             {!(selectedThread?.mailboxes || []).includes(MAILBOX_ARCHIVE) && (
                                 <Tooltip label='Archive' placement='bottom'>
-                                    <button onClick={() => updateMailBox(MAILBOX_ARCHIVE)}
+                                    <button onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        updateMailBox(MAILBOX_ARCHIVE)
+                                    }}
                                             className='archive-button-icon'>
                                         <ArchiveIcon/>
                                     </button>
@@ -280,7 +304,11 @@ export function MessagesHeader() {
                             )}
                             {!(selectedThread?.mailboxes || []).includes(MAILBOX_TRASH) && (
                                 <Tooltip label='Trash' placement='bottom'>
-                                    <button onClick={() => updateMailBox(MAILBOX_TRASH)} className='trash-button-icon'>
+                                    <button onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        updateMailBox(MAILBOX_TRASH)
+                                    }} className='trash-button-icon'>
                                         <TrashIcon/>
                                     </button>
                                 </Tooltip>
@@ -294,6 +322,17 @@ export function MessagesHeader() {
                                     />
                                 </div>
                             </Tooltip>
+                            {!(selectedThread?.mailboxes || []).includes(MAILBOX_SPAM) && (
+                                <Tooltip label='Spam' placement='bottom'>
+                                    <button onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        updateMailBox(MAILBOX_SPAM)
+                                    }} className='trash-button-icon'>
+                                        <SpamIcon/>
+                                    </button>
+                                </Tooltip>
+                            )}
                         </div>
                     </Flex>
                 </Flex>
