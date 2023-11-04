@@ -360,9 +360,9 @@ export function ProjectHeader() {
                                                           onClick={() => {
                                                               if (router.query.project !== project.id) {
                                                                   threadService.pageChange(false);
-                                                                  projectService.pageChange();
+                                                                  // projectService.pageChange();
                                                                   messageService.pageChange();
-                                                                  router.push(`/projects/${project.id}`)
+                                                                  router.replace(`/projects/${project.id}`, undefined, {shallow: true});
                                                               }
                                                           }}>
                                                     {project.emoji} {project.name}
