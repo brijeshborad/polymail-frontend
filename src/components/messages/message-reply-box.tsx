@@ -930,20 +930,20 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                     setEmailRecipients({...values})
                                 }}
                             />
+                            <Flex width={'100%'} mt={1} flex={'none'} backgroundColor={'#FFFFFF'}
+                                  border={'1px solid #E5E7EB'} borderRadius={8} gap={2} padding={'4px 16px'} className={styles.replyBoxCC}>
+                                <Heading as={'h6'} fontSize={'13px'} paddingTop={1} fontWeight={500} lineHeight={1}
+                                         color={'#374151'}>Subject:</Heading>
+                                <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
+                                    <Input width={'auto'} display='inline-flex' padding={0} height={'20px'} flex={'1 0 auto'}
+                                           fontSize={'12px'} border={0} className={styles.ccInput}
+                                           value={subject} onChange={(e) => setSubject(e.target.value)}
+                                           placeholder={`Enter Subject`}
+                                    />
+                                </Flex>
+                            </Flex>
                         </div>
                         }
-                        <Flex width={'100%'} mt={1} flex={'none'} backgroundColor={'#FFFFFF'}
-                              border={'1px solid #E5E7EB'} borderRadius={8} gap={2} padding={'4px 16px'} className={styles.replyBoxCC}>
-                            <Heading as={'h6'} fontSize={'13px'} paddingTop={1} fontWeight={500} lineHeight={1}
-                                     color={'#374151'}>Subject:</Heading>
-                            <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
-                                <Input width={'auto'} display='inline-flex' padding={0} height={'20px'} flex={'1 0 auto'}
-                                       fontSize={'12px'} border={0} className={styles.ccInput}
-                                       value={subject} onChange={(e) => setSubject(e.target.value)}
-                                       placeholder={`Enter Subject`}
-                                />
-                            </Flex>
-                        </Flex>
                         <Flex
                             onClick={(e) => {
                                 e.stopPropagation();
