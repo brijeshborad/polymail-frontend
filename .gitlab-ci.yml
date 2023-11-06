@@ -36,4 +36,4 @@ deploy_prod:
   needs: []
   when: manual
   only:
-    - develop
+    - teams
