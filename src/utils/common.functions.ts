@@ -278,3 +278,8 @@ export function getSignatureBanner(selectedAccount: Account | null | undefined) 
     }
     return `<p></p><p></p>${textContent.body.innerHTML}`;
 }
+
+export function getRandomProjectMetaOrder(): number {
+    let random: number = Math.random();
+    return random > 0 ? random : getRandomProjectMetaOrder();
+}

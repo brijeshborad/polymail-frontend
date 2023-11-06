@@ -17,10 +17,11 @@ import Router, {useRouter} from "next/router";
 import {Project, UserProjectOnlineStatus} from "@/models";
 import {POSITION_GAP} from "@/utils/constants";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
-import {commonService} from "@/services";
+import {commonService, projectService} from "@/services";
 import Tooltip from "@/components/common/Tooltip";
 import RemoveRecordModal from "@/components/common/delete-record-modal";
 import {deleteMemberFromProject} from "@/redux/memberships/action-reducer";
+import {getRandomProjectMetaOrder} from "@/utils/common.functions";
 
 function Index() {
     const {isLoading, projects, projectSearchedString} = useSelector((state: StateType) => state.projects);
@@ -31,9 +32,9 @@ function Index() {
 
     const [itemList, setItemList] = useState<Project[]>([]);
     const {isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose} = useDisclosure()
-    const [projectData,setProjectData] = useState<Project | null>(null);
+    const [projectData, setProjectData] = useState<Project | null>(null);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
-    const [actionType,setActionType] = useState<string>('');
+    const [actionType, setActionType] = useState<string>('');
 
 
     useEffect(() => {
@@ -61,6 +62,10 @@ function Index() {
         e.preventDefault();
     };
 
+    function getOrder(item: any) {
+        return item?.projectMeta?.order || getRandomProjectMetaOrder();
+    }
+
 
     const nextPosition = (items: Project[], index: number | undefined, excludedId: string | undefined) => {
         const filteredItems = excludedId === undefined ? items : items.filter((item) => item.id !== excludedId);
@@ -68,19 +73,18 @@ function Index() {
         if (index === undefined) {
             const lastItem = filteredItems[filteredItems.length - 1];
 
-            return (lastItem ? lastItem.projectMeta?.order || 0 : 0) + POSITION_GAP;
+            return (lastItem ? getOrder(lastItem) : 0) + POSITION_GAP;
         }
 
         const prevItem = filteredItems[index - 1];
         const nextItem = filteredItems[index];
 
-        const prevPosition = prevItem ? prevItem.projectMeta?.order || 0 : 0;
+        const prevPosition = prevItem ? getOrder(prevItem) : 0;
 
         if (!nextItem) {
             return prevPosition + POSITION_GAP;
         }
-
-        return (prevPosition + (nextItem.projectMeta?.order || 0)) / 2;
+        return (prevPosition + getOrder(nextItem)) / 2;
     };
 
 
@@ -154,7 +158,7 @@ function Index() {
                             }
                         },
                         afterSuccessAction: () => {
-                            let project = (itemList || []).filter((item : Project) => item.id !== projectData.id);
+                            let project = (itemList || []).filter((item: Project) => item.id !== projectData.id);
                             setItemList(project);
                         }
                     }));
@@ -163,17 +167,26 @@ function Index() {
         } else {
             if (projectData && projectData.id) {
                 dispatch(removeProject({
-                      body: {
-                          projectId: projectData.id
-                      },
-                      toaster: {
-                          success: {
-                              desc: 'Project removed successfully',
-                              title: 'Success',
-                              type: 'success'
-                          }
-                      }
-                  }
+                        body: {
+                            projectId: projectData.id
+                        },
+                        toaster: {
+                            success: {
+                                desc: 'Project removed successfully',
+                                title: 'Success',
+                                type: 'success'
+                            }
+                        },
+                        afterSuccessAction: () => {
+                            let {projects} = projectService.getProjectState();
+                            let finalProjects = [...(projects || [])];
+                            let removeProjectIndex = finalProjects.findIndex((item: Project) => item.id === projectData.id);
+                            if (removeProjectIndex !== -1) {
+                                finalProjects.splice(removeProjectIndex, 1);
+                            }
+                            projectService.setProjectState({projects: finalProjects});
+                        }
+                    }
                 ))
             }
         }
@@ -283,9 +296,14 @@ function Index() {
                                     </MenuButton>
                                     <MenuList minW={'126px'} className={'drop-down-list'}>
                                         <MenuItem>Mark as read</MenuItem>
-                                        <MenuItem onClick={() => commonService.toggleEditProjectModel(true, false, project)}>Edit project</MenuItem>
+                                        <MenuItem
+                                            onClick={() => commonService.toggleEditProjectModel(true, false, project)}>Edit
+                                            project</MenuItem>
                                         <MenuItem onClick={() => openModel(project, 'leave')}>Leave project</MenuItem>
-                                        {(project.projectMeta?.userId === selectedAccount?.userId) && <MenuItem className={'delete-button'} onClick={() => openModel(project, 'delete')}>Delete project</MenuItem>}
+                                        {(project.projectMeta?.userId === selectedAccount?.userId) &&
+                                        <MenuItem className={'delete-button'}
+                                                  onClick={() => openModel(project, 'delete')}>Delete
+                                            project</MenuItem>}
                                     </MenuList>
                                 </Menu>
 
