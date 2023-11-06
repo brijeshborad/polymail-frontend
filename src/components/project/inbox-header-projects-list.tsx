@@ -119,7 +119,6 @@ export function InboxHeaderProjectsList() {
                             </Flex>
                         </Button>
                     ))}
-
                     {(projectData && projectData.length >= maxSize && maxSize > 0) &&
                     <Button alignItems={'center'} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
                             onClick={() => changePage()} padding={'7px'} minWidth={'216px'}

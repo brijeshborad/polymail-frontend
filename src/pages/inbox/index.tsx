@@ -30,7 +30,7 @@ function InboxPage() {
     return (
         <div>
             <Flex padding={'16px 40px 15px'} backgroundColor={'#FFFFFF'} borderBottom={'1px solid #F3F4F6'} gap={3}
-                  overflowX={'auto'}>
+                  overflowX={'auto'} height={'69px'}>
                 <InboxHeaderProjectsList/>
             </Flex>
 

@@ -267,7 +267,7 @@ export function ProjectHeader() {
     return (
         <>
             <Flex align={'center'} justify={'space-between'} gap={4} padding={'16px 40px 15px'}
-                  borderBottom={'1px solid #F3F4F6'} backgroundColor={'#FFFFFF'}>
+                  borderBottom={'1px solid #F3F4F6'} backgroundColor={'#FFFFFF'} height={'69px'}>
                 <Flex align={'center'} gap={2}>
                     {!loadedFirstTime ? (
                         <>
