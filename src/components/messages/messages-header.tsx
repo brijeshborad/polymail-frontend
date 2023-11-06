@@ -251,7 +251,7 @@ export function MessagesHeader() {
                                         updateMailBox(MAILBOX_UNREAD)
                                     }}
                                             className={`unread-button-icon`}>
-                                        <InboxOpenIcon/>
+                                        <InboxOpenIcon opacity={true}/>
                                     </button>
                                 </Tooltip>
                             )}
@@ -262,7 +262,7 @@ export function MessagesHeader() {
                                     updateMailBox(MAILBOX_STARRED)
                                 }}
                                         className={`starred-button-icon ${(selectedThread?.mailboxes || []).includes(MAILBOX_STARRED) ? 'active' : ''}`}>
-                                    <StarIcon/>
+                                    <StarIcon opacity={true}/>
                                 </button>
                             </Tooltip>
                             <Tooltip label={selectedThread?.mute ? 'Unmute' : 'Mute'} placement='bottom'>
@@ -272,7 +272,7 @@ export function MessagesHeader() {
                                     muteThread(!selectedThread?.mute)
                                 }}
                                         className={`mute-button-icon`}>
-                                    {!selectedThread?.mute ? <MuteIcon/> : <UnmuteIcon/>}
+                                    {!selectedThread?.mute ? <MuteIcon opacity={true}/> : <UnmuteIcon opacity={true}/>}
                                 </button>
                             </Tooltip>
                         </div>
@@ -286,7 +286,7 @@ export function MessagesHeader() {
                                         e.stopPropagation();
                                         updateMailBox(MAILBOX_INBOX)
                                     }} className='inbox-button-icon'>
-                                        <InboxIcon/>
+                                        <InboxIcon opacity={true}/>
                                     </button>
                                 </Tooltip>
                             )}
@@ -298,7 +298,7 @@ export function MessagesHeader() {
                                         updateMailBox(MAILBOX_ARCHIVE)
                                     }}
                                             className='archive-button-icon'>
-                                        <ArchiveIcon/>
+                                        <ArchiveIcon opacity={true}/>
                                     </button>
                                 </Tooltip>
                             )}
@@ -309,13 +309,14 @@ export function MessagesHeader() {
                                         e.stopPropagation();
                                         updateMailBox(MAILBOX_TRASH)
                                     }} className='trash-button-icon'>
-                                        <TrashIcon/>
+                                        <TrashIcon opacity={true}/>
                                     </button>
                                 </Tooltip>
                             )}
                             <Tooltip label='Snooze' placement='bottom'>
                                 <div>
                                     <MessageSchedule
+                                        iconOpacity={true}
                                         isSnooze={true}
                                         date={scheduledDate}
                                         onChange={handleSchedule}
@@ -329,7 +330,7 @@ export function MessagesHeader() {
                                         e.stopPropagation();
                                         updateMailBox(MAILBOX_SPAM)
                                     }} className='trash-button-icon'>
-                                        <SpamIcon/>
+                                        <SpamIcon opacity={true}/>
                                     </button>
                                 </Tooltip>
                             )}

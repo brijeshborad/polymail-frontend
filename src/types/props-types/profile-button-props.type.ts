@@ -18,4 +18,5 @@ export declare type IconProps = {
     click?: (_e: MouseEvent | any) => void,
     marginRight?: string
     color?: string
+    opacity?: boolean
 }

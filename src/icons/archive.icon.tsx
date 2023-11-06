@@ -1,9 +1,10 @@
 import {Icon} from "@chakra-ui/react";
+import {IconProps} from "@/types";
 
-export function ArchiveIcon() {
-    return (
-        <Icon viewBox="0 0 20 20" fill="none">
-            <g opacity="0.5">
+export function ArchiveIcon(props: IconProps) {
+    function getPath() {
+        return (
+            <>
                 <path
                     d="M15.2057 7.29297H4.78906L5.47871 14.5343C5.56018 15.3897 6.27861 16.043 7.13787 16.043H12.8569C13.7161 16.043 14.4346 15.3897 14.5161 14.5343L15.2057 7.29297Z"
                     stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -12,7 +13,13 @@ export function ArchiveIcon() {
                     stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 <path d="M8.125 11.043H11.875" stroke="black" strokeWidth="1.5" strokeLinecap="round"
                       strokeLinejoin="round"/>
-            </g>
+            </>
+        )
+    }
+
+    return (
+        <Icon viewBox="0 0 20 20" fill="none">
+            {props.opacity ? <g opacity="0.5">{getPath()}</g> : getPath()}
         </Icon>
     )
 }

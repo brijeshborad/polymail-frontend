@@ -4,4 +4,5 @@ export declare type MessageScheduleProps = {
   isSnooze?: boolean,
   isNameShow?: boolean
   disabled?: boolean
+  iconOpacity?: boolean
 }
