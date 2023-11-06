@@ -361,7 +361,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                         items.push(...selectedMessage?.bcc)
                     }
                 }
-                const filteredArray = (items || []).filter(obj => obj.email !== '');
+                const filteredArray = (items || []).filter(obj => obj.email !== '' && selectedMessage?.from?.email !== obj.email);
                 setEmailRecipients((prevState: RecipientsType) => ({
                     ...prevState,
                     cc: {
