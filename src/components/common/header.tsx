@@ -14,13 +14,13 @@ import {useSelector} from 'react-redux';
 import Router, {useRouter} from 'next/router';
 import {StateType} from '@/types';
 import React, {useCallback, useEffect, useState} from 'react';
-import {Account, Message, Organization, User} from '@/models';
+import {Account, Message, Organization, Project, User} from '@/models';
 import LocalStorageService from '@/utils/localstorage.service';
 import {Toaster} from '@/components/common';
 import dynamic from 'next/dynamic'
 import {HeaderSearch} from "@/components/common/header-search";
 import {
-    accountService, commonService, globalEventService,
+    accountService, cacheService, commonService, globalEventService,
     messageService,
     organizationService, projectService,
     socketService,
@@ -79,6 +79,7 @@ export function Header() {
 
     const updateValuesFromAccount = useCallback((account: Account, fireSuccess: boolean = true) => {
         let projects = account.projects || [];
+        cacheService.buildCache(projects.map((p: Project) => p.id) as string[]);
         let organizations = ([...account.organizations || []]).sort((a: Organization, b: Organization) => (new Date(b.created as string).valueOf() - new Date(a.created as string).valueOf()));
         let contacts = account.contacts || [];
         projectService.setProjectState({projects, isLoading: false});

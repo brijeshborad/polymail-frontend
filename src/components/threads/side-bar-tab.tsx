@@ -8,11 +8,10 @@ import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import {useRouter} from "next/router";
 import dynamic from "next/dynamic";
 import {
-    getCacheThreads,
-    setCacheThreads,
     setCurrentSelectedThreads, setCurrentViewingCacheTab
 } from "@/utils/cache.functions";
 import {
+    cacheService,
     commonService,
     draftService,
     globalEventService, messageService,
@@ -72,8 +71,8 @@ export function ThreadsSideBarTab(props: TabProps) {
                 return;
             }
             let cutoffDate = dayjs().add(5, "day").format('YYYY-MM-DD');
-            if (getCacheThreads()[`${props.cachePrefix}-${tabValue}-${selectedAccount.id}-${type}`]) {
-                let threads = getCacheThreads()[`${props.cachePrefix}-${tabValue}-${selectedAccount.id}-${type}`];
+            if (cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue, type)).length > 0) {
+                let threads = cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue, type)) as Thread[];
                 resetState = false
                 threadService.setThreadState({
                     threads: threads,
@@ -122,10 +121,7 @@ export function ThreadsSideBarTab(props: TabProps) {
                 body: buildBody,
                 afterSuccessAction: (threads: any) => {
                     setCurrentViewingCacheTab(`${props.cachePrefix}-${tabValue!}-${selectedAccount?.id}-${type}`);
-                    setCacheThreads({
-                        ...getCacheThreads(),
-                        [`${props.cachePrefix}-${tabValue!}-${selectedAccount?.id}-${type}`]: threads ? [...threads] : []
-                    });
+                    cacheService.setThreadCacheByKey(cacheService.buildCacheKey(tabValue, type), threads ? [...threads] : []);
                 }
             }));
         }
@@ -146,14 +142,11 @@ export function ThreadsSideBarTab(props: TabProps) {
     }, [tabName])
 
     useEffect(() => {
-        if (threadListSuccess && selectedAccount) {
-            setCacheThreads({
-                ...getCacheThreads(),
-                [`${props.cachePrefix}-${tabValue!}-${selectedAccount?.id}-${tabName}`]: threads ? [...threads] : []
-            });
+        if (threadListSuccess) {
+            cacheService.setThreadCacheByKey(cacheService.buildCacheKey(tabValue!, tabName!), threads ? [...threads] : []);
             threadService.setThreadState({success: false});
         }
-    }, [selectedAccount, threadListSuccess, props.cachePrefix, dispatch, threads, tabName, tabValue])
+    }, [threadListSuccess, dispatch, threads, tabName, tabValue])
 
     useEffect(() => {
         if (newMessage) {
