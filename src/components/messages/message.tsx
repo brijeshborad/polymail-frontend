@@ -27,7 +27,6 @@ let previousToastId: string = '';
 
 export function Message({isProjectView = false}: { isProjectView?: boolean }) {
     const messagesWrapperRef = React.useRef<HTMLDivElement | null | any>(null);
-    const [replyTypeName, setReplyTypeName] = useState<string>('Reply');
     const {
         attachmentUrl,
         showMessageBox: isShowingMessageBox
@@ -138,13 +137,6 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
 
 
     const hideAndShowReplyBox = (type: string = '', messageData: MessageModel) => {
-        if (type === 'reply') {
-            setReplyTypeName('Reply')
-        } else if (type === 'reply-all') {
-            setReplyTypeName('Reply All')
-        } else {
-            setReplyTypeName('Forward')
-        }
         globalEventService.fireEvent({data: messageData, type: 'draft.currentMessage'})
         setTimeout(() => {
             globalEventService.fireEvent({type: 'draft.updateType', data: {type, messageData}})
@@ -227,7 +219,7 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
                                 </div>
                                 <MessageReplyBox
                                     isProjectView={isProjectView}
-                                    hideAndShowReplyBox={hideAndShowReplyBox} replyTypeName={replyTypeName}/>
+                                    hideAndShowReplyBox={hideAndShowReplyBox}/>
                             </Flex>
                         </Flex>}
                     </>

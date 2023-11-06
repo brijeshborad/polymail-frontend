@@ -32,6 +32,7 @@ export function MessageBox(props: any) {
         messages
     } = useSelector((state: StateType) => state.messages);
     const {selectedThread} = useSelector((state: StateType) => state.threads);
+    const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const [isAttachmentOpen, setIsAttachmentOpen] = useState<boolean[]>([]);
     const [currentLinkPreview, setCurrentLinkPreview] = useState<LinkPreviewProps>({
         isVisible: false,
@@ -73,10 +74,23 @@ export function MessageBox(props: any) {
     useEffect(() => {
         if (currentSelectedThread && currentSelectedThread?.id) {
             setIndex(null);
-            globalEventService.fireEvent({data: {type: 'reply'}, type: 'draft.updateType'})
+            let eventData: any = {type: 'reply'};
+            let noDraftMessage = (currentSelectedThread.messages || []).filter((msg: MessageModel) => !(msg.mailboxes || []).includes('DRAFT'));
+            if (selectedAccount) {
+                noDraftMessage = noDraftMessage.filter((msg: MessageModel) => msg.from?.email !== selectedAccount.email);
+            }
+            let latestMessage: MessageModel = noDraftMessage[noDraftMessage.length -1];
+            if (latestMessage) {
+                let to = (latestMessage.to || []).filter((t: any) => t.email);
+                let cc = (latestMessage.cc || []).filter((t: any) => t.email);
+                if (to.length > 1 || cc.length > 1) {
+                    eventData = {type: 'reply-all', messageData: latestMessage};
+                }
+            }
+            globalEventService.fireEvent({data: eventData, type: 'draft.updateType'})
             messageService.setMessages(currentSelectedThread.messages || []);
         }
-    }, [currentSelectedThread])
+    }, [currentSelectedThread, selectedAccount])
 
     useEffect(() => {
         if (messages && messages.length > 0) {

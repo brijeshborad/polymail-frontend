@@ -790,6 +790,16 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         }
     }
 
+    function typeName(type: string) {
+        if (type === 'reply-all') {
+            return 'Reply All'
+        } else if (type === 'forward') {
+            return 'Forward'
+        } else {
+            return 'Reply'
+        }
+    }
+
     return (
         <Flex backgroundColor={'#FFFFFF'} position={'sticky'} mt={'20px'} bottom={0} boxShadow={'0 21px 0px 0 #fff'}>
             <DropZone onFileUpload={handleFileUpload} forReply={true}>
@@ -843,7 +853,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                         color={'#6B7280'} variant='link' size='xs'
                                         as={Button} rightIcon={<ChevronDownIcon/>}
                                     >
-                                        {props.replyTypeName || 'Reply'}
+                                        {typeName(replyType)}
                                     </MenuButton>
                                     <MenuList className={'drop-down-list reply-dropdown'}>
                                         {replyType === 'reply-all' ?
