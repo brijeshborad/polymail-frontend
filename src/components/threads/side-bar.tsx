@@ -259,12 +259,6 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                 </div>
                                 <MenuItem onClick={() => moveThreadToMailBoxes(MAILBOX_STARRED)}><StarIcon/> Toggle Star</MenuItem>
                                 <MenuItem
-                                    onClick={() => moveThreadToMailBoxes(MAILBOX_TRASH)}><TrashIcon/> Move to
-                                    Trash</MenuItem>
-                                <MenuItem
-                                    onClick={() => moveThreadToMailBoxes(MAILBOX_ARCHIVE)}><ArchiveIcon/> Move to
-                                    Archive</MenuItem>
-                                <MenuItem
                                     onClick={() => moveThreadToMailBoxes(MAILBOX_UNREAD)}><InboxOpenIcon/> Mark
                                     Unread</MenuItem>
                                 <MenuItem
@@ -272,6 +266,12 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                     Mute</MenuItem>
                                 <MenuItem
                                     onClick={() => moveThreadToMailBoxes(MAILBOX_SPAM)}><SpamIcon/> Mark Spam</MenuItem>
+                                <MenuItem
+                                    onClick={() => moveThreadToMailBoxes(MAILBOX_TRASH)}><TrashIcon/> Move to
+                                    Trash</MenuItem>
+                                <MenuItem
+                                    onClick={() => moveThreadToMailBoxes(MAILBOX_ARCHIVE)}><ArchiveIcon/> Move to
+                                    Archive</MenuItem>
                             </MenuList>
                         </Menu>
 
@@ -446,26 +446,28 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                 }, 100, 'MORE_MENU')
                             }}
                         >
-                            {[MAILBOX_TRASH, MAILBOX_STARRED, MAILBOX_ARCHIVE, MAILBOX_DRAFT, MAILBOX_SPAM].includes(tab) &&
+                            {tab !== MAILBOX_SNOOZED &&
                             <MenuItem
                                 onClick={() => changeEmailTabs(MAILBOX_SNOOZED)}><TimeSnoozeIcon/> Snoozed</MenuItem>
                             }
-                            {tab !== MAILBOX_TRASH &&
-                            <MenuItem onClick={() => changeEmailTabs(MAILBOX_TRASH)}><TrashIcon/> Trash</MenuItem>
-                            }
+
                             {tab !== MAILBOX_STARRED &&
                             <MenuItem
                                 onClick={() => changeEmailTabs(MAILBOX_STARRED)}><StarIcon/> Starred</MenuItem>
-                            }
-                            {tab !== MAILBOX_ARCHIVE &&
-                            <MenuItem
-                                onClick={() => changeEmailTabs(MAILBOX_ARCHIVE)}><ArchiveIcon opacity={true}/> Archive</MenuItem>
                             }
                             {tab !== MAILBOX_DRAFT &&
                             <MenuItem onClick={() => changeEmailTabs(MAILBOX_DRAFT)}><DraftIcon/> Draft</MenuItem>
                             }
                             {tab !== MAILBOX_SPAM &&
                             <MenuItem onClick={() => changeEmailTabs(MAILBOX_SPAM)}><SpamIcon opacity={true}/> Spam</MenuItem>
+                            }
+                            {tab !== MAILBOX_TRASH &&
+                            <MenuItem 
+                                onClick={() => changeEmailTabs(MAILBOX_TRASH)}><TrashIcon/> Trash</MenuItem>
+                            }
+                            {tab !== MAILBOX_ARCHIVE &&
+                            <MenuItem
+                                onClick={() => changeEmailTabs(MAILBOX_ARCHIVE)}><ArchiveIcon opacity={true}/> Archive</MenuItem>
                             }
                         </MenuList>
                     </Menu>
