@@ -366,9 +366,12 @@
 
 .manageMemberDropDown .projectMember button,
 .manageMemberDropDown .projectMember button:hover,
-.manageMemberDropDown .projectMember:hover button,
 .manageMemberDropDown .projectMember button:focus {
     background-color: transparent;
+}
+
+.manageMemberDropDown .projectMember .memberRoleDropdownList button:hover {
+    background-color: rgba(8, 22, 47, 0.05);
 }
 
 .manageMemberDropDown .addMemberButton:hover {
@@ -393,6 +396,14 @@
 
 .manageMemberDropDown .memberDropDown {
     padding: 5px 10px;
+}
+
+.manageMemberDropDown .memberDropDown.memberRoleButton {
+    background-color: #FFFFFF;
+}
+
+.manageMemberDropDown .memberDropDown.memberRoleButton:hover {
+    background-color: transparent;
 }
 
 .manageMemberDropDown .memberDropDown:hover,

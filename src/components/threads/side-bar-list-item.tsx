@@ -185,7 +185,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                 </Flex>
                 <div className={styles.mailMessage}>
                     <Flex alignItems={'center'} justifyContent={'space-between'}>
-                        <Text noOfLines={1}> {props.thread.subject || "(no subject)"}</Text>
+                        <Text lineHeight={'18px'} noOfLines={1}> {props.thread.subject || "(no subject)"}</Text>
                         <Flex alignItems={'center'} justifyContent={'end'} className={'member-images subheader-images'}>
                             {(onlineUsers && props.thread && onlineUsers['threads'][props.thread.id!] || [])
                                 .filter((t: UserProjectOnlineStatus) => t.isOnline).slice(0, 5)

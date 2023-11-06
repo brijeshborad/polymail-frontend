@@ -18,7 +18,7 @@ import inboxStyles from "@/styles/Inbox.module.css";
 import {commonService, messageService, projectService, socketService, threadService} from "@/services";
 import Router, {useRouter} from "next/router";
 import {MailIcon, MenuIcon} from "@/icons";
-import {Project, UserProjectOnlineStatus} from "@/models";
+import {Project, TeamMember, UserProjectOnlineStatus} from "@/models";
 import {PROJECT_ROLES} from "@/utils/constants";
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import {
@@ -249,6 +249,17 @@ export function ProjectHeader() {
             setAllowAdd(!!(membersInputs.input.trim() && isEmail(membersInputs.input.trim()) && !alreadyInvitedMembers.includes(membersInputs.input)));
         }
     }, [invitees, membersInputs])
+
+    function showDeleteIcon() {
+        let showDelete = false;
+        if (selectedAccount && project) {
+            let findMe: TeamMember | undefined = project.accounts.find((t: TeamMember) => t.email === selectedAccount.email);
+            if (findMe && findMe.role === 'admin') {
+                showDelete = true;
+            }
+        }
+        return showDelete;
+    }
 
 
     // useEffect(() => {
@@ -491,35 +502,40 @@ export function ProjectHeader() {
                                                     {member.name}
                                                 </MenuItem>
                                                 <Flex align={'center'} gap={1}>
-                                                    <Menu>
-                                                        <MenuButton className={styles.memberDropDown}
-                                                                    fontSize={'12px'}
-                                                                    color={'#374151'} textTransform={'capitalize'}
-                                                                    backgroundColor={'#FFFFFF'} h={'auto'}
-                                                                    border={'1px solid #D1D5DB'}
-                                                                    borderRadius={'50px'}
-                                                                    as={Button} rightIcon={<TriangleDownIcon/>}>
-                                                            {member.role}
-                                                        </MenuButton>
-                                                        <MenuList className={`drop-down-list`}>
-                                                            {PROJECT_ROLES.map((role, roleIndex) => {
-                                                                return <MenuItem
-                                                                    onClick={() => {
-                                                                        projectService.addOrUpdateProjectMemberOrInvites('update', 'member', {...member, role});
-                                                                        updateProjectMemberRoleData(role, member)
-                                                                    }}
-                                                                    textTransform={'capitalize'} key={roleIndex}>
-                                                                    {role}
-                                                                </MenuItem>
-                                                            })}
-                                                        </MenuList>
-                                                    </Menu>
-                                                    <IconButton className={styles.closeIcon}
-                                                                onClick={() => openModel(member, 'leave')}
-                                                                cursor={'pointer'} backgroundColor={'#FFFFFF'}
-                                                                padding={0}
-                                                                minWidth={'1px'} aria-label='Add to friends'
-                                                                icon={<CloseIcon/>}/>
+                                                    {!showDeleteIcon() && <Text fontSize={'13px'} color={'#374151'} textTransform={'capitalize'}>{member.role}</Text>}
+                                                    {showDeleteIcon() &&
+                                                        <>
+                                                            <Menu>
+                                                                <MenuButton className={`${styles.memberDropDown} ${styles.memberRoleButton}`}
+                                                                            fontSize={'12px'}
+                                                                            color={'#374151'} textTransform={'capitalize'}
+                                                                            backgroundColor={'#FFFFFF'} h={'auto'}
+                                                                            border={'1px solid #D1D5DB'}
+                                                                            borderRadius={'50px'}
+                                                                            as={Button} rightIcon={<TriangleDownIcon/>}>
+                                                                    {member.role}
+                                                                </MenuButton>
+                                                                <MenuList className={`drop-down-list ${styles.memberRoleDropdownList}`}>
+                                                                    {PROJECT_ROLES.map((role, roleIndex) => {
+                                                                        return <MenuItem
+                                                                            onClick={() => {
+                                                                                projectService.addOrUpdateProjectMemberOrInvites('update', 'member', {...member, role});
+                                                                                updateProjectMemberRoleData(role, member)
+                                                                            }}
+                                                                            textTransform={'capitalize'} key={roleIndex}>
+                                                                            {role}
+                                                                        </MenuItem>
+                                                                    })}
+                                                                </MenuList>
+                                                            </Menu>
+                                                            <IconButton className={styles.closeIcon}
+                                                                        onClick={() => openModel(member, 'leave')}
+                                                                        cursor={'pointer'} backgroundColor={'#FFFFFF'}
+                                                                        padding={0}
+                                                                        minWidth={'1px'} aria-label='Add to friends'
+                                                                        icon={<CloseIcon/>}/>
+                                                        </>
+                                                    }
                                                 </Flex>
                                             </Flex>
                                         ))}
@@ -533,35 +549,40 @@ export function ProjectHeader() {
                                                     {invite?.invite?.toEmail}
                                                 </MenuItem>
                                                 <Flex align={'center'} gap={1}>
-                                                    <Menu>
-                                                        <MenuButton className={styles.memberDropDown}
-                                                                    fontSize={'12px'}
-                                                                    color={'#374151'} textTransform={'capitalize'}
-                                                                    backgroundColor={'#FFFFFF'} h={'auto'}
-                                                                    border={'1px solid #D1D5DB'}
-                                                                    borderRadius={'50px'}
-                                                                    as={Button} rightIcon={<TriangleDownIcon/>}>
-                                                            {invite.role}
-                                                        </MenuButton>
-                                                        <MenuList className={`drop-down-list`}>
-                                                            {PROJECT_ROLES.map((role, roleIndex) => {
-                                                                return <MenuItem
-                                                                    onClick={() => {
-                                                                        projectService.addOrUpdateProjectMemberOrInvites('update', 'invite', {...invite, role});
-                                                                        updateProjectMemberRoleData(role, invite)
-                                                                    }}
-                                                                    textTransform={'capitalize'} key={roleIndex}>
-                                                                    {role}
-                                                                </MenuItem>
-                                                            })}
-                                                        </MenuList>
-                                                    </Menu>
-                                                    <IconButton className={styles.closeIcon}
-                                                                onClick={() => openModel(invite, 'leave')}
-                                                                cursor={'pointer'} backgroundColor={'#FFFFFF'}
-                                                                padding={0}
-                                                                minWidth={'1px'} aria-label='Add to friends'
-                                                                icon={<CloseIcon/>}/>
+                                                    {!showDeleteIcon() && <Text fontSize={'13px'} color={'#374151'} textTransform={'capitalize'}>{invite.role}</Text>}
+                                                    {showDeleteIcon() &&
+                                                        <>
+                                                            <Menu>
+                                                                <MenuButton className={`${styles.memberDropDown} ${styles.memberRoleButton}`}
+                                                                            fontSize={'12px'}
+                                                                            color={'#374151'} textTransform={'capitalize'}
+                                                                            backgroundColor={'#FFFFFF'} h={'auto'}
+                                                                            border={'1px solid #D1D5DB'}
+                                                                            borderRadius={'50px'}
+                                                                            as={Button} rightIcon={<TriangleDownIcon/>}>
+                                                                    {invite.role}
+                                                                </MenuButton>
+                                                                <MenuList className={`drop-down-list ${styles.memberRoleDropdownList}`}>
+                                                                    {PROJECT_ROLES.map((role, roleIndex) => {
+                                                                        return <MenuItem
+                                                                            onClick={() => {
+                                                                                projectService.addOrUpdateProjectMemberOrInvites('update', 'invite', {...invite, role});
+                                                                                updateProjectMemberRoleData(role, invite)
+                                                                            }}
+                                                                            textTransform={'capitalize'} key={roleIndex}>
+                                                                            {role}
+                                                                        </MenuItem>
+                                                                    })}
+                                                                </MenuList>
+                                                            </Menu>
+                                                            <IconButton className={styles.closeIcon}
+                                                                        onClick={() => openModel(invite, 'leave')}
+                                                                        cursor={'pointer'} backgroundColor={'#FFFFFF'}
+                                                                        padding={0}
+                                                                        minWidth={'1px'} aria-label='Add to friends'
+                                                                        icon={<CloseIcon/>}/>
+                                                        </>
+                                                    }
                                                 </Flex>
                                             </Flex>
                                         ))}
