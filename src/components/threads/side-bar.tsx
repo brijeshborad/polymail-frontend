@@ -323,7 +323,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                 className={`${tab === MAILBOX_SNOOZED ? styles.active : ''}`}
                                 onClick={() => changeEmailTabs(MAILBOX_SNOOZED)}
                             >
-                                <TimeSnoozeIcon/>
+                                <TimeSnoozeIcon opacity={true}/>
                                 <span className={styles.mailboxText}>Snoozed</span>
                             </div>
                         </Tooltip>
@@ -459,13 +459,13 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                             }
                             {tab !== MAILBOX_ARCHIVE &&
                             <MenuItem
-                                onClick={() => changeEmailTabs(MAILBOX_ARCHIVE)}><ArchiveIcon/> Archive</MenuItem>
+                                onClick={() => changeEmailTabs(MAILBOX_ARCHIVE)}><ArchiveIcon opacity={true}/> Archive</MenuItem>
                             }
                             {tab !== MAILBOX_DRAFT &&
                             <MenuItem onClick={() => changeEmailTabs(MAILBOX_DRAFT)}><DraftIcon/> Draft</MenuItem>
                             }
                             {tab !== MAILBOX_SPAM &&
-                            <MenuItem onClick={() => changeEmailTabs(MAILBOX_SPAM)}><SpamIcon/> Spam</MenuItem>
+                            <MenuItem onClick={() => changeEmailTabs(MAILBOX_SPAM)}><SpamIcon opacity={true}/> Spam</MenuItem>
                             }
                         </MenuList>
                     </Menu>

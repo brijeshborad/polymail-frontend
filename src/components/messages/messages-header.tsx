@@ -1,13 +1,14 @@
 import {
+    Button,
     Flex,
     Heading,
-    Image
+    Image, Menu, MenuButton, MenuItem, MenuList
 } from "@chakra-ui/react";
 
 import {
     ArchiveIcon,
     TrashIcon,
-    InboxIcon, StarIcon, InboxOpenIcon, UnmuteIcon, SpamIcon
+    InboxIcon, StarIcon, InboxOpenIcon, UnmuteIcon, SpamIcon, MenuIcon
 } from "@/icons";
 import React, {useState} from "react";
 import {updateThreads} from "@/redux/threads/action-reducer";
@@ -28,6 +29,7 @@ import {clearDebounce, debounce, generateToasterId} from "@/utils/common.functio
 import {messageService, threadService} from "@/services";
 import Tooltip from "../common/Tooltip";
 import {MuteIcon} from "@/icons/mute.icon";
+import styles from "@/styles/Inbox.module.css";
 
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
 const MessageSchedule = dynamic(() => import("./message-schedule").then(mod => mod.default));
@@ -38,6 +40,7 @@ export function MessagesHeader() {
 
     const dispatch = useDispatch();
     const [scheduledDate, setScheduledDate] = useState<string | undefined>();
+    const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean>(false);
 
     const updateMailBox = (messageBox: string, date: string = '') => {
         if (selectedThread && selectedThread.id) {
@@ -240,43 +243,6 @@ export function MessagesHeader() {
                         </Flex>
                         <AddToProjectButton allowDefaultSelect={true}/>
                     </Flex>
-
-                    <Flex align={'center'} className={'header-right-icon'}>
-                        <div>
-                            {!(selectedThread?.mailboxes || []).includes(MAILBOX_UNREAD) && (
-                                <Tooltip label='Unread' placement='bottom'>
-                                    <button onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        updateMailBox(MAILBOX_UNREAD)
-                                    }}
-                                            className={`unread-button-icon`}>
-                                        <InboxOpenIcon opacity={true}/>
-                                    </button>
-                                </Tooltip>
-                            )}
-                            <Tooltip label='Starred' placement='bottom'>
-                                <button onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    updateMailBox(MAILBOX_STARRED)
-                                }}
-                                        className={`starred-button-icon ${(selectedThread?.mailboxes || []).includes(MAILBOX_STARRED) ? 'active' : ''}`}>
-                                    <StarIcon opacity={true}/>
-                                </button>
-                            </Tooltip>
-                            <Tooltip label={selectedThread?.mute ? 'Unmute' : 'Mute'} placement='bottom'>
-                                <button onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    muteThread(!selectedThread?.mute)
-                                }}
-                                        className={`mute-button-icon`}>
-                                    {!selectedThread?.mute ? <MuteIcon opacity={true}/> : <UnmuteIcon opacity={true}/>}
-                                </button>
-                            </Tooltip>
-                        </div>
-                    </Flex>
                     <Flex align={'center'} className={'header-right-icon'}>
                         <div>
                             {!(selectedThread?.mailboxes || []).includes(MAILBOX_INBOX) && (
@@ -323,17 +289,49 @@ export function MessagesHeader() {
                                     />
                                 </div>
                             </Tooltip>
-                            {!(selectedThread?.mailboxes || []).includes(MAILBOX_SPAM) && (
-                                <Tooltip label='Spam' placement='bottom'>
-                                    <button onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        updateMailBox(MAILBOX_SPAM)
-                                    }} className='trash-button-icon'>
-                                        <SpamIcon opacity={true}/>
-                                    </button>
-                                </Tooltip>
-                            )}
+                            <Menu isOpen={isMoreMenuOpen}
+                                  onClose={() => setIsMoreMenuOpen(false)}>
+                                <MenuButton
+                                    onClick={(e) => {
+                                        e.preventDefault()
+                                        e.stopPropagation()
+                                        setIsMoreMenuOpen(!isMoreMenuOpen)
+                                    }} className={styles.menuIcon}
+                                    transition={'all 0.5s'} backgroundColor={'transparent'} outline={'none'}
+                                    _focusVisible={{boxShadow: 'none'}} _focus={{boxShadow: 'none'}} fontSize={'12px'}
+                                    h={'auto'} minWidth={'24px'} padding={'0'} as={Button} rightIcon={<MenuIcon/>}>
+                                </MenuButton>
+                                <MenuList className={`drop-down-list ${styles.messageHeaderDropdown}`}>
+                                    {!(selectedThread?.mailboxes || []).includes(MAILBOX_SPAM) && <MenuItem
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            updateMailBox(MAILBOX_SPAM)
+                                        }}><SpamIcon opacity={true}/> Mark Spam</MenuItem>}
+                                    <MenuItem
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            updateMailBox(MAILBOX_UNREAD)
+                                        }}><InboxOpenIcon
+                                        opacity={true}/> Mark {(selectedThread?.mailboxes || []).includes(MAILBOX_UNREAD) ? 'Read' : 'Unread'}
+                                    </MenuItem>
+                                    <MenuItem
+                                        className={`starred-button-icon ${(selectedThread?.mailboxes || []).includes(MAILBOX_STARRED) ? 'active' : ''}`}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            updateMailBox(MAILBOX_STARRED)
+                                        }}><StarIcon opacity={true}/> Add Star</MenuItem>
+                                    <MenuItem
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            muteThread(!selectedThread?.mute)
+                                        }}>{!selectedThread?.mute ? <MuteIcon opacity={true}/> : <UnmuteIcon
+                                        opacity={true}/>} {!selectedThread?.mute ? 'Mute' : 'Unmute'}</MenuItem>
+                                </MenuList>
+                            </Menu>
                         </div>
                     </Flex>
                 </Flex>

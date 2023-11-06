@@ -1024,6 +1024,11 @@
     background-color: transparent;
 }
 
+.messageHeaderDropdown button {
+    padding: 10px 12px;
+    gap: 8px;
+}
+
 .headerRightIcon .menuIcon span {
     margin: 0;
 }

@@ -873,9 +873,9 @@ div:has(> .mailSendToaster) {
     stroke: #A62700;
 }
 
-.starred-button-icon:hover path {
-    stroke: #f7ff00;
-}
+/*.starred-button-icon:hover path {*/
+/*    stroke: #f7ff00;*/
+/*}*/
 
 .starred-button-icon.active svg {
     fill: #f7ff00;
