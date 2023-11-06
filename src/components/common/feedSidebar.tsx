@@ -61,7 +61,8 @@ export const FeedSidebar = () => {
                     title: newMessage.data.Title,
                     subtitle: newMessage.data.Subtitle,
                     body: newMessage.data.Body,
-                    username: userDetails && userDetails.id === newMessage.data.UserID ? 'You' : newMessage.data.Username,
+                    // username: userDetails && userDetails.id === newMessage.data.UserID ? 'You' : newMessage.data.Username,
+                    username: newMessage.data.Username,
                     isRead: userDetails ? !dayjs(newMessage.data.Created).isAfter(dayjs(userDetails.activitiesRead)) : false,
                 })
                 setFeeds([...currentFeeds]);
@@ -78,7 +79,8 @@ export const FeedSidebar = () => {
         if (activityFeed && activityFeed.length > 0 && userDetails) {
             setFeeds([...activityFeed.map(item => {
                 let finalItem = {...item};
-                finalItem.username = userDetails && userDetails.id === item.userId ? 'You' : item.username;
+                // finalItem.username = userDetails && userDetails.id === item.userId ? 'You' : item.username;
+                finalItem.username = item.username;
                 finalItem.isRead = userDetails ? !dayjs(item.created).isAfter(dayjs(userDetails.activitiesRead)) : false;
                 return finalItem
             })]);
