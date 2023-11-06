@@ -973,7 +973,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                     <Input padding={0} height={'fit-content'} border={"none"} cursor={'pointer'}
                                            outline={'none'} boxShadow={'none'} _focusVisible={{boxShadow: 'none'}}
                                            fontSize={'13px'} _placeholder={{color: '#adb5bd'}}
-                                           placeholder={'Hit enter to reply with anything you\'d like'}/>
+                                           placeholder={'Hit tab to reply with anything you\'d like'}/>
                                 </div>
                                 {!reloadingEditor &&
                                 (selectedThread && draftIndex !== null) && (
@@ -982,7 +982,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                             id={selectedThread.id + '-' + draftIndex}
                                             // onCreate={() => sendToDraft('')}
                                             content={draft?.draftInfo?.body}
-                                            placeholder="Hit enter to reply with anything you'd like"
+                                            placeholder="Hit tab to reply with anything you'd like"
                                             isToolbarVisible={showEditorToolbar}
                                             onChange={(value) => {
                                                 handleEditorScroll();
