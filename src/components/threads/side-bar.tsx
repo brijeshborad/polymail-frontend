@@ -245,9 +245,6 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                 Actions
                             </MenuButton>
                             <MenuList className={`${styles.tabListDropDown} drop-down-list`}>
-                                <MenuItem
-                                    onClick={() => moveThreadToMailBoxes(MAILBOX_INBOX)}><InboxIcon/> Move to
-                                    Inbox</MenuItem>
 
                                 <div className={styles.tabListSnoozeButton}>
                                     <MessageSchedule
@@ -266,6 +263,9 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                     Mute</MenuItem>
                                 <MenuItem
                                     onClick={() => moveThreadToMailBoxes(MAILBOX_SPAM)}><SpamIcon/> Mark Spam</MenuItem>
+                                <MenuItem
+                                    onClick={() => moveThreadToMailBoxes(MAILBOX_INBOX)}><InboxIcon/> Move to
+                                    Inbox</MenuItem>
                                 <MenuItem
                                     onClick={() => moveThreadToMailBoxes(MAILBOX_TRASH)}><TrashIcon/> Move to
                                     Trash</MenuItem>
