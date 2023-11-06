@@ -245,7 +245,14 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                 Actions
                             </MenuButton>
                             <MenuList className={`${styles.tabListDropDown} drop-down-list`}>
-
+                                <MenuItem
+                                    onClick={() => moveThreadToMailBoxes(MAILBOX_UNREAD)}><InboxOpenIcon/> Mark
+                                    Unread</MenuItem>
+                                <MenuItem
+                                    onClick={() => threadService.markMultipleThreadsAsMute()}><MuteIcon/> Toggle
+                                    Mute</MenuItem>
+                                <MenuItem
+                                    onClick={() => moveThreadToMailBoxes(MAILBOX_SPAM)}><SpamIcon/> Mark Spam</MenuItem>
                                 <div className={styles.tabListSnoozeButton}>
                                     <MessageSchedule
                                         isSnooze={true}
@@ -255,14 +262,6 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                     />
                                 </div>
                                 <MenuItem onClick={() => moveThreadToMailBoxes(MAILBOX_STARRED)}><StarIcon/> Toggle Star</MenuItem>
-                                <MenuItem
-                                    onClick={() => moveThreadToMailBoxes(MAILBOX_UNREAD)}><InboxOpenIcon/> Mark
-                                    Unread</MenuItem>
-                                <MenuItem
-                                    onClick={() => threadService.markMultipleThreadsAsMute()}><MuteIcon/> Toggle
-                                    Mute</MenuItem>
-                                <MenuItem
-                                    onClick={() => moveThreadToMailBoxes(MAILBOX_SPAM)}><SpamIcon/> Mark Spam</MenuItem>
                                 <MenuItem
                                     onClick={() => moveThreadToMailBoxes(MAILBOX_INBOX)}><InboxIcon/> Move to
                                     Inbox</MenuItem>
