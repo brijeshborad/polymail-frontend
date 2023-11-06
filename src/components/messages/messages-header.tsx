@@ -10,7 +10,7 @@ import {
     TrashIcon,
     InboxIcon, StarIcon, InboxOpenIcon, UnmuteIcon, SpamIcon, MenuIcon
 } from "@/icons";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {updateThreads} from "@/redux/threads/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
@@ -26,7 +26,7 @@ import {
 } from "@/utils/constants";
 import dayjs from "dayjs";
 import {clearDebounce, debounce, generateToasterId} from "@/utils/common.functions";
-import {messageService, threadService} from "@/services";
+import {globalEventService, messageService, threadService} from "@/services";
 import Tooltip from "../common/Tooltip";
 import {MuteIcon} from "@/icons/mute.icon";
 import styles from "@/styles/Inbox.module.css";
@@ -37,6 +37,7 @@ const MessageSchedule = dynamic(() => import("./message-schedule").then(mod => m
 export function MessagesHeader() {
     const {selectedThread, threads, tabValue} = useSelector((state: StateType) => state.threads);
     const {onlineUsers} = useSelector((state: StateType) => state.commonApis);
+    const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
 
     const dispatch = useDispatch();
     const [scheduledDate, setScheduledDate] = useState<string | undefined>();
@@ -211,6 +212,13 @@ export function MessagesHeader() {
         setScheduledDate(date);
         updateMailBox(MAILBOX_SNOOZED, date);
     }
+
+    useEffect(() => {
+        if (incomingEvent === 'thread.archive') {
+            globalEventService.blankEvent();
+            updateMailBox(MAILBOX_ARCHIVE);
+        }
+    }, [incomingEvent])
 
     if (!selectedThread || !threads || threads.length === 0 || (!tabValue)) {
         return <></>;

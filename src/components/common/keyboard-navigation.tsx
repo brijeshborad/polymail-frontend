@@ -62,10 +62,15 @@ export default function KeyboardNavigationListener() {
                         threadService.toggleThreadFocused(false);
                     }
 
-                    if (pressedKey?.value === 'ENTER') {
+                    if (pressedKey?.value === 'TAB') {
                         dispatchAction.target = 'threads';
                         threadService.toggleThreadFocused(true);
                         globalEventService.fireEvent('draft.undo');
+                    }
+
+                    if (pressedKey?.value === 'ENTER') {
+                        dispatchAction.target = 'threads';
+                        globalEventService.fireEvent('thread.archive');
                     }
 
                     if (target === 'threads') {
