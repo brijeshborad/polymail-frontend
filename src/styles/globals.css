@@ -859,19 +859,19 @@ div:has(> .mailSendToaster) {
     background-color: rgba(32, 33, 36, 0.1);
 }
 
-.archive-button-icon:hover path {
-    opacity: 1;
-    stroke: #00A88E;
-}
+/*.archive-button-icon:hover path {*/
+/*    opacity: 1;*/
+/*    stroke: #00A88E;*/
+/*}*/
 
-.unread-button-icon:hover path {
-    opacity: 1;
-    stroke: #5D5F62;
-}
+/*.unread-button-icon:hover path {*/
+/*    opacity: 1;*/
+/*    stroke: #5D5F62;*/
+/*}*/
 
-.trash-button-icon:hover path {
-    stroke: #A62700;
-}
+/*.trash-button-icon:hover path {*/
+/*    stroke: #A62700;*/
+/*}*/
 
 /*.starred-button-icon:hover path {*/
 /*    stroke: #f7ff00;*/
@@ -882,9 +882,9 @@ div:has(> .mailSendToaster) {
     stroke: #f7ff00;
 }
 
-.snooze-button-icon:hover svg {
-    stroke: #640064;
-}
+/*.snooze-button-icon:hover svg {*/
+/*    stroke: #640064;*/
+/*}*/
 
 .snooze-button-icon.disable {
     opacity: 0.4;
@@ -892,9 +892,9 @@ div:has(> .mailSendToaster) {
     box-shadow: var(--chakra-shadows-none);
 }
 
-.inbox-button-icon:hover svg {
-    stroke: #0556FF !important;
-}
+/*.inbox-button-icon:hover svg {*/
+/*    stroke: #0556FF !important;*/
+/*}*/
 
 /* .prosemirror-dropcursor-inline{
   display: flex;
