@@ -62,17 +62,20 @@ export function HeaderSearch() {
 
     useEffect(() => {
         if (router.pathname.includes('/projects')) {
-            let currentBadges = ['Projects'];
             setIsProjectRoute(true);
-            if (router.query.project && project) {
-                currentBadges = [`Project: ${project.name || ''}`];
+            if (router.pathname === '/projects') {
+                setBadges(['Projects']);
             }
-            setBadges(currentBadges);
+            if (router.query.project && project) {
+                setBadges([`Project: ${project.name || ''}`]);
+            }
         } else {
             setIsProjectRoute(false);
             setBadges([]);
         }
     }, [router.pathname, router.query, project]);
+
+    console.log('-BADHGES', badges);
 
     useEffect(() => {
         if (isProjectRoute) {
@@ -158,6 +161,19 @@ export function HeaderSearch() {
         });
     }, [])
 
+    function getSearchPlaceHolder() {
+        if (isProjectRoute) {
+            if (router.pathname === '/projects') {
+                return 'Search projects';
+            }
+            if (project) {
+                return `Search in ${project.name}`
+            }
+            return 'Search';
+        }
+        return 'Search';
+    }
+
     return (
         <div id="clickBox"
              className={`${styles.headerSearch} ${showCloseIcon && !isProjectRoute ? styles.headerSearchPopup : ''}`}
@@ -190,7 +206,7 @@ export function HeaderSearch() {
                     <Input
                         flex={'1'}
                         type="text"
-                        placeholder={isProjectRoute ? (project ? `Search in ${project.name}` : 'Search projects') : 'Search'}
+                        placeholder={getSearchPlaceHolder()}
                         onChange={event => {
                             setSearchString(event.target.value);
                         }}

@@ -1,7 +1,6 @@
 import {Thread, UserProjectOnlineStatus} from "@/models";
 
 let cacheThreads: { [key: string]: Thread[] } = {};
-let currentCacheTab = 'INBOX';
 let currentViewingCacheTab = '';
 let currentSelectedThreads: number[] = [];
 let draftStatus: { [key: string]: boolean } = {};
@@ -15,15 +14,6 @@ let memberStatus: {
 let inboxLoadedFirstTime: boolean = false;
 let projectLoadedFirstTime: boolean = false;
 let previousToast: string = '';
-
-export function getCurrentCacheTab() {
-    return currentCacheTab;
-}
-
-export function setCurrentCacheTab(value: string) {
-    currentCacheTab = value;
-    return currentCacheTab;
-}
 
 export function getDraftStatus() {
     return draftStatus;
