@@ -4,7 +4,7 @@ import {
     Button,
     Flex,
     Menu,
-    MenuButton,
+    MenuButton, MenuDivider,
     MenuItem,
     MenuList,
     Tab,
@@ -253,6 +253,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                                     Mute</MenuItem>
                                 <MenuItem
                                     onClick={() => moveThreadToMailBoxes(MAILBOX_SPAM)}><SpamIcon/> Mark Spam</MenuItem>
+                                <MenuDivider/>
                                 <div className={styles.tabListSnoozeButton}>
                                     <MessageSchedule
                                         isSnooze={true}
@@ -461,7 +462,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                             <MenuItem onClick={() => changeEmailTabs(MAILBOX_SPAM)}><SpamIcon opacity={true}/> Spam</MenuItem>
                             }
                             {tab !== MAILBOX_TRASH &&
-                            <MenuItem 
+                            <MenuItem
                                 onClick={() => changeEmailTabs(MAILBOX_TRASH)}><TrashIcon/> Trash</MenuItem>
                             }
                             {tab !== MAILBOX_ARCHIVE &&
