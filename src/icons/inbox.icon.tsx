@@ -15,7 +15,7 @@ export function InboxIcon(props: IconProps) {
     }
 
     return (
-        <Icon viewBox="0 0 20 20" fill="none" stroke="#5D5F62">
+        <Icon viewBox="0 0 20 20" fill="none" stroke="#000000">
             {props.opacity ? <g opacity="0.5">{getPath()}</g> : getPath()}
         </Icon>
     )
