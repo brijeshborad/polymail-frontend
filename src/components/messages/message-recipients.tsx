@@ -162,7 +162,7 @@ export default function MessageRecipients({emailRecipients: values, updateValues
                     {!!emailRecipients?.recipients?.items?.length && emailRecipients.recipients.items.map((item: MessageRecipient, i: number) => (
                         <Chip text={item.email} key={i} click={() => handleItemDelete(item.email!, 'recipients')}/>
                     ))}
-                    <AutoComplete value={emailRecipients.recipients.value.email} placeholder={`Recipients's Email`}
+                    <AutoComplete value={emailRecipients.recipients.value.email} placeholder={``}
                                   handleChange={(e) => handleChange(e, 'recipients')}
                                   openAutoComplete={emailRecipients.recipients.value.email.length > 0}
                                   handleKeyDown={(e) => handleKeyDown(e, 'recipients')}
@@ -177,7 +177,7 @@ export default function MessageRecipients({emailRecipients: values, updateValues
                     {!!emailRecipients?.cc?.items?.length && emailRecipients.cc.items.map((item: MessageRecipient, i: number) => (
                         <Chip text={item.email} key={i} click={() => handleItemDelete(item.email!, 'cc')}/>
                     ))}
-                    <AutoComplete value={emailRecipients.cc.value.email} placeholder={`Cc's Email`}
+                    <AutoComplete value={emailRecipients.cc.value.email} placeholder={``}
                                   handleChange={(e) => handleChange(e, 'cc')}
                                   openAutoComplete={emailRecipients.cc.value.email.length > 0}
                                   handleKeyDown={(e) => handleKeyDown(e, 'cc')}
@@ -192,7 +192,7 @@ export default function MessageRecipients({emailRecipients: values, updateValues
                     {!!emailRecipients?.bcc?.items?.length && emailRecipients.bcc.items.map((item: MessageRecipient, i: number) => (
                         <Chip text={item.email} key={i} click={() => handleItemDelete(item.email!, 'bcc')}/>
                     ))}
-                    <AutoComplete value={emailRecipients.bcc.value.email} placeholder={`Bcc's Email`}
+                    <AutoComplete value={emailRecipients.bcc.value.email} placeholder={``}
                                   handleChange={(e) => handleChange(e, 'bcc')}
                                   openAutoComplete={emailRecipients.bcc.value.email.length > 0}
                                   handleKeyDown={(e) => handleKeyDown(e, 'bcc')}
