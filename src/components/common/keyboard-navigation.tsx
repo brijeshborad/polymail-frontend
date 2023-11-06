@@ -44,9 +44,9 @@ export default function KeyboardNavigationListener() {
 
 
                     if (pressedKey?.value === 'RIGHT') {
-                        dispatchAction.target = 'thread'
-                        dispatchAction.messageIndex = 0
-                        threadService.toggleThreadFocused(true);
+                        dispatchAction.target = 'threads'
+                        // dispatchAction.messageIndex = 0
+                        // threadService.toggleThreadFocused(true);
 
                         if (selectedThread) {
                             threadService.makeThreadAsRead(selectedThread);
