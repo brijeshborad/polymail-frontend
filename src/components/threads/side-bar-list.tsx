@@ -8,7 +8,7 @@ import {ThreadListProps} from "@/types";
 import {useRouter} from "next/router";
 import dynamic from "next/dynamic";
 import {
-    getCurrentSelectedThreads, getInboxLoadedFirstTime,
+    getCurrentSelectedThreads,
     setCurrentSelectedThreads,
 } from "@/utils/cache.functions";
 import {debounce, debounceInterval} from "@/utils/common.functions";
