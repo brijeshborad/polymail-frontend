@@ -46,13 +46,11 @@ class CacheService {
     }
 
     getThreadCacheByKey(key: string): Thread[] {
-        console.log('---JEY', key, this.cacheThreads);
         return (this.cacheThreads[key] || []) as Thread[];
     }
 
     setThreadCacheByKey(key: string, value: any) {
         this.cacheThreads[key] = value;
-        console.log('---JEY', key, this.cacheThreads);
     }
 
     buildCacheKey(tab: string, filter: string = '') {

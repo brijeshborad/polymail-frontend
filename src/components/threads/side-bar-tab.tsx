@@ -71,14 +71,6 @@ export function ThreadsSideBarTab(props: TabProps) {
                 return;
             }
             let cutoffDate = dayjs().add(5, "day").format('YYYY-MM-DD');
-            if (cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue, type)).length > 0) {
-                let threads = cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue, type)) as Thread[];
-                resetState = false
-                threadService.setThreadState({
-                    threads: threads,
-                    isLoading: false
-                })
-            }
             let currentThreads = [...threadService.getThreadState().threads || []];
             if (currentPage > 1 && currentThreads[currentThreads.length - 1]) {
                 cutoffDate = dayjs(currentThreads[currentThreads.length - 1].sortDate).format('YYYY-MM-DD');
@@ -228,14 +220,36 @@ export function ThreadsSideBarTab(props: TabProps) {
     useEffect(() => {
         if (tabValue && currentTab !== tabValue) {
             setCurrentTab(tabValue)
-            threadService.setThreads([]);
-            threadService.setSelectedThread(null);
-            if (window.location.pathname.includes('projects') && waitForProjectRoute) {
-                setWaitForProjectRoute(false);
+            if (cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue)).length > 0) {
+                setTabName(() => {
+                    let defaultTab = 'just-mine';
+                    if (router.asPath === "/projects/[project]") {
+                        defaultTab = 'every-thing';
+                    } else if (router.query.project) {
+                        defaultTab = 'every-thing';
+                    }
+                    return defaultTab;
+                });
+                let threads = cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue)) as Thread[];
+                threadService.setThreads([]);
+                messageService.setMessages([]);
+                threadService.setThreadState({
+                    threads: threads,
+                    isLoading: false,
+                    selectedThread: threads[0]
+                });
                 return;
+            } else {
+                threadService.setThreads([]);
+                threadService.setSelectedThread(null);
+                messageService.setMessages([]);
+                if (window.location.pathname.includes('projects') && waitForProjectRoute) {
+                    setWaitForProjectRoute(false);
+                    return;
+                }
+                currentPage = 1;
+                getAllThread();
             }
-            currentPage = 1;
-            getAllThread();
         }
     }, [getAllThread, tabValue, currentTab, waitForProjectRoute])
 
@@ -254,17 +268,27 @@ export function ThreadsSideBarTab(props: TabProps) {
     }, [isLoading, threads])
 
     const changeThread = (type: string) => {
-        setTabName(type);
-        threadService.setThreads([]);
-        threadService.setSelectedThread(null);
-        messageService.setMessages([]);
-        clearDebounce('THREAD_FILTER');
-        debounce(() => {
-            threadService.setThreads([]);
-            threadService.setSelectedThread(null);
-            currentPage = 1;
-            getAllThread(type);
-        }, 500, 'THREAD_FILTER');
+        if (tabName !== type) {
+            setTabName(type);
+            if (cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue!, type!)).length > 0) {
+                let threads = cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue!, type!)) as Thread[];
+                threadService.setThreads([]);
+                setTimeout(() => {
+                    threadService.setThreadState({
+                        threads: threads,
+                        isLoading: false,
+                        selectedThread: threads[0]
+                    })
+                }, 1);
+                return;
+            } else {
+                threadService.setThreads([]);
+                threadService.setSelectedThread(null);
+                messageService.setMessages([]);
+                currentPage = 1;
+                getAllThread(type);
+            }
+        }
     }
 
     function fetchNext() {
