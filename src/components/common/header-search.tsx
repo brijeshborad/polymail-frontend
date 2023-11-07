@@ -67,7 +67,7 @@ export function HeaderSearch() {
                 setBadges(['Projects']);
             }
             if (router.query.project && project) {
-                setBadges([`Project: ${project.name || ''}`]);
+                setBadges([`in: ${project.name || ''}`]);
             }
         } else {
             setIsProjectRoute(false);
