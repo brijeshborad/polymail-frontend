@@ -5,6 +5,7 @@ import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {globalEventService, messageService, threadService} from "@/services";
 import {clearDebounce, debounce} from "@/utils/common.functions";
+import {MessageDraft} from "@/models";
 
 export default function KeyboardNavigationListener() {
     const dispatch = useDispatch();
@@ -65,7 +66,10 @@ export default function KeyboardNavigationListener() {
                     if (pressedKey?.value === 'TAB') {
                         dispatchAction.target = 'threads';
                         threadService.toggleThreadFocused(true);
-                        globalEventService.fireEvent('draft.undo');
+                        let draftMessages = [...(messages || [])].filter((item: MessageDraft) => item.mailboxes?.includes('DRAFT') && !item.draftInfo?.discardedBy);
+                        if (draftMessages.length > 0) {
+                            globalEventService.fireEvent({data: {draftId: draftMessages[draftMessages.length - 1].id}, type: 'draft.updateIndex'})
+                        }
                     }
 
                     if (pressedKey?.value === 'ENTER') {
