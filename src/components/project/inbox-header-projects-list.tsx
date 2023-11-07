@@ -6,7 +6,7 @@ import {StateType} from "@/types";
 import {Project, UserProjectOnlineStatus} from "@/models";
 import Router from "next/router";
 import {PlusIcon} from "@/icons/plus.icon";
-import {commonService, messageService, threadService} from "@/services";
+import {commonService, messageService, projectService, threadService} from "@/services";
 import Tooltip from "../common/Tooltip";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import {getInboxLoadedFirstTime, setInboxLoadedFirstTime} from "@/utils/cache.functions";
@@ -40,7 +40,7 @@ export function InboxHeaderProjectsList() {
 
     useEffect(() => {
         if (projects && projects.length > 0 && maxSize > 0) {
-            setProjectData([...(projects || [])].reverse().slice(0, maxSize));
+            setProjectData(projectService.sortProjects([...(projects || [])]).slice(0, maxSize));
             setProjectDataLength(projects)
         }
     }, [projects, maxSize]);

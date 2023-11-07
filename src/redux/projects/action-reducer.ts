@@ -1,6 +1,7 @@
 import {Project, TeamMember} from "@/models";
 import { InitialProjectState, ReducerActionType } from "@/types";
 import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
+import {projectService} from "@/services";
 
 const initialState: any = {
     projects: [],
@@ -140,7 +141,7 @@ const projectsSlice = createSlice({
                 }
             };
 
-            const sortedList = [...currentProjects].sort((a: Project, b: Project) => (a.projectMeta?.order || 0) - (b.projectMeta?.order || 0));
+            const sortedList = projectService.sortProjects([...currentProjects]);
             return {...state, projects: [...sortedList], isProjectUpdateSuccess: false, error: null}
         },
 
@@ -156,7 +157,7 @@ const projectsSlice = createSlice({
                     favorite: projectData.projectMeta?.favorite,
                 }
             };
-            const sortedList = [...currentProjects].sort((a: Project, b: Project) => (a.projectMeta?.order || 0) - (b.projectMeta?.order || 0));
+            const sortedList = projectService.sortProjects([...currentProjects]);
             return {...state, projects: [...sortedList], isProjectUpdateSuccess: true, error: null}
         },
         updateProjectError: (state: InitialProjectState, _action: PayloadAction<any>) => {
@@ -176,7 +177,7 @@ const projectsSlice = createSlice({
                 }
             };
 
-            const sortedList = [...currentProjects].sort((a: Project, b: Project) => (a.projectMeta?.order || 0) - (b.projectMeta?.order || 0));
+            const sortedList = projectService.sortProjects([...currentProjects]);
             return {...state, projects: [...sortedList], isProjectUpdateSuccess: false}
         },
 
