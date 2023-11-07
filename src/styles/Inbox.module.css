@@ -324,7 +324,7 @@
 
 /* Mail Box Start */
 .mailBox {
-    border: 1px solid rgba(8, 22, 47, 0.16);
+    border: 1px solid #F3F4F6;
     border-radius: 16px;
     height: 100%;
     background-color: white;

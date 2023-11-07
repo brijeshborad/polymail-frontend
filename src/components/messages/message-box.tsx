@@ -318,7 +318,7 @@ export function MessageBox(props: any) {
                 <Flex position={'relative'} direction={'column'} key={messageIndex}
                       className={`${styles.oldMail} ${messageIndex === index ? styles.lastOpenMail : ''}`} mb={3}
                       gap={4}
-                      border={'1px solid #E5E7EB'} borderRadius={12} align={'center'}>
+                      border={'1px solid #F3F4F6'} borderRadius={12} align={'center'}>
                     {messageIndex !== index &&
                     <Flex align={'flex-start'} width={'100%'} _hover={{backgroundColor: 'rgba(0, 0, 0, 0.01)'}}>
                         <Flex align={'center'} w={'100%'} gap={2} cursor={'pointer'} padding={4}
