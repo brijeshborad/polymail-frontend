@@ -69,6 +69,8 @@ export default function KeyboardNavigationListener() {
                         let draftMessages = [...(messages || [])].filter((item: MessageDraft) => item.mailboxes?.includes('DRAFT') && !item.draftInfo?.discardedBy);
                         if (draftMessages.length > 0) {
                             globalEventService.fireEvent({data: {draftId: draftMessages[draftMessages.length - 1].id}, type: 'draft.updateIndex'})
+                        } else {
+                            globalEventService.fireEvent('draft.undo');
                         }
                     }
 
