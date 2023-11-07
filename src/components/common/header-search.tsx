@@ -69,8 +69,8 @@ export function HeaderSearch() {
 
     useEffect(() => {
         if (router.pathname.includes('/projects')) {
-            setIsProjectRoute(true);
             if (router.pathname === '/projects') {
+                setIsProjectRoute(true);
                 setBadges(['Projects']);
             }
             if (router.query.project && project) {
@@ -83,12 +83,18 @@ export function HeaderSearch() {
     }, [router.pathname, router.query, project]);
 
     useEffect(() => {
-        if (isProjectRoute) {
-            projectService.setProjectSearchString(searchString);
-        } else {
-            cacheService.performCacheSearch(searchString);
+        if (searchString) {
+            if (isProjectRoute) {
+                projectService.setProjectSearchString(searchString);
+            } else {
+                let badges: string[] = [];
+                if (project) {
+                    badges = [`in:${project.id || ''}`];
+                }
+                cacheService.performCacheSearch(searchString, badges);
+            }
         }
-    }, [searchString, isProjectRoute])
+    }, [searchString, isProjectRoute, project])
 
     const searchCancel = (callAPI: boolean = false) => {
         if (isProjectRoute && !project) {

@@ -65,9 +65,12 @@ class CacheService {
         } else {
             cachePage = `PROJECT`;
         }
+        if (routePaths.includes('projects')) {
+            cachePage += `-${routePaths[2] as string}`
+        }
         cachePage += `-${tab}`;
         if (!filter) {
-            if (routePaths.includes('project')) {
+            if (routePaths.includes('projects')) {
                 cachePage += '-EVERYTHING';
             } else {
                 cachePage += '-JUST-MINE';
@@ -75,17 +78,27 @@ class CacheService {
         } else {
             cachePage += `-${filter}`;
         }
-        cachePage = cachePage.toUpperCase();
-        if (routePaths.includes('project')) {
-            cachePage += `-${routePaths[2] as string}`
-        }
-        return cachePage
+        return cachePage.toLowerCase();
     }
 
-    performCacheSearch(searchString: string) {
+    extractProjectIdsFromBadges(badges: string[]) {
+        let projectIds: string[] = [];
+        badges.forEach((b: string) => {
+            projectIds.push(b.replace('in:', '').trim())
+        })
+        return projectIds;
+    }
+
+    performCacheSearch(searchString: string, badges: string[] = []) {
         if (!searchString) {
             return;
         }
+        // let {projects} = projectService.getProjectState();
+        // let findProjects = matchSorter((projects || []), searchString, {keys: ['id', 'name']});
+        // console.log('FIND PROJECTS', findProjects);
+        // if (searchString.includes('in:')) {
+        //
+        // }
         let allCache = this.getThreadCache();
         let foundThreads: Thread[] = [];
         let keysToFind: string[] = [
@@ -96,14 +109,22 @@ class CacheService {
             'messages.*.subject', 'messages.*.subject',
             'messages.*.attachments.*.filename', 'messages.*.attachments.*.filename',
             'messages.mailboxes.*', 'messages.mailboxes.*',
-
         ];
+        let projectIds: string[] = [];
+        if (badges.length > 0) {
+            projectIds = this.extractProjectIdsFromBadges(badges);
+        }
         Object.keys(allCache).forEach((cacheKey: string) => {
             if (!cacheKey.includes(MAILBOX_DRAFT.toLowerCase())) {
-                foundThreads = matchSorter((allCache[cacheKey] || []), searchString, {keys: keysToFind});
+                if (projectIds.length > 0) {
+                    if (projectIds.includes(cacheKey.split('-')[1])) {
+                        foundThreads = [...foundThreads, ...matchSorter((allCache[cacheKey] || []), searchString, {keys: keysToFind})];
+                    }
+                } else {
+                    foundThreads = [...foundThreads, ...matchSorter((allCache[cacheKey] || []), searchString, {keys: keysToFind})];
+                }
             }
         })
-        console.log(foundThreads);
         threadService.setThreads(foundThreads);
     }
 }

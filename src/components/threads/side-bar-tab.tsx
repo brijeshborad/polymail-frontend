@@ -220,9 +220,9 @@ export function ThreadsSideBarTab() {
             setCurrentTab(tabValue)
             let defaultTab = 'just-mine';
             if (router.asPath === "/projects/[project]") {
-                defaultTab = 'every-thing';
+                defaultTab = 'everything';
             } else if (router.query.project) {
-                defaultTab = 'every-thing';
+                defaultTab = 'everything';
             }
             setTabName(defaultTab);
             setCurrentViewingCacheTab(cacheService.buildCacheKey(tabValue, defaultTab));
