@@ -13,7 +13,7 @@ import dynamic from "next/dynamic";
 import {InboxLoader} from "@/components/loader-screen/inbox-loader";
 import {globalEventService, keyNavigationService, messageService, threadService} from "@/services";
 import {Toaster} from "../common";
-import {generateToasterId} from "@/utils/common.functions";
+import {debounce, generateToasterId} from "@/utils/common.functions";
 import {MuteIcon} from "@/icons";
 // import {clearDebounce, debounce} from "@/utils/common.functions";
 
@@ -45,6 +45,7 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
     const {isLoading: projectsLoading} = useSelector((state: StateType) => state.projects);
     const {isLoading: summaryLoading, syncingEmails, isComposing} = useSelector((state: StateType) => state.commonApis);
     const [isLoaderShow, setIsLoaderShow] = useState<boolean>(false);
+    const [showScrollBar, setShowScrollBar] = useState<boolean>(false);
 
     // const handleScroll = useCallback(() => {
     //     // const container = messagesWrapperRef.current;
@@ -135,6 +136,10 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
         };
     }, []);
 
+    const handleScroll = useCallback(() => {
+        setShowScrollBar(true);
+        debounce(() => setShowScrollBar(false), 500, 'MESSAGE_LIST_SCROLLBAR');
+    }, [])
 
     const hideAndShowReplyBox = (type: string = '', messageData: MessageModel) => {
         globalEventService.fireEvent({data: messageData, type: 'draft.currentMessage'})
@@ -211,8 +216,8 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
                         <MessagesHeader/>
                         {getMuteStatus()}
                         {isShowingMessageBox &&
-                        <Flex ref={messagesWrapperRef} padding={'20px'} gap={5} direction={'column'} flex={1}
-                              overflowY={'scroll'} overflowX={'hidden'}>
+                        <Flex ref={messagesWrapperRef} onScroll={handleScroll} padding={'20px'} gap={5} direction={'column'} flex={1}
+                              overflowY={'scroll'} overflowX={'hidden'} className={`${styles.messageListscrollbar} ${showScrollBar ? styles.messageScrollBar : ''}`}>
                             <Flex gap={2} direction={'column'} height={'100%'}>
                                 <div className={styles.mailBoxMailList}>
                                     <MessageBox hideAndShowReplyBox={hideAndShowReplyBox}/>

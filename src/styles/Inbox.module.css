@@ -221,6 +221,14 @@
     scrollbar-gutter: stable;
 }
 
+.mailList::-webkit-scrollbar-thumb {
+    background-color: transparent;
+}
+
+.mailList.scrollBar::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
 .mailList.projectMailList {
     max-height: calc(100vh - 290px);
 }
@@ -1333,6 +1341,14 @@
     line-height: 14.52px;
     font-weight: 500;
     border-radius: 34px;
+}
+
+.messageListscrollbar::-webkit-scrollbar-thumb {
+    background-color: transparent;
+}
+
+.messageListscrollbar.messageScrollBar::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.8);
 }
 
 @media (min-width: 991px) and (max-width: 1431px) {
