@@ -145,7 +145,9 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
             >
                 <Flex align={"center"} justify={'space-between'} gap={2}>
                     <Flex align={"center"} className={styles.senderDetails} gap={1}>
-                        {props?.thread?.from?.name || props?.thread?.from?.email}
+                        <Tooltip label={props?.thread?.from?.email} placement={'bottom'}>
+                            {props?.thread?.from?.name || props?.thread?.from?.email}
+                        </Tooltip>
                     </Flex>
                     {(props?.thread?.projects || []).length > 0 && (
                         <Tooltip label={
