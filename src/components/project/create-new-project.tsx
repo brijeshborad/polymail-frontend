@@ -17,7 +17,6 @@ import {
     ModalHeader,
     ModalOverlay
 } from "@chakra-ui/react";
-import Image from "next/image";
 import Router from "next/router";
 import React, {ChangeEvent, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
