@@ -501,9 +501,9 @@
     color: #FFFFFF;
 }
 
-.addToProjectList .backToInbox:hover svg {
-    stroke: #266DF0;
-}
+/*.addToProjectList .backToInbox:hover svg {*/
+/*    stroke: #266DF0;*/
+/*}*/
 
 .addToProjectList .backToInbox button svg {
     stroke: #08162F;
