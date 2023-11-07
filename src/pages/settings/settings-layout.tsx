@@ -4,6 +4,9 @@ import styles from "@/styles/setting.module.css";
 import {UserIcon} from "@/icons";
 import Router, {useRouter} from "next/router";
 import {ArrowBackIcon} from "@chakra-ui/icons";
+import {getOrganizationMembers} from "@/redux/organizations/action-reducer";
+import {useDispatch, useSelector} from "react-redux";
+import {StateType} from "@/types";
 
 
 const tabMenu = [
@@ -49,6 +52,8 @@ let currentRoute: string = '';
 
 export default function SettingsLayout({children}: any) {
     const router = useRouter()
+    const dispatch = useDispatch();
+    const {organizations, members} = useSelector((state: StateType) => state.organizations);
 
     useEffect(() => {
         const routePaths = router.pathname.split('/');
@@ -65,6 +70,14 @@ export default function SettingsLayout({children}: any) {
         currentRoute = menuItem.route;
         Router.push(menuItem.route);
     }, [])
+
+    useEffect(() => {
+        if (organizations && organizations.length > 0 && organizations[0].id) {
+            if (members && members.length <= 0) {
+                dispatch(getOrganizationMembers({body: {orgId: organizations[0].id}}));
+            }
+        }
+    }, [dispatch, organizations])
 
 
     return (

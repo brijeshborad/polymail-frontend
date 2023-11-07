@@ -18,7 +18,6 @@ import React, {ChangeEvent, useEffect, useState} from "react";
 import {MenuIcon, TextIcon} from "@/icons";
 import withAuth from "@/components/auth/withAuth";
 import {
-    getOrganizationMembers,
     updateOrganizationMemberRole
 } from "@/redux/organizations/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
@@ -43,12 +42,6 @@ function Members() {
     const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
 
     const dispatch = useDispatch();
-
-    useEffect(() => {
-        if (organizations && organizations.length > 0 && organizations[0].id) {
-            dispatch(getOrganizationMembers({body: {orgId: organizations[0].id}}));
-        }
-    }, [dispatch, organizations])
 
 
     useEffect(() => {
