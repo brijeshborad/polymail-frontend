@@ -390,9 +390,9 @@ function EditProject() {
                                       className={styles.projectMember}>
                                     <Flex align={'center'} gap={3} padding={'8px 12px'} fontSize={'13px'}
                                           color={'#0a101d'}>
-                                        <div style={{background: '#000'}} className={styles.imgWrapper}>
-                                            {/*<Image src="/image/user.png" width="36" height="36" alt=""/>*/}
-                                        </div>
+                                        {/*<div style={{background: '#000'}} className={styles.imgWrapper}>*/}
+                                        {/*    /!*<Image src="/image/user.png" width="36" height="36" alt=""/>*!/*/}
+                                        {/*</div>*/}
                                         {invite?.invite?.toEmail}
                                     </Flex>
                                     <Flex align={'center'} gap={1}>
