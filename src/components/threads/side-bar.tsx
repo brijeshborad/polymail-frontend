@@ -476,7 +476,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                     <Button
                         className={styles.composeButton} borderRadius={8} height={'auto'} padding={'10px'}
                         minWidth={'101px'} backgroundColor={'#FFFFFF'} color={'#374151'} borderColor={'#E5E7EB'}
-                        leftIcon={<EditIcon/>} colorScheme='blue' variant='outline'
+                        leftIcon={<EditIcon/>} _hover={{backgroundColor: 'var(--alias-bg-subtle)'}} variant='outline'
                         onClick={() => openComposeModel()}
                     >
                         <span className={styles.composeButtonText}>Compose</span>

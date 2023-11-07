@@ -75,8 +75,6 @@ export function HeaderSearch() {
         }
     }, [router.pathname, router.query, project]);
 
-    console.log('-BADHGES', badges);
-
     useEffect(() => {
         if (isProjectRoute) {
             projectService.setProjectSearchString(searchString);

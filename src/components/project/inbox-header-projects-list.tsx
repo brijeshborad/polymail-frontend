@@ -78,7 +78,7 @@ export function InboxHeaderProjectsList() {
             <>
                 <Button alignItems={'center'} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
                         onClick={() => commonService.toggleCreateProjectModel(true, true)} padding={'7px'}
-                        minWidth={'216px'}
+                        minWidth={'216px'} _hover={{backgroundColor: 'var(--alias-bg-subtle)'}}
                         border={'1px dashed #E5E7EB'} borderRadius={'8px'} h={'fit-content'}
                         maxWidth={'216px'} className={'create-project-button'}>
                     <div className={'folder-icon'}>
@@ -93,7 +93,7 @@ export function InboxHeaderProjectsList() {
                     {projectData && !!projectData.length && (projectData || []).map((project: Project, index: number) => (
                         <Button onClick={() => gotoProject(project.id!)} ref={projectButtonRef}
                                 key={index} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
-                                border={'1px solid #F3F4F6'} h={'fit-content'}
+                                border={'1px solid #F3F4F6'} h={'fit-content'} _hover={{backgroundColor: 'var(--alias-bg-subtle)'}}
                                 borderRadius={'8px'} padding={'7px'} minWidth={'216px'} maxWidth={'216px'}>
                             <Flex className={'disney-icon'} position={'relative'} align={'center'} justify={'center'}
                                   borderRadius={'3px'} h={'20px'} w={'20px'} fontSize={'18px'}>
@@ -121,7 +121,7 @@ export function InboxHeaderProjectsList() {
                     ))}
                     {(projectData && projectData.length >= maxSize && maxSize > 0) &&
                     <Button alignItems={'center'} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
-                            onClick={() => changePage()} padding={'7px'} minWidth={'216px'}
+                            onClick={() => changePage()} padding={'7px'} minWidth={'216px'} _hover={{backgroundColor: 'var(--alias-bg-subtle)'}}
                             border={'1px solid #F3F4F6'} borderRadius={'8px'} h={'fit-content'}
                             maxWidth={'216px'}>
                         <div className={'folder-icon'}>
