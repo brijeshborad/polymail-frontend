@@ -37,7 +37,7 @@ function ProjectInbox() {
                 <Grid className={styles.mailGrid} templateColumns='30% auto' padding={'16px 20px 16px'} gap={4}
                       flex={1}>
                     <GridItem w='100%' flex={1}>
-                        <ThreadsSideBar cachePrefix={`project-${router.query.project}`}/>
+                        <ThreadsSideBar/>
                     </GridItem>
                     <GridItem w='100%' flex={1}>
                         <Message isProjectView={true}/>

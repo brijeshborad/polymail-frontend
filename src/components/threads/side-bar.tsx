@@ -58,7 +58,7 @@ const MessageSchedule = dynamic(() => import("../messages/message-schedule").the
 const ThreadsSideBarTab = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarTab), {ssr: false});
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
 
-export function ThreadsSideBar(props: { cachePrefix: string }) {
+export function ThreadsSideBar() {
     const [tab, setTab] = useState<string>('INBOX');
     const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false)
     const [countUnreadMessages, setCountUnreadMessages] = useState<number>(0);
@@ -493,7 +493,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
                     {(isThreadSearched || (multiSelection && multiSelection.length > 0)) ? getHeaderForSearched() : getHeaderForNotSearched()}
 
                     <TabPanels marginTop={5}>
-                        <ThreadsSideBarTab cachePrefix={props.cachePrefix}/>
+                        <ThreadsSideBarTab/>
                     </TabPanels>
                 </Tabs>
             </Flex>

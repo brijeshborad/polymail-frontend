@@ -13,7 +13,14 @@ import React, {useEffect, useRef, useState} from "react";
 import {useSelector} from "react-redux";
 import {StateType} from "@/types";
 import Router, {useRouter} from "next/router";
-import {globalEventService, keyNavigationService, projectService, socketService, threadService} from "@/services";
+import {
+    cacheService,
+    globalEventService,
+    keyNavigationService,
+    projectService,
+    socketService,
+    threadService
+} from "@/services";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import {Contacts, Project} from "@/models";
@@ -78,6 +85,8 @@ export function HeaderSearch() {
     useEffect(() => {
         if (isProjectRoute) {
             projectService.setProjectSearchString(searchString);
+        } else {
+            cacheService.performCacheSearch(searchString);
         }
     }, [searchString, isProjectRoute])
 
@@ -101,18 +110,19 @@ export function HeaderSearch() {
     }
 
     const handleKeyPress = (event: KeyboardEvent | any) => {
-        if (event.key.toLowerCase() === 'enter') {
-            searchCancel(false);
-            if (searchString) {
-                let finalSearchString = searchString;
-                if (isProjectRoute && project) {
-                    finalSearchString = `project:${project.id} ${searchString}`;
-                }
-                threadService.searchThread();
-                socketService.searchThreads(userDetails?.id, finalSearchString);
-                return;
-            }
-        }
+        threadService.searchThread()
+        // if (event.key.toLowerCase() === 'enter') {
+        //     searchCancel(false);
+        //     if (searchString) {
+        //         let finalSearchString = searchString;
+        //         if (isProjectRoute && project) {
+        //             finalSearchString = `project:${project.id} ${searchString}`;
+        //         }
+        //         threadService.searchThread();
+        //         socketService.searchThreads(userDetails?.id, finalSearchString);
+        //         return;
+        //     }
+        // }
     };
 
     const handleFocus = () => {
@@ -258,7 +268,8 @@ export function HeaderSearch() {
                                       cursor={'pointer'} borderRadius={'3px'} onClick={() => {
                                     setSearchString('');
                                     threadService.searchThread();
-                                    socketService.searchThreads(userDetails?.id, `${item.email}`);
+                                    // socketService.searchThreads(userDetails?.id, `${item.email}`);
+                                    cacheService.performCacheSearch(item.email);
                                     setPeopleArray(item);
                                 }}
                                 >

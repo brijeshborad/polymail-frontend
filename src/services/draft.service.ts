@@ -6,11 +6,10 @@ import {addItemToGroup} from "@/redux/memberships/action-reducer";
 import {projectService} from "@/services/project.service";
 import {threadService} from "@/services/threads.service";
 import {
-    getCacheThreads,
     getCurrentViewingCacheTab,
-    setCacheThreads
 } from "@/utils/cache.functions";
 import {debounce} from "@/utils/common.functions";
+import {cacheService} from "@/services/cache.service";
 
 class DraftService extends BaseService {
     constructor() {
@@ -106,8 +105,8 @@ class DraftService extends BaseService {
                 currentThreads[selectThreadIndex!].messages = [...(currentThreads[selectThreadIndex!].messages || [])];
                 currentThreads[selectThreadIndex!].messages.splice(draftIndex, 1);
                 threadService.setThreads([...currentThreads]);
-                setCacheThreads({
-                    ...getCacheThreads(),
+                cacheService.setThreadCache({
+                    ...cacheService.getThreadCache(),
                     [getCurrentViewingCacheTab()]: [...currentThreads]
                 })
                 let finalSelectThread: any = {...selectedThread};

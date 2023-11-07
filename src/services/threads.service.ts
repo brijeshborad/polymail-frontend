@@ -15,11 +15,11 @@ import {addItemToGroup} from "@/redux/memberships/action-reducer";
 import {removeThreadFromProject} from "@/redux/projects/action-reducer";
 import {commonService} from "@/services/common.service";
 import {globalEventService} from "@/services/global-event.service";
-import {getCacheThreads, getDraftStatus, setCacheThreads} from "@/utils/cache.functions";
-import {accountService} from "@/services/account.service";
+import {getDraftStatus} from "@/utils/cache.functions";
 import {messageService} from "@/services/message.service";
 import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
 import {performMessagesUpdate} from "@/utils/thread.functions";
+import {cacheService} from "@/services/cache.service";
 
 declare type MailBoxTypes = 'INBOX' | 'DRAFT' | 'UNREAD' | 'ARCHIVE' | 'TRASH' | 'SNOOZED' | 'STARRED' | string;
 
@@ -59,17 +59,22 @@ class ThreadsService extends BaseService {
                     selectedThread: null,
                 } : {})
             });
+            messageService.setMessages([]);
         }
     }
 
     searchThread() {
-        this.setThreadState({
-            isThreadSearched: true,
-            multiSelection: [],
-            threads: [],
-            isLoading: true,
-            selectedThread: null,
-        });
+        let {isThreadSearched} = this.getThreadState();
+        if (!isThreadSearched) {
+            this.setThreadState({
+                isThreadSearched: true,
+                multiSelection: [],
+                threads: [],
+                isLoading: true,
+                selectedThread: null,
+            });
+            messageService.setMessages([]);
+        }
     }
 
     pageChange(blankTabValue: boolean = true) {
@@ -478,8 +483,8 @@ class ThreadsService extends BaseService {
     makeThreadAsReadCache(threadId: string) {
         let {tabValue} = this.getThreadState();
         let currentTabValue = tabValue || 'INBOX';
-        let cacheThreads = {...getCacheThreads()};
-        let cacheFromPage = this.getCachePage(currentTabValue);
+        let cacheThreads = {...cacheService.getThreadCache()};
+        let cacheFromPage = cacheService.buildCacheKey(currentTabValue);
         let fromThreads = [...(cacheThreads[cacheFromPage] || [])];
         let threadIndex = fromThreads.findIndex((item) => item.id === threadId);
         if (threadIndex !== -1) {
@@ -493,7 +498,7 @@ class ThreadsService extends BaseService {
             let updatingThread = {...fromThreads[threadIndex]};
             updatingThread.mailboxes = mailBoxes;
             fromThreads[threadIndex] = updatingThread;
-            setCacheThreads({
+            cacheService.setThreadCache({
                 ...cacheThreads,
                 [cacheFromPage]: fromThreads
             })
@@ -609,14 +614,14 @@ class ThreadsService extends BaseService {
         if (getDraftThreadToMove) {
             getDraftThreadToMove = {...getDraftThreadToMove};
             getDraftThreadToMove.mailboxes = ['SENT'];
-            let cacheThreads = {...getCacheThreads()};
-            let cachePage = this.getCachePage('SENT');
+            let cacheThreads = {...cacheService.getThreadCache()};
+            let cachePage = cacheService.buildCacheKey('SENT');
             if (!cacheThreads[cachePage]) {
                 cacheThreads[cachePage] = [];
             }
             let cacheTabThreads = [...cacheThreads[cachePage]];
             cacheTabThreads.unshift(getDraftThreadToMove);
-            setCacheThreads({
+            cacheService.setThreadCache({
                 ...cacheThreads,
                 [cachePage]: cacheTabThreads
             })
@@ -628,9 +633,9 @@ class ThreadsService extends BaseService {
         let {threads, tabValue} = threadService.getThreadState();
         draftService.setComposeDraft(null);
         draftService.setResumeDraft(null);
-        let cacheThreads = {...getCacheThreads()};
-        let cacheSentPage = this.getCachePage('SENT');
-        let cacheDraftPage = this.getCachePage('DRAFT');
+        let cacheThreads = {...cacheService.getThreadCache()};
+        let cacheSentPage = cacheService.buildCacheKey('SENT');
+        let cacheDraftPage = cacheService.buildCacheKey('DRAFT');
         let sendThreads = [...cacheThreads[cacheSentPage]];
         let draftThreads = [...cacheThreads[cacheDraftPage]];
         let threadIndex = sendThreads.findIndex((item) => item.id === threadId);
@@ -657,7 +662,7 @@ class ThreadsService extends BaseService {
             }
             sendThreads.splice(threadIndex, 1);
             draftThreads.unshift(revertThread);
-            setCacheThreads({
+            cacheService.setThreadCache({
                 ...cacheThreads,
                 [cacheDraftPage]: draftThreads,
                 [cacheSentPage]: sendThreads
@@ -668,28 +673,10 @@ class ThreadsService extends BaseService {
         }
     }
 
-    getCachePage(tab: string) {
-        let {selectedAccount} = accountService.getAccountState();
-        let cachePage = '';
-        let routePaths = window.location.pathname.split('/')
-        if (routePaths.includes('inbox')) {
-            cachePage = 'inbox-page'
-        } else {
-            cachePage = `project-${routePaths[2] as string}`;
-        }
-        cachePage += `-${tab}-${selectedAccount?.id}`;
-        if (cachePage.includes('project')) {
-            cachePage += '-everything';
-        } else {
-            cachePage += '-just-mine';
-        }
-        return cachePage
-    }
-
     moveThreadFromListToListCache(from: string, to: string, threadId: string) {
-        let cacheThreads = {...getCacheThreads()};
-        let cacheFromPage = this.getCachePage(from);
-        let cacheToPage = this.getCachePage(to);
+        let cacheThreads = {...cacheService.getThreadCache()};
+        let cacheFromPage = cacheService.buildCacheKey(from);
+        let cacheToPage = cacheService.buildCacheKey(to);
         let fromThreads = [...(cacheThreads[cacheFromPage] || [])];
         let toThreads = [...(cacheThreads[cacheToPage] || [])];
         let threadIndex = fromThreads.findIndex((item) => item.id === threadId);
@@ -707,7 +694,7 @@ class ThreadsService extends BaseService {
             updatingThread.mailboxes = mailBoxes;
             fromThreads.splice(threadIndex, 1);
             toThreads.unshift(updatingThread);
-            setCacheThreads({
+            cacheService.setThreadCache({
                 ...cacheThreads,
                 [cacheFromPage]: fromThreads,
                 [cacheToPage]: toThreads
@@ -782,6 +769,7 @@ class ThreadsService extends BaseService {
         let isProjectThread = (thread.projects || []).length > 0;
         let findThreadIndex = cacheThreads[cacheKey].findIndex((item: Thread) => item.id === thread.id);
         let tabValueFromCacheKey = cacheKey.split('-')[2];
+        cacheThreads[cacheKey] = [...cacheThreads[cacheKey]];
         if (!allMailboxToFindIn.includes(tabValueFromCacheKey)) {
             if (findThreadIndex !== -1) {
                 cacheThreads[cacheKey].splice(findThreadIndex, 1);
@@ -802,7 +790,7 @@ class ThreadsService extends BaseService {
     }
 
     findThreadInAllCacheListAndRemoveOrUpdateIt(thread: Thread, isNewThread: boolean) {
-        let cacheThreads = {...getCacheThreads()};
+        let cacheThreads = {...cacheService.getThreadCache()};
         Object.keys(cacheThreads).forEach((cacheKey: string) => {
             if (cacheKey.startsWith('inbox-')) {
                 cacheThreads[cacheKey] = [...this.updateInboxPageCacheList(cacheThreads, cacheKey, thread, isNewThread)];
@@ -811,7 +799,7 @@ class ThreadsService extends BaseService {
             }
 
         })
-        setCacheThreads(cacheThreads);
+        cacheService.setThreadCache(cacheThreads);
     }
 
     pushEventThreadToAppropriateList(thread: Thread, isNewThread: boolean, tabName: string) {
@@ -883,14 +871,14 @@ class ThreadsService extends BaseService {
     }
 
     updateThreadToProperPlaceInCache(thread: Thread) {
-        let cacheThreads = {...getCacheThreads()};
+        let cacheThreads = {...cacheService.getThreadCache()};
         let threadsToRemove: any = {...this.getThreadsToRemoveFromCache(cacheThreads, thread)};
         let removableThread: Thread | null = null;
         if (Object.keys(threadsToRemove).length > 0) {
             removableThread = threadsToRemove[Object.keys(threadsToRemove)[0]];
         }
         cacheThreads = this.updateThreadsToCache(cacheThreads, thread, removableThread);
-        setCacheThreads(cacheThreads);
+        cacheService.setThreadCache(cacheThreads);
         return removableThread;
     }
 
@@ -1033,15 +1021,15 @@ class ThreadsService extends BaseService {
     makeThreadAsMuteCache(threadId: string, mute: boolean) {
         let {tabValue} = this.getThreadState();
         let currentTabValue = tabValue || 'INBOX';
-        let cacheThreads = {...getCacheThreads()};
-        let cacheFromPage = this.getCachePage(currentTabValue);
+        let cacheThreads = {...cacheService.getThreadCache()};
+        let cacheFromPage = cacheService.buildCacheKey(currentTabValue);
         let fromThreads = [...(cacheThreads[cacheFromPage] || [])];
         let threadIndex = fromThreads.findIndex((item) => item.id === threadId);
         if (threadIndex !== -1) {
             let updatingThread = {...fromThreads[threadIndex]};
             updatingThread.mute = mute;
             fromThreads[threadIndex] = updatingThread;
-            setCacheThreads({
+            cacheService.setThreadCache({
                 ...cacheThreads,
                 [cacheFromPage]: fromThreads
             })

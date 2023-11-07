@@ -21,7 +21,6 @@ import {
 import {Thread} from "@/models";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import {clearDebounce, debounce} from "@/utils/common.functions";
 import {INFINITE_LIST_PER_COUNT} from "@/utils/constants";
 
 dayjs.extend(customParseFormat)
@@ -30,7 +29,7 @@ const ThreadsSideBarList = dynamic(() => import("@/components/threads").then(mod
 
 let currentPage: number = 1;
 
-export function ThreadsSideBarTab(props: TabProps) {
+export function ThreadsSideBarTab() {
     const {
         threads,
         isLoading,
@@ -53,9 +52,9 @@ export function ThreadsSideBarTab(props: TabProps) {
     const [tabName, setTabName] = useState<string>(() => {
         let defaultTab = 'just-mine';
         if (router.asPath === "/projects/[project]") {
-            defaultTab = 'every-thing';
+            defaultTab = 'everything';
         } else if (router.query.project) {
-            defaultTab = 'every-thing';
+            defaultTab = 'everything';
         }
         return defaultTab;
     });
@@ -112,12 +111,11 @@ export function ThreadsSideBarTab(props: TabProps) {
             dispatch(getAllThreads({
                 body: buildBody,
                 afterSuccessAction: (threads: any) => {
-                    setCurrentViewingCacheTab(`${props.cachePrefix}-${tabValue!}-${selectedAccount?.id}-${type}`);
                     cacheService.setThreadCacheByKey(cacheService.buildCacheKey(tabValue, type), threads ? [...threads] : []);
                 }
             }));
         }
-    }, [dispatch, projectId, props.cachePrefix, selectedAccount, syncingEmails, tabName, tabValue]);
+    }, [dispatch, projectId, selectedAccount, syncingEmails, tabName, tabValue]);
 
     const updateThreads = useCallback((isNewThread: boolean, newThread: Thread, callBack: any | null = null) => {
         let thread: Thread = {...newThread};
@@ -220,16 +218,15 @@ export function ThreadsSideBarTab(props: TabProps) {
     useEffect(() => {
         if (tabValue && currentTab !== tabValue) {
             setCurrentTab(tabValue)
+            let defaultTab = 'just-mine';
+            if (router.asPath === "/projects/[project]") {
+                defaultTab = 'every-thing';
+            } else if (router.query.project) {
+                defaultTab = 'every-thing';
+            }
+            setTabName(defaultTab);
+            setCurrentViewingCacheTab(cacheService.buildCacheKey(tabValue, defaultTab));
             if (cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue)).length > 0) {
-                setTabName(() => {
-                    let defaultTab = 'just-mine';
-                    if (router.asPath === "/projects/[project]") {
-                        defaultTab = 'every-thing';
-                    } else if (router.query.project) {
-                        defaultTab = 'every-thing';
-                    }
-                    return defaultTab;
-                });
                 let threads = cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue)) as Thread[];
                 threadService.setThreads([]);
                 messageService.setMessages([]);
@@ -270,6 +267,7 @@ export function ThreadsSideBarTab(props: TabProps) {
     const changeThread = (type: string) => {
         if (tabName !== type) {
             setTabName(type);
+            setCurrentViewingCacheTab(cacheService.buildCacheKey(tabValue!, type!));
             if (cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue!, type!)).length > 0) {
                 let threads = cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue!, type!)) as Thread[];
                 threadService.setThreads([]);
@@ -319,10 +317,10 @@ export function ThreadsSideBarTab(props: TabProps) {
                         </Flex> :
                         <Flex align={'center'} gap={2}>
                             {router.query.project && (
-                                <div className={tabName === 'every-thing' ? styles.active : ''}>
+                                <div className={tabName === 'everything' ? styles.active : ''}>
                                     <Button
                                         colorScheme='white'
-                                        onClick={() => changeThread('every-thing')}
+                                        onClick={() => changeThread('everything')}
                                     >
                                         Everything
                                     </Button>

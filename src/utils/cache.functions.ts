@@ -1,6 +1,5 @@
-import {Thread, UserProjectOnlineStatus} from "@/models";
+import {UserProjectOnlineStatus} from "@/models";
 
-let cacheThreads: { [key: string]: Thread[] } = {};
 let currentViewingCacheTab = '';
 let currentSelectedThreads: number[] = [];
 let draftStatus: { [key: string]: boolean } = {};
@@ -31,15 +30,6 @@ export function getCurrentViewingCacheTab() {
 export function setCurrentViewingCacheTab(value: string) {
     currentViewingCacheTab = value;
     return currentViewingCacheTab;
-}
-
-export function getCacheThreads() {
-    return cacheThreads;
-}
-
-export function setCacheThreads(threads: Thread[] | any) {
-    cacheThreads = threads;
-    return cacheThreads;
 }
 
 export function getCurrentSelectedThreads() {

@@ -23,7 +23,7 @@ function InboxPage() {
             <div className={styles.mailBg}>
                 <Grid className={styles.mailGrid} templateColumns='30% auto' gap={4} height={'100%'}>
                     <GridItem w='100%'>
-                        <ThreadsSideBar cachePrefix={'inbox-page'}/>
+                        <ThreadsSideBar/>
                     </GridItem>
                     <GridItem w='100%'>
                         <Message/>
