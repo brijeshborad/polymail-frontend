@@ -81,26 +81,49 @@ class CacheService {
         return cachePage.toLowerCase();
     }
 
-    extractProjectIdsFromBadges(badges: string[]) {
-        let projectIds: string[] = [];
-        badges.forEach((b: string) => {
-            projectIds.push(b.replace('in:', '').trim())
+    extractValuesFromBadges(badges: any[], type: string) {
+        let values: string[] = [];
+        badges.forEach((b: any) => {
+            if (b.type === type) {
+                if (type === 'project') {
+                    values.push(b.value.id)
+                }
+                if (type === 'people') {
+                    values.push(b.value.email)
+                }
+            }
         })
-        return projectIds;
+        return values;
     }
 
-    performCacheSearch(searchString: string, badges: string[] = []) {
-        if (!searchString) {
+    performFilter(projectIds: string[], cacheKey: string, values: any, searchTerm: string, keys: string[]): Thread[] {
+        if (projectIds.length > 0) {
+            if (projectIds.includes(cacheKey.split('-')[1])) {
+                return matchSorter(values, searchTerm, {keys})
+            }
+        } else {
+            return matchSorter(values, searchTerm, {keys})
+        }
+        return [];
+    }
+
+    performCacheSearch(searchString: string, badges: any[] = []) {
+        let projectIds: string[] = [];
+        if (badges.length > 0) {
+            projectIds = this.extractValuesFromBadges(badges, 'project');
+        }
+        let peopleArray: string[] = [];
+        if (badges.length > 0) {
+            peopleArray = this.extractValuesFromBadges(badges, 'people');
+        }
+        if (peopleArray.length<= 0 && !searchString) {
             return;
         }
-        // let {projects} = projectService.getProjectState();
-        // let findProjects = matchSorter((projects || []), searchString, {keys: ['id', 'name']});
-        // console.log('FIND PROJECTS', findProjects);
-        // if (searchString.includes('in:')) {
-        //
-        // }
         let allCache = this.getThreadCache();
         let foundThreads: Thread[] = [];
+        let peopleToFinKeys: string[] = [
+            'messages.*.from.email', 'messages.*.from.name',
+        ];
         let keysToFind: string[] = [
             'messages.*.from.email', 'messages.*.from.name',
             'messages.*.to.*.name', 'messages.*.to.*.email',
@@ -110,28 +133,34 @@ class CacheService {
             'messages.*.attachments.*.filename', 'messages.*.attachments.*.filename',
             'messages.mailboxes.*', 'messages.mailboxes.*',
         ];
-        let projectIds: string[] = [];
-        if (badges.length > 0) {
-            projectIds = this.extractProjectIdsFromBadges(badges);
-        }
         Object.keys(allCache).forEach((cacheKey: string) => {
+            let newThreads: Thread[] = [];
             if (!cacheKey.includes(MAILBOX_DRAFT.toLowerCase())) {
-                allCache[cacheKey] = [...allCache[cacheKey]];
-                allCache[cacheKey] = allCache[cacheKey].map(item => {
+                let threads = [...(allCache[cacheKey] || [])];
+                threads = threads.map(item => {
                     let messages = [...(item.messages || [])];
                     return {...item, messages: messages.filter((m) => !m.mailboxes?.includes(MAILBOX_DRAFT))};
                 })
-                if (projectIds.length > 0) {
-                    if (projectIds.includes(cacheKey.split('-')[1])) {
-                        foundThreads = [...foundThreads, ...matchSorter((allCache[cacheKey] || []), searchString, {keys: keysToFind})];
-                    }
-                } else {
-                    foundThreads = [...foundThreads, ...matchSorter((allCache[cacheKey] || []), searchString, {keys: keysToFind})];
+                let filterThreadsForPeople: Thread[] = [];
+                peopleArray.forEach((person: string) => {
+                    filterThreadsForPeople = [...filterThreadsForPeople, ...this.performFilter(projectIds, cacheKey, threads, person, peopleToFinKeys)]
+                })
+                if (filterThreadsForPeople.length > 0) {
+                    threads = filterThreadsForPeople;
                 }
+                newThreads = [...newThreads, ...this.performFilter(projectIds, cacheKey, threads, searchString, keysToFind)]
+                let replaceWithOriginalThreads = [...(allCache[cacheKey] || [])];
+                newThreads = newThreads.map(item => {
+                    let findItem = replaceWithOriginalThreads.find(r => r.id === item.id);
+                    if (findItem) {
+                        return findItem;
+                    }
+                    return item;
+                })
+                foundThreads.push(...newThreads);
             }
         })
-        console.log('f', foundThreads);
-        threadService.setThreads(foundThreads);
+        threadService.setThreads(foundThreads.filter((tag, index, array) => array.findIndex(t => t.id == tag.id) == index));
     }
 }
 

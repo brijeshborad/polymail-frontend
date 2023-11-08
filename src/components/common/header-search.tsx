@@ -36,11 +36,10 @@ export function HeaderSearch() {
     const [searchString, setSearchString] = useState<string>('');
     const searchInputRef = useRef<HTMLInputElement | null>(null);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
-    const [badges, setBadges] = useState<string[]>([]);
+    const [badges, setBadges] = useState<{ type: string, value: any }[]>([]);
     const [isProjectRoute, setIsProjectRoute] = useState<boolean>(false);
     const [filteredProjectsAndPeoples, setFilteredProjectsAndPeoples] = useState<any>([]);
     const [filteredPeoples, setFilteredPeoples] = useState<any>([]);
-    const [peopleArray, setPeopleArray] = useState<any>(null);
 
     const router = useRouter();
 
@@ -63,7 +62,6 @@ export function HeaderSearch() {
     useEffect(() => {
         if (!isThreadSearched) {
             setSearchString('');
-            setPeopleArray(null);
         }
     }, [isThreadSearched]);
 
@@ -71,10 +69,10 @@ export function HeaderSearch() {
         if (router.pathname.includes('/projects')) {
             if (router.pathname === '/projects') {
                 setIsProjectRoute(true);
-                setBadges(['Projects']);
+                setBadges([{type: 'projects', value: 'Projects'}]);
             }
             if (router.query.project && project) {
-                setBadges([`in: ${project.name || ''}`]);
+                setBadges([{type: 'project', value: project}]);
             }
         } else {
             setIsProjectRoute(false);
@@ -87,19 +85,14 @@ export function HeaderSearch() {
             if (isProjectRoute) {
                 projectService.setProjectSearchString(searchString);
             } else {
-                let badges: string[] = [];
-                if (project) {
-                    badges = [`in:${project.id || ''}`];
-                }
                 cacheService.performCacheSearch(searchString, badges);
             }
         }
-    }, [searchString, isProjectRoute, project])
+    }, [searchString, isProjectRoute, project, badges])
 
     const searchCancel = (callAPI: boolean = false) => {
         if (isProjectRoute && !project) {
             if (callAPI) {
-                setPeopleArray(null);
                 setSearchString('');
                 projectService.setProjectSearchString('');
             }
@@ -108,7 +101,6 @@ export function HeaderSearch() {
         socketService.cancelThreadSearch(userDetails?.id);
         setShowCloseIcon(false);
         if (selectedAccount && selectedAccount.id && callAPI) {
-            setPeopleArray(null);
             threadService.cancelThreadSearch(true);
             setSearchString('');
             globalEventService.fireEvent('threads.refresh-with-cache');
@@ -188,6 +180,22 @@ export function HeaderSearch() {
         return 'Search';
     }
 
+    function getBadgeText(badge: any) {
+        if (badge.type === 'project') {
+            return `in:${badge.value.name}`;
+        }
+        if (badge.type === 'people') {
+            return `from:${(badge.value.name || badge.value.email)}`;
+        }
+        return badge.value;
+    }
+
+    function removeBadge(index: number) {
+        let currentBadges = [...badges];
+        currentBadges.splice(index, 1);
+        setBadges(currentBadges);
+    }
+
     return (
         <div id="clickBox"
              className={`${styles.headerSearch} ${showCloseIcon && !isProjectRoute ? styles.headerSearchPopup : ''}`}
@@ -196,27 +204,25 @@ export function HeaderSearch() {
             <InputGroup className={styles.inputGroup}>
                 <Flex className={styles.headerSearchInput}>
                     <SearchIcon/>
-                    {badges.map((badge: string, index: number) => (
-                        <Badge key={index} textTransform={'none'} backgroundColor={'#ffffff'} color={'#08162F'}
-                               borderRadius={'4px'}
-                               fontSize={'11px'} fontWeight={'500'} padding={'3px 10px'} lineHeight={1}>{badge}</Badge>
-                    ))}
-                    <Flex className={styles.headerSearchChip} alignItems={'center'} wrap={'wrap'} gap={1}>
-                        {peopleArray &&
-                        <Badge textTransform={'none'} backgroundColor={'#ffffff'} color={'#08162F'}
-                               borderRadius={'4px'} display={'flex'} alignItems={'center'}
-                               fontSize={'11px'} fontWeight={'500'} padding={'3px 10px'} lineHeight={1}>
-                            {peopleArray.name || peopleArray.email}
-                            <CloseIcon cursor={'pointer'} width={'8px'} height={'8px'} marginLeft={'5px'}
-                                       onClick={(e) => {
-                                           e.preventDefault()
-                                           e.stopPropagation();
-                                           setPeopleArray(null)
-                                       }}
-                            />
-                        </Badge>
-                        }
-                    </Flex>
+                    {badges.map((badge: any, index: number) => {
+                        return (
+                            <Flex key={index} className={styles.headerSearchChip} alignItems={'center'} wrap={'wrap'}
+                                  gap={1}>
+                                <Badge key={index} textTransform={'none'} backgroundColor={'#ffffff'} color={'#08162F'}
+                                       borderRadius={'4px'} display={'flex'} alignItems={'center'}
+                                       fontSize={'11px'} fontWeight={'500'} padding={'3px 10px'} lineHeight={1}>
+                                    {getBadgeText(badge)}
+                                    <CloseIcon cursor={'pointer'} width={'8px'} height={'8px'} marginLeft={'5px'}
+                                               onClick={(e) => {
+                                                   e.preventDefault()
+                                                   e.stopPropagation();
+                                                   removeBadge(index);
+                                               }}
+                                    />
+                                </Badge>
+                            </Flex>
+                        )
+                    })}
                     <Input
                         flex={'1'}
                         type="text"
@@ -254,7 +260,10 @@ export function HeaderSearch() {
                                       _hover={{backgroundColor: 'rgba(0,0,0, 0.05)'}}
                                       lineHeight={1} onClick={() => {
                                     setSearchString('');
-                                    Router.push(`/projects/${item.id!}`)
+                                    threadService.searchThread();
+                                    // socketService.searchThreads(userDetails?.id, `${item.email}`);
+                                    cacheService.performCacheSearch('', [...badges, {type: 'project', value: item}]);
+                                    setBadges(prevState => [...prevState, {type: 'project', value: item}]);
                                 }} letterSpacing={'-0.13px'}>{item.emoji} {item.name}</Text>
                             ))}
                         </Flex>
@@ -275,8 +284,8 @@ export function HeaderSearch() {
                                     setSearchString('');
                                     threadService.searchThread();
                                     // socketService.searchThreads(userDetails?.id, `${item.email}`);
-                                    cacheService.performCacheSearch(item.email);
-                                    setPeopleArray(item);
+                                    cacheService.performCacheSearch('', [...badges, {type: 'people', value: item}]);
+                                    setBadges(prevState => [...prevState, {type: 'people', value: item}]);
                                 }}
                                 >
                                     <Text color={'#374151'} fontSize={'13px'} fontWeight={'500'} width={'100%'}

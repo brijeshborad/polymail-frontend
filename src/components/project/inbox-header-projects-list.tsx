@@ -69,6 +69,7 @@ export function InboxHeaderProjectsList() {
     }
 
     function applyChanges() {
+        threadService.cancelThreadSearch(false);
         threadService.pageChange();
         messageService.pageChange();
     }

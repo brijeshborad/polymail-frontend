@@ -186,7 +186,7 @@ class ThreadsService extends BaseService {
                         },
                         showToasterAfterUndoClick: true
                     }
-                }: {})
+                } : {})
             }
             this.dispatchAction(batchUpdateThreads, batchUpdateMoveBody);
             if (remove_from_list) {
@@ -861,7 +861,7 @@ class ThreadsService extends BaseService {
         } else {
             if (findThreadIndex !== -1) {
                 if (selectedThread && selectedThread.id === thread.id) {
-                    let finalIndex = (findThreadIndex - 1 < finalThreads.length ) ? (findThreadIndex === 0) ? findThreadIndex : findThreadIndex - 1 : (findThreadIndex <= 0 ? findThreadIndex + 1 : findThreadIndex - 1)
+                    let finalIndex = (findThreadIndex - 1 < finalThreads.length) ? (findThreadIndex === 0) ? findThreadIndex : findThreadIndex - 1 : (findThreadIndex <= 0 ? findThreadIndex + 1 : findThreadIndex - 1)
                     this.setSelectedThread(finalThreads[finalIndex]);
                 }
                 finalThreads.splice(findThreadIndex, 1);

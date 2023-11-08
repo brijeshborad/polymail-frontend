@@ -9,6 +9,7 @@ export function UrlManager() {
     const {
         threads,
         selectedThread,
+        isThreadSearched
     } = useSelector((state: StateType) => state.threads);
     const {
         isComposing
@@ -17,12 +18,14 @@ export function UrlManager() {
 
     useEffect(() => {
         if (threads && threads.length > 0 && !selectedThread && router.query.thread) {
-            let findThread = threads.find((item: Thread) => item.id === router.query.thread);
-            if (findThread) {
-                threadService.setSelectedThread(findThread);
+            if (!isThreadSearched) {
+                let findThread = threads.find((item: Thread) => item.id === router.query.thread);
+                if (findThread) {
+                    threadService.setSelectedThread(findThread);
+                }
             }
         }
-    }, [router.query.thread, selectedThread, threads])
+    }, [router.query.thread, selectedThread, threads, isThreadSearched])
 
     useEffect(() => {
         if (selectedThread) {
