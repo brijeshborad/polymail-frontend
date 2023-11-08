@@ -191,7 +191,7 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
 
     function getMuteStatus() {
         if (selectedThread && selectedThread.mute) {
-            return <Flex align={'center'} px={'20px'} pt={'20px'}>
+            return <Flex align={'center'} px={'20px'} pt={'20px'} position={'sticky'} top={0}>
                 <MuteIcon color={'#67074A'}/>
                 <Text fontSize={'13px'} color={'#67074A'} mt={'1px'}>
                     This conversation has been muted. You will not receive notifications for new messages.
