@@ -62,6 +62,7 @@ export function HeaderSearch() {
     useEffect(() => {
         if (!isThreadSearched) {
             setSearchString('');
+            setBadges([]);
         }
     }, [isThreadSearched]);
 
@@ -93,6 +94,7 @@ export function HeaderSearch() {
     const searchCancel = (callAPI: boolean = false) => {
         if (isProjectRoute && !project) {
             if (callAPI) {
+                setBadges([]);
                 setSearchString('');
                 projectService.setProjectSearchString('');
             }
@@ -101,6 +103,7 @@ export function HeaderSearch() {
         socketService.cancelThreadSearch(userDetails?.id);
         setShowCloseIcon(false);
         if (selectedAccount && selectedAccount.id && callAPI) {
+            setBadges([]);
             threadService.cancelThreadSearch(true);
             setSearchString('');
             globalEventService.fireEvent('threads.refresh-with-cache');
