@@ -38,10 +38,9 @@ export function Toaster(props: ToasterProps) {
                             </div>
                         }
 
-                        <Flex direction={'column'} gap={'2px'} overflow={'hidden'} whiteSpace={'nowrap'}
-                              textOverflow={'ellipsis'}>
-                            <Heading as='h6' fontSize={'15px'} lineHeight={'1.21'}>{props.title}</Heading>
-                            <Text fontSize='13px' color={'#6B7280'} lineHeight={'1.21'}>{props.desc}</Text>
+                        <Flex direction={'column'} gap={'2px'}>
+                            <Heading as='h6' fontSize={'15px'} lineHeight={'1.21'} noOfLines={1}>{props.title}</Heading>
+                            <Text fontSize='13px' color={'#6B7280'} lineHeight={'1.21'} noOfLines={1}>{props.desc}</Text>
                         </Flex>
 
                         {props.type === 'send_confirmation' && (
