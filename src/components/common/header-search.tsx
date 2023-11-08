@@ -110,8 +110,18 @@ export function HeaderSearch() {
         }
     }
 
-    const handleKeyPress = (event: KeyboardEvent | any) => {
-        threadService.searchThread()
+    const handleKeyDown = (event: KeyboardEvent | any) => {
+        if (event.target.value) {
+            threadService.searchThread()
+        }
+        if (event.key === 'Backspace') {
+            if (!event.target.value) {
+                event.preventDefault();
+                if (badges.length > 0) {
+                    removeBadge(badges.length - 1);
+                }
+            }
+        }
         // if (event.key.toLowerCase() === 'enter') {
         //     searchCancel(false);
         //     if (searchString) {
@@ -142,7 +152,7 @@ export function HeaderSearch() {
         if (!value) {
             return [];
         }
-        let finalContacts: Contacts[] = matchSorter((selectedAccount?.contacts || []), value, {keys: ['email.email', 'email.name']});
+        let finalContacts: Contacts[] = matchSorter((selectedAccount?.contacts || []), value.replace('from:', '').trim(), {keys: ['email.email', 'email.name']});
         finalContacts = finalContacts.slice(0, finalContacts.length > 5 ? 5 : finalContacts.length);
         return finalContacts.map((contact: Contacts) => ({email: contact.email.email, name: contact.email.name}));
     }
@@ -152,7 +162,7 @@ export function HeaderSearch() {
             setFilteredPeoples([])
             setFilteredProjectsAndPeoples([])
         } else {
-            setFilteredProjectsAndPeoples((projects || []).filter((item: Project) => item.name?.toLowerCase().includes(searchString.toLowerCase())));
+            setFilteredProjectsAndPeoples((projects || []).filter((item: Project) => item.name?.toLowerCase().includes(searchString.replace('in:', '').trim().toLowerCase())));
             setFilteredPeoples(filterContacts(searchString));
         }
     }, [projects, searchString, selectedAccount?.contacts])
@@ -235,7 +245,7 @@ export function HeaderSearch() {
                         }}
                         ref={searchInputRef}
                         value={searchString}
-                        onKeyPress={e => handleKeyPress(e)}
+                        onKeyDown={e => handleKeyDown(e)}
                     />
                     <InputRightElement>
                         {showCloseIcon ? <div className={styles.inputRight} style={{background: "transparent"}}

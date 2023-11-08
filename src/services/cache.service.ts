@@ -116,7 +116,7 @@ class CacheService {
         if (badges.length > 0) {
             peopleArray = this.extractValuesFromBadges(badges, 'people');
         }
-        if (peopleArray.length<= 0 && !searchString) {
+        if (peopleArray.length <= 0 && projectIds.length <= 0 && !searchString) {
             return;
         }
         let allCache = this.getThreadCache();
@@ -141,6 +141,15 @@ class CacheService {
                     let messages = [...(item.messages || [])];
                     return {...item, messages: messages.filter((m) => !m.mailboxes?.includes(MAILBOX_DRAFT))};
                 })
+                if (projectIds.length > 0) {
+                    threads = threads.filter(item => {
+                        if (item.projects && item.projects?.length > 0) {
+                            let ids = item.projects.map(t => t.id);
+                            return ids.some((r: any) => projectIds.includes(r));
+                        }
+                        return false;
+                    })
+                }
                 let filterThreadsForPeople: Thread[] = [];
                 peopleArray.forEach((person: string) => {
                     filterThreadsForPeople = [...filterThreadsForPeople, ...this.performFilter(projectIds, cacheKey, threads, person, peopleToFinKeys)]
