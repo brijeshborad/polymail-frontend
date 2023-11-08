@@ -18,17 +18,17 @@ interface FeedComponentProps {
 
 export const FeedComponent: React.FC<FeedComponentProps> = ({feedData, markFeedAsRead, close}) => {
     const {projects} = useSelector((state: StateType) => state.projects);
-    function allowRouteChangeForProject(projectId: string) {
+    function allowRouteChangeForProject(projectId: string, feedData: ActivityFeed) {
         let findProject = [...(projects || [])].find((p: Project) => p.id === projectId);
         if (findProject) {
-            Router.push(`/projects/${feedData?.projectId}`);
+            Router.push(`/projects/${projectId}`);
             if (close) {
                 close();
             }
         } else {
             Toaster({
-                title: 'Project',
-                desc: 'You are not a member of this project',
+                title: 'You are not a member of this project',
+                desc: feedData?.subtitle || '',
                 type: 'error'
             })
         }
@@ -38,7 +38,7 @@ export const FeedComponent: React.FC<FeedComponentProps> = ({feedData, markFeedA
         <Box className={`${styles.feedBox} ${feedData?.isRead ? styles.feedBoxRead: ''}`}
              onClick={() => {
                  if (feedData?.projectId) {
-                     allowRouteChangeForProject(feedData.projectId);
+                     allowRouteChangeForProject(feedData.projectId, feedData);
                  }
                  markFeedAsRead ? markFeedAsRead() : null
              }}>
