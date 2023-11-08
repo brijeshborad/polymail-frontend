@@ -88,6 +88,7 @@ export function MessagesHeader() {
                             return
                         }
                         body.mailboxes = [messageBox]
+                        body.snooze = null;
                         remove_from_list = true
                         messageService.setSelectedMessage(null);
                         break;
