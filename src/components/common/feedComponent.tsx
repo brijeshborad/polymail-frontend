@@ -27,7 +27,7 @@ export const FeedComponent: React.FC<FeedComponentProps> = ({feedData, markFeedA
             <Flex>
                 <Box flex={1}>
                     <Flex align={'center'} mb={'5px'}>
-                        <div style={{width: '25px', height: '25px', borderRadius: '50%', overflow: 'hidden', marginRight: '5px'}}>
+                        <div style={{width: '25px', height: '25px', borderRadius: '50%', overflow: 'hidden', marginRight: '5px', minWidth: '25px'}}>
                             {feedData?.avatar && feedData?.avatar.url ?
                                 <Image width="36" height="36" style={{width: '100%', height: '100%', objectFit: 'cover', maxWidth: 'unset'}} src={feedData?.avatar.url} alt=""/> : null}
                         </div>
