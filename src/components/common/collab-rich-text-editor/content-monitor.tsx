@@ -36,6 +36,11 @@ export default function ContentMonitor(props: any) {
                 event.data.callBack()
             }
         }
+        if (event && event.type === 'richtexteditor.getCurrentData') {
+            if (event.data.callBack && editor) {
+                event.data.callBack(editor.getHTML());
+            }
+        }
         if (event && event.type === 'richtexteditor.forceUpdateWithOnChange') {
             editor?.commands.clearContent(false);
             editor?.commands.setContent(event.data.body, true)
@@ -54,10 +59,16 @@ export default function ContentMonitor(props: any) {
 
         if (event && event.type === 'richtexteditor.focus') {
             globalEventService.fireEvent('iframe.clicked');
-            if (editor && !editor.isFocused) {
-                setTimeout(() => {
-                    editor?.commands.focus('start')
-                }, 100)
+            if (editor) {
+                let forceFocusPosition = !editor.isFocused;
+                if (event.data.force) {
+                    forceFocusPosition = true;
+                }
+                if (forceFocusPosition) {
+                    setTimeout(() => {
+                        editor?.commands.focus('start')
+                    }, 1000)
+                }
             }
         }
 

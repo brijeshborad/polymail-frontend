@@ -15,4 +15,5 @@ export declare type CollabRichTextEditorType = {
     projectShare?: ReactElement | string;
     onChange: (_content: string) => void;
     onFocus?: () => void;
+    isCompose?: boolean
 };

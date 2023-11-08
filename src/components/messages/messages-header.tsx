@@ -219,6 +219,9 @@ export function MessagesHeader() {
             globalEventService.blankEvent();
             updateMailBox(MAILBOX_ARCHIVE);
         }
+        if (incomingEvent === 'iframe.clicked') {
+            setIsMoreMenuOpen(false);
+        }
     }, [incomingEvent])
 
     if (!selectedThread || !threads || threads.length === 0 || (!tabValue)) {

@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Flex, Grid, GridItem, Input, InputGroup, InputLeftElement} from "@chakra-ui/react";
 import {SearchIcon} from "@chakra-ui/icons";
 import {emojiArrayWithName} from "@/utils/common.functions";
+import Tooltip from "@/components/common/Tooltip";
 
 
 export function EmojiMenu(props: any) {
@@ -35,20 +36,27 @@ export function EmojiMenu(props: any) {
             >
                 {filteredEmojis.map((emoji: any, index: number) => (
                     <GridItem w='100%' key={index}>
-                        <div
-                            className={'emoji-modal-icon'}
-                            onClick={() => {
-                                if (props?.onChange) {
-                                    props?.onChange(emoji.emoji)
-                                }
-                                if (props?.onChangeVisibility) {
-                                    props?.onChangeVisibility(false)
-                                }
-                                setSearchValue('');
-                            }}
-                        >
-                            {emoji.emoji}
-                        </div>
+                        <Tooltip label={
+                            <Flex align={'center'} direction={'column'}>
+                                {emoji.emoji}
+                                <p>{emoji.name}</p>
+                            </Flex>
+                        } placement={'bottom'}>
+                            <div
+                                className={'emoji-modal-icon'}
+                                onClick={() => {
+                                    if (props?.onChange) {
+                                        props?.onChange(emoji.emoji)
+                                    }
+                                    if (props?.onChangeVisibility) {
+                                        props?.onChangeVisibility(false)
+                                    }
+                                    setSearchValue('');
+                                }}
+                            >
+                                {emoji.emoji}
+                            </div>
+                        </Tooltip>
                     </GridItem>
                 ))}
             </Grid>

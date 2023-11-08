@@ -12,11 +12,12 @@ export default function KeyboardNavigationListener() {
     const {threads, selectedThread} = useSelector((state: StateType) => state.threads);
     const {messages, selectedMessage} = useSelector((state: StateType) => state.messages);
     const {target: lastTarget, currentMessageId, isEnabled} = useSelector((state: StateType) => state.keyNavigation);
+    const {isComposing} = useSelector((state: StateType) => state.commonApis);
     const [isKeyDown, setIsKeyDown] = useState(false)
 
     useEffect(() => {
         const handleShortcutKeyPress = (e: KeyboardEvent | any) => {
-            if (!isEnabled) return
+            if (!isEnabled || isComposing) return
             if (isKeyDown) {
                 e.preventDefault()
                 e.stopPropagation()
@@ -161,7 +162,7 @@ export default function KeyboardNavigationListener() {
         return () => {
             window.removeEventListener('keydown', handleShortcutKeyPress);
         };
-    }, [dispatch, lastTarget, threads, selectedThread, currentMessageId, messages, selectedMessage?.id, isKeyDown, isEnabled]);
+    }, [dispatch, lastTarget, threads, selectedThread, currentMessageId, messages, selectedMessage?.id, isKeyDown, isEnabled, isComposing]);
 
     useEffect(() => {
         const handleKeyUp = () => {

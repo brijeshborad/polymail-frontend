@@ -56,7 +56,15 @@ export function MessageBox(props: any) {
                 if (findDraft !== -1) {
                     finalMessages[findDraft] = updatedDraft;
                 } else {
-                    finalMessages.push(updatedDraft);
+                    globalEventService.fireEvent({
+                        data: {
+                            callBack: (value: string) => {
+                                finalMessages.push({...updatedDraft, draftInfo: {...updatedDraft.draftInfo, body: value}});
+                                setDraftMessages([...finalMessages]);
+                                globalEventService.blankEvent();
+                            }
+                        }, type: 'richtexteditor.getCurrentData'
+                    });
                 }
                 setDraftMessages([...finalMessages]);
             }
@@ -79,7 +87,7 @@ export function MessageBox(props: any) {
             if (selectedAccount) {
                 noDraftMessage = noDraftMessage.filter((msg: MessageModel) => msg.from?.email !== selectedAccount.email);
             }
-            let latestMessage: MessageModel = noDraftMessage[noDraftMessage.length -1];
+            let latestMessage: MessageModel = noDraftMessage[noDraftMessage.length - 1];
             if (latestMessage) {
                 let to = (latestMessage.to || []).filter((t: any) => t.email);
                 let cc = (latestMessage.cc || []).filter((t: any) => t.email);
@@ -503,7 +511,7 @@ export function MessageBox(props: any) {
                     }
                 </Flex>
             ))
-          }
+            }
 
             {draftMessages && draftMessages.length > 0 && draftMessages.map((message: Message, messageIndex) => {
                 if (message.draftInfo?.discardedBy) {
@@ -519,11 +527,13 @@ export function MessageBox(props: any) {
                                     <Flex width={'20px'} height={'20px'} borderRadius={'50%'} overflow={'hidden'}>
                                         <div className={'member-photo'} key={index}
                                              style={{background: '#000'}}>
-                                            {message?.draftInfo?.createdByAvatarURL && <Image src={message?.draftInfo?.createdByAvatarURL} width="24" height="24"
-                                                                                              alt=""/>}
+                                            {message?.draftInfo?.createdByAvatarURL &&
+                                            <Image src={message?.draftInfo?.createdByAvatarURL} width="24" height="24"
+                                                   alt=""/>}
                                         </div>
                                     </Flex>
-                                    <Text fontSize={'13px'} color={'#0A101D'}> {message?.draftInfo?.createdBy || ''} </Text>
+                                    <Text fontSize={'13px'}
+                                          color={'#0A101D'}> {message?.draftInfo?.createdBy || ''} </Text>
                                 </Flex>
                                 {/*<Text fontSize={'11px'} color={'#6B7280'}>*/}
                                 {/*    Saved <Time fontSize={'11px'} as={'span'} time={message?.updated || ''} isShowFullTime={false}*/}
