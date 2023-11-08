@@ -60,7 +60,7 @@ export function MessagesHeader() {
                         if (selectedThread.mailboxes?.includes(messageBox)) {
                             return
                         }
-                        body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_ARCHIVE, MAILBOX_TRASH].includes(item))
+                        body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_ARCHIVE, MAILBOX_TRASH, MAILBOX_SPAM].includes(item))
                         body.mailboxes = [...body.mailboxes, messageBox]
                         remove_from_list = true
                         messageService.setSelectedMessage(null);
@@ -69,7 +69,7 @@ export function MessagesHeader() {
                         if (selectedThread.mailboxes?.includes(messageBox)) {
                             return
                         }
-                        body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_INBOX, MAILBOX_ARCHIVE].includes(item))
+                        body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_INBOX, MAILBOX_ARCHIVE, MAILBOX_SPAM].includes(item))
                         body.mailboxes = [...body.mailboxes, messageBox]
                         remove_from_list = true
                         messageService.setSelectedMessage(null);
@@ -78,7 +78,7 @@ export function MessagesHeader() {
                         if (selectedThread.mailboxes?.includes(messageBox)) {
                             return
                         }
-                        body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_INBOX, MAILBOX_TRASH].includes(item))
+                        body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_INBOX, MAILBOX_TRASH, MAILBOX_SPAM].includes(item))
                         body.mailboxes = [...body.mailboxes, messageBox]
                         remove_from_list = true
                         messageService.setSelectedMessage(null);
@@ -110,7 +110,7 @@ export function MessagesHeader() {
                         if (selectedThread.mailboxes?.includes(messageBox)) {
                             return
                         }
-                        body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_INBOX, MAILBOX_TRASH].includes(item))
+                        body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_INBOX, MAILBOX_TRASH, MAILBOX_SPAM].includes(item))
                         body.mailboxes = [...body.mailboxes, messageBox]
                         remove_from_list = true
                         messageService.setSelectedMessage(null);
