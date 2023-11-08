@@ -1,6 +1,6 @@
 import {Button, Checkbox, Flex} from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
-import {StateType, TabProps} from "@/types";
+import {StateType} from "@/types";
 import React, {useState, useEffect, useCallback} from "react";
 import {getAllThreads} from "@/redux/threads/action-reducer";
 import {useDispatch, useSelector} from "react-redux";

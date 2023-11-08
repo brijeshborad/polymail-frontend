@@ -12,7 +12,7 @@ import {FolderIcon, UserIcon} from "@/icons";
 import React, {useEffect, useRef, useState} from "react";
 import {useSelector} from "react-redux";
 import {StateType} from "@/types";
-import Router, {useRouter} from "next/router";
+import {useRouter} from "next/router";
 import {
     cacheService,
     globalEventService,
