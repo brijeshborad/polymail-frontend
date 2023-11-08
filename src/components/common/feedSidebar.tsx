@@ -61,6 +61,7 @@ export const FeedSidebar = () => {
                     title: newMessage.data.Title,
                     subtitle: newMessage.data.Subtitle,
                     body: newMessage.data.Body,
+                    avatar: newMessage.data.Avatar,
                     // username: userDetails && userDetails.id === newMessage.data.UserID ? 'You' : newMessage.data.Username,
                     username: newMessage.data.Username,
                     isRead: userDetails ? !dayjs(newMessage.data.Created).isAfter(dayjs(userDetails.activitiesRead)) : false,

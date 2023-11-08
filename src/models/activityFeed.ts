@@ -1,3 +1,5 @@
+import {Avatar} from "@/models/user";
+
 export interface ActivityFeed {
     id?: string,
     created?: string,
@@ -11,4 +13,5 @@ export interface ActivityFeed {
     body?: string,
     isRead?: boolean,
     username?: string,
+    avatar?: Avatar,
 }

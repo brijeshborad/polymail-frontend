@@ -4,6 +4,7 @@ import {ActivityFeed} from "@/models/activityFeed";
 import styles from '@/styles/Home.module.css';
 import {Time} from "@/components/common/time";
 import Router from "next/router";
+import Image from "next/image";
 
 interface FeedComponentProps {
     feedData?: ActivityFeed;
@@ -25,9 +26,15 @@ export const FeedComponent: React.FC<FeedComponentProps> = ({feedData, markFeedA
              }}>
             <Flex>
                 <Box flex={1}>
-                    <Text fontSize="13px">
-                        {feedData?.username && <b style={{marginRight: '4px'}}>{feedData?.username}</b>}{feedData?.title}
-                    </Text>
+                    <Flex align={'center'} mb={'5px'}>
+                        <div style={{width: '25px', height: '25px', borderRadius: '50%', overflow: 'hidden', marginRight: '5px'}}>
+                            {feedData?.avatar && feedData?.avatar.url ?
+                                <Image width="36" height="36" style={{width: '100%', height: '100%', objectFit: 'cover', maxWidth: 'unset'}} src={feedData?.avatar.url} alt=""/> : null}
+                        </div>
+                        <Text fontSize="13px">
+                            {feedData?.username && <b style={{marginRight: '4px'}}>{feedData?.username}</b>}{feedData?.title}
+                        </Text>
+                    </Flex>
                     <Text display={'flex'} alignItems={'center'} color="#6B7280" fontSize="12px" className={styles.feedSubtitle}>
                         <Time as={'span'} fontSize={'12px'} time={feedData?.created} isShowFullTime={false} showTimeInShortForm={true}/>
                         <span className={styles.feedSubtitleDot}/>
