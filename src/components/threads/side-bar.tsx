@@ -188,8 +188,8 @@ export function ThreadsSideBar() {
                     backgroundColor={'#FFFFFF'}
                     border={'1px solid #F3F4F6'}
                     borderRadius={16} padding={'10px 14px'}
-                    gap={2} align={'center'} w={"100%"}
-                    justify={'space-between'}
+                    gap={1} align={'center'} w={"100%"}
+                    justify={'space-between'} className={styles.threadSearched}
                 >
                     {(isThreadSearched || multiSelection && multiSelection.length > 0) &&
                     <Flex align={'center'} fontSize={'13px'} fontWeight={'400'}
@@ -241,7 +241,7 @@ export function ThreadsSideBar() {
                                 rightIcon={<TriangleDownIcon color={'#374151'}/>}
                                 p={'0 8px 0 10px'}
                             >
-                                Actions
+                                <span className={styles.threadSearchedActionButtonText}>Actions</span>
                             </MenuButton>
                             <MenuList className={`${styles.tabListDropDown} drop-down-list`}>
                                 <MenuItem

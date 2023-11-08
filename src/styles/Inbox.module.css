@@ -1351,7 +1351,40 @@
     background-color: rgba(0, 0, 0, 0.8);
 }
 
-@media (min-width: 991px) and (max-width: 1431px) {
+
+
+@media (min-width: 992px) and (max-width: 1487px) {
+    .threadSearched .addToProjectButtonText {
+        display: none;
+    }
+    .threadSearched .addToProject {
+        min-width: 1px;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1236px) {
+    .threadSearched .threadSearchedActionButtonText {
+        display: none;
+    }
+    .threadSearched .tabListMoreButton {
+        padding-left: 1px;
+        border-radius: 10px;
+        min-width: 1px;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1041px) {
+    .mailListTabs .threadSearched {
+        gap: 3px;
+        padding: 10px 10px;
+    }
+
+    .threadSearched .addToProject .RightContent {
+        margin: 0;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1431px) {
     .mailListTabs .composeButton .composeButtonText {
         display: none;
     }
@@ -1364,10 +1397,7 @@
     .mailListTabs .composeButton span {
         margin: 0;
     }
-}
 
-
-@media (min-width: 992px) and (max-width: 1431px) {
     .mailTabList .emailTabs .active .mailboxText {
         display: none;
     }

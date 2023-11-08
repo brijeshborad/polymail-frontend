@@ -212,7 +212,7 @@ export function AddToProjectButton({allowDefaultSelect = true}: {allowDefaultSel
                     ref={addToProjectRef}
                 >
                     <span style={{marginRight: 4}}><FolderIcon/></span>
-                    Add to Project
+                    <span className={styles.addToProjectButtonText}>Add to Project</span>
                     <span className={styles.RightContent}>⌘P</span>
                 </MenuButton>}
 
