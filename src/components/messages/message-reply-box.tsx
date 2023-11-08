@@ -738,6 +738,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                     setReloadingEditor(false);
                     if (findMessage !== -1) {
                         setIsContentUpdated(false);
+                        setAttachments([]);
                         setDraftIndex(findMessage);
                         draftService.setReplyDraft((totalMessages || [])[findMessage]);
                         globalEventService.fireEvent({data: {force: true}, type: 'richtexteditor.focus'})
