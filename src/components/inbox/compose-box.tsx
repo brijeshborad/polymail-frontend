@@ -453,7 +453,7 @@ export function ComposeBox(props: any) {
                     <Flex align={'center'} justify={'space-between'} gap={3} padding={'16px 20px'}
                           borderBottom={'1px solid #E5E7EB'}>
                         <Input className={styles.subjectInput} placeholder='Enter subject title' fontSize={'15px'}
-                               flex={1} fontWeight={'600'} padding={'0'} border={'0'} h={'auto'}
+                               flex={1} fontWeight={'600'} padding={'0'} border={'0'} h={'auto'} autoFocus={true}
                                borderRadius={'0'} lineHeight={1} color={'#0A101D'}
                                onChange={(e) => addSubject(e)} value={subject || ''}/>
                         <div>
@@ -479,7 +479,8 @@ export function ComposeBox(props: any) {
                                 >
                                     {composeDraft?.threadId && <CollabRichTextEditor
                                         id={composeDraft?.threadId + '-' + 0}
-                                        isAutoFocus={true}
+                                        isAutoFocus={false}
+                                        isCompose={true}
                                         content={composeDraft?.draftInfo?.body}
                                         // onCreate={() => sendToDraft('')}
                                         onChange={(value) => {

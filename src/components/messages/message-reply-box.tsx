@@ -740,7 +740,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                         setIsContentUpdated(false);
                         setDraftIndex(findMessage);
                         draftService.setReplyDraft((totalMessages || [])[findMessage]);
-                        globalEventService.fireEvent({data: {}, type: 'richtexteditor.focus'})
+                        globalEventService.fireEvent({data: {force: true}, type: 'richtexteditor.focus'})
                     }
                 }, 50)
             }
@@ -982,6 +982,8 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                     <div style={{display: showEditorToolbar ? 'block' : 'none'}}>
                                         <CollabRichTextEditor
                                             id={selectedThread.id + '-' + draftIndex}
+                                            isAutoFocus={true}
+                                            isCompose={false}
                                             // onCreate={() => sendToDraft('')}
                                             content={draft?.draftInfo?.body}
                                             placeholder="Hit tab to reply with anything you'd like"

@@ -42,7 +42,7 @@ import {
     socketService,
     draftService,
     messageService,
-    globalEventService
+    globalEventService, keyNavigationService
 } from "@/services";
 import Tooltip from "../common/Tooltip";
 import {createDraft} from "@/redux/draft/action-reducer";
@@ -165,6 +165,7 @@ export function ThreadsSideBar(props: { cachePrefix: string }) {
             draftService.setComposeDraft(null);
             draftService.setResumeDraft(null);
             commonService.toggleComposing(true);
+            keyNavigationService.toggleKeyNavigation(false);
             if (selectedAccount && selectedAccount.id) {
                 dispatch(createDraft({body: {accountId: selectedAccount.id, body: {}, fromCompose: true}}));
             }

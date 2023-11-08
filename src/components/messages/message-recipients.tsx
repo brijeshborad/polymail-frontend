@@ -99,8 +99,10 @@ export default function MessageRecipients({emailRecipients: values, updateValues
 
     const handleKeyDown = (evt: KeyboardEvent | any, type: string) => {
         if (["Enter", "Tab"].includes(evt.key)) {
-            evt.preventDefault();
             let value = emailRecipients[type as keyof RecipientsType].value.email.trim();
+            if (value) {
+                evt.preventDefault();
+            }
 
             let emailArray = value.split(',');
             !!emailArray.length && emailArray.map((email: string) => {

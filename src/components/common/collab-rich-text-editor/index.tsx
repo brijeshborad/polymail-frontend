@@ -27,7 +27,7 @@ export default function CollabRichTextEditor({
                                                  placeholder,
                                                  emailSignature, projectShare,
                                                  className = '',
-                                                 onChange
+                                                 onChange, isCompose
                                              }: CollabRichTextEditorType) {
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {isComposing} = useSelector((state: StateType) => state.commonApis);
@@ -83,30 +83,36 @@ export default function CollabRichTextEditor({
         ])
     }, [id, selectedAccount, placeholder])
 
+    function setContent(editor: any) {
+        if (!getPlainTextFromHtml(content || '').trim()) {
+            let finalContent = '';
+            if (emailSignature) {
+                finalContent += emailSignature;
+            }
+            if (projectShare) {
+                finalContent += projectShare
+            }
+            if (!projectShare && isComposing && project) {
+                finalContent += getProjectBanner(selectedAccount)
+            }
+
+            editor.commands.setContent(finalContent.trim(), false)
+        }
+        if (isAutoFocus) {
+            editor.commands.focus('start')
+        }
+    }
+
     if (!provider) return;
 
     return (
         <div className={`tiptap-container ${className}`}>
             <EditorProvider
                 autofocus={isAutoFocus}
-                onFocus={(editor) => {
+                onFocus={({editor}) => {
                     keyNavigationService.toggleKeyNavigation(false);
-                    if (editor.editor.isEmpty) {
-                        if (!getPlainTextFromHtml(content || '').trim()) {
-                            let finalContent = '';
-                            if (emailSignature) {
-                                finalContent += emailSignature;
-                            }
-                            if (projectShare) {
-                                finalContent += projectShare
-                            }
-                            if (!projectShare && isComposing && project) {
-                                finalContent += getProjectBanner(selectedAccount)
-                            }
-
-                            editor.editor.commands.setContent(finalContent.trim(), false)
-                            editor.editor.commands.focus('start')
-                        }
+                    if (editor.isEmpty) {
+                        setContent(editor);
                     }
                 }}
                 onUpdate={({editor}) => onChange(editor.getHTML())}
@@ -117,8 +123,12 @@ export default function CollabRichTextEditor({
                     extendToolbar={extendToolbar}
                 />}
                 onSelectionUpdate={({editor})=> {
-                    const { from, to } = editor.state.selection;
-                    editor.chain().focus().setTextSelection({ from, to }).run()
+                    if (!isCompose) {
+                        const { from, to } = editor.state.selection;
+                        editor.chain().focus().setTextSelection({ from, to }).run()
+                    } else {
+                        setContent(editor);
+                    }
                 }}
                 onBlur={() => {
                     keyNavigationService.toggleKeyNavigation(true);
