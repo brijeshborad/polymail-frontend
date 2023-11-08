@@ -36,6 +36,11 @@ export default function ContentMonitor(props: any) {
                 event.data.callBack()
             }
         }
+        if (event && event.type === 'richtexteditor.getCurrentData') {
+            if (event.data.callBack && editor) {
+                event.data.callBack(editor.getHTML());
+            }
+        }
         if (event && event.type === 'richtexteditor.forceUpdateWithOnChange') {
             editor?.commands.clearContent(false);
             editor?.commands.setContent(event.data.body, true)
