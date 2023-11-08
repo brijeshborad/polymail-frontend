@@ -81,7 +81,7 @@ class ThreadsService extends BaseService {
                 isThreadSearched: true,
                 multiSelection: [],
                 threads: [],
-                isLoading: false,
+                isLoading: true,
                 selectedThread: null,
             });
             messageService.setMessages([]);
