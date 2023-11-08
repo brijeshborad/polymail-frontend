@@ -86,10 +86,12 @@ export function HeaderSearch() {
             if (isProjectRoute) {
                 projectService.setProjectSearchString(searchString);
             } else {
-                cacheService.performCacheSearch(searchString, badges);
+                if (router.pathname !== '/inbox') {
+                    cacheService.performCacheSearch(searchString, badges);
+                }
             }
         }
-    }, [searchString, isProjectRoute, project, badges])
+    }, [searchString, isProjectRoute, project, badges, router.pathname])
 
     const searchCancel = (callAPI: boolean = false) => {
         if (isProjectRoute && !project) {
@@ -111,9 +113,6 @@ export function HeaderSearch() {
     }
 
     const handleKeyDown = (event: KeyboardEvent | any) => {
-        if (event.target.value) {
-            threadService.searchThread()
-        }
         if (event.key === 'Backspace') {
             if (!event.target.value) {
                 event.preventDefault();
@@ -122,18 +121,30 @@ export function HeaderSearch() {
                 }
             }
         }
-        // if (event.key.toLowerCase() === 'enter') {
-        //     searchCancel(false);
-        //     if (searchString) {
-        //         let finalSearchString = searchString;
-        //         if (isProjectRoute && project) {
-        //             finalSearchString = `project:${project.id} ${searchString}`;
-        //         }
-        //         threadService.searchThread();
-        //         socketService.searchThreads(userDetails?.id, finalSearchString);
-        //         return;
-        //     }
-        // }
+        if (router.pathname === '/inbox') {
+            if (event.key.toLowerCase() === 'enter') {
+                searchCancel(false);
+                if (searchString || badges.length > 0) {
+                    let finalSearchString: string[] = [];
+                    badges.forEach((item) => {
+                        if (item.type === 'project') {
+                            finalSearchString.push(`in:${item.value.id}`);
+                        }
+                        if (item.type === 'people') {
+                            finalSearchString.push(`from:${item.value.email}`);
+                        }
+                    })
+                    finalSearchString.push(searchString);
+                    threadService.searchThread();
+                    socketService.searchThreads(userDetails?.id, finalSearchString.join(' '));
+                    return;
+                }
+            }
+        } else {
+            if (event.target.value) {
+                threadService.searchThread(true)
+            }
+        }
     };
 
     const handleFocus = () => {
@@ -201,6 +212,16 @@ export function HeaderSearch() {
             return `from:${(badge.value.name || badge.value.email)}`;
         }
         return badge.value;
+    }
+
+    function addBadge(item: any, type: string) {
+        setSearchString('');
+        setBadges(prevState => [...prevState, {type, value: item}]);
+        if (router.pathname !== '/inbox') {
+            threadService.searchThread(true);
+            // socketService.searchThreads(userDetails?.id, `${item.email}`);
+            cacheService.performCacheSearch('', [...badges, {type: 'project', value: item}]);
+        }
     }
 
     function removeBadge(index: number) {
@@ -271,13 +292,7 @@ export function HeaderSearch() {
                                 <Text color={'#374151'} fontSize={'13px'} padding={'8px 12px'} cursor={'pointer'}
                                       borderRadius={'3px'} fontWeight={'500'} width={'100%'} key={index}
                                       _hover={{backgroundColor: 'rgba(0,0,0, 0.05)'}}
-                                      lineHeight={1} onClick={() => {
-                                    setSearchString('');
-                                    threadService.searchThread();
-                                    // socketService.searchThreads(userDetails?.id, `${item.email}`);
-                                    cacheService.performCacheSearch('', [...badges, {type: 'project', value: item}]);
-                                    setBadges(prevState => [...prevState, {type: 'project', value: item}]);
-                                }} letterSpacing={'-0.13px'}>{item.emoji} {item.name}</Text>
+                                      lineHeight={1} onClick={() => addBadge(item, 'project')} letterSpacing={'-0.13px'}>{item.emoji} {item.name}</Text>
                             ))}
                         </Flex>
                         }
@@ -293,13 +308,7 @@ export function HeaderSearch() {
                         <Flex borderTop={'1px solid rgba(0,0,0, 0.1)'} mt={3} direction={"column"}>
                             {filteredPeoples && filteredPeoples.slice(0, 5).map((item: any, index: number) => (
                                 <Flex className={styles.headerSearchbarList} key={index} padding={'8px 12px'}
-                                      cursor={'pointer'} borderRadius={'3px'} onClick={() => {
-                                    setSearchString('');
-                                    threadService.searchThread();
-                                    // socketService.searchThreads(userDetails?.id, `${item.email}`);
-                                    cacheService.performCacheSearch('', [...badges, {type: 'people', value: item}]);
-                                    setBadges(prevState => [...prevState, {type: 'people', value: item}]);
-                                }}
+                                      cursor={'pointer'} borderRadius={'3px'} onClick={() => addBadge(item, 'people')}
                                 >
                                     <Text color={'#374151'} fontSize={'13px'} fontWeight={'500'} width={'100%'}
                                           lineHeight={1}

@@ -63,9 +63,20 @@ class ThreadsService extends BaseService {
         }
     }
 
-    searchThread() {
-        let {isThreadSearched} = this.getThreadState();
-        if (!isThreadSearched) {
+    searchThread(checkForValidation: boolean = false) {
+        if (checkForValidation) {
+            let {isThreadSearched} = this.getThreadState();
+            if (!isThreadSearched) {
+                this.setThreadState({
+                    isThreadSearched: true,
+                    multiSelection: [],
+                    threads: [],
+                    isLoading: false,
+                    selectedThread: null,
+                });
+                messageService.setMessages([]);
+            }
+        } else {
             this.setThreadState({
                 isThreadSearched: true,
                 multiSelection: [],
