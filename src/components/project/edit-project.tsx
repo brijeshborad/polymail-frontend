@@ -283,6 +283,7 @@ function EditProject() {
                             </Menu>
 
                             <Input className={styles.projectSearchBar} value={projectName} onChange={handleChange}
+                                   autoFocus={true}
                                    borderColor={'#E5E7EB'} borderRadius={8} backgroundColor={'#FFFFFF'}
                                    fontSize={'13px'} padding={'10px 16px'} lineHeight={1} height={'auto'}
                                    placeholder='Project name'/>

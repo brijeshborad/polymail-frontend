@@ -10,6 +10,7 @@ import {authService} from "@/services/auth.service";
 import {accountService} from "@/services/account.service";
 import {organizationService} from "@/services/organization.service";
 import LocalStorageService from "@/utils/localstorage.service";
+import {keyNavigationService} from "@/services/key-action.service";
 dayjs.extend(customParseFormat)
 
 class CommonService extends BaseService {
@@ -231,10 +232,12 @@ class CommonService extends BaseService {
     }
 
     toggleCreateProjectModel(enable: boolean, shouldRedirect: boolean = false, shouldAddThread: boolean = false) {
+        keyNavigationService.toggleKeyNavigation(!enable);
         this.setCommonState({showCreateProjectModal: enable, shouldRedirectOnCreateProject: shouldRedirect, shouldAddThread: shouldAddThread});
     }
 
     toggleEditProjectModel(enable: boolean, shouldRedirect: boolean = false, passThroughProject: Project | null = null) {
+        keyNavigationService.toggleKeyNavigation(!enable);
         this.setCommonState({showEditProjectModal: enable, shouldRedirectOnEditProject: shouldRedirect, passThroughProject: passThroughProject});
     }
 
