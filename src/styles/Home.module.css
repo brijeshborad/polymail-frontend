@@ -548,6 +548,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    min-width: 24px;
 }
 
 .mailToaster .toastIcon svg {
@@ -585,7 +586,9 @@
 }
 
 div:has(> .mailToaster) {
-    min-width: 360px;
+    /*min-width: 360px;*/
+    width: 450px;
+    max-width: 450px;
     margin-right: 20px;
 }
 
@@ -702,11 +705,6 @@ div:has(> .mailToaster) {
     width: 20px;
     height: 20px;
     color: #6B7280;
-}
-
-div:has(> .mailToaster) {
-    min-width: 360px;
-    margin-right: 20px;
 }
 
 @media (max-width: 576px) {
