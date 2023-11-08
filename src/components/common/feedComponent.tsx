@@ -5,6 +5,10 @@ import styles from '@/styles/Home.module.css';
 import {Time} from "@/components/common/time";
 import Router from "next/router";
 import Image from "next/image";
+import {useSelector} from "react-redux";
+import {StateType} from "@/types";
+import {Project} from "@/models";
+import {Toaster} from "@/components/common/toaster";
 
 interface FeedComponentProps {
     feedData?: ActivityFeed;
@@ -13,14 +17,28 @@ interface FeedComponentProps {
 }
 
 export const FeedComponent: React.FC<FeedComponentProps> = ({feedData, markFeedAsRead, close}) => {
+    const {projects} = useSelector((state: StateType) => state.projects);
+    function allowRouteChangeForProject(projectId: string) {
+        let findProject = [...(projects || [])].find((p: Project) => p.id === projectId);
+        if (findProject) {
+            Router.push(`/projects/${feedData?.projectId}`);
+            if (close) {
+                close();
+            }
+        } else {
+            Toaster({
+                title: 'Project',
+                desc: 'You are not a member of this project',
+                type: 'error'
+            })
+        }
+    }
+
     return (
         <Box className={`${styles.feedBox} ${feedData?.isRead ? styles.feedBoxRead: ''}`}
              onClick={() => {
                  if (feedData?.projectId) {
-                     Router.push(`/projects/${feedData?.projectId}`);
-                     if (close) {
-                         close();
-                     }
+                     allowRouteChangeForProject(feedData.projectId);
                  }
                  markFeedAsRead ? markFeedAsRead() : null
              }}>
