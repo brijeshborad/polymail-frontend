@@ -170,7 +170,7 @@ export function HeaderSearch() {
             } else {
                 setTimeout(() => {
                     setShowCloseIcon(false);
-                }, 300)
+                }, 100)
             }
         });
     }, [])

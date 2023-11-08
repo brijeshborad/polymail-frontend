@@ -11,7 +11,7 @@ import {
     getCurrentSelectedThreads,
     setCurrentSelectedThreads,
 } from "@/utils/cache.functions";
-import {debounceInterval} from "@/utils/common.functions";
+import {debounce, debounceInterval} from "@/utils/common.functions";
 import {
     commonService,
     draftService,
@@ -39,6 +39,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     const [currentThreads, setCurrentThreads] = useState<Thread[]>([]);
     const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
     const threadsRef = useRef<any>([]);
+    const [showScrollBar, setShowScrollBar] = useState<boolean>(false);
 
     const scrollToPosition = useCallback((thread: Thread) => {
         const node = threadsRef.current[thread.id!]
@@ -191,6 +192,8 @@ export function ThreadsSideBarList(props: ThreadListProps) {
             } else {
                 setExtraClassNamesForBottom(prevState => prevState.replace('project-list-bottom-shadow', ''));
             }
+            setShowScrollBar(true);
+            debounce(() => setShowScrollBar(false), 500, 'THREAD_LIST_SCROLLBAR');
         }
     }, [])
 
@@ -221,10 +224,11 @@ export function ThreadsSideBarList(props: ThreadListProps) {
             <div className={'project-list-shadow'}>
                 <Flex direction={'column'} gap={2} marginTop={5} pb={3} ref={editorRef}
                       onScroll={() => handleEditorScroll()} id={'scrollableDiv'}
-                      className={`${styles.mailList} ${extraClassNames} ${extraClassNamesForBottom} ${routePaths.includes('projects') ? styles.projectMailList : ''}`}>
+                      className={`${styles.mailList} ${extraClassNames} ${extraClassNamesForBottom} ${routePaths.includes('projects') ? styles.projectMailList : ''} ${showScrollBar ? styles.scrollBar : ''}`}>
                     <Input type={'text'} opacity={0} height={0} width={0} padding={0} border={0} outline={0}
                            ref={listRef}/>
-                    <InfiniteScroll dataLength={currentThreads.length} hasMore={currentThreads.length === 0 ? false : (currentThreads.length % INFINITE_LIST_PER_COUNT === 0)}
+                    <InfiniteScroll dataLength={currentThreads.length}
+                                    hasMore={currentThreads.length === 0 ? false : (currentThreads.length % INFINITE_LIST_PER_COUNT === 0)}
                                     scrollableTarget="scrollableDiv" next={() => fetchNext()} loader={null}>
                         {currentThreads.length > 0 && currentThreads.map((item: Thread, index: number) => (
                             <div

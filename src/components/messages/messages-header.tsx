@@ -60,7 +60,7 @@ export function MessagesHeader() {
                         if (selectedThread.mailboxes?.includes(messageBox)) {
                             return
                         }
-                        body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_ARCHIVE, MAILBOX_TRASH].includes(item))
+                        body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_ARCHIVE, MAILBOX_TRASH, MAILBOX_SPAM].includes(item))
                         body.mailboxes = [...body.mailboxes, messageBox]
                         remove_from_list = true
                         messageService.setSelectedMessage(null);
@@ -69,7 +69,7 @@ export function MessagesHeader() {
                         if (selectedThread.mailboxes?.includes(messageBox)) {
                             return
                         }
-                        body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_INBOX, MAILBOX_ARCHIVE].includes(item))
+                        body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_INBOX, MAILBOX_ARCHIVE, MAILBOX_SPAM].includes(item))
                         body.mailboxes = [...body.mailboxes, messageBox]
                         remove_from_list = true
                         messageService.setSelectedMessage(null);
@@ -78,7 +78,7 @@ export function MessagesHeader() {
                         if (selectedThread.mailboxes?.includes(messageBox)) {
                             return
                         }
-                        body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_INBOX, MAILBOX_TRASH].includes(item))
+                        body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_INBOX, MAILBOX_TRASH, MAILBOX_SPAM].includes(item))
                         body.mailboxes = [...body.mailboxes, messageBox]
                         remove_from_list = true
                         messageService.setSelectedMessage(null);
@@ -88,6 +88,7 @@ export function MessagesHeader() {
                             return
                         }
                         body.mailboxes = [messageBox]
+                        body.snooze = null;
                         remove_from_list = true
                         messageService.setSelectedMessage(null);
                         break;
@@ -110,7 +111,7 @@ export function MessagesHeader() {
                         if (selectedThread.mailboxes?.includes(messageBox)) {
                             return
                         }
-                        body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_INBOX, MAILBOX_TRASH].includes(item))
+                        body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_INBOX, MAILBOX_TRASH, MAILBOX_SPAM].includes(item))
                         body.mailboxes = [...body.mailboxes, messageBox]
                         remove_from_list = true
                         messageService.setSelectedMessage(null);
@@ -226,7 +227,7 @@ export function MessagesHeader() {
     return (
         <>
             <Flex gap={2} align={'center'} justify={'space-between'} padding={'16px 20px 12px'}
-                  borderBottom={'1px solid #E5E7EB'}>
+                  borderBottom={'1px solid #F3F4F6'}>
                 <Flex gap={1}>
                     <Heading as='h6' fontSize={'15px'} color={'#0A101D'} noOfLines={1}
                              fontWeight={600}>{selectedThread?.subject || '(no subject)'}</Heading>

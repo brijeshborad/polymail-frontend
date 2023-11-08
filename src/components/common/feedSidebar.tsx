@@ -39,6 +39,7 @@ export const FeedSidebar = () => {
         if (newMessage && newMessage.name === 'Activity') {
             socketService.updateSocketMessage(null);
             if (ACTIVITY_FEED_EVENT_TYPES.includes(newMessage.data.Type)) {
+                console.log('--s', newMessage);
                 if (newMessage.data.Type === 'ThreadShared' || newMessage.data.Type === 'ProjectInvite' || newMessage.data.Type === 'MemberJoined') {
                     globalEventService.fireEvent({
                         type: 'show-notification',
@@ -61,6 +62,7 @@ export const FeedSidebar = () => {
                     title: newMessage.data.Title,
                     subtitle: newMessage.data.Subtitle,
                     body: newMessage.data.Body,
+                    avatar: {...newMessage.data.Avatar, url: newMessage.data.Avatar.URL},
                     // username: userDetails && userDetails.id === newMessage.data.UserID ? 'You' : newMessage.data.Username,
                     username: newMessage.data.Username,
                     isRead: userDetails ? !dayjs(newMessage.data.Created).isAfter(dayjs(userDetails.activitiesRead)) : false,

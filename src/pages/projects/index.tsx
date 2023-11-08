@@ -39,7 +39,7 @@ function Index() {
 
     useEffect(() => {
         if (projects && projects.length > 0) {
-            let sortedList = [...projects].sort((a: Project, b: Project) => (a.projectMeta?.order || 0) - (b.projectMeta?.order || 0));
+            let sortedList = projectService.sortProjects(projects);
             if (projectSearchedString) {
                 sortedList = sortedList.filter((item: Project) => item.name?.toLowerCase().includes(projectSearchedString.toLowerCase().trim()));
             }

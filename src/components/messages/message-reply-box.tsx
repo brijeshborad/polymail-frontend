@@ -669,6 +669,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
                 if (incomingEvent.data.type === 'reply-all') {
                     if (!isDraftUpdated) {
+                        setSubject(`Re: ${incomingEvent.data.messageData.subject}`);
                         if (incomingEvent.data.messageData?.from) {
                             setEmailRecipients((prevState: RecipientsType) => ({
                                 ...prevState,
@@ -708,6 +709,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
                 if (incomingEvent.data.type === 'reply') {
                     if (!isDraftUpdated) {
+                        setSubject(`Re: ${selectedThread?.subject}`);
                         if (incomingEvent.data.messageData?.from) {
                             setEmailRecipients((prevState: RecipientsType) => ({
                                 ...prevState,
@@ -933,14 +935,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                         </Flex>
                         {showReplyBox &&
                         <div ref={divRef} style={{marginTop: '5px'}}>
-                            <MessageRecipients
-                                emailRecipients={emailRecipients}
-                                updateValues={(values) => {
-                                    setIsDraftUpdated(true);
-                                    setEmailRecipients({...values})
-                                }}
-                            />
-                            <Flex width={'100%'} mt={1} flex={'none'} backgroundColor={'#FFFFFF'}
+                            <Flex width={'100%'} mb={1} flex={'none'} backgroundColor={'#FFFFFF'}
                                   border={'1px solid #E5E7EB'} borderRadius={8} gap={2} padding={'4px 16px'} className={styles.replyBoxCC}>
                                 <Heading as={'h6'} fontSize={'13px'} paddingTop={1} fontWeight={500} lineHeight={1}
                                          color={'#374151'}>Subject:</Heading>
@@ -952,6 +947,13 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                     />
                                 </Flex>
                             </Flex>
+                            <MessageRecipients
+                                emailRecipients={emailRecipients}
+                                updateValues={(values) => {
+                                    setIsDraftUpdated(true);
+                                    setEmailRecipients({...values})
+                                }}
+                            />
                         </div>
                         }
                         <Flex

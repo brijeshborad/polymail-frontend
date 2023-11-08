@@ -17,7 +17,6 @@ import {
     ModalHeader,
     ModalOverlay
 } from "@chakra-ui/react";
-import Image from "next/image";
 import Router from "next/router";
 import React, {ChangeEvent, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
@@ -273,9 +272,9 @@ function CreateNewProjectModal() {
                             <Flex justify={'space-between'} align={'center'} pr={3} key={index}>
                                 <Flex align={'center'} gap={2} color={'#0A101D'} fontSize={'13px'}
                                       letterSpacing={'-0.13px'}>
-                                    <div className={styles.imgWrapper}>
-                                        <Image src="/image/user.png" width="36" height="36" alt=""/>
-                                    </div>
+                                    {/*<div className={styles.imgWrapper}>*/}
+                                    {/*    <Image src="/image/user.png" width="36" height="36" alt=""/>*/}
+                                    {/*</div>*/}
                                     {member.item}
                                 </Flex>
                                 <Flex align={'center'} gap={1}>

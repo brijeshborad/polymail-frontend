@@ -543,7 +543,7 @@ export function ProjectHeader() {
                                             <Flex align={'center'} pr={3} gap={3} key={index}
                                                   className={styles.projectMember}>
                                                 <MenuItem>
-                                                    <div style={{background: '#000'}} className={styles.imgWrapper}>
+                                                    <div style={{background: 'transparent'}} className={styles.imgWrapper}>
                                                         {/*<Image src="/image/user.png" width="36" height="36" alt=""/>*/}
                                                     </div>
                                                     {invite?.invite?.toEmail}

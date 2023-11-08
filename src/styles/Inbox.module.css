@@ -221,6 +221,14 @@
     scrollbar-gutter: stable;
 }
 
+.mailList::-webkit-scrollbar-thumb {
+    background-color: transparent;
+}
+
+.mailList.scrollBar::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
 .mailList.projectMailList {
     max-height: calc(100vh - 290px);
 }
@@ -316,7 +324,7 @@
 
 /* Mail Box Start */
 .mailBox {
-    border: 1px solid rgba(8, 22, 47, 0.16);
+    border: 1px solid #F3F4F6;
     border-radius: 16px;
     height: 100%;
     background-color: white;
@@ -493,9 +501,9 @@
     color: #FFFFFF;
 }
 
-.addToProjectList .backToInbox:hover svg {
-    stroke: #266DF0;
-}
+/*.addToProjectList .backToInbox:hover svg {*/
+/*    stroke: #266DF0;*/
+/*}*/
 
 .addToProjectList .backToInbox button svg {
     stroke: #08162F;
@@ -1333,6 +1341,14 @@
     line-height: 14.52px;
     font-weight: 500;
     border-radius: 34px;
+}
+
+.messageListscrollbar::-webkit-scrollbar-thumb {
+    background-color: transparent;
+}
+
+.messageListscrollbar.messageScrollBar::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.8);
 }
 
 @media (min-width: 991px) and (max-width: 1431px) {

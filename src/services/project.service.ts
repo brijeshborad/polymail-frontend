@@ -141,6 +141,15 @@ class ProjectService extends BaseService {
         this.setMembers(currentProject.accounts);
         this.setInvitees(currentProject.invites);
     }
+
+    sortProjects(projects: Project[]) {
+        return [...projects].sort((a: Project, b: Project) => {
+            if (a.projectMeta?.favorite === b.projectMeta?.favorite) {
+                return (a.projectMeta?.order || 0) - (b.projectMeta?.order || 0)
+            }
+            return a.projectMeta?.favorite ? -1 : 1;
+        })
+    }
 }
 
 export const projectService = new ProjectService();

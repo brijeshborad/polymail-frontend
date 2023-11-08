@@ -474,8 +474,8 @@ export function ThreadsSideBar() {
                 <Tooltip label={'Compose'} placement={'bottom'} customClass={'text-tooltip'}>
                     <Button
                         className={styles.composeButton} borderRadius={8} height={'auto'} padding={'10px'}
-                        minWidth={'101px'} backgroundColor={'#FFFFFF'} color={'#374151'} borderColor={'#E5E7EB'}
-                        leftIcon={<EditIcon/>} colorScheme='blue' variant='outline'
+                        minWidth={'101px'} backgroundColor={'#FFFFFF'} color={'#374151'} borderColor={'#F3F4F6'}
+                        leftIcon={<EditIcon/>} _hover={{backgroundColor: 'var(--alias-bg-subtle)'}} variant='outline'
                         onClick={() => openComposeModel()}
                     >
                         <span className={styles.composeButtonText}>Compose</span>

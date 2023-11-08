@@ -48,15 +48,15 @@ axiosInstance.interceptors.response.use((response) => {
             apiMethod = error.config.method
         }
         if (!apiUrl.includes('avatar') || apiMethod !== 'get') {
-            if(error.config.url != '/link/preview') {
-              Toaster(err);
+            if (error.config.url != '/link/preview') {
+                Toaster(err);
             }
         }
 
-        if (error.response.status === 401) {
-            Router.push(`/auth/logout`);
-            return false;
-        }
+        // if (error.response.status === 401) {
+        //     Router.push(`/auth/logout`);
+        //     return false;
+        // }
     } else if (error.code === 'ERR_NETWORK') {
         let err = {
             desc: error.message,
