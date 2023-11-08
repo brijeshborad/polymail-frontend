@@ -111,7 +111,7 @@ export function HeaderSearch() {
             setPeopleArray(null);
             threadService.cancelThreadSearch(true);
             setSearchString('');
-            globalEventService.fireEvent('threads.refresh');
+            globalEventService.fireEvent('threads.refresh-with-cache');
         }
     }
 

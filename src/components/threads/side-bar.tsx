@@ -129,7 +129,7 @@ export function ThreadsSideBar() {
         threadService.cancelThreadSearch(true);
         socketService.cancelThreadSearch(userDetails?.id);
         if (selectedAccount && selectedAccount.id && callAPI) {
-            globalEventService.fireEvent('threads.refresh');
+            globalEventService.fireEvent('threads.refresh-with-cache');
         }
     }
 

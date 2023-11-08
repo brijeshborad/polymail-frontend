@@ -206,7 +206,19 @@ export function ThreadsSideBarTab() {
             currentPage = 1;
             getAllThread();
         }
-    }, [getAllThread, incomingEvent])
+        if (incomingEvent === 'threads.refresh-with-cache') {
+            if (cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue!, tabName!)).length > 0) {
+                let threads = cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue!, tabName!)) as Thread[];
+                threadService.setThreadState({
+                    threads: threads,
+                    isLoading: false,
+                    selectedThread: threads[0]
+                })
+            }
+            currentPage = 1;
+            getAllThread();
+        }
+    }, [getAllThread, incomingEvent, tabName, tabValue])
 
     useEffect(() => {
         if (projectId) {

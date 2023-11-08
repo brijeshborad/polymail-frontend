@@ -116,6 +116,11 @@ class CacheService {
         }
         Object.keys(allCache).forEach((cacheKey: string) => {
             if (!cacheKey.includes(MAILBOX_DRAFT.toLowerCase())) {
+                allCache[cacheKey] = [...allCache[cacheKey]];
+                allCache[cacheKey] = allCache[cacheKey].map(item => {
+                    let messages = [...(item.messages || [])];
+                    return {...item, messages: messages.filter((m) => !m.mailboxes?.includes(MAILBOX_DRAFT))};
+                })
                 if (projectIds.length > 0) {
                     if (projectIds.includes(cacheKey.split('-')[1])) {
                         foundThreads = [...foundThreads, ...matchSorter((allCache[cacheKey] || []), searchString, {keys: keysToFind})];
@@ -125,6 +130,7 @@ class CacheService {
                 }
             }
         })
+        console.log('f', foundThreads);
         threadService.setThreads(foundThreads);
     }
 }
