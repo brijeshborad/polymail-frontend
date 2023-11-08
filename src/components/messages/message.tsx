@@ -173,7 +173,7 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
         return (
             <Box
                 className={`${styles.mailBox} ${isThreadFocused ? styles.mailBoxFocused : ''}`}
-                height={'calc(100vh - 165px)'} overflow={'hidden'} borderRadius={'15px'}
+                height={'calc(100vh - 157px)'} overflow={'hidden'} borderRadius={'15px'}
                 onClick={() => {
                     if (!isThreadFocused) {
                         setThreadFocus(true);
