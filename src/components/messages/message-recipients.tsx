@@ -120,6 +120,15 @@ export default function MessageRecipients({emailRecipients: values, updateValues
                 }
             })
         }
+        if (evt.key === "Backspace") {
+            if (!evt.target.value) {
+                evt.preventDefault();
+                let items = [...emailRecipients[type as keyof RecipientsType].items];
+                if (items.length > 0) {
+                    handleItemDelete(items[items.length - 1].email, type);
+                }
+            }
+        }
     };
 
     const handleAutoCompleteSelect = (value: any, type: string) => {
