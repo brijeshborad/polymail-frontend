@@ -28,6 +28,7 @@ export interface UserDetails {
     status?: string,
     email?: string,
     firstName?: string,
+    color?: string,
     lastName?: string,
     deviceIds?: string,
     preferences?: Preferences | null,
