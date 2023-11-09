@@ -143,7 +143,10 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                 <Flex direction={'column'}>
                     Sent to:
                     {to.map((t: any, index: number) => (
-                        <Text key={index}>{t.name || t.email}</Text>
+                        <Text key={index}>{t?.name ? <>
+                            {t?.name || ''}
+                            {t?.email ? <>{' <' + t?.email + '>'}</> : ''}
+                        </> : <>{t?.email || ''}</>}</Text>
                     ))}
                 </Flex>
             </>} placement={'bottom'}>
