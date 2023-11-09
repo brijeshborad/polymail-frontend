@@ -323,6 +323,13 @@ export function MessagesHeader() {
                                         opacity={true}/> Mark {(selectedThread?.mailboxes || []).includes(MAILBOX_UNREAD) ? 'Read' : 'Unread'}
                                     </MenuItem>
                                     <MenuItem
+                                        className={`starred-button-icon ${(selectedThread?.mailboxes || []).includes(MAILBOX_STARRED) ? 'active' : ''}`}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            updateMailBox(MAILBOX_STARRED)
+                                        }}><StarIcon opacity={true}/> Add Star</MenuItem>
+                                    <MenuItem
                                         onClick={(e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
@@ -335,13 +342,6 @@ export function MessagesHeader() {
                                             e.stopPropagation();
                                             updateMailBox(MAILBOX_SPAM)
                                         }}><SpamIcon opacity={true}/> Mark Spam</MenuItem>}
-                                    <MenuItem
-                                        className={`starred-button-icon ${(selectedThread?.mailboxes || []).includes(MAILBOX_STARRED) ? 'active' : ''}`}
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            updateMailBox(MAILBOX_STARRED)
-                                        }}><StarIcon opacity={true}/> Add Star</MenuItem>
                                 </MenuList>
                             </Menu>
                         </div>
