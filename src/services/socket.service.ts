@@ -2,6 +2,7 @@ import {BaseService} from "@/services/base.service";
 import {InitialSocketType} from "@/types";
 import {SendJsonMessage} from "react-use-websocket/src/lib/types";
 import {updateLastMessage, updateSendFunction} from "@/redux/socket/action-reducer";
+import {userService} from "@/services/user.service";
 
 class SocketService extends BaseService {
     constructor() {
@@ -28,6 +29,10 @@ class SocketService extends BaseService {
     }
 
     cancelThreadSearch(userId: string | undefined) {
+        if (!userId) {
+            let {userDetails} = userService.getUserState();
+            userId = userDetails?.id;
+        }
         this.sendMessage({userId: userId || '', name: "SearchCancel"});
     }
 
