@@ -82,7 +82,6 @@ export function ProjectHeader() {
             dispatch(addItemToGroup({
                 body: reqBody,
                 afterSuccessAction: (invite: any) => {
-                    console.log('in', invite);
                     let memberType = invite[0].invite ? 'invite' : 'member';
                     projectService.addOrUpdateProjectMemberOrInvites('add', memberType, invite[0]);
                 }
@@ -168,7 +167,7 @@ export function ProjectHeader() {
                         afterSuccessAction: () => {
                             if (selectedAccount && selectedMember.userId === selectedAccount.userId) {
                                 let projectData = (projects || []).filter((item: Project) => item.id !== project.id);
-                                projectService.setProjectState({projects: projectData})
+                                projectService.setProjectState({projects: projectData, project: null})
                                 Router.push(`/inbox`);
                             }
                         }
@@ -191,7 +190,7 @@ export function ProjectHeader() {
                     }
                 ))
                 let filteredProjects = (projects || []).filter((item: Project) => item.id !== projectData.id);
-                projectService.setProjectState({projects: filteredProjects});
+                projectService.setProjectState({projects: filteredProjects, project: null});
                 Router.push(`/inbox`);
             }
         }

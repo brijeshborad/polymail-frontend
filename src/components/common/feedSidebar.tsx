@@ -8,7 +8,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {ActivityFeed} from "@/models/activityFeed";
 import {ACTIVITY_FEED_EVENT_TYPES} from "@/utils/constants";
-import {globalEventService, socketService} from "@/services";
+import {globalEventService, projectService, socketService} from "@/services";
 import Tooltip from "@/components/common/Tooltip";
 import {markActivityAsRead} from "@/redux/common-apis/action-reducer";
 import dayjs from "dayjs";
@@ -34,7 +34,6 @@ export const FeedSidebar = () => {
         handler: () => isOpen ? onToggle() : null,
     })
 
-
     useEffect(() => {
         if (newMessage && newMessage.name === 'Activity') {
             socketService.updateSocketMessage(null);
@@ -54,6 +53,12 @@ export const FeedSidebar = () => {
                 }
                 if (newMessage.data.Type === 'MemberJoined') {
                     dispatch(getAllProjects({noBlank: true}));
+                }
+                if (newMessage.data.Type === 'ProjectDeleted') {
+                    projectService.processProjectDeletedActivity(newMessage.data);
+                }
+                if (newMessage.data.Type === 'MemberLeft') {
+                    projectService.processMemberActivity(newMessage.data);
                 }
                 let currentFeeds: ActivityFeed[] = [...feeds];
                 currentFeeds.push({

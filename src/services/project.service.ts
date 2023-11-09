@@ -3,6 +3,9 @@ import {BaseService} from "@/services/base.service";
 import {updateProjectState} from "@/redux/projects/action-reducer";
 import {InviteMember, Project, TeamMember} from "@/models";
 import {commonService} from "@/services/common.service";
+import Router from "next/router";
+import {Toaster} from "@/components/common";
+import {userService} from "@/services/user.service";
 
 class ProjectService extends BaseService {
     constructor() {
@@ -149,6 +152,61 @@ class ProjectService extends BaseService {
             }
             return a.projectMeta?.favorite ? -1 : 1;
         })
+    }
+
+    processProjectDeletedActivity(activity: any) {
+        let {projects} = this.getProjectState();
+        let currentProjects = [...(projects || [])];
+        let projectId = activity.ProjectID;
+        let findProject = currentProjects.findIndex((item: Project) => item.id === projectId);
+        if (findProject !== -1) {
+            let deletingProject = {...currentProjects[findProject]};
+            currentProjects.splice(findProject, 1);
+            this.setProjectState({projects: currentProjects});
+            if (Router.pathname === `/projects/[project]` && Router.query.project === projectId) {
+                this.setProjectState({project: null});
+                Router.push('/inbox');
+                Toaster({
+                    type: 'error',
+                    title: 'Project has been deleted',
+                    desc: `${deletingProject.emoji} ${deletingProject.name}`
+                })
+            }
+        }
+    }
+
+    processMemberActivity(activity: any) {
+        let {projects} = this.getProjectState();
+        let {userDetails} = userService.getUserState();
+        let currentProjects = [...(projects || [])];
+        let projectId = activity.ProjectID;
+        let userId = activity.UserID;
+        let findProject = currentProjects.findIndex((item: Project) => item.id === projectId);
+        if (findProject !== -1) {
+            let deletingProject = {...currentProjects[findProject]};
+            let accounts = [...(deletingProject.accounts || [])];
+            let findDeletedMember = accounts.findIndex((account: TeamMember) => account.userId === userId);
+            if (findDeletedMember !== -1) {
+                let deletingMember = {...accounts[findDeletedMember]};
+                if (userDetails && deletingMember.userId === userDetails?.id) {
+                    currentProjects.splice(findProject, 1);
+                    this.setProjectState({projects: currentProjects});
+                    if (Router.pathname === `/projects/[project]` && Router.query.project === projectId) {
+                        this.setProjectState({project: null});
+                        Router.push('/inbox');
+                        Toaster({
+                            type: 'error',
+                            title: 'You have been removed from the project',
+                            desc: `${deletingProject.emoji} ${deletingProject.name}`
+                        })
+                    }
+                } else {
+                    accounts.splice(findDeletedMember, 1);
+                    currentProjects[findProject].accounts = accounts;
+                    this.setProjectState({projects: currentProjects});
+                }
+            }
+        }
     }
 }
 
