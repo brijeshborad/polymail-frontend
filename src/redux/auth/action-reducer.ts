@@ -11,6 +11,7 @@ const initialState = {
     magicCodeSuccess: false,
     magicCodeResponse: null,
     passwordResetSuccess: false,
+    refreshToken: 'pending',
 } as InitialAuthState
 
 const authSlice = createSlice({
@@ -80,6 +81,16 @@ const authSlice = createSlice({
             return {...state, isLoading: false}
         },
 
+        authRefreshToken: (state: InitialAuthState, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, refreshToken: 'pending', isLoading: true}
+        },
+        authRefreshTokenSuccess: (state: InitialAuthState) => {
+            return {...state, refreshToken: 'success', isLoading: false}
+        },
+        authRefreshTokenError: (state: InitialAuthState,  _action: PayloadAction<any>) => {
+            return {...state, refreshToken: 'error', isLoading: false}
+        },
+
         magicCode: (state: InitialAuthState, _action: PayloadAction<ReducerActionType>) => {
             return {...state, isLoading: true}
         },
@@ -117,6 +128,6 @@ export const {
     resetPasswordError,
     magicCode,
     magicCodeSuccess,
-    magicCodeError
+    magicCodeError, authRefreshToken, authRefreshTokenSuccess, authRefreshTokenError
 } = authSlice.actions
 export default authSlice.reducer

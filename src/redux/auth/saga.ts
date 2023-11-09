@@ -1,4 +1,5 @@
 import {
+    authRefreshToken, authRefreshTokenError, authRefreshTokenSuccess,
     changePassword,
     changePasswordError,
     changePasswordSuccess,
@@ -22,6 +23,7 @@ import LocalStorageService from "@/utils/localstorage.service";
 import { all, fork, put, takeEvery } from "@redux-saga/core/effects";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { AxiosError, AxiosResponse } from "axios";
+import {authService} from "@/services";
 
 function* login({payload: {email, password}}: PayloadAction<{ email: string, password: string }>) {
     try {
@@ -139,6 +141,19 @@ function* compareCode({payload}: PayloadAction<ReducerActionType>) {
     }
 }
 
+function* refreshToken() {
+    try {
+        const response: AxiosResponse = yield ApiService.callGet(`auth/refresh`, null);
+        let tokenResponse = response as any;
+        LocalStorageService.updateUser('store', {token: tokenResponse.token})
+        authService.setUser({token: tokenResponse.token})
+        yield put(authRefreshTokenSuccess());
+    } catch (error: any) {
+        error = error as AxiosError;
+        yield put(authRefreshTokenError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
+    }
+}
+
 export function* watchLoginUser() {
     yield takeEvery(loginUser.type, login);
 }
@@ -171,6 +186,10 @@ export function* watchCompareCode() {
     yield takeEvery(magicCode.type, compareCode);
 }
 
+export function* watchAuthRefreshToken() {
+    yield takeEvery(authRefreshToken.type, refreshToken);
+}
+
 export default function* rootSaga() {
     yield all([
         fork(watchLoginUser),
@@ -181,6 +200,7 @@ export default function* rootSaga() {
         fork(watchResetPassword),
         fork(watchUpdateNewPassword),
         fork(watchCompareCode),
+        fork(watchAuthRefreshToken),
     ]);
 }
 

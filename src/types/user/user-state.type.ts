@@ -10,6 +10,7 @@ export declare type InitialAuthState = {
     passwordResetSuccess?: boolean
     magicCodeSuccess?: boolean,
     magicCodeResponse?: MagicCode | null
+    refreshToken?: string
 }
 
 export declare type InitialUserState = {

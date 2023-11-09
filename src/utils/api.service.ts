@@ -37,6 +37,7 @@ axiosInstance.interceptors.response.use((response) => {
     return response.data;
 }, error => {
     if (error.response && error.response.data) {
+        let ignoreUrls = ['/link/preview', 'auth/refresh'];
         let err = {
             desc: error.response.data.description,
             title: error.response.data.description,
@@ -48,7 +49,7 @@ axiosInstance.interceptors.response.use((response) => {
             apiMethod = error.config.method
         }
         if (!apiUrl.includes('avatar') || apiMethod !== 'get') {
-            if (error.config.url != '/link/preview') {
+            if (!ignoreUrls.includes(error.config.url)) {
                 Toaster(err);
             }
         }

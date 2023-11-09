@@ -6,18 +6,19 @@ import {StateType} from "@/types";
 import {useEffect, useState} from "react";
 import Router, {useRouter} from 'next/router';
 import LocalStorageService from "@/utils/localstorage.service";
-import {googleAuthLink} from "@/redux/auth/action-reducer";
+import {authRefreshToken, googleAuthLink} from "@/redux/auth/action-reducer";
 import {getRedirectionUrl} from "@/utils/common.functions";
 import {getUsersDetails} from "@/redux/users/action-reducer";
 import {Toaster} from "@/components/common";
-import {authService} from "@/services";
+import {accountService, authService, organizationService} from "@/services";
 
 function OnBoardingType() {
     const dispatch = useDispatch();
-    const {user, googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
+    const {user, googleAuthRedirectionLink, refreshToken} = useSelector((state: StateType) => state.auth);
     const {userDetails} = useSelector((state: StateType) => state.users);
     const router = useRouter();
     const [showPage, setShowPage] = useState<boolean>(false);
+    const [loginButtonDisabled, setLoginButtonDisabled] = useState<boolean>(true);
 
     useEffect(() => {
         if (router.query) {
@@ -44,7 +45,16 @@ function OnBoardingType() {
         } else {
             setShowPage(true);
         }
-    }, [dispatch]);
+    }, []);
+
+    useEffect(() => {
+        let user = LocalStorageService.updateUser('get');
+        if (user && user.token) {
+            dispatch(authRefreshToken({}));
+        } else {
+            setLoginButtonDisabled(false)
+        }
+    }, [dispatch])
 
     useEffect(() => {
         if (userDetails && userDetails.hasOwnProperty('onboarded')) {
@@ -76,6 +86,19 @@ function OnBoardingType() {
         }
     }, [googleAuthRedirectionLink])
 
+    useEffect(() => {
+        if (refreshToken === 'success') {
+            Router.push('/inbox');
+        }
+        if (refreshToken === 'error') {
+            setLoginButtonDisabled(false)
+            authService.setUser(null);
+            accountService.setSelectedAccount(null);
+            organizationService.setSelectedOrganization(null);
+            LocalStorageService.clearStorage();
+        }
+    }, [refreshToken])
+
     if (!showPage) {
         return null;
     }
@@ -87,7 +110,7 @@ function OnBoardingType() {
                     <Heading as='h4' size='md' fontWeight={700} color={'#0A101D'}
                              mb={4}>{router.query.type === 'login' ? 'Log into' : 'Create'} your account</Heading>
                     <Button onClick={() => oauthWithGoogle()} backgroundColor={'#2A6FFF'} w={'fit-content'}
-                            isDisabled={false} _hover={{_disabled: {background: '#2A6FFF'}}}
+                            isDisabled={loginButtonDisabled} _hover={{_disabled: {background: '#2A6FFF'}}}
                             borderRadius={'2px'} height={'46px'} border={'1px solid #2A6FFF'} mb={3} className={styles.continueButton}
                             padding={'0 12px 0 0'} justifyContent={'flex-start'} fontWeight={'500'} gap={3} color={'#FFFFFF'}>
                         <Flex backgroundColor={'#FFFFFF'} padding={'13px'}>
