@@ -26,6 +26,7 @@ export interface Thread {
     snooze?: string
     attachments?: MessageAttachments[]
     mute?: boolean
+    latestSentMessage?: Message
 }
 
 export interface ThreadsRequestBody {

@@ -22,7 +22,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
         updateSuccess,
         error,
         isThreadFocused,
-        selectedThread
+        selectedThread, tabValue
     } = useSelector((state: StateType) => state.threads);
     const [isSelected, setIsSelected] = useState<boolean>(false);
     const [isClicked, setIsClicked] = useState<boolean>(false);
@@ -129,6 +129,29 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
         dispatch(getAttachmentDownloadUrl({body: {id: item.messageId, attachment: item.id}}));
     }
 
+    function buildSentNameAndTooltip() {
+        let to: any = props?.thread?.latestSentMessage?.to || [];
+        let othersText = 'Me to ';
+        if (to.length > 0) {
+            othersText += to[0].name || to[0].email;
+        }
+        if (to.length > 1) {
+            othersText += ` and ${to.length - 1} others`
+        }
+        return (
+            <Tooltip label={<>
+                <Flex direction={'column'}>
+                    Sent to:
+                    {to.map((t: any, index: number) => (
+                        <Text key={index}>{t.name || t.email}</Text>
+                    ))}
+                </Flex>
+            </>} placement={'bottom'}>
+                {othersText}
+            </Tooltip>
+        )
+    }
+
     return (
         <>
             <Box
@@ -145,9 +168,10 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
             >
                 <Flex align={"center"} justify={'space-between'} gap={2}>
                     <Flex align={"center"} className={styles.senderDetails} gap={1}>
+                        {tabValue === 'SENT' ? buildSentNameAndTooltip() :
                         <Tooltip label={props?.thread?.from?.email} placement={'bottom'}>
                             {props?.thread?.from?.name || props?.thread?.from?.email}
-                        </Tooltip>
+                        </Tooltip>}
                     </Flex>
                     {(props?.thread?.projects || []).length > 0 && (
                         <Tooltip label={

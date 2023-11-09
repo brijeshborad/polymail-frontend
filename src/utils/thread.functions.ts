@@ -18,6 +18,7 @@ export function extractAndMapThreadAndMessagesBody(threads: Thread[], payload: a
             }
         }))
         rawThread.attachments = [...allAttachments];
+        rawThread.latestSentMessage = rawThread.messages.findLast((item: Message) => item.mailboxes?.includes('SENT'));
         return rawThread;
     })
     if (payload.from) {
