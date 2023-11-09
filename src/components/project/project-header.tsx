@@ -118,6 +118,17 @@ export function ProjectHeader() {
         onDeleteModalOpen()
     }
 
+    const leaveProject = () => {
+        if (projectData) {
+            setActionType('Are you sure you want to leave this project?')
+            let myAccount = projectData.accounts.find((item: TeamMember) => item.userId === selectedAccount?.userId);
+            if (myAccount) {
+                setSelectedMember(myAccount)
+                onDeleteModalOpen()
+            }
+        }
+    }
+
     const capitalizeFLetter = (value: string) => {
         return value[0].toUpperCase() + value.slice(1)
     }
@@ -157,8 +168,8 @@ export function ProjectHeader() {
                         afterSuccessAction: () => {
                             if (selectedAccount && selectedMember.userId === selectedAccount.userId) {
                                 let projectData = (projects || []).filter((item: Project) => item.id !== project.id);
-                                dispatch(updateProjectState({projects: projectData}))
-                                Router.push(`/projects`);
+                                projectService.setProjectState({projects: projectData})
+                                Router.push(`/inbox`);
                             }
                         }
                     }));
@@ -176,14 +187,12 @@ export function ProjectHeader() {
                                 title: 'Success',
                                 type: 'success'
                             }
-                        },
-                        afterSuccessAction: () => {
-                            let filteredProjects = (projects || []).filter((item: Project) => item.id !== projectData.id);
-                            projectService.setProjectState({projects: filteredProjects});
-                            Router.push(`/inbox`);
                         }
                     }
                 ))
+                let filteredProjects = (projects || []).filter((item: Project) => item.id !== projectData.id);
+                projectService.setProjectState({projects: filteredProjects});
+                Router.push(`/inbox`);
             }
         }
         onDeleteModalClose()
@@ -624,7 +633,7 @@ export function ProjectHeader() {
                             <MenuItem onClick={() => commonService.toggleEditProjectModel(true, false, project)}>Edit
                                 project</MenuItem>
                             <MenuItem
-                                onClick={() => openModel(selectedAccount, 'Are you sure you want to leave this project?')}>Leave
+                                onClick={() => leaveProject()}>Leave
                                 project</MenuItem>
 
                             {(projectData?.projectMeta?.userId === selectedAccount?.userId) &&
