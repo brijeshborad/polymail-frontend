@@ -63,7 +63,7 @@ class CommonService extends BaseService {
                 onlineMembers['projects'][newProjectId].push({
                     userId: userDetails.id,
                     avatar: (profilePicture?.url || ''),
-                    color: this.getUserColor(userDetails.id!),
+                    color: userDetails?.color || this.getUserColor(userDetails.id!),
                     name: (userDetails.firstName || '') + ' ' + (userDetails.lastName || ' '),
                     isOnline: true,
                     lastOnlineStatusCheck: dayjs().format('DD/MM/YYYY hh:mm:ss a'),
@@ -124,7 +124,7 @@ class CommonService extends BaseService {
                 onlineMembers['threads'][newThreadId].push({
                     userId: userDetails.id,
                     avatar: (profilePicture?.url || ''),
-                    color: this.getUserColor(userDetails.id!),
+                    color: userDetails?.color || this.getUserColor(userDetails.id!),
                     name: (userDetails.firstName || '') + ' ' + (userDetails.lastName || ' '),
                     isOnline: true,
                     lastOnlineStatusCheck: dayjs().format('DD/MM/YYYY hh:mm:ss a'),
@@ -195,7 +195,7 @@ class CommonService extends BaseService {
                     isOnline: true,
                     lastOnlineStatusCheck: dayjs().format('DD/MM/YYYY hh:mm:ss a'),
                     avatar: newMessage.data.avatar,
-                    color: this.getUserColor(newMessage.data.userId),
+                    color: newMessage.data.color || this.getUserColor(newMessage.data.userId),
                     name: newMessage.data.name,
                     forceWait: 0
                 })
