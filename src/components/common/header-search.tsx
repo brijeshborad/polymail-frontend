@@ -25,6 +25,7 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import {Contacts, Project} from "@/models";
 import {matchSorter} from "match-sorter";
+import {debounce} from "@/utils/common.functions";
 
 dayjs.extend(customParseFormat)
 
@@ -33,6 +34,7 @@ export function HeaderSearch() {
     const {userDetails} = useSelector((state: StateType) => state.users);
     const {project, projects} = useSelector((state: StateType) => state.projects);
     const [showCloseIcon, setShowCloseIcon] = useState(false);
+    const [searchPopup, showSearchPopup] = useState(false);
     const [searchString, setSearchString] = useState<string>('');
     const searchInputRef = useRef<HTMLInputElement | null>(null);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
@@ -75,7 +77,9 @@ export function HeaderSearch() {
             if (router.query.project && project) {
                 setBadges([{type: 'project', value: project}]);
             }
+            setShowCloseIcon(true);
         } else {
+            setShowCloseIcon(false);
             setIsProjectRoute(false);
             setBadges([]);
         }
@@ -104,6 +108,7 @@ export function HeaderSearch() {
         }
         socketService.cancelThreadSearch(userDetails?.id);
         setShowCloseIcon(false);
+        showSearchPopup(false);
         if (selectedAccount && selectedAccount.id && callAPI) {
             setBadges([]);
             threadService.cancelThreadSearch(true);
@@ -150,13 +155,11 @@ export function HeaderSearch() {
     const handleFocus = () => {
         keyNavigationService.toggleKeyNavigation(false);
         setShowCloseIcon(true);
+        showSearchPopup(true)
     }
 
     const handleBlur = () => {
         keyNavigationService.toggleKeyNavigation(true);
-        setTimeout(() => {
-            // setShowCloseIcon(false);
-        }, 300)
     };
 
     function filterContacts(value: string) {
@@ -183,13 +186,17 @@ export function HeaderSearch() {
         document.addEventListener('click', function (e) {
             if (clickBox && e.target && clickBox.contains(e.target as Node)) {
                 setShowCloseIcon(true);
+                showSearchPopup(true)
             } else {
-                setTimeout(() => {
-                    setShowCloseIcon(false);
+                debounce(() => {
+                    showSearchPopup(false);
+                    if (!searchString && badges.length <= 0) {
+                        setShowCloseIcon(false);
+                    }
                 }, 100)
             }
         });
-    }, [])
+    }, [badges.length, searchString])
 
     function getSearchPlaceHolder() {
         if (isProjectRoute) {
@@ -232,7 +239,7 @@ export function HeaderSearch() {
 
     return (
         <div id="clickBox"
-             className={`${styles.headerSearch} ${showCloseIcon && !isProjectRoute ? styles.headerSearchPopup : ''}`}
+             className={`${styles.headerSearch} ${searchPopup && !isProjectRoute ? styles.headerSearchPopup : ''}`}
              onFocus={() => handleFocus()}
              onBlur={() => handleBlur()}>
             <InputGroup className={styles.inputGroup}>
@@ -279,7 +286,7 @@ export function HeaderSearch() {
                 </Flex>
             </InputGroup>
 
-            {showCloseIcon && !isProjectRoute && <div className={styles.headerSearchPopupBox}>
+            {searchPopup && !isProjectRoute && <div className={styles.headerSearchPopupBox}>
                 <Flex gap={2} align={'flex-start'} pb={2} className={styles.headerButton} direction={'column'}>
                     <Flex direction={'column'} width={'100%'}>
                         <Button width={'fit-content'} className={styles.headerSearchPopupBoxButton} variant='outline'
