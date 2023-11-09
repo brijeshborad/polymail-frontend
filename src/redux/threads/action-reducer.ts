@@ -35,7 +35,7 @@ const threadsSlice = createSlice({
             if (isThreadSearched) {
                 return {...state};
             }
-            threads = extractAndMapThreadAndMessagesBody(threads, fullPayload.body.pagination, currentThreads);
+            threads = extractAndMapThreadAndMessagesBody(threads, fullPayload.body.pagination, currentThreads, fullPayload.body.mailbox);
             performSuccessActions(fullPayload, threads);
             return {...state, threads, isLoading: false, success: false}
         },
