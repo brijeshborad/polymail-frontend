@@ -8,6 +8,7 @@ import {StateType} from "@/types";
 import useWebSocket from "react-use-websocket";
 import {getSummary} from "@/redux/common-apis/action-reducer";
 import {commonService, socketService} from "@/services";
+import {useUrlChangeHook} from "@/hooks/use-url-change.hook";
 
 // Multiple instances of the hook can exist simultaneously.
 // This stores the timestamp of the last heartbeat for a given socket url,
@@ -27,6 +28,7 @@ export function CommonApiComponents() {
     const {userDetails} = useSelector((state: StateType) => state.users);
     // Stores the heartbeat interval.
     const heartbeatIntervalRef = useRef<number>();
+    useUrlChangeHook();
 
     const {lastMessage, sendJsonMessage, readyState} = useWebSocket(socketUrl, {
         share: true,
