@@ -27,6 +27,7 @@ export interface Thread {
     attachments?: MessageAttachments[]
     mute?: boolean
     latestSentMessage?: Message
+    tab?: string
 }
 
 export interface ThreadsRequestBody {

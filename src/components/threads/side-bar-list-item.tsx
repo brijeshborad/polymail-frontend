@@ -22,7 +22,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
         updateSuccess,
         error,
         isThreadFocused,
-        selectedThread, tabValue
+        selectedThread
     } = useSelector((state: StateType) => state.threads);
     const [isSelected, setIsSelected] = useState<boolean>(false);
     const [isClicked, setIsClicked] = useState<boolean>(false);
@@ -168,7 +168,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
             >
                 <Flex align={"center"} justify={'space-between'} gap={2}>
                     <Flex align={"center"} className={styles.senderDetails} gap={1}>
-                        {tabValue === 'SENT' ? buildSentNameAndTooltip() :
+                        {props.thread?.tab === 'SENT' ? buildSentNameAndTooltip() :
                         <Tooltip label={props?.thread?.from?.email} placement={'bottom'}>
                             {props?.thread?.from?.name || props?.thread?.from?.email}
                         </Tooltip>}

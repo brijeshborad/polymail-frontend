@@ -1,6 +1,6 @@
 import {ContentRoot, Message, MessageAttachments, Thread} from "@/models";
 
-export function extractAndMapThreadAndMessagesBody(threads: Thread[], payload: any, currentThreads: Thread[] | undefined) {
+export function extractAndMapThreadAndMessagesBody(threads: Thread[], payload: any, currentThreads: Thread[] | undefined, currentTab: string) {
     let rawThreads: Thread[] = [...(threads || [])];
     // rawThreads.sort((a: Thread, b: Thread) => (new Date(b.sortDate as string).valueOf() - new Date(a.sortDate as string).valueOf()));
     rawThreads = rawThreads.map((thread: Thread) => {
@@ -18,6 +18,7 @@ export function extractAndMapThreadAndMessagesBody(threads: Thread[], payload: a
             }
         }))
         rawThread.attachments = [...allAttachments];
+        rawThread.tab = currentTab;
         rawThread.latestSentMessage = rawThread.messages.findLast((item: Message) => item.mailboxes?.includes('SENT'));
         return rawThread;
     })
