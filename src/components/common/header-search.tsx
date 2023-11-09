@@ -86,6 +86,14 @@ export function HeaderSearch() {
     }, [router.pathname, router.query, project]);
 
     useEffect(() => {
+        if (searchString || badges.length > 0) {
+            setShowCloseIcon(true)
+        } else {
+            setShowCloseIcon(false)
+        }
+    }, [searchString, badges])
+
+    useEffect(() => {
         if (searchString) {
             if (isProjectRoute) {
                 projectService.setProjectSearchString(searchString);
