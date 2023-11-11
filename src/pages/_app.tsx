@@ -16,6 +16,7 @@ import { HEADER_NOT_ALLOWED_PATHS } from '@/utils/constants';
 import {CommonApiComponents} from "@/components/common";
 import GlobalEvents from '@/components/common/global-events';
 import {setGlobalStore} from "@/utils/common.functions";
+import { HighlightInit } from '@highlight-run/next/client';
 
 const { Button, Input, Menu, Checkbox, Heading, Divider, Alert, Modal, Popover, Tooltip, Textarea, Spinner, List, Select, Table, Progress, Skeleton, Radio, Drawer, Badge } =
     chakraTheme.components;
@@ -57,7 +58,18 @@ export default function App({ Component, ...rest }: AppProps) {
     const { pageProps } = props;
     const router = useRouter();
     return (
+
         <Provider store={store}>
+            <HighlightInit
+				projectId={'kgr5qxne'}
+				serviceName="polymail-teams"
+				tracingOrigins
+				networkRecording={{
+					enabled: true,
+					recordHeadersAndBody: true,
+					urlBlocklist: [],
+				}}
+		    />
             <ChakraBaseProvider theme={theme}>
                 <Head>
                     <title>Polymail</title>
