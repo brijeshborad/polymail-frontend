@@ -116,7 +116,7 @@ function OnBoardingType() {
                         <Flex backgroundColor={'#FFFFFF'} padding={'13px'}>
                             <Image src={'/image/google-logo.png'} alt={''} width={'18px'} height={'18px'}/>
                         </Flex>
-                        {router.query.type === 'login' ? 'Sign in' : 'Sign Up'} with Google
+                        {router.query.type === 'login' ? 'Sign in' : 'Sign up'} with Google
                     </Button>
                     <Text fontSize='13px' letterSpacing={'-0.13px'}
                           color={'#6B7280'}>{router.query.type === 'login' ? 'If you don\'t have an account' : 'If you already have an account'}, {router.query.type === 'login' ? ' sign up ' : ' log in '}
