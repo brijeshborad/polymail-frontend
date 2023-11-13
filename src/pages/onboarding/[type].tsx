@@ -32,7 +32,21 @@ function OnBoardingType() {
             if (router.query.error) {
                 Router.replace(`/onboarding/${router.query.type}`, undefined, {shallow: true});
                 authService.setAuthState({error: {description: 'Invalid account'}});
-                Toaster({desc: 'Invalid account', title: 'User not found', type: 'error'});
+                
+                if (router.query.error === 'account_exists') {
+                  Toaster({
+                    type: 'error',
+                    title: 'An account with this email already exists', 
+                    desc: 'Try logging in or setting up a new account', 
+                  });
+                } else {
+                  Toaster({
+                    type: 'error',
+                    title: 'User not found', 
+                    desc: 'Invalid account', 
+                  });
+                }
+                
                 return;
             }
         }

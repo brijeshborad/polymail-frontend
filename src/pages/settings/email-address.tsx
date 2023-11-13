@@ -27,19 +27,18 @@ function EmailAddress() {
     const dispatch = useDispatch();
     const router = useRouter();
 
-
     useEffect(() => {
         if (router.query.error) {
             let errorMessage: { title: string; desc: string }
             if (router.query.error === 'account_exists') {
                 errorMessage = {
-                    desc: 'This account is already exist',
-                    title: 'Account already exist'
+                    title: 'An account with this email already exists',
+                    desc: 'This account already exists',
                 }
             } else {
                 errorMessage = {
+                  title: 'Invalid account',
                     desc: 'This account is invalid',
-                    title: 'Invalid account'
                 }
             }
             Toaster({
