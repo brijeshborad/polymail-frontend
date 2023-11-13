@@ -9,7 +9,7 @@ import {
 import styles from "@/styles/Inbox.module.css";
 import Image from "next/image";
 import {ChevronDownIcon, CloseIcon} from "@chakra-ui/icons";
-import React, {useCallback, useEffect, useRef, useState} from "react";
+import React, {WheelEvent, useCallback, useEffect, useRef, useState} from "react";
 import {clearDebounce, debounce, getProjectBanner, getSignatureBanner} from "@/utils/common.functions";
 import {DropZone} from "@/components/common";
 import {updatePartialMessage, discardDraft} from "@/redux/draft/action-reducer";
@@ -75,6 +75,8 @@ export function MessageReplyBox(props: MessageBoxType) {
     const [messageData, setMessageData] = useState<any>(null);
     const [replyType, setReplyType] = useState<string>('reply');
     const [reloadingEditor, setReloadingEditor] = useState<boolean>(false);
+    const [isOnTop, setIsOnTop] = useState(false)
+    const [deltaY, setDeltaY] = useState(Infinity)
 
     const editorRef = useRef<any>(null);
     const router = useRouter();
@@ -598,18 +600,28 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         setScheduledDate(date);
     }
 
-    const handleEditorScroll = useCallback(() => {
+    const handleEditorScroll = useCallback((watchScrollHeight=false) => {
         if (editorRef.current && editorRef.current.scrollTop > 0) {
             setExtraClassNames(prevState => !prevState.includes('show-shadow') ? prevState + ' show-shadow' : prevState);
         } else {
             setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
         }
-        // if (editorRef.current.scrollTop === 0) {
-        //     clearDebounce('EDITOR_SCROLL');
-        //     debounce(() => {
-        //         globalEventService.fireEvent({data: {body: null}, type: 'replybox.hide'});
-        //     }, 10, 'EDITOR_SCROLL')
-        // }
+
+        const size = editorRef.current.getBoundingClientRect()
+
+        if (watchScrollHeight && editorRef.current.scrollTop === 0 && editorRef.current.scrollHeight >= 325 && editorRef.current.scrollHeight > size.height) {
+          if(!isOnTop) {
+            clearDebounce('setIsOnTop')
+            debounce(() => {
+              setIsOnTop(true)
+              setDeltaY(0)
+            }, 500, 'setIsOnTop')
+          }
+        }
+
+        if(isOnTop && editorRef.current.scrollTop > 10) {
+          setIsOnTop(false)
+        }
 
         const container = editorRef.current;
         if (container) {
@@ -622,11 +634,25 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 setExtraClassNamesForBottom(prevState => prevState.replace('show-shadow-bottom', ''));
             }
         }
-    }, [])
+    }, [isOnTop])
 
     useEffect(() => {
         handleEditorScroll();
     }, [handleEditorScroll]);
+
+    useEffect(() => {
+      if(isOnTop && deltaY < 0 && showEditorToolbar) {
+        setShowEditorToolbar(false)
+        setDeltaY(100)
+        setIsOnTop(false)
+      }
+    }, [isOnTop, deltaY, showEditorToolbar])
+
+    useEffect(() => {
+      editorRef.current.addEventListener('wheel', (event: WheelEvent) => {
+        setDeltaY(event.deltaY)
+      })
+    }, [])
 
     useEffect(() => {
         if (incomingEvent === 'iframe.clicked') {
@@ -966,7 +992,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                             direction={'column'} position={"relative"} flex={1} overflow={'none'}>
                             <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} zIndex={6} ref={editorRef}
                                   overflowY={'auto'} className={`editor-bottom-shadow`}
-                                  onScroll={() => handleEditorScroll()}>
+                                  onScroll={() => handleEditorScroll(true)}>
                                 {/*onWheel={(event) => {*/}
                                 {/*    if (event.deltaX <= 0) {*/}
                                 {/*        handleEditorScroll()*/}
