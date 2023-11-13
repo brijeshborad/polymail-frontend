@@ -111,8 +111,12 @@
     text-decoration: underline;
 }
 
-.onBoardingPage .continueButton:hover {
-    background-color: #2A6FFF;
+.onBoardingPage .continueButton:hover:disabled {
+  opacity: 0.4 !important;
+  background-color: #1F2937 !important;
+}
+.onBoardingPage .continueButton:hover:enabled {
+    background-color: #2A6FFF !important;
 }
 
 .onBoardingPage .connectGoogleAccount:hover {
