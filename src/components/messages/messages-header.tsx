@@ -229,7 +229,7 @@ export function MessagesHeader() {
     }
     return (
         <>
-            <Flex gap={2} align={'center'} justify={'space-between'} padding={'16px 20px 12px'}
+            <Flex gap={2} align={'center'} justify={'space-between'} padding={'12px 20px'}
                   borderBottom={'1px solid #F3F4F6'}>
                 <Flex gap={1}>
                     <Heading as='h6' fontSize={'15px'} color={'#0A101D'} noOfLines={1}
