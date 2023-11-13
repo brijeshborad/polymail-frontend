@@ -809,7 +809,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 <Flex
                     maxHeight={'450px'} direction={'column'} backgroundColor={'#FFFFFF'} width={'100%'}
                     onBlur={() => handleBlur()}>
-                    <Flex borderRadius={8} border={'1px solid #F3F4F6'} direction={'column'} padding={4}>
+                    <Flex borderRadius={8} border={'1px solid #F3F4F6'} direction={'column'} paddingX={4} paddingY={2}>
                         {totalDraftMessages.length > 0 &&
                         <Flex align={'center'} justifyContent={'space-between'} pb={2}
                               borderBottom={'1px solid #F3F4F6'}>
@@ -844,7 +844,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                             </Button>}
                         </Flex>}
                         <Flex
-                            align={'center'} justify={'space-between'} mt={'5px'} gap={4} position={"relative"}
+                            align={'center'} justify={'space-between'} mt={totalDraftMessages.length > 0 ? '5px' : 0} gap={4} position={"relative"}
                             zIndex={isReplyDropdownOpen ? 8 : 6}>
                             <Flex align={'center'} gap={1}>
                                 <Menu isOpen={isReplyDropdownOpen} onClose={() => setIsReplyDropdownOpen(false)}>
