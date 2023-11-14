@@ -624,6 +624,7 @@ div:has(> .mailSendToaster) {
     padding-top: 16px;
     font-size: 13px;
     font-weight: 500;
+    word-break: break-all;
 }
 
 .tiptap:focus {

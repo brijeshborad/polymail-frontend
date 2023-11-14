@@ -494,7 +494,6 @@ export function MessageBox(props: any) {
                         <div className={styles.mailBodyContent}>
                             <iframe
                                 ref={ref => iframeRef.current[messageIndex] = ref}
-                                scrolling="no"
                                 onLoad={() => onIframeLoad(messageIndex)}
                                 height={iframeHeight[messageIndex] || '0px'}
                                 src={message.body as string}
