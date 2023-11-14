@@ -1078,16 +1078,18 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                             <Flex direction={'column'} className={styles.composeBox} width={'fit-content'}
                                   marginLeft={'auto'} mr={'6px'} boxShadow={'none'}>
                                 <Flex align={'center'} className={styles.replyButton} position={'relative'} zIndex={6}>
-                                    <Button
-                                        className={styles.replyTextDiscardButton}
-                                        outline={'none'} boxShadow={'none'} _focusVisible={{boxShadow: 'none'}}
-                                        fontSize={14} lineHeight={16} height={'38px'}
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            discardMessage(!!draft?.draftInfo?.discardedBy)
-                                        }}
-                                    > {draft?.draftInfo?.discardedBy ? 'Rescue' : 'Discard'} </Button>
+                                    {totalDraftMessages.length > 0 && (
+                                      <Button
+                                          className={styles.replyTextDiscardButton}
+                                          outline={'none'} boxShadow={'none'} _focusVisible={{boxShadow: 'none'}}
+                                          fontSize={14} lineHeight={16} height={'38px'}
+                                          onClick={(e) => {
+                                              e.preventDefault();
+                                              e.stopPropagation();
+                                              discardMessage(!!draft?.draftInfo?.discardedBy)
+                                          }}
+                                      > {draft?.draftInfo?.discardedBy ? 'Rescue' : 'Discard'} </Button>
+                                    )}
                                     <Flex className={styles.messageSendButton}>
                                         <Button
                                             isDisabled={showAttachmentLoader || (!draft?.id)}
