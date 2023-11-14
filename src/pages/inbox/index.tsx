@@ -25,7 +25,7 @@ function InboxPage() {
                     <GridItem w='100%'>
                         <ThreadsSideBar/>
                     </GridItem>
-                    <GridItem w='100%'>
+                    <GridItem w='100%' style={{ overflow: 'hidden'}}>
                         <Message/>
                     </GridItem>
                 </Grid>

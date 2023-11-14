@@ -75,8 +75,8 @@ export function MessageReplyBox(props: MessageBoxType) {
     const [messageData, setMessageData] = useState<any>(null);
     const [replyType, setReplyType] = useState<string>('reply');
     const [reloadingEditor, setReloadingEditor] = useState<boolean>(false);
-    const [isOnTop, setIsOnTop] = useState(false)
-    const [deltaY, setDeltaY] = useState(Infinity)
+    const [isOnTop, setIsOnTop] = useState(true)
+    const [deltaY, setDeltaY] = useState(0)
 
     const editorRef = useRef<any>(null);
     const router = useRouter();
@@ -577,6 +577,8 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
     const handleFocus = () => {
         setShowEditorToolbar(true);
+        setIsOnTop(true)
+        setDeltaY(0)
         globalEventService.fireEvent({data: {}, type: 'richtexteditor.focus'})
     }
 
