@@ -264,7 +264,7 @@ export function MessagesHeader() {
                                         e.stopPropagation();
                                         updateMailBox(MAILBOX_INBOX)
                                     }} className='inbox-button-icon'>
-                                        <InboxIcon opacity={true}/>
+                                        <InboxIcon />
                                     </button>
                                 </Tooltip>
                             )}
@@ -276,7 +276,7 @@ export function MessagesHeader() {
                                         updateMailBox(MAILBOX_ARCHIVE)
                                     }}
                                             className='archive-button-icon'>
-                                        <ArchiveIcon opacity={true}/>
+                                        <ArchiveIcon />
                                     </button>
                                 </Tooltip>
                             )}
@@ -287,14 +287,13 @@ export function MessagesHeader() {
                                         e.stopPropagation();
                                         updateMailBox(MAILBOX_TRASH)
                                     }} className='trash-button-icon'>
-                                        <TrashIcon opacity={true}/>
+                                        <TrashIcon />
                                     </button>
                                 </Tooltip>
                             )}
                             <Tooltip label='Snooze' placement='bottom'>
                                 <div>
                                     <MessageSchedule
-                                        iconOpacity={true}
                                         isSnooze={true}
                                         date={scheduledDate}
                                         onChange={handleSchedule}
@@ -320,7 +319,7 @@ export function MessagesHeader() {
                                             e.stopPropagation();
                                             updateMailBox(MAILBOX_UNREAD)
                                         }}><InboxOpenIcon
-                                        opacity={true}/> Mark {(selectedThread?.mailboxes || []).includes(MAILBOX_UNREAD) ? 'Read' : 'Unread'}
+                                        /> Mark {(selectedThread?.mailboxes || []).includes(MAILBOX_UNREAD) ? 'Read' : 'Unread'}
                                     </MenuItem>
                                     <MenuItem
                                         className={`starred-button-icon ${(selectedThread?.mailboxes || []).includes(MAILBOX_STARRED) ? 'active' : ''}`}
@@ -328,20 +327,20 @@ export function MessagesHeader() {
                                             e.preventDefault();
                                             e.stopPropagation();
                                             updateMailBox(MAILBOX_STARRED)
-                                        }}><StarIcon opacity={true}/> Add Star</MenuItem>
+                                        }}><StarIcon /> Add Star</MenuItem>
                                     <MenuItem
                                         onClick={(e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
                                             muteThread(!selectedThread?.mute)
-                                        }}>{!selectedThread?.mute ? <MuteIcon opacity={true}/> : <UnmuteIcon
-                                        opacity={true}/>} {!selectedThread?.mute ? 'Mute' : 'Unmute'}</MenuItem>
+                                        }}>{!selectedThread?.mute ? <MuteIcon /> : <UnmuteIcon
+                                        />} {!selectedThread?.mute ? 'Mute' : 'Unmute'}</MenuItem>
                                     {!(selectedThread?.mailboxes || []).includes(MAILBOX_SPAM) && <MenuItem
                                         onClick={(e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
                                             updateMailBox(MAILBOX_SPAM)
-                                        }}><SpamIcon opacity={true}/> Mark Spam</MenuItem>}
+                                        }}><SpamIcon /> Mark Spam</MenuItem>}
                                 </MenuList>
                             </Menu>
                         </div>

@@ -851,9 +851,12 @@ div:has(> .mailSendToaster) {
     stroke: #f7ff00;
 }
 
-/*.snooze-button-icon:hover svg {*/
-/*    stroke: #640064;*/
-/*}*/
+.snooze-button-icon svg {
+  stroke: rgba(0,0,0,0.5);
+}
+.snooze-button-icon:hover svg {
+  stroke: #000;
+}
 
 .snooze-button-icon.disable {
     opacity: 0.4;
@@ -1065,6 +1068,14 @@ div:has(> .mailSendToaster) {
     padding-left: 5px;
     margin-left: 5px;
     /*border-left: 1px solid #E2E8F0;*/
+}
+
+.header-right-icon button svg {
+  stroke: rgba(0,0,0,.5);
+}
+
+.header-right-icon button:hover svg {
+  stroke: black;
 }
 
 .text-tooltip {
