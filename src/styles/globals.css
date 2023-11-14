@@ -207,7 +207,8 @@ a {
 }
 
 .drop-down-list button:hover {
-    background-color: rgba(8, 22, 47, 0.05);
+    color: #000;
+    background-color: --alias-bg-subtle;
 }
 
 .drop-down-list .dropdown-searchbar {
