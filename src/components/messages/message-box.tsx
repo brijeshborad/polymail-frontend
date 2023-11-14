@@ -4,6 +4,7 @@ import {Time} from "@/components/common";
 import {MenuIcon} from "@/icons";
 import React, {useEffect, useState} from "react";
 import {
+  getAllMessages,
     getAttachmentDownloadUrl,
     updateMessage
 } from "@/redux/messages/action-reducer";
@@ -15,7 +16,7 @@ import {EyeSlashedIcon} from "@/icons/eye-slashed.icon";
 import Tooltip from "../common/Tooltip";
 import {AttachmentIcon} from "@chakra-ui/icons";
 import {FileIcon, defaultStyles, DefaultExtensionType} from 'react-file-icon';
-import {globalEventService, messageService, threadService} from "@/services";
+import {globalEventService, messageService, socketService, threadService} from "@/services";
 import LinkPreview from "../common/link-preview";
 import {LinkPreviewProps} from "@/types/props-types/link-preview.types";
 import Image from "next/image";
@@ -24,6 +25,7 @@ import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
 export function MessageBox(props: any) {
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const {success: draftSuccess, updatedDraft} = useSelector((state: StateType) => state.draft);
+    const {newMessage} = useSelector((state: StateType) => state.socket);
     const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean[]>([]);
     const iframeRef = React.useRef<any>([]);
     const [iframeHeight, setIframeHeight] = useState<{ [key: number]: string }>({});
@@ -211,6 +213,15 @@ export function MessageBox(props: any) {
             messageService.setSelectedMessage(targetMessage)
         }
     }, [index, messages])
+
+    useEffect(() => {
+      if (newMessage) {
+          socketService.updateSocketMessage(null);
+          if(newMessage.name === 'DraftCreated' || newMessage.name === 'DraftUpdated') {
+            dispatch(getAllMessages)
+          }
+      }
+  }, [newMessage])
 
     function showExtensionImages(item: string | undefined) {
         if (item) {
