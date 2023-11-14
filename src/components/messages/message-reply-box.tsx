@@ -87,6 +87,8 @@ export function MessageReplyBox(props: MessageBoxType) {
     const [totalMessages, setTotalMessages] = useState<MessageDraft[] | null>(null);
     const [waitForDraft, setWaitForDraft] = useState<boolean>(false);
 
+    const isDraftCreatedByCurrentUser = draft?.accountId === selectedAccount?.id
+
     useEffect(() => {
         if (draftSuccess) {
             if (updatedDraft) {
@@ -1078,7 +1080,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                             <Flex direction={'column'} className={styles.composeBox} width={'fit-content'}
                                   marginLeft={'auto'} mr={'6px'} boxShadow={'none'}>
                                 <Flex align={'center'} className={styles.replyButton} position={'relative'} zIndex={6}>
-                                    {totalDraftMessages.length > 0 && (
+                                    {isDraftCreatedByCurrentUser && (
                                       <Button
                                           className={styles.replyTextDiscardButton}
                                           outline={'none'} boxShadow={'none'} _focusVisible={{boxShadow: 'none'}}

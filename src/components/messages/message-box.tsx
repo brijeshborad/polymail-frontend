@@ -26,7 +26,7 @@ export function MessageBox(props: any) {
     const {success: draftSuccess, updatedDraft} = useSelector((state: StateType) => state.draft);
     const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean[]>([]);
     const iframeRef = React.useRef<any>([]);
-    const [iframeHeight, setIframeHeight] = useState<{ [key: string | number]: string }>({});
+    const [iframeHeight, setIframeHeight] = useState<{ [key: number]: string }>({});
     const dispatch = useDispatch();
     const {
         messages
@@ -133,7 +133,7 @@ export function MessageBox(props: any) {
 
             setIframeHeight(prevState => ({
                 ...prevState,
-                [index]: (iframeRef.current[index].contentWindow.document.body.scrollHeight + 20) + "px"
+                [index]: (iframeRef.current[index].contentWindow.document.body.scrollHeight + 20)
             }));
 
             const allLinks = iframeRef.current[index].contentDocument.getElementsByTagName("a")
@@ -491,7 +491,7 @@ export function MessageBox(props: any) {
                         </Flex>
 
                         {message.body &&
-                        <div className={styles.mailBodyContent}>
+                        <div className={styles.mailBodyContent} style={{ height: iframeRef.current[messageIndex] ? parseFloat(iframeHeight[messageIndex]) - 32 : 'auto' }}>
                             <iframe
                                 ref={ref => iframeRef.current[messageIndex] = ref}
                                 onLoad={() => onIframeLoad(messageIndex)}
