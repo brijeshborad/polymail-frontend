@@ -24,6 +24,10 @@
     cursor: pointer;
 }
 
+.emailTabs > div svg {
+  stroke: rgba(0,0,0,.5);
+}
+
 .emailTabs > div:hover {
     color: #000000;
 }
@@ -122,6 +126,10 @@
 
 .tabListDropDown button {
     gap: 8px;
+}
+
+.tabListDropDown button:hover svg {
+  stroke: #000;
 }
 
 .tabListDropDown .tabListSnoozeButton {
