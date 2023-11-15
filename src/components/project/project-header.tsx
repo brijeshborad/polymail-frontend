@@ -147,8 +147,8 @@ export function ProjectHeader() {
                 dispatch(deleteMemberShipFromProject({
                     body: {id: selectedMember.id}, toaster: {
                         success: {
-                            desc: 'Membership is removed form project successfully',
-                            title: 'Remove membership form project',
+                            desc: project?.emoji + " " + project?.name,
+                            title: 'Removed ' + selectedMember.name,
                             type: 'success'
                         }
                     }
@@ -159,8 +159,8 @@ export function ProjectHeader() {
                     dispatch(deleteMemberFromProject({
                         body: {id: project.id, accountId: selectedMember.id}, toaster: {
                             success: {
-                                desc: 'Member is removed form project successfully',
-                                title: 'Remove member form project',
+                                desc: project?.emoji + " " + project?.name,
+                                title: 'Removed ' + selectedMember.name + ' from project',
                                 type: 'success'
                             }
                         },
@@ -175,15 +175,15 @@ export function ProjectHeader() {
                 }
             }
         } else {
-            if (projectData && projectData.id) {
+            if (project && project.id) {
                 dispatch(removeProject({
                         body: {
-                            projectId: projectData.id
+                            projectId: project.id
                         },
                         toaster: {
                             success: {
-                                desc: 'Project removed successfully',
-                                title: 'Success',
+                                desc: 'Project has been deleted',
+                                title: project.emoji + " " + project.name,
                                 type: 'success'
                             }
                         }

@@ -46,7 +46,6 @@ import {
 } from "@/services";
 import Tooltip from "../common/Tooltip";
 import {createDraft} from "@/redux/draft/action-reducer";
-import {clearDebounce, debounce} from "@/utils/common.functions";
 import {useRouter} from "next/router";
 import {UrlManager} from "@/components/threads/url-manager";
 import dayjs from "dayjs";
@@ -78,7 +77,6 @@ export function ThreadsSideBar() {
     const dispatch = useDispatch();
     const {isComposing} = useSelector((state: StateType) => state.commonApis);
     const [scheduledDate, setScheduledDate] = useState<string | undefined>();
-    const [isMoreClicked, setIsMoreClicked] = useState(false)
     const router = useRouter();
 
     useEffect(() => {
@@ -323,7 +321,7 @@ export function ThreadsSideBar() {
                                 className={`${tab === MAILBOX_SNOOZED ? styles.active : ''}`}
                                 onClick={() => changeEmailTabs(MAILBOX_SNOOZED)}
                             >
-                                <TimeSnoozeIcon opacity={true}/>
+                                <TimeSnoozeIcon />
                                 <span className={styles.mailboxText}>Snoozed</span>
                             </div>
                         </Tooltip>
@@ -403,12 +401,10 @@ export function ThreadsSideBar() {
                         isOpen={isMoreDropdownOpen}
                         onClose={() => {
                             setIsMoreDropdownOpen(false)
-                            setIsMoreClicked(false)
                         }}>
                         <MenuButton
                             onClick={() => {
                                 setIsMoreDropdownOpen(!isMoreDropdownOpen)
-                                setIsMoreClicked(true)
                             }}
                             className={styles.tabListMoreButton} minWidth={'80px'}
                             borderLeft={'1px solid #D1D5DB'}
@@ -416,35 +412,11 @@ export function ThreadsSideBar() {
                             fontSize={'13px'} color={'#6B7280'} as={Button} marginLeft={1}
                             rightIcon={<TriangleDownIcon/>}
                             _focus={{boxShadow: "none"}}
-                            onMouseEnter={() => {
-                                clearDebounce('MORE_MENU');
-                                setIsMoreDropdownOpen(true)
-                            }}
-                            onMouseLeave={() => {
-                                debounce(() => {
-                                    if (!isMoreClicked) {
-                                        setIsMoreDropdownOpen(false)
-                                        setIsMoreClicked(false)
-                                    }
-                                }, 100, 'MORE_MENU')
-                            }}
                         >
                             More
                         </MenuButton>
                         <MenuList
                             className={`${styles.tabListDropDown} drop-down-list`}
-                            onMouseEnter={() => {
-                                clearDebounce('MORE_MENU');
-                                setIsMoreDropdownOpen(true)
-                            }}
-                            onMouseLeave={() => {
-                                debounce(() => {
-                                    if (!isMoreClicked) {
-                                        setIsMoreDropdownOpen(false)
-                                        setIsMoreClicked(false)
-                                    }
-                                }, 100, 'MORE_MENU')
-                            }}
                         >
                             {tab !== MAILBOX_SNOOZED &&
                             <MenuItem
@@ -459,7 +431,7 @@ export function ThreadsSideBar() {
                             <MenuItem onClick={() => changeEmailTabs(MAILBOX_DRAFT)}><DraftIcon/> Draft</MenuItem>
                             }
                             {tab !== MAILBOX_SPAM &&
-                            <MenuItem onClick={() => changeEmailTabs(MAILBOX_SPAM)}><SpamIcon opacity={true}/> Spam</MenuItem>
+                            <MenuItem onClick={() => changeEmailTabs(MAILBOX_SPAM)}><SpamIcon/> Spam</MenuItem>
                             }
                             {tab !== MAILBOX_TRASH &&
                             <MenuItem
@@ -467,7 +439,7 @@ export function ThreadsSideBar() {
                             }
                             {tab !== MAILBOX_ARCHIVE &&
                             <MenuItem
-                                onClick={() => changeEmailTabs(MAILBOX_ARCHIVE)}><ArchiveIcon opacity={true}/> Archive</MenuItem>
+                                onClick={() => changeEmailTabs(MAILBOX_ARCHIVE)}><ArchiveIcon /> Archive</MenuItem>
                             }
                         </MenuList>
                     </Menu>

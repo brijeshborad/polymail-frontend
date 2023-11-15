@@ -1,38 +1,19 @@
 :root {
     --max-width: 1100px;
     --border-radius: 12px;
-    --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono',
-    'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro',
-    'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
+    --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono', 'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro', 'Fira Mono', 'Droid Sans Mono',
+        'Courier New', monospace;
 
     --foreground-rgb: 0, 0, 0;
     --background-start-rgb: 214, 219, 220;
     --background-end-rgb: 255, 255, 255;
 
-    --primary-glow: conic-gradient(
-            from 180deg at 50% 50%,
-            #16abff33 0deg,
-            #0885ff33 55deg,
-            #54d6ff33 120deg,
-            #0071ff33 160deg,
-            transparent 360deg
-    );
-    --secondary-glow: radial-gradient(
-            rgba(255, 255, 255, 1),
-            rgba(255, 255, 255, 0)
-    );
-    --alias-bg-subtle: #F3F4F6;
+    --primary-glow: conic-gradient(from 180deg at 50% 50%, #16abff33 0deg, #0885ff33 55deg, #54d6ff33 120deg, #0071ff33 160deg, transparent 360deg);
+    --secondary-glow: radial-gradient(rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+    --alias-bg-subtle: #f3f4f6;
     --tile-start-rgb: 239, 245, 249;
     --tile-end-rgb: 228, 232, 233;
-    --tile-border: conic-gradient(
-            #00000080,
-            #00000040,
-            #00000030,
-            #00000020,
-            #00000010,
-            #00000010,
-            #00000080
-    );
+    --tile-border: conic-gradient(#00000080, #00000040, #00000030, #00000020, #00000010, #00000010, #00000080);
 
     --callout-rgb: 238, 240, 241;
     --callout-border-rgb: 172, 175, 176;
@@ -47,24 +28,11 @@
         --background-end-rgb: 0, 0, 0;
 
         --primary-glow: radial-gradient(rgba(1, 65, 255, 0.4), rgba(1, 65, 255, 0));
-        --secondary-glow: linear-gradient(
-                to bottom right,
-                rgba(1, 65, 255, 0),
-                rgba(1, 65, 255, 0),
-                rgba(1, 65, 255, 0.3)
-        );
+        --secondary-glow: linear-gradient(to bottom right, rgba(1, 65, 255, 0), rgba(1, 65, 255, 0), rgba(1, 65, 255, 0.3));
 
         --tile-start-rgb: 2, 13, 46;
         --tile-end-rgb: 2, 5, 19;
-        --tile-border: conic-gradient(
-                #ffffff80,
-                #ffffff40,
-                #ffffff30,
-                #ffffff20,
-                #ffffff10,
-                #ffffff10,
-                #ffffff80
-        );
+        --tile-border: conic-gradient(#ffffff80, #ffffff40, #ffffff30, #ffffff20, #ffffff10, #ffffff10, #ffffff80);
 
         --callout-rgb: 20, 20, 20;
         --callout-border-rgb: 108, 108, 108;
@@ -88,7 +56,7 @@ body {
 
 body {
     color: rgb(var(--foreground-rgb));
-    background: #FCFCFD !important;
+    background: #fcfcfd !important;
 }
 
 a {
@@ -109,7 +77,6 @@ a {
         color-scheme: dark;
     }
 }
-
 
 ::-webkit-scrollbar {
     width: 3px;
@@ -146,7 +113,7 @@ a {
 
 .default-editor-css {
     font-size: 13px;
-    color: #0A101D;
+    color: #0a101d;
     font-weight: 500;
 }
 
@@ -188,10 +155,9 @@ a {
     content: '';
     width: 100%;
     height: 72px;
-    background: linear-gradient(180deg, #FFF 0%, rgba(255, 255, 255, 0.00) 100%);
+    background: linear-gradient(180deg, #fff 0%, rgba(255, 255, 255, 0) 100%);
     z-index: 5;
 }
-
 
 .rdw-editor-wrapper .rdw-editor-toolbar .rdw-emoji-wrapper {
     border-left: 1px solid rgba(8, 22, 47, 0.1);
@@ -209,17 +175,16 @@ a {
     padding: 0 !important;
     box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.08) !important;
     border-radius: 16px !important;
-    border: 1px solid #E5E7EB;
+    border: 1px solid #e5e7eb;
     overflow: auto;
 }
-
 
 .drop-down-list.reply-dropdown {
     min-width: 135px;
 }
 
 .drop-down-list .delete-button {
-    color: #F44B16;
+    color: #f44b16;
 }
 
 .drop-down-list button {
@@ -242,7 +207,8 @@ a {
 }
 
 .drop-down-list button:hover {
-    background-color: rgba(8, 22, 47, 0.05);
+    color: #000;
+    background-color: --alias-bg-subtle;
 }
 
 .drop-down-list .dropdown-searchbar {
@@ -250,19 +216,19 @@ a {
     margin: 0 auto;
     padding: 12px 0;
     position: relative;
-    border-bottom: 1px solid #F3F4F6;
+    border-bottom: 1px solid #f3f4f6;
 }
 
 .drop-down-list .dropdown-searchbar svg {
     width: 15px;
     height: 15px;
-    color: #6B7280;
+    color: #6b7280;
 }
 
 .drop-down-list .dropdown-searchbar input {
     border-radius: 50px;
     border: 0;
-    background-color: #F3F4F6;
+    background-color: #f3f4f6;
     font-size: 14px;
     font-weight: 500;
     padding: 3px 15px 3px 30px;
@@ -270,7 +236,7 @@ a {
 }
 
 .drop-down-list .dropdown-searchbar input::placeholder {
-    color: #9CA3AF;
+    color: #9ca3af;
 }
 
 .rdw-editor-wrapper .rdw-editor-main {
@@ -316,9 +282,9 @@ div:has(> .mailSendToaster) {
     height: 24px;
     border-radius: 50%;
     overflow: hidden;
-    background-color: #EBF2FF;
-    border: 1px solid #FFFFFF;
-    color: #FFFFFF;
+    background-color: #ebf2ff;
+    border: 1px solid #ffffff;
+    color: #ffffff;
 }
 
 .member-images.subheader-images .member-photo {
@@ -343,12 +309,11 @@ div:has(> .mailSendToaster) {
     font-size: 12px;
 }
 
-
 .dot {
     width: 3px;
     height: 3px;
     border-radius: 4px;
-    background-color: #0A101D;
+    background-color: #0a101d;
     display: inline-block;
     margin-bottom: 3px;
 }
@@ -382,25 +347,25 @@ div:has(> .mailSendToaster) {
 }
 
 .confirm-modal .footer-button.remove-button {
-    background-color: #FF5E2C;
-    color: #FFFFFF;
-    border-color: #FF5E2C;
+    background-color: #ff5e2c;
+    color: #ffffff;
+    border-color: #ff5e2c;
 }
 
 .confirm-modal .footer-button.confirm-button {
-    background-color: #1F2937;
-    color: #FFFFFF;
-    border-color: #1F2937;
+    background-color: #1f2937;
+    color: #ffffff;
+    border-color: #1f2937;
 }
 
 .confirm-modal .footer-button.cancel-button {
-    background-color: #FFFFFF;
+    background-color: #ffffff;
     color: #374151;
     border-color: #374151;
 }
 
 .inbox-loader .progress-bar > div {
-    background-color: #FF87DB;
+    background-color: #ff87db;
 }
 
 .inbox-loader-box {
@@ -436,21 +401,21 @@ div:has(> .mailSendToaster) {
 
 .rdw-editor-wrapper .emoji-picker .rdw-link-modal-btn,
 .rdw-editor-wrapper .rdw-image-modal .rdw-image-modal-btn {
-    background-color: #1F2937;
-    color: #FFFFFF;
+    background-color: #1f2937;
+    color: #ffffff;
     padding: 10px;
     height: auto;
     line-height: 1;
     font-size: 14px;
     font-weight: 500;
     border-radius: 8px;
-    border: 1px solid #1F2937;
+    border: 1px solid #1f2937;
 }
 
 .rdw-editor-wrapper .emoji-picker .rdw-link-modal-btn + .rdw-link-modal-btn,
 .rdw-editor-wrapper .rdw-image-modal .rdw-image-modal-btn + .rdw-image-modal-btn {
-    background-color: #FFFFFF;
-    color: #1F2937;
+    background-color: #ffffff;
+    color: #1f2937;
 }
 
 .rdw-editor-wrapper .emoji-picker .rdw-link-modal-btn:hover,
@@ -464,7 +429,7 @@ div:has(> .mailSendToaster) {
     height: auto;
     line-height: 1;
     font-size: 13px;
-    border: 1px solid #E5E7EB;
+    border: 1px solid #e5e7eb;
 }
 
 .rdw-editor-wrapper .link-class {
@@ -483,7 +448,7 @@ div:has(> .mailSendToaster) {
     color: #374151;
     letter-spacing: -0.13px;
     font-weight: 400;
-    border-color: #E5E7EB;
+    border-color: #e5e7eb;
 }
 
 .custom-dropdown .radio-group-button label span {
@@ -491,8 +456,8 @@ div:has(> .mailSendToaster) {
 }
 
 .custom-dropdown .radio-group-button label span[data-checked] {
-    background: #2A6FFF;
-    border-color: #2A6FFF;
+    background: #2a6fff;
+    border-color: #2a6fff;
 }
 
 .custom-dropdown .radio-group-button label span[data-checked] + span {
@@ -500,16 +465,16 @@ div:has(> .mailSendToaster) {
 }
 
 .custom-dropdown .radio-group-button label span span {
-    color: #9CA3AF;
+    color: #9ca3af;
 }
 
 .custom-dropdown .custom-time-date:hover {
-    background-color: #FFFFFF;
+    background-color: #ffffff;
 }
 
 .radio-group-button .custom-time input:focus-visible,
 .radio-group-button .custom-time select:focus-visible {
-    border: 1px solid #E5E7EB;
+    border: 1px solid #e5e7eb;
     box-shadow: none;
 }
 
@@ -522,7 +487,7 @@ div:has(> .mailSendToaster) {
 }
 
 .radio-group-button .schedule-button:hover {
-    background-color: #1F2937;
+    background-color: #1f2937;
 }
 
 .create-project-button .folder-icon svg {
@@ -552,7 +517,7 @@ div:has(> .mailSendToaster) {
     content: '';
     width: 100%;
     height: 72px;
-    background: linear-gradient(0deg, #FFF 0%, rgba(255, 255, 255, 0.00) 100%);
+    background: linear-gradient(0deg, #fff 0%, rgba(255, 255, 255, 0) 100%);
     bottom: 38px;
     left: 0;
     z-index: 5;
@@ -563,7 +528,7 @@ div:has(> .mailSendToaster) {
     content: '';
     width: 100%;
     height: 40px;
-    background: linear-gradient(0deg, rgba(255, 255, 255, 0.00) 0%, #FFF 100%);
+    background: linear-gradient(0deg, rgba(255, 255, 255, 0) 0%, #fff 100%);
     top: 0;
     left: 0;
     z-index: 5;
@@ -585,7 +550,7 @@ div:has(> .mailSendToaster) {
     height: 30px;
     left: 6px;
     top: 0;
-    background: linear-gradient(180deg, #F9FAFB 0%, rgba(249, 250, 251, 0.00) 100%);
+    background: linear-gradient(180deg, #f9fafb 0%, rgba(249, 250, 251, 0) 100%);
     pointer-events: none;
 }
 
@@ -596,7 +561,7 @@ div:has(> .mailSendToaster) {
     height: 30px;
     left: 6px;
     bottom: 0;
-    background: linear-gradient(0deg, #F9FAFB 0%, rgba(249, 250, 251, 0.00) 100%);
+    background: linear-gradient(0deg, #f9fafb 0%, rgba(249, 250, 251, 0) 100%);
     pointer-events: none;
 }
 
@@ -614,7 +579,6 @@ div:has(> .mailSendToaster) {
     overflow: auto;
 }
 
-
 /**
   * Collab Rich Text Editor
   */
@@ -624,6 +588,11 @@ div:has(> .mailSendToaster) {
     padding-top: 16px;
     font-size: 13px;
     font-weight: 500;
+    word-break: break-all;
+  }
+  
+.tiptap-break-all {
+    word-break: break-all !important;
 }
 
 .tiptap:focus {
@@ -655,6 +624,7 @@ div:has(> .mailSendToaster) {
 }
 
 .tiptap-container {
+    width: 100%;
     transition: all 1s ease-in-out;
 }
 
@@ -684,7 +654,7 @@ div:has(> .mailSendToaster) {
     content: '';
     width: 100%;
     height: 72px;
-    background: linear-gradient(180deg, #FFF 0%, rgba(255, 255, 255, 0.00) 100%);
+    background: linear-gradient(180deg, #fff 0%, rgba(255, 255, 255, 0) 100%);
     top: 0;
     left: 0;
     z-index: 5;
@@ -695,7 +665,7 @@ div:has(> .mailSendToaster) {
     content: '';
     width: 100%;
     height: 72px;
-    background: linear-gradient(0deg, #FFF 0%, rgba(255, 255, 255, 0.00) 100%);
+    background: linear-gradient(0deg, #fff 0%, rgba(255, 255, 255, 0) 100%);
     bottom: 0;
     left: 0;
     z-index: 5;
@@ -711,7 +681,7 @@ div:has(> .mailSendToaster) {
 
 /* Give a remote user a caret */
 .collaboration-cursor__caret {
-    content: "x";
+    content: 'x';
     width: 1px;
     height: 18px;
     border-left: 1px solid #0d0d0d;
@@ -764,7 +734,7 @@ div:has(> .mailSendToaster) {
 }
 
 .email-signature.rdw-editor-wrapper .rdw-editor-toolbar .rdw-list-wrapper {
-    border-right: 1px solid rgba(8, 22, 47, .1);
+    border-right: 1px solid rgba(8, 22, 47, 0.1);
     padding-right: 8px;
 }
 
@@ -782,10 +752,10 @@ div:has(> .mailSendToaster) {
 }
 
 .rdw-editor-wrapper .rdw-image-modal .rdw-image-modal-upload-option {
-    background-color: #FFFFFF;
+    background-color: #ffffff;
     border-radius: 10px;
     outline: none;
-    border: 1px solid #E5E7EB;
+    border: 1px solid #e5e7eb;
     padding: 0;
 }
 
@@ -882,9 +852,12 @@ div:has(> .mailSendToaster) {
     stroke: #f7ff00;
 }
 
-/*.snooze-button-icon:hover svg {*/
-/*    stroke: #640064;*/
-/*}*/
+.snooze-button-icon svg {
+  stroke: rgba(0,0,0,0.5);
+}
+.snooze-button-icon:hover svg {
+  stroke: #000;
+}
 
 .snooze-button-icon.disable {
     opacity: 0.4;
@@ -946,7 +919,7 @@ div:has(> .mailSendToaster) {
 }
 
 .attachments-progress-bar .inbox-loader .progress-bar div {
-    background-color: #266DF0;
+    background-color: #266df0;
 }
 
 .link-preview-thumbnail {
@@ -1004,7 +977,7 @@ div:has(> .mailSendToaster) {
 
 .link-preview-thumbnail .url {
     font-size: 10px;
-    color: #A9AAA9;
+    color: #a9aaa9;
     max-height: 16px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1017,7 +990,7 @@ div:has(> .mailSendToaster) {
 }
 
 .link-preview-thumbnail .arrow {
-    content: "";
+    content: '';
     position: absolute;
     bottom: -15px;
     margin-left: 18px;
@@ -1054,7 +1027,7 @@ div:has(> .mailSendToaster) {
 }
 
 .emoji-dropdown:hover {
-    background-color: #F6F6F6 !important;
+    background-color: #f6f6f6 !important;
 }
 
 .emoji-dropdown:hover .icon {
@@ -1065,7 +1038,6 @@ div:has(> .mailSendToaster) {
     width: 1em;
     height: 1em;
 }
-
 
 .emoji-popover .emoji-search-group input {
     /*background-color:#F3F4F6;*/
@@ -1078,7 +1050,6 @@ div:has(> .mailSendToaster) {
 .signature-emoji-popover.emoji-popover > div {
     display: none;
 }
-
 
 .signature-emoji-popover.emoji-popover > div + div {
     display: block;
@@ -1098,6 +1069,14 @@ div:has(> .mailSendToaster) {
     padding-left: 5px;
     margin-left: 5px;
     /*border-left: 1px solid #E2E8F0;*/
+}
+
+.header-right-icon button svg {
+  stroke: rgba(0,0,0,.5);
+}
+
+.header-right-icon button:hover svg {
+  stroke: black;
 }
 
 .text-tooltip {

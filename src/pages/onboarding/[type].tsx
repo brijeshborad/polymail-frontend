@@ -32,7 +32,21 @@ function OnBoardingType() {
             if (router.query.error) {
                 Router.replace(`/onboarding/${router.query.type}`, undefined, {shallow: true});
                 authService.setAuthState({error: {description: 'Invalid account'}});
-                Toaster({desc: 'Invalid account', title: 'User not found', type: 'error'});
+                
+                if (router.query.error === 'account_exists') {
+                  Toaster({
+                    type: 'error',
+                    title: 'An account with this email already exists', 
+                    desc: 'Try logging in or setting up a different account',
+                  });
+                } else {
+                  Toaster({
+                    type: 'error',
+                    title: 'An account with this email does not exist',
+                    desc: 'Try signing up or logging in with a different account',
+                  });
+                }
+                
                 return;
             }
         }
@@ -116,7 +130,7 @@ function OnBoardingType() {
                         <Flex backgroundColor={'#FFFFFF'} padding={'13px'}>
                             <Image src={'/image/google-logo.png'} alt={''} width={'18px'} height={'18px'}/>
                         </Flex>
-                        {router.query.type === 'login' ? 'Sign in' : 'Sign Up'} with Google
+                        {router.query.type === 'login' ? 'Sign in' : 'Sign up'} with Google
                     </Button>
                     <Text fontSize='13px' letterSpacing={'-0.13px'}
                           color={'#6B7280'}>{router.query.type === 'login' ? 'If you don\'t have an account' : 'If you already have an account'}, {router.query.type === 'login' ? ' sign up ' : ' log in '}

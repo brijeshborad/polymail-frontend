@@ -41,6 +41,11 @@ export default function ContentMonitor(props: any) {
                 event.data.callBack(editor.getHTML());
             }
         }
+
+        if(event && event.type === 'draft.updateIndex') {
+          editor?.commands.focus('start');
+        }
+
         if (event && event.type === 'richtexteditor.forceUpdateWithOnChange') {
             editor?.commands.clearContent(false);
             editor?.commands.setContent(event.data.body, true)

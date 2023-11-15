@@ -9,7 +9,7 @@ import {
 import styles from "@/styles/Inbox.module.css";
 import Image from "next/image";
 import {ChevronDownIcon, CloseIcon} from "@chakra-ui/icons";
-import React, {useCallback, useEffect, useRef, useState} from "react";
+import React, {WheelEvent, useCallback, useEffect, useRef, useState} from "react";
 import {clearDebounce, debounce, getProjectBanner, getSignatureBanner} from "@/utils/common.functions";
 import {DropZone} from "@/components/common";
 import {updatePartialMessage, discardDraft} from "@/redux/draft/action-reducer";
@@ -75,6 +75,8 @@ export function MessageReplyBox(props: MessageBoxType) {
     const [messageData, setMessageData] = useState<any>(null);
     const [replyType, setReplyType] = useState<string>('reply');
     const [reloadingEditor, setReloadingEditor] = useState<boolean>(false);
+    const [isOnTop, setIsOnTop] = useState(true)
+    const [deltaY, setDeltaY] = useState(0)
 
     const editorRef = useRef<any>(null);
     const router = useRouter();
@@ -84,6 +86,8 @@ export function MessageReplyBox(props: MessageBoxType) {
     const [totalDraftMessages, setTotalDraftMessages] = useState<MessageDraft[]>([]);
     const [totalMessages, setTotalMessages] = useState<MessageDraft[] | null>(null);
     const [waitForDraft, setWaitForDraft] = useState<boolean>(false);
+
+    const isDraftCreatedByCurrentUser = draft?.accountId === selectedAccount?.id
 
     useEffect(() => {
         if (draftSuccess) {
@@ -575,6 +579,8 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
 
     const handleFocus = () => {
         setShowEditorToolbar(true);
+        setIsOnTop(true)
+        setDeltaY(0)
         globalEventService.fireEvent({data: {}, type: 'richtexteditor.focus'})
     }
 
@@ -598,18 +604,28 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         setScheduledDate(date);
     }
 
-    const handleEditorScroll = useCallback(() => {
+    const handleEditorScroll = useCallback((watchScrollHeight=false) => {
         if (editorRef.current && editorRef.current.scrollTop > 0) {
             setExtraClassNames(prevState => !prevState.includes('show-shadow') ? prevState + ' show-shadow' : prevState);
         } else {
             setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
         }
-        // if (editorRef.current.scrollTop === 0) {
-        //     clearDebounce('EDITOR_SCROLL');
-        //     debounce(() => {
-        //         globalEventService.fireEvent({data: {body: null}, type: 'replybox.hide'});
-        //     }, 10, 'EDITOR_SCROLL')
-        // }
+
+        const size = editorRef.current.getBoundingClientRect()
+
+        if (watchScrollHeight && editorRef.current.scrollTop === 0 && editorRef.current.scrollHeight >= 325 && editorRef.current.scrollHeight > size.height) {
+          if(!isOnTop) {
+            clearDebounce('setIsOnTop')
+            debounce(() => {
+              setIsOnTop(true)
+              setDeltaY(0)
+            }, 500, 'setIsOnTop')
+          }
+        }
+
+        if(isOnTop && editorRef.current.scrollTop > 10) {
+          setIsOnTop(false)
+        }
 
         const container = editorRef.current;
         if (container) {
@@ -622,11 +638,25 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 setExtraClassNamesForBottom(prevState => prevState.replace('show-shadow-bottom', ''));
             }
         }
-    }, [])
+    }, [isOnTop])
 
     useEffect(() => {
         handleEditorScroll();
     }, [handleEditorScroll]);
+
+    useEffect(() => {
+      if(isOnTop && deltaY < 0 && showEditorToolbar) {
+        setShowEditorToolbar(false)
+        setDeltaY(100)
+        setIsOnTop(false)
+      }
+    }, [isOnTop, deltaY, showEditorToolbar])
+
+    useEffect(() => {
+      editorRef.current.addEventListener('wheel', (event: WheelEvent) => {
+        setDeltaY(event.deltaY)
+      })
+    }, [])
 
     useEffect(() => {
         if (incomingEvent === 'iframe.clicked') {
@@ -809,7 +839,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 <Flex
                     maxHeight={'450px'} direction={'column'} backgroundColor={'#FFFFFF'} width={'100%'}
                     onBlur={() => handleBlur()}>
-                    <Flex borderRadius={8} border={'1px solid #F3F4F6'} direction={'column'} padding={4}>
+                    <Flex borderRadius={8} border={'1px solid #F3F4F6'} direction={'column'} paddingX={4} paddingY={2}>
                         {totalDraftMessages.length > 0 &&
                         <Flex align={'center'} justifyContent={'space-between'} pb={2}
                               borderBottom={'1px solid #F3F4F6'}>
@@ -844,7 +874,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                             </Button>}
                         </Flex>}
                         <Flex
-                            align={'center'} justify={'space-between'} mt={'5px'} gap={4} position={"relative"}
+                            align={'center'} justify={'space-between'} mt={totalDraftMessages.length > 0 ? '5px' : 0} gap={4} position={"relative"}
                             zIndex={isReplyDropdownOpen ? 8 : 6}>
                             <Flex align={'center'} gap={1}>
                                 <Menu isOpen={isReplyDropdownOpen} onClose={() => setIsReplyDropdownOpen(false)}>
@@ -966,7 +996,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                             direction={'column'} position={"relative"} flex={1} overflow={'none'}>
                             <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} zIndex={6} ref={editorRef}
                                   overflowY={'auto'} className={`editor-bottom-shadow`}
-                                  onScroll={() => handleEditorScroll()}>
+                                  onScroll={() => handleEditorScroll(true)}>
                                 {/*onWheel={(event) => {*/}
                                 {/*    if (event.deltaX <= 0) {*/}
                                 {/*        handleEditorScroll()*/}
@@ -1050,16 +1080,18 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                             <Flex direction={'column'} className={styles.composeBox} width={'fit-content'}
                                   marginLeft={'auto'} mr={'6px'} boxShadow={'none'}>
                                 <Flex align={'center'} className={styles.replyButton} position={'relative'} zIndex={6}>
-                                    <Button
-                                        className={styles.replyTextDiscardButton}
-                                        outline={'none'} boxShadow={'none'} _focusVisible={{boxShadow: 'none'}}
-                                        fontSize={14} lineHeight={16} height={'38px'}
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            discardMessage(!!draft?.draftInfo?.discardedBy)
-                                        }}
-                                    > {draft?.draftInfo?.discardedBy ? 'Rescue' : 'Discard'} </Button>
+                                    {isDraftCreatedByCurrentUser && (
+                                      <Button
+                                          className={styles.replyTextDiscardButton}
+                                          outline={'none'} boxShadow={'none'} _focusVisible={{boxShadow: 'none'}}
+                                          fontSize={14} lineHeight={16} height={'38px'}
+                                          onClick={(e) => {
+                                              e.preventDefault();
+                                              e.stopPropagation();
+                                              discardMessage(!!draft?.draftInfo?.discardedBy)
+                                          }}
+                                      > {draft?.draftInfo?.discardedBy ? 'Rescue' : 'Discard'} </Button>
+                                    )}
                                     <Flex className={styles.messageSendButton}>
                                         <Button
                                             isDisabled={showAttachmentLoader || (!draft?.id)}
