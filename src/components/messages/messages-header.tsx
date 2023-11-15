@@ -79,7 +79,6 @@ export function MessagesHeader() {
                             return
                         }
                         body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_INBOX, MAILBOX_TRASH, MAILBOX_SPAM].includes(item))
-                        body.mailboxes = [...body.mailboxes, messageBox]
                         remove_from_list = true
                         messageService.setSelectedMessage(null);
                         break;
