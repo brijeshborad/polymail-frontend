@@ -150,7 +150,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                     ))}
                 </Flex>
             </>} placement={'bottom'}>
-                {othersText}
+                <Text style={{display: 'block'}} whiteSpace={'nowrap'} maxWidth={'250px'} noOfLines={1}>{othersText}</Text>
             </Tooltip>
         )
     }
