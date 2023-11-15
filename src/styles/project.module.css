@@ -355,6 +355,10 @@
     min-width: 56px;
 }
 
+.manageMemberDropDown .addMemberButton:hover {
+    color: #FFFFFF;
+}
+
 .manageMemberDropDown button {
     color: #0A101D;
     flex: 1;

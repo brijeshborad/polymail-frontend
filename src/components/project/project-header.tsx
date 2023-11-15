@@ -189,7 +189,7 @@ export function ProjectHeader() {
                         }
                     }
                 ))
-                let filteredProjects = (projects || []).filter((item: Project) => item.id !== projectData.id);
+                let filteredProjects = (projects || []).filter((item: Project) => item.id !== projectData?.id);
                 projectService.setProjectState({projects: filteredProjects, project: null});
                 Router.push(`/inbox`);
             }
