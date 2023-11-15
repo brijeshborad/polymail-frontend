@@ -39,6 +39,12 @@ function OnBoardingType() {
                     title: 'An account with this email already exists', 
                     desc: 'Try logging in or setting up a different account',
                   });
+                } else if (router.query.error === 'oauth_error') {
+                    Toaster({
+                        type: 'error',
+                        title: 'An error occurred while signing in',
+                        desc: 'Please try again',
+                      });
                 } else {
                   Toaster({
                     type: 'error',
