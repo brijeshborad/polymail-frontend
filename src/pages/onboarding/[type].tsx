@@ -37,13 +37,13 @@ function OnBoardingType() {
                   Toaster({
                     type: 'error',
                     title: 'An account with this email already exists', 
-                    desc: 'Try logging in or setting up a new account', 
+                    desc: 'Try logging in or setting up a different account',
                   });
                 } else {
                   Toaster({
                     type: 'error',
-                    title: 'User not found', 
-                    desc: 'Invalid account', 
+                    title: 'An account with this email does not exist',
+                    desc: 'Try signing up or logging in with a different account',
                   });
                 }
                 
