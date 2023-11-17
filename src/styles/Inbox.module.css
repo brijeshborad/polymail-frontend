@@ -1008,30 +1008,6 @@
 
 /* Mail Box End */
 
-@media (max-width: 991px) {
-    .mailBox {
-        height: 100% !important;
-    }
-
-    .filterTabs {
-        padding: 16px 25px;
-    }
-
-    .mailList {
-        max-height: calc(100vh - 266px);
-    }
-
-    .replayBox .mailFooter .replyMessageArea {
-        max-height: calc(100vh - 407px);
-    }
-}
-
-@media (max-width: 767px) {
-    .filterTabs {
-        padding: 15px;
-    }
-}
-
 .envelopeIcon svg {
     fill: #5D5F62;
     width: 18px;
@@ -1361,7 +1337,25 @@
     background-color: rgba(0, 0, 0, 0.8);
 }
 
+@media (max-width: 991px) {
+    .filterTabs {
+        padding: 16px 25px;
+    }
 
+    .mailList {
+        max-height: calc(100vh - 266px);
+    }
+
+    .replayBox .mailFooter .replyMessageArea {
+        max-height: calc(100vh - 407px);
+    }
+}
+
+@media (max-width: 767px) {
+    .filterTabs {
+        padding: 15px;
+    }
+}
 
 @media (min-width: 992px) and (max-width: 1487px) {
     .threadSearched .addToProjectButtonText {
@@ -1427,4 +1421,3 @@
         padding: 9px;
     }
 }
-

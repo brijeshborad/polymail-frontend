@@ -2,7 +2,7 @@
     --max-width: 1100px;
     --border-radius: 12px;
     --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono', 'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro', 'Fira Mono', 'Droid Sans Mono',
-        'Courier New', monospace;
+    'Courier New', monospace;
 
     --foreground-rgb: 0, 0, 0;
     --background-start-rgb: 214, 219, 220;
@@ -19,26 +19,6 @@
     --callout-border-rgb: 172, 175, 176;
     --card-rgb: 180, 185, 188;
     --card-border-rgb: 131, 134, 135;
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --foreground-rgb: 255, 255, 255;
-        --background-start-rgb: 0, 0, 0;
-        --background-end-rgb: 0, 0, 0;
-
-        --primary-glow: radial-gradient(rgba(1, 65, 255, 0.4), rgba(1, 65, 255, 0));
-        --secondary-glow: linear-gradient(to bottom right, rgba(1, 65, 255, 0), rgba(1, 65, 255, 0), rgba(1, 65, 255, 0.3));
-
-        --tile-start-rgb: 2, 13, 46;
-        --tile-end-rgb: 2, 5, 19;
-        --tile-border: conic-gradient(#ffffff80, #ffffff40, #ffffff30, #ffffff20, #ffffff10, #ffffff10, #ffffff80);
-
-        --callout-rgb: 20, 20, 20;
-        --callout-border-rgb: 108, 108, 108;
-        --card-rgb: 100, 100, 100;
-        --card-border-rgb: 200, 200, 200;
-    }
 }
 
 * {
@@ -70,12 +50,6 @@ a {
     margin: 0;
     display: flex;
     flex-direction: column;
-}
-
-@media (prefers-color-scheme: dark) {
-    html {
-        color-scheme: dark;
-    }
 }
 
 ::-webkit-scrollbar {
@@ -589,7 +563,7 @@ div:has(> .mailSendToaster) {
     font-size: 13px;
     font-weight: 500;
     word-break: break-all;
-  }
+}
 
 .tiptap-break-all {
     word-break: break-all !important;
@@ -853,10 +827,11 @@ div:has(> .mailSendToaster) {
 }
 
 .snooze-button-icon svg {
-  stroke: rgba(0,0,0,0.5);
+    stroke: rgba(0, 0, 0, 0.5);
 }
+
 .snooze-button-icon:hover svg {
-  stroke: #000;
+    stroke: #000;
 }
 
 .snooze-button-icon.disable {
@@ -1072,11 +1047,11 @@ div:has(> .mailSendToaster) {
 }
 
 .header-right-icon button svg {
-  stroke: #6B7280;
+    stroke: #6B7280;
 }
 
 .header-right-icon button:hover svg {
-  stroke: black;
+    stroke: black;
 }
 
 .text-tooltip {
@@ -1086,5 +1061,31 @@ div:has(> .mailSendToaster) {
 @media (min-width: 991px) and (max-width: 1431px) {
     .text-tooltip {
         display: block;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --foreground-rgb: 255, 255, 255;
+        --background-start-rgb: 0, 0, 0;
+        --background-end-rgb: 0, 0, 0;
+
+        --primary-glow: radial-gradient(rgba(1, 65, 255, 0.4), rgba(1, 65, 255, 0));
+        --secondary-glow: linear-gradient(to bottom right, rgba(1, 65, 255, 0), rgba(1, 65, 255, 0), rgba(1, 65, 255, 0.3));
+
+        --tile-start-rgb: 2, 13, 46;
+        --tile-end-rgb: 2, 5, 19;
+        --tile-border: conic-gradient(#ffffff80, #ffffff40, #ffffff30, #ffffff20, #ffffff10, #ffffff10, #ffffff80);
+
+        --callout-rgb: 20, 20, 20;
+        --callout-border-rgb: 108, 108, 108;
+        --card-rgb: 100, 100, 100;
+        --card-border-rgb: 200, 200, 200;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    html {
+        color-scheme: dark;
     }
 }

@@ -323,7 +323,7 @@
     transform: translateY(-50%);
 }
 
-.mailDetails .senderDetails p{
+.mailDetails .senderDetails p {
     max-width: 250px;
     white-space: nowrap;
     overflow: hidden;

@@ -9,7 +9,7 @@
 .projectPage .userImage img,
 .mailBox .imgWrapper img,
 .projectList .projectIcon img,
-.memberImages .memberPhoto img{
+.memberImages .memberPhoto img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -30,7 +30,7 @@
 
 .projectPage .manageMembers:hover,
 .projectPage .manageMembers:active,
-.projectPage .manageMembers[data-active]{
+.projectPage .manageMembers[data-active] {
     background-color: #000000;
 }
 
@@ -153,7 +153,7 @@
 }
 
 .replyButton input::placeholder {
-    color: rgba(0,0,0, 0.6);
+    color: rgba(0, 0, 0, 0.6);
     font-weight: 500;
 }
 
@@ -224,13 +224,13 @@
 
 .replyBoxIcon svg {
     width: 20px;
-    height: 20px    ;
+    height: 20px;
 }
 
 .readMail .mailDetails {
     background-color: #F5F5F5;
     border-color: #EBEBEB;
-    box-shadow: 0 4px 4px 0 rgba(0,0,0, 0.04);
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.04);
 }
 
 .readMail .mailDetails .senderDetails {
@@ -494,14 +494,21 @@
 .projectPage .projectListMenuButton svg {
     fill: #374151;
 }
+
 .projectPage .projectListDropDownButton.projectListMenuButton:hover,
 .projectPage .projectListDropDownButton.projectListMenuButton[data-active],
 .projectPage .projectListDropDownButton.projectListMenuButton:active {
     background-color: #FFFFFF;
 }
 
+.projectNameDropdown {
+    background-color: #fff !important;
 
+}
 
+.projectNameDropdown:hover {
+    background-color: #F6F6F6 !important;
+}
 
 @media (max-width: 991px) {
     .projectPage .mailGrid {
@@ -516,13 +523,4 @@
     .mailList.projectThreadList {
         max-height: calc(100vh - 236px);
     }
-}
-
-.projectNameDropdown {
-  background-color: #fff !important;
-
-}
-
-.projectNameDropdown:hover {
-  background-color: #F6F6F6 !important;
 }
