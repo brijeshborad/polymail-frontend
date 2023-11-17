@@ -20,8 +20,8 @@ export function UrlManager() {
     const [width] = useWindowSize();
 
     useEffect(() => {
-        setAllowAutoSelect(width >= 991);
-        commonService.setCommonState({allowThreadSelection: width >= 991});
+        setAllowAutoSelect(width > 991);
+        commonService.setCommonState({allowThreadSelection: width > 991});
     }, [width])
 
     useEffect(() => {
