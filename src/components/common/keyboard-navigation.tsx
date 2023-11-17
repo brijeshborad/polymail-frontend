@@ -4,7 +4,6 @@ import {MONITORED_KEYS} from "@/utils/constants";
 import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {globalEventService, messageService, threadService} from "@/services";
-import {clearDebounce, debounce} from "@/utils/common.functions";
 import {MessageDraft} from "@/models";
 
 export default function KeyboardNavigationListener() {
