@@ -175,6 +175,23 @@
     margin: 0;
 }
 
+.onBoardingPage {
+    width: 400px;
+    height: 580px;
+}
+
+@media (max-width: 991px) {
+    .onborading .onboradingGrid {
+        display: block;
+        overflow-y: scroll;
+    }
+
+    .onborading .onboradingGrid .onBoardingPage {
+        height: 400px;
+        margin-top: 20%;
+    }
+}
+
 @media (max-width: 576px) {
 
     .loginGoogleButton button {
