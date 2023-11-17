@@ -173,11 +173,7 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
     function showMessageBox() {
         return (
             <>
-                <Button className={''} fontSize={'13px'} fontWeight={500} letterSpacing={'-0.13px'} border={'none'}
-                        borderRadius={8} height={'auto'} padding={'5px 8px 5px 5px'}
-                        my={'10px'} backgroundColor={'#FFFFFF'} _hover={{background: "transparent"}} color={'#6B7280'}
-                        borderColor={'#6B7280'}
-                        w={'fit-content'}
+                <Button className={'backToThread'}
                         colorScheme='blue' variant='outline'
                         leftIcon={<ArrowBackIcon/>} onClick={() => threadService.setSelectedThread(null)}>
                     Back To Threads

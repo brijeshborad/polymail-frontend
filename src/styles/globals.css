@@ -1066,6 +1066,25 @@ div:has(> .mailSendToaster) {
     display: block;
 }
 
+.messageSideBar .backToThread {
+    display: none;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: -0.13px;
+    border: none;
+    border-radius: 8px;
+    height: auto;
+    padding: 5px 8px 5px 5px;
+    margin: 10px 0;
+    background-color: #FFFFFF;
+    color: #6B7280;
+    width: fit-content;
+}
+
+.messageSideBar .backToThread:hover {
+    background-color: transparent;
+}
+
 @media (max-width: 991px) {
     .threadSideBar.selected-thread {
         display: none;
@@ -1076,6 +1095,10 @@ div:has(> .mailSendToaster) {
     }
 
     .messageSideBar.selected-thread {
+        display: block;
+    }
+
+    .messageSideBar .backToThread {
         display: block;
     }
 }
