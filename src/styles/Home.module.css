@@ -289,8 +289,9 @@
 .headerButton div {
     height: fit-content !important;
 }
+
 .headerButton .headerSearchbarList:hover {
-    background-color: rgba(0,0,0, 0.05);
+    background-color: rgba(0, 0, 0, 0.05);
 }
 
 .headerSearch .inputRight {
@@ -395,7 +396,7 @@
 }
 
 .profile:hover {
-  background-color: #e2e8f0;
+    background-color: #e2e8f0;
 }
 
 .profileButton {
@@ -405,7 +406,7 @@
 }
 
 .profileButton:hover {
-  background: #F6F6F6 !important;
+    background: #F6F6F6 !important;
 }
 
 .profileButton .profileImage {
@@ -773,4 +774,18 @@ div:has(> .mailToaster) {
     background-color: #F3F4F6;
     bottom: 0;
     left: 12px;
+}
+
+.threadSideBar {
+    display: block;
+}
+
+.messageSideBar {
+    display: block;
+}
+
+@media (max-width: 991px) {
+    .messageSideBar {
+        display: none;
+    }
 }
