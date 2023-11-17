@@ -25,7 +25,7 @@
 }
 
 .emailTabs > div svg {
-  stroke: rgba(0,0,0,.5);
+    stroke: rgba(0, 0, 0, .5);
 }
 
 .emailTabs > div:hover {
@@ -129,7 +129,7 @@
 }
 
 .tabListDropDown button:hover svg {
-  stroke: #000;
+    stroke: #000;
 }
 
 .tabListDropDown .tabListSnoozeButton {
@@ -1361,6 +1361,7 @@
     .threadSearched .addToProjectButtonText {
         display: none;
     }
+
     .threadSearched .addToProject {
         min-width: 1px;
     }
@@ -1370,6 +1371,7 @@
     .threadSearched .threadSearchedActionButtonText {
         display: none;
     }
+
     .threadSearched .tabListMoreButton {
         padding-left: 1px;
         border-radius: 10px;
@@ -1419,5 +1421,19 @@
 @media (min-width: 991px) and (max-width: 1035px) {
     .mailTabList .emailTabs > div {
         padding: 9px;
+    }
+}
+
+@media (max-width: 456px) {
+    .mailTabList .emailTabs .active .mailboxText {
+        display: none;
+    }
+
+    .mailTabList .tabListMoreButton span:first-child {
+        display: none;
+    }
+
+    .mailListTabs .composeButton .composeButtonText {
+        display: none;
     }
 }

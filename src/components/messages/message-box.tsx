@@ -135,7 +135,7 @@ export function MessageBox(props: any) {
 
             setIframeHeight(prevState => ({
                 ...prevState,
-                [index]: (iframeRef.current[index].contentWindow.document.body.scrollHeight + 20)
+                [index]: (iframeRef.current[index].contentWindow.document.body.scrollHeight + 32)
             }));
 
             const allLinks = iframeRef.current[index].contentDocument.getElementsByTagName("a")
@@ -506,6 +506,7 @@ export function MessageBox(props: any) {
                             <iframe
                                 ref={ref => iframeRef.current[messageIndex] = ref}
                                 onLoad={() => onIframeLoad(messageIndex)}
+                                scrolling="no"
                                 height={iframeHeight[messageIndex] || '0px'}
                                 src={message.body as string}
                                 className={styles.mailBody}
