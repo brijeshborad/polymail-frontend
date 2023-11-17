@@ -4,6 +4,7 @@ import {batchUpdateThreads, updateThreads, updateThreadState} from "@/redux/thre
 import {BaseService} from "@/services/base.service";
 import {draftService} from "@/services/draft.service";
 import {
+    MAILBOX_ARCHIVE,
     MAILBOX_DRAFT,
     MAILBOX_SENT,
     MAILBOX_SNOOZED, MAILBOX_STARRED,
@@ -694,7 +695,7 @@ class ThreadsService extends BaseService {
         if (threadIndex !== -1) {
             let mailBoxes = [...(fromThreads[threadIndex].mailboxes || [])];
             let mailBoxesIndex = mailBoxes.indexOf(to);
-            if (mailBoxesIndex !== -1) {
+            if (mailBoxesIndex === -1 && to !== MAILBOX_ARCHIVE) {
                 mailBoxes.push(to);
             }
             mailBoxesIndex = mailBoxes.indexOf(from);
