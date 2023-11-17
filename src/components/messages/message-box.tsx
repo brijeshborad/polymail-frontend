@@ -115,9 +115,9 @@ export function MessageBox(props: any) {
             })
             setIsMoreMenuOpen([...finalArray]);
             setIsAttachmentOpen([...finalArray]);
-            if (index === null) {
-                setIndex(currentInboxMessages.length - 1);
-            }
+            // if (index === null) {
+            // }
+            setIndex(currentInboxMessages.length - 1);
         }
     }, [messages, dispatch])
 

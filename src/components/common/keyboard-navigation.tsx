@@ -90,11 +90,11 @@ export default function KeyboardNavigationListener() {
                             if (nextThread) {
                                 threadService.setSelectedThread(nextThread);
                                 messageService.setMessages([]);
-                                messageService.setMessageState({showMessageBox: false});
-                                clearDebounce('THREAD_SELECTION_BY_KEY');
-                                debounce(() => {
-                                    messageService.setMessageState({showMessageBox: true});
-                                }, 10, 'THREAD_SELECTION_BY_KEY');
+                                // messageService.setMessageState({showMessageBox: false});
+                                // clearDebounce('THREAD_SELECTION_BY_KEY');
+                                // debounce(() => {
+                                //     messageService.setMessageState({showMessageBox: true});
+                                // }, 10, 'THREAD_SELECTION_BY_KEY');
                                 dispatchAction.threadIndex = nextThreadIndex
                                 dispatchAction.currentThreadId = nextThread.id
                             }
@@ -106,11 +106,11 @@ export default function KeyboardNavigationListener() {
                             if (lastThread) {
                                 threadService.setSelectedThread(lastThread);
                                 messageService.setMessages([]);
-                                messageService.setMessageState({showMessageBox: false});
-                                clearDebounce('THREAD_SELECTION_BY_KEY');
-                                debounce(() => {
-                                    messageService.setMessageState({showMessageBox: true});
-                                }, 10, 'THREAD_SELECTION_BY_KEY');
+                                // messageService.setMessageState({showMessageBox: false});
+                                // clearDebounce('THREAD_SELECTION_BY_KEY');
+                                // debounce(() => {
+                                //     messageService.setMessageState({showMessageBox: true});
+                                // }, 10, 'THREAD_SELECTION_BY_KEY');
                                 dispatchAction.threadIndex = lastThreadIndex
                                 dispatchAction.currentThreadId = lastThread.id
                             }
