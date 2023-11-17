@@ -43,8 +43,8 @@ const blankRecipientValue: MessageRecipient = {
 
 let loaderPercentage = 10;
 
-let sendData: { [key: string]: string} = {};
-let isCreating: { [key: string]: boolean} = {};
+let sendData: { [key: string]: string } = {};
+let isCreating: { [key: string]: boolean } = {};
 
 export function MessageReplyBox(props: MessageBoxType) {
     const [emailRecipients, setEmailRecipients] = useState<RecipientsType | any>({
@@ -217,7 +217,7 @@ export function MessageReplyBox(props: MessageBoxType) {
         let messageId = '';
         if (messageData && messageData.id) {
             messageId = messageData.id;
-        } else if (selectedMessage && selectedMessage.id)  {
+        } else if (selectedMessage && selectedMessage.id) {
             messageId = selectedMessage.id;
         }
 
@@ -536,7 +536,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             let messageId = '';
             if (messageData && messageData.id) {
                 messageId = messageData.id;
-            } else if (selectedMessage && selectedMessage.id)  {
+            } else if (selectedMessage && selectedMessage.id) {
                 messageId = selectedMessage.id;
             }
             let body: any = {
@@ -604,31 +604,30 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         setScheduledDate(date);
     }
 
-    const handleEditorScroll = useCallback((watchScrollHeight=false) => {
+    const handleEditorScroll = useCallback((watchScrollHeight = false) => {
         if (editorRef.current && editorRef.current.scrollTop > 0) {
             setExtraClassNames(prevState => !prevState.includes('show-shadow') ? prevState + ' show-shadow' : prevState);
         } else {
             setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
         }
 
-        const size = editorRef.current.getBoundingClientRect()
-
-        if (watchScrollHeight && editorRef.current.scrollTop === 0 && editorRef.current.scrollHeight >= 325 && editorRef.current.scrollHeight > size.height) {
-          if(!isOnTop) {
-            clearDebounce('setIsOnTop')
-            debounce(() => {
-              setIsOnTop(true)
-              setDeltaY(0)
-            }, 500, 'setIsOnTop')
-          }
-        }
-
-        if(isOnTop && editorRef.current.scrollTop > 10) {
-          setIsOnTop(false)
-        }
-
         const container = editorRef.current;
         if (container) {
+            const size = editorRef.current.getBoundingClientRect()
+
+            if (watchScrollHeight && editorRef.current.scrollTop === 0 && editorRef.current.scrollHeight >= 325 && editorRef.current.scrollHeight > size.height) {
+                if (!isOnTop) {
+                    clearDebounce('setIsOnTop')
+                    debounce(() => {
+                        setIsOnTop(true)
+                        setDeltaY(0)
+                    }, 500, 'setIsOnTop')
+                }
+            }
+
+            if (isOnTop && editorRef.current.scrollTop > 10) {
+                setIsOnTop(false)
+            }
             const scrollHeight = container?.scrollHeight;
             const containerHeight = container?.clientHeight;
             const scrollBottom = scrollHeight - containerHeight - editorRef.current.scrollTop;
@@ -645,17 +644,17 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     }, [handleEditorScroll]);
 
     useEffect(() => {
-      if(isOnTop && deltaY < 0 && showEditorToolbar) {
-        setShowEditorToolbar(false)
-        setDeltaY(100)
-        setIsOnTop(false)
-      }
+        if (isOnTop && deltaY < 0 && showEditorToolbar) {
+            setShowEditorToolbar(false)
+            setDeltaY(100)
+            setIsOnTop(false)
+        }
     }, [isOnTop, deltaY, showEditorToolbar])
 
     useEffect(() => {
-      editorRef.current.addEventListener('wheel', (event: WheelEvent) => {
-        setDeltaY(event.deltaY)
-      })
+        editorRef.current.addEventListener('wheel', (event: WheelEvent) => {
+            setDeltaY(event.deltaY)
+        })
     }, [])
 
     useEffect(() => {
@@ -804,7 +803,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             let messageId = '';
             if (messageData && messageData.id) {
                 messageId = messageData.id;
-            } else if (selectedMessage && selectedMessage.id)  {
+            } else if (selectedMessage && selectedMessage.id) {
                 messageId = selectedMessage.id;
             }
             let body: any = {
@@ -868,13 +867,16 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                 </Text>
                             </Flex>
                             {props.isProjectView &&
-                            <Button fontSize={'13px'} fontWeight={'500'} border={'1px solid #FFFFFF'} onClick={() => createNewDraft()}
-                                    background={'#F3F4F6'} borderRadius={'34px'} padding={'6px 8px'} height={'fit-content'}>
+                            <Button fontSize={'13px'} fontWeight={'500'} border={'1px solid #FFFFFF'}
+                                    onClick={() => createNewDraft()}
+                                    background={'#F3F4F6'} borderRadius={'34px'} padding={'6px 8px'}
+                                    height={'fit-content'}>
                                 Create new draft
                             </Button>}
                         </Flex>}
                         <Flex
-                            align={'center'} justify={'space-between'} mt={totalDraftMessages.length > 0 ? '5px' : 0} gap={4} position={"relative"}
+                            align={'center'} justify={'space-between'} mt={totalDraftMessages.length > 0 ? '5px' : 0}
+                            gap={4} position={"relative"}
                             zIndex={isReplyDropdownOpen ? 8 : 6}>
                             <Flex align={'center'} gap={1}>
                                 <Menu isOpen={isReplyDropdownOpen} onClose={() => setIsReplyDropdownOpen(false)}>
@@ -967,11 +969,13 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                         {showReplyBox &&
                         <div ref={divRef} style={{marginTop: '5px'}}>
                             <Flex width={'100%'} mb={1} flex={'none'} backgroundColor={'#FFFFFF'}
-                                  border={'1px solid #E5E7EB'} borderRadius={8} gap={2} padding={'4px 16px'} className={styles.replyBoxCC}>
+                                  border={'1px solid #E5E7EB'} borderRadius={8} gap={2} padding={'4px 16px'}
+                                  className={styles.replyBoxCC}>
                                 <Heading as={'h6'} fontSize={'13px'} paddingTop={1} fontWeight={500} lineHeight={1}
                                          color={'#374151'}>Subject:</Heading>
                                 <Flex alignItems={'center'} wrap={'wrap'} width={'100%'} gap={1}>
-                                    <Input width={'auto'} display='inline-flex' padding={0} height={'20px'} flex={'1 0 auto'}
+                                    <Input width={'auto'} display='inline-flex' padding={0} height={'20px'}
+                                           flex={'1 0 auto'}
                                            fontSize={'12px'} border={0} className={styles.ccInput}
                                            value={subject} onChange={(e) => setSubject(e.target.value)}
                                            placeholder={`Enter Subject`}
@@ -1081,16 +1085,16 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                   marginLeft={'auto'} mr={'6px'} boxShadow={'none'}>
                                 <Flex align={'center'} className={styles.replyButton} position={'relative'} zIndex={6}>
                                     {isDraftCreatedByCurrentUser && (
-                                      <Button
-                                          className={styles.replyTextDiscardButton}
-                                          outline={'none'} boxShadow={'none'} _focusVisible={{boxShadow: 'none'}}
-                                          fontSize={14} lineHeight={16} height={'38px'}
-                                          onClick={(e) => {
-                                              e.preventDefault();
-                                              e.stopPropagation();
-                                              discardMessage(!!draft?.draftInfo?.discardedBy)
-                                          }}
-                                      > {draft?.draftInfo?.discardedBy ? 'Rescue' : 'Discard'} </Button>
+                                        <Button
+                                            className={styles.replyTextDiscardButton}
+                                            outline={'none'} boxShadow={'none'} _focusVisible={{boxShadow: 'none'}}
+                                            fontSize={14} lineHeight={16} height={'38px'}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                discardMessage(!!draft?.draftInfo?.discardedBy)
+                                            }}
+                                        > {draft?.draftInfo?.discardedBy ? 'Rescue' : 'Discard'} </Button>
                                     )}
                                     <Flex className={styles.messageSendButton}>
                                         <Button
@@ -1111,7 +1115,8 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                             )}
                                         </Button>
 
-                                        <MessageSchedule disabled={showAttachmentLoader || (!draft?.id)} date={scheduledDate} onChange={handleSchedule}/>
+                                        <MessageSchedule disabled={showAttachmentLoader || (!draft?.id)}
+                                                         date={scheduledDate} onChange={handleSchedule}/>
                                     </Flex>
                                 </Flex>
                             </Flex>
