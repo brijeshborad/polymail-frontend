@@ -334,10 +334,8 @@
 .mailBox {
     border: 1px solid #F3F4F6;
     border-radius: 16px;
-    height: 100%;
     background-color: white;
-    /*box-shadow: 0 0 12px 0 #00000014;*/
-
+    height: calc(100vh - 157px)
 }
 
 .mailBox .mailBoxMailList {
@@ -1344,6 +1342,10 @@
 
     .mailList {
         max-height: calc(100vh - 266px);
+    }
+
+    .mailBox {
+        height: calc(100vh - 180px);
     }
 
     .replayBox .mailFooter .replyMessageArea {

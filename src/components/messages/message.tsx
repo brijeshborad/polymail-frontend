@@ -1,6 +1,6 @@
 import styles from "@/styles/Inbox.module.css";
 import {
-    Box, createStandaloneToast,
+    Box, Button, createStandaloneToast,
     Flex,
     Heading, Text,
 } from "@chakra-ui/react";
@@ -15,6 +15,7 @@ import {globalEventService, keyNavigationService, messageService, threadService}
 import {Toaster} from "../common";
 import {debounce, generateToasterId} from "@/utils/common.functions";
 import {MuteIcon} from "@/icons";
+import {ArrowBackIcon} from "@chakra-ui/icons";
 // import {clearDebounce, debounce} from "@/utils/common.functions";
 
 const SelectedThreads = dynamic(() => import('@/components/threads/selected-threads').then((mod) => mod.default));
@@ -171,21 +172,32 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
 
     function showMessageBox() {
         return (
-            <Box
-                className={`${styles.mailBox} ${isThreadFocused ? styles.mailBoxFocused : ''}`}
-                height={'calc(100vh - 157px)'} overflow={'hidden'} borderRadius={'15px'}
-                onClick={() => {
-                    if (!isThreadFocused) {
-                        setThreadFocus(true);
-                        keyNavigationService.setKeyNavigationState({
-                            action: 'RIGHT',
-                            target: 'thread'
-                        })
-                    }
-                }}>
-                {isLoaderShow && showLoader()}
-                {!isLoaderShow && showMessage()}
-            </Box>
+            <>
+                <Button className={''} fontSize={'13px'} fontWeight={500} letterSpacing={'-0.13px'} border={'none'}
+                        borderRadius={8} height={'auto'} padding={'5px 8px 5px 5px'}
+                        my={'10px'} backgroundColor={'#FFFFFF'} _hover={{background: "transparent"}} color={'#6B7280'}
+                        borderColor={'#6B7280'}
+                        w={'fit-content'}
+                        colorScheme='blue' variant='outline'
+                        leftIcon={<ArrowBackIcon/>} onClick={() => threadService.setSelectedThread(null)}>
+                    Back To Threads
+                </Button>
+                <Box
+                    className={`${styles.mailBox} ${isThreadFocused ? styles.mailBoxFocused : ''}`}
+                    overflow={'hidden'} borderRadius={'15px'}
+                    onClick={() => {
+                        if (!isThreadFocused) {
+                            setThreadFocus(true);
+                            keyNavigationService.setKeyNavigationState({
+                                action: 'RIGHT',
+                                target: 'thread'
+                            })
+                        }
+                    }}>
+                    {isLoaderShow && showLoader()}
+                    {!isLoaderShow && showMessage()}
+                </Box>
+            </>
         )
     }
 
@@ -216,8 +228,10 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
                         <MessagesHeader/>
                         {getMuteStatus()}
                         {isShowingMessageBox &&
-                        <Flex ref={messagesWrapperRef} onScroll={handleScroll} padding={'20px'} gap={5} direction={'column'} flex={1}
-                              overflowY={'scroll'} overflowX={'hidden'} className={`${styles.messageListscrollbar} ${showScrollBar ? styles.messageScrollBar : ''}`}>
+                        <Flex ref={messagesWrapperRef} onScroll={handleScroll} padding={'20px'} gap={5}
+                              direction={'column'} flex={1}
+                              overflowY={'scroll'} overflowX={'hidden'}
+                              className={`${styles.messageListscrollbar} ${showScrollBar ? styles.messageScrollBar : ''}`}>
                             <Flex gap={2} direction={'column'} height={'100%'}>
                                 <div className={styles.mailBoxMailList}>
                                     <MessageBox hideAndShowReplyBox={hideAndShowReplyBox}/>

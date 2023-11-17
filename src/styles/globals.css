@@ -1058,6 +1058,28 @@ div:has(> .mailSendToaster) {
     display: none;
 }
 
+.threadSideBar {
+    display: block;
+}
+
+.messageSideBar {
+    display: block;
+}
+
+@media (max-width: 991px) {
+    .threadSideBar.selected-thread {
+        display: none;
+    }
+
+    .messageSideBar {
+        display: none;
+    }
+
+    .messageSideBar.selected-thread {
+        display: block;
+    }
+}
+
 @media (min-width: 991px) and (max-width: 1431px) {
     .text-tooltip {
         display: block;

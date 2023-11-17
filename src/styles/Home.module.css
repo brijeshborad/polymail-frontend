@@ -594,18 +594,7 @@ div:has(> .mailToaster) {
     left: 12px;
 }
 
-.threadSideBar {
-    display: block;
-}
-
-.messageSideBar {
-    display: block;
-}
-
 @media (max-width: 991px) {
-    .messageSideBar {
-        display: none;
-    }
 
     .mailBg .mailGrid {
         grid-template-columns: 100% 100%;
@@ -614,7 +603,7 @@ div:has(> .mailToaster) {
 
     .mailBg {
         height: 100%;
-        padding: 20px;
+        padding: 0 20px 20px 20px;
     }
 
     .header {

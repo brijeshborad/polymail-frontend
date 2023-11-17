@@ -22,10 +22,10 @@ function InboxPage() {
 
             <div className={styles.mailBg}>
                 <Grid className={styles.mailGrid} templateColumns='30% auto' gap={4} height={'100%'}>
-                    <GridItem w='100%' className={styles.threadSideBar}>
+                    <GridItem w='100%' className={'threadSideBar'} id={'inbox-thread-side-bar'}>
                         <ThreadsSideBar/>
                     </GridItem>
-                    <GridItem w='100%' className={styles.messageSideBar} style={{overflow: 'hidden'}}>
+                    <GridItem w='100%' className={'messageSideBar'} id={'inbox-message-side-bar'} style={{overflow: 'hidden'}}>
                         <Message/>
                     </GridItem>
                 </Grid>

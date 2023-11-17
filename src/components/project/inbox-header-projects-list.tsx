@@ -10,6 +10,7 @@ import {commonService, messageService, projectService, threadService} from "@/se
 import Tooltip from "../common/Tooltip";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import {getInboxLoadedFirstTime, setInboxLoadedFirstTime} from "@/utils/cache.functions";
+import {useWindowSize} from "@/hooks/window-resize.hook";
 
 export function InboxHeaderProjectsList() {
     const {projects} = useSelector((state: StateType) => state.projects);
@@ -19,24 +20,8 @@ export function InboxHeaderProjectsList() {
     const [projectDataLength, setProjectDataLength] = useState<Project[]>([]);
     const projectButtonRef = React.useRef<HTMLDivElement | null | any>(null);
     const [maxSize, setMaxSize] = useState<number>(0);
-    const [size, setSize] = useState<number>(0);
+    const [width] = useWindowSize();
     const [loadedFirstTime, setIsLoadedFirstTime] = useState<boolean>(getInboxLoadedFirstTime());
-
-    function updateSize() {
-        setSize(window.innerWidth);
-    }
-
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            window.addEventListener('resize', updateSize);
-            updateSize();
-        }
-        return () => {
-            if (typeof window !== "undefined") {
-                window.removeEventListener('resize', updateSize)
-            }
-        };
-    }, []);
 
     useEffect(() => {
         if (projects && projects.length > 0 && maxSize > 0) {
@@ -55,8 +40,8 @@ export function InboxHeaderProjectsList() {
     }, [isLoading, threadIsLoading]);
 
     useEffect(() => {
-        setMaxSize(Math.floor(size / 216) - 3)
-    }, [size])
+        setMaxSize(Math.floor(width / 216) - 3)
+    }, [width])
 
     const changePage = () => {
         applyChanges();
