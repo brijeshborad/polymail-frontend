@@ -371,13 +371,14 @@
 .mailBox .mailBody {
     font-size: 16px;
     line-height: 1.5;
-    width: calc(100% + 32px);
+    /*width: calc(100% + 32px);*/
+    width: 100%;
 }
 
 .mailBox .mailBodyContent {
     width: 100%;
     padding: 0 16px;
-    overflow: hidden;
+    /*overflow: hidden;*/
 }
 
 .mailBox .mailBodyContent.projectMailBodyContent {

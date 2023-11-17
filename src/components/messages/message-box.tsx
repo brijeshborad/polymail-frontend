@@ -502,7 +502,7 @@ export function MessageBox(props: any) {
                         </Flex>
 
                         {message.body &&
-                        <div className={styles.mailBodyContent} style={{ height: iframeRef.current[messageIndex] ? parseFloat(iframeHeight[messageIndex]) - 32 : 'auto' }}>
+                        <div className={styles.mailBodyContent} style={{ height: iframeRef.current[messageIndex] && iframeHeight[messageIndex] ? parseFloat(iframeHeight[messageIndex]) - 32 : 'auto' }}>
                             <iframe
                                 ref={ref => iframeRef.current[messageIndex] = ref}
                                 onLoad={() => onIframeLoad(messageIndex)}
