@@ -1072,7 +1072,7 @@ div:has(> .mailSendToaster) {
 }
 
 .header-right-icon button svg {
-  stroke: rgba(0,0,0,.5);
+  stroke: #6B7280;
 }
 
 .header-right-icon button:hover svg {
