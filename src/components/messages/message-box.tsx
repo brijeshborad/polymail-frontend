@@ -33,7 +33,7 @@ export function MessageBox(props: any) {
     const {
         messages
     } = useSelector((state: StateType) => state.messages);
-    const {selectedThread} = useSelector((state: StateType) => state.threads);
+    const {selectedThread: currentSelectedThread} = useSelector((state: StateType) => state.threads);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const [isAttachmentOpen, setIsAttachmentOpen] = useState<boolean[]>([]);
     const [currentLinkPreview, setCurrentLinkPreview] = useState<LinkPreviewProps>({
@@ -45,7 +45,6 @@ export function MessageBox(props: any) {
     const [inboxMessages, setInboxMessages] = useState<MessageModel[]>([]);
     const [draftMessages, setDraftMessages] = useState<MessageModel[]>([]);
     const [index, setIndex] = useState<number | null>(null);
-    const [currentSelectedThread, setCurrentSelectedThread] = useState<Thread | null>(null);
 
     useEffect(() => {
         if (draftSuccess) {
@@ -72,14 +71,6 @@ export function MessageBox(props: any) {
             }
         }
     }, [draftSuccess, updatedDraft, draftMessages])
-
-    useEffect(() => {
-        if (selectedThread && selectedThread?.id) {
-            if (!currentSelectedThread || currentSelectedThread.id !== selectedThread.id) {
-                setCurrentSelectedThread(selectedThread);
-            }
-        }
-    }, [currentSelectedThread, selectedThread])
 
     useEffect(() => {
         if (currentSelectedThread && currentSelectedThread?.id) {
