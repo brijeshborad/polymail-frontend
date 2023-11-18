@@ -444,6 +444,7 @@
     padding: 8px 16px;
     border-radius: 8px;
     width: 100%;
+    z-index: 0;
 }
 
 .copyLinkDetails svg {
@@ -560,6 +561,8 @@
 
 .setting .settingSideBarHeader .settingMenu {
     display: none;
+    outline: none;
+    box-shadow: none;
 }
 
 .setting .settingItems {
@@ -586,6 +589,11 @@
     border-radius: 4px;
     transition: all 0.3s;
     cursor: pointer;
+}
+
+.settingTitle .settingMenuItem:focus,
+.settingTitle .settingMenuItem[data-focus] {
+    --menu-bg: transparent
 }
 
 .settingTitle .settingMenuItem:hover {
