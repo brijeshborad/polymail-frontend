@@ -32,11 +32,11 @@ function OnBoardingType() {
             if (router.query.error) {
                 Router.replace(`/onboarding/${router.query.type}`, undefined, {shallow: true});
                 authService.setAuthState({error: {description: 'Invalid account'}});
-                
+
                 if (router.query.error === 'account_exists') {
                   Toaster({
                     type: 'error',
-                    title: 'An account with this email already exists', 
+                    title: 'An account with this email already exists',
                     desc: 'Try logging in or setting up a different account',
                   });
                 } else if (router.query.error === 'oauth_error') {
@@ -52,7 +52,7 @@ function OnBoardingType() {
                     desc: 'Try signing up or logging in with a different account',
                   });
                 }
-                
+
                 return;
             }
         }
@@ -126,7 +126,7 @@ function OnBoardingType() {
     return (
         <>
             <OnboardingLayout>
-                <Flex direction={'column'}>
+                <Flex direction={'column'} className={styles.onBoardingType}>
                     <Heading as='h4' size='md' fontWeight={700} color={'#0A101D'}
                              mb={4}>{router.query.type === 'login' ? 'Log into' : 'Create'} your account</Heading>
                     <Button onClick={() => oauthWithGoogle()} backgroundColor={'#2A6FFF'} w={'fit-content'}

@@ -178,6 +178,8 @@
 .onBoardingPage {
     width: 400px;
     height: 580px;
+    justify-content: space-between;
+    align-items: flex-start;
 }
 
 @media (max-width: 991px) {
@@ -189,6 +191,11 @@
     .onBoarding .onBoardingGrid .onBoardingPage {
         height: 400px;
         margin-top: 20%;
+        align-items: center;
+    }
+
+    .onBoarding .onBoardingGrid .onBoardingPage .onBoardingType {
+        align-items: center;
     }
 }
 

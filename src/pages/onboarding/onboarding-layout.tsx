@@ -8,8 +8,7 @@ export default function OnboardingLayout({children}: any) {
         <div className={styles.onBoarding}>
             <Grid templateColumns='auto 600px' className={styles.onBoardingGrid} gap={6} h={'100vh'} bg={'#FFFFFF'}>
                 <GridItem w='100%' padding={'20px'} display={'flex'} alignItems={'center'} justifyContent={'center'}>
-                    <Flex className={styles.onBoardingPage} direction={'column'}
-                          justify={'space-between'} alignItems={'flex-start'}>
+                    <Flex className={styles.onBoardingPage} direction={'column'}>
                         <OnboardingLogoIcon/>
                         {children}
                         <Text className={styles.onBoardingPolicy} fontSize='13px' letterSpacing={'-0.13px'}
