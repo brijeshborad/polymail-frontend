@@ -1342,6 +1342,7 @@
 
     .mailList {
         max-height: calc(100vh - 266px);
+        padding-right: 0;
     }
 
     .mailBox {
@@ -1426,16 +1427,8 @@
     }
 }
 
-@media (max-width: 456px) {
-    .mailTabList .emailTabs .active .mailboxText {
-        display: none;
-    }
-
-    .mailTabList .tabListMoreButton span:first-child {
-        display: none;
-    }
-
-    .mailListTabs .composeButton .composeButtonText {
+@media (max-width: 480px) {
+    .mailTabList .emailTabs .active .mailboxText, .mailTabList .tabListMoreButton span:first-child, .mailListTabs .composeButton .composeButtonText {
         display: none;
     }
 }

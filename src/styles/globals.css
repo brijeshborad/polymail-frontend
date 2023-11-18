@@ -1099,7 +1099,7 @@ div:has(> .mailSendToaster) {
     }
 
     .messageSideBar .backToThread {
-        display: block;
+        display: flex;
     }
 }
 
