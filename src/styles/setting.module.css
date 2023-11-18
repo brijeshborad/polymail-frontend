@@ -444,6 +444,7 @@
     padding: 8px 16px;
     border-radius: 8px;
     width: 100%;
+    z-index: 0;
 }
 
 .copyLinkDetails svg {
@@ -538,7 +539,7 @@
     bottom: 0;
     left: 0;
     top: 0;
-    background: rgba(0,0,0, 0.5);
+    background: rgba(0, 0, 0, 0.5);
     height: 100%;
     display: flex;
     align-items: center;
@@ -547,5 +548,94 @@
 }
 
 .spinner > div > div {
-margin: 0;
+    margin: 0;
 }
+
+.setting .settingSideBarHeader {
+    display: block;
+}
+
+.setting .settingSideBarHeader .settingTitle .settingTitleText {
+    display: block;
+}
+
+.setting .settingSideBarHeader .settingMenu {
+    display: none;
+    outline: none;
+    box-shadow: none;
+}
+
+.setting .settingItems {
+    display: block;
+}
+
+.setting .settingSideBar {
+    padding: 20px 30px 40px 40px;
+    border-right: 1px solid #E1E3E6;
+    width: 100%;
+}
+
+.setting .settingsRight {
+    padding: 50px 40px 40px;
+    height: 100%;
+}
+
+.settingTitle .settingMenuItem {
+    padding: 3px 15px;
+    color: #1D2939;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5384;
+    border-radius: 4px;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.settingTitle .settingMenuItem:focus,
+.settingTitle .settingMenuItem[data-focus] {
+    --menu-bg: transparent
+}
+
+.settingTitle .settingMenuItem:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.settingTitle .settingMenuItem.active {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    .setting .settingGrid {
+        grid-template-columns: 100% 100%;
+        display: block;
+    }
+
+    .setting .settingSideBarHeader {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .setting .settingSideBarHeader .settingTitle .settingTitleText {
+        display: none;
+    }
+
+    .setting .settingSideBarHeader .settingMenu {
+        display: block;
+    }
+
+    .setting .settingItems {
+        display: none;
+    }
+
+    .setting .settingSideBar {
+       padding: 20px 30px 0 40px;
+    }
+
+    .setting .backButton,
+    .setting .settingSideBarHeader .settingTitle {
+        margin-bottom: 0;
+    }
+}
+

@@ -33,7 +33,7 @@ export function MessageBox(props: any) {
     const {
         messages
     } = useSelector((state: StateType) => state.messages);
-    const {selectedThread} = useSelector((state: StateType) => state.threads);
+    const {selectedThread: currentSelectedThread} = useSelector((state: StateType) => state.threads);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const [isAttachmentOpen, setIsAttachmentOpen] = useState<boolean[]>([]);
     const [currentLinkPreview, setCurrentLinkPreview] = useState<LinkPreviewProps>({
@@ -45,7 +45,6 @@ export function MessageBox(props: any) {
     const [inboxMessages, setInboxMessages] = useState<MessageModel[]>([]);
     const [draftMessages, setDraftMessages] = useState<MessageModel[]>([]);
     const [index, setIndex] = useState<number | null>(null);
-    const [currentSelectedThread, setCurrentSelectedThread] = useState<Thread | null>(null);
 
     useEffect(() => {
         if (draftSuccess) {
@@ -72,14 +71,6 @@ export function MessageBox(props: any) {
             }
         }
     }, [draftSuccess, updatedDraft, draftMessages])
-
-    useEffect(() => {
-        if (selectedThread && selectedThread?.id) {
-            if (!currentSelectedThread || currentSelectedThread.id !== selectedThread.id) {
-                setCurrentSelectedThread(selectedThread);
-            }
-        }
-    }, [currentSelectedThread, selectedThread])
 
     useEffect(() => {
         if (currentSelectedThread && currentSelectedThread?.id) {
@@ -115,9 +106,9 @@ export function MessageBox(props: any) {
             })
             setIsMoreMenuOpen([...finalArray]);
             setIsAttachmentOpen([...finalArray]);
-            if (index === null) {
-                setIndex(currentInboxMessages.length - 1);
-            }
+            // if (index === null) {
+            // }
+            setIndex(currentInboxMessages.length - 1);
         }
     }, [messages, dispatch])
 
@@ -135,7 +126,7 @@ export function MessageBox(props: any) {
 
             setIframeHeight(prevState => ({
                 ...prevState,
-                [index]: (iframeRef.current[index].contentWindow.document.body.scrollHeight + 20)
+                [index]: (iframeRef.current[index].contentWindow.document.body.scrollHeight + 32)
             }));
 
             const allLinks = iframeRef.current[index].contentDocument.getElementsByTagName("a")
@@ -502,10 +493,11 @@ export function MessageBox(props: any) {
                         </Flex>
 
                         {message.body &&
-                        <div className={styles.mailBodyContent} style={{ height: iframeRef.current[messageIndex] ? parseFloat(iframeHeight[messageIndex]) - 32 : 'auto' }}>
+                        <div className={styles.mailBodyContent} style={{ height: iframeRef.current[messageIndex] && iframeHeight[messageIndex] ? parseFloat(iframeHeight[messageIndex]) - 32 : 'auto' }}>
                             <iframe
                                 ref={ref => iframeRef.current[messageIndex] = ref}
                                 onLoad={() => onIframeLoad(messageIndex)}
+                                scrolling="no"
                                 height={iframeHeight[messageIndex] || '0px'}
                                 src={message.body as string}
                                 className={styles.mailBody}

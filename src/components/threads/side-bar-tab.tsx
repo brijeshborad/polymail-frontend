@@ -25,7 +25,7 @@ import {INFINITE_LIST_PER_COUNT} from "@/utils/constants";
 
 dayjs.extend(customParseFormat)
 
-const ThreadsSideBarList = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarList), {ssr: false});
+const ThreadsSideBarList = dynamic(() => import("@/components/threads").then(mod => mod.ThreadsSideBarList));
 
 let currentPage: number = 1;
 

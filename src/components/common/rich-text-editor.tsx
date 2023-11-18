@@ -160,10 +160,9 @@ export function RichTextEditor({onChange, placeholder, className, value, hideToo
                     options: ['inline', 'list', 'link'],
                     inline: {
                         inDropdown: false,
-                        options: ['bold', 'italic', 'strikethrough'],
+                        options: ['bold', 'italic'],
                         bold: {icon: "/image/icon/bold.svg"},
-                        italic: {icon: "/image/icon/italic.svg"},
-                        strikethrough: {icon: "/image/icon/strikethrough.svg"},
+                        italic: {icon: "/image/icon/italic.svg"}
                     },
                     list: {
                         inDropdown: false,

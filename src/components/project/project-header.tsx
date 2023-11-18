@@ -17,7 +17,7 @@ import {ChevronDownIcon, CloseIcon, SearchIcon, SmallAddIcon, TriangleDownIcon} 
 import inboxStyles from "@/styles/Inbox.module.css";
 import {commonService, messageService, projectService, socketService, threadService} from "@/services";
 import Router, {useRouter} from "next/router";
-import {MailIcon, MemberInviteIcon, MenuIcon} from "@/icons";
+import {MailIcon, MemberInviteIcon, MenuIcon, ShareIcon} from "@/icons";
 import {Project, TeamMember, UserProjectOnlineStatus} from "@/models";
 import {PROJECT_ROLES} from "@/utils/constants";
 import React, {useCallback, useEffect, useRef, useState} from "react";
@@ -283,8 +283,7 @@ export function ProjectHeader() {
 
     return (
         <>
-            <Flex align={'center'} justify={'space-between'} gap={4} padding={'16px 40px 15px'}
-                  borderBottom={'1px solid #F3F4F6'} backgroundColor={'#FFFFFF'} height={'69px'}>
+            <Flex align={'center'} justify={'space-between'} className={styles.projectHeader} gap={4}>
                 <Flex align={'center'} gap={2}>
                     {!loadedFirstTime ? (
                         <>
@@ -331,8 +330,7 @@ export function ProjectHeader() {
                                         rounded={'md'}
                                     >
                                         {project && <>
-                                            {project?.emoji ? project.emoji :
-                                                <Image src="/image/user.png" width="24" height="24" alt=""/>}
+                                            {project?.emoji}
                                             <span style={{marginLeft: 12}}>
                                                 {project && project.name ? project.name : ''}
                                             </span>
@@ -400,7 +398,8 @@ export function ProjectHeader() {
                                 </MenuList>
                             </Menu>
                             {project && members &&
-                            <Badge textTransform={'none'} color={'#000000'} fontSize={'14px'} fontWeight={'600'}
+                            <Badge textTransform={'none'} className={styles.projectMembers} color={'#000000'}
+                                   fontSize={'14px'} fontWeight={'600'}
                                    backgroundColor={'#E9E9E9'} marginBottom={'-2px'}
                                    padding={'3px 6px'} borderRadius={'4px'}
                                    lineHeight={'1.19'}>{members && members.length === 1 ? `1 member` : `${members && members.length} members`}</Badge>}
@@ -427,14 +426,14 @@ export function ProjectHeader() {
                     <Menu isOpen={isManagerMembersOpen} onClose={() => setIsManagerMembersOpen(false)}>
                         {({onClose}) => (
                             <>
-                                <MenuButton
-                                    onClick={() => setIsManagerMembersOpen(!isManagerMembersOpen)}
-                                    as={Button} className={styles.manageMembers} ml={2} backgroundColor={'#000000'}
-                                    color={'#ffffff'} lineHeight={'1'} fontSize={'14px'} borderRadius={'8px'}
-                                    height={'auto'} padding={'11px 16px'}
-                                >
-                                    Share
-                                </MenuButton>
+                                <Tooltip label={'Share'} placement={'bottom'} customClass={'manageMembersTooltip'}>
+                                    <MenuButton onClick={() => setIsManagerMembersOpen(!isManagerMembersOpen)}
+                                                as={Button}
+                                                className={styles.manageMembers}>
+                                        <ShareIcon color={'#ffffff'}/>
+                                        <span className={styles.manageMembersText}>Share</span>
+                                    </MenuButton>
+                                </Tooltip>
                                 <MenuList className={`${styles.manageMemberDropDown} drop-down-list`}>
                                     <Flex color={'#374151'} fontWeight={'500'} fontSize={'13px'} padding={'12px'}
                                           justifyContent={'space-between'} alignItems={'center'}
@@ -643,9 +642,10 @@ export function ProjectHeader() {
                     </Menu>
                 </Flex>}
             </Flex>
+            {isDeleteModalOpen &&
             <RemoveRecordModal onOpen={onDeleteModalOpen} isOpen={isDeleteModalOpen} onClose={onDeleteModalClose}
                                confirmDelete={removeMemberFromProject}
-                               modelTitle={actionType}/>
+                               modelTitle={actionType}/>}
         </>
     )
 }

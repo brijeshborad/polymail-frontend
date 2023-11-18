@@ -170,6 +170,7 @@ export function MessagesHeader() {
                                 },
                                 tag: messageBox.toLowerCase(),
                                 afterUndoAction: () => {
+                                    threadService.moveThreadFromListToListCache(messageBox, tabValue || 'INBOX', threadData.id!);
                                     threadService.setThreadState({
                                         threads: threads || [],
                                         selectedThread: threadData
@@ -263,11 +264,11 @@ export function MessagesHeader() {
                                         e.stopPropagation();
                                         updateMailBox(MAILBOX_INBOX)
                                     }} className='inbox-button-icon'>
-                                        <InboxIcon />
+                                        <InboxIcon/>
                                     </button>
                                 </Tooltip>
                             )}
-                            {!(selectedThread?.mailboxes || []).includes(MAILBOX_ARCHIVE) && (
+                            {(selectedThread?.mailboxes || []).some((item) => [MAILBOX_SPAM, MAILBOX_INBOX, MAILBOX_TRASH].includes(item)) && (
                                 <Tooltip label='Archive' placement='bottom'>
                                     <button onClick={(e) => {
                                         e.preventDefault();
@@ -275,7 +276,7 @@ export function MessagesHeader() {
                                         updateMailBox(MAILBOX_ARCHIVE)
                                     }}
                                             className='archive-button-icon'>
-                                        <ArchiveIcon />
+                                        <ArchiveIcon/>
                                     </button>
                                 </Tooltip>
                             )}
@@ -286,7 +287,7 @@ export function MessagesHeader() {
                                         e.stopPropagation();
                                         updateMailBox(MAILBOX_TRASH)
                                     }} className='trash-button-icon'>
-                                        <TrashIcon />
+                                        <TrashIcon/>
                                     </button>
                                 </Tooltip>
                             )}
@@ -318,7 +319,7 @@ export function MessagesHeader() {
                                             e.stopPropagation();
                                             updateMailBox(MAILBOX_UNREAD)
                                         }}><InboxOpenIcon
-                                        /> Mark {(selectedThread?.mailboxes || []).includes(MAILBOX_UNREAD) ? 'Read' : 'Unread'}
+                                    /> Mark {(selectedThread?.mailboxes || []).includes(MAILBOX_UNREAD) ? 'Read' : 'Unread'}
                                     </MenuItem>
                                     <MenuItem
                                         className={`starred-button-icon ${(selectedThread?.mailboxes || []).includes(MAILBOX_STARRED) ? 'active' : ''}`}
@@ -326,20 +327,20 @@ export function MessagesHeader() {
                                             e.preventDefault();
                                             e.stopPropagation();
                                             updateMailBox(MAILBOX_STARRED)
-                                        }}><StarIcon /> Add Star</MenuItem>
+                                        }}><StarIcon/> Add Star</MenuItem>
                                     <MenuItem
                                         onClick={(e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
                                             muteThread(!selectedThread?.mute)
-                                        }}>{!selectedThread?.mute ? <MuteIcon /> : <UnmuteIcon
-                                        />} {!selectedThread?.mute ? 'Mute' : 'Unmute'}</MenuItem>
+                                        }}>{!selectedThread?.mute ? <MuteIcon/> : <UnmuteIcon
+                                    />} {!selectedThread?.mute ? 'Mute' : 'Unmute'}</MenuItem>
                                     {!(selectedThread?.mailboxes || []).includes(MAILBOX_SPAM) && <MenuItem
                                         onClick={(e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
                                             updateMailBox(MAILBOX_SPAM)
-                                        }}><SpamIcon /> Mark Spam</MenuItem>}
+                                        }}><SpamIcon/> Mark Spam</MenuItem>}
                                 </MenuList>
                             </Menu>
                         </div>

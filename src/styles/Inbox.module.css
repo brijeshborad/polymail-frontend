@@ -25,7 +25,7 @@
 }
 
 .emailTabs > div svg {
-  stroke: rgba(0,0,0,.5);
+    stroke: rgba(0, 0, 0, .5);
 }
 
 .emailTabs > div:hover {
@@ -129,7 +129,7 @@
 }
 
 .tabListDropDown button:hover svg {
-  stroke: #000;
+    stroke: #000;
 }
 
 .tabListDropDown .tabListSnoozeButton {
@@ -334,10 +334,8 @@
 .mailBox {
     border: 1px solid #F3F4F6;
     border-radius: 16px;
-    height: 100%;
     background-color: white;
-    /*box-shadow: 0 0 12px 0 #00000014;*/
-
+    height: calc(100vh - 157px)
 }
 
 .mailBox .mailBoxMailList {
@@ -371,13 +369,14 @@
 .mailBox .mailBody {
     font-size: 16px;
     line-height: 1.5;
-    width: calc(100% + 32px);
+    /*width: calc(100% + 32px);*/
+    width: 100%;
 }
 
 .mailBox .mailBodyContent {
     width: 100%;
     padding: 0 16px;
-    overflow: hidden;
+    /*overflow: hidden;*/
 }
 
 .mailBox .mailBodyContent.projectMailBodyContent {
@@ -1007,30 +1006,6 @@
 
 /* Mail Box End */
 
-@media (max-width: 991px) {
-    .mailBox {
-        height: 100% !important;
-    }
-
-    .filterTabs {
-        padding: 16px 25px;
-    }
-
-    .mailList {
-        max-height: calc(100vh - 266px);
-    }
-
-    .replayBox .mailFooter .replyMessageArea {
-        max-height: calc(100vh - 407px);
-    }
-}
-
-@media (max-width: 767px) {
-    .filterTabs {
-        padding: 15px;
-    }
-}
-
 .envelopeIcon svg {
     fill: #5D5F62;
     width: 18px;
@@ -1360,12 +1335,36 @@
     background-color: rgba(0, 0, 0, 0.8);
 }
 
+@media (max-width: 991px) {
+    .filterTabs {
+        padding: 16px 25px;
+    }
 
+    .mailList {
+        max-height: calc(100vh - 266px);
+        padding-right: 0;
+    }
+
+    .mailBox {
+        height: calc(100vh - 180px);
+    }
+
+    .replayBox .mailFooter .replyMessageArea {
+        max-height: calc(100vh - 407px);
+    }
+}
+
+@media (max-width: 767px) {
+    .filterTabs {
+        padding: 15px;
+    }
+}
 
 @media (min-width: 992px) and (max-width: 1487px) {
     .threadSearched .addToProjectButtonText {
         display: none;
     }
+
     .threadSearched .addToProject {
         min-width: 1px;
     }
@@ -1375,6 +1374,7 @@
     .threadSearched .threadSearchedActionButtonText {
         display: none;
     }
+
     .threadSearched .tabListMoreButton {
         padding-left: 1px;
         border-radius: 10px;
@@ -1427,3 +1427,13 @@
     }
 }
 
+@media (max-width: 480px) {
+    .mailTabList .emailTabs .active .mailboxText, .mailTabList .tabListMoreButton span:first-child, .mailListTabs .composeButton .composeButtonText {
+        display: none;
+    }
+
+    .mailListTabs .composeButton {
+        width: auto;
+        min-width: auto;
+    }
+}

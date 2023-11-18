@@ -5,11 +5,10 @@ import {OnboardingLogoIcon} from "@/icons";
 
 export default function OnboardingLayout({children}: any) {
     return (
-        <>
-            <Grid templateColumns='auto 600px' gap={6} h={'100vh'} bg={'#FFFFFF'}>
+        <div className={styles.onBoarding}>
+            <Grid templateColumns='auto 600px' className={styles.onBoardingGrid} gap={6} h={'100vh'} bg={'#FFFFFF'}>
                 <GridItem w='100%' padding={'20px'} display={'flex'} alignItems={'center'} justifyContent={'center'}>
-                    <Flex className={styles.onBoardingPage} w={'400px'} h={'580px'} direction={'column'}
-                          justify={'space-between'} alignItems={'flex-start'}>
+                    <Flex className={styles.onBoardingPage} direction={'column'}>
                         <OnboardingLogoIcon/>
                         {children}
                         <Text className={styles.onBoardingPolicy} fontSize='13px' letterSpacing={'-0.13px'}
@@ -56,6 +55,6 @@ export default function OnboardingLayout({children}: any) {
                     </Flex>
                 </GridItem>
             </Grid>
-        </>
+        </div>
     )
 }
