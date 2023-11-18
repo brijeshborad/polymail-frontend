@@ -1,13 +1,23 @@
-import React, {useCallback, useEffect, useState} from "react";
-import {Button, Flex, Grid, GridItem, Heading, ListItem, UnorderedList,} from "@chakra-ui/react";
+import React, {useCallback, useEffect} from "react";
+import {
+    Button,
+    Flex,
+    Grid,
+    GridItem,
+    Heading,
+    IconButton,
+    ListItem, Menu,
+    MenuButton, MenuGroup, MenuItem,
+    MenuList,
+    UnorderedList,
+} from "@chakra-ui/react";
 import styles from "@/styles/setting.module.css";
 import {UserIcon} from "@/icons";
 import Router, {useRouter} from "next/router";
-import {ArrowBackIcon, ChevronDownIcon} from "@chakra-ui/icons";
+import {ArrowBackIcon, HamburgerIcon} from "@chakra-ui/icons";
 import {getOrganizationMembers} from "@/redux/organizations/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {useWindowSize} from "@/hooks/window-resize.hook";
 
 
 const tabMenu = [
@@ -16,24 +26,24 @@ const tabMenu = [
         children: [
             {
                 title: 'Profile',
-                route: '/settings/profile',
+                route: '/settings/profile'
             },
             {
                 title: 'Signature',
-                route: '/settings/signature',
+                route: '/settings/signature'
             },
             {
                 title: 'Email Address',
-                route: '/settings/email-address',
+                route: '/settings/email-address'
             },
-        ],
+        ]
     },
     {
         title: 'Organization',
         children: [
             {
                 title: 'Approved Domains',
-                route: '/settings/preferences',
+                route: '/settings/preferences'
             },
             /*
             {
@@ -43,20 +53,18 @@ const tabMenu = [
             */
             {
                 title: 'Members',
-                route: '/settings/members',
+                route: '/settings/members'
             },
-        ],
+        ]
     },
 ];
 
 let currentRoute: string = '';
 
 export default function SettingsLayout({children}: any) {
-    const router = useRouter();
+    const router = useRouter()
     const dispatch = useDispatch();
     const {organizations, members} = useSelector((state: StateType) => state.organizations);
-    const [isMobileView, setIsMobileView] = useState(false);
-    const [width] = useWindowSize();
 
     useEffect(() => {
         const routePaths = router.pathname.split('/');
@@ -79,124 +87,77 @@ export default function SettingsLayout({children}: any) {
                 dispatch(getOrganizationMembers({body: {orgId: organizations[0].id}}));
             }
         }
-    }, [dispatch, organizations]);
+    }, [dispatch, organizations])
 
-    useEffect(() => {
-        if (width > 762) {
-            setIsMobileView(false);
-        } else {
-            setIsMobileView(true);
-        }
-        // setAllowAutoSelect(width > 991);
-        // commonService.setCommonState({allowThreadSelection: width > 991});
-    }, [width]);
-
-    const [isOpen, setIsOpen] = useState(false);
-
-    const toggleDropdown = () => {
-        setIsOpen(!isOpen);
-    };
-
-    const MobileDropdown = ({tabMenu}: any) => {
-        return (
-            <div className={styles.mobileDropdown}>
-                {isOpen && (
-                    <>
-                        {tabMenu.map((tab: any, index: number) => (
-                            <Flex direction={'column'} mb={8} key={index + 1}>
-                                <Heading display={'flex'} alignItems={'center'} mb={2} as="h5" size="sm"
-                                         className={styles.settingListTitle} textTransform={'uppercase'}>
-                                    <UserIcon/>
-                                    {tab.title}
-                                </Heading>
-                                {tab.children && (
-                                    <UnorderedList display={'flex'} gap={1} className={styles.settingList}>
-                                        {tab.children.map((item: any, i: number) => (
-                                            <ListItem key={i + 1} onClick={() => openTabs(item)}
-                                                      className={currentRoute === item.route ? styles.active : ''}>
-                                                {item.title}
-                                            </ListItem>
-                                        ))}
-                                    </UnorderedList>
-                                )}
-                            </Flex>
-                        ))}
-                    </>
-                )}
-            </div>
-        );
-    };
 
     return (
         <>
             <div className={styles.setting}>
-                <Grid templateColumns={`${isMobileView ? '-1px' : '232px'} auto`} gap={6} h={'100%'}
+                <Grid className={styles.settingGrid} templateColumns='232px auto' gap={6} h={'100%'}
                       minHeight={'calc(100vh - 65px)'}>
-                    <GridItem
-                        display={'flex'}
-                        w="100%"
-                        className={styles.settingSideBar}
-                        padding={'20px 30px 40px 40px'}
-                        borderRight={'1px solid #E1E3E6'}
-                        flexDirection={'column'}>
-                        <Button
-                            className={styles.backButton}
-                            borderRadius={8}
-                            height={'auto'}
-                            padding={'5px 8px 5px 5px'}
-                            marginBottom={'20px'}
-                            backgroundColor={'#FFFFFF'}
-                            color={'#6B7280'}
-                            borderColor={'#6B7280'}
-                            w={'fit-content'}
-                            colorScheme="blue"
-                            variant="outline"
-                            fontSize={'14px'}
-                            leftIcon={<ArrowBackIcon/>}
-                            onClick={() => router.push('/inbox')}>
-                            Back To Inbox
-                        </Button>
-                        <div>
-                            <Heading as="h4" mb={8} className={styles.settingTitle} onClick={toggleDropdown}>
-                                {' '}
-                                Settings {isMobileView && <ChevronDownIcon/>}{' '}
+                    <GridItem display={'flex'} className={styles.settingSideBar} flexDirection={'column'}>
+                        <div className={styles.settingSideBarHeader}>
+                            <Button className={styles.backButton} borderRadius={8} height={'auto'}
+                                    padding={'5px 8px 5px 5px'}
+                                    marginBottom={'20px'}
+                                    backgroundColor={'#FFFFFF'} color={'#6B7280'} borderColor={'#6B7280'}
+                                    w={'fit-content'}
+                                    colorScheme='blue' variant='outline' fontSize={'14px'}
+                                    leftIcon={<ArrowBackIcon/>} onClick={() => router.push('/inbox')}>
+                                Back To Inbox
+                            </Button>
+                            <Heading as='h4' mb={8} className={styles.settingTitle}>
+                                <span className={styles.settingTitleText}>Settings</span>
+                                <Menu>
+                                    <MenuButton
+                                        className={styles.settingMenu}
+                                        as={IconButton}
+                                        aria-label='Options'
+                                        icon={<HamburgerIcon/>}
+                                        variant='outline'
+                                    />
+                                    <MenuList>
+                                        {tabMenu.map((tab, index: number) => (
+                                            <MenuGroup
+                                                       key={index}
+                                                       className={styles.settingListTitle} textTransform={'uppercase'}
+                                                       title={(<><UserIcon/> {tab.title}</>) as any}>
+                                                {tab.children &&
+                                                tab.children.map((item, i: number) => (
+                                                    <MenuItem key={i + 1} onClick={() => openTabs(item)}
+                                                              className={`${styles.settingMenuItem} ${currentRoute === item.route ? styles.active : ''}`}>{item.title}</MenuItem>
+                                                ))}
+                                            </MenuGroup>
+                                        ))}
+                                    </MenuList>
+                                </Menu>
                             </Heading>
-                            {isMobileView && <MobileDropdown tabMenu={tabMenu}/>}
+                        </div>
 
-                            {!isMobileView && (
-                                <>
-                                    {tabMenu.map((tab, index: number) => (
-                                        <Flex direction={'column'} mb={8} key={index + 1}>
-                                            <Heading
-                                                display={'flex'}
-                                                alignItems={'center'}
-                                                mb={2}
-                                                as="h5"
-                                                size="sm"
-                                                className={styles.settingListTitle}
-                                                textTransform={'uppercase'}>
-                                                <UserIcon/>
-                                                {tab.title}
-                                            </Heading>
-                                            {tab.children && (
-                                                <UnorderedList display={'flex'} gap={1} className={styles.settingList}>
-                                                    {tab.children.map((item, i: number) => (
-                                                        <ListItem key={i + 1} onClick={() => openTabs(item)}
-                                                                  className={currentRoute === item.route ? styles.active : ''}>
-                                                            {item.title}
-                                                        </ListItem>
-                                                    ))}
-                                                </UnorderedList>
-                                            )}
-                                        </Flex>
-                                    ))}
-                                </>
-                            )}
+                        <div className={styles.settingItems}>
+                            {tabMenu.map((tab, index: number) => (
+                                <Flex direction={'column'} mb={8} key={index + 1}>
+                                    <Heading display={'flex'} alignItems={'center'} mb={2} as='h5' size='sm'
+                                             className={styles.settingListTitle} textTransform={'uppercase'}>
+                                        <UserIcon/>{tab.title}
+                                    </Heading>
+                                    {tab.children &&
+                                    <UnorderedList display={'flex'} gap={1} className={styles.settingList}>
+                                        {tab.children.map((item, i: number) => (
+                                            <ListItem key={i + 1} onClick={() => openTabs(item)}
+                                                      className={currentRoute === item.route ? styles.active : ''}>{item.title}</ListItem>
+                                        ))}
+                                    </UnorderedList>
+                                    }
+                                </Flex>
+                            ))}
                         </div>
                     </GridItem>
-                    <GridItem w="100%">{children}</GridItem>
+                    <GridItem w='100%'>
+                        {children}
+                    </GridItem>
                 </Grid>
             </div>
         </>
-    );
+    )
 }
