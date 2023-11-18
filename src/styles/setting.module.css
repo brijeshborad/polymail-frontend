@@ -549,3 +549,36 @@
 .spinner > div > div {
     margin: 0;
 }
+
+.mobileDropdown {
+    position: absolute;
+    background-color: white;
+    width: 90%;
+    z-index: 1;
+}
+
+.dropdownList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: none;
+}
+
+.dropdownList li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .mobileDropdown .dropdownList {
+        display: block;
+    }
+}
+
