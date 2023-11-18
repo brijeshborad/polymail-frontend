@@ -181,12 +181,12 @@
 }
 
 @media (max-width: 991px) {
-    .onborading .onboradingGrid {
+    .onBoarding .onBoardingGrid {
         display: block;
         overflow-y: scroll;
     }
 
-    .onborading .onboradingGrid .onBoardingPage {
+    .onBoarding .onBoardingGrid .onBoardingPage {
         height: 400px;
         margin-top: 20%;
     }

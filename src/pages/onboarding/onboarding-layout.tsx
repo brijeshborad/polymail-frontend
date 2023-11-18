@@ -5,8 +5,8 @@ import {OnboardingLogoIcon} from "@/icons";
 
 export default function OnboardingLayout({children}: any) {
     return (
-        <div className={styles.onborading}>
-            <Grid templateColumns='auto 600px' className={styles.onboradingGrid} gap={6} h={'100vh'} bg={'#FFFFFF'}>
+        <div className={styles.onBoarding}>
+            <Grid templateColumns='auto 600px' className={styles.onBoardingGrid} gap={6} h={'100vh'} bg={'#FFFFFF'}>
                 <GridItem w='100%' padding={'20px'} display={'flex'} alignItems={'center'} justifyContent={'center'}>
                     <Flex className={styles.onBoardingPage} direction={'column'}
                           justify={'space-between'} alignItems={'flex-start'}>
