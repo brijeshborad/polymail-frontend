@@ -510,6 +510,32 @@
     background-color: #F6F6F6 !important;
 }
 
+.projectPage .manageMembers {
+    margin-left: 8px;
+    background-color: #000000;
+    color: #FFFFFF;
+    line-height: 1;
+    font-size: 14px;
+    border-radius: 8px;
+    height: auto;
+    padding: 11px 16px;
+}
+
+.projectPage .manageMembers svg {
+    display: none;
+}
+
+.projectPage .manageMembers .manageMembersText {
+    display: block;
+}
+
+.projectPage .projectHeader {
+    padding: 16px 40px 15px;
+    border-bottom: 1px solid #F3F4F6;
+    background-color: #FFFFFF;
+    height: 69px;
+}
+
 @media (max-width: 991px) {
     .projectPage .mailGrid {
         grid-template-columns: 100% 100%;
@@ -523,5 +549,62 @@
 
     .mailList.projectThreadList {
         max-height: calc(100vh - 236px);
+    }
+
+    .projectPage .projectHeader {
+        padding: 16px 30px 15px;
+    }
+}
+
+@media (max-width: 705px) {
+    .projectNameDropdown span {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 637px) {
+    .projectNameDropdown span {
+        font-size: 15px;
+    }
+
+    .projectPage .projectMembers {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 767px) {
+    .projectPage .mailGrid {
+        padding: 10px 20px 20px 20px;
+    }
+}
+
+@media (max-width: 605px) {
+    .projectPage .manageMembers svg {
+        display: block;
+    }
+
+    .projectPage .manageMembers .manageMembersText {
+        display: none;
+    }
+
+    .projectPage .manageMembers,
+    .projectPage .projectListDropDownButton {
+        padding: 8px 12px;
+    }
+
+    .projectPage .projectHeader {
+        padding: 16px 10px 15px;
+    }
+}
+
+@media (max-width: 501px) {
+    .projectPage .projectHeader {
+        padding: 16px 0 15px;
+    }
+}
+
+@media (max-width: 576px) {
+    .projectPage .mailGrid {
+        padding: 10px 15px 15px 10px;
     }
 }

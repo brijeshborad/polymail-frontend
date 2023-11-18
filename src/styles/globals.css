@@ -1054,7 +1054,7 @@ div:has(> .mailSendToaster) {
     stroke: black;
 }
 
-.text-tooltip {
+.text-tooltip, .manageMembersTooltip {
     display: none;
 }
 
@@ -1105,6 +1105,12 @@ div:has(> .mailSendToaster) {
 
 @media (min-width: 991px) and (max-width: 1431px) {
     .text-tooltip {
+        display: block;
+    }
+}
+
+@media (max-width: 605px) {
+    .manageMembersTooltip {
         display: block;
     }
 }
