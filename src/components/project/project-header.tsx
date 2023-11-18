@@ -643,9 +643,9 @@ export function ProjectHeader() {
                     </Menu>
                 </Flex>}
             </Flex>
-            <RemoveRecordModal onOpen={onDeleteModalOpen} isOpen={isDeleteModalOpen} onClose={onDeleteModalClose}
-                               confirmDelete={removeMemberFromProject}
-                               modelTitle={actionType}/>
+            {isDeleteModalOpen && <RemoveRecordModal onOpen={onDeleteModalOpen} isOpen={isDeleteModalOpen} onClose={onDeleteModalClose}
+                                                     confirmDelete={removeMemberFromProject}
+                                                     modelTitle={actionType}/>}
         </>
     )
 }

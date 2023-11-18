@@ -36,10 +36,10 @@ function ProjectInbox() {
 
                 <Grid className={styles.mailGrid} templateColumns='30% auto' padding={'16px 20px 16px'} gap={4}
                       flex={1}>
-                    <GridItem w='100%' flex={1}>
+                    <GridItem w='100%' flex={1} className={'threadSideBar'} id={'inbox-thread-side-bar'}>
                         <ThreadsSideBar/>
                     </GridItem>
-                    <GridItem w='100%' flex={1}>
+                    <GridItem w='100%' flex={1} className={'messageSideBar'} id={'inbox-message-side-bar'}>
                         <Message isProjectView={true}/>
                     </GridItem>
                 </Grid>

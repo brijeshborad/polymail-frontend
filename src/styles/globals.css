@@ -1075,7 +1075,7 @@ div:has(> .mailSendToaster) {
     border-radius: 8px;
     height: auto;
     padding: 5px 8px 5px 5px;
-    margin: 10px 0;
+    margin: 5px 0;
     background-color: #FFFFFF;
     color: #6B7280;
     width: fit-content;

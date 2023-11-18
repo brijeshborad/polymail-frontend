@@ -514,6 +514,7 @@
     .projectPage .mailGrid {
         grid-template-columns: 100% 100%;
         display: flex;
+        padding: 0 20px 20px 20px;
     }
 
     .projectPage {
