@@ -9,7 +9,7 @@ import {
     updateMessage
 } from "@/redux/messages/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
-import {Message, Message as MessageModel, MessageAttachments, Thread} from "@/models";
+import {Message, Message as MessageModel, MessageAttachments} from "@/models";
 import {StateType} from "@/types";
 import {clearDebounce, debounce} from "@/utils/common.functions";
 import {EyeSlashedIcon} from "@/icons/eye-slashed.icon";
