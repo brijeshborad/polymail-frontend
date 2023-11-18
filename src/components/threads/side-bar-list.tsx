@@ -194,11 +194,11 @@ export function ThreadsSideBarList(props: ThreadListProps) {
         }
     }, [])
 
-    useEffect(() => {
-        if (currentThreads) {
-            handleEditorScroll();
-        }
-    }, [currentThreads, handleEditorScroll]);
+    // useEffect(() => {
+    //     if (currentThreads) {
+    //         handleEditorScroll();
+    //     }
+    // }, [currentThreads, handleEditorScroll]);
 
 
     useEffect(() => {

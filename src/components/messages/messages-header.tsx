@@ -170,6 +170,7 @@ export function MessagesHeader() {
                                 },
                                 tag: messageBox.toLowerCase(),
                                 afterUndoAction: () => {
+                                    threadService.moveThreadFromListToListCache(messageBox, tabValue || 'INBOX', threadData.id!);
                                     threadService.setThreadState({
                                         threads: threads || [],
                                         selectedThread: threadData
