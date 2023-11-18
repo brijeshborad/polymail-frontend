@@ -153,7 +153,7 @@ export default function SettingsLayout({children}: any) {
                             ))}
                         </div>
                     </GridItem>
-                    <GridItem w='100%'>
+                    <GridItem  w='100%' overflow={'auto'}>
                         {children}
                     </GridItem>
                 </Grid>

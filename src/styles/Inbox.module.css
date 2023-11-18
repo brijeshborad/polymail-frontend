@@ -1431,4 +1431,9 @@
     .mailTabList .emailTabs .active .mailboxText, .mailTabList .tabListMoreButton span:first-child, .mailListTabs .composeButton .composeButtonText {
         display: none;
     }
+
+    .mailListTabs .composeButton {
+        width: auto;
+        min-width: auto;
+    }
 }
