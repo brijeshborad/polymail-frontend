@@ -790,11 +790,6 @@ div:has(> .mailToaster) {
         display: none;
     }
 
-    .header .headerSearch {
-        width: fit-content;
-        margin-left: auto;
-    }
-
     .headerSearch .headerSearchInput {
         width: fit-content;
         padding: 6px;

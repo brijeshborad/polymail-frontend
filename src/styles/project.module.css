@@ -607,3 +607,33 @@
     }
 }
 
+@media (max-width: 480px) {
+    .projectListPage {
+        padding: 20px 15px !important;
+    }
+
+    .projectListPage .projects {
+        padding-right: 10px;
+    }
+
+    .projectListPage .projects > div:first-child {
+        padding: 10px 0 10px 10px;
+        gap: 8px;
+    }
+
+    .projectListPage .projects > div:first-child > div {
+        gap: 4px;
+    }
+
+    .projectListPage .projects .dragIcon svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .projectListPage .projects .projectIcon {
+        width: 20px;
+        height: 20px;
+        min-width: 20px;
+        font-size: 15px;
+    }
+}

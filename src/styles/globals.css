@@ -1133,6 +1133,12 @@ div:has(> .mailSendToaster) {
     }
 }
 
+@media (min-width: 481px) {
+    .header-menu-button {
+        display: none !important;
+    }
+}
+
 @media (max-width: 480px) {
     .dot {
         display: none;
