@@ -88,7 +88,7 @@ export function ThreadsSideBarTab() {
                     page: currentPage
                 }
             }
-            let buildBody = {};
+            let buildBody: any = {};
             if (projectId) {
                 buildBody = {
                     mailbox: tabValue,
@@ -107,6 +107,9 @@ export function ThreadsSideBarTab() {
                         pagination
                     }
                 }
+            }
+            if (buildBody.mailbox === 'ARCHIVE') {
+                buildBody.mailbox = '';
             }
             dispatch(getAllThreads({
                 body: buildBody,
