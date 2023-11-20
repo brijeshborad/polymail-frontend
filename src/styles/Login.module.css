@@ -184,14 +184,17 @@
 
 @media (max-width: 991px) {
     .onBoarding .onBoardingGrid {
-        display: block;
+        grid-template-columns: 100%;
         overflow-y: scroll;
+        min-height: 100vh;
+        height: 100%;
     }
 
     .onBoarding .onBoardingGrid .onBoardingPage {
         height: 400px;
         margin-top: 20%;
         align-items: center;
+        text-align: center;
     }
 
     .onBoarding .onBoardingGrid .onBoardingPage .onBoardingType {
@@ -200,6 +203,11 @@
 }
 
 @media (max-width: 576px) {
+    .onBoarding .onBoardingGrid .onBoardingPage {
+        margin: 0;
+        width: 100%;
+        gap: 40px;
+    }
 
     .loginGoogleButton button {
         font-size: 18px;
@@ -212,5 +220,12 @@
 
     .loginBox .loginInput {
         font-size: 18px;
+    }
+}
+
+
+@media (max-width: 480px) {
+    .onBoarding .onBoardingGrid .onBoardingPage {
+        height: auto;
     }
 }

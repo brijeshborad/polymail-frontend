@@ -1433,6 +1433,7 @@
     .mailBox .mailBoxHeader {
         flex-direction: column;
         padding: 10px;
+        align-items: flex-start;
     }
 
     .mailBox .mailBoxHeader > div + div {

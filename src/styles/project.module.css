@@ -640,4 +640,12 @@
     .addProjectMember .addProjectMemberInputFlex {
         flex-direction: column;
     }
+
+    .manageMemberDropDown {
+        min-width: 1px !important;
+    }
+
+    .manageMemberDropDown .dropDownSearchBar {
+        min-width: 1px;
+    }
 }
