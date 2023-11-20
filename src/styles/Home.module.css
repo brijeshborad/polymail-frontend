@@ -610,7 +610,11 @@ div:has(> .mailToaster) {
     }
 
     .notificationIcon {
-        margin-right: 70px;
+        margin-right: 40px;
+    }
+
+    .headerSearchInput input {
+        padding: 0;
     }
 }
 
@@ -737,11 +741,7 @@ div:has(> .mailToaster) {
     }
 
     .header {
-        padding: 0 15px !important;
-    }
-
-    .headerSearch .inputGroup {
-        /*display: none;*/
+        padding: 0 25px !important;
     }
 
     .headerTabs {
@@ -762,12 +762,53 @@ div:has(> .mailToaster) {
         width: 30px;
         height: 30px;
         margin-right: 25px;
+        margin-left: 0;
     }
 
     .profileButton .profileImage {
         width: 30px;
         height: 30px;
         min-width: 30px;
+    }
+
+    .headerSearch .headerSearchInput input {
+        display: none;
+    }
+
+    .headerSearch .headerSearchInput > div {
+        display: none;
+    }
+
+    .headerSearch .headerSearchInput {
+        width: fit-content;
+        padding: 6px;
+        background-color: #FFFFFF;
+        border: 0;
+        margin-left: auto;
+        cursor: pointer;
+    }
+
+    .headerSearch.headerSearchPopup {
+        position: unset;
+    }
+
+    .headerSearch.headerSearchPopup .headerSearchPopupBox {
+        width: calc(100% - 30px);
+        left: 15px;
+        padding: 16px 24px;
+        z-index: 1;
+    }
+
+    .headerSearch.headerSearchPopup .headerSearchPopupBox .headerSearchInput {
+        width: 100%;
+    }
+
+    .headerSearch.headerSearchPopup .headerSearchPopupBox .headerSearchInput > div {
+        display: flex;
+    }
+
+    .headerSearch.headerSearchPopup .headerSearchPopupBox .headerButton {
+        margin-top: 20px;
     }
 }
 

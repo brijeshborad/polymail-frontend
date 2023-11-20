@@ -1447,28 +1447,28 @@
         padding: 10px 10px 20px 10px;
     }
 
-    .mailBox .oldMail .maxBoxMailHeader {
+    .mailBox .oldMail .mailBoxMailHeader {
         flex-direction: column;
     }
 
-    .mailBox .oldMail .maxBoxMailHeader > div {
+    .mailBox .oldMail .mailBoxMailHeader > div {
         padding: 10px 10px 16px;
         border: 1px solid transparent;
     }
 
-    .mailBox .oldMail .maxBoxMailHeader > div + div {
+    .mailBox .oldMail .mailBoxMailHeader > div + div {
         padding: 0 10px 16px;
         position: unset;
         margin-top: -10px;
     }
 
-    .mailBox .oldMail .maxBoxMailHeader .menuIcon {
+    .mailBox .oldMail .mailBoxMailHeader .menuIcon {
         position: absolute;
         right: 0;
         top: 12px;
     }
 
-    .mailBox .oldMail .maxBoxMailHeader .mailBoxTime {
+    .mailBox .oldMail .mailBoxMailHeader .mailBoxTime {
         padding: 0;
     }
 
@@ -1493,6 +1493,16 @@
 
     .mailListTabs .tabListMoreButton {
         min-width: 1px;
+    }
+
+    .mailBox .oldMail .mailBoxMailHeader .mailBoxMailHeaderDetails {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .mailBox .oldMail .mailBoxMailHeader .mailBoxMailHeaderDetails  {
+        flex-direction: column;
+        align-items: flex-start;
     }
 }
 

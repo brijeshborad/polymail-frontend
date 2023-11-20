@@ -398,7 +398,7 @@ export function MessageBox(props: any) {
 
                     {messageIndex === index &&
                     <Flex direction={'column'} w={'100%'} pb={4}>
-                        <Flex align={'flex-start'} className={styles.maxBoxMailHeader}>
+                        <Flex align={'flex-start'} className={styles.mailBoxMailHeader}>
                             <Flex align={'center'} w={'100%'} cursor={'pointer'} gap={2} padding={4}
                                   onClick={() => handleRowClick(messageIndex)}>
                                 {/*<div className={styles.mailBoxUserImage}>*/}
@@ -406,7 +406,7 @@ export function MessageBox(props: any) {
                                 {/*</div>*/}
                                 <Flex w={'100%'} direction={'column'} pr={'20px'}>
                                     <Flex align={'center'} justify={'space-between'} mb={1}>
-                                        <Flex align={'flex-end'} gap={1}>
+                                        <Flex align={'flex-end'} className={styles.mailBoxMailHeaderDetails} gap={1}>
                                             <Heading
                                                 as='h6' fontSize={'13px'} color={'#0A101D'}
                                                 fontWeight={400} letterSpacing={'-0.13px'} lineHeight={1}
