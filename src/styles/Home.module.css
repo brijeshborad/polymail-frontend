@@ -735,6 +735,12 @@ div:has(> .mailToaster) {
     }
 }
 
+@media (min-width: 768px) {
+    .headerSearch.headerSearchPopup .headerSearchPopupBox .headerSearchInput {
+        display: none;
+    }
+}
+
 @media (max-width: 767px) {
     .mailBg {
         padding: 15px 10px;
@@ -801,6 +807,13 @@ div:has(> .mailToaster) {
 
     .headerSearch.headerSearchPopup .headerSearchPopupBox .headerSearchInput {
         width: 100%;
+        border: 1px solid #cbd5e0;
+        background-color: #f5f5f5;
+    }
+
+    .headerSearch.headerSearchPopup .headerSearchPopupBox .headerSearchInput input {
+        display: block;
+        padding-right: 30px;
     }
 
     .headerSearch.headerSearchPopup .headerSearchPopupBox .headerSearchInput > div {
