@@ -767,8 +767,13 @@ div:has(> .mailToaster) {
     .notificationIcon {
         width: 30px;
         height: 30px;
-        margin-right: 25px;
+        margin-right: 0;
         margin-left: 0;
+        border: 0;
+    }
+
+    .headerSearch {
+        padding-right: 0;
     }
 
     .profileButton .profileImage {

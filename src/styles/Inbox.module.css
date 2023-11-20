@@ -1498,11 +1498,13 @@
     .mailBox .oldMail .mailBoxMailHeader .mailBoxMailHeaderDetails {
         flex-direction: column;
         align-items: flex-start;
+        padding-bottom: 3px;
     }
+}
 
-    .mailBox .oldMail .mailBoxMailHeader .mailBoxMailHeaderDetails  {
-        flex-direction: column;
-        align-items: flex-start;
+@media (min-width: 361px) {
+    .mailBox .oldMail .mailBoxHideMail .mailBoxTimeMobile {
+        display: none;
     }
 }
 
@@ -1514,5 +1516,18 @@
     .mailBox .mailBoxHeader .addToProject {
         min-width: 1px;
         padding-right: 8px;
+    }
+
+    .mailBox .oldMail .mailBoxHideMail .mailBoxTimeMobile p {
+        font-weight: 400;
+        color: #6B7280;
+        font-size: 11px;
+        line-height: 15px;
+        margin-bottom: 5px;
+        margin-top: -3px;
+    }
+
+    .mailBox .oldMail .mailBoxTime .mailBoxTimeDesktop {
+        display: none;
     }
 }

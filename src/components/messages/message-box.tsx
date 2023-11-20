@@ -343,6 +343,9 @@ export function MessageBox(props: any) {
                                              letterSpacing={'-0.13px'}
                                              lineHeight={1}>{message.from?.name || message.from?.email}</Heading>
                                 </Flex>
+                                <span className={styles.mailBoxTimeMobile} style={{whiteSpace: 'nowrap'}}>
+                                    <Time time={message.created || ''} isShowFullTime={true} showTimeInShortForm={false}/>
+                                </span>
                                 <Text fontSize='13px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
                                       fontWeight={400}>
                                     <span dangerouslySetInnerHTML={{__html: message.snippet || ''}}/>
@@ -358,7 +361,7 @@ export function MessageBox(props: any) {
 
                             {message.attachments && !!message.attachments.length && attachmentsMenu(message, messageIndex)}
 
-                            <span style={{whiteSpace: 'nowrap'}}>
+                            <span className={styles.mailBoxTimeDesktop} style={{whiteSpace: 'nowrap'}}>
                                         <Time time={message.created || ''} isShowFullTime={true}
                                               showTimeInShortForm={false}/>
                                     </span>

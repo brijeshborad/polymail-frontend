@@ -1137,6 +1137,33 @@ div:has(> .mailSendToaster) {
     .dot {
         display: none;
     }
+
+    .drop-down-list.header-dropdown-list button {
+        gap: 5px;
+        color: rgba(8, 22, 47, 0.4);
+        transition: all 0.2s;
+    }
+
+    .drop-down-list.header-dropdown-list button svg {
+        stroke: rgba(8, 22, 47, 0.4);
+        transition: all 0.2s;
+    }
+
+    .drop-down-list.header-dropdown-list button:hover {
+        color: #000000;
+    }
+
+    .drop-down-list.header-dropdown-list button.tabsActive {
+        color: #000000;
+    }
+
+    .drop-down-list.header-dropdown-list button.tabsActive svg {
+        stroke: #000000;
+    }
+
+    .drop-down-list.header-dropdown-list button:hover svg {
+        stroke: #000000;
+    }
 }
 
 @media (prefers-color-scheme: dark) {

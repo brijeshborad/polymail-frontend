@@ -7,7 +7,7 @@ import {
     MenuItem,
     MenuList
 } from '@chakra-ui/react';
-import {CheckIcon, ChevronDownIcon} from '@chakra-ui/icons';
+import {CheckIcon, ChevronDownIcon, HamburgerIcon} from '@chakra-ui/icons';
 import {FolderIcon, MailIcon} from '@/icons';
 import styles from '@/styles/Home.module.css';
 import {useSelector} from 'react-redux';
@@ -269,6 +269,18 @@ export function Header() {
                         Projects
                     </Flex>
                 </Flex>
+
+                <Menu>
+                    <MenuButton as={Button} rightIcon={<HamburgerIcon />} />
+                    <MenuList className={'drop-down-list header-dropdown-list'}>
+                        <MenuItem className={router.pathname === '/inbox' ? styles.tabsActive : ''} onClick={() => changePage('inbox')}>
+                            <MailIcon/> Inbox
+                        </MenuItem>
+                        <MenuItem className={router.pathname === '/projects' ? styles.tabsActive : ''} onClick={() => changePage('projects')}>
+                            <FolderIcon/> Projects
+                        </MenuItem>
+                    </MenuList>
+                </Menu>
             </Flex>
 
             <HeaderSearch/>
