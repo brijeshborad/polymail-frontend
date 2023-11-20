@@ -1151,18 +1151,23 @@ div:has(> .mailSendToaster) {
 
     .drop-down-list.header-dropdown-list button:hover {
         color: #000000;
+        background-color: --alias-bg-subtle;
     }
 
-    .drop-down-list.header-dropdown-list button.tabsActive {
+    .drop-down-list.header-dropdown-list button.tab-active {
         color: #000000;
     }
 
-    .drop-down-list.header-dropdown-list button.tabsActive svg {
+    .drop-down-list.header-dropdown-list button.tab-active svg {
         stroke: #000000;
     }
 
     .drop-down-list.header-dropdown-list button:hover svg {
         stroke: #000000;
+    }
+
+    .header-menu-button span {
+        margin: 0;
     }
 }
 

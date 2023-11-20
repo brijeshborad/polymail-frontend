@@ -790,6 +790,11 @@ div:has(> .mailToaster) {
         display: none;
     }
 
+    .header .headerSearch {
+        width: fit-content;
+        margin-left: auto;
+    }
+
     .headerSearch .headerSearchInput {
         width: fit-content;
         padding: 6px;
@@ -833,5 +838,22 @@ div:has(> .mailToaster) {
 @media (max-width: 576px) {
     .notificationIcon {
         margin-right: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header .headerTabs {
+        display: none;
+    }
+}
+
+
+@media (max-width: 360px) {
+    .header .headerLogo {
+        margin-right: auto;
+    }
+
+    .header .headerLogo .logo svg {
+        height: 25px;
     }
 }
