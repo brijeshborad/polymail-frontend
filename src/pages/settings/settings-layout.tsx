@@ -115,8 +115,9 @@ export default function SettingsLayout({children}: any) {
                                         aria-label='Options'
                                         icon={<HamburgerIcon/>}
                                         variant='outline'
+                                        minWidth={'1px'} height={'auto'} padding={'7px'}
                                     />
-                                    <MenuList>
+                                    <MenuList className={'drop-down-list'}>
                                         {tabMenu.map((tab, index: number) => (
                                             <MenuGroup
                                                        key={index}

@@ -636,4 +636,8 @@
         min-width: 20px;
         font-size: 15px;
     }
+
+    .addProjectMember .addProjectMemberInputFlex {
+        flex-direction: column;
+    }
 }

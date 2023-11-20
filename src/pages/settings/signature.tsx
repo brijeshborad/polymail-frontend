@@ -80,7 +80,7 @@ function Signature() {
 
     return (
         <SettingsLayout>
-            <Flex direction={'column'} h={'100%'} padding={'50px 40px 40px'}>
+            <Flex className={styles.settingPageBox} direction={'column'} h={'100%'} padding={'50px 40px 40px'}>
                 <Flex direction={'column'} pb={8} mb={8} borderBottom={'1px solid #D9D9D9'}>
                     <Heading as='h4' size='lg' gap={1}> Signature </Heading>
                     <Text fontSize='sm' className={styles.settingSubTitle}>Manage your team and preferences
