@@ -1179,6 +1179,21 @@ div:has(> .mailSendToaster) {
     .drop-down-list > div + div {
         grid-template-columns: repeat(9, 1fr);
     }
+
+    .tiptap-container.compose-view {
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .compose-editor .tiptap-container > div {
+        flex: none;
+        position: unset;
+    }
+
+    .tiptap-toolbar.show {
+        position: unset;
+        margin-bottom: 6px;
+    }
 }
 
 @media (max-width: 360px) {
