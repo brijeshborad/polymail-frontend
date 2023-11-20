@@ -1115,6 +1115,12 @@ div:has(> .mailSendToaster) {
     }
 }
 
+@media (max-width: 576px) {
+   .header .mail-box-subheader {
+
+    }
+}
+
 @media (prefers-color-scheme: dark) {
     :root {
         --foreground-rgb: 255, 255, 255;
@@ -1133,9 +1139,7 @@ div:has(> .mailSendToaster) {
         --card-rgb: 100, 100, 100;
         --card-border-rgb: 200, 200, 200;
     }
-}
 
-@media (prefers-color-scheme: dark) {
     html {
         color-scheme: dark;
     }

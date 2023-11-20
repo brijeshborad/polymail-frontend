@@ -595,7 +595,6 @@ div:has(> .mailToaster) {
 }
 
 @media (max-width: 991px) {
-
     .mailBg .mailGrid {
         grid-template-columns: 100% 100%;
         display: block;
@@ -603,7 +602,7 @@ div:has(> .mailToaster) {
 
     .mailBg {
         height: 100%;
-        padding: 0 20px 20px 20px;
+        padding: 16px 10px 0;
     }
 
     .header {
@@ -765,9 +764,3 @@ div:has(> .mailToaster) {
         margin-right: 25px;
     }
 }
-
-/*@media (max-width: 576px) {*/
-/*    .mailBg {*/
-/*        padding: 10px 15px 15px 10px;*/
-/*    }*/
-/*}*/
