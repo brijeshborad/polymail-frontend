@@ -236,7 +236,7 @@ function Index() {
                                                 <Image src="/image/handcraft.png" width="24" height="24" alt=""/>}
                                         </div>
                                         <Text fontSize='sm' lineHeight={'16px'} color={'#0A101D'}
-                                              fontWeight={'500'}>{project.name}</Text>
+                                              fontWeight={'500'} noOfLines={1}>{project.name}</Text>
                                         <Badge textTransform={'none'} backgroundColor={'#F3F4F6'} fontSize={'11px'}
                                                fontWeight={400}
                                                color={'#374151'} lineHeight={'1'} borderRadius={50}

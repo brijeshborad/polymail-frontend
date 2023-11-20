@@ -227,7 +227,7 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
                         <Flex ref={messagesWrapperRef} onScroll={handleScroll} padding={'20px'} gap={5}
                               direction={'column'} flex={1}
                               overflowY={'scroll'} overflowX={'hidden'}
-                              className={`${styles.messageListscrollbar} ${showScrollBar ? styles.messageScrollBar : ''}`}>
+                              className={`${styles.messageListScrollBar} ${showScrollBar ? styles.messageScrollBar : ''}`}>
                             <Flex gap={2} direction={'column'} height={'100%'}>
                                 <div className={styles.mailBoxMailList}>
                                     <MessageBox hideAndShowReplyBox={hideAndShowReplyBox}/>

@@ -1101,6 +1101,10 @@ div:has(> .mailSendToaster) {
     .messageSideBar .backToThread {
         display: flex;
     }
+
+    .mail-box-main .mail-box-subheader {
+        padding: 15px 35px;
+    }
 }
 
 @media (min-width: 991px) and (max-width: 1431px) {
@@ -1112,6 +1116,95 @@ div:has(> .mailSendToaster) {
 @media (max-width: 605px) {
     .manageMembersTooltip {
         display: block;
+    }
+}
+
+@media (max-width: 576px) {
+    .mail-box-main .mail-box-subheader {
+        padding: 10px 25px;
+        height: fit-content;
+        gap: 8px;
+    }
+
+    .mail-box-main .mail-box-subheader .create-project-button,
+    .mail-box-main .mail-box-subheader .header-project-name-button {
+        min-width: 175px;
+        max-width: 175px;
+    }
+}
+
+@media (min-width: 481px) {
+    .header-menu-button {
+        display: none !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .dot {
+        display: none;
+    }
+
+    .drop-down-list.header-dropdown-list button {
+        gap: 5px;
+        color: rgba(8, 22, 47, 0.4);
+        transition: all 0.2s;
+    }
+
+    .drop-down-list.header-dropdown-list button svg {
+        stroke: rgba(8, 22, 47, 0.4);
+        transition: all 0.2s;
+    }
+
+    .drop-down-list.header-dropdown-list button:hover {
+        color: #000000;
+        background-color: --alias-bg-subtle;
+    }
+
+    .drop-down-list.header-dropdown-list button.tab-active {
+        color: #000000;
+    }
+
+    .drop-down-list.header-dropdown-list button.tab-active svg {
+        stroke: #000000;
+    }
+
+    .drop-down-list.header-dropdown-list button:hover svg {
+        stroke: #000000;
+    }
+
+    .header-menu-button span {
+        margin: 0;
+    }
+
+    .drop-down-list > div + div {
+        grid-template-columns: repeat(9, 1fr);
+    }
+
+    .tiptap-container.compose-view {
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .compose-editor .tiptap-container > div {
+        flex: none;
+        position: unset;
+    }
+
+    .tiptap-toolbar.show {
+        position: unset;
+        margin-bottom: 6px;
+    }
+}
+
+@media (max-width: 360px) {
+    .drop-down-list > div + div {
+        grid-template-columns: repeat(8, 1fr);
+    }
+}
+
+@media (max-width: 320px) {
+    .drop-down-list > div + div {
+        grid-template-columns: repeat(7, 1fr);
     }
 }
 
@@ -1133,9 +1226,7 @@ div:has(> .mailSendToaster) {
         --card-rgb: 100, 100, 100;
         --card-border-rgb: 200, 200, 200;
     }
-}
 
-@media (prefers-color-scheme: dark) {
     html {
         color-scheme: dark;
     }

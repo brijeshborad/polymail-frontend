@@ -289,10 +289,12 @@
     color: #000000;
     max-width: 400px;
     white-space: nowrap;
-    overflow: hidden;
     display: inline-block;
-    text-overflow: ellipsis;
     line-height: 22px;
+}
+
+.mailDetails .senderDetails span {
+    display: inline;
 }
 
 .mailDetails .senderDetails svg {
@@ -1327,11 +1329,11 @@
     border-radius: 34px;
 }
 
-.messageListscrollbar::-webkit-scrollbar-thumb {
+.messageListScrollBar::-webkit-scrollbar-thumb {
     background-color: transparent;
 }
 
-.messageListscrollbar.messageScrollBar::-webkit-scrollbar-thumb {
+.messageListScrollBar.messageScrollBar::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.8);
 }
 
@@ -1341,7 +1343,7 @@
     }
 
     .mailList {
-        max-height: calc(100vh - 266px);
+        max-height: calc(100vh - 250px);
         padding-right: 0;
     }
 
@@ -1427,6 +1429,59 @@
     }
 }
 
+@media (max-width: 576px) {
+    .mailBox .mailBoxHeader {
+        flex-direction: column;
+        padding: 10px;
+        align-items: flex-start;
+    }
+
+    .mailBox .mailBoxHeader > div + div {
+        width: 100%;
+    }
+
+    .mailBox .mailBoxHeader .mailBoxHeaderAddProjectDiv {
+        margin-right: auto;
+    }
+
+    .mailBox .messageListScrollBar {
+        padding: 10px 10px 20px 10px;
+    }
+
+    .mailBox .oldMail .mailBoxMailHeader {
+        flex-direction: column;
+    }
+
+    .mailBox .oldMail .mailBoxMailHeader > div {
+        padding: 10px 10px 16px;
+        border: 1px solid transparent;
+    }
+
+    .mailBox .oldMail .mailBoxMailHeader > div + div {
+        padding: 0 10px 16px;
+        position: unset;
+        margin-top: -10px;
+    }
+
+    .mailBox .oldMail .mailBoxMailHeader .menuIcon {
+        position: absolute;
+        right: 0;
+        top: 12px;
+    }
+
+    .mailBox .oldMail .mailBoxMailHeader .mailBoxTime {
+        padding: 0;
+    }
+
+    .mailBox .oldMail .mailBoxHideMail {
+        padding: 8px 11px 16px;
+    }
+
+    .mailBox .oldMail .mailBoxTime {
+        padding-top: 11px;
+    }
+}
+
 @media (max-width: 480px) {
     .mailTabList .emailTabs .active .mailboxText, .mailTabList .tabListMoreButton span:first-child, .mailListTabs .composeButton .composeButtonText {
         display: none;
@@ -1435,5 +1490,45 @@
     .mailListTabs .composeButton {
         width: auto;
         min-width: auto;
+    }
+
+    .mailListTabs .tabListMoreButton {
+        min-width: 1px;
+    }
+
+    .mailBox .oldMail .mailBoxMailHeader .mailBoxMailHeaderDetails {
+        flex-direction: column;
+        align-items: flex-start;
+        padding-bottom: 3px;
+    }
+}
+
+@media (min-width: 361px) {
+    .mailBox .oldMail .mailBoxHideMail .mailBoxTimeMobile {
+        display: none;
+    }
+}
+
+@media (max-width: 360px) {
+    .mailBox .mailBoxHeader .addToProject .addToProjectButtonText {
+        display: none;
+    }
+
+    .mailBox .mailBoxHeader .addToProject {
+        min-width: 1px;
+        padding-right: 8px;
+    }
+
+    .mailBox .oldMail .mailBoxHideMail .mailBoxTimeMobile p {
+        font-weight: 400;
+        color: #6B7280;
+        font-size: 11px;
+        line-height: 15px;
+        margin-bottom: 5px;
+        margin-top: -3px;
+    }
+
+    .mailBox .oldMail .mailBoxTime .mailBoxTimeDesktop {
+        display: none;
     }
 }

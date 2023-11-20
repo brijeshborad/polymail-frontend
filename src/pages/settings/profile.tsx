@@ -293,7 +293,7 @@ function Profile() {
     return (
         <>
             <SettingsLayout>
-                <Flex className={styles.settingsRight} direction={'column'}>
+                <Flex className={`${styles.settingPageBox} ${styles.settingsRight}`} direction={'column'}>
                     <Flex direction={'column'} pb={8} mb={8} borderBottom={'1px solid #D9D9D9'}>
                         <Heading as='h4' size='lg' gap={1}> Profile </Heading>
                         <Text fontSize='sm' className={styles.settingSubTitle}>Manage your team and preferences

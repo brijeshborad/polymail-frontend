@@ -230,14 +230,14 @@ export function MessagesHeader() {
     return (
         <>
             <Flex gap={2} align={'center'} justify={'space-between'} padding={'12px 20px'}
-                  borderBottom={'1px solid #F3F4F6'}>
+                  borderBottom={'1px solid #F3F4F6'} className={styles.mailBoxHeader}>
                 <Flex gap={1}>
                     <Heading as='h6' fontSize={'15px'} color={'#0A101D'} noOfLines={1}
                              fontWeight={600}>{selectedThread?.subject || '(no subject)'}</Heading>
                 </Flex>
 
                 <Flex align={'center'}>
-                    <Flex gap={3} align={'center'}>
+                    <Flex gap={3} align={'center'} className={styles.mailBoxHeaderAddProjectDiv}>
                         <Flex alignItems={'center'} justifyContent={'end'} className={'member-images'}>
                             {(onlineUsers && selectedThread && onlineUsers['threads'][selectedThread.id!] || [])
                                 .filter((t: UserProjectOnlineStatus) => t.isOnline).slice(0, 5)

@@ -295,6 +295,51 @@ export function HeaderSearch() {
             </InputGroup>
 
             {searchPopup && !isProjectRoute && <div className={styles.headerSearchPopupBox}>
+
+                <InputGroup className={styles.inputGroup}>
+                    <Flex className={styles.headerSearchInput}>
+                        <SearchIcon/>
+                        {badges.map((badge: any, index: number) => {
+                            return (
+                                <Flex key={index} className={styles.headerSearchChip} alignItems={'center'} wrap={'wrap'}
+                                      gap={1}>
+                                    <Badge key={index} textTransform={'none'} backgroundColor={'#ffffff'} color={'#08162F'}
+                                           borderRadius={'4px'} display={'flex'} alignItems={'center'}
+                                           fontSize={'11px'} fontWeight={'500'} padding={'3px 10px'} lineHeight={1}>
+                                        {getBadgeText(badge)}
+                                        <CloseIcon cursor={'pointer'} width={'8px'} height={'8px'} marginLeft={'5px'}
+                                                   onClick={(e) => {
+                                                       e.preventDefault()
+                                                       e.stopPropagation();
+                                                       removeBadge(index);
+                                                   }}
+                                        />
+                                    </Badge>
+                                </Flex>
+                            )
+                        })}
+                        <Input
+                            flex={'1'}
+                            type="text"
+                            placeholder={getSearchPlaceHolder()}
+                            onChange={event => {
+                                setSearchString(event.target.value);
+                            }}
+                            ref={searchInputRef}
+                            value={searchString}
+                            onKeyDown={e => handleKeyDown(e)}
+                        />
+                        <InputRightElement>
+                            {showCloseIcon ? <div className={styles.inputRight} style={{background: "transparent"}}
+                                                  onClick={() => searchCancel(true)}>
+                                <CloseIcon cursor={'pointer'} fontSize={'10'}/>
+                            </div> : <div className={styles.inputRight}>⌘K</div>
+                            }
+                        </InputRightElement>
+
+                    </Flex>
+                </InputGroup>
+
                 <Flex gap={2} align={'flex-start'} pb={2} className={styles.headerButton} direction={'column'}>
                     <Flex direction={'column'} width={'100%'}>
                         <Button width={'fit-content'} className={styles.headerSearchPopupBoxButton} variant='outline'

@@ -7,7 +7,7 @@ import {
     MenuItem,
     MenuList
 } from '@chakra-ui/react';
-import {CheckIcon, ChevronDownIcon} from '@chakra-ui/icons';
+import {CheckIcon, ChevronDownIcon, HamburgerIcon} from '@chakra-ui/icons';
 import {FolderIcon, MailIcon} from '@/icons';
 import styles from '@/styles/Home.module.css';
 import {useSelector} from 'react-redux';
@@ -253,8 +253,8 @@ export function Header() {
 
     return (
         <Flex className={styles.header} w="100%" align={'center'} flex={'none'} padding={'0 40px'}>
-            <Flex padding={'12px 0'} align={'center'}>
-                <Flex marginBottom={'-5px'} cursor={'pointer'} onClick={() => changePage('inbox')}>
+            <Flex padding={'12px 0'} align={'center'} className={styles.headerLogo}>
+                <Flex className={styles.logo} marginBottom={'-5px'} cursor={'pointer'} onClick={() => changePage('inbox')}>
                     <OnboardingLogoIcon/>
                 </Flex>
                 <Flex className={styles.headerTabs} align={'center'}>
@@ -269,6 +269,18 @@ export function Header() {
                         Projects
                     </Flex>
                 </Flex>
+
+                <Menu>
+                    <MenuButton className={'header-menu-button'} backgroundColor={"#FFFFFF"} border={'1px solid rgba(0,0,0, 0.1)'} minWidth={'1px'} padding={'5px'} height={'fit-content'} marginLeft={3} as={Button} rightIcon={<HamburgerIcon />} />
+                    <MenuList className={'drop-down-list header-dropdown-list'}>
+                        <MenuItem className={router.pathname === '/inbox' ? 'tab-active' : ''} onClick={() => changePage('inbox')}>
+                            <MailIcon/> Inbox
+                        </MenuItem>
+                        <MenuItem className={router.pathname === '/projects' ? 'tab-active' : ''} onClick={() => changePage('projects')}>
+                            <FolderIcon/> Projects
+                        </MenuItem>
+                    </MenuList>
+                </Menu>
             </Flex>
 
             <HeaderSearch/>

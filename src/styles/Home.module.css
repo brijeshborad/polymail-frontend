@@ -595,7 +595,6 @@ div:has(> .mailToaster) {
 }
 
 @media (max-width: 991px) {
-
     .mailBg .mailGrid {
         grid-template-columns: 100% 100%;
         display: block;
@@ -603,15 +602,19 @@ div:has(> .mailToaster) {
 
     .mailBg {
         height: 100%;
-        padding: 0 20px 20px 20px;
+        padding: 16px 10px 0;
     }
 
     .header {
-        padding: 12px 25px;
+        padding: 0 35px !important;
     }
 
     .notificationIcon {
-        margin-right: 70px;
+        margin-right: 40px;
+    }
+
+    .headerSearchInput input {
+        padding: 0;
     }
 }
 
@@ -732,17 +735,19 @@ div:has(> .mailToaster) {
     }
 }
 
+@media (min-width: 768px) {
+    .headerSearch.headerSearchPopup .headerSearchPopupBox .headerSearchInput {
+        display: none;
+    }
+}
+
 @media (max-width: 767px) {
     .mailBg {
         padding: 15px 10px;
     }
 
     .header {
-        padding: 12px 15px;
-    }
-
-    .headerSearch .inputGroup {
-        display: none;
+        padding: 0 25px !important;
     }
 
     .headerTabs {
@@ -762,12 +767,88 @@ div:has(> .mailToaster) {
     .notificationIcon {
         width: 30px;
         height: 30px;
-        margin-right: 25px;
+        margin-right: 0;
+        margin-left: 0;
+        border: 0;
+    }
+
+    .headerSearch {
+        padding-right: 0;
+    }
+
+    .profileButton .profileImage {
+        width: 30px;
+        height: 30px;
+        min-width: 30px;
+    }
+
+    .headerSearch .headerSearchInput input {
+        display: none;
+    }
+
+    .headerSearch .headerSearchInput > div {
+        display: none;
+    }
+
+    .headerSearch .headerSearchInput {
+        width: fit-content;
+        padding: 6px;
+        background-color: #FFFFFF;
+        border: 0;
+        margin-left: auto;
+        cursor: pointer;
+    }
+
+    .headerSearch.headerSearchPopup {
+        position: unset;
+    }
+
+    .headerSearch.headerSearchPopup .headerSearchPopupBox {
+        width: calc(100% - 30px);
+        left: 15px;
+        padding: 16px 24px;
+        z-index: 1;
+    }
+
+    .headerSearch.headerSearchPopup .headerSearchPopupBox .headerSearchInput {
+        width: 100%;
+        border: 1px solid #cbd5e0;
+        background-color: #f5f5f5;
+    }
+
+    .headerSearch.headerSearchPopup .headerSearchPopupBox .headerSearchInput input {
+        display: block;
+        padding-right: 30px;
+    }
+
+    .headerSearch.headerSearchPopup .headerSearchPopupBox .headerSearchInput > div {
+        display: flex;
+    }
+
+    .headerSearch.headerSearchPopup .headerSearchPopupBox .headerButton {
+        margin-top: 20px;
     }
 }
 
-/*@media (max-width: 576px) {*/
-/*    .mailBg {*/
-/*        padding: 10px 15px 15px 10px;*/
-/*    }*/
-/*}*/
+@media (max-width: 576px) {
+    .notificationIcon {
+        margin-right: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header .headerTabs {
+        display: none;
+    }
+}
+
+
+@media (max-width: 360px) {
+    .header .headerLogo {
+        margin-right: auto;
+    }
+
+    .header .headerLogo .logo svg {
+        height: 25px;
+    }
+}

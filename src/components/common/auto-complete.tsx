@@ -44,7 +44,7 @@ export function AutoComplete({
         >
             <HStack flex={1}>
                 <PopoverAnchor>
-                    <Input width={'auto'} display='inline-flex' lineHeight={1} letterSpacing={'-0.13px'} padding={0}
+                    <Input width={'100%'} display='inline-flex' lineHeight={1} letterSpacing={'-0.13px'} padding={0}
                            height={'20px'} flex={'1 0 auto'}
                            fontSize={'13px'} border={0} className={styles.ccInput}
                            value={value} ref={inputRef}

@@ -134,7 +134,7 @@ function OnBoardingType() {
                             borderRadius={'2px'} height={'46px'} border={'1px solid #2A6FFF'} mb={3} className={styles.continueButton}
                             padding={'0 12px 0 0'} justifyContent={'flex-start'} fontWeight={'500'} gap={3} color={'#FFFFFF'}>
                         <Flex backgroundColor={'#FFFFFF'} padding={'13px'}>
-                            <Image src={'/image/google-logo.png'} alt={''} width={'18px'} height={'18px'}/>
+                            <Image src={'/image/google-logo.png'} alt={''} width={'18px'} height={'18px'} minWidth={'18px'}/>
                         </Flex>
                         {router.query.type === 'login' ? 'Sign in' : 'Sign up'} with Google
                     </Button>
