@@ -480,7 +480,6 @@ export function ComposeBox(props: any) {
                                     {composeDraft?.threadId && <CollabRichTextEditor
                                         id={composeDraft?.threadId + '-' + 0}
                                         isAutoFocus={false}
-                                        isCompose={true}
                                         content={composeDraft?.draftInfo?.body}
                                         // onCreate={() => sendToDraft('')}
                                         onChange={(value) => {

@@ -27,7 +27,7 @@ export default function CollabRichTextEditor({
                                                  placeholder,
                                                  emailSignature, projectShare,
                                                  className = '',
-                                                 onChange, isCompose
+                                                 onChange
                                              }: CollabRichTextEditorType) {
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {isComposing} = useSelector((state: StateType) => state.commonApis);
