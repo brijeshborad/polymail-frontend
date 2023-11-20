@@ -106,7 +106,7 @@ function Preferences() {
 
                 <Flex direction={"column"} className={styles.SettingDetails}>
                     <div className={styles.memberTable}>
-                        <Flex alignItems={'center'} justify={'space-between'} gap={4} padding={'20px 24px'}>
+                        <Flex className={styles.memberTableHeader} alignItems={'center'} justify={'space-between'} gap={4} padding={'20px 24px'}>
                             <Heading as='h4' fontSize={'18px'} fontWeight={600}
                                      color={'#101828'}>Approved Domains</Heading>
 

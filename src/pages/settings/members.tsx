@@ -139,7 +139,7 @@ function Members() {
 
                     <Flex direction={"column"} className={styles.SettingDetails}>
                         <div className={styles.memberTable}>
-                            <Flex alignItems={'center'} justify={'space-between'} gap={4} padding={'20px 24px'}>
+                            <Flex className={styles.teamMemberHeader} alignItems={'center'} justify={'space-between'} gap={4} padding={'20px 24px'}>
                                 <Heading as='h4' fontSize={'18px'} fontWeight={600} color={'#101828'}>Team
                                     members</Heading>
                                 <Button className={styles.inviteMemberButton} fontSize={'14px'}
@@ -147,7 +147,7 @@ function Members() {
                                         height={'auto'} padding={'10px 20px'}>Invite</Button>
                             </Flex>
                             <TableContainer>
-                                <Table variant='simple'>
+                                <Table variant='simple' className={styles.teamMemberTable}>
                                     <Thead>
                                         <Tr backgroundColor={'#F9FAFB'} borderColor={'#EAECF0'}
                                             borderTop={'1px solid #EAECF0'}>
