@@ -1101,6 +1101,10 @@ div:has(> .mailSendToaster) {
     .messageSideBar .backToThread {
         display: flex;
     }
+
+    .mail-box-main .mail-box-subheader {
+        padding: 15px 35px;
+    }
 }
 
 @media (min-width: 991px) and (max-width: 1431px) {
@@ -1116,8 +1120,16 @@ div:has(> .mailSendToaster) {
 }
 
 @media (max-width: 576px) {
-   .header .mail-box-subheader {
+    .mail-box-main .mail-box-subheader {
+        padding: 10px 25px;
+        height: fit-content;
+        gap: 8px;
+    }
 
+    .mail-box-main .mail-box-subheader .create-project-button,
+    .mail-box-main .mail-box-subheader .header-project-name-button {
+        min-width: 175px;
+        max-width: 175px;
     }
 }
 

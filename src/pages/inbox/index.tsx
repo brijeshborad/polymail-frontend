@@ -14,7 +14,7 @@ const Message = dynamic(
 
 function InboxPage() {
     return (
-        <div>
+        <div className={'mail-box-main'}>
             <Flex padding={'16px 40px 15px'} backgroundColor={'#FFFFFF'} borderBottom={'1px solid #F3F4F6'} gap={3}
                   overflow={'auto hidden'} height={'69px'} className={'mail-box-subheader'}>
                 <InboxHeaderProjectsList/>

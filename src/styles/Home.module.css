@@ -606,7 +606,7 @@ div:has(> .mailToaster) {
     }
 
     .header {
-        padding: 12px 25px;
+        padding: 0 35px !important;
     }
 
     .notificationIcon {
@@ -737,11 +737,11 @@ div:has(> .mailToaster) {
     }
 
     .header {
-        padding: 12px 15px;
+        padding: 0 15px !important;
     }
 
     .headerSearch .inputGroup {
-        display: none;
+        /*display: none;*/
     }
 
     .headerTabs {
@@ -762,5 +762,17 @@ div:has(> .mailToaster) {
         width: 30px;
         height: 30px;
         margin-right: 25px;
+    }
+
+    .profileButton .profileImage {
+        width: 30px;
+        height: 30px;
+        min-width: 30px;
+    }
+}
+
+@media (max-width: 576px) {
+    .notificationIcon {
+        margin-right: 5px;
     }
 }
