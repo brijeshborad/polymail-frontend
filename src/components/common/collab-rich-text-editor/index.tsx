@@ -27,7 +27,7 @@ export default function CollabRichTextEditor({
                                                  placeholder,
                                                  emailSignature, projectShare,
                                                  className = '',
-                                                 onChange
+                                                 onChange, isCompose
                                              }: CollabRichTextEditorType) {
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {isComposing} = useSelector((state: StateType) => state.commonApis);
@@ -128,8 +128,10 @@ export default function CollabRichTextEditor({
                     extendToolbar={extendToolbar}
                 />}
                 onSelectionUpdate={({editor})=> {
-                    const { from, to } = editor.state.selection;
-                    editor.chain().focus().setTextSelection({ from, to }).run()
+                    if (!isCompose) {
+                        const { from, to } = editor.state.selection;
+                        editor.chain().focus().setTextSelection({ from, to }).run()
+                    }
                 }}
                 onBlur={() => {
                     keyNavigationService.toggleKeyNavigation(true);

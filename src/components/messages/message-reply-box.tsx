@@ -1019,6 +1019,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                         <CollabRichTextEditor
                                             id={selectedThread.id + '-' + draftIndex}
                                             isAutoFocus={true}
+                                            isCompose={false}
                                             // onCreate={() => sendToDraft('')}
                                             content={draft?.draftInfo?.body}
                                             placeholder="Hit tab to reply with anything you'd like"
