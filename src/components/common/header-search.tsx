@@ -265,10 +265,10 @@ export function HeaderSearch() {
                         value={searchString}
                         onKeyDown={e => handleKeyDown(e)}
                     />
-                    {badges.map((badge: any, index: number) => {
-                        return (
-                            <Flex key={index} className={styles.headerSearchChip} alignItems={'center'} wrap={'wrap'}
-                                  gap={1}>
+                    <Flex className={styles.headerSearchChip} alignItems={'center'} wrap={'wrap'}
+                          gap={1}>
+                        {badges.map((badge: any, index: number) => {
+                            return (
                                 <Badge key={index} textTransform={'none'} backgroundColor={'#ffffff'} color={'#08162F'}
                                        borderRadius={'4px'} display={'flex'} alignItems={'center'}
                                        fontSize={'11px'} fontWeight={'500'} padding={'3px 10px'} lineHeight={1}>
@@ -281,9 +281,9 @@ export function HeaderSearch() {
                                                }}
                                     />
                                 </Badge>
-                            </Flex>
-                        )
-                    })}
+                            )
+                        })}
+                    </Flex>
                     <InputRightElement>
                         {showCloseIcon ? <div className={styles.inputRight} style={{background: "transparent"}}
                                               onClick={() => searchCancel(true)}>
@@ -312,10 +312,10 @@ export function HeaderSearch() {
                             value={searchString}
                             onKeyDown={e => handleKeyDown(e)}
                         />
-                        {badges.map((badge: any, index: number) => {
-                            return (
-                                <Flex key={index} className={styles.headerSearchChip} alignItems={'center'} wrap={'wrap'}
-                                      gap={1}>
+                        <Flex className={styles.headerSearchChip} alignItems={'center'} wrap={'wrap'}
+                              gap={1}>
+                            {badges.map((badge: any, index: number) => {
+                                return (
                                     <Badge key={index} textTransform={'none'} backgroundColor={'#ffffff'} color={'#08162F'}
                                            borderRadius={'4px'} display={'flex'} alignItems={'center'}
                                            fontSize={'11px'} fontWeight={'500'} padding={'3px 10px'} lineHeight={1}>
@@ -328,9 +328,9 @@ export function HeaderSearch() {
                                                    }}
                                         />
                                     </Badge>
-                                </Flex>
-                            )
-                        })}
+                                )
+                            })}
+                        </Flex>
                         <InputRightElement>
                             {showCloseIcon ? <div className={styles.inputRight} style={{background: "transparent"}}
                                                   onClick={() => searchCancel(true)}>
