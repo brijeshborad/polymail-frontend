@@ -126,6 +126,9 @@ class CacheService {
         let foundThreads: Thread[] = [];
         let peopleToFinKeys: string[] = [
             'messages.*.from.email', 'messages.*.from.name',
+            'messages.*.to.*.name', 'messages.*.to.*.email',
+            'messages.*.cc.*.name', 'messages.*.cc.*.email',
+            'messages.*.bcc.*.name', 'messages.*.bcc.*.email',
         ];
         let keysToFind: string[] = [
             'messages.*.from.email', 'messages.*.from.name',
