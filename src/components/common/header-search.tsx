@@ -164,6 +164,11 @@ export function HeaderSearch() {
         keyNavigationService.toggleKeyNavigation(false);
         setShowCloseIcon(true);
         showSearchPopup(true)
+        setTimeout(() => {
+            if (searchInputRef.current) {
+                searchInputRef.current?.focus();
+            }
+        }, 100);
     }
 
     const handleBlur = () => {
@@ -250,46 +255,47 @@ export function HeaderSearch() {
              className={`${styles.headerSearch} ${searchPopup && !isProjectRoute ? styles.headerSearchPopup : ''}`}
              onFocus={() => handleFocus()}
              onBlur={() => handleBlur()}>
-            <InputGroup className={styles.inputGroup}>
+            <InputGroup>
                 <Flex className={styles.headerSearchInput}>
                     <SearchIcon/>
-                    <Flex gap={1} flex={1} overflow={'auto'} width={'calc(100vw - 810px)'} className={styles.searchBarHeaderInput}>
-                        <span placeholder={getSearchPlaceHolder()}
-                              ref={searchInputRef}
-                              onKeyDown={e => handleKeyDown(e)}
-                              className={`${badges.length > 0 ? 'header-search-badge-input' : ''} header-search-input-span`}
-                              role="textbox" contentEditable>Search</span>
-
-                        {/*<Input*/}
-                        {/*    className={`${badges.length > 0 ? styles.headerSearchBadgeInput : ''}`}*/}
-                        {/*    flex={'1'}*/}
-                        {/*    type="text"*/}
-                        {/*    placeholder={getSearchPlaceHolder()}*/}
-                        {/*    onChange={event => {*/}
-                        {/*        setSearchString(event.target.value);*/}
-                        {/*    }}*/}
-                        {/*    ref={searchInputRef}*/}
-                        {/*    value={searchString}*/}
-                        {/*    onKeyDown={e => handleKeyDown(e)}*/}
-                        {/*/>*/}
-                        <Flex className={styles.headerSearchChip} alignItems={'center'} wrap={'wrap'}
-                              gap={1}>
-                            {badges.map((badge: any, index: number) => {
-                                return (
-                                    <Badge key={index} textTransform={'none'} backgroundColor={'#ffffff'} color={'#08162F'}
-                                           borderRadius={'4px'} display={'flex'} alignItems={'center'}
-                                           fontSize={'11px'} fontWeight={'500'} padding={'3px 10px'} lineHeight={1}>
-                                        {getBadgeText(badge)}
-                                        <CloseIcon cursor={'pointer'} width={'8px'} height={'8px'} marginLeft={'5px'}
-                                                   onClick={(e) => {
-                                                       e.preventDefault()
-                                                       e.stopPropagation();
-                                                       removeBadge(index);
-                                                   }}
-                                        />
-                                    </Badge>
-                                )
-                            })}
+                    <Flex gap={1} flex={1} overflow={'auto'} width={'calc(100vw - 810px)'}
+                          className={styles.searchBarHeaderInput}>
+                        <Flex maxWidth={'600px'}>
+                            <Input
+                                style={{width: Math.max(searchString.length, getSearchPlaceHolder().length) * 7.7 + 'px'}}
+                                className={`${badges.length > 0 ? styles.headerSearchBadgeInput : ''}`}
+                                flex={'0 0 auto'}
+                                minWidth={'70px'}
+                                type="text"
+                                placeholder={getSearchPlaceHolder()}
+                                onChange={event => {
+                                    setSearchString(event.target.value);
+                                }}
+                                ref={searchInputRef}
+                                value={searchString}
+                                onKeyDown={e => handleKeyDown(e)}
+                            />
+                            <Flex className={styles.headerSearchChip} alignItems={'center'}
+                                  gap={1}>
+                                {badges.map((badge: any, index: number) => {
+                                    return (
+                                        <Badge key={index} textTransform={'none'} backgroundColor={'#ffffff'}
+                                               color={'#08162F'}
+                                               borderRadius={'4px'} display={'flex'} alignItems={'center'}
+                                               fontSize={'11px'} fontWeight={'500'} padding={'3px 10px'} lineHeight={1}>
+                                            {getBadgeText(badge)}
+                                            <CloseIcon cursor={'pointer'} width={'8px'} height={'8px'}
+                                                       marginLeft={'5px'}
+                                                       onClick={(e) => {
+                                                           e.preventDefault()
+                                                           e.stopPropagation();
+                                                           removeBadge(index);
+                                                       }}
+                                            />
+                                        </Badge>
+                                    )
+                                })}
+                            </Flex>
                         </Flex>
                     </Flex>
                     <InputRightElement>
@@ -304,59 +310,6 @@ export function HeaderSearch() {
             </InputGroup>
 
             {searchPopup && !isProjectRoute && <div className={styles.headerSearchPopupBox}>
-
-                <InputGroup className={styles.inputGroup}>
-                    <Flex className={styles.headerSearchInput}>
-                        <SearchIcon/>
-                        <Flex gap={1} flex={1} overflow={'auto'} width={'calc(100vw - 810px)'} className={styles.searchBarHeaderInput}>
-                            <span placeholder={getSearchPlaceHolder()}
-                                  ref={searchInputRef}
-                                  onKeyDown={e => handleKeyDown(e)}
-                                  className={`${badges.length > 0 ? 'header-search-badge-input' : ''} header-search-input-span`}
-                                  role="textbox" contentEditable>Search</span>
-                            {/*<Input*/}
-                            {/*    className={`${badges.length > 0 ? styles.headerSearchBadgeInput : ''}`}*/}
-                            {/*    flex={'1'}*/}
-                            {/*    type="text"*/}
-                            {/*    placeholder={getSearchPlaceHolder()}*/}
-                            {/*    onChange={event => {*/}
-                            {/*        setSearchString(event.target.value);*/}
-                            {/*    }}*/}
-                            {/*    ref={searchInputRef}*/}
-                            {/*    value={searchString}*/}
-                            {/*    onKeyDown={e => handleKeyDown(e)}*/}
-                            {/*/>*/}
-                            <Flex className={styles.headerSearchChip} alignItems={'center'} wrap={'wrap'}
-                                  gap={1}>
-                                {badges.map((badge: any, index: number) => {
-                                    return (
-                                        <Badge key={index} textTransform={'none'} backgroundColor={'#ffffff'} color={'#08162F'}
-                                               borderRadius={'4px'} display={'flex'} alignItems={'center'}
-                                               fontSize={'11px'} fontWeight={'500'} padding={'3px 10px'} lineHeight={1}>
-                                            {getBadgeText(badge)}
-                                            <CloseIcon cursor={'pointer'} width={'8px'} height={'8px'} marginLeft={'5px'}
-                                                       onClick={(e) => {
-                                                           e.preventDefault()
-                                                           e.stopPropagation();
-                                                           removeBadge(index);
-                                                       }}
-                                            />
-                                        </Badge>
-                                    )
-                                })}
-                            </Flex>
-                        </Flex>
-                        <InputRightElement>
-                            {showCloseIcon ? <div className={styles.inputRight} style={{background: "transparent"}}
-                                                  onClick={() => searchCancel(true)}>
-                                <CloseIcon cursor={'pointer'} fontSize={'10'}/>
-                            </div> : <div className={styles.inputRight}>⌘K</div>
-                            }
-                        </InputRightElement>
-
-                    </Flex>
-                </InputGroup>
-
                 <Flex gap={2} align={'flex-start'} pb={2} className={styles.headerButton} direction={'column'}>
                     <Flex direction={'column'} width={'100%'}>
                         <Button width={'fit-content'} className={styles.headerSearchPopupBoxButton} variant='outline'
@@ -369,7 +322,8 @@ export function HeaderSearch() {
                                 <Text color={'#374151'} fontSize={'13px'} padding={'8px 12px'} cursor={'pointer'}
                                       borderRadius={'3px'} fontWeight={'500'} width={'100%'} key={index}
                                       _hover={{backgroundColor: 'rgba(0,0,0, 0.05)'}}
-                                      lineHeight={1} onClick={() => addBadge(item, 'project')} letterSpacing={'-0.13px'}>{item.emoji} {item.name}</Text>
+                                      lineHeight={1} onClick={() => addBadge(item, 'project')}
+                                      letterSpacing={'-0.13px'}>{item.emoji} {item.name}</Text>
                             ))}
                         </Flex>
                         }

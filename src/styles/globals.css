@@ -1085,23 +1085,6 @@ div:has(> .mailSendToaster) {
     background-color: transparent;
 }
 
-.header-search-input-span {
-    font-size: 14px;
-    font-weight: 500;
-    line-height: normal;
-    color: #08162F;
-    flex: 1;
-    white-space: nowrap;
-}
-
-.header-search-input-span:focus-visible {
-    outline: none;
-}
-
-.header-search-input-span.header-search-badge-input {
-    flex: none;
-}
-
 @media (max-width: 991px) {
     .threadSideBar.selected-thread {
         display: none;
