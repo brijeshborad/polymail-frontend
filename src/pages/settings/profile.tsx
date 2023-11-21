@@ -44,32 +44,11 @@ function Profile() {
     const [isDataUpdate, setIsDataUpdate] = useState<boolean>(false);
     const [showLoader, setShowLoader] = useState<boolean>(false);
     const [accountData] = useState<Account>();
-    // let {passwordChangeSuccess} = useSelector((state: StateType) => state.auth);
 
     const [profileDetails, setProfileDetails] = useState<UserDetails>({
         firstName: '',
         lastName: ''
     });
-
-    // const [passwordUpdate, setPasswordUpdate] = useState<{ old: string, newP: string, confirmP: string }>({
-    //     old: '',
-    //     newP: '',
-    //     confirmP: ''
-    // });
-
-    // const [passwordShow, setPasswordShow] = useState<{ old: boolean, newP: boolean, confirmP: boolean }>({
-    //     old: false,
-    //     newP: false,
-    //     confirmP: false
-    // });
-
-    // const [passwordMatch, setPasswordMatch] = useState<boolean>(true);
-
-    // const validatePassword = useCallback(() => {
-    //     debounce(() => {
-    //         setPasswordMatch(passwordUpdate.newP.trim() === passwordUpdate.confirmP.trim())
-    //     }, 300);
-    // }, [passwordUpdate])
 
 
     const setFullName = (event: ChangeEvent | any, type: string) => {
@@ -173,16 +152,6 @@ function Profile() {
         }
     }, [success, accountData, dispatch, accounts])
 
-
-    // useEffect(() => {
-    //     if (passwordUpdate.newP && passwordUpdate.confirmP) {
-    //         validatePassword();
-    //     } else {
-    //         setPasswordMatch(true);
-    //     }
-    // }, [passwordUpdate.newP, passwordUpdate.confirmP, validatePassword])
-
-
     function handleFileUpload(event: ChangeEventHandler | any) {
         const file = event.target.files[0];
         const contentType = file.name.split('.').pop();
@@ -221,39 +190,6 @@ function Profile() {
             console.log('Error: ', error);
         };
     }
-
-
-    // function handlePasswordChange(e: KeyboardEvent | any, type: string) {
-    //     setPasswordUpdate(prevState => ({
-    //         ...prevState,
-    //         [type]: e.target.value.trim()
-    //     }))
-    // }
-    //
-    //
-    // function handlePasswordShow(e: MouseEvent | any, type: string) {
-    //     setPasswordShow(prevState => ({
-    //         ...prevState,
-    //         [type]: !prevState[type as keyof object]
-    //     }))
-    // }
-
-
-    // function updatePassword() {
-    //     let newPHash = encryptData(passwordUpdate.newP);
-    //     dispatch(changePassword({
-    //         body: {password: passwordUpdate.old, newPasswordOne: newPHash, newPasswordTwo: newPHash},
-    //         toaster: {
-    //             success: {
-    //                 desc: "Password changed successfully",
-    //                 title: "Password changed",
-    //                 type: 'success'
-    //             }
-    //         },
-    //     }));
-    //     onClose();
-    // }
-
 
     const removePhoto = () => {
         dispatch(removeProfilePicture({
@@ -366,74 +302,6 @@ function Profile() {
                     </Flex>
                 </Flex>
             </SettingsLayout>
-            {/*<Modal isOpen={isOpen} onClose={onClose} isCentered closeOnOverlayClick={false}>*/}
-            {/*    <ModalOverlay/>*/}
-            {/*    <ModalContent className={styles.changePasswordModal}>*/}
-            {/*        <ModalHeader>Change Password</ModalHeader>*/}
-            {/*        <ModalCloseButton/>*/}
-            {/*        <ModalBody>*/}
-            {/*            <Flex direction={'column'} mb={3}>*/}
-            {/*                <Text fontSize={'11px'} fontWeight={600}>Old Password</Text>*/}
-            {/*                <InputGroup size='sm'>*/}
-            {/*                    <Input tabIndex={1} onChange={(e) => handlePasswordChange(e, 'old')} borderRadius={8}*/}
-            {/*                           border={'1px solid #E5E5E5'} fontSize={'13px'} placeholder='Enter Old Password'*/}
-            {/*                           size='sm' type={passwordShow['old'] ? 'text' : 'password'}/>*/}
-            {/*                    <InputRightElement width='fit-content'>*/}
-            {/*                        <Button h='1.75rem' background={"transparent"} size='sm'*/}
-            {/*                                onClick={(e) => handlePasswordShow(e, 'old')}>*/}
-            {/*                            {passwordShow['old'] ? <ViewOffIcon/> : <ViewIcon/>}*/}
-            {/*                        </Button>*/}
-            {/*                    </InputRightElement>*/}
-            {/*                </InputGroup>*/}
-            {/*            </Flex>*/}
-            {/*            <Flex direction={'column'} mb={3}>*/}
-            {/*                <Text fontSize={'11px'} fontWeight={600}>New Password</Text>*/}
-            {/*                <InputGroup size='sm'>*/}
-            {/*                    <Input tabIndex={2} onChange={(e) => handlePasswordChange(e, 'newP')} borderRadius={8}*/}
-            {/*                           border={'1px solid #E5E5E5'} fontSize={'13px'} placeholder='Enter New Password'*/}
-            {/*                           size='sm' type={passwordShow['newP'] ? 'text' : 'password'}/>*/}
-            {/*                    <InputRightElement width='fit-content'>*/}
-            {/*                        <Button h='1.75rem' background={"transparent"} size='sm'*/}
-            {/*                                onClick={(e) => handlePasswordShow(e, 'newP')}>*/}
-            {/*                            {passwordShow['newP'] ? <ViewOffIcon/> : <ViewIcon/>}*/}
-            {/*                        </Button>*/}
-            {/*                    </InputRightElement>*/}
-            {/*                </InputGroup>*/}
-            {/*            </Flex>*/}
-            {/*            <Flex direction={'column'} mb={3}>*/}
-            {/*                <Text fontSize={'11px'} fontWeight={600}>Confirm Password</Text>*/}
-            {/*                <InputGroup size='sm'>*/}
-            {/*                    <Input tabIndex={3} onChange={(e) => handlePasswordChange(e, 'confirmP')}*/}
-            {/*                           borderRadius={8}*/}
-            {/*                           border={'1px solid #E5E5E5'} fontSize={'13px'} placeholder='Confirm Password'*/}
-            {/*                           size='sm' type={passwordShow['confirmP'] ? 'text' : 'password'}*/}
-            {/*                           isInvalid={!passwordUpdate}*/}
-            {/*                           errorBorderColor={!passwordMatch ? 'crimson' : ''}/>*/}
-            {/*                    <InputRightElement width='fit-content'>*/}
-            {/*                        <Button h='1.75rem' background={"transparent"} size='sm'*/}
-            {/*                                onClick={(e) => handlePasswordShow(e, 'confirmP')}>*/}
-            {/*                            {passwordShow['confirmP'] ? <ViewOffIcon/> : <ViewIcon/>}*/}
-            {/*                        </Button>*/}
-            {/*                    </InputRightElement>*/}
-            {/*                </InputGroup>*/}
-            {/*                {!passwordMatch &&*/}
-            {/*                <Text fontSize={'11px'} fontWeight={600} color={'crimson'}>Passwords do not match</Text>}*/}
-            {/*            </Flex>*/}
-            {/*        </ModalBody>*/}
-
-            {/*        <ModalFooter className={styles.modalFooterButton}>*/}
-            {/*            <Button className={styles.closeButton} backgroundColor={'#ffffff'} border={'1px solid #000000'}*/}
-            {/*                    borderRadius={8} height={'auto'} padding={'10px 20px'} color={'#000000'}*/}
-            {/*                    fontSize={'14px'} mr={3} onClick={onClose}> Close </Button>*/}
-            {/*            <Button className={styles.saveButton} backgroundColor={'#000000'} borderRadius={8}*/}
-            {/*                    onClick={() => updatePassword()}*/}
-            {/*                    isDisabled={!(passwordUpdate['old'] && passwordUpdate['newP'] && passwordUpdate['confirmP'] && passwordMatch)}*/}
-            {/*                    height={'auto'} padding={'10px 20px'} color={'#FFFFFF'} fontSize={'14px'}*/}
-            {/*                    variant='ghost'>Save</Button>*/}
-            {/*        </ModalFooter>*/}
-            {/*    </ModalContent>*/}
-            {/*</Modal>*/}
-
             <RemoveRecordModal onOpen={onOpen} isOpen={isOpen} onClose={onClose}
                                confirmDelete={deleteProfileData}
                                modelTitle={`Are you sure you want to remove your profile?`}/>

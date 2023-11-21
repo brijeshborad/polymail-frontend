@@ -48,7 +48,6 @@ export default function SelectedThreads() {
                     </Tooltip>
 
                     <Tooltip label='Snooze' placement='bottom'>
-                        {/*<Button variant='link' size='xs' onClick={() => moveThreadToMailBoxes(MAILBOX_SNOOZED)}><TimeSnoozeIcon /></Button>*/}
                         <div>
                             <MessageSchedule
                                 isSnooze={true}

@@ -194,13 +194,6 @@ export function ThreadsSideBarList(props: ThreadListProps) {
         }
     }, [])
 
-    // useEffect(() => {
-    //     if (currentThreads) {
-    //         handleEditorScroll();
-    //     }
-    // }, [currentThreads, handleEditorScroll]);
-
-
     useEffect(() => {
         if (selectedThread && selectedAccount) {
             const interval = debounceInterval(() => {
@@ -213,7 +206,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
 
     function fetchNext() {
         avoidScroll = true;
-        props.fetchNext();
+        globalEventService.fireEvent('threads.next')
     }
 
     return (
