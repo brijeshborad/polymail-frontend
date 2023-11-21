@@ -4,7 +4,7 @@ import {Time} from "@/components/common";
 import {MenuIcon} from "@/icons";
 import React, {useEffect, useState} from "react";
 import {
-  getAllMessages,
+    getAllMessages,
     getAttachmentDownloadUrl,
     updateMessage
 } from "@/redux/messages/action-reducer";
@@ -60,7 +60,10 @@ export function MessageBox(props: any) {
                     globalEventService.fireEvent({
                         data: {
                             callBack: (value: string) => {
-                                finalMessages.push({...updatedDraft, draftInfo: {...updatedDraft.draftInfo, body: value}});
+                                finalMessages.push({
+                                    ...updatedDraft,
+                                    draftInfo: {...updatedDraft.draftInfo, body: value}
+                                });
                                 setDraftMessages([...finalMessages]);
                                 globalEventService.blankEvent();
                             }
@@ -206,13 +209,13 @@ export function MessageBox(props: any) {
     }, [index, messages])
 
     useEffect(() => {
-      if (newMessage) {
-          socketService.updateSocketMessage(null);
-          if(newMessage.name === 'DraftCreated' || newMessage.name === 'DraftUpdated') {
-            dispatch(getAllMessages)
-          }
-      }
-  }, [newMessage])
+        if (newMessage) {
+            socketService.updateSocketMessage(null);
+            if (newMessage.name === 'DraftCreated' || newMessage.name === 'DraftUpdated') {
+                dispatch(getAllMessages)
+            }
+        }
+    }, [newMessage])
 
     function showExtensionImages(item: string | undefined) {
         if (item) {
@@ -344,7 +347,8 @@ export function MessageBox(props: any) {
                                              lineHeight={1}>{message.from?.name || message.from?.email}</Heading>
                                 </Flex>
                                 <span className={styles.mailBoxTimeMobile} style={{whiteSpace: 'nowrap'}}>
-                                    <Time time={message.created || ''} isShowFullTime={true} showTimeInShortForm={false}/>
+                                    <Time time={message.created || ''} isShowFullTime={true}
+                                          showTimeInShortForm={false}/>
                                 </span>
                                 <Text fontSize='13px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
                                       fontWeight={400}>
@@ -496,7 +500,8 @@ export function MessageBox(props: any) {
                         </Flex>
 
                         {message.body &&
-                        <div className={styles.mailBodyContent} style={{ height: iframeRef.current[messageIndex] && iframeHeight[messageIndex] ? parseFloat(iframeHeight[messageIndex]) - 32 : 'auto' }}>
+                        <div className={styles.mailBodyContent}
+                             style={{height: iframeRef.current[messageIndex] && iframeHeight[messageIndex] ? parseFloat(iframeHeight[messageIndex]) - 32 : 'auto'}}>
                             <iframe
                                 ref={ref => iframeRef.current[messageIndex] = ref}
                                 onLoad={() => onIframeLoad(messageIndex)}

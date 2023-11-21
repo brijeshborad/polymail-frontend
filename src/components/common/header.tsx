@@ -88,13 +88,6 @@ export function Header() {
         if (fireSuccess) {
             globalEventService.fireEvent('threads.refresh');
         }
-        // if (!organizations) {
-        //     Router.push('/organization/add');
-        //     return;
-        // }
-        // if (organizations && organizations.length <= 0) {
-        //     Router.push('/organization/add');
-        // }
     }, [])
 
     useEffect(() => {
@@ -132,7 +125,10 @@ export function Header() {
                         commonService.updateEmailSyncPercentage(Math.floor(newMessage.data.progress));
                     } else {
                         commonService.updateEmailSyncPercentage(null);
-                        accountService.setSelectedAccount({...selectedAccount, syncHistory: {mailInitSynced: new Date().toString()}});
+                        accountService.setSelectedAccount({
+                            ...selectedAccount,
+                            syncHistory: {mailInitSynced: new Date().toString()}
+                        });
                         updateValuesFromAccount(selectedAccount, true);
                     }
                 }
@@ -254,7 +250,8 @@ export function Header() {
     return (
         <Flex className={styles.header} w="100%" align={'center'} flex={'none'} padding={'0 40px'}>
             <Flex padding={'12px 0'} align={'center'} className={styles.headerLogo}>
-                <Flex className={styles.logo} marginBottom={'-5px'} cursor={'pointer'} onClick={() => changePage('inbox')}>
+                <Flex className={styles.logo} marginBottom={'-5px'} cursor={'pointer'}
+                      onClick={() => changePage('inbox')}>
                     <OnboardingLogoIcon/>
                 </Flex>
                 <Flex className={styles.headerTabs} align={'center'}>
@@ -271,12 +268,16 @@ export function Header() {
                 </Flex>
 
                 <Menu>
-                    <MenuButton className={'header-menu-button'} backgroundColor={"#FFFFFF"} border={'1px solid rgba(0,0,0, 0.1)'} minWidth={'1px'} padding={'5px'} height={'fit-content'} marginLeft={3} as={Button} rightIcon={<HamburgerIcon />} />
+                    <MenuButton className={'header-menu-button'} backgroundColor={"#FFFFFF"}
+                                border={'1px solid rgba(0,0,0, 0.1)'} minWidth={'1px'} padding={'5px'}
+                                height={'fit-content'} marginLeft={3} as={Button} rightIcon={<HamburgerIcon/>}/>
                     <MenuList className={'drop-down-list header-dropdown-list'}>
-                        <MenuItem className={router.pathname === '/inbox' ? 'tab-active' : ''} onClick={() => changePage('inbox')}>
+                        <MenuItem className={router.pathname === '/inbox' ? 'tab-active' : ''}
+                                  onClick={() => changePage('inbox')}>
                             <MailIcon/> Inbox
                         </MenuItem>
-                        <MenuItem className={router.pathname === '/projects' ? 'tab-active' : ''} onClick={() => changePage('projects')}>
+                        <MenuItem className={router.pathname === '/projects' ? 'tab-active' : ''}
+                                  onClick={() => changePage('projects')}>
                             <FolderIcon/> Projects
                         </MenuItem>
                     </MenuList>

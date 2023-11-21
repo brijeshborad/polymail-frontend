@@ -28,7 +28,7 @@ export function performSuccessActions(payload: ReducerActionType, currentRespons
                     // @ts-ignore
                     payload.toasterClickAction(currentResponse);
                 }
-            }: {}),
+            } : {}),
             ...(payload.undoAction?.showUndoButton ? {
                 undoUpdateRecordClick: () => {
                     if (payload.undoAction?.dispatch && payload.undoAction.action) {
@@ -48,15 +48,6 @@ export function performSuccessActions(payload: ReducerActionType, currentRespons
                     if (payload?.undoAction?.undoBody?.afterUndoAction) {
                         payload?.undoAction?.undoBody?.afterUndoAction();
                     }
-                    // if (payload?.undoAction?.undoBody?.forThread) {
-                    //     if (payload?.undoAction?.dispatch) {
-                    //         payload?.undoAction?.dispatch(updateThreadState({
-                    //             threads: payload.undoAction.undoBody?.data || [],
-                    //             selectedThread: (payload.undoAction.undoBody?.data || [])[0],
-                    //         }));
-                    //     }
-                    // }
-
                 }
             } : {})
         });

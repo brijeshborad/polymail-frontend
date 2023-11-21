@@ -321,7 +321,7 @@ export function ThreadsSideBar() {
                                 className={`${tab === MAILBOX_SNOOZED ? styles.active : ''}`}
                                 onClick={() => changeEmailTabs(MAILBOX_SNOOZED)}
                             >
-                                <TimeSnoozeIcon />
+                                <TimeSnoozeIcon/>
                                 <span className={styles.mailboxText}>Snoozed</span>
                             </div>
                         </Tooltip>
@@ -439,7 +439,7 @@ export function ThreadsSideBar() {
                             }
                             {tab !== MAILBOX_ARCHIVE &&
                             <MenuItem
-                                onClick={() => changeEmailTabs(MAILBOX_ARCHIVE)}><ArchiveIcon /> Archive</MenuItem>
+                                onClick={() => changeEmailTabs(MAILBOX_ARCHIVE)}><ArchiveIcon/> Archive</MenuItem>
                             }
                         </MenuList>
                     </Menu>

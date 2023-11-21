@@ -122,10 +122,10 @@ export default function CollabRichTextEditor({
                     afterToolbar={afterToolbar}
                     extendToolbar={extendToolbar}
                 />}
-                onSelectionUpdate={({editor})=> {
+                onSelectionUpdate={({editor}) => {
                     if (!isCompose) {
-                        const { from, to } = editor.state.selection;
-                        editor.chain().focus().setTextSelection({ from, to }).run()
+                        const {from, to} = editor.state.selection;
+                        editor.chain().focus().setTextSelection({from, to}).run()
                     } else {
                         setContent(editor);
                     }

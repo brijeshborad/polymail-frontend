@@ -150,7 +150,8 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                     ))}
                 </Flex>
             </>} placement={'bottom'}>
-                <Text style={{display: 'block'}} whiteSpace={'nowrap'} maxWidth={'250px'} noOfLines={1}>{othersText}</Text>
+                <Text style={{display: 'block'}} whiteSpace={'nowrap'} maxWidth={'250px'}
+                      noOfLines={1}>{othersText}</Text>
             </Tooltip>
         )
     }
@@ -172,16 +173,18 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                 <Flex align={"center"} justify={'space-between'} gap={2}>
                     <Flex align={"center"} className={styles.senderDetails} noOfLines={1} gap={1}>
                         {props.thread?.tab === 'SENT' ? buildSentNameAndTooltip() :
-                        <Tooltip label={props?.thread?.from?.email} placement={'bottom'}>
-                            {props?.thread?.from?.name || props?.thread?.from?.email}
-                        </Tooltip>}
+                            <Tooltip label={props?.thread?.from?.email} placement={'bottom'}>
+                                {props?.thread?.from?.name || props?.thread?.from?.email}
+                            </Tooltip>}
                     </Flex>
                     {(props?.thread?.projects || []).length > 0 && (
                         <Tooltip label={
                             <Flex flexDir={'column'}>
                                 {props?.thread?.projects?.map((p, index) => {
                                     return (
-                                        <span key={index} style={{marginBottom: props.thread!.projects!.length! - 1 === index ? 0 :'5px'}} className='emoji'>
+                                        <span key={index}
+                                              style={{marginBottom: props.thread!.projects!.length! - 1 === index ? 0 : '5px'}}
+                                              className='emoji'>
                                         {p.emoji} {p.name}
                                     </span>
                                     )
