@@ -366,6 +366,11 @@
     width: 20px;
     height: 20px;
     margin: 0 2px;
+    stroke: #6B7280;
+}
+
+.mailBox svg:hover {
+    stroke: black;
 }
 
 .mailBox .mailBody {
