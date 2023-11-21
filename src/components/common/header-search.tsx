@@ -253,65 +253,25 @@ export function HeaderSearch() {
             <InputGroup className={styles.inputGroup}>
                 <Flex className={styles.headerSearchInput}>
                     <SearchIcon/>
-                    <Input
-                        className={`${badges.length > 0 ? styles.headerSearchBadgeInput : ''}`}
-                        flex={'1'}
-                        type="text"
-                        placeholder={getSearchPlaceHolder()}
-                        onChange={event => {
-                            setSearchString(event.target.value);
-                        }}
-                        ref={searchInputRef}
-                        value={searchString}
-                        onKeyDown={e => handleKeyDown(e)}
-                    />
-                    <Flex className={styles.headerSearchChip} alignItems={'center'} wrap={'wrap'}
-                          gap={1}>
-                        {badges.map((badge: any, index: number) => {
-                            return (
-                                <Badge key={index} textTransform={'none'} backgroundColor={'#ffffff'} color={'#08162F'}
-                                       borderRadius={'4px'} display={'flex'} alignItems={'center'}
-                                       fontSize={'11px'} fontWeight={'500'} padding={'3px 10px'} lineHeight={1}>
-                                    {getBadgeText(badge)}
-                                    <CloseIcon cursor={'pointer'} width={'8px'} height={'8px'} marginLeft={'5px'}
-                                               onClick={(e) => {
-                                                   e.preventDefault()
-                                                   e.stopPropagation();
-                                                   removeBadge(index);
-                                               }}
-                                    />
-                                </Badge>
-                            )
-                        })}
-                    </Flex>
-                    <InputRightElement>
-                        {showCloseIcon ? <div className={styles.inputRight} style={{background: "transparent"}}
-                                              onClick={() => searchCancel(true)}>
-                            <CloseIcon cursor={'pointer'} fontSize={'10'}/>
-                        </div> : <div className={styles.inputRight}>⌘K</div>
-                        }
-                    </InputRightElement>
+                    <Flex gap={1} flex={1} overflow={'auto'} width={'calc(100vw - 810px)'} className={styles.searchBarHeaderInput}>
+                        <span placeholder={getSearchPlaceHolder()}
+                              ref={searchInputRef}
+                              onKeyDown={e => handleKeyDown(e)}
+                              className={`${badges.length > 0 ? 'header-search-badge-input' : ''} header-search-input-span`}
+                              role="textbox" contentEditable>Search</span>
 
-                </Flex>
-            </InputGroup>
-
-            {searchPopup && !isProjectRoute && <div className={styles.headerSearchPopupBox}>
-
-                <InputGroup className={styles.inputGroup}>
-                    <Flex className={styles.headerSearchInput}>
-                        <SearchIcon/>
-                        <Input
-                            className={`${badges.length > 0 ? styles.headerSearchBadgeInput : ''}`}
-                            flex={'1'}
-                            type="text"
-                            placeholder={getSearchPlaceHolder()}
-                            onChange={event => {
-                                setSearchString(event.target.value);
-                            }}
-                            ref={searchInputRef}
-                            value={searchString}
-                            onKeyDown={e => handleKeyDown(e)}
-                        />
+                        {/*<Input*/}
+                        {/*    className={`${badges.length > 0 ? styles.headerSearchBadgeInput : ''}`}*/}
+                        {/*    flex={'1'}*/}
+                        {/*    type="text"*/}
+                        {/*    placeholder={getSearchPlaceHolder()}*/}
+                        {/*    onChange={event => {*/}
+                        {/*        setSearchString(event.target.value);*/}
+                        {/*    }}*/}
+                        {/*    ref={searchInputRef}*/}
+                        {/*    value={searchString}*/}
+                        {/*    onKeyDown={e => handleKeyDown(e)}*/}
+                        {/*/>*/}
                         <Flex className={styles.headerSearchChip} alignItems={'center'} wrap={'wrap'}
                               gap={1}>
                             {badges.map((badge: any, index: number) => {
@@ -330,6 +290,61 @@ export function HeaderSearch() {
                                     </Badge>
                                 )
                             })}
+                        </Flex>
+                    </Flex>
+                    <InputRightElement>
+                        {showCloseIcon ? <div className={styles.inputRight} style={{background: "transparent"}}
+                                              onClick={() => searchCancel(true)}>
+                            <CloseIcon cursor={'pointer'} fontSize={'10'}/>
+                        </div> : <div className={styles.inputRight}>⌘K</div>
+                        }
+                    </InputRightElement>
+
+                </Flex>
+            </InputGroup>
+
+            {searchPopup && !isProjectRoute && <div className={styles.headerSearchPopupBox}>
+
+                <InputGroup className={styles.inputGroup}>
+                    <Flex className={styles.headerSearchInput}>
+                        <SearchIcon/>
+                        <Flex gap={1} flex={1} overflow={'auto'} width={'calc(100vw - 810px)'} className={styles.searchBarHeaderInput}>
+                            <span placeholder={getSearchPlaceHolder()}
+                                  ref={searchInputRef}
+                                  onKeyDown={e => handleKeyDown(e)}
+                                  className={`${badges.length > 0 ? 'header-search-badge-input' : ''} header-search-input-span`}
+                                  role="textbox" contentEditable>Search</span>
+                            {/*<Input*/}
+                            {/*    className={`${badges.length > 0 ? styles.headerSearchBadgeInput : ''}`}*/}
+                            {/*    flex={'1'}*/}
+                            {/*    type="text"*/}
+                            {/*    placeholder={getSearchPlaceHolder()}*/}
+                            {/*    onChange={event => {*/}
+                            {/*        setSearchString(event.target.value);*/}
+                            {/*    }}*/}
+                            {/*    ref={searchInputRef}*/}
+                            {/*    value={searchString}*/}
+                            {/*    onKeyDown={e => handleKeyDown(e)}*/}
+                            {/*/>*/}
+                            <Flex className={styles.headerSearchChip} alignItems={'center'} wrap={'wrap'}
+                                  gap={1}>
+                                {badges.map((badge: any, index: number) => {
+                                    return (
+                                        <Badge key={index} textTransform={'none'} backgroundColor={'#ffffff'} color={'#08162F'}
+                                               borderRadius={'4px'} display={'flex'} alignItems={'center'}
+                                               fontSize={'11px'} fontWeight={'500'} padding={'3px 10px'} lineHeight={1}>
+                                            {getBadgeText(badge)}
+                                            <CloseIcon cursor={'pointer'} width={'8px'} height={'8px'} marginLeft={'5px'}
+                                                       onClick={(e) => {
+                                                           e.preventDefault()
+                                                           e.stopPropagation();
+                                                           removeBadge(index);
+                                                       }}
+                                            />
+                                        </Badge>
+                                    )
+                                })}
+                            </Flex>
                         </Flex>
                         <InputRightElement>
                             {showCloseIcon ? <div className={styles.inputRight} style={{background: "transparent"}}

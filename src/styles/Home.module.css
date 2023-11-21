@@ -236,12 +236,6 @@
     box-shadow: rgb(49, 130, 206) 0 0 0 1px;
 }
 
-.headerSearch.headerSearchPopup .headerSearchInput .headerSearchBadgeInput {
-    flex: none;
-    padding: 0;
-    width: 46px;
-}
-
 .headerSearch .headerSearchInput {
     align-items: center;
     border: 1px solid #cbd5e0;
@@ -250,6 +244,11 @@
     gap: 12px;
     background-color: #F5F5F5;
     border-radius: 50px;
+}
+
+.headerSearch .headerSearchInput .searchBarHeaderInput::-webkit-scrollbar {
+    width: 0;
+    height: 0;
 }
 
 .headerSearch .headerSearchInput .headerSearchChip button {
