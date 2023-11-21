@@ -174,7 +174,10 @@ export function HeaderSearch() {
         if (!value) {
             return [];
         }
-        let finalContacts: Contacts[] = matchSorter((selectedAccount?.contacts || []), value.replace('from:', '').trim(), {keys: ['email.email', 'email.name']});
+        ['from', 'to', 'cc', 'bcc'].forEach(t => {
+            value = value.replace(`${t}:`, '').trim()
+        })
+        let finalContacts: Contacts[] = matchSorter((selectedAccount?.contacts || []), value, {keys: ['email.email', 'email.name']});
         finalContacts = finalContacts.slice(0, finalContacts.length > 5 ? 5 : finalContacts.length);
         return finalContacts.map((contact: Contacts) => ({email: contact.email.email, name: contact.email.name}));
     }
@@ -301,9 +304,11 @@ export function HeaderSearch() {
                         <SearchIcon/>
                         {badges.map((badge: any, index: number) => {
                             return (
-                                <Flex key={index} className={styles.headerSearchChip} alignItems={'center'} wrap={'wrap'}
+                                <Flex key={index} className={styles.headerSearchChip} alignItems={'center'}
+                                      wrap={'wrap'}
                                       gap={1}>
-                                    <Badge key={index} textTransform={'none'} backgroundColor={'#ffffff'} color={'#08162F'}
+                                    <Badge key={index} textTransform={'none'} backgroundColor={'#ffffff'}
+                                           color={'#08162F'}
                                            borderRadius={'4px'} display={'flex'} alignItems={'center'}
                                            fontSize={'11px'} fontWeight={'500'} padding={'3px 10px'} lineHeight={1}>
                                         {getBadgeText(badge)}
@@ -352,7 +357,8 @@ export function HeaderSearch() {
                                 <Text color={'#374151'} fontSize={'13px'} padding={'8px 12px'} cursor={'pointer'}
                                       borderRadius={'3px'} fontWeight={'500'} width={'100%'} key={index}
                                       _hover={{backgroundColor: 'rgba(0,0,0, 0.05)'}}
-                                      lineHeight={1} onClick={() => addBadge(item, 'project')} letterSpacing={'-0.13px'}>{item.emoji} {item.name}</Text>
+                                      lineHeight={1} onClick={() => addBadge(item, 'project')}
+                                      letterSpacing={'-0.13px'}>{item.emoji} {item.name}</Text>
                             ))}
                         </Flex>
                         }
