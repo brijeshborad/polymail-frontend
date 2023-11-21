@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import styles from "@/styles/project.module.css";
 import Image from "next/image";
-import {BlueStarIcon, DragIcon, LockIcon, StarIcon, MenuIcon} from "@/icons";
+import {DragIcon, LockIcon, StarIcon, MenuIcon} from "@/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {updateProject, updateOptimisticProject, removeProject} from "@/redux/projects/action-reducer";
@@ -267,25 +267,15 @@ function Index() {
                                                 <LockIcon/>
                                             </Flex>
                                         )}
-                                        {project.projectMeta?.favorite ?
-                                            <Flex align={'center'} justify={'center'} h={'20px'} w={'20px'}
-                                                  borderRadius={50}
-                                                  className={`${styles.projectListIcon} ${styles.projectFillStar}`}
-                                                  backgroundColor={'#F3F4F6'} onClick={(e) => {
-                                                e.stopPropagation();
-                                                makeProjectFavorite(project, false)
-                                            }}>
-                                                <BlueStarIcon/>
-                                            </Flex> :
-                                            <Flex align={'center'} justify={'center'} h={'20px'} w={'20px'}
-                                                  borderRadius={50} className={styles.projectListIcon}
-                                                  backgroundColor={'#F3F4F6'} onClick={(e) => {
-                                                e.stopPropagation();
-                                                makeProjectFavorite(project, true)
-                                            }}>
-                                                <StarIcon/>
-                                            </Flex>
-                                        }
+                                        <Flex align={'center'} justify={'center'} h={'20px'} w={'20px'}
+                                              borderRadius={50}
+                                              className={`${styles.projectListIcon} ${project.projectMeta?.favorite ? styles.projectFillStar: ''}`}
+                                              backgroundColor={'#F3F4F6'} onClick={(e) => {
+                                            e.stopPropagation();
+                                            makeProjectFavorite(project, !project.projectMeta?.favorite)
+                                        }}>
+                                            <StarIcon/>
+                                        </Flex>
                                     </Flex>
                                 </Flex>
                                 <Menu isLazy>

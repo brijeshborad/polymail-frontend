@@ -1,5 +1,5 @@
 import {Flex, Text, Image, Button} from "@chakra-ui/react";
-import {DisneyDIcon, FolderIcon} from "@/icons";
+import {AddEmojiIcon, FolderIcon} from "@/icons";
 import React, {useEffect, useState} from "react";
 import {useSelector} from "react-redux";
 import {StateType} from "@/types";
@@ -83,7 +83,7 @@ export function InboxHeaderProjectsList() {
                                 borderRadius={'8px'} padding={'7px'} minWidth={'216px'} maxWidth={'216px'}>
                             <Flex className={'disney-icon'} position={'relative'} align={'center'} justify={'center'}
                                   borderRadius={'3px'} h={'20px'} w={'20px'} fontSize={'18px'}>
-                                {project?.emoji ? project.emoji : <DisneyDIcon/>}
+                                {project?.emoji ? project.emoji : <AddEmojiIcon/>}
                             </Flex>
                             <Text whiteSpace={'nowrap'} overflow={'hidden'} textOverflow={'ellipsis'} fontSize='13px'
                                   color={'#0A101D'} flex={'1'}>{project.name}</Text>
