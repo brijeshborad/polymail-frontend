@@ -1,12 +1,9 @@
 import {useEffect} from "react";
 import KeyboardNavigationListener from "./keyboard-navigation";
-import {useDispatch} from "react-redux";
 import {globalEventService} from "@/services";
 import Notification from "./notification";
 
 export default function GlobalEvents() {
-    const dispatch = useDispatch()
-
     useEffect(() => {
         const handleWindowBlur = () => {
             if (document.activeElement?.tagName === 'IFRAME') {
@@ -20,12 +17,12 @@ export default function GlobalEvents() {
         return () => {
             window.removeEventListener('blur', handleWindowBlur);
         };
-    }, [dispatch])
+    }, [])
 
     return (
-      <>
-        <Notification />
-        <KeyboardNavigationListener/>
-      </>
+        <>
+            <Notification/>
+            <KeyboardNavigationListener/>
+        </>
     )
 }

@@ -35,24 +35,6 @@ export default function ToolbarEmoji({isOpen, onChangeVisibility, onChange, edit
             <PopoverContent width={250} className={'emoji-popover'}>
                 <PopoverArrow/>
                 <PopoverBody padding={0}>
-                    {/*<Grid*/}
-                    {/*    templateColumns='repeat(10, 1fr)' maxH={'175px'}*/}
-                    {/*    overflow={'auto'} gap={2} padding={3}*/}
-                    {/*>*/}
-                    {/*    {emojiArray.map((emoji: string, index: number) => (*/}
-                    {/*        <GridItem w='100%' key={index}>*/}
-                    {/*            <div*/}
-                    {/*                className={'emoji-modal-icon'}*/}
-                    {/*                onClick={() => {*/}
-                    {/*                    onChange(emoji)*/}
-                    {/*                    onChangeVisibility(false)*/}
-                    {/*                }}*/}
-                    {/*            >*/}
-                    {/*                {emoji}*/}
-                    {/*            </div>*/}
-                    {/*        </GridItem>*/}
-                    {/*    ))}*/}
-                    {/*</Grid>*/}
                     <EmojiMenu onChange={onChange} onChangeVisibility={onChangeVisibility}/>
                 </PopoverBody>
             </PopoverContent>

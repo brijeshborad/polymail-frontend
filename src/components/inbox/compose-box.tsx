@@ -473,7 +473,8 @@ export function ComposeBox(props: any) {
                                 }}
                             />
                             <Flex flex={1} direction={'column'} position={'relative'}>
-                                <Flex flex={1} direction={'column'} ref={editorRef} className={`editor-bottom-shadow compose-editor`}
+                                <Flex flex={1} direction={'column'} ref={editorRef}
+                                      className={`editor-bottom-shadow compose-editor`}
                                       maxH={'calc(100vh - 500px)'} overflowY={'auto'}
                                       onScroll={() => handleEditorScroll()} zIndex={6}
                                 >
@@ -485,7 +486,10 @@ export function ComposeBox(props: any) {
                                         // onCreate={() => sendToDraft('')}
                                         onChange={(value) => {
                                             setEmailBody(value);
-                                            draftService.setComposeDraft({...composeDraft, draftInfo: {...composeDraft.draftInfo, body: value}});
+                                            draftService.setComposeDraft({
+                                                ...composeDraft,
+                                                draftInfo: {...composeDraft.draftInfo, body: value}
+                                            });
                                         }}
                                         placeholder='Reply with anything you like or @mention someone to share this thread'
                                         isToolbarVisible={true}

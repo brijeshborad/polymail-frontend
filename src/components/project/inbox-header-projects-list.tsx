@@ -1,5 +1,5 @@
 import {Flex, Text, Image, Button} from "@chakra-ui/react";
-import {DisneyDIcon, FolderIcon} from "@/icons";
+import {AddEmojiIcon, FolderIcon} from "@/icons";
 import React, {useEffect, useState} from "react";
 import {useSelector} from "react-redux";
 import {StateType} from "@/types";
@@ -77,13 +77,15 @@ export function InboxHeaderProjectsList() {
                 {(!loadedFirstTime) && <SkeletonLoader height={'36px'} skeletonLength={6} width={'216px'}/>}
                 {loadedFirstTime && <>
                     {projectData && !!projectData.length && (projectData || []).map((project: Project, index: number) => (
-                        <Button onClick={() => gotoProject(project.id!)} ref={projectButtonRef} className={'header-project-name-button'}
+                        <Button onClick={() => gotoProject(project.id!)} ref={projectButtonRef}
+                                className={'header-project-name-button'}
                                 key={index} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
-                                border={'1px solid #F3F4F6'} h={'fit-content'} _hover={{backgroundColor: 'var(--alias-bg-subtle)'}}
+                                border={'1px solid #F3F4F6'} h={'fit-content'}
+                                _hover={{backgroundColor: 'var(--alias-bg-subtle)'}}
                                 borderRadius={'8px'} padding={'7px'} minWidth={'216px'} maxWidth={'216px'}>
                             <Flex className={'disney-icon'} position={'relative'} align={'center'} justify={'center'}
                                   borderRadius={'3px'} h={'20px'} w={'20px'} fontSize={'18px'}>
-                                {project?.emoji ? project.emoji : <DisneyDIcon/>}
+                                {project?.emoji ? project.emoji : <AddEmojiIcon/>}
                             </Flex>
                             <Text whiteSpace={'nowrap'} overflow={'hidden'} textOverflow={'ellipsis'} fontSize='13px'
                                   color={'#0A101D'} flex={'1'}>{project.name}</Text>
@@ -107,8 +109,10 @@ export function InboxHeaderProjectsList() {
                     ))}
                     {(projectData && projectData.length >= maxSize && maxSize > 0) &&
                     <Button alignItems={'center'} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
-                            onClick={() => changePage()} padding={'7px'} minWidth={'216px'} _hover={{backgroundColor: 'var(--alias-bg-subtle)'}}
-                            border={'1px solid #F3F4F6'} borderRadius={'8px'} h={'fit-content'} className={'header-project-name-button'}
+                            onClick={() => changePage()} padding={'7px'} minWidth={'216px'}
+                            _hover={{backgroundColor: 'var(--alias-bg-subtle)'}}
+                            border={'1px solid #F3F4F6'} borderRadius={'8px'} h={'fit-content'}
+                            className={'header-project-name-button'}
                             maxWidth={'216px'}>
                         <div className={'folder-icon'}>
                             <FolderIcon/>

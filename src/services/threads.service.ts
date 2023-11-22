@@ -5,9 +5,9 @@ import {BaseService} from "@/services/base.service";
 import {draftService} from "@/services/draft.service";
 import {
     MAILBOX_ARCHIVE,
-    MAILBOX_DRAFT,
+    MAILBOX_DRAFT, MAILBOX_INBOX,
     MAILBOX_SENT,
-    MAILBOX_SNOOZED, MAILBOX_STARRED,
+    MAILBOX_SNOOZED, MAILBOX_SPAM, MAILBOX_STARRED, MAILBOX_TRASH,
     MAILBOX_UNREAD
 } from "@/utils/constants";
 import {generateToasterId} from "@/utils/common.functions";
@@ -151,28 +151,45 @@ class ThreadsService extends BaseService {
     moveThreadToMailBox(mailBoxType: MailBoxTypes, snoozeDate: string = '') {
         let selectedThreadIds = this.getThreadState().multiSelection || [];
         let threads = this.getThreadState().threads || [];
-        let tabValue = this.getThreadState().tabValue;
         let showToaster = true;
         let remove_from_list = true;
         if (selectedThreadIds.length > 0) {
             const messagePlural = selectedThreadIds.length === 1 ? 'message' : 'messages'
-            let body: any = {
-                threadIds: selectedThreadIds,
-                mailboxes: [mailBoxType]
-            }
+            let movingThreads = threads.filter((thread: Thread) => selectedThreadIds.includes(thread.id!));
+            let body: any = movingThreads.map((thread: Thread) => {
+                let finalBody: any = {
+                    id: thread.id,
+                    fromTab: this.getThreadTabFromMailBoxes(thread.mailboxes || []),
+                    ...this.getThreadMailBox(thread, mailBoxType),
+                }
+                if (mailBoxType === MAILBOX_SNOOZED) {
+                    const targetDate = dayjs(snoozeDate)
+                    const currentDate = dayjs();
+                    finalBody.snooze = targetDate.diff(currentDate, 'second')
+                }
+                return finalBody;
+            })
+            let undoBody: any = movingThreads.map((thread: Thread) => {
+                let finalBody: any = {
+                    id: thread.id,
+                    mailboxes: thread.mailboxes,
+                    fromTab: this.getThreadTabFromMailBoxes(thread.mailboxes || []),
+                    snooze: thread.snooze || null
+                }
+                return finalBody
+            })
             let toastId = generateToasterId();
-            if (mailBoxType === MAILBOX_SNOOZED) {
-                const targetDate = dayjs(snoozeDate)
-                const currentDate = dayjs();
-                body.snooze = targetDate.diff(currentDate, 'second')
-            }
             if (mailBoxType === MAILBOX_UNREAD) {
                 showToaster = false;
                 remove_from_list = false;
             }
-            let movingThreads = threads.filter((thread: Thread) => selectedThreadIds.includes(thread.id!));
             let batchUpdateMoveBody = {
-                body: {body},
+                body: {
+                    body: body.map((t: any) => {
+                        delete t.fromTab
+                        return t
+                    })
+                },
                 ...(showToaster ? {
                     toaster: {
                         success: {
@@ -187,13 +204,16 @@ class ThreadsService extends BaseService {
                         dispatch: this.getDispatch(),
                         action: batchUpdateThreads,
                         undoBody: {
-                            body: {
-                                threadIds: selectedThreadIds,
-                                mailboxes: movingThreads[0].mailboxes || [],
-                            },
+                            body: undoBody.map((t: any) => {
+                                delete t.fromTab
+                                return t
+                            }),
                             tag: mailBoxType.toString().toLowerCase(),
                             afterUndoAction: () => {
                                 this.setThreadState({threads: threads, selectedThread: threads[0]});
+                                undoBody.forEach((data: any) => {
+                                    this.moveThreadFromListToListCache(mailBoxType, data.fromTab, data.id);
+                                })
                             }
                         },
                         showToasterAfterUndoClick: true
@@ -204,8 +224,8 @@ class ThreadsService extends BaseService {
             if (remove_from_list) {
                 let newFilteredThreads = threads.filter((thread: Thread) => !selectedThreadIds.includes(thread.id!))
                 this.setThreadState({threads: newFilteredThreads, selectedThread: newFilteredThreads[0]});
-                selectedThreadIds.forEach(id => {
-                    this.moveThreadFromListToListCache(tabValue || 'INBOX', mailBoxType, id);
+                body.forEach((data: any) => {
+                    this.moveThreadFromListToListCache(data.fromTab, mailBoxType, data.id);
                 })
                 this.cancelThreadSearch();
             } else {
@@ -1046,6 +1066,79 @@ class ThreadsService extends BaseService {
                 [cacheFromPage]: fromThreads
             })
         }
+    }
+
+    getThreadMailBox(selectedThread: Thread, messageBox: string) {
+        let body: any = {
+            mailboxes: selectedThread.mailboxes
+        };
+        switch (messageBox) {
+            case MAILBOX_INBOX:
+                if (selectedThread.mailboxes?.includes(messageBox)) {
+                    return
+                }
+                body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_ARCHIVE, MAILBOX_TRASH, MAILBOX_SPAM].includes(item))
+                body.mailboxes = [...body.mailboxes, messageBox]
+                break;
+            case MAILBOX_TRASH:
+                if (selectedThread.mailboxes?.includes(messageBox)) {
+                    return
+                }
+                body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_INBOX, MAILBOX_ARCHIVE, MAILBOX_SPAM].includes(item))
+                body.mailboxes = [...body.mailboxes, messageBox]
+                break;
+            case MAILBOX_ARCHIVE:
+                if (selectedThread.mailboxes?.includes(messageBox)) {
+                    return
+                }
+                body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_INBOX, MAILBOX_TRASH, MAILBOX_SPAM].includes(item))
+                break;
+            case MAILBOX_SPAM:
+                if (selectedThread.mailboxes?.includes(messageBox)) {
+                    return
+                }
+                body.mailboxes = [messageBox]
+                body.snooze = null;
+                break;
+            case MAILBOX_STARRED:
+                if (selectedThread.mailboxes?.includes(messageBox)) {
+                    body.mailboxes = body.mailboxes.filter((item: string) => item !== messageBox)
+                } else {
+                    body.mailboxes = [...body.mailboxes, messageBox]
+                }
+                break;
+            case MAILBOX_UNREAD:
+                if (selectedThread.mailboxes?.includes(messageBox)) {
+                    body.mailboxes = body.mailboxes.filter((item: string) => item !== messageBox)
+                } else {
+                    body.mailboxes = [...body.mailboxes, messageBox]
+                }
+                break;
+            case MAILBOX_SNOOZED:
+                if (selectedThread.mailboxes?.includes(messageBox)) {
+                    return
+                }
+                body.mailboxes = body.mailboxes.filter((item: string) => ![MAILBOX_INBOX, MAILBOX_TRASH, MAILBOX_SPAM].includes(item))
+                body.mailboxes = [...body.mailboxes, messageBox]
+                break;
+        }
+        return body;
+    }
+
+    getThreadTabFromMailBoxes(mailBoxes: string[]) {
+        if (mailBoxes.includes(MAILBOX_INBOX)) {
+            return MAILBOX_INBOX;
+        }
+        if (mailBoxes.includes(MAILBOX_TRASH)) {
+            return MAILBOX_TRASH;
+        }
+        if (mailBoxes.includes(MAILBOX_SPAM)) {
+            return MAILBOX_SPAM;
+        }
+        if (mailBoxes.includes(MAILBOX_SNOOZED)) {
+            return MAILBOX_SNOOZED;
+        }
+        return MAILBOX_ARCHIVE;
     }
 }
 

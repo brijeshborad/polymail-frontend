@@ -115,6 +115,11 @@ export default function CollabRichTextEditor({
                         setContent(editor);
                     }
                 }}
+                onCreate={({editor}) => {
+                    if (editor.isEmpty) {
+                        setContent(editor);
+                    }
+                }}
                 onUpdate={({editor}) => onChange(editor.getHTML())}
                 slotAfter={<CollabRichTextEditorToolbar
                     beforeToolbar={null}
@@ -122,12 +127,10 @@ export default function CollabRichTextEditor({
                     afterToolbar={afterToolbar}
                     extendToolbar={extendToolbar}
                 />}
-                onSelectionUpdate={({editor})=> {
+                onSelectionUpdate={({editor}) => {
                     if (!isCompose) {
-                        const { from, to } = editor.state.selection;
-                        editor.chain().focus().setTextSelection({ from, to }).run()
-                    } else {
-                        setContent(editor);
+                        const {from, to} = editor.state.selection;
+                        editor.chain().focus().setTextSelection({from, to}).run()
                     }
                 }}
                 onBlur={() => {

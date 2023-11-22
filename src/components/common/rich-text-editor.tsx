@@ -22,6 +22,7 @@ let htmlToDraft: any = null;
 if (typeof window === 'object') {
     htmlToDraft = require('html-to-draftjs').default;
 }
+
 export function RichTextEditor({onChange, placeholder, className, value, hideToolBar}: RichTextEditorProps) {
     const containerRef: any = useRef(null)
     const dispatch = useDispatch()

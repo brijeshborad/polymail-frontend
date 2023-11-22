@@ -20,7 +20,6 @@ const FeedComponent = dynamic(
 
 export const FeedSidebar = () => {
     const {isOpen, onToggle} = useDisclosure();
-    // const [selectedMenu, setSelectedMenu] = React.useState('Disney Launch');
     const btnRef = React.useRef(null);
     const {newMessage} = useSelector((state: StateType) => state.socket);
     const {userDetails} = useSelector((state: StateType) => state.users);
@@ -175,27 +174,6 @@ export const FeedSidebar = () => {
                             <Text fontStyle="bold" fontSize={'14px'}>Updates</Text>
                         </Flex>
                     </Box>
-                    {/* Content */}
-                    {/*<Box margin="12px 16px" mb="6px" height="36px" display={'flex'}*/}
-                    {/*     backgroundColor=" var(--alias-bg-subtle)" borderRadius="6px">*/}
-                    {/*    {['Disney Launch', 'Everything'].map(item => (*/}
-                    {/*        <Box*/}
-                    {/*            key={item}*/}
-                    {/*            onClick={() => setSelectedMenu(item)}*/}
-                    {/*            color={item === selectedMenu ? 'black' : '#6B7280'}*/}
-                    {/*            width="50%"*/}
-                    {/*            alignItems={'center'}*/}
-                    {/*            display="flex"*/}
-                    {/*            justifyContent="center"*/}
-                    {/*            backgroundColor={item === selectedMenu ? 'white' : 'var(--alias-bg-subtle)'}*/}
-                    {/*            borderRadius="6px"*/}
-                    {/*            cursor="pointer"*/}
-                    {/*            margin="2px">*/}
-                    {/*            <Text fontSize="13px">{item}</Text>*/}
-                    {/*        </Box>*/}
-                    {/*    ))}*/}
-                    {/*</Box>*/}
-
                     <Box padding="12px 16px">
                         {feeds
                             .sort((a, b) => {
@@ -214,11 +192,11 @@ export const FeedSidebar = () => {
                                             <Text fontSize={'13px'} color={'red'} display={'flex'}
                                                   alignItems={'center'}>New</Text>
                                             <hr style={{
-                                            width: '100%',
-                                            marginLeft: '5px',
-                                            borderColor: 'red',
-                                            marginTop: '3px'
-                                        }}/>
+                                                width: '100%',
+                                                marginLeft: '5px',
+                                                borderColor: 'red',
+                                                marginTop: '3px'
+                                            }}/>
                                         </Flex>}
                                     </React.Fragment>
                                 )

@@ -10,7 +10,7 @@ import {
 import {CheckIcon, ChevronDownIcon, HamburgerIcon} from '@chakra-ui/icons';
 import {FolderIcon, MailIcon} from '@/icons';
 import styles from '@/styles/Home.module.css';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Router, {useRouter} from 'next/router';
 import {StateType} from '@/types';
 import React, {useCallback, useEffect, useState} from 'react';
@@ -29,6 +29,7 @@ import {
 } from "@/services";
 import {performMessagesUpdate} from "@/utils/thread.functions";
 import {OnboardingLogoIcon} from "@/icons";
+import {getAllMessages} from "@/redux/messages/action-reducer";
 
 const FeedSidebar = dynamic(
     () => import('./feedSidebar').then((mod) => mod.FeedSidebar)
@@ -53,6 +54,7 @@ export function Header() {
 
     const {user} = useSelector((state: StateType) => state.auth);
     const router = useRouter();
+    const dispatch = useDispatch();
 
     useEffect(() => {
         if (user) {
@@ -88,13 +90,6 @@ export function Header() {
         if (fireSuccess) {
             globalEventService.fireEvent('threads.refresh');
         }
-        // if (!organizations) {
-        //     Router.push('/organization/add');
-        //     return;
-        // }
-        // if (organizations && organizations.length <= 0) {
-        //     Router.push('/organization/add');
-        // }
     }, [])
 
     useEffect(() => {
@@ -132,13 +127,19 @@ export function Header() {
                         commonService.updateEmailSyncPercentage(Math.floor(newMessage.data.progress));
                     } else {
                         commonService.updateEmailSyncPercentage(null);
-                        accountService.setSelectedAccount({...selectedAccount, syncHistory: {mailInitSynced: new Date().toString()}});
+                        accountService.setSelectedAccount({
+                            ...selectedAccount,
+                            syncHistory: {mailInitSynced: new Date().toString()}
+                        });
                         updateValuesFromAccount(selectedAccount, true);
                     }
                 }
             }
+            if (newMessage.name === 'DraftCreated' || newMessage.name === 'DraftCreated') {
+                dispatch(getAllMessages)
+            }
         }
-    }, [accounts, newMessage, threads, reAuthToast, selectedAccount, updateValuesFromAccount]);
+    }, [accounts, newMessage, threads, reAuthToast, selectedAccount, updateValuesFromAccount, dispatch]);
 
     useEffect(() => {
         if (googleAuthRedirectionLink) {
@@ -254,7 +255,8 @@ export function Header() {
     return (
         <Flex className={styles.header} w="100%" align={'center'} flex={'none'} padding={'0 40px'}>
             <Flex padding={'12px 0'} align={'center'} className={styles.headerLogo}>
-                <Flex className={styles.logo} marginBottom={'-5px'} cursor={'pointer'} onClick={() => changePage('inbox')}>
+                <Flex className={styles.logo} marginBottom={'-5px'} cursor={'pointer'}
+                      onClick={() => changePage('inbox')}>
                     <OnboardingLogoIcon/>
                 </Flex>
                 <Flex className={styles.headerTabs} align={'center'}>
@@ -271,12 +273,16 @@ export function Header() {
                 </Flex>
 
                 <Menu>
-                    <MenuButton className={'header-menu-button'} backgroundColor={"#FFFFFF"} border={'1px solid rgba(0,0,0, 0.1)'} minWidth={'1px'} padding={'5px'} height={'fit-content'} marginLeft={3} as={Button} rightIcon={<HamburgerIcon />} />
+                    <MenuButton className={'header-menu-button'} backgroundColor={"#FFFFFF"}
+                                border={'1px solid rgba(0,0,0, 0.1)'} minWidth={'1px'} padding={'5px'}
+                                height={'fit-content'} marginLeft={3} as={Button} rightIcon={<HamburgerIcon/>}/>
                     <MenuList className={'drop-down-list header-dropdown-list'}>
-                        <MenuItem className={router.pathname === '/inbox' ? 'tab-active' : ''} onClick={() => changePage('inbox')}>
+                        <MenuItem className={router.pathname === '/inbox' ? 'tab-active' : ''}
+                                  onClick={() => changePage('inbox')}>
                             <MailIcon/> Inbox
                         </MenuItem>
-                        <MenuItem className={router.pathname === '/projects' ? 'tab-active' : ''} onClick={() => changePage('projects')}>
+                        <MenuItem className={router.pathname === '/projects' ? 'tab-active' : ''}
+                                  onClick={() => changePage('projects')}>
                             <FolderIcon/> Projects
                         </MenuItem>
                     </MenuList>

@@ -26,7 +26,7 @@ export function Toaster(props: ToasterProps) {
                     <Box
                         display={'flex'} alignItems={'center'} color='#000000' p={3} bg='#FFFFFF'
                         borderRadius={'8px'} border={'1px solid #E5E7EB'}
-                        boxShadow={'0 0 12px 0 rgba(0,0,0, 0.08)'} cursor={props.onClick ? 'pointer': 'inherit'}
+                        boxShadow={'0 0 12px 0 rgba(0,0,0, 0.08)'} cursor={props.onClick ? 'pointer' : 'inherit'}
                         onClick={() => props.onClick ? props.onClick() : null}
                         className={styles.mailToaster} padding={'16px'} gap={2}>
                         {(['reauth', 'error']).includes(props.type) ?
@@ -40,7 +40,8 @@ export function Toaster(props: ToasterProps) {
 
                         <Flex direction={'column'} gap={'2px'}>
                             <Heading as='h6' fontSize={'15px'} lineHeight={'1.21'} noOfLines={1}>{props.title}</Heading>
-                            <Text fontSize='13px' color={'#6B7280'} lineHeight={'1.21'} noOfLines={1}>{props.desc}</Text>
+                            <Text fontSize='13px' color={'#6B7280'} lineHeight={'1.21'}
+                                  noOfLines={1}>{props.desc}</Text>
                         </Flex>
 
                         {props.type === 'send_confirmation' && (

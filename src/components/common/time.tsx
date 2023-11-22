@@ -75,10 +75,10 @@ export function Time(props: TimeProps) {
             fullTime = 'Yesterday at ' + infoDate.format('hh:mm:ss A');
         } else if (currentDate.format('YYYY') === infoDate.format('YYYY')) {
             timeString = dayjs(props.time).format('MMM DD');
-            fullTime = infoDate.format('MMM DD') + getNumeralEnding(infoDate.format('DD')) +',' + ' at ' + infoDate.format('hh:mm:ss A');
+            fullTime = infoDate.format('MMM DD') + getNumeralEnding(infoDate.format('DD')) + ',' + ' at ' + infoDate.format('hh:mm:ss A');
         } else {
             timeString = dayjs(props.time).format('MM/DD/YYYY')
-            fullTime = infoDate.format('MMM DD') + getNumeralEnding(infoDate.format('DD')) +', ' + infoDate.format('YYYY') + ' at ' + infoDate.format('hh:mm:ss A');
+            fullTime = infoDate.format('MMM DD') + getNumeralEnding(infoDate.format('DD')) + ', ' + infoDate.format('YYYY') + ' at ' + infoDate.format('hh:mm:ss A');
         }
 
         return <Tooltip label={fullTime} placement={'top'}><span tabIndex={-1}>{timeString}</span></Tooltip>;

@@ -15,7 +15,13 @@ const MessageScheduleCustom = dynamic(() => import("./message-schedule-custom").
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
-export default function MessageSchedule({date, onChange, isSnooze = false, isNameShow = false, disabled = false}: MessageScheduleProps) {
+export default function MessageSchedule({
+                                            date,
+                                            onChange,
+                                            isSnooze = false,
+                                            isNameShow = false,
+                                            disabled = false
+                                        }: MessageScheduleProps) {
     const [isOpen, setOpen] = useState(false)
     const [scheduleDate, setScheduleDate] = useState(date)
     const [customSchedule, setCustomSchedule] = useState(false)
@@ -116,7 +122,7 @@ export default function MessageSchedule({date, onChange, isSnooze = false, isNam
                     aria-label='Options'
                     {...(!isSnooze ? {variant: 'outline'} : {})}
                 >
-                    {isSnooze ? <TimeSnoozeIcon /> : <ChevronDownIcon/>}
+                    {isSnooze ? <TimeSnoozeIcon/> : <ChevronDownIcon/>}
                     {isNameShow && 'Snooze'}
                 </MenuButton>
 

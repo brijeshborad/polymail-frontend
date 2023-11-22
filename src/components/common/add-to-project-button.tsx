@@ -20,7 +20,7 @@ import Router, {useRouter} from 'next/router';
 import {commonService, globalEventService, threadService} from "@/services";
 import Tooltip from "@/components/common/Tooltip";
 
-export function AddToProjectButton({allowDefaultSelect = true}: {allowDefaultSelect: boolean}) {
+export function AddToProjectButton({allowDefaultSelect = true}: { allowDefaultSelect: boolean }) {
     const [isDropdownOpen, setDropDownOpen] = useState(false)
     const {selectedThread, threads, multiSelection} = useSelector((state: StateType) => state.threads);
     let {projects, project} = useSelector((state: StateType) => state.projects);
