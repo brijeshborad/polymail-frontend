@@ -25,12 +25,9 @@ import {INFINITE_LIST_PER_COUNT} from "@/utils/constants";
 
 const ThreadsSideBarListItem = dynamic(() => import("./side-bar-list-item").then(mod => mod.ThreadsSideBarListItem));
 
-let avoidScroll: boolean = false;
-
 export function ThreadsSideBarList(props: ThreadListProps) {
     const {selectedThread, threads, multiSelection} = useSelector((state: StateType) => state.threads);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
-    const {newMessage} = useSelector((state: StateType) => state.socket);
     const listRef = useRef<any>(null);
     const router = useRouter();
     const routePaths = router.pathname.split('/');
@@ -61,14 +58,6 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     }, [])
 
     useEffect(() => {
-        if (newMessage) {
-            if (newMessage.name === 'SearchResult') {
-                avoidScroll = true;
-            }
-        }
-    }, [newMessage]);
-
-    useEffect(() => {
         if (threads) {
             setCurrentThreads(threads);
         }
@@ -77,9 +66,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     useEffect(() => {
         // Make isThreadSearched as false when multiSelection is null or blank
         if (selectedThread) {
-            if (!avoidScroll) {
-                scrollToPosition(selectedThread)
-            }
+            scrollToPosition(selectedThread)
             let currentSelectedThreads = getCurrentSelectedThreads();
             currentSelectedThreads.push(currentThreads.findIndex((thread: Thread) => thread.id === selectedThread.id))
             setCurrentSelectedThreads(currentSelectedThreads);
@@ -122,7 +109,6 @@ export function ThreadsSideBarList(props: ThreadListProps) {
                 threadService.setMultiSelectionThreads(currentThreads.map((thread: Thread, index: number) => getCurrentSelectedThreads().includes(index) && thread.id!).filter(t => t) as string[]);
 
             } else {
-                avoidScroll = false;
                 let isSameThreadClicked = false;
                 if (selectedThread && item) {
                     isSameThreadClicked = selectedThread.id === item.id;
@@ -205,7 +191,6 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     }, [selectedThread, selectedAccount]);
 
     function fetchNext() {
-        avoidScroll = true;
         globalEventService.fireEvent('threads.next')
     }
 
