@@ -19,7 +19,6 @@ export default function IframeLoader({body}: { body: string }) {
         if (iframeHeight !== '') {
             return;
         }
-        console.log('CALLED HOW MANY TIMES', iframeHeight);
         if (iframeRef.current && iframeRef.current.contentWindow && iframeRef.current.contentWindow.document && iframeRef.current.contentWindow.document.body) {
             setIframeHeight((iframeRef.current.contentWindow.document.body.scrollHeight + 40) + "px");
 
