@@ -17,18 +17,15 @@ import Tooltip from "../common/Tooltip";
 import {AttachmentIcon} from "@chakra-ui/icons";
 import {FileIcon, defaultStyles, DefaultExtensionType} from 'react-file-icon';
 import {globalEventService, messageService, socketService, threadService} from "@/services";
-import LinkPreview from "../common/link-preview";
-import {LinkPreviewProps} from "@/types/props-types/link-preview.types";
 import Image from "next/image";
 import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
+import IframeLoader from "@/components/common/iframe-loader";
 
 export function MessageBox(props: any) {
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const {success: draftSuccess, updatedDraft} = useSelector((state: StateType) => state.draft);
     const {newMessage} = useSelector((state: StateType) => state.socket);
     const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean[]>([]);
-    const iframeRef = React.useRef<any>([]);
-    const [iframeHeight, setIframeHeight] = useState<{ [key: number]: string }>({});
     const dispatch = useDispatch();
     const {
         messages
@@ -36,12 +33,6 @@ export function MessageBox(props: any) {
     const {selectedThread: currentSelectedThread} = useSelector((state: StateType) => state.threads);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const [isAttachmentOpen, setIsAttachmentOpen] = useState<boolean[]>([]);
-    const [currentLinkPreview, setCurrentLinkPreview] = useState<LinkPreviewProps>({
-        isVisible: false,
-        url: null,
-        top: 0,
-        left: 0
-    })
     const [inboxMessages, setInboxMessages] = useState<MessageModel[]>([]);
     const [draftMessages, setDraftMessages] = useState<MessageModel[]>([]);
     const [index, setIndex] = useState<number | null>(null);
@@ -117,54 +108,6 @@ export function MessageBox(props: any) {
             setIndex(currentInboxMessages.length - 1);
         }
     }, [messages, dispatch])
-
-    // Set iframe height once content is loaded within iframe
-    const onIframeLoad = (index: number) => {
-        if (iframeRef.current && iframeRef.current[index] && iframeRef.current[index].contentWindow) {
-            // iframeRef.current[index].contentDocument.addEventListener('wheel', function () {
-            //     clearDebounce('IFRAME_SCROLL');
-            //     debounce(() => {
-            //         globalEventService.fireEvent('messagebox.scroll');
-            //     }, 10, 'IFRAME_SCROLL');
-            // }, false)
-            iframeRef.current[index].contentDocument.body.style.fontFamily = "'Inter', sans-serif";
-            iframeRef.current[index].contentDocument.body.style.fontSize = "14px";
-
-            setIframeHeight(prevState => ({
-                ...prevState,
-                [index]: (iframeRef.current[index].contentWindow.document.body.scrollHeight + 32)
-            }));
-
-            const allLinks = iframeRef.current[index].contentDocument.getElementsByTagName("a")
-
-            for (let i in allLinks) {
-                const a = allLinks[i]
-                if (typeof a === 'object' && a.hasAttribute('href')) {
-                    const href = a.getAttribute('href')
-                    a.onmouseover = function () {
-                        setCurrentLinkPreview({
-                            isVisible: true,
-                            url: href,
-                            top: a.getBoundingClientRect().top + window.scrollY,
-                            left: a.getBoundingClientRect().left + window.scrollX
-                        })
-                    }
-                    a.onmouseout = function () {
-                        setCurrentLinkPreview({
-                            isVisible: false,
-                            url: href,
-                            top: -100,
-                            left: -100
-                        })
-                    }
-                }
-            }
-        } else {
-            setTimeout(() => {
-                onIframeLoad(index);
-            }, 100);
-        }
-    };
 
     const setScope = (message: MessageModel) => {
         if (message && message.id) {
@@ -503,23 +446,9 @@ export function MessageBox(props: any) {
                         </Flex>
 
                         {message.body &&
-                        <div className={styles.mailBodyContent}
-                             style={{height: iframeRef.current[messageIndex] && iframeHeight[messageIndex] ? parseFloat(iframeHeight[messageIndex]) - 32 : 'auto'}}>
-                            <iframe
-                                ref={ref => iframeRef.current[messageIndex] = ref}
-                                onLoad={() => onIframeLoad(messageIndex)}
-                                scrolling="no"
-                                height={iframeHeight[messageIndex] || '0px'}
-                                src={message.body as string}
-                                className={styles.mailBody}
-                            />
+                        <div className={styles.mailBodyContent}>
+                            <IframeLoader body={message.body as string}/>
                         </div>}
-                        <LinkPreview
-                            isVisible={currentLinkPreview.isVisible}
-                            url={currentLinkPreview?.url}
-                            top={currentLinkPreview.top}
-                            left={currentLinkPreview.left}
-                        />
                     </Flex>
                     }
                 </Flex>

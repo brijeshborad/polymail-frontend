@@ -111,6 +111,7 @@ export function MessageReplyBox(props: MessageBoxType) {
     useEffect(() => {
         if (selectedThread) {
             setTotalMessages([...selectedThread?.messages || []]);
+            discardMessage(false);
         }
     }, [selectedThread])
 
