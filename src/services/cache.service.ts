@@ -119,10 +119,16 @@ class CacheService {
         if (peopleArray.length <= 0 && projectIds.length <= 0 && !searchString) {
             return;
         }
+        ['subject', 'label', 'filename'].forEach(t => {
+            searchString = searchString.replace(`${t}:`, '').trim();
+        })
         let allCache = this.getThreadCache();
         let foundThreads: Thread[] = [];
         let peopleToFinKeys: string[] = [
             'messages.*.from.email', 'messages.*.from.name',
+            'messages.*.to.*.name', 'messages.*.to.*.email',
+            'messages.*.cc.*.name', 'messages.*.cc.*.email',
+            'messages.*.bcc.*.name', 'messages.*.bcc.*.email',
         ];
         let keysToFind: string[] = [
             'messages.*.from.email', 'messages.*.from.name',
@@ -130,7 +136,7 @@ class CacheService {
             'messages.*.cc.*.name', 'messages.*.cc.*.email',
             'messages.*.bcc.*.name', 'messages.*.bcc.*.email',
             'messages.*.subject', 'messages.*.subject',
-            'messages.*.attachments.*.filename', 'messages.*.attachments.*.filename',
+            'attachments.*.filename', 'attachments.*.filename',
             'messages.mailboxes.*', 'messages.mailboxes.*',
         ];
         Object.keys(allCache).forEach((cacheKey: string) => {
