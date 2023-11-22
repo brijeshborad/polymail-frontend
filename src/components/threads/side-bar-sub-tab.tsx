@@ -79,7 +79,7 @@ export function SideBarSubTab() {
                     page: currentPage
                 }
             }
-            let buildBody = {};
+            let buildBody: any = {};
             if (projectId) {
                 buildBody = {
                     mailbox: tabValue,
@@ -98,6 +98,9 @@ export function SideBarSubTab() {
                         pagination
                     }
                 }
+            }
+            if (buildBody.mailbox === 'ARCHIVE') {
+                buildBody.mailbox = '';
             }
             dispatch(getAllThreads({
                 body: buildBody,
