@@ -159,7 +159,7 @@ class ThreadsService extends BaseService {
             let body: any = movingThreads.map((thread: Thread) => {
                 let finalBody: any = {
                     id: thread.id,
-                    fromTab: this.getFromTabFromMailBoxes(thread.mailboxes || []),
+                    fromTab: this.getThreadTabFromMailBoxes(thread.mailboxes || []),
                     ...this.getThreadMailBox(thread, mailBoxType),
                 }
                 if (mailBoxType === MAILBOX_SNOOZED) {
@@ -173,7 +173,7 @@ class ThreadsService extends BaseService {
                 let finalBody: any = {
                     id: thread.id,
                     mailboxes: thread.mailboxes,
-                    fromTab: this.getFromTabFromMailBoxes(thread.mailboxes || []),
+                    fromTab: this.getThreadTabFromMailBoxes(thread.mailboxes || []),
                     snooze: thread.snooze || null
                 }
                 return finalBody
@@ -1125,7 +1125,7 @@ class ThreadsService extends BaseService {
         return body;
     }
 
-    getFromTabFromMailBoxes(mailBoxes: string[]) {
+    getThreadTabFromMailBoxes(mailBoxes: string[]) {
         if (mailBoxes.includes(MAILBOX_INBOX)) {
             return MAILBOX_INBOX;
         }
