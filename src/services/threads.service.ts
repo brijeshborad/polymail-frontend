@@ -1127,18 +1127,18 @@ class ThreadsService extends BaseService {
 
     getFromTabFromMailBoxes(mailBoxes: string[]) {
         if (mailBoxes.includes(MAILBOX_INBOX)) {
-            return 'INBOX';
+            return MAILBOX_INBOX;
         }
         if (mailBoxes.includes(MAILBOX_TRASH)) {
-            return 'TRASH';
+            return MAILBOX_TRASH;
         }
         if (mailBoxes.includes(MAILBOX_SPAM)) {
-            return 'SPAM';
+            return MAILBOX_SPAM;
         }
         if (mailBoxes.includes(MAILBOX_SNOOZED)) {
-            return 'SNOOZED';
+            return MAILBOX_SNOOZED;
         }
-        return 'ARCHIVE';
+        return MAILBOX_ARCHIVE;
     }
 }
 
