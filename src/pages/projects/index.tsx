@@ -105,7 +105,8 @@ function Index() {
     };
 
 
-    const makeProjectFavorite = (item: Project, isProjectFavorite: boolean) => {
+    const toggleProjectFavorite = (item: Project) => {
+        let isProjectFavorite: boolean = !item.projectMeta?.favorite;
         if (item && item.id) {
             let body = {
                 do: {
@@ -272,7 +273,7 @@ function Index() {
                                               className={`${styles.projectListIcon} ${project.projectMeta?.favorite ? styles.projectFillStar: ''}`}
                                               backgroundColor={'#F3F4F6'} onClick={(e) => {
                                             e.stopPropagation();
-                                            makeProjectFavorite(project, !project.projectMeta?.favorite)
+                                            toggleProjectFavorite(project)
                                         }}>
                                             <StarIcon/>
                                         </Flex>
