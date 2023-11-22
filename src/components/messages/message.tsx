@@ -7,11 +7,10 @@ import {
 import {StateType} from "@/types";
 import React, {useCallback, useEffect, useState} from "react";
 import {useSelector} from "react-redux";
-import {Message as MessageModel} from "@/models";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import dynamic from "next/dynamic";
 import {InboxLoader} from "@/components/loader-screen/inbox-loader";
-import {globalEventService, keyNavigationService, messageService, threadService} from "@/services";
+import {keyNavigationService, messageService, threadService} from "@/services";
 import {Toaster} from "../common";
 import {debounce, generateToasterId} from "@/utils/common.functions";
 import {MuteIcon} from "@/icons";
@@ -142,13 +141,6 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
         debounce(() => setShowScrollBar(false), 500, 'MESSAGE_LIST_SCROLLBAR');
     }, [])
 
-    const hideAndShowReplyBox = (type: string = '', messageData: MessageModel) => {
-        globalEventService.fireEvent({data: messageData, type: 'draft.currentMessage'})
-        setTimeout(() => {
-            globalEventService.fireEvent({type: 'draft.updateType', data: {type, messageData}})
-        }, 100)
-    }
-
     function showBlankPage() {
         return (
             <Flex justifyContent={'center'} alignItems={'center'} flexDir={'column'}
@@ -230,11 +222,9 @@ export function Message({isProjectView = false}: { isProjectView?: boolean }) {
                               className={`${styles.messageListScrollBar} ${showScrollBar ? styles.messageScrollBar : ''}`}>
                             <Flex gap={2} direction={'column'} height={'100%'}>
                                 <div className={styles.mailBoxMailList}>
-                                    <MessageBox hideAndShowReplyBox={hideAndShowReplyBox}/>
+                                    <MessageBox/>
                                 </div>
-                                <MessageReplyBox
-                                    isProjectView={isProjectView}
-                                    hideAndShowReplyBox={hideAndShowReplyBox}/>
+                                <MessageReplyBox isProjectView={isProjectView}/>
                             </Flex>
                         </Flex>}
                     </>

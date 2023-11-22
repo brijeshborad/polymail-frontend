@@ -17,7 +17,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import {Message, MessageAttachments, MessageDraft, MessageRecipient} from "@/models";
+import {Message as MessageModel, Message, MessageAttachments, MessageDraft, MessageRecipient} from "@/models";
 import {removeAttachment, uploadAttachment} from "@/redux/messages/action-reducer";
 import {MessageBoxType} from "@/types/props-types/message-box.type";
 import {useRouter} from "next/router";
@@ -667,92 +667,8 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         }
         if (typeof incomingEvent === 'object' && incomingEvent.type) {
             if (incomingEvent.type === 'draft.updateType') {
-                setReplyType(incomingEvent.data.type);
                 globalEventService.blankEvent();
-                if (incomingEvent.data.type === 'forward') {
-                    if (!isDraftUpdated) {
-                        setShowReplyBox(true);
-                        setEmailRecipients({
-                            cc: {items: [], value: blankRecipientValue},
-                            bcc: {items: [], value: blankRecipientValue},
-                            recipients: {items: [], value: blankRecipientValue}
-                        });
-                        setSubject(`Fwd: ${incomingEvent.data.messageData.subject}`);
-                        let decoded = Buffer.from(incomingEvent.data.messageData.rawBody.data || '', 'base64').toString('utf-8');
-                        let sentence = '';
-                        if (selectedThread && selectedThread?.projects && selectedThread?.projects?.length) {
-                            sentence = getProjectBanner(selectedAccount);
-                        }
-                        let content = getForwardContent(incomingEvent.data.messageData) + (decoded || '') + (selectedAccount ? getSignatureBanner(selectedAccount) : '') + (`${sentence}`);
-                        // setEmailBody(content);
-                        sendData[selectedThread?.id + '-' + draftIndex] = content;
-                        globalEventService.fireEvent({
-                            type: 'richtexteditor.forceUpdate',
-                            data: {body: content, callBack: () => setShowEditorToolbar(true)}
-                        })
-                        debounce(() => {
-                            globalEventService.blankEvent()
-                            handleEditorScroll();
-                        }, 200)
-                    }
-                }
-
-                if (incomingEvent.data.type === 'reply-all') {
-                    if (!isDraftUpdated) {
-                        setSubject(`Re: ${incomingEvent.data.messageData.subject}`);
-                        if (incomingEvent.data.messageData?.from) {
-                            setEmailRecipients((prevState: RecipientsType) => ({
-                                ...prevState,
-                                recipients: {
-                                    items: (incomingEvent.data.messageData?.from?.email === selectedAccount?.email) ? incomingEvent.data.messageData?.to! : [incomingEvent.data.messageData?.from!],
-                                    value: prevState.recipients.value
-                                }
-                            }));
-                        }
-                        let items: MessageRecipient[] = []
-                        items.push(...incomingEvent.data.messageData?.to!)
-                        if (incomingEvent.data.messageData?.cc && incomingEvent.data.messageData?.cc.length) {
-                            items.push(...incomingEvent.data.messageData?.cc)
-                        } else if (incomingEvent.data.messageData?.bcc && incomingEvent.data.messageData?.bcc.length) {
-                            items.push(...incomingEvent.data.messageData?.bcc)
-                        }
-                        const filteredArray = (items || []).filter(obj => obj.email !== '');
-                        setEmailRecipients((prevState: RecipientsType) => ({
-                            ...prevState,
-                            cc: {
-                                items: filteredArray,
-                                value: prevState.cc.value
-                            }
-                        }));
-
-                        if (incomingEvent.data.messageData?.bcc?.length) {
-                            setEmailRecipients((prevState: RecipientsType) => ({
-                                ...prevState,
-                                bcc: {
-                                    items: incomingEvent.data.messageData?.bcc,
-                                    value: prevState.bcc.value
-                                }
-                            }));
-                        }
-                    }
-                }
-
-                if (incomingEvent.data.type === 'reply') {
-                    if (!isDraftUpdated) {
-                        setSubject(`Re: ${selectedThread?.subject}`);
-                        if (incomingEvent.data.messageData?.from) {
-                            setEmailRecipients((prevState: RecipientsType) => ({
-                                ...prevState,
-                                recipients: {
-                                    items: (incomingEvent.data.messageData?.from?.email === selectedAccount?.email) ? incomingEvent.data.messageData?.to! : [incomingEvent.data.messageData?.from!],
-                                    value: prevState.recipients.value
-                                },
-                                cc: {items: [], value: blankRecipientValue},
-                                bcc: {items: [], value: blankRecipientValue},
-                            }));
-                        }
-                    }
-                }
+                updateDraftType(incomingEvent.type, incomingEvent.data.messageData);
             }
             if (incomingEvent.type === 'draft.currentMessage') {
                 setMessageData(incomingEvent.data);
@@ -833,6 +749,99 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         }
     }
 
+    function updateDraftType(type: string, messageData: any) {
+        setReplyType(type);
+        if (type === 'forward') {
+            if (!isDraftUpdated) {
+                setShowReplyBox(true);
+                setEmailRecipients({
+                    cc: {items: [], value: blankRecipientValue},
+                    bcc: {items: [], value: blankRecipientValue},
+                    recipients: {items: [], value: blankRecipientValue}
+                });
+                setSubject(`Fwd: ${messageData.subject}`);
+                let decoded = Buffer.from(messageData.rawBody.data || '', 'base64').toString('utf-8');
+                let sentence = '';
+                if (selectedThread && selectedThread?.projects && selectedThread?.projects?.length) {
+                    sentence = getProjectBanner(selectedAccount);
+                }
+                let content = getForwardContent(messageData) + (decoded || '') + (selectedAccount ? getSignatureBanner(selectedAccount) : '') + (`${sentence}`);
+                // setEmailBody(content);
+                sendData[selectedThread?.id + '-' + draftIndex] = content;
+                globalEventService.fireEvent({
+                    type: 'richtexteditor.forceUpdate',
+                    data: {body: content, callBack: () => setShowEditorToolbar(true)}
+                })
+                debounce(() => {
+                    globalEventService.blankEvent()
+                    handleEditorScroll();
+                }, 200)
+            }
+        }
+
+        if (type === 'reply-all') {
+            if (!isDraftUpdated) {
+                setSubject(`Re: ${messageData.subject}`);
+                if (messageData?.from) {
+                    setEmailRecipients((prevState: RecipientsType) => ({
+                        ...prevState,
+                        recipients: {
+                            items: (messageData?.from?.email === selectedAccount?.email) ? messageData?.to! : [messageData?.from!],
+                            value: prevState.recipients.value
+                        }
+                    }));
+                }
+                let items: MessageRecipient[] = []
+                items.push(...messageData?.to!)
+                if (messageData?.cc && messageData?.cc.length) {
+                    items.push(...messageData?.cc)
+                } else if (messageData?.bcc && messageData?.bcc.length) {
+                    items.push(...messageData?.bcc)
+                }
+                const filteredArray = (items || []).filter(obj => obj.email !== '');
+                setEmailRecipients((prevState: RecipientsType) => ({
+                    ...prevState,
+                    cc: {
+                        items: filteredArray,
+                        value: prevState.cc.value
+                    }
+                }));
+
+                if (messageData?.bcc?.length) {
+                    setEmailRecipients((prevState: RecipientsType) => ({
+                        ...prevState,
+                        bcc: {
+                            items: messageData?.bcc,
+                            value: prevState.bcc.value
+                        }
+                    }));
+                }
+            }
+        }
+
+        if (type === 'reply') {
+            if (!isDraftUpdated) {
+                setSubject(`Re: ${selectedThread?.subject}`);
+                if (messageData?.from) {
+                    setEmailRecipients((prevState: RecipientsType) => ({
+                        ...prevState,
+                        recipients: {
+                            items: (messageData?.from?.email === selectedAccount?.email) ? messageData?.to! : [messageData?.from!],
+                            value: prevState.recipients.value
+                        },
+                        cc: {items: [], value: blankRecipientValue},
+                        bcc: {items: [], value: blankRecipientValue},
+                    }));
+                }
+            }
+        }
+    }
+
+    const hideAndShowReplyBox = (type: string = '', messageData: MessageModel | any) => {
+        setMessageData(messageData);
+        updateDraftType(type, messageData);
+    }
+
     return (
         <Flex backgroundColor={'#FFFFFF'} position={'sticky'} mt={'20px'} bottom={0} boxShadow={'0 21px 0px 0 #fff'}>
             <DropZone onFileUpload={handleFileUpload} forReply={true}>
@@ -894,20 +903,18 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                     <MenuList className={'drop-down-list reply-dropdown'}>
                                         {replyType === 'reply-all' ?
                                             <MenuItem
-                                                onClick={() => props.hideAndShowReplyBox ? props.hideAndShowReplyBox('reply', selectedMessage) : null}> Reply</MenuItem> :
+                                                onClick={() => hideAndShowReplyBox('reply', selectedMessage)}> Reply</MenuItem> :
                                             <MenuItem
-                                                onClick={() => props.hideAndShowReplyBox ? props.hideAndShowReplyBox('reply-all', selectedMessage) : null}> Reply
+                                                onClick={() => hideAndShowReplyBox('reply-all', selectedMessage)}> Reply
                                                 All</MenuItem>
                                         }
                                         {replyType === 'forward' ?
                                             <MenuItem
-                                                onClick={() => props.hideAndShowReplyBox ? props.hideAndShowReplyBox('reply', selectedMessage) : null}> Reply</MenuItem> :
+                                                onClick={() => hideAndShowReplyBox('reply', selectedMessage)}> Reply</MenuItem> :
                                             <MenuItem
                                                 onClick={() => {
-                                                    if (props.hideAndShowReplyBox) {
-                                                        props.hideAndShowReplyBox('forward', selectedMessage)
-                                                        handleFocus()
-                                                    }
+                                                    hideAndShowReplyBox('forward', selectedMessage)
+                                                    handleFocus()
                                                 }}> Forward</MenuItem>
                                         }
                                     </MenuList>

@@ -164,11 +164,6 @@ export function HeaderSearch() {
         keyNavigationService.toggleKeyNavigation(false);
         setShowCloseIcon(true);
         showSearchPopup(true)
-        setTimeout(() => {
-            if (searchInputRef.current) {
-                searchInputRef.current?.focus();
-            }
-        }, 100);
     }
 
     const handleBlur = () => {
@@ -201,6 +196,11 @@ export function HeaderSearch() {
         const clickBox = document.getElementById('clickBox');
         document.addEventListener('click', function (e) {
             if (clickBox && e.target && clickBox.contains(e.target as Node)) {
+                setTimeout(() => {
+                    if (searchInputRef.current) {
+                        searchInputRef.current?.focus();
+                    }
+                }, 100);
                 setShowCloseIcon(true);
                 showSearchPopup(true)
             } else {

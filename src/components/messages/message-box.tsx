@@ -21,7 +21,7 @@ import Image from "next/image";
 import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
 import IframeLoader from "@/components/common/iframe-loader";
 
-export function MessageBox(props: any) {
+export function MessageBox() {
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const {success: draftSuccess, updatedDraft} = useSelector((state: StateType) => state.draft);
     const {newMessage} = useSelector((state: StateType) => state.socket);
@@ -271,6 +271,13 @@ export function MessageBox(props: any) {
         setIsAttachmentOpen([...attachmentMenu]);
     }
 
+    const hideAndShowReplyBox = (type: string = '', messageData: MessageModel) => {
+        globalEventService.fireEvent({data: messageData, type: 'draft.currentMessage'})
+        setTimeout(() => {
+            globalEventService.fireEvent({type: 'draft.updateType', data: {type, messageData}})
+        }, 100)
+    }
+
     return (
         <>
             {inboxMessages && inboxMessages.length > 0 && inboxMessages.map((message: Message, messageIndex) => (
@@ -337,12 +344,12 @@ export function MessageBox(props: any) {
                                         {message.scope !== 'hidden' ? 'Hide from project members' : 'Show to project members'}
                                     </MenuItem>
                                     <MenuItem
-                                        onClick={() => props.hideAndShowReplyBox('reply', message)}> Reply </MenuItem>
+                                        onClick={() => hideAndShowReplyBox('reply', message)}> Reply </MenuItem>
                                     <MenuItem
-                                        onClick={() => props.hideAndShowReplyBox('reply-all', message)}> Reply
+                                        onClick={() => hideAndShowReplyBox('reply-all', message)}> Reply
                                         All </MenuItem>
                                     <MenuItem
-                                        onClick={() => props.hideAndShowReplyBox('forward', message)}> Forward </MenuItem>
+                                        onClick={() => hideAndShowReplyBox('forward', message)}> Forward </MenuItem>
                                 </MenuList>
                             </Menu>
                         </Flex>
@@ -433,12 +440,12 @@ export function MessageBox(props: any) {
                                             {message.scope !== 'hidden' ? 'Hide from project members' : 'Show to project members'}
                                         </MenuItem>
                                         <MenuItem
-                                            onClick={() => props.hideAndShowReplyBox('reply', message)}> Reply </MenuItem>
+                                            onClick={() => hideAndShowReplyBox('reply', message)}> Reply </MenuItem>
                                         <MenuItem
-                                            onClick={() => props.hideAndShowReplyBox('reply-all', message)}> Reply
+                                            onClick={() => hideAndShowReplyBox('reply-all', message)}> Reply
                                             All </MenuItem>
                                         <MenuItem
-                                            onClick={() => props.hideAndShowReplyBox('forward', message)}> Forward </MenuItem>
+                                            onClick={() => hideAndShowReplyBox('forward', message)}> Forward </MenuItem>
                                     </MenuList>
                                 </Menu>
                             </Flex>
