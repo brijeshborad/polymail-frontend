@@ -10,7 +10,7 @@ import {
 import {CheckIcon, ChevronDownIcon, HamburgerIcon} from '@chakra-ui/icons';
 import {FolderIcon, MailIcon} from '@/icons';
 import styles from '@/styles/Home.module.css';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Router, {useRouter} from 'next/router';
 import {StateType} from '@/types';
 import React, {useCallback, useEffect, useState} from 'react';
@@ -29,6 +29,7 @@ import {
 } from "@/services";
 import {performMessagesUpdate} from "@/utils/thread.functions";
 import {OnboardingLogoIcon} from "@/icons";
+import {getAllMessages} from "@/redux/messages/action-reducer";
 
 const FeedSidebar = dynamic(
     () => import('./feedSidebar').then((mod) => mod.FeedSidebar)
@@ -53,6 +54,7 @@ export function Header() {
 
     const {user} = useSelector((state: StateType) => state.auth);
     const router = useRouter();
+    const dispatch = useDispatch();
 
     useEffect(() => {
         if (user) {
@@ -133,8 +135,11 @@ export function Header() {
                     }
                 }
             }
+            if (newMessage.name === 'DraftCreated' || newMessage.name === 'DraftCreated') {
+                dispatch(getAllMessages)
+            }
         }
-    }, [accounts, newMessage, threads, reAuthToast, selectedAccount, updateValuesFromAccount]);
+    }, [accounts, newMessage, threads, reAuthToast, selectedAccount, updateValuesFromAccount, dispatch]);
 
     useEffect(() => {
         if (googleAuthRedirectionLink) {
