@@ -77,6 +77,9 @@ export function MessageBox(props: any) {
 
     useEffect(() => {
         if (currentSelectedThread && currentSelectedThread?.id) {
+            if (inboxMessages[0] && inboxMessages[0].threadId === currentSelectedThread.id) {
+                return;
+            }
             setIndex(null);
             let eventData: any = {type: 'reply'};
             let noDraftMessage = (currentSelectedThread.messages || []).filter((msg: MessageModel) => !(msg.mailboxes || []).includes('DRAFT'));
@@ -94,7 +97,7 @@ export function MessageBox(props: any) {
             globalEventService.fireEvent({data: eventData, type: 'draft.updateType'})
             messageService.setMessages(currentSelectedThread.messages || []);
         }
-    }, [currentSelectedThread, selectedAccount])
+    }, [currentSelectedThread, inboxMessages, selectedAccount])
 
     useEffect(() => {
         if (messages && messages.length > 0) {
