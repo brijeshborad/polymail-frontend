@@ -1,11 +1,13 @@
 import {InitialProjectState} from "@/types";
 import {BaseService} from "@/services/base.service";
 import {markProjectRead, updateProjectState} from "@/redux/projects/action-reducer";
-import {InviteMember, Project, TeamMember} from "@/models";
+import {InviteMember, Project, TeamMember, Thread} from "@/models";
 import {commonService} from "@/services/common.service";
 import Router from "next/router";
 import {Toaster} from "@/components/common";
 import {userService} from "@/services/user.service";
+import {cacheService} from "@/services/cache.service";
+import {MAILBOX_UNREAD} from "@/utils/constants";
 
 class ProjectService extends BaseService {
     constructor() {
@@ -232,6 +234,24 @@ class ProjectService extends BaseService {
 
     markProjectAsRead(projectId: string) {
         this.getDispatch()(markProjectRead({body: {projectId}}));
+        this.updateAllThreadsAsUnreadInProject(projectId);
+    }
+
+    updateAllThreadsAsUnreadInProject(projectId: string) {
+        let cacheThreads = {...cacheService.getThreadCache()};
+        Object.keys(cacheThreads).forEach(key => {
+            cacheThreads[key] = [...cacheThreads[key]];
+            cacheThreads[key].forEach((item: Thread, index: number) => {
+                let projects = (item.projects || []).map(t => t.id);
+                if (projects.length > 0 && projects.includes(projectId) && item.mailboxes?.includes(MAILBOX_UNREAD)) {
+                    cacheThreads[key][index] = {
+                        ...cacheThreads[key][index],
+                        mailboxes: (cacheThreads[key][index].mailboxes || []).filter(d => d !== MAILBOX_UNREAD)
+                    }
+                }
+            })
+        })
+        cacheService.setThreadCache(cacheThreads);
     }
 }
 
