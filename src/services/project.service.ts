@@ -1,6 +1,6 @@
 import {InitialProjectState} from "@/types";
 import {BaseService} from "@/services/base.service";
-import {updateProjectState} from "@/redux/projects/action-reducer";
+import {markProjectRead, updateProjectState} from "@/redux/projects/action-reducer";
 import {InviteMember, Project, TeamMember} from "@/models";
 import {commonService} from "@/services/common.service";
 import Router from "next/router";
@@ -228,6 +228,10 @@ class ProjectService extends BaseService {
             }
             this.setProjectState({projects: finalProjects});
         }
+    }
+
+    markProjectAsRead(projectId: string) {
+        this.getDispatch()(markProjectRead({body: {projectId}}));
     }
 }
 

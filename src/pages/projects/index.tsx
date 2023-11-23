@@ -286,7 +286,7 @@ function Index() {
                                         <MenuIcon/>
                                     </MenuButton>
                                     <MenuList minW={'126px'} className={'drop-down-list'}>
-                                        <MenuItem>Mark as read</MenuItem>
+                                        <MenuItem onClick={() => projectService.markProjectAsRead(project.id!)}>Mark as read</MenuItem>
                                         <MenuItem
                                             onClick={() => commonService.toggleEditProjectModel(true, false, project)}>Edit
                                             project</MenuItem>
