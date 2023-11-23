@@ -195,7 +195,7 @@ export function ComposeBox(props: any) {
                     id: composeDraft?.threadId + '-' + 0,
                     body: body,
                     fromCompose: true,
-                    isDraftTab: props.tabValue === 'DRAFT'
+                    isDraftTab: tabValue === 'DRAFT'
                 }
             }))
         }, 250);
@@ -235,7 +235,7 @@ export function ComposeBox(props: any) {
             messageService.sendMessage(true, scheduledDate || '', {
                 ...body,
                 id: composeDraft.id
-            }, props.tabValue === 'DRAFT')
+            }, tabValue === 'DRAFT')
             setEmailRecipients({
                 cc: {
                     items: [],
@@ -253,7 +253,7 @@ export function ComposeBox(props: any) {
             setEmailBody('');
             setSubject('');
 
-            if (props.tabValue === 'DRAFT') {
+            if (tabValue === 'DRAFT') {
                 threadService.performThreadsUpdateForDraftTab(composeDraft)
             } else {
                 commonService.toggleComposingWithThreadSelection(false, true);
@@ -318,7 +318,7 @@ export function ComposeBox(props: any) {
                                     body: {
                                         id: composeDraft.threadId + '-' + 0,
                                         fromCompose: true,
-                                        isDraftTab: props.tabValue === 'DRAFT'
+                                        isDraftTab: tabValue === 'DRAFT'
                                     }
                                 }));
                             }
@@ -363,7 +363,7 @@ export function ComposeBox(props: any) {
                         body: {
                             id: composeDraft.threadId + '-' + 0,
                             fromCompose: true,
-                            isDraftTab: props.tabValue === 'DRAFT'
+                            isDraftTab: tabValue === 'DRAFT'
                         }
                     }));
                 }

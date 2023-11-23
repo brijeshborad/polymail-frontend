@@ -21,7 +21,7 @@ export function MessageItems() {
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const {selectedThread: currentSelectedThread} = useSelector((state: StateType) => state.threads);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
-    const {messages} = useSelector((state: StateType) => state.messages);
+    const {messages, attachmentUrl} = useSelector((state: StateType) => state.messages);
 
     const [index, setIndex] = useState<number | null>(null);
     const [inboxMessages, setInboxMessages] = useState<MessageModel[]>([]);
@@ -85,6 +85,22 @@ export function MessageItems() {
             messageService.setSelectedMessage(targetMessage)
         }
     }, [index, messages])
+
+    useEffect(() => {
+        if (attachmentUrl) {
+            const link: HTMLAnchorElement = document.createElement('a');
+            link.href = attachmentUrl.url!;
+            link.setAttribute('download', '');
+            link.setAttribute('target', '_blank');
+            link.setAttribute('rel', 'noopener noreferrer');
+            document.body.appendChild(link);
+            link.click();
+            if (link.parentNode) {
+                link.parentNode.removeChild(link);
+            }
+            messageService.setMessageState({attachmentUrl: null})
+        }
+    }, [attachmentUrl])
 
     const setScope = (message: MessageModel) => {
         if (message && message.id) {

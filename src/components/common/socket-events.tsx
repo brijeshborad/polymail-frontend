@@ -84,7 +84,7 @@ export function SocketEvents() {
 
     useEffect(() => {
         if (newMessage) {
-            console.log('---NEW EVENT---', newMessage);
+            // console.log('---NEW EVENT---', newMessage);
             socketService.updateSocketMessage(null);
             let activityName = newMessage.name;
             switch (activityName) {

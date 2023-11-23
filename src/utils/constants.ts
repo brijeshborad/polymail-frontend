@@ -38,7 +38,9 @@ export const SOCKET_ACTIVITY_EVENTS = {
     REPLY_SENT: 'ReplySent',
     MEMBER_JOINED: 'MemberJoined',
     PROJECT_DELETED: 'ProjectDeleted',
-    MEMBER_LEFT: 'MemberLeft'
+    MEMBER_LEFT: 'MemberLeft',
+    VIEWING_THREAD: 'ViewingThread',
+    VIEWING_PROJECT: 'ViewingProject',
 }
 export const ACTIVITY_FEED_EVENT_TYPES = [
     SOCKET_ACTIVITY_EVENTS.THREAD_SHARED,
