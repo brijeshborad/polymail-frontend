@@ -208,6 +208,27 @@ class ProjectService extends BaseService {
             }
         }
     }
+
+    updateThreadsCountInProject(project: Project, totalThreads: number, type: string) {
+        let {projects} = this.getProjectState();
+        let finalProjects: Project[] = [...(projects || [])];
+        let projectIndex: number = finalProjects.findIndex((item: Project) => item.id === project.id);
+        if (projectIndex !== -1) {
+            let numberOfThreads = finalProjects[projectIndex].numThreads || 0;
+            if (type === 'add') {
+                finalProjects[projectIndex] = {
+                    ...finalProjects[projectIndex],
+                    numThreads: numberOfThreads + totalThreads
+                }
+            } else {
+                finalProjects[projectIndex] = {
+                    ...finalProjects[projectIndex],
+                    numThreads: numberOfThreads - totalThreads
+                }
+            }
+            this.setProjectState({projects: finalProjects});
+        }
+    }
 }
 
 export const projectService = new ProjectService();

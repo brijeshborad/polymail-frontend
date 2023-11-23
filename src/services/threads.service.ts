@@ -21,6 +21,7 @@ import {messageService} from "@/services/message.service";
 import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
 import {performMessagesUpdate} from "@/utils/thread.functions";
 import {cacheService} from "@/services/cache.service";
+import {projectService} from "@/services/project.service";
 
 declare type MailBoxTypes = 'INBOX' | 'DRAFT' | 'UNREAD' | 'ARCHIVE' | 'TRASH' | 'SNOOZED' | 'STARRED' | string;
 
@@ -256,7 +257,7 @@ class ThreadsService extends BaseService {
             threadsId = [selectedThread.threadId]
         }
         if (selectedThread && selectedThread.id || isThreadMultiSelection) {
-            let reqBody = {
+            let reqBody: any = {
                 threadIds: threadsId,
                 roles: ['n/a'],
                 groupType: 'project',
@@ -295,9 +296,14 @@ class ThreadsService extends BaseService {
                     }
                     threadsId?.forEach((ids: string) => {
                         let index1 = (threads || []).findIndex((thread: Thread) => thread.id === ids);
+                        let threadProjects = newThreads[index1].projects || [];
+                        threadProjects = [...threadProjects, item];
+                        threadProjects = threadProjects.filter((obj: Project, index: number) => {
+                            return index === threadProjects.findIndex((o: Project) => obj.id === o.id);
+                        })
                         newThreads[index1] = {
                             ...newThreads[index1],
-                            projects: projects
+                            projects: threadProjects
                         }
                     })
                     this.setThreadState({threads: newThreads});
@@ -309,14 +315,20 @@ class ThreadsService extends BaseService {
                 }
                 threadsId?.forEach((ids: string) => {
                     let index1 = (threads || []).findIndex((thread: Thread) => thread.id === ids);
+                    let threadProjects = newThreads[index1].projects || [];
+                    threadProjects = [...threadProjects, item];
+                    threadProjects = threadProjects.filter((obj: Project, index: number) => {
+                        return index === threadProjects.findIndex((o: Project) => obj.id === o.id);
+                    })
                     newThreads[index1] = {
                         ...newThreads[index1],
-                        projects: projects
+                        projects: threadProjects
                     }
                 })
                 this.setSelectedThread(addProject);
                 this.setThreadState({threads: newThreads});
             }
+            projectService.updateThreadsCountInProject(item, reqBody.threadIds.length, 'add');
             this.dispatchAction(
                 addItemToGroup,
                 {
@@ -354,6 +366,7 @@ class ThreadsService extends BaseService {
                                     }, 30)
                                     draftService.setComposeDraft(thread)
                                 }
+                                projectService.updateThreadsCountInProject(item, reqBody.threadIds.length, 'remove');
                                 this.setThreadState({selectedThread: selectedThread, threads: threads});
                                 globalEventService.fireEvent({data: item, type: 'addToProject.remove'});
                             }
@@ -386,6 +399,7 @@ class ThreadsService extends BaseService {
                 groupType: 'project',
                 groupId: item.id
             }
+            projectService.updateThreadsCountInProject(item, 1, 'remove');
             this.dispatchAction(removeThreadFromProject, {
                 body: {
                     threadId: threadId,
@@ -429,6 +443,7 @@ class ThreadsService extends BaseService {
                                 }, 30)
                                 draftService.setComposeDraft(addProject)
                             }
+                            projectService.updateThreadsCountInProject(item, 1, 'add');
                             this.setThreadState({selectedThread: selectedThread, threads: threads});
                             globalEventService.fireEvent({data: item, type: 'addToProject.add'});
                         }
