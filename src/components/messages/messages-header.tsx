@@ -2,7 +2,7 @@ import {
     Button,
     Flex,
     Heading,
-    Image, Menu, MenuButton, MenuItem, MenuList
+    Menu, MenuButton, MenuItem, MenuList
 } from "@chakra-ui/react";
 
 import {
@@ -14,7 +14,7 @@ import React, {useEffect, useState} from "react";
 import {updateThreads} from "@/redux/threads/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {Thread, UserProjectOnlineStatus} from "@/models";
+import {Thread} from "@/models";
 import dynamic from "next/dynamic";
 import {
     MAILBOX_ARCHIVE,
@@ -30,13 +30,13 @@ import {globalEventService, messageService, threadService} from "@/services";
 import Tooltip from "../common/Tooltip";
 import {MuteIcon} from "@/icons/mute.icon";
 import styles from "@/styles/Inbox.module.css";
+import {UsersOnline} from "@/components/common";
 
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
 const MessageSchedule = dynamic(() => import("./message-schedule").then(mod => mod.default));
 
 export function MessagesHeader() {
     const {selectedThread, threads, tabValue} = useSelector((state: StateType) => state.threads);
-    const {onlineUsers} = useSelector((state: StateType) => state.commonApis);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
 
     const dispatch = useDispatch();
@@ -239,19 +239,7 @@ export function MessagesHeader() {
                 <Flex align={'center'}>
                     <Flex gap={3} align={'center'} className={styles.mailBoxHeaderAddProjectDiv}>
                         <Flex alignItems={'center'} justifyContent={'end'} className={'member-images'}>
-                            {(onlineUsers && selectedThread && onlineUsers['threads'][selectedThread.id!] || [])
-                                .filter((t: UserProjectOnlineStatus) => t.isOnline).slice(0, 5)
-                                .map((item: UserProjectOnlineStatus, index: number) => (
-                                        <Tooltip label={item.name || ''} placement='bottom' key={index}>
-                                            <div className={'member-photo'}
-                                                 style={{background: '#000', border: `2px solid #${item.color}`}}>
-                                                {item.avatar && <Image src={item.avatar} width="24" height="24"
-                                                                       alt=""/>}
-                                            </div>
-                                        </Tooltip>
-                                    )
-                                )
-                            }
+                            <UsersOnline type={'threads'} itemId={selectedThread.id!}/>
                         </Flex>
                         <AddToProjectButton allowDefaultSelect={true}/>
                     </Flex>
@@ -291,15 +279,14 @@ export function MessagesHeader() {
                                     </button>
                                 </Tooltip>
                             )}
-                            <Tooltip label='Snooze' placement='bottom'>
-                                <div>
-                                    <MessageSchedule
-                                        isSnooze={true}
-                                        date={scheduledDate}
-                                        onChange={handleSchedule}
-                                    />
-                                </div>
-                            </Tooltip>
+                            <div>
+                                <MessageSchedule
+                                    showTooltip={true}
+                                    isSnooze={true}
+                                    date={scheduledDate}
+                                    onChange={handleSchedule}
+                                />
+                            </div>
                             <Menu isOpen={isMoreMenuOpen}
                                   onClose={() => setIsMoreMenuOpen(false)}>
                                 <MenuButton

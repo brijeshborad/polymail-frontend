@@ -1,13 +1,13 @@
 import styles2 from "@/styles/common.module.css";
 import styles from "@/styles/Inbox.module.css";
-import {Box, Button, Flex, Image, Menu, MenuButton, MenuItem, MenuList, Text} from "@chakra-ui/react";
-import {Time} from "@/components/common";
+import {Box, Button, Flex, Menu, MenuButton, MenuItem, MenuList, Text} from "@chakra-ui/react";
+import {Time, UsersOnline} from "@/components/common";
 import {DotIcon} from "@/icons";
 import {StateType, ThreadListItemProps} from "@/types";
 import {useDispatch, useSelector} from "react-redux";
 import React, {useEffect, useState} from "react";
 import {MAILBOX_UNREAD} from "@/utils/constants";
-import {MessageAttachments, UserProjectOnlineStatus} from "@/models";
+import {MessageAttachments} from "@/models";
 import {keyNavigationService} from "@/services";
 import Tooltip from "../common/Tooltip";
 import {AttachmentIcon} from "@chakra-ui/icons";
@@ -26,7 +26,6 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
     } = useSelector((state: StateType) => state.threads);
     const [isSelected, setIsSelected] = useState<boolean>(false);
     const [isClicked, setIsClicked] = useState<boolean>(false);
-    const {onlineUsers} = useSelector((state: StateType) => state.commonApis)
     const [isAttachmentOpen, setIsAttachmentOpen] = useState<boolean>(false);
     const [isAttachmentToolTipOpen, setIsAttachmentToolTipOpen] = useState<boolean>(false);
     const dispatch = useDispatch();
@@ -219,20 +218,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                     <Flex alignItems={'center'} justifyContent={'space-between'}>
                         <Text lineHeight={'18px'} noOfLines={1}> {props.thread.subject || "(no subject)"}</Text>
                         <Flex alignItems={'center'} justifyContent={'end'} className={'member-images subheader-images'}>
-                            {(onlineUsers && props.thread && onlineUsers['threads'][props.thread.id!] || [])
-                                .filter((t: UserProjectOnlineStatus) => t.isOnline).slice(0, 5)
-                                .map((item: UserProjectOnlineStatus, index: number) => (
-                                        <Tooltip label={item.name || ''} placement='bottom'
-                                                 key={index}>
-                                            <div className={'member-photo'}
-                                                 style={{background: '#000', border: `2px solid #${item.color}`}}>
-                                                {item.avatar && <Image src={item.avatar} width="24" height="24"
-                                                                       alt=""/>}
-                                            </div>
-                                        </Tooltip>
-                                    )
-                                )
-                            }
+                            <UsersOnline type={'threads'} itemId={props.thread.id!}/>
                         </Flex>
                     </Flex>
                 </div>

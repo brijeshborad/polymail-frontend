@@ -10,26 +10,23 @@ import {
 import {CheckIcon, ChevronDownIcon, HamburgerIcon} from '@chakra-ui/icons';
 import {FolderIcon, MailIcon} from '@/icons';
 import styles from '@/styles/Home.module.css';
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 import Router, {useRouter} from 'next/router';
 import {StateType} from '@/types';
 import React, {useCallback, useEffect, useState} from 'react';
-import {Account, Message, Organization, Project, User} from '@/models';
+import {Account, Organization, User} from '@/models';
 import LocalStorageService from '@/utils/localstorage.service';
-import {Toaster} from '@/components/common';
 import dynamic from 'next/dynamic'
 import {HeaderSearch} from "@/components/common/header-search";
 import {
-    accountService, cacheService, commonService, globalEventService,
+    accountService, commonService,
     messageService,
     organizationService, projectService,
-    socketService,
     threadService,
     userService
 } from "@/services";
-import {performMessagesUpdate} from "@/utils/thread.functions";
 import {OnboardingLogoIcon} from "@/icons";
-import {getAllMessages} from "@/redux/messages/action-reducer";
+import {Toaster} from "@/components/common/toaster";
 
 const FeedSidebar = dynamic(
     () => import('./feedSidebar').then((mod) => mod.FeedSidebar)
@@ -44,23 +41,14 @@ const EditProjectModal = dynamic(
 export function Header() {
     const {organizations} = useSelector((state: StateType) => state.organizations);
     const {accounts, selectedAccount} = useSelector((state: StateType) => state.accounts);
-    const {threads} = useSelector((state: StateType) => state.threads);
     const {googleAuthRedirectionLink} = useSelector((state: StateType) => state.auth);
     const {userDetails, profilePicture} = useSelector((state: StateType) => state.users);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const [userData, setUserData] = useState<User>();
-    const {newMessage} = useSelector((state: StateType) => state.socket);
     const [showSettingsMenu, setShowSettingsMenu] = useState(false);
 
     const {user} = useSelector((state: StateType) => state.auth);
     const router = useRouter();
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        if (user) {
-            setUserData(user);
-        }
-    }, [user]);
 
     const reAuthToast = useCallback(
         (email: string) => {
@@ -79,67 +67,11 @@ export function Header() {
         [],
     );
 
-    const updateValuesFromAccount = useCallback((account: Account, fireSuccess: boolean = true) => {
-        let projects = account.projects || [];
-        cacheService.buildCache(projects.map((p: Project) => p.id) as string[]);
-        let organizations = ([...account.organizations || []]).sort((a: Organization, b: Organization) => (new Date(b.created as string).valueOf() - new Date(a.created as string).valueOf()));
-        let contacts = account.contacts || [];
-        projectService.setProjectState({projects, isLoading: false});
-        organizationService.setOrganizationState({organizations, isLoading: false});
-        commonService.setCommonState({contacts, isLoading: false});
-        if (fireSuccess) {
-            globalEventService.fireEvent('threads.refresh');
-        }
-    }, [])
-
     useEffect(() => {
-        if (newMessage) {
-            socketService.updateSocketMessage(null);
-            if (newMessage.name === 'SearchResult' && newMessage?.data) {
-                Object.keys(newMessage?.data).map((id: string) => {
-                    let newThread = {
-                        ...newMessage.data[id],
-                        id: newMessage.data[id]._id,
-                    };
-                    if (newThread.messages && newThread.messages.length > 0) {
-                        newThread.messages = newThread.messages.map((t: Message) => ({...t, id: t._id}));
-                        newThread.messages = newThread.messages.sort((a: Message, b: Message) => new Date(b.created as string).valueOf() - new Date(a.created as string).valueOf());
-                        newThread.messages = performMessagesUpdate(newThread.messages);
-                    }
-                    threadService.setThreadState({threads: [...(threads || []), newThread]})
-                });
-            }
-            if (newMessage.name === 'Reauthenticate' && newMessage?.data && accounts!.length > 0) {
-                let finalAccounts = [...(accounts || [])];
-                let accountForReAuth = finalAccounts.findIndex(account => account.id === newMessage.data.account._id)!;
-                if (accountForReAuth !== -1) {
-                    finalAccounts[accountForReAuth] = {
-                        ...finalAccounts[accountForReAuth],
-                        status: 'invalid'
-                    }
-                    accountService.setAccounts(finalAccounts);
-                    reAuthToast(finalAccounts[accountForReAuth].email!);
-                }
-            }
-            if (newMessage.name === 'InitSyncProgress' && newMessage?.data) {
-                if (selectedAccount && selectedAccount.id === newMessage.data.accountId) {
-                    if (newMessage.data.progress < 100) {
-                        commonService.updateEmailSyncPercentage(Math.floor(newMessage.data.progress));
-                    } else {
-                        commonService.updateEmailSyncPercentage(null);
-                        accountService.setSelectedAccount({
-                            ...selectedAccount,
-                            syncHistory: {mailInitSynced: new Date().toString()}
-                        });
-                        updateValuesFromAccount(selectedAccount, true);
-                    }
-                }
-            }
-            if (newMessage.name === 'DraftCreated' || newMessage.name === 'DraftCreated') {
-                dispatch(getAllMessages)
-            }
+        if (user) {
+            setUserData(user);
         }
-    }, [accounts, newMessage, threads, reAuthToast, selectedAccount, updateValuesFromAccount, dispatch]);
+    }, [user]);
 
     useEffect(() => {
         if (googleAuthRedirectionLink) {
@@ -159,15 +91,13 @@ export function Header() {
         (account: Account) => {
             if (account.syncHistory?.mailInitSynced) {
                 commonService.updateEmailSyncPercentage(null);
-                updateValuesFromAccount(account, !LocalStorageService.updateAccount('get'));
+                accountService.updateValuesFromAccount(account, !LocalStorageService.updateAccount('get'));
                 LocalStorageService.updateAccount('store', account);
             } else {
                 commonService.updateEmailSyncPercentage(1);
             }
             accountService.setSelectedAccount(account);
-        },
-        [updateValuesFromAccount],
-    );
+        }, []);
 
     useEffect(() => {
         if (organizations && organizations.length > 0) {
@@ -186,13 +116,13 @@ export function Header() {
                 if (findTheUpdatedAccount) {
                     findTheUpdatedAccount = accounts.find(item => item.id === findTheUpdatedAccount.id);
                     if (findTheUpdatedAccount) {
-                        updateValuesFromAccount(findTheUpdatedAccount, false);
+                        accountService.updateValuesFromAccount(findTheUpdatedAccount, false);
                         setAccounts(findTheUpdatedAccount);
                     }
                 }
             }
         }
-    }, [accounts, setAccounts, updateValuesFromAccount]);
+    }, [accounts, setAccounts]);
 
     useEffect(() => {
         if (selectedAccount) {

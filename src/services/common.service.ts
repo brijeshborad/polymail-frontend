@@ -11,10 +11,13 @@ import {accountService} from "@/services/account.service";
 import {organizationService} from "@/services/organization.service";
 import LocalStorageService from "@/utils/localstorage.service";
 import {keyNavigationService} from "@/services/key-action.service";
+import {SOCKET_ACTIVITY_EVENTS, SOCKET_EVENTS} from "@/utils/constants";
+
 dayjs.extend(customParseFormat)
 
 class CommonService extends BaseService {
-    userColorStatus: {[key: string]: string} = {};
+    userColorStatus: { [key: string]: string } = {};
+
     constructor() {
         super();
     }
@@ -155,15 +158,15 @@ class CommonService extends BaseService {
     }
 
     updateUserOnlineStatusWithSocketEvent(newMessage: any) {
-        if (newMessage.name === 'Activity') {
+        if (newMessage.name === SOCKET_EVENTS.ACTIVITY) {
             let onlineUsers: any = {...getMemberStatusCache()};
             let type = '';
             let id = '';
-            if (newMessage.data.type === 'ViewingThread') {
+            if (newMessage.data.type === SOCKET_ACTIVITY_EVENTS.VIEWING_THREAD) {
                 type = 'threads';
                 id = newMessage.data.threadId;
             }
-            if (newMessage.data.type === 'ViewingProject') {
+            if (newMessage.data.type === SOCKET_ACTIVITY_EVENTS.VIEWING_PROJECT) {
                 type = 'projects';
                 id = newMessage.data.projectId;
             }
@@ -233,12 +236,20 @@ class CommonService extends BaseService {
 
     toggleCreateProjectModel(enable: boolean, shouldRedirect: boolean = false, shouldAddThread: boolean = false) {
         keyNavigationService.toggleKeyNavigation(!enable);
-        this.setCommonState({showCreateProjectModal: enable, shouldRedirectOnCreateProject: shouldRedirect, shouldAddThread: shouldAddThread});
+        this.setCommonState({
+            showCreateProjectModal: enable,
+            shouldRedirectOnCreateProject: shouldRedirect,
+            shouldAddThread: shouldAddThread
+        });
     }
 
     toggleEditProjectModel(enable: boolean, shouldRedirect: boolean = false, passThroughProject: Project | null = null) {
         keyNavigationService.toggleKeyNavigation(!enable);
-        this.setCommonState({showEditProjectModal: enable, shouldRedirectOnEditProject: shouldRedirect, passThroughProject: passThroughProject});
+        this.setCommonState({
+            showEditProjectModal: enable,
+            shouldRedirectOnEditProject: shouldRedirect,
+            passThroughProject: passThroughProject
+        });
     }
 
     clearEverything() {

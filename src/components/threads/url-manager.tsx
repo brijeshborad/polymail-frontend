@@ -47,14 +47,6 @@ export function UrlManager() {
                     {shallow: true}
                 )
             }
-        } else {
-            if (router.query.thread) {
-                router.push(
-                    {pathname: router.pathname.includes('projects') ? `/projects/${router.query.project}` : '/inbox'},
-                    undefined,
-                    {shallow: true}
-                )
-            }
         }
     }, [router, selectedThread])
 

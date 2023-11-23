@@ -16,7 +16,12 @@ import {
     getProjectMembersInvites,
     getProjectMembersInvitesError,
     getProjectMembersInvitesSuccess,
-    getProjectMembersSuccess, removeProject, removeProjectError,
+    getProjectMembersSuccess,
+    markProjectRead,
+    markProjectReadError,
+    markProjectReadSuccess,
+    removeProject,
+    removeProjectError,
     removeProjectSuccess,
     removeThreadFromProject,
     removeThreadFromProjectError,
@@ -182,6 +187,18 @@ function* removeProjectData({payload}: PayloadAction<ReducerActionType>) {
     }
 }
 
+function* markProjectAsRead({payload}: PayloadAction<ReducerActionType>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callPatch(`projects/${payload.body.projectId}/read`, {});
+        performSuccessActions(payload);
+        yield put(markProjectReadSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        performSuccessActions(payload);
+        yield put(markProjectReadError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
+    }
+}
+
 export function* watchGetProjects() {
     yield takeEvery(getAllProjects.type, getProjects);
 }
@@ -227,6 +244,11 @@ export function* watchRemoveProjectData() {
     yield takeEvery(removeProject.type, removeProjectData);
 }
 
+
+export function* watchMarkProjectRead() {
+    yield takeEvery(markProjectRead.type, markProjectAsRead);
+}
+
 export default function* rootSaga() {
     yield all([
         fork(watchGetProjects),
@@ -240,6 +262,7 @@ export default function* rootSaga() {
         fork(watchRemoveProjectFromThread),
         fork(watchEditProjectData),
         fork(watchRemoveProjectData),
+        fork(watchMarkProjectRead),
     ]);
 }
 

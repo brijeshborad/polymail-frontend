@@ -21,6 +21,7 @@ import {messageService} from "@/services/message.service";
 import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
 import {performMessagesUpdate} from "@/utils/thread.functions";
 import {cacheService} from "@/services/cache.service";
+import {projectService} from "@/services/project.service";
 
 declare type MailBoxTypes = 'INBOX' | 'DRAFT' | 'UNREAD' | 'ARCHIVE' | 'TRASH' | 'SNOOZED' | 'STARRED' | string;
 
@@ -256,7 +257,7 @@ class ThreadsService extends BaseService {
             threadsId = [selectedThread.threadId]
         }
         if (selectedThread && selectedThread.id || isThreadMultiSelection) {
-            let reqBody = {
+            let reqBody: any = {
                 threadIds: threadsId,
                 roles: ['n/a'],
                 groupType: 'project',
@@ -295,9 +296,14 @@ class ThreadsService extends BaseService {
                     }
                     threadsId?.forEach((ids: string) => {
                         let index1 = (threads || []).findIndex((thread: Thread) => thread.id === ids);
+                        let threadProjects = newThreads[index1].projects || [];
+                        threadProjects = [...threadProjects, item];
+                        threadProjects = threadProjects.filter((obj: Project, index: number) => {
+                            return index === threadProjects.findIndex((o: Project) => obj.id === o.id);
+                        })
                         newThreads[index1] = {
                             ...newThreads[index1],
-                            projects: projects
+                            projects: threadProjects
                         }
                     })
                     this.setThreadState({threads: newThreads});
@@ -309,14 +315,21 @@ class ThreadsService extends BaseService {
                 }
                 threadsId?.forEach((ids: string) => {
                     let index1 = (threads || []).findIndex((thread: Thread) => thread.id === ids);
+                    let threadProjects = newThreads[index1].projects || [];
+                    threadProjects = [...threadProjects, item];
+                    threadProjects = threadProjects.filter((obj: Project, index: number) => {
+                        return index === threadProjects.findIndex((o: Project) => obj.id === o.id);
+                    })
                     newThreads[index1] = {
                         ...newThreads[index1],
-                        projects: projects
+                        projects: threadProjects
                     }
                 })
                 this.setSelectedThread(addProject);
                 this.setThreadState({threads: newThreads});
             }
+            projectService.updateThreadsCountInProject(item, reqBody.threadIds.length, 'add');
+            this.updateThreadsCacheForProjects(reqBody.threadIds, item, 'add');
             this.dispatchAction(
                 addItemToGroup,
                 {
@@ -354,6 +367,8 @@ class ThreadsService extends BaseService {
                                     }, 30)
                                     draftService.setComposeDraft(thread)
                                 }
+                                projectService.updateThreadsCountInProject(item, reqBody.threadIds.length, 'remove');
+                                this.updateThreadsCacheForProjects(reqBody.threadIds, item, 'remove');
                                 this.setThreadState({selectedThread: selectedThread, threads: threads});
                                 globalEventService.fireEvent({data: item, type: 'addToProject.remove'});
                             }
@@ -380,12 +395,14 @@ class ThreadsService extends BaseService {
         }
         if (threadId) {
             let polyToast = generateToasterId();
-            let reqBody = {
+            let reqBody: any = {
                 threadIds: [threadId],
                 roles: ['n/a'],
                 groupType: 'project',
                 groupId: item.id
             }
+            projectService.updateThreadsCountInProject(item, 1, 'remove');
+            this.updateThreadsCacheForProjects([threadId], item, 'remove');
             this.dispatchAction(removeThreadFromProject, {
                 body: {
                     threadId: threadId,
@@ -429,6 +446,8 @@ class ThreadsService extends BaseService {
                                 }, 30)
                                 draftService.setComposeDraft(addProject)
                             }
+                            projectService.updateThreadsCountInProject(item, 1, 'add');
+                            this.updateThreadsCacheForProjects([threadId], item, 'add');
                             this.setThreadState({selectedThread: selectedThread, threads: threads});
                             globalEventService.fireEvent({data: item, type: 'addToProject.add'});
                         }
@@ -780,9 +799,15 @@ class ThreadsService extends BaseService {
         let isProjectThread = (thread.projects || []).length > 0;
         let findThreadIndex = cacheThreads[cacheKey].findIndex((item: Thread) => item.id === thread.id);
         let tabValueFromCacheKey = cacheKey.split('-')[2];
+        cacheThreads[cacheKey] = [...cacheThreads[cacheKey]];
         if (!allMailboxToFindIn.includes(tabValueFromCacheKey)) {
             if (findThreadIndex !== -1) {
                 cacheThreads[cacheKey].splice(findThreadIndex, 1);
+            } else {
+                let messages: Message[] = [...(thread.messages || [])];
+                messages = performMessagesUpdate(messages);
+                thread.messages = messages;
+                cacheThreads[cacheKey].unshift(thread);
             }
         } else {
             if (isProjectThread && cacheKey.includes('projects')) {
@@ -805,6 +830,11 @@ class ThreadsService extends BaseService {
         if (!allMailboxToFindIn.includes(tabValueFromCacheKey)) {
             if (findThreadIndex !== -1) {
                 cacheThreads[cacheKey].splice(findThreadIndex, 1);
+            } else {
+                let messages: Message[] = [...(thread.messages || [])];
+                messages = performMessagesUpdate(messages);
+                thread.messages = messages;
+                cacheThreads[cacheKey].unshift(thread);
             }
         } else {
             let projectIds = [...(thread.projects || [])].map((p: Project) => p.id);
@@ -1139,6 +1169,27 @@ class ThreadsService extends BaseService {
             return MAILBOX_SNOOZED;
         }
         return MAILBOX_ARCHIVE;
+    }
+
+    updateThreadsCacheForProjects(threadIds: string[], project: Project, type: string) {
+        let cacheThreads = {...cacheService.getThreadCache()};
+        Object.keys(cacheThreads).forEach(key => {
+            cacheThreads[key] = [...cacheThreads[key]];
+            cacheThreads[key].forEach((item: Thread, index: number) => {
+                if (threadIds.includes(item.id!)) {
+                    if (type === 'add') {
+                        cacheThreads[key][index] = {
+                            ...cacheThreads[key][index],
+                            projects: [...(cacheThreads[key][index]['projects'] || []), project]
+                        }
+                    } else {
+                        cacheThreads[key][index] = {...cacheThreads[key][index]}
+                        cacheThreads[key][index].projects = (cacheThreads[key][index].projects || []).filter((p: Project) => p.id !== project.id);
+                    }
+                }
+            })
+        })
+        cacheService.setThreadCache(cacheThreads);
     }
 }
 

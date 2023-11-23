@@ -1,11 +1,14 @@
 import {InitialProjectState} from "@/types";
 import {BaseService} from "@/services/base.service";
-import {updateProjectState} from "@/redux/projects/action-reducer";
-import {InviteMember, Project, TeamMember} from "@/models";
+import {markProjectRead, updateProjectState} from "@/redux/projects/action-reducer";
+import {InviteMember, Project, TeamMember, Thread} from "@/models";
 import {commonService} from "@/services/common.service";
 import Router from "next/router";
 import {Toaster} from "@/components/common";
 import {userService} from "@/services/user.service";
+import {cacheService} from "@/services/cache.service";
+import {MAILBOX_UNREAD} from "@/utils/constants";
+import {threadService} from "@/services/threads.service";
 
 class ProjectService extends BaseService {
     constructor() {
@@ -207,6 +210,73 @@ class ProjectService extends BaseService {
                 }
             }
         }
+    }
+
+    updateThreadsCountInProject(project: Project, totalThreads: number, type: string) {
+        let {projects} = this.getProjectState();
+        let finalProjects: Project[] = [...(projects || [])];
+        let projectIndex: number = finalProjects.findIndex((item: Project) => item.id === project.id);
+        if (projectIndex !== -1) {
+            let numberOfThreads = finalProjects[projectIndex].numThreads || 0;
+            if (type === 'add') {
+                finalProjects[projectIndex] = {
+                    ...finalProjects[projectIndex],
+                    numThreads: numberOfThreads + totalThreads
+                }
+            } else {
+                finalProjects[projectIndex] = {
+                    ...finalProjects[projectIndex],
+                    numThreads: numberOfThreads - totalThreads
+                }
+            }
+            this.setProjectState({projects: finalProjects});
+        }
+    }
+
+    markProjectAsRead(projectId: string) {
+        this.getDispatch()(markProjectRead({body: {projectId}}));
+        this.updateAllThreadsAsUnreadInProject(projectId);
+    }
+
+    updateAllThreadsAsUnreadInProject(projectId: string) {
+        let {threads, selectedThread} = threadService.getThreadState();
+        let finalThreads = [...(threads || [])];
+        finalThreads = finalThreads.map((item: Thread) => {
+            item = {...item};
+            let projects = (item.projects || []).map(t => t.id);
+            if (projects.length > 0 && projects.includes(projectId) && item.mailboxes?.includes(MAILBOX_UNREAD)) {
+                item.mailboxes = (item.mailboxes || []).filter(d => d !== MAILBOX_UNREAD)
+            }
+            return item;
+        })
+        threadService.setThreads(finalThreads);
+        if (selectedThread && selectedThread.id) {
+            let finalSelectThread = {...selectedThread};
+            let projects = (finalSelectThread.projects || []).map(t => t.id);
+            if (projects.length > 0 && projects.includes(projectId) && finalSelectThread.mailboxes?.includes(MAILBOX_UNREAD)) {
+                finalSelectThread.mailboxes = (finalSelectThread.mailboxes || []).filter(d => d !== MAILBOX_UNREAD)
+            }
+            threadService.setSelectedThread(finalSelectThread);
+        }
+
+        this.updateAllThreadsAsUnreadInProjectCache(projectId);
+    }
+
+    updateAllThreadsAsUnreadInProjectCache(projectId: string) {
+        let cacheThreads = {...cacheService.getThreadCache()};
+        Object.keys(cacheThreads).forEach(key => {
+            cacheThreads[key] = [...cacheThreads[key]];
+            cacheThreads[key].forEach((item: Thread, index: number) => {
+                let projects = (item.projects || []).map(t => t.id);
+                if (projects.length > 0 && projects.includes(projectId) && item.mailboxes?.includes(MAILBOX_UNREAD)) {
+                    cacheThreads[key][index] = {
+                        ...cacheThreads[key][index],
+                        mailboxes: (cacheThreads[key][index].mailboxes || []).filter(d => d !== MAILBOX_UNREAD)
+                    }
+                }
+            })
+        })
+        cacheService.setThreadCache(cacheThreads);
     }
 }
 

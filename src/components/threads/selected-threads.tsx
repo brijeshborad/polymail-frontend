@@ -47,15 +47,14 @@ export default function SelectedThreads() {
                                 onClick={() => threadService.moveThreadToMailBox(MAILBOX_TRASH)}><TrashIcon/></Button>
                     </Tooltip>
 
-                    <Tooltip label='Snooze' placement='bottom'>
-                        <div>
-                            <MessageSchedule
-                                isSnooze={true}
-                                date={scheduledDate}
-                                onChange={handleSchedule}
-                            />
-                        </div>
-                    </Tooltip>
+                    <div>
+                        <MessageSchedule
+                            showTooltip={true}
+                            isSnooze={true}
+                            date={scheduledDate}
+                            onChange={handleSchedule}
+                        />
+                    </div>
                 </Flex>
             </Box>
         </Box>

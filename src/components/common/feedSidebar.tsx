@@ -7,12 +7,10 @@ import dynamic from 'next/dynamic'
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {ActivityFeed} from "@/models/activityFeed";
-import {ACTIVITY_FEED_EVENT_TYPES} from "@/utils/constants";
-import {globalEventService, projectService, socketService} from "@/services";
+import {globalEventService} from "@/services";
 import Tooltip from "@/components/common/Tooltip";
 import {markActivityAsRead} from "@/redux/common-apis/action-reducer";
 import dayjs from "dayjs";
-import {getAllProjects} from "@/redux/projects/action-reducer";
 
 const FeedComponent = dynamic(
     () => import('./feedComponent').then((mod) => mod.FeedComponent)
@@ -21,7 +19,7 @@ const FeedComponent = dynamic(
 export const FeedSidebar = () => {
     const {isOpen, onToggle} = useDisclosure();
     const btnRef = React.useRef(null);
-    const {newMessage} = useSelector((state: StateType) => state.socket);
+    const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const {userDetails} = useSelector((state: StateType) => state.users);
     const {activityFeed} = useSelector((state: StateType) => state.commonApis);
     const dispatch = useDispatch();
@@ -34,52 +32,29 @@ export const FeedSidebar = () => {
     })
 
     useEffect(() => {
-        if (newMessage && newMessage.name === 'Activity') {
-            socketService.updateSocketMessage(null);
-            if (ACTIVITY_FEED_EVENT_TYPES.includes(newMessage.data.Type)) {
-                console.log('--s', newMessage);
-                if (newMessage.data.Type === 'ThreadShared' || newMessage.data.Type === 'ProjectInvite' || newMessage.data.Type === 'MemberJoined') {
-                    globalEventService.fireEvent({
-                        type: 'show-notification',
-                        data: {
-                            title: `${newMessage.data.Username} ${newMessage.data.Title}`,
-                            data: {
-                                body: newMessage.data.Subtitle,
-                                tag: `${newMessage.data.Type}-${newMessage.data.Created}`
-                            }
-                        }
-                    })
-                }
-                if (newMessage.data.Type === 'MemberJoined') {
-                    dispatch(getAllProjects({noBlank: true}));
-                }
-                if (newMessage.data.Type === 'ProjectDeleted') {
-                    projectService.processProjectDeletedActivity(newMessage.data);
-                }
-                if (newMessage.data.Type === 'MemberLeft') {
-                    projectService.processMemberActivity(newMessage.data);
-                }
+        setUnreadCount(feeds.filter((t: ActivityFeed) => !t.isRead).length);
+    }, [feeds])
+
+    useEffect(() => {
+        if (typeof incomingEvent === 'object' && incomingEvent.type) {
+            if (incomingEvent.type === 'activity.new') {
+                globalEventService.blankEvent();
                 let currentFeeds: ActivityFeed[] = [...feeds];
                 currentFeeds.push({
-                    projectId: newMessage.data.ProjectID,
-                    created: newMessage.data.Created,
-                    title: newMessage.data.Title,
-                    subtitle: newMessage.data.Subtitle,
-                    body: newMessage.data.Body,
-                    avatar: {...newMessage.data.Avatar, url: newMessage.data.Avatar.URL},
+                    projectId: incomingEvent.data.ProjectID,
+                    created: incomingEvent.data.Created,
+                    title: incomingEvent.data.Title,
+                    subtitle: incomingEvent.data.Subtitle,
+                    body: incomingEvent.data.Body,
+                    avatar: {...incomingEvent.data.Avatar, url: incomingEvent.data.Avatar.URL},
                     // username: userDetails && userDetails.id === newMessage.data.UserID ? 'You' : newMessage.data.Username,
-                    username: newMessage.data.Username,
-                    isRead: userDetails ? !dayjs(newMessage.data.Created).isAfter(dayjs(userDetails.activitiesRead)) : false,
+                    username: incomingEvent.data.Username,
+                    isRead: userDetails ? !dayjs(incomingEvent.data.Created).isAfter(dayjs(userDetails.activitiesRead)) : false,
                 })
                 setFeeds([...currentFeeds]);
             }
-
         }
-    }, [newMessage, dispatch, feeds, userDetails])
-
-    useEffect(() => {
-        setUnreadCount(feeds.filter((t: ActivityFeed) => !t.isRead).length);
-    }, [feeds])
+    }, [feeds, incomingEvent, userDetails])
 
     useEffect(() => {
         if (activityFeed && activityFeed.length > 0 && userDetails) {

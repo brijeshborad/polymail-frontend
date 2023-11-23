@@ -225,6 +225,16 @@ const projectsSlice = createSlice({
             return {...state, isLoading: false}
         },
 
+        markProjectRead: (state: InitialProjectState, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, isLoading: false}
+        },
+        markProjectReadSuccess: (state: InitialProjectState, _action: PayloadAction<{}>) => {
+            return {...state,isLoading: false}
+        },
+        markProjectReadError: (state: InitialProjectState, _action: PayloadAction<any>) => {
+            return {...state, isLoading: false}
+        },
+
         updateProjectState: (state: InitialProjectState, action: PayloadAction<InitialProjectState>) => {
             return {...state, ...action.payload}
         },
@@ -264,6 +274,6 @@ export const {
     removeProject,
     removeProjectSuccess,
     removeProjectError,
-    undoProjectUpdate
+    undoProjectUpdate, markProjectRead, markProjectReadSuccess, markProjectReadError
 } = projectsSlice.actions
 export default projectsSlice.reducer

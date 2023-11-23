@@ -1,7 +1,12 @@
 import {BaseService} from "@/services/base.service";
 import {updateAccountState} from "@/redux/accounts/action-reducer";
 import {InitialAccountStateType} from "@/types";
-import {Account} from "@/models";
+import {Account, Organization, Project} from "@/models";
+import {cacheService} from "@/services/cache.service";
+import {projectService} from "@/services/project.service";
+import {organizationService} from "@/services/organization.service";
+import {commonService} from "@/services/common.service";
+import {globalEventService} from "@/services/global-event.service";
 
 export class AccountService extends BaseService {
 
@@ -23,6 +28,19 @@ export class AccountService extends BaseService {
 
     setAccountState(stateBody: InitialAccountStateType) {
         this.dispatchAction(updateAccountState, stateBody);
+    }
+
+    updateValuesFromAccount(account: Account, fireSuccess: boolean = true) {
+        let projects = account.projects || [];
+        cacheService.buildCache(projects.map((p: Project) => p.id) as string[]);
+        let organizations = ([...account.organizations || []]).sort((a: Organization, b: Organization) => (new Date(b.created as string).valueOf() - new Date(a.created as string).valueOf()));
+        let contacts = account.contacts || [];
+        projectService.setProjectState({projects, isLoading: false});
+        organizationService.setOrganizationState({organizations, isLoading: false});
+        commonService.setCommonState({contacts, isLoading: false});
+        if (fireSuccess) {
+            globalEventService.fireEvent('threads.refresh');
+        }
     }
 
 }

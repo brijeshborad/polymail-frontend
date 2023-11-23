@@ -24,7 +24,7 @@ import {useRouter} from "next/router";
 import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
 import dynamic from "next/dynamic";
 import CollabRichTextEditor from "../common/collab-rich-text-editor";
-import {draftService, globalEventService, messageService, socketService} from "@/services";
+import {draftService, globalEventService, messageService} from "@/services";
 import {RecipientsType} from "@/types/props-types/message-recipients.type";
 import {ProgressBar} from "@/components/loader-screen/progress-bar";
 import Tooltip from "@/components/common/Tooltip";
@@ -59,7 +59,6 @@ export function MessageReplyBox(props: MessageBoxType) {
     const {selectedThread} = useSelector((state: StateType) => state.threads);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const {selectedMessage, showAttachmentLoader} = useSelector((state: StateType) => state.messages);
-    const {newMessage} = useSelector((state: StateType) => state.socket);
     const dispatch = useDispatch();
     const [attachments, setAttachments] = useState<MessageAttachments[]>([]);
     const inputFile = useRef<HTMLInputElement | null>(null)
@@ -125,16 +124,6 @@ export function MessageReplyBox(props: MessageBoxType) {
             }
         }
     }, [totalMessages, draftIndex])
-
-    useEffect(() => {
-        if (newMessage) {
-            socketService.updateSocketMessage(null);
-            if (newMessage.name === 'DraftDeleted') {
-                draftService.discardDraft(newMessage.data.id);
-                setDraftIndex(null);
-            }
-        }
-    }, [newMessage])
 
     useEffect(() => {
         if (emailRecipients?.recipients?.items && emailRecipients?.recipients?.items.length > 1) {
@@ -664,6 +653,9 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         }
         if (incomingEvent === 'draft.undo') {
             handleFocus();
+        }
+        if (incomingEvent === 'draft.setNull') {
+            setDraftIndex(null);
         }
         if (typeof incomingEvent === 'object' && incomingEvent.type) {
             if (incomingEvent.type === 'draft.updateType') {
