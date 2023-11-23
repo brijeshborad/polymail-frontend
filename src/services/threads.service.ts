@@ -799,9 +799,15 @@ class ThreadsService extends BaseService {
         let isProjectThread = (thread.projects || []).length > 0;
         let findThreadIndex = cacheThreads[cacheKey].findIndex((item: Thread) => item.id === thread.id);
         let tabValueFromCacheKey = cacheKey.split('-')[2];
+        cacheThreads[cacheKey] = [...cacheThreads[cacheKey]];
         if (!allMailboxToFindIn.includes(tabValueFromCacheKey)) {
             if (findThreadIndex !== -1) {
                 cacheThreads[cacheKey].splice(findThreadIndex, 1);
+            } else {
+                let messages: Message[] = [...(thread.messages || [])];
+                messages = performMessagesUpdate(messages);
+                thread.messages = messages;
+                cacheThreads[cacheKey].unshift(thread);
             }
         } else {
             if (isProjectThread && cacheKey.includes('projects')) {
@@ -824,6 +830,11 @@ class ThreadsService extends BaseService {
         if (!allMailboxToFindIn.includes(tabValueFromCacheKey)) {
             if (findThreadIndex !== -1) {
                 cacheThreads[cacheKey].splice(findThreadIndex, 1);
+            } else {
+                let messages: Message[] = [...(thread.messages || [])];
+                messages = performMessagesUpdate(messages);
+                thread.messages = messages;
+                cacheThreads[cacheKey].unshift(thread);
             }
         } else {
             let projectIds = [...(thread.projects || [])].map((p: Project) => p.id);

@@ -279,15 +279,14 @@ export function MessagesHeader() {
                                     </button>
                                 </Tooltip>
                             )}
-                            <Tooltip label='Snooze' placement='bottom'>
-                                <div>
-                                    <MessageSchedule
-                                        isSnooze={true}
-                                        date={scheduledDate}
-                                        onChange={handleSchedule}
-                                    />
-                                </div>
-                            </Tooltip>
+                            <div>
+                                <MessageSchedule
+                                    showTooltip={true}
+                                    isSnooze={true}
+                                    date={scheduledDate}
+                                    onChange={handleSchedule}
+                                />
+                            </div>
                             <Menu isOpen={isMoreMenuOpen}
                                   onClose={() => setIsMoreMenuOpen(false)}>
                                 <MenuButton

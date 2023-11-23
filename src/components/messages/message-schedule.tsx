@@ -5,11 +5,12 @@ import {Flex, RadioGroup, Radio, Text, Button, Menu, MenuButton, MenuList, MenuI
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
-import {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import dynamic from "next/dynamic";
 import {StateType} from "@/types";
 import {useSelector} from "react-redux";
 import {TimeSnoozeIcon} from "@/icons";
+import Tooltip from "@/components/common/Tooltip";
 
 const MessageScheduleCustom = dynamic(() => import("./message-schedule-custom").then(mod => mod.default));
 dayjs.extend(utc)
@@ -20,7 +21,7 @@ export default function MessageSchedule({
                                             onChange,
                                             isSnooze = false,
                                             isNameShow = false,
-                                            disabled = false
+                                            disabled = false, showTooltip
                                         }: MessageScheduleProps) {
     const [isOpen, setOpen] = useState(false)
     const [scheduleDate, setScheduleDate] = useState(date)
@@ -91,6 +92,34 @@ export default function MessageSchedule({
         // eslint-disable-next-line
     }, [incomingEvent]);
 
+    function getMenuButton() {
+        return <MenuButton
+            onClick={(e) => {
+                if (disabled) {
+                    return;
+                }
+                e.preventDefault();
+                e.stopPropagation();
+                const opened = isOpen
+                setOpen(!opened)
+                if (opened) {
+                    setShowScheduleMenu(false)
+                    if (!scheduleDate) {
+                        setCustomSchedule(false)
+                    }
+                }
+            }}
+            className={`${styles.replyArrowIcon} snooze-button-icon ${disabled ? 'disable' : ''}`}
+            as={isSnooze ? "div" : Button}
+            style={{cursor: 'pointer'}}
+            aria-label='Options'
+            {...(!isSnooze ? {variant: 'outline'} : {})}
+        >
+            {isSnooze ? <TimeSnoozeIcon/> : <ChevronDownIcon/>}
+            {isNameShow && 'Snooze'}
+        </MenuButton>
+    }
+
     return (
         <div ref={clickRef}>
             <Menu
@@ -100,31 +129,9 @@ export default function MessageSchedule({
                 onClose={() => closeScheduleDropdown}
                 closeOnSelect={false} placement={'bottom'}
             >
-                <MenuButton
-                    onClick={(e) => {
-                        if (disabled) {
-                            return;
-                        }
-                        e.preventDefault();
-                        e.stopPropagation();
-                        const opened = isOpen
-                        setOpen(!opened)
-                        if (opened) {
-                            setShowScheduleMenu(false)
-                            if (!scheduleDate) {
-                                setCustomSchedule(false)
-                            }
-                        }
-                    }}
-                    className={`${styles.replyArrowIcon} snooze-button-icon ${disabled ? 'disable' : ''}`}
-                    as={isSnooze ? "div" : Button}
-                    style={{cursor: 'pointer'}}
-                    aria-label='Options'
-                    {...(!isSnooze ? {variant: 'outline'} : {})}
-                >
-                    {isSnooze ? <TimeSnoozeIcon/> : <ChevronDownIcon/>}
-                    {isNameShow && 'Snooze'}
-                </MenuButton>
+                {showTooltip ? <Tooltip label='Snooze' placement='bottom'>
+                    {getMenuButton()}
+                </Tooltip> : getMenuButton()}
 
                 {!showScheduleMenu && (
                     <MenuList zIndex={'10'} className={'drop-down-list'}>
