@@ -329,6 +329,7 @@ class ThreadsService extends BaseService {
                 this.setThreadState({threads: newThreads});
             }
             projectService.updateThreadsCountInProject(item, reqBody.threadIds.length, 'add');
+            this.updateThreadsCacheForProjects(reqBody.threadIds, item, 'add');
             this.dispatchAction(
                 addItemToGroup,
                 {
@@ -367,6 +368,7 @@ class ThreadsService extends BaseService {
                                     draftService.setComposeDraft(thread)
                                 }
                                 projectService.updateThreadsCountInProject(item, reqBody.threadIds.length, 'remove');
+                                this.updateThreadsCacheForProjects(reqBody.threadIds, item, 'remove');
                                 this.setThreadState({selectedThread: selectedThread, threads: threads});
                                 globalEventService.fireEvent({data: item, type: 'addToProject.remove'});
                             }
@@ -393,13 +395,14 @@ class ThreadsService extends BaseService {
         }
         if (threadId) {
             let polyToast = generateToasterId();
-            let reqBody = {
+            let reqBody: any = {
                 threadIds: [threadId],
                 roles: ['n/a'],
                 groupType: 'project',
                 groupId: item.id
             }
             projectService.updateThreadsCountInProject(item, 1, 'remove');
+            this.updateThreadsCacheForProjects([threadId], item, 'remove');
             this.dispatchAction(removeThreadFromProject, {
                 body: {
                     threadId: threadId,
@@ -444,6 +447,7 @@ class ThreadsService extends BaseService {
                                 draftService.setComposeDraft(addProject)
                             }
                             projectService.updateThreadsCountInProject(item, 1, 'add');
+                            this.updateThreadsCacheForProjects([threadId], item, 'add');
                             this.setThreadState({selectedThread: selectedThread, threads: threads});
                             globalEventService.fireEvent({data: item, type: 'addToProject.add'});
                         }
@@ -1154,6 +1158,27 @@ class ThreadsService extends BaseService {
             return MAILBOX_SNOOZED;
         }
         return MAILBOX_ARCHIVE;
+    }
+
+    updateThreadsCacheForProjects(threadIds: string[], project: Project, type: string) {
+        let cacheThreads = {...cacheService.getThreadCache()};
+        Object.keys(cacheThreads).forEach(key => {
+            cacheThreads[key] = [...cacheThreads[key]];
+            cacheThreads[key].forEach((item: Thread, index: number) => {
+                if (threadIds.includes(item.id!)) {
+                    if (type === 'add') {
+                        cacheThreads[key][index] = {
+                            ...cacheThreads[key][index],
+                            projects: [...(cacheThreads[key][index]['projects'] || []), project]
+                        }
+                    } else {
+                        cacheThreads[key][index] = {...cacheThreads[key][index]}
+                        cacheThreads[key][index].projects = (cacheThreads[key][index].projects || []).filter((p: Project) => p.id !== project.id);
+                    }
+                }
+            })
+        })
+        cacheService.setThreadCache(cacheThreads);
     }
 }
 
