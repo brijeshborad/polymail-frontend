@@ -37,7 +37,6 @@ export const FeedSidebar = () => {
         if (newMessage && newMessage.name === 'Activity') {
             socketService.updateSocketMessage(null);
             if (ACTIVITY_FEED_EVENT_TYPES.includes(newMessage.data.Type)) {
-                console.log('--s', newMessage);
                 if (newMessage.data.Type === 'ThreadShared' || newMessage.data.Type === 'ProjectInvite' || newMessage.data.Type === 'MemberJoined') {
                     globalEventService.fireEvent({
                         type: 'show-notification',

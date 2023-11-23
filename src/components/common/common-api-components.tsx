@@ -72,7 +72,7 @@ export function CommonApiComponents() {
         return () => {
             clearInterval(interVal);
         };
-    }, [alertUser, dispatch]);
+    }, [dispatch]);
 
     useEffect(() => {
         if (lastMessage) {

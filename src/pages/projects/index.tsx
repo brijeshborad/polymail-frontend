@@ -14,18 +14,18 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {updateProject, updateOptimisticProject, removeProject} from "@/redux/projects/action-reducer";
 import Router, {useRouter} from "next/router";
-import {Project, UserProjectOnlineStatus} from "@/models";
+import {Project} from "@/models";
 import {POSITION_GAP} from "@/utils/constants";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import {commonService, projectService} from "@/services";
-import Tooltip from "@/components/common/Tooltip";
 import RemoveRecordModal from "@/components/common/delete-record-modal";
 import {deleteMemberFromProject} from "@/redux/memberships/action-reducer";
 import {getRandomProjectMetaOrder} from "@/utils/common.functions";
+import {UsersOnline} from "@/components/common";
 
 function Index() {
     const {isLoading, projects, projectSearchedString} = useSelector((state: StateType) => state.projects);
-    const {showCreateProjectModal, onlineUsers} = useSelector((state: StateType) => state.commonApis);
+    const {showCreateProjectModal} = useSelector((state: StateType) => state.commonApis);
     const router = useRouter();
     const dispatch = useDispatch();
     const [isOpenByRoute, setIsOpenByRoute] = useState<boolean>(false);
@@ -248,18 +248,8 @@ function Index() {
 
                                     <Flex align={'center'} gap={2}>
                                         <Flex className={styles.memberImages}>
-                                            {onlineUsers && (onlineUsers['projects'][project.id!] || [])
-                                                .filter((t: UserProjectOnlineStatus) => t.isOnline).slice(0, 5)
-                                                .map((item: UserProjectOnlineStatus, index: number) => (
-                                                    <Tooltip label={item.name || ''} placement='bottom' key={index}>
-                                                        <div className={styles.memberPhoto}
-                                                             style={{border: `2px solid #${item.color}`}}>
-                                                            {item.avatar &&
-                                                            <Image src={item.avatar} width="24" height="24" alt=""/>}
-                                                        </div>
-                                                    </Tooltip>
-                                                ))}
-                                            {/*<div className={styles.memberPhoto}> +6 </div>*/}
+                                            <UsersOnline type={'projects'} itemId={project.id!}
+                                                         className={styles.memberPhoto}/>
                                         </Flex>
                                         {project.scope === "private" && (
                                             <Flex align={'center'} justify={'center'} h={'20px'} w={'20px'}
@@ -270,7 +260,7 @@ function Index() {
                                         )}
                                         <Flex align={'center'} justify={'center'} h={'20px'} w={'20px'}
                                               borderRadius={50}
-                                              className={`${styles.projectListIcon} ${project.projectMeta?.favorite ? styles.projectFillStar: ''}`}
+                                              className={`${styles.projectListIcon} ${project.projectMeta?.favorite ? styles.projectFillStar : ''}`}
                                               backgroundColor={'#F3F4F6'} onClick={(e) => {
                                             e.stopPropagation();
                                             toggleProjectFavorite(project)
@@ -286,7 +276,8 @@ function Index() {
                                         <MenuIcon/>
                                     </MenuButton>
                                     <MenuList minW={'126px'} className={'drop-down-list'}>
-                                        <MenuItem onClick={() => projectService.markProjectAsRead(project.id!)}>Mark as read</MenuItem>
+                                        <MenuItem onClick={() => projectService.markProjectAsRead(project.id!)}>Mark as
+                                            read</MenuItem>
                                         <MenuItem
                                             onClick={() => commonService.toggleEditProjectModel(true, false, project)}>Edit
                                             project</MenuItem>

@@ -1,20 +1,20 @@
-import {Flex, Text, Image, Button} from "@chakra-ui/react";
+import {Flex, Text, Button} from "@chakra-ui/react";
 import {AddEmojiIcon, FolderIcon} from "@/icons";
 import React, {useEffect, useState} from "react";
 import {useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {Project, UserProjectOnlineStatus} from "@/models";
+import {Project} from "@/models";
 import Router from "next/router";
 import {PlusIcon} from "@/icons/plus.icon";
 import {commonService, messageService, projectService, threadService} from "@/services";
-import Tooltip from "../common/Tooltip";
 import {SkeletonLoader} from "@/components/loader-screen/skeleton-loader";
 import {getInboxLoadedFirstTime, setInboxLoadedFirstTime} from "@/utils/cache.functions";
 import {useWindowSize} from "@/hooks/window-resize.hook";
+import {UsersOnline} from "@/components/common";
 
 export function InboxHeaderProjectsList() {
     const {projects} = useSelector((state: StateType) => state.projects);
-    const {onlineUsers, isLoading} = useSelector((state: StateType) => state.commonApis);
+    const {isLoading} = useSelector((state: StateType) => state.commonApis);
     const {isLoading: threadIsLoading} = useSelector((state: StateType) => state.threads);
     const [projectData, setProjectData] = useState<Project[]>([]);
     const [projectDataLength, setProjectDataLength] = useState<Project[]>([]);
@@ -90,20 +90,7 @@ export function InboxHeaderProjectsList() {
                             <Text whiteSpace={'nowrap'} overflow={'hidden'} textOverflow={'ellipsis'} fontSize='13px'
                                   color={'#0A101D'} flex={'1'}>{project.name}</Text>
                             <Flex className={'member-images subheader-images'}>
-                                {(onlineUsers && onlineUsers.projects[project.id!] || [])
-                                    .filter((t: UserProjectOnlineStatus) => t.isOnline).slice(0, 5)
-                                    .map((item: UserProjectOnlineStatus, index: number) => (
-                                            <Tooltip label={item.name || ''} placement='bottom'
-                                                     key={index}>
-                                                <div className={'member-photo'}
-                                                     style={{background: '#000', border: `2px solid #${item.color}`}}>
-                                                    {item.avatar && <Image src={item.avatar} width="24" height="24"
-                                                                           alt=""/>}
-                                                </div>
-                                            </Tooltip>
-                                        )
-                                    )
-                                }
+                                <UsersOnline type={'projects'} itemId={project.id!}/>
                             </Flex>
                         </Button>
                     ))}

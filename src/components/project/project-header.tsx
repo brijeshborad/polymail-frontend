@@ -18,7 +18,7 @@ import inboxStyles from "@/styles/Inbox.module.css";
 import {commonService, messageService, projectService, socketService, threadService} from "@/services";
 import Router, {useRouter} from "next/router";
 import {MailIcon, MemberInviteIcon, MenuIcon, ShareIcon} from "@/icons";
-import {Project, TeamMember, UserProjectOnlineStatus} from "@/models";
+import {Project, TeamMember} from "@/models";
 import {PROJECT_ROLES} from "@/utils/constants";
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import {
@@ -41,6 +41,7 @@ import {
     setProjectLoadedFirstTime
 } from "@/utils/cache.functions";
 import {AutoComplete} from "@/components/common/auto-complete";
+import {UsersOnline} from "@/components/common";
 
 export function ProjectHeader() {
     const router = useRouter();
@@ -51,7 +52,6 @@ export function ProjectHeader() {
         input: '',
         role: 'member'
     });
-    const [maxShowingMembers, setMaxShowingMembers] = useState<number>(5);
     const [isManagerMembersOpen, setIsManagerMembersOpen] = useState<boolean>(false)
     const [searchValue, setSearchValue] = useState<string>('');
     const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
@@ -64,7 +64,6 @@ export function ProjectHeader() {
     const [loadedFirstTime, setIsLoadedFirstTime] = useState<boolean>(getProjectLoadedFirstTime());
     const [autoCompleteOpen, setAutoCompleteOpen] = useState<boolean>(false);
 
-    const {onlineUsers} = useSelector((state: StateType) => state.commonApis);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const {projects, members, project, invitees} = useSelector((state: StateType) => state.projects);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
@@ -408,21 +407,9 @@ export function ProjectHeader() {
                 </Flex>
 
                 {(loadedFirstTime && project) && <Flex align={'center'} gap={1}>
-                    {project && onlineUsers && (onlineUsers['projects'][project.id!] || [])
-                        .filter((t: UserProjectOnlineStatus) => t.isOnline).slice(0, maxShowingMembers)
-                        .map((item: UserProjectOnlineStatus, index: number) => (
-                            <Tooltip label={item.name || ''} placement='bottom' key={index}>
-                                <div className={styles.userImage} style={{border: `2px solid #${item.color}`}}>
-                                    {item.avatar && <Image src={item.avatar} width="36" height="36" alt=""/>}
-                                </div>
-                            </Tooltip>
-                        ))}
-
-                    <Text fontSize={'sm'} textDecoration={'underline'} cursor={'pointer'}
-                          onClick={() => setMaxShowingMembers(maxShowingMembers + 5)}>
-                        {project && onlineUsers && (onlineUsers['projects'][project.id!] || []).length > maxShowingMembers ? `+${(onlineUsers['projects'][project.id!] || []).length - maxShowingMembers}more` : ''}
-                    </Text>
-
+                    {project &&
+                    <UsersOnline type={'projects'} itemId={project.id!} className={styles.userImage} imageSize={'36'}
+                                 showTotal={true}/>}
                     <Menu isOpen={isManagerMembersOpen} onClose={() => setIsManagerMembersOpen(false)}>
                         {({onClose}) => (
                             <>
@@ -627,7 +614,8 @@ export function ProjectHeader() {
                             <MenuIcon/>
                         </MenuButton>
                         <MenuList minW={'126px'} className={'drop-down-list'}>
-                            <MenuItem onClick={() => projectService.markProjectAsRead(project.id!)}>Mark as read</MenuItem>
+                            <MenuItem onClick={() => projectService.markProjectAsRead(project.id!)}>Mark as
+                                read</MenuItem>
                             <MenuItem onClick={() => commonService.toggleEditProjectModel(true, false, project)}>Edit
                                 project</MenuItem>
                             <MenuItem
