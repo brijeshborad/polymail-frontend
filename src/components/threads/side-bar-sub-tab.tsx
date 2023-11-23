@@ -38,7 +38,6 @@ export function SideBarSubTab() {
     const {isComposing, syncingEmails} = useSelector((state: StateType) => state.commonApis);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
-    const {newMessage} = useSelector((state: StateType) => state.socket);
 
     const [projectId, setProjectId] = useState<string>('');
     const [waitForProjectRoute, setWaitForProjectRoute] = useState<boolean>(true);
@@ -167,63 +166,6 @@ export function SideBarSubTab() {
     }, [threadListSuccess, dispatch, threads, tabName, tabValue])
 
     useEffect(() => {
-        if (newMessage) {
-            socketService.updateSocketMessage(null);
-
-            if (newMessage.name === 'NewMessage') {
-                console.log('---NEW MESSAGE---', newMessage);
-                const _newMsg = newMessage.data.thread as Thread
-                updateThreads(true, _newMsg, () => {
-                    getAllThread(tabName, newMessage.data.thread.sortDate);
-                });
-                if (_newMsg.mute) {
-                    return;
-                }
-                var name = _newMsg?.from?.name || _newMsg?.from?.email
-                globalEventService.fireEvent({
-                    type: 'show-notification',
-                    data: {
-                        title: "New message from " + name,
-                        data: {
-                            body: `${_newMsg?.subject}`,
-                            tag: `${_newMsg?.updated}`
-                        }
-                    }
-                });
-            }
-            if (newMessage.name === 'SnoozedThread') {
-                console.log(newMessage);
-                updateThreads(false, newMessage.data.thread);
-                const _newMsg = newMessage.data.thread as Thread
-                if (_newMsg.mute) {
-                    return;
-                }
-                globalEventService.fireEvent({
-                    type: 'show-notification',
-                    data: {
-                        title: newMessage.data.thread.subject || "You got a new message",
-                        data: {
-                            body: `${newMessage.data.thread?.from?.name} ${newMessage.data.thread?.from?.email}`,
-                            tag: `${newMessage.data.thread?.updated}`
-                        }
-                    }
-                });
-            }
-            if (newMessage.name === 'ThreadUpdated') {
-                console.log('---NEW EVENT', newMessage);
-                let thread: Thread = {...newMessage.data.thread};
-                thread = {...thread, id: thread._id};
-                threadService.threadUpdated(thread);
-            }
-            if (newMessage.name === 'Activity' && newMessage.data.Type === 'MemberJoined') {
-                if (tabName === 'projects') {
-                    getAllThread();
-                }
-            }
-        }
-    }, [getAllThread, newMessage, dispatch, threads, tabName, updateThreads])
-
-    useEffect(() => {
         if (projectId !== router.query.project) {
             setProjectId(router.query.project as string);
         }
@@ -292,7 +234,19 @@ export function SideBarSubTab() {
             currentPage = 1;
             getAllThread();
         }
-    }, [getAllThread, incomingEvent, tabName, tabValue])
+        if (typeof incomingEvent === 'object' && incomingEvent.type) {
+            if (incomingEvent.type === 'threads.update') {
+                if (incomingEvent.data.type === 'new') {
+                    updateThreads(true, incomingEvent.data.thread, () => {
+                        getAllThread(tabName, incomingEvent.data.thread.sortDate);
+                    });
+                }
+                if (incomingEvent.data.type === 'snooze') {
+                    updateThreads(false, incomingEvent.data.thread);
+                }
+            }
+        }
+    }, [getAllThread, incomingEvent, tabName, tabValue, updateThreads])
 
     return (
         <Flex overflowX={'auto'} align={'center'} alignItems={'center'} alignContent={'center'} gap={2}

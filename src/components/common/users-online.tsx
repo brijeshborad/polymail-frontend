@@ -9,7 +9,6 @@ type UsersOnlineType = { type: 'projects' | 'threads', itemId: string, className
 
 export function UsersOnline({type, itemId, className, imageSize, showTotal}: UsersOnlineType) {
     const {onlineUsers} = useSelector((state: StateType) => state.commonApis);
-    console.log('--', onlineUsers);
     const [maxShowingMembers, setMaxShowingMembers] = useState<number>(5);
     return (
         <>
