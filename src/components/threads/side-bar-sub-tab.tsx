@@ -4,9 +4,7 @@ import {
     cacheService,
     commonService,
     draftService,
-    globalEventService,
     messageService,
-    socketService,
     threadService
 } from "@/services";
 import React, {useCallback, useEffect, useState} from "react";
