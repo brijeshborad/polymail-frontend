@@ -8,6 +8,7 @@ import {Toaster} from "@/components/common";
 import {userService} from "@/services/user.service";
 import {cacheService} from "@/services/cache.service";
 import {MAILBOX_UNREAD} from "@/utils/constants";
+import {threadService} from "@/services/threads.service";
 
 class ProjectService extends BaseService {
     constructor() {
@@ -238,6 +239,30 @@ class ProjectService extends BaseService {
     }
 
     updateAllThreadsAsUnreadInProject(projectId: string) {
+        let {threads, selectedThread} = threadService.getThreadState();
+        let finalThreads = [...(threads || [])];
+        finalThreads = finalThreads.map((item: Thread) => {
+            item = {...item};
+            let projects = (item.projects || []).map(t => t.id);
+            if (projects.length > 0 && projects.includes(projectId) && item.mailboxes?.includes(MAILBOX_UNREAD)) {
+                item.mailboxes = (item.mailboxes || []).filter(d => d !== MAILBOX_UNREAD)
+            }
+            return item;
+        })
+        threadService.setThreads(finalThreads);
+        if (selectedThread && selectedThread.id) {
+            let finalSelectThread = {...selectedThread};
+            let projects = (finalSelectThread.projects || []).map(t => t.id);
+            if (projects.length > 0 && projects.includes(projectId) && finalSelectThread.mailboxes?.includes(MAILBOX_UNREAD)) {
+                finalSelectThread.mailboxes = (finalSelectThread.mailboxes || []).filter(d => d !== MAILBOX_UNREAD)
+            }
+            threadService.setSelectedThread(finalSelectThread);
+        }
+
+        this.updateAllThreadsAsUnreadInProjectCache(projectId);
+    }
+
+    updateAllThreadsAsUnreadInProjectCache(projectId: string) {
         let cacheThreads = {...cacheService.getThreadCache()};
         Object.keys(cacheThreads).forEach(key => {
             cacheThreads[key] = [...cacheThreads[key]];
