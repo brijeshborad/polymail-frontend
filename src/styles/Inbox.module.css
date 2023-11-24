@@ -1209,6 +1209,21 @@
     display: flex;
     flex-direction: column;
     box-shadow: 0 0 12px 0 #00000014;
+
+}
+
+.composeBox.composeBoxCloseAnimation {
+    position: absolute;
+    width: 100%;
+    height: calc(100vh - 157px);
+    z-index: 10;
+    top: 0;
+    left: 0;
+    animation: compose-animation 500ms ease-in-out;
+}
+
+.composeBox.composeBoxOpenAnimation {
+    animation: compose-animation 500ms ease-in-out reverse;
 }
 
 .composeBox .subjectInput::placeholder {
@@ -1344,6 +1359,18 @@
 
 .mailBox .mailBodyContent .mailBody {
     min-width: 730px;
+}
+
+@keyframes compose-animation {
+    from {
+        width: 100%;
+        height: calc(100vh - 157px);
+    }
+
+    to {
+        width: 0;
+        height: 0;
+    }
 }
 
 @media (max-width: 991px) {

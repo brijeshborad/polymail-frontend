@@ -426,7 +426,7 @@ export function ComposeBox(props: any) {
 
     return (
         <>
-            <Box className={`${styles.mailBox} ${styles.composeBox} ${animateCompose ? 'compose-box-animation': ''}`} overflow={'hidden'}>
+            <Box className={`${styles.mailBox} ${styles.composeBox} ${animateCompose ? styles.composeBoxCloseAnimation : styles.composeBoxOpenAnimation}`} overflow={'hidden'}>
                 <Flex padding={'16px 20px'} align={'center'} justify={'space-between'} gap={3}
                       className={styles.composeHeader} borderBottom={'1px solid #E5E7EB'}>
                     <Flex gap={1} align={'center'}>

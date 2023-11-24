@@ -1086,29 +1086,6 @@ div:has(> .mailSendToaster) {
     background-color: transparent;
 }
 
-.selected-thread .compose-box-animation {
-    position: absolute;
-    width: 100%;
-    height: calc(100vh - 157px);
-    z-index: 10;
-    top: 0;
-    left: 0;
-    animation: compose-animation 500ms ease-in-out;
-    animation-iteration-count: 1;
-}
-
-@keyframes compose-animation {
-    from {
-        width: 100%;
-        height: calc(100vh - 157px);
-    }
-
-    to {
-        width: 0;
-        height: 0;
-    }
-}
-
 @media (max-width: 991px) {
     .threadSideBar.selected-thread {
         display: none;
