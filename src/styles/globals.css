@@ -1103,7 +1103,7 @@ div:has(> .mailSendToaster) {
     animation: reply-box-animation 500ms ease;
 }
 
-.editor-toolbar.editor-toolbar-hide .tiptap-container {
+.reply-box-focus .editor-toolbar.editor-toolbar-hide .tiptap-container {
     height: 0;
     animation: reply-box-animation-hide 500ms ease;
     transition: all 500ms ease;
@@ -1180,7 +1180,7 @@ div:has(> .mailSendToaster) {
     animation: toolbar-animate 100ms ease;
 }
 
-.editor-toolbar-hide .tiptap-toolbar {
+.reply-box-focus .editor-toolbar-hide .tiptap-toolbar {
     opacity: 0;
     animation: toolbar-animate-hide 100ms ease;
     display: flex;
@@ -1234,8 +1234,8 @@ div:has(> .mailSendToaster) {
     animation: editor-input-animation 500ms ease;
 }
 
-.editor-fake-input.editor-fake-input-show input,
-.editor-fake-input.editor-fake-input-show {
+.reply-box-focus .editor-fake-input.editor-fake-input-show input,
+.reply-box-focus .editor-fake-input.editor-fake-input-show {
     height: 20px;
     opacity: 1;
     visibility: visible;

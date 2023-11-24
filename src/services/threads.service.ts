@@ -125,7 +125,6 @@ class ThreadsService extends BaseService {
                 ...currentThreads[currentThreadIndex],
                 messages: [...currentMessages]
             };
-            draftService.setDraftState({success: false, updatedDraft: null});
             if (currentThread.id === draft.threadId) {
                 if (!getDraftStatus()[draft.id!]) {
                     draftService.setReplyDraft(draft);
@@ -143,6 +142,7 @@ class ThreadsService extends BaseService {
             // selectedThread.messages = [...selectedThreadMessages];
             // this.setSelectedThread(selectedThread);
         }
+        draftService.setDraftState({success: false, updatedDraft: null});
     }
 
     setThreadState(body: InitialThreadStateType) {

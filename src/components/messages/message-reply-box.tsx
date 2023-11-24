@@ -76,6 +76,7 @@ export function MessageReplyBox(props: MessageBoxType) {
     const [reloadingEditor, setReloadingEditor] = useState<boolean>(false);
     const [isOnTop, setIsOnTop] = useState(true)
     const [deltaY, setDeltaY] = useState(0)
+    const [focusClass, setFocusClass] = useState<string>('');
 
     const editorRef = useRef<any>(null);
     const router = useRouter();
@@ -568,6 +569,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     }
 
     const handleFocus = () => {
+        setFocusClass('reply-box-focus');
         setShowEditorToolbar(true);
         setIsOnTop(true)
         setDeltaY(0)
@@ -992,6 +994,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                         </div>
                         }
                         <Flex
+                            className={focusClass}
                             onClick={(e) => {
                                 e.stopPropagation();
                                 e.preventDefault();
