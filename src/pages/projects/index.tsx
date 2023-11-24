@@ -201,10 +201,15 @@ function Index() {
                       h={'100%'}
                       className={styles.projectListPage}>
                     <Flex align={'center'} justify={'space-between'}>
-                        <Heading as='h4' fontSize={'24px'} lineHeight={'29px'} fontWeight={600} color={'#374151'}>Projects
-                            <Badge backgroundColor={'#EBF2FF'} fontSize={'14px'} lineHeight={'16px'} color={'#0556FF'}
-                                   padding={'3px 6px'} borderRadius={'4px'}
-                                   marginLeft={2}>{itemList && itemList.length}</Badge></Heading>
+                        <Flex align={'center'}>
+                            <Flex align={'center'}>
+                                <Heading as='h4' fontSize={'24px'} lineHeight={'29px'} fontWeight={600} color={'#374151'}>Projects</Heading>
+                                <Badge backgroundColor={'#EBF2FF'} fontSize={'14px'} lineHeight={'16px'} color={'#0556FF'}
+                                       padding={'3px 6px'} borderRadius={'4px'} display={'block'}
+                                       marginLeft={2}>{itemList && itemList.length}</Badge>
+                            </Flex>
+                            <Text fontSize='xs' mb={0} pl={3} ml={3} borderLeft={'1px solid #D1D5DB'} color={'#6B7280'} lineHeight={1}>by priority</Text>
+                        </Flex>
                         <Button className={styles.createProjectButton} color={'#ffffff'} backgroundColor={'#1F2937'}
                                 onClick={() => {
                                     Router.replace('/projects/create-project');
