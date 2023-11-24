@@ -35,7 +35,7 @@ import {UsersOnline} from "@/components/common";
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
 const MessageSchedule = dynamic(() => import("./message-schedule").then(mod => mod.default));
 
-export function MessagesHeader() {
+export function MessagesHeader({isProjectView = false}: { isProjectView?: boolean }) {
     const {selectedThread, threads, tabValue} = useSelector((state: StateType) => state.threads);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
 
@@ -241,7 +241,7 @@ export function MessagesHeader() {
                         <Flex alignItems={'center'} justifyContent={'end'} className={'member-images'}>
                             <UsersOnline type={'threads'} itemId={selectedThread.id!}/>
                         </Flex>
-                        <AddToProjectButton allowDefaultSelect={true}/>
+                        {!isProjectView && <AddToProjectButton allowDefaultSelect={true}/>}
                     </Flex>
                     <Flex align={'center'} className={'header-right-icon'}>
                         <div>

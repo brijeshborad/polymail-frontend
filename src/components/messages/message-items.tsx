@@ -299,6 +299,13 @@ export function MessageItems() {
                             </MenuButton>
                             <MenuList className={'drop-down-list'}>
                                 <MenuItem
+                                    onClick={() => hideAndShowReplyBox('reply', message)}> Reply </MenuItem>
+                                <MenuItem
+                                    onClick={() => hideAndShowReplyBox('reply-all', message)}> Reply
+                                    All </MenuItem>
+                                <MenuItem
+                                    onClick={() => hideAndShowReplyBox('forward', message)}> Forward </MenuItem>
+                                <MenuItem
                                     onClick={(e) => {
                                         e.preventDefault()
                                         e.stopPropagation()
@@ -306,13 +313,6 @@ export function MessageItems() {
                                     }}>
                                     {message.scope !== 'hidden' ? 'Hide from project members' : 'Show to project members'}
                                 </MenuItem>
-                                <MenuItem
-                                    onClick={() => hideAndShowReplyBox('reply', message)}> Reply </MenuItem>
-                                <MenuItem
-                                    onClick={() => hideAndShowReplyBox('reply-all', message)}> Reply
-                                    All </MenuItem>
-                                <MenuItem
-                                    onClick={() => hideAndShowReplyBox('forward', message)}> Forward </MenuItem>
                             </MenuList>
                         </Menu>
                     </Flex>

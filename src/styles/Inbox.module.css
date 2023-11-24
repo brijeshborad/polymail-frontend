@@ -378,6 +378,7 @@
     line-height: 1.5;
     /*width: calc(100% + 32px);*/
     width: 100%;
+    border-radius: 12px;
 }
 
 .mailBox .mailBodyContent {

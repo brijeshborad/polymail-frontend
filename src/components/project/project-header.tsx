@@ -397,9 +397,9 @@ export function ProjectHeader() {
                                 </MenuList>
                             </Menu>
                             {project && members &&
-                            <Badge textTransform={'none'} className={styles.projectMembers} color={'#000000'}
+                            <Badge textTransform={'none'} className={styles.projectMembers} color={'#0556FF'}
                                    fontSize={'14px'} fontWeight={'600'}
-                                   backgroundColor={'#E9E9E9'} marginBottom={'-2px'}
+                                   backgroundColor={'#EBF2FF'} marginBottom={'-2px'}
                                    padding={'3px 6px'} borderRadius={'4px'}
                                    lineHeight={'1.19'}>{members && members.length === 1 ? `1 member` : `${members && members.length} members`}</Badge>}
                         </>
@@ -590,7 +590,7 @@ export function ProjectHeader() {
                                                             </MenuList>
                                                         </Menu>
                                                         <IconButton className={styles.closeIcon}
-                                                                    onClick={() => openModel(invite, 'Are you sure you want to remove member from project?')}
+                                                                    onClick={() => openModel(invite, 'Are you sure you want to remove member?')}
                                                                     cursor={'pointer'} backgroundColor={'#FFFFFF'}
                                                                     padding={0}
                                                                     minWidth={'1px'} aria-label='Add to friends'
