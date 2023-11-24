@@ -128,23 +128,13 @@ function OnBoardingType() {
             <OnboardingLayout>
                 <Flex direction={'column'} className={styles.onBoardingType}>
                     <Heading as='h4' size='md' fontWeight={700} color={'#0A101D'}
-                             mb={4}>{router.query.type === 'login' ? 'Log into' : 'Create'} your work account</Heading>
+                             mb={4}>{router.query.type === 'login' ? 'Log into' : 'Create'} your account</Heading>
                     <Button onClick={() => oauthWithGoogle()} backgroundColor={'#2A6FFF'} w={'fit-content'}
                             isDisabled={loginButtonDisabled} _hover={{_disabled: {background: '#2A6FFF'}}}
                             borderRadius={'2px'} height={'46px'} border={'1px solid #2A6FFF'} mb={3} className={styles.continueButton}
                             padding={'0 12px 0 0'} justifyContent={'flex-start'} fontWeight={'500'} gap={3} color={'#FFFFFF'}>
                         <Flex backgroundColor={'#FFFFFF'} padding={'13px'}>
                             <Image src={'/image/google-logo.png'} alt={''} width={'18px'} height={'18px'} minWidth={'18px'}/>
-                        </Flex>
-                        {router.query.type === 'login' ? 'Sign in' : 'Sign up'} with Google
-                    </Button>
-
-                    <Button onClick={() => oauthWithGoogle()} backgroundColor={'#2A6FFF'} w={'fit-content'} minWidth={'250px'}
-                            isDisabled={loginButtonDisabled} _hover={{_disabled: {background: '#2A6FFF'}}} fontSize={'14px'}
-                            borderRadius={'8px'} border={'1px solid #2A6FFF'} mb={3} className={styles.continueButton}
-                            padding={'4px 12px 4px 4px'} justifyContent={'flex-start'} lineHeight={'1'} height={'auto'} fontWeight={'500'} gap={3} color={'#FFFFFF'}>
-                        <Flex backgroundColor={'#FFFFFF'} padding={'2px'} borderRadius={6}>
-                            <Image src={'/image/google-logo.png'} alt={''} width={'24px'} height={'24px'} minWidth={'24px'}/>
                         </Flex>
                         {router.query.type === 'login' ? 'Sign in' : 'Sign up'} with Google
                     </Button>
