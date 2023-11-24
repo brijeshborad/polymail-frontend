@@ -1091,6 +1091,7 @@ div:has(> .mailSendToaster) {
     visibility: hidden;
     opacity: 0;
     overflow: hidden;
+    transition: all 0.5s ease;
 }
 
 .editor-toolbar-hide.editor-toolbar-show {
@@ -1098,6 +1099,7 @@ div:has(> .mailSendToaster) {
     visibility: visible;
     opacity: 1;
     overflow: unset;
+    transition: all 0.5s ease;
 }
 
 @media (max-width: 991px) {
