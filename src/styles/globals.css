@@ -1086,20 +1086,72 @@ div:has(> .mailSendToaster) {
     background-color: transparent;
 }
 
-.editor-toolbar-hide {
+.editor-toolbar-hide .tiptap-container {
     height: 0;
     visibility: hidden;
     opacity: 0;
     overflow: hidden;
-    transition: all 0.5s ease;
+    transition: all 1s ease;
 }
 
-.editor-toolbar-hide.editor-toolbar-show {
-    height: auto;
-    visibility: visible;
+.editor-toolbar-hide.editor-toolbar-show .tiptap-container {
+    height: inherit;
     opacity: 1;
+    visibility: visible;
     overflow: unset;
-    transition: all 0.5s ease;
+    transition: all 1s ease;
+    animation: reply-box-animation 1s ease;
+}
+
+.editor-button-hide {
+    position: absolute;
+    transform: translateY(10px);
+    opacity: 0;
+}
+
+.editor-button-hide.editor-button-show {
+    position: inherit;
+    transform: translateY(0px);
+    opacity: 1;
+    animation: toolbar-animate 1s ease;
+}
+
+@keyframes reply-box-animation {
+    0% {
+        height: 0;
+        opacity: 0;
+        visibility: hidden;
+        overflow: hidden;
+    }
+    98% {
+        height: 90px;
+        opacity: 1;
+        visibility: visible;
+    }
+    100% {
+        height: inherit;
+        overflow: inherit;
+    }
+}
+
+
+.editor-toolbar-show .tiptap-toolbar {
+    opacity: 1;
+    animation: toolbar-animate 1s ease;
+    /*animation-delay: 0.9s;*/
+}
+
+@keyframes toolbar-animate {
+    0% {
+        opacity: 0;
+    }
+
+    65% {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 @media (max-width: 991px) {

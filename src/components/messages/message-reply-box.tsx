@@ -1081,7 +1081,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                 </div> : null}
 
                             </Flex>
-                            <Flex direction={'column'} className={`${styles.composeBox} ${showEditorToolbar ? 'editor-toolbar-show' : ''} editor-toolbar-hide`} width={'fit-content'}
+                            <Flex direction={'column'} className={`${styles.composeBox} ${showEditorToolbar ? 'editor-button-show' : ''} editor-button-hide`} width={'fit-content'}
                                   marginLeft={'auto'} mr={'6px'} boxShadow={'none'}>
                                 <Flex align={'center'} className={styles.replyButton} position={'relative'} zIndex={6}>
                                     {isDraftCreatedByCurrentUser && (
