@@ -25,7 +25,6 @@ import {
     threadService,
     userService
 } from "@/services";
-import {OnboardingLogoIcon} from "@/icons";
 import {Toaster} from "@/components/common/toaster";
 
 const FeedSidebar = dynamic(
