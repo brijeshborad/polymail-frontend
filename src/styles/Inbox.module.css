@@ -1209,7 +1209,6 @@
     display: flex;
     flex-direction: column;
     box-shadow: 0 0 12px 0 #00000014;
-
 }
 
 .composeBox.composeBoxCloseAnimation {
@@ -1361,11 +1360,13 @@
     from {
         width: 100%;
         height: calc(100vh - 157px);
+        top: 0;
     }
 
     to {
         width: 0;
         height: 0;
+        top: 60px;
     }
 }
 
