@@ -1064,6 +1064,7 @@ div:has(> .mailSendToaster) {
 
 .messageSideBar {
     display: block;
+    position: relative;
 }
 
 .messageSideBar .backToThread {
@@ -1083,6 +1084,30 @@ div:has(> .mailSendToaster) {
 
 .messageSideBar .backToThread:hover {
     background-color: transparent;
+}
+
+.selected-thread .compose-box-animation {
+    position: absolute;
+    width: 100%;
+    height: calc(100vh - 157px);
+    background-color: #0d0d0d;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    animation: compose-animation 0.45s ease-in-out;
+    animation-iteration-count: 1;
+}
+
+@keyframes compose-animation {
+    from {
+        width: 100%;
+        height: calc(100vh - 157px);
+    }
+
+    to {
+        width: 0;
+        height: 0;
+    }
 }
 
 @media (max-width: 991px) {

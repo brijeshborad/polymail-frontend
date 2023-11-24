@@ -425,9 +425,11 @@ export function ComposeBox(props: any) {
 
     return (
         <>
-            <Box className={`${styles.mailBox} ${styles.composeBox}`}
-                 height={'calc(100vh - 157px)'} overflow={'hidden'} borderRadius={'15px'}>
+            <div className={'compose-box-animation'}>
 
+            </div>
+
+            <Box className={`${styles.mailBox} ${styles.composeBox}`} overflow={'hidden'}>
                 <Flex padding={'16px 20px'} align={'center'} justify={'space-between'} gap={3}
                       className={styles.composeHeader} borderBottom={'1px solid #E5E7EB'}>
                     <Flex gap={1} align={'center'}>
