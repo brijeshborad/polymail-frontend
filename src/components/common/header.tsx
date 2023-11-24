@@ -187,7 +187,8 @@ export function Header() {
             <Flex padding={'12px 0'} align={'center'} className={styles.headerLogo}>
                 <Flex className={styles.logo} marginBottom={'-5px'} cursor={'pointer'}
                       onClick={() => changePage('inbox')}>
-                    <OnboardingLogoIcon/>
+                    {/*<OnboardingLogoIcon/>*/}
+                    <Image priority src="/image/icon/logo.png" alt="emoji" width={26} height={30}/>
                 </Flex>
                 <Flex className={styles.headerTabs} align={'center'}>
                     <Flex align={'center'} className={router.pathname === '/inbox' ? styles.tabsActive : ''}

@@ -113,6 +113,11 @@
     max-width: 20px;
 }
 
+.header .logo img {
+    min-width: 26px;
+    max-width: 26px;
+}
+
 .headerTabs {
     gap: 35px;
     padding: 0 50px;
@@ -123,8 +128,12 @@
     font-size: 13px;
     font-weight: 500;
     transition: all 0.5s;
-    opacity: 0.4;
-    color: #08162F;
+    color: #9CA3AF;
+}
+
+.headerTabs div svg{
+    stroke: #9CA3AF;
+    transition: all 0.5s;
 }
 
 .logoContainer {
@@ -147,18 +156,16 @@
 }
 
 .headerTabs div:hover {
-    color: #000000;
-    opacity: 1;
+    color: #0A101D;
 }
 
 .headerTabs div:hover svg {
-    stroke: #000000;
+    stroke: #0A101D;
 }
 
 .headerTabs .tabsActive {
-    color: #000000;
+    color: #0A101D;
     position: relative;
-    opacity: 1;
 }
 
 .headerTabs .tabsActive:after {
@@ -167,11 +174,11 @@
     width: 100%;
     height: 2px;
     background: #000000;
-    bottom: -18px;
+    bottom: -20px;
 }
 
 .headerTabs .tabsActive svg {
-    stroke: #000000;
+    stroke: #0A101D;
     transition: all 0.5s;
 }
 
@@ -243,8 +250,8 @@
 
 .headerSearch .headerSearchInput {
     align-items: center;
-    border: 1px solid #cbd5e0;
-    padding: 6px 35px 6px 8px;
+    border: 0;
+    padding: 9px 35px 9px 8px;
     width: 100%;
     gap: 12px;
     background-color: #F5F5F5;
@@ -337,21 +344,11 @@
     height: 36px;
     width: 36px;
     border-radius: 50px;
-    border: 1px solid rgba(8, 22, 47, 0.2);
-    margin-left: 21px;
+    border: 1px solid #E5E7EB;
+    margin-left: 8px;
     margin-right: 160px;
     background-color: #FFFFFF;
     color: #08162F;
-}
-
-.notificationIcon:hover {
-    background-color: var(--alias-bg-subtle);
-    color: #08162F;
-}
-
-.notificationIcon.notificationIconUnRead {
-    background-color: #08162F;
-    color: #ffffff;
 }
 
 .feedBox {
@@ -386,9 +383,8 @@
 .notificationIcon span {
     position: absolute;
     border-radius: 50px;
-    background-color: #FFFFFF;
-    border: 1px solid #08162F;
-    color: #08162F;
+    background-color: #1F2937;
+    color: #FFFFFF;
     min-width: 16px;
     width: fit-content;
     height: 16px;
@@ -397,6 +393,10 @@
     text-align: center;
     right: -5px;
     top: -5px;
+}
+
+.notificationIcon svg {
+    fill: #374151;
 }
 
 .profile {
