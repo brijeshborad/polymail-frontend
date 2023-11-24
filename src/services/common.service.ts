@@ -12,6 +12,7 @@ import {organizationService} from "@/services/organization.service";
 import LocalStorageService from "@/utils/localstorage.service";
 import {keyNavigationService} from "@/services/key-action.service";
 import {SOCKET_ACTIVITY_EVENTS, SOCKET_EVENTS} from "@/utils/constants";
+import {threadService} from "@/services/threads.service";
 
 dayjs.extend(customParseFormat)
 
@@ -26,13 +27,14 @@ class CommonService extends BaseService {
         return this.getState('commonApis');
     }
 
-    toggleComposing(enable: boolean) {
-        if (!enable) {
+    toggleComposing(enable: boolean, showAnimation: boolean = true) {
+        let {tabValue} = threadService.getThreadState();
+        if (!enable && tabValue !== 'DRAFT' && showAnimation) {
             this.setCommonState({animateCompose: true});
             setTimeout(() => {
                 this.setCommonState({animateCompose: false});
                 this.setCommonState({isComposing: enable});
-            }, 500)
+            }, 300)
         } else {
             this.setCommonState({isComposing: enable});
         }
@@ -41,7 +43,7 @@ class CommonService extends BaseService {
 
     toggleComposingWithThreadSelection(enable: boolean, allowSelection: boolean) {
         this.setCommonState({allowThreadSelection: allowSelection});
-        this.toggleComposing(enable);
+        this.toggleComposing(enable, false);
     }
 
     setCommonState(body: InitialCommonApisStateType) {
