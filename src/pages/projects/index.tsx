@@ -247,8 +247,8 @@ function Index() {
                                                fontWeight={400}
                                                color={'#374151'} lineHeight={'1'} borderRadius={50}
                                                padding={'3px 6px'}>{project.numThreads} thread{(project.numThreads || 0) !== 1 ? 's' : ''}</Badge>
-                                        <Badge backgroundColor={'#EBF2FF'} fontSize={'11px'} color={'#0556FF'} fontWeight={400}
-                                       lineHeight={'1'} borderRadius={50} padding={'4px 6px'} textTransform={'none'}>2 updates</Badge>
+                                       {/* <Badge backgroundColor={'#EBF2FF'} fontSize={'11px'} color={'#0556FF'} fontWeight={400}*/}
+                                       {/*lineHeight={'1'} borderRadius={50} padding={'4px 6px'} textTransform={'none'}>2 updates</Badge>*/}
                                     </Flex>
 
                                     <Flex align={'center'} gap={2}>
