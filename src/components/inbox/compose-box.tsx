@@ -62,6 +62,7 @@ export function ComposeBox(props: any) {
     const {composeDraft} = useSelector((state: StateType) => state.draft);
     const {tabValue} = useSelector((state: StateType) => state.threads);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
+    const {animateCompose} = useSelector((state: StateType) => state.commonApis);
     const dispatch = useDispatch();
     const {isOpen: isOpenProject, onOpen: onOpenProject, onClose: onCloseProject} = useDisclosure();
     const {
@@ -425,11 +426,7 @@ export function ComposeBox(props: any) {
 
     return (
         <>
-            <div className={'compose-box-animation'}>
-
-            </div>
-
-            <Box className={`${styles.mailBox} ${styles.composeBox}`} overflow={'hidden'}>
+            <Box className={`${styles.mailBox} ${styles.composeBox} ${animateCompose ? 'compose-box-animation': ''}`} overflow={'hidden'}>
                 <Flex padding={'16px 20px'} align={'center'} justify={'space-between'} gap={3}
                       className={styles.composeHeader} borderBottom={'1px solid #E5E7EB'}>
                     <Flex gap={1} align={'center'}>

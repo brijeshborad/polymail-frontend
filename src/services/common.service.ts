@@ -27,11 +27,21 @@ class CommonService extends BaseService {
     }
 
     toggleComposing(enable: boolean) {
-        this.setCommonState({isComposing: enable});
+        if (!enable) {
+            this.setCommonState({animateCompose: true});
+            setTimeout(() => {
+                this.setCommonState({animateCompose: false});
+                this.setCommonState({isComposing: enable});
+            }, 500)
+        } else {
+            this.setCommonState({isComposing: enable});
+        }
+
     }
 
     toggleComposingWithThreadSelection(enable: boolean, allowSelection: boolean) {
-        this.setCommonState({isComposing: enable, allowThreadSelection: allowSelection})
+        this.setCommonState({allowThreadSelection: allowSelection});
+        this.toggleComposing(enable);
     }
 
     setCommonState(body: InitialCommonApisStateType) {

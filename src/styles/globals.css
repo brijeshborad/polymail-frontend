@@ -1090,11 +1090,10 @@ div:has(> .mailSendToaster) {
     position: absolute;
     width: 100%;
     height: calc(100vh - 157px);
-    background-color: #0d0d0d;
     z-index: 10;
     top: 0;
     left: 0;
-    animation: compose-animation 0.45s ease-in-out;
+    animation: compose-animation 500ms ease-in-out;
     animation-iteration-count: 1;
 }
 

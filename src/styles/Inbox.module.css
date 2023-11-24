@@ -383,7 +383,7 @@
 .mailBox .mailBodyContent {
     width: 100%;
     padding: 0 16px;
-    /*overflow: hidden;*/
+    overflow-x: hidden;
 }
 
 .mailBox .mailBodyContent.projectMailBodyContent {
@@ -1340,6 +1340,10 @@
 
 .messageListScrollBar.messageScrollBar::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.8);
+}
+
+.mailBox .mailBodyContent .mailBody {
+    min-width: 730px;
 }
 
 @media (max-width: 991px) {
