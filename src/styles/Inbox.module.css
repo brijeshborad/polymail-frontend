@@ -378,12 +378,13 @@
     line-height: 1.5;
     /*width: calc(100% + 32px);*/
     width: 100%;
+    border-radius: 12px;
 }
 
 .mailBox .mailBodyContent {
     width: 100%;
     padding: 0 16px;
-    /*overflow: hidden;*/
+    overflow-x: hidden;
 }
 
 .mailBox .mailBodyContent.projectMailBodyContent {
@@ -1211,6 +1212,16 @@
     box-shadow: 0 0 12px 0 #00000014;
 }
 
+.composeBox.composeBoxCloseAnimation {
+    position: absolute;
+    width: 100%;
+    height: calc(100vh - 157px);
+    z-index: 10;
+    top: 0;
+    left: 0;
+    animation: compose-animation 300ms ease-in-out;
+}
+
 .composeBox .subjectInput::placeholder {
     color: rgba(10, 16, 29, 0.34);
 }
@@ -1340,6 +1351,24 @@
 
 .messageListScrollBar.messageScrollBar::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.8);
+}
+
+.mailBox .mailBodyContent .mailBody {
+    min-width: 730px;
+}
+
+@keyframes compose-animation {
+    from {
+        width: 100%;
+        height: calc(100vh - 157px);
+        top: 0;
+    }
+
+    to {
+        width: 0;
+        height: 0;
+        top: 60px;
+    }
 }
 
 @media (max-width: 991px) {

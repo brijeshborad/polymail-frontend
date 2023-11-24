@@ -19,5 +19,6 @@ export declare type InitialCommonApisStateType = {
   onlineUsers?: {
     threads: { [key: string]: UserProjectOnlineStatus[] },
     projects: { [key: string]: UserProjectOnlineStatus[] }
-  }
+  },
+  animateCompose?: boolean,
 }

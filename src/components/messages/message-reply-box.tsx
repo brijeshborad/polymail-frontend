@@ -76,6 +76,7 @@ export function MessageReplyBox(props: MessageBoxType) {
     const [reloadingEditor, setReloadingEditor] = useState<boolean>(false);
     const [isOnTop, setIsOnTop] = useState(true)
     const [deltaY, setDeltaY] = useState(0)
+    const [focusClass, setFocusClass] = useState<string>('');
 
     const editorRef = useRef<any>(null);
     const router = useRouter();
@@ -568,6 +569,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     }
 
     const handleFocus = () => {
+        setFocusClass('reply-box-focus');
         setShowEditorToolbar(true);
         setIsOnTop(true)
         setDeltaY(0)
@@ -992,6 +994,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                         </div>
                         }
                         <Flex
+                            className={focusClass}
                             onClick={(e) => {
                                 e.stopPropagation();
                                 e.preventDefault();
@@ -1001,20 +1004,18 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                             <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} zIndex={6} ref={editorRef}
                                   overflowY={'auto'} className={`editor-bottom-shadow`}
                                   onScroll={() => handleEditorScroll(true)}>
-                                {/*onWheel={(event) => {*/}
-                                {/*    if (event.deltaX <= 0) {*/}
-                                {/*        handleEditorScroll()*/}
-                                {/*    }*/}
-                                {/*}}*/}
-                                <div style={{display: !showEditorToolbar ? 'block' : 'none'}}>
+                                <div
+                                    className={`${showEditorToolbar ? 'editor-fake-input-hide' : 'editor-fake-input-show'} editor-fake-input`}>
                                     <Input padding={0} height={'fit-content'} border={"none"} cursor={'pointer'}
+                                           lineHeight={'20px'}
                                            outline={'none'} boxShadow={'none'} _focusVisible={{boxShadow: 'none'}}
                                            fontSize={'13px'} _placeholder={{color: '#adb5bd'}}
                                            placeholder={'Hit tab to reply with anything you\'d like'}/>
                                 </div>
                                 {!reloadingEditor &&
                                 (selectedThread && draftIndex !== null) && (
-                                    <div style={{display: showEditorToolbar ? 'block' : 'none'}}>
+                                    <div
+                                        className={`${showEditorToolbar ? 'editor-toolbar-show' : 'editor-toolbar-hide'} editor-toolbar`}>
                                         <CollabRichTextEditor
                                             id={selectedThread.id + '-' + draftIndex}
                                             isAutoFocus={true}
@@ -1080,8 +1081,9 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                 </div> : null}
 
                             </Flex>
-                            {showEditorToolbar &&
-                            <Flex direction={'column'} className={styles.composeBox} width={'fit-content'}
+                            <Flex direction={'column'}
+                                  className={`${styles.composeBox} ${showEditorToolbar ? 'editor-button-show' : 'editor-button-hide'} editor-button`}
+                                  width={'fit-content'}
                                   marginLeft={'auto'} mr={'6px'} boxShadow={'none'}>
                                 <Flex align={'center'} className={styles.replyButton} position={'relative'} zIndex={6}>
                                     {isDraftCreatedByCurrentUser && (
@@ -1120,7 +1122,6 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                     </Flex>
                                 </Flex>
                             </Flex>
-                            }
                         </Flex>
                     </Flex>
                 </Flex>

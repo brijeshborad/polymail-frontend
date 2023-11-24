@@ -60,7 +60,7 @@ export function MessageBoxContent({isProjectView = false}: { isProjectView?: boo
                     <Heading as='h3' size='md' color={'rgba(0, 0, 0, 0.2)'}>Enjoy the beauty of white space.</Heading>
                 </Flex>}
                 {selectedThread && <Flex flexDir={'column'} height={'100%'}>
-                    <MessagesHeader/>
+                    <MessagesHeader isProjectView={isProjectView}/>
                     {getMuteStatus()}
                     {isShowingMessageBox &&
                     <Flex ref={messagesWrapperRef} onScroll={handleScroll} padding={'20px'} gap={5}
