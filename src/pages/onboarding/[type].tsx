@@ -34,23 +34,23 @@ function OnBoardingType() {
                 authService.setAuthState({error: {description: 'Invalid account'}});
 
                 if (router.query.error === 'account_exists') {
-                  Toaster({
-                    type: 'error',
-                    title: 'An account with this email already exists',
-                    desc: 'Try logging in or setting up a different account',
-                  });
+                    Toaster({
+                        type: 'error',
+                        title: 'An account with this email already exists',
+                        desc: 'Try logging in or setting up a different account',
+                    });
                 } else if (router.query.error === 'oauth_error') {
                     Toaster({
                         type: 'error',
                         title: 'An error occurred while signing in',
                         desc: 'Please try again',
-                      });
+                    });
                 } else {
-                  Toaster({
-                    type: 'error',
-                    title: 'An account with this email does not exist',
-                    desc: 'Try signing up or logging in with a different account',
-                  });
+                    Toaster({
+                        type: 'error',
+                        title: 'An account with this email does not exist',
+                        desc: 'Try signing up or logging in with a different account',
+                    });
                 }
 
                 return;
@@ -90,7 +90,7 @@ function OnBoardingType() {
 
     function oauthWithGoogle() {
         let body = {
-            mode: router.query.type === 'login' ? 'login': 'register',
+            mode: router.query.type === 'login' ? 'login' : 'register',
             redirectUrl: getRedirectionUrl(`/onboarding/${router.query.type}`),
             accountType: "google",
             platform: "web"
@@ -130,18 +130,24 @@ function OnBoardingType() {
                     <Heading as='h4' size='md' fontWeight={700} color={'#0A101D'}
                              mb={4}>{router.query.type === 'login' ? 'Log into' : 'Create'} your account</Heading>
                     <Button onClick={() => oauthWithGoogle()} backgroundColor={'#2A6FFF'} w={'fit-content'}
+                            minWidth={'250px'}
                             isDisabled={loginButtonDisabled} _hover={{_disabled: {background: '#2A6FFF'}}}
-                            borderRadius={'2px'} height={'46px'} border={'1px solid #2A6FFF'} mb={3} className={styles.continueButton}
-                            padding={'0 12px 0 0'} justifyContent={'flex-start'} fontWeight={'500'} gap={3} color={'#FFFFFF'}>
-                        <Flex backgroundColor={'#FFFFFF'} padding={'13px'}>
-                            <Image src={'/image/google-logo.png'} alt={''} width={'18px'} height={'18px'} minWidth={'18px'}/>
+                            fontSize={'14px'}
+                            borderRadius={'8px'} border={'1px solid #2A6FFF'} mb={3} className={styles.continueButton}
+                            padding={'4px 12px 4px 4px'} justifyContent={'flex-start'} lineHeight={'1'} height={'auto'}
+                            fontWeight={'500'} gap={3} color={'#FFFFFF'}>
+                        <Flex backgroundColor={'#FFFFFF'} padding={'2px'} borderRadius={6}>
+                            <Image src={'/image/google-logo.png'} alt={''} width={'24px'} height={'24px'}
+                                   minWidth={'24px'}/>
                         </Flex>
                         {router.query.type === 'login' ? 'Sign in' : 'Sign up'} with Google
                     </Button>
                     <Text fontSize='13px' letterSpacing={'-0.13px'}
                           color={'#6B7280'}>{router.query.type === 'login' ? 'If you don\'t have an account' : 'If you already have an account'}, {router.query.type === 'login' ? ' sign up ' : ' log in '}
                         <button style={{textDecoration: 'underline'}}
-                            onClick={() => Router.push(`/onboarding/${router.query.type === 'login' ? 'signup' : 'login'}`, undefined, {shallow: true})}>here</button>.
+                                onClick={() => Router.push(`/onboarding/${router.query.type === 'login' ? 'signup' : 'login'}`, undefined, {shallow: true})}>here
+                        </button>
+                        .
                     </Text>
                 </Flex>
             </OnboardingLayout>
