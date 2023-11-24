@@ -1086,6 +1086,20 @@ div:has(> .mailSendToaster) {
     background-color: transparent;
 }
 
+.editor-toolbar-hide {
+    height: 0;
+    visibility: hidden;
+    opacity: 0;
+    overflow: hidden;
+}
+
+.editor-toolbar-hide.editor-toolbar-show {
+    height: auto;
+    visibility: visible;
+    opacity: 1;
+    overflow: unset;
+}
+
 @media (max-width: 991px) {
     .threadSideBar.selected-thread {
         display: none;

@@ -1014,7 +1014,8 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                 </div>
                                 {!reloadingEditor &&
                                 (selectedThread && draftIndex !== null) && (
-                                    <div style={{display: showEditorToolbar ? 'block' : 'none'}}>
+                                    // <div style={{display: showEditorToolbar ? 'block' : 'none'}}>
+                                        <div className={`${showEditorToolbar ? 'editor-toolbar-show' : ''} editor-toolbar-hide`}>
                                         <CollabRichTextEditor
                                             id={selectedThread.id + '-' + draftIndex}
                                             isAutoFocus={true}
@@ -1080,8 +1081,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                 </div> : null}
 
                             </Flex>
-                            {showEditorToolbar &&
-                            <Flex direction={'column'} className={styles.composeBox} width={'fit-content'}
+                            <Flex direction={'column'} className={`${styles.composeBox} ${showEditorToolbar ? 'editor-toolbar-show' : ''} editor-toolbar-hide`} width={'fit-content'}
                                   marginLeft={'auto'} mr={'6px'} boxShadow={'none'}>
                                 <Flex align={'center'} className={styles.replyButton} position={'relative'} zIndex={6}>
                                     {isDraftCreatedByCurrentUser && (
@@ -1120,7 +1120,47 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                     </Flex>
                                 </Flex>
                             </Flex>
-                            }
+                            {/*{showEditorToolbar &&*/}
+                            {/*<Flex direction={'column'} className={styles.composeBox} width={'fit-content'}*/}
+                            {/*      marginLeft={'auto'} mr={'6px'} boxShadow={'none'}>*/}
+                            {/*    <Flex align={'center'} className={styles.replyButton} position={'relative'} zIndex={6}>*/}
+                            {/*        {isDraftCreatedByCurrentUser && (*/}
+                            {/*            <Button*/}
+                            {/*                className={styles.replyTextDiscardButton}*/}
+                            {/*                outline={'none'} boxShadow={'none'} _focusVisible={{boxShadow: 'none'}}*/}
+                            {/*                fontSize={14} lineHeight={16} height={'38px'}*/}
+                            {/*                onClick={(e) => {*/}
+                            {/*                    e.preventDefault();*/}
+                            {/*                    e.stopPropagation();*/}
+                            {/*                    discardMessage(!!draft?.draftInfo?.discardedBy)*/}
+                            {/*                }}*/}
+                            {/*            > {draft?.draftInfo?.discardedBy ? 'Rescue' : 'Discard'} </Button>*/}
+                            {/*        )}*/}
+                            {/*        <Flex className={styles.messageSendButton}>*/}
+                            {/*            <Button*/}
+                            {/*                isDisabled={showAttachmentLoader || (!draft?.id)}*/}
+                            {/*                className={styles.replyTextButton}*/}
+                            {/*                colorScheme='blue'*/}
+                            {/*                fontSize={14} lineHeight={16}*/}
+                            {/*                onClick={(e) => {*/}
+                            {/*                    e.preventDefault();*/}
+                            {/*                    e.stopPropagation();*/}
+                            {/*                    sendMessages()*/}
+                            {/*                }}*/}
+                            {/*            >*/}
+                            {/*                {scheduledDate ? (*/}
+                            {/*                    <>Send {dayjs(scheduledDate).from(dayjs())} @ {dayjs(scheduledDate).format('hh:mmA')}</>*/}
+                            {/*                ) : (*/}
+                            {/*                    <>Send</>*/}
+                            {/*                )}*/}
+                            {/*            </Button>*/}
+
+                            {/*            <MessageSchedule disabled={showAttachmentLoader || (!draft?.id)}*/}
+                            {/*                             date={scheduledDate} onChange={handleSchedule}/>*/}
+                            {/*        </Flex>*/}
+                            {/*    </Flex>*/}
+                            {/*</Flex>*/}
+                            {/*}*/}
                         </Flex>
                     </Flex>
                 </Flex>
