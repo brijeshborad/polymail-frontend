@@ -28,8 +28,6 @@ import {getPlainTextFromHtml} from "@/utils/editor-common-functions";
 import {commonService, draftService, globalEventService, messageService, threadService} from "@/services";
 import {ProgressBar} from "@/components/loader-screen/progress-bar";
 
-const CreateNewProject = dynamic(() => import('@/components/project/create-new-project').then(mod => mod.default));
-// const Time = dynamic(() => import("@/components/common").then(mod => mod.Time));
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
 const MessageRecipients = dynamic(() => import("../messages/message-recipients").then(mod => mod.default));
 const MessageSchedule = dynamic(() => import("../messages/message-schedule").then(mod => mod.default));
@@ -64,7 +62,6 @@ export function ComposeBox(props: any) {
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const {animateCompose} = useSelector((state: StateType) => state.commonApis);
     const dispatch = useDispatch();
-    const {isOpen: isOpenProject, onOpen: onOpenProject, onClose: onCloseProject} = useDisclosure();
     const {
         isOpen: isDraftConformationModal,
         onOpen: onOpenDraftConformationModal,
@@ -426,7 +423,7 @@ export function ComposeBox(props: any) {
 
     return (
         <>
-            <Box className={`${styles.mailBox} ${styles.composeBox} ${animateCompose ? styles.composeBoxCloseAnimation : styles.composeBoxOpenAnimation}`} overflow={'hidden'}>
+            <Box className={`${styles.mailBox} ${styles.composeBox} ${animateCompose ? styles.composeBoxCloseAnimation : ''}`} overflow={'hidden'}>
                 <Flex padding={'16px 20px'} align={'center'} justify={'space-between'} gap={3}
                       className={styles.composeHeader} borderBottom={'1px solid #E5E7EB'}>
                     <Flex gap={1} align={'center'}>
@@ -485,7 +482,7 @@ export function ComposeBox(props: any) {
                                         // onCreate={() => sendToDraft('')}
                                         onChange={(value) => {
                                             setEmailBody(value);
-                                            draftService.setComposeDraft({
+                                            draftService.setComposeDraftAndResumeDraft({
                                                 ...composeDraft,
                                                 draftInfo: {...composeDraft.draftInfo, body: value}
                                             });
@@ -561,9 +558,6 @@ export function ComposeBox(props: any) {
                     </DropZone>
                 </Flex>
             </Box>
-
-            <CreateNewProject onOpen={onOpenProject} isOpen={isOpenProject} onClose={onCloseProject}/>
-
             <Modal isOpen={isDraftConformationModal} onClose={onOpenDraftConformationModal} isCentered>
                 <ModalOverlay backgroundColor={'rgba(229, 231, 235, 0.50)'} backdropFilter={'blur(16px)'}/>
                 <ModalContent className={'confirm-modal'} borderRadius={12} boxShadow={'0 0 12px 0 rgba(0,0,0, 0.08)'}

@@ -25,7 +25,7 @@ const draftSlice = createSlice({
         createDraftSuccess: (state: InitialDraftStateType, {payload: {draft, isForCompose}}: PayloadAction<any>) => {
             return {
                 ...state,
-                ...(isForCompose ? {composeDraft: draft, updatedComposeDraft: draft} : {draft, updatedDraft: draft}),
+                ...(isForCompose ? {composeDraft: draft, resumeAbleDraft: draft} : {draft, updatedDraft: draft}),
                 isLoading: false
             }
         },

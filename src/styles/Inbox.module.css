@@ -1222,10 +1222,6 @@
     animation: compose-animation 500ms ease-in-out;
 }
 
-.composeBox.composeBoxOpenAnimation {
-    animation: compose-animation 500ms ease-in-out reverse;
-}
-
 .composeBox .subjectInput::placeholder {
     color: rgba(10, 16, 29, 0.34);
 }

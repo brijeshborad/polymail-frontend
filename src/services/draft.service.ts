@@ -24,6 +24,11 @@ class DraftService extends BaseService {
         this.setDraftState({composeDraft: draft});
     }
 
+    setComposeDraftAndResumeDraft(draft: MessageDraft | null | undefined) {
+        this.setComposeDraft(draft);
+        this.setResumeDraft(draft);
+    }
+
     setReplyDraft(draft: MessageDraft | null) {
         this.setDraftState({draft: draft});
     }

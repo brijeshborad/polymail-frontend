@@ -12,8 +12,8 @@ export default function Logout() {
         authService.setUser(null);
         accountService.setSelectedAccount(null);
         organizationService.setSelectedOrganization(null);
+        LocalStorageService.clearStorage();
         setTimeout(() => {
-            LocalStorageService.clearStorage();
             Router.push('/onboarding/login');
         }, 1000);
     }, [])
