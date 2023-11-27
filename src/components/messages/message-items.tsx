@@ -1,7 +1,7 @@
-import {Message as MessageModel, Message, MessageAttachments} from "@/models";
+import {Message as MessageModel, Message, MessageAttachments, Thread} from "@/models";
 import {Button, Flex, Heading, Menu, MenuButton, MenuItem, MenuList, Text} from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
-import {Time} from "@/components/common";
+import {Time, UsersOnline} from "@/components/common";
 import {EyeSlashedIcon} from "@/icons/eye-slashed.icon";
 import {MenuIcon} from "@/icons";
 import Tooltip from "@/components/common/Tooltip";
@@ -9,11 +9,21 @@ import IframeLoader from "@/components/common/iframe-loader";
 import React, {useEffect, useState} from "react";
 import {getAttachmentDownloadUrl, updateMessage} from "@/redux/messages/action-reducer";
 import {globalEventService, messageService, threadService} from "@/services";
-import {clearDebounce, debounce} from "@/utils/common.functions";
+import {clearDebounce, debounce, generateToasterId} from "@/utils/common.functions";
 import {AttachmentIcon} from "@chakra-ui/icons";
 import {DefaultExtensionType, defaultStyles, FileIcon} from "react-file-icon";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
+import {
+    MAILBOX_ARCHIVE,
+    MAILBOX_INBOX, MAILBOX_SNOOZED,
+    MAILBOX_SPAM,
+    MAILBOX_STARRED,
+    MAILBOX_TRASH,
+    MAILBOX_UNREAD
+} from "@/utils/constants";
+import dayjs from "dayjs";
+import {updateThreads} from "@/redux/threads/action-reducer";
 
 export function MessageItems() {
     const dispatch = useDispatch();
@@ -245,12 +255,11 @@ export function MessageItems() {
     return (
         inboxMessages && inboxMessages.length > 0 && inboxMessages.map((message: Message, messageIndex) => (
             <Flex position={'relative'} direction={'column'} key={messageIndex}
-                  className={`${styles.oldMail} ${messageIndex === index ? styles.lastOpenMail : ''}`} mb={3}
-                  gap={4}
-                  border={'1px solid #F3F4F6'} borderRadius={12} align={'center'}>
+                  className={`${styles.oldMail} ${messageIndex === index ? styles.lastOpenMail : ''}`} mb={2}
+                  gap={4} border={'1px solid #E5E7EB'} borderRadius={12} align={'center'}>
                 {messageIndex !== index &&
                 <Flex align={'flex-start'} width={'100%'} _hover={{backgroundColor: 'rgba(0, 0, 0, 0.01)'}}>
-                    <Flex align={'center'} w={'100%'} gap={2} cursor={'pointer'} padding={4}
+                    <Flex align={'center'} w={'100%'} gap={2} cursor={'pointer'} padding={3} borderColor={'#E5E7EB'}
                           onClick={() => handleRowClick(messageIndex)} className={styles.mailBoxHideMail}>
                         {/*<div className={styles.mailBoxUserImage}>*/}
 
@@ -266,8 +275,8 @@ export function MessageItems() {
                                     <Time time={message.created || ''} isShowFullTime={true}
                                           showTimeInShortForm={false}/>
                                 </span>
-                            <Text fontSize='13px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
-                                  fontWeight={400}>
+                            <Text fontSize='13px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1.2}
+                                  fontWeight={400} noOfLines={1}>
                                 <span dangerouslySetInnerHTML={{__html: message.snippet || ''}}/>
                             </Text>
                         </Flex>
@@ -322,7 +331,7 @@ export function MessageItems() {
                 {messageIndex === index &&
                 <Flex direction={'column'} w={'100%'} pb={4}>
                     <Flex align={'flex-start'} className={styles.mailBoxMailHeader}>
-                        <Flex align={'center'} w={'100%'} cursor={'pointer'} gap={2} padding={4}
+                        <Flex align={'center'} w={'100%'} cursor={'pointer'} gap={2} py={4} pr={4} pl={3}
                               onClick={() => handleRowClick(messageIndex)}>
                             {/*<div className={styles.mailBoxUserImage}>*/}
 

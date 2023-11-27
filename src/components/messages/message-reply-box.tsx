@@ -842,7 +842,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 <Flex
                     maxHeight={'450px'} direction={'column'} backgroundColor={'#FFFFFF'} width={'100%'}
                     onBlur={() => handleBlur()}>
-                    <Flex borderRadius={8} border={'1px solid #F3F4F6'} direction={'column'} paddingX={4} paddingY={2}>
+                    <Flex borderRadius={8} border={'1px solid #E5E7EB'} direction={'column'} paddingX={4} paddingY={2}>
                         {totalDraftMessages.length > 0 &&
                         <Flex align={'center'} justifyContent={'space-between'} pb={2}
                               borderBottom={'1px solid #F3F4F6'}>
@@ -889,7 +889,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                             e.stopPropagation()
                                             setIsReplyDropdownOpen(true)
                                         }}
-                                        color={'#6B7280'} variant='link' size='xs'
+                                        color={'#6B7280'} fontWeight={'500'} variant='link' size='xs'
                                         as={Button} rightIcon={<ChevronDownIcon/>}
                                     >
                                         {typeName(replyType)}

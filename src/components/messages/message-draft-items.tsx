@@ -57,7 +57,7 @@ export function MessageDraftItems() {
             }
             return (
                 <div key={messageIndex}>
-                    <Flex direction={'column'} cursor={'pointer'} mb={3} onClick={() => {
+                    <Flex direction={'column'} cursor={'pointer'} mb={2} onClick={() => {
                         globalEventService.fireEvent({data: {draftId: message.id}, type: 'draft.updateIndex'})
                     }} gap={2} padding={4} borderRadius={'10px'} border={'1px dashed #E5E7EB'}>
                         <Flex align={'center'} justify={'space-between'} gap={2}>

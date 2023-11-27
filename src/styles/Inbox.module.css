@@ -337,7 +337,7 @@
     border: 1px solid #F3F4F6;
     border-radius: 16px;
     background-color: white;
-    height: calc(100vh - 157px)
+    height: calc(100vh - 192px)
 }
 
 .mailBox .mailBoxMailList {
@@ -383,7 +383,7 @@
 
 .mailBox .mailBodyContent {
     width: 100%;
-    padding: 0 16px;
+    /*padding: 0 16px;*/
     overflow-x: auto;
 }
 
