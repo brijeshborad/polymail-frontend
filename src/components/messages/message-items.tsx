@@ -6,7 +6,7 @@ import {EyeSlashedIcon} from "@/icons/eye-slashed.icon";
 import {MenuIcon} from "@/icons";
 import Tooltip from "@/components/common/Tooltip";
 import IframeLoader from "@/components/common/iframe-loader";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {getAttachmentDownloadUrl, updateMessage} from "@/redux/messages/action-reducer";
 import {globalEventService, messageService, threadService} from "@/services";
 import {clearDebounce, debounce} from "@/utils/common.functions";
@@ -17,6 +17,7 @@ import {StateType} from "@/types";
 
 export function MessageItems() {
     const dispatch = useDispatch();
+    const lastMessageRef = useRef<HTMLDivElement | null | any>(null)
 
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
     const {selectedThread: currentSelectedThread} = useSelector((state: StateType) => state.threads);
@@ -64,6 +65,13 @@ export function MessageItems() {
             setIsMoreMenuOpen([...finalArray]);
             setIsAttachmentOpen([...finalArray]);
             setIndex(currentInboxMessages.length - 1);
+            if (currentInboxMessages.length > 1) {
+                setTimeout(() => {
+                    if (lastMessageRef && lastMessageRef.current) {
+                        lastMessageRef.current.scrollIntoView({behavior: 'smooth'});
+                    }
+                }, 700);
+            }
         }
     }, [messages, dispatch])
 
@@ -319,7 +327,7 @@ export function MessageItems() {
                 }
 
                 {messageIndex === index &&
-                <Flex direction={'column'} w={'100%'} pb={4}>
+                <Flex direction={'column'} w={'100%'} pb={4} ref={lastMessageRef}>
                     <Flex align={'flex-start'} className={styles.mailBoxMailHeader}>
                         <Flex align={'center'} w={'100%'} cursor={'pointer'} gap={2} py={4} pr={4} pl={3}
                               onClick={() => handleRowClick(messageIndex)}>
