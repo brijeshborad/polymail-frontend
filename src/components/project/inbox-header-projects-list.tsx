@@ -65,7 +65,7 @@ export function InboxHeaderProjectsList() {
                 <Button alignItems={'center'} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
                         onClick={() => commonService.toggleCreateProjectModel(true, true)} padding={'7px'}
                         minWidth={'216px'} _hover={{backgroundColor: 'var(--alias-bg-subtle)'}}
-                        border={'1px dashed #E5E7EB'} borderRadius={'8px'} h={'fit-content'}
+                        border={'1px dashed #E5E7EB'} borderRadius={'8px'} h={'fit-content'} color={'#0A101D'}
                         maxWidth={'216px'} className={'create-project-button'}>
                     <div className={'folder-icon'}>
                         <PlusIcon/>

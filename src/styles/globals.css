@@ -276,7 +276,7 @@ div:has(> .mailSendToaster) {
 }
 
 .folder-icon svg {
-    stroke: #374151;
+    stroke: #FFFFFF;
 }
 
 .readThreadIcon {
