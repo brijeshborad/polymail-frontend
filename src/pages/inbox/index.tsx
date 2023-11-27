@@ -25,8 +25,7 @@ function InboxPage() {
                     <GridItem w='100%' className={'threadSideBar'} id={'inbox-thread-side-bar'}>
                         <ThreadsSideBar/>
                     </GridItem>
-                    <GridItem w='100%' className={'messageSideBar'} id={'inbox-message-side-bar'}
-                              style={{overflow: 'hidden'}}>
+                    <GridItem w='100%' className={'messageSideBar'} id={'inbox-message-side-bar'}>
                         <Message/>
                     </GridItem>
                 </Grid>
