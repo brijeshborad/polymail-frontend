@@ -265,8 +265,7 @@
 }
 
 .mailDetailsSelected {
-    border-color: #6B7280;
-    box-shadow: 0 0 0 3px #e5e7eb;
+    border-color: #76A2FF;
 }
 
 .mailDetails .SenderIcon svg {
@@ -960,7 +959,7 @@
 
 .selectedThread .mailDetailsSelected {
     border-color: #76A2FF;
-    box-shadow: 0 0 0 3px #e5e7eb;
+    box-shadow: none;
 }
 
 .mailMessageOption button {
