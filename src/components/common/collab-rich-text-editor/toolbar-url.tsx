@@ -62,7 +62,8 @@ export default function ToolbarUrl({isOpen, onChangeVisibility, onChange, editor
                                 color={'#fff'}
                                 fontSize={13}
                                 paddingX={8} paddingY={4}
-                                className='button'
+                                _hover={{backgroundColor: '#000000'}}
+                                className='button add-button'
                                 onClick={() => {
                                     onChange(url);
                                     editor.chain().focus().unsetHighlight().run();

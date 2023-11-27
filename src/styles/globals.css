@@ -1242,6 +1242,10 @@ div:has(> .mailSendToaster) {
     animation: editor-input-animation-hide 500ms ease;
 }
 
+.link-modal-ui .add-button:hover {
+    background-color: #000000;
+}
+
 @keyframes editor-input-animation {
     0% {
         height: 20px;
