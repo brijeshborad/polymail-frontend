@@ -1218,6 +1218,20 @@
     animation: compose-animation 300ms ease-in-out;
 }
 
+.composeBox.composeBoxFadeAnimation {
+    opacity: 1;
+    animation: compose-box-fade-animation 500ms ease-in-out;
+}
+
+@keyframes compose-box-fade-animation {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
 .composeBox .subjectInput::placeholder {
     color: rgba(10, 16, 29, 0.34);
 }
