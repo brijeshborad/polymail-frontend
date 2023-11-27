@@ -1355,13 +1355,16 @@
 
 @keyframes compose-animation {
     from {
-        /*width: 100%;*/
-        /*height: calc(100vh - 157px);*/
-        /*top: 0;*/
+        width: 100%;
+        height: calc(100vh - 157px);
+        top: 0;
         opacity: 1;
     }
 
     to {
+        width: 0;
+        height: 0;
+        top: 60px;
         opacity: 0;
     }
 }
