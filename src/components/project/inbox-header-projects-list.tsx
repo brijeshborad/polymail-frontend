@@ -78,7 +78,7 @@ export function InboxHeaderProjectsList() {
                 {loadedFirstTime && <>
                     {projectData && !!projectData.length && (projectData || []).map((project: Project, index: number) => (
                         <Button onClick={() => gotoProject(project.id!)} ref={projectButtonRef}
-                                className={'header-project-name-button'}
+                                className={'header-project-name-button'} color={'#0A101D'}
                                 key={index} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
                                 border={'1px solid #F3F4F6'} h={'fit-content'}
                                 _hover={{backgroundColor: 'var(--alias-bg-subtle)'}}
@@ -99,7 +99,7 @@ export function InboxHeaderProjectsList() {
                             onClick={() => changePage()} padding={'7px'} minWidth={'216px'}
                             _hover={{backgroundColor: 'var(--alias-bg-subtle)'}}
                             border={'1px solid #F3F4F6'} borderRadius={'8px'} h={'fit-content'}
-                            className={'header-project-name-button'}
+                            className={'header-project-name-button'} color={'#0A101D'}
                             maxWidth={'216px'}>
                         <div className={'folder-icon'}>
                             <FolderIcon/>

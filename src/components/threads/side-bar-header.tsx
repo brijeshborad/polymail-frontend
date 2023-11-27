@@ -281,7 +281,7 @@ export function SideBarHeader() {
                                 <InboxIcon/>
                                 <span className={styles.mailboxText}>Inbox</span>
                                 {countUnreadMessages > 0 &&
-                                <Badge>{countUnreadMessages}</Badge>}
+                                <Badge backgroundColor={'#F3F4F6'}>{countUnreadMessages}</Badge>}
                             </div>
                         </Tooltip>
                     </Tab>
