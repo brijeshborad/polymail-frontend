@@ -1002,7 +1002,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                             }}
                             direction={'column'} position={"relative"} flex={1} overflow={'none'}>
                             <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} zIndex={6} ref={editorRef}
-                                  overflowY={'auto'} className={`editor-bottom-shadow`}
+                                  overflowY={`${showEditorToolbar ? 'auto' : 'unset'}`} className={`editor-bottom-shadow ${showEditorToolbar ? 'editor-scroll-bar' : ''}`}
                                   onScroll={() => handleEditorScroll(true)}>
                                 <div
                                     className={`${showEditorToolbar ? 'editor-fake-input-hide' : 'editor-fake-input-show'} editor-fake-input`}>
