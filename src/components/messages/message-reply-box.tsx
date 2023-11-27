@@ -843,7 +843,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                     maxHeight={'450px'} direction={'column'} backgroundColor={'#FFFFFF'} width={'100%'}
                     onBlur={() => handleBlur()}>
                     <Flex borderRadius={8} border={'1px solid #E5E7EB'} direction={'column'} paddingX={4} paddingY={2}>
-                        {props.isProjectView && totalDraftMessages.length > 0 &&
+                        {(selectedThread && selectedThread?.projects && selectedThread?.projects?.length > 0 && totalDraftMessages.length > 0) &&
                         <Flex align={'center'} justifyContent={'space-between'} pb={2}
                               borderBottom={'1px solid #F3F4F6'}>
                             <Flex gap={2}>
@@ -870,16 +870,17 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                     Draft
                                 </Text>
                             </Flex>
+                            {props.isProjectView &&
                             <Button fontSize={'13px'} fontWeight={'500'} border={'1px solid #FFFFFF'}
                                     onClick={() => createNewDraft()}
                                     background={'#F3F4F6'} borderRadius={'34px'} padding={'6px 8px'}
                                     height={'fit-content'}>
                                 Create new draft
-                            </Button>
+                            </Button>}
                         </Flex>}
                         <Flex
                             align={'center'} justify={'space-between'}
-                            mt={props.isProjectView && totalDraftMessages.length > 0 ? '5px' : 0}
+                            mt={(selectedThread && selectedThread?.projects && selectedThread?.projects?.length > 0 && totalDraftMessages.length > 0) ? '5px' : 0}
                             gap={4} position={"relative"}
                             zIndex={isReplyDropdownOpen ? 8 : 6}>
                             <Flex align={'center'} gap={1}>
