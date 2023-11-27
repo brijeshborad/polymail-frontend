@@ -263,21 +263,6 @@ export function HeaderSearch() {
                     <SearchIcon/>
                     <Flex gap={1} flex={1} overflow={'auto'} width={'calc(100vw - 810px)'}
                           className={styles.searchBarHeaderInput}>
-                        <Flex maxWidth={'600px'}>
-                            <Input
-                                style={{width: Math.max(searchString.length, getSearchPlaceHolder().length) * 7.7 + 'px'}}
-                                className={`${badges.length > 0 ? styles.headerSearchBadgeInput : ''}`}
-                                flex={'0 0 auto'}
-                                minWidth={'70px'}
-                                type="text"
-                                placeholder={getSearchPlaceHolder()}
-                                onChange={event => {
-                                    setSearchString(event.target.value);
-                                }}
-                                ref={searchInputRef}
-                                value={searchString}
-                                onKeyDown={e => handleKeyDown(e)}
-                            />
                             <Flex className={styles.headerSearchChip} alignItems={'center'}
                                   gap={1}>
                                 {badges.map((badge: any, index: number) => {
@@ -299,7 +284,22 @@ export function HeaderSearch() {
                                     )
                                 })}
                             </Flex>
-                        </Flex>
+                            <Input
+                                // style={{width: Math.max(searchString.length, getSearchPlaceHolder().length) * 7.7 + 'px'}}
+                                // className={`${badges.length > 0 ? styles.headerSearchBadgeInput : ''}`}
+                                flex={'1'}
+                                minWidth={'70px'}
+                                type="text"
+                                placeholder={getSearchPlaceHolder()}
+                                onChange={event => {
+                                    setSearchString(event.target.value);
+                                }}
+                                ref={searchInputRef}
+                                value={searchString}
+                                onKeyDown={e => handleKeyDown(e)}
+                            />
+                        {/*<Flex >*/}
+                        {/*</Flex>*/}
                     </Flex>
                     <InputRightElement>
                         {showCloseIcon ? <div className={styles.inputRight} style={{background: "transparent"}}

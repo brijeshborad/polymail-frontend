@@ -1,5 +1,5 @@
 import {MessageBoxLoader} from "@/components/messages/message-view/message-box-loader";
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useState} from "react";
 import {useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {Flex, Heading, Text} from "@chakra-ui/react";
@@ -7,6 +7,7 @@ import styles from "@/styles/Inbox.module.css";
 import {debounce} from "@/utils/common.functions";
 import dynamic from "next/dynamic";
 import {MuteIcon} from "@/icons";
+import {useAllLoader} from "@/hooks/all-loader.hook";
 
 const MessagesHeader = dynamic(() => import('@/components/messages/messages-header').then(mod => mod.MessagesHeader));
 const MessageBox = dynamic(() => import('@/components/messages/message-box').then(mod => mod.MessageBox));
@@ -15,29 +16,16 @@ const MessageReplyBox = dynamic(() => import('@/components/messages/message-repl
 export function MessageBoxContent({isProjectView = false}: { isProjectView?: boolean }) {
     const messagesWrapperRef = React.useRef<HTMLDivElement | null | any>(null);
 
-    const {isLoading: threadLoading, selectedThread} = useSelector((state: StateType) => state.threads);
-    const {isLoading: accountLoading} = useSelector((state: StateType) => state.accounts);
-    const {isLoading: organizationLoading} = useSelector((state: StateType) => state.organizations);
-    const {isLoading: usersProfilePictureLoading} = useSelector((state: StateType) => state.users);
-    const {isLoading: projectsLoading} = useSelector((state: StateType) => state.projects);
-    const {isLoading: summaryLoading, syncingEmails} = useSelector((state: StateType) => state.commonApis);
+    const {selectedThread} = useSelector((state: StateType) => state.threads);
     const {showMessageBox: isShowingMessageBox} = useSelector((state: StateType) => state.messages);
-
-    const [isLoaderShow, setIsLoaderShow] = useState<boolean>(false);
     const [showScrollBar, setShowScrollBar] = useState<boolean>(false);
+
+    const isLoaderShow = useAllLoader();
 
     const handleScroll = useCallback(() => {
         setShowScrollBar(true);
         debounce(() => setShowScrollBar(false), 500, 'MESSAGE_LIST_SCROLLBAR');
     }, [])
-
-    useEffect(() => {
-        if (!threadLoading && !accountLoading && !organizationLoading && !usersProfilePictureLoading && !projectsLoading && !summaryLoading && !syncingEmails) {
-            setIsLoaderShow(false)
-        } else {
-            setIsLoaderShow(true)
-        }
-    }, [threadLoading, accountLoading, organizationLoading, usersProfilePictureLoading, projectsLoading, summaryLoading, syncingEmails])
 
     function getMuteStatus() {
         if (selectedThread && selectedThread.mute) {

@@ -14,10 +14,10 @@ export function ThreadsSideBar() {
     return (
         <>
             <UrlManager/>
-            <Flex direction={'column'} gap={5} className={styles.mailListTabs}>
-                <Tabs>
+            <Flex direction={'column'} gap={5} className={styles.mailListTabs} height={'100%'}>
+                <Tabs flex={1} display={'flex'} flexDirection={'column'}>
                     <SideBarHeader/>
-                    <TabPanels marginTop={3}>
+                    <TabPanels marginTop={3} flex={1} display={'flex'} flexDirection={'column'}>
                         <ThreadsSideBarTab/>
                     </TabPanels>
                 </Tabs>

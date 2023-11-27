@@ -121,7 +121,15 @@ export function MessageReplyBox(props: MessageBoxType) {
             let draftMessages = [...messages].filter((item: MessageDraft) => item.mailboxes?.includes('DRAFT') && !item.draftInfo?.discardedBy)
             setTotalDraftMessages([...draftMessages]);
             if (draftIndex === null) {
-                setDraftIndex(messages.length);
+                if (draftMessages.length > 0) {
+                    let findFirstDraftIndex = messages.findIndex((t: MessageDraft) => t.mailboxes?.includes('DRAFT') && !t.draftInfo?.discardedBy);
+                    setDraftIndex(findFirstDraftIndex !== -1 ? findFirstDraftIndex : messages.length);
+                    if (findFirstDraftIndex !== -1) {
+                        draftService.setReplyDraft(messages[findFirstDraftIndex]);
+                    }
+                } else {
+                    setDraftIndex(messages.length);
+                }
             }
         }
     }, [totalMessages, draftIndex])
@@ -843,7 +851,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                     maxHeight={'450px'} direction={'column'} backgroundColor={'#FFFFFF'} width={'100%'}
                     onBlur={() => handleBlur()}>
                     <Flex borderRadius={8} border={'1px solid #E5E7EB'} direction={'column'} paddingX={4} paddingY={2}>
-                        {totalDraftMessages.length > 0 &&
+                        {(selectedThread && selectedThread?.projects && selectedThread?.projects?.length > 0 && totalDraftMessages.length > 0) &&
                         <Flex align={'center'} justifyContent={'space-between'} pb={2}
                               borderBottom={'1px solid #F3F4F6'}>
                             <Flex gap={2}>
@@ -879,7 +887,8 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                             </Button>}
                         </Flex>}
                         <Flex
-                            align={'center'} justify={'space-between'} mt={totalDraftMessages.length > 0 ? '5px' : 0}
+                            align={'center'} justify={'space-between'}
+                            mt={(selectedThread && selectedThread?.projects && selectedThread?.projects?.length > 0 && totalDraftMessages.length > 0) ? '5px' : 0}
                             gap={4} position={"relative"}
                             zIndex={isReplyDropdownOpen ? 8 : 6}>
                             <Flex align={'center'} gap={1}>
@@ -1002,7 +1011,8 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                             }}
                             direction={'column'} position={"relative"} flex={1} overflow={'none'}>
                             <Flex direction={'column'} maxH={`calc(315px - ${divHeight}px)`} zIndex={6} ref={editorRef}
-                                  overflowY={'auto'} className={`editor-bottom-shadow`}
+                                  overflowY={`${showEditorToolbar ? 'auto' : 'unset'}`}
+                                  className={`editor-bottom-shadow ${showEditorToolbar ? 'editor-scroll-bar' : ''}`}
                                   onScroll={() => handleEditorScroll(true)}>
                                 <div
                                     className={`${showEditorToolbar ? 'editor-fake-input-hide' : 'editor-fake-input-show'} editor-fake-input`}>
@@ -1064,25 +1074,26 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                     </div>
                                 )}
 
-                                {attachments && attachments.length > 0 ? <Flex mt={3} align={'center'} flexWrap={'wrap'} gap={3}>
-                                    {attachments.map((item, index: number) => (
-                                        <Flex align={'center'} borderRadius={'50px'} border={'1px solid #E5E7EB'}
-                                              fontSize={'12px'} color={'#6B7280'} fontWeight={400} key={index}
-                                              backgroundColor={'#FFFFFF'} gap={1} className={styles.attachmentsFile}
-                                              padding={'3px 8px 3px 6px'}
-                                        >
-                                            {item.filename}
-                                            <Flex gap={3} className={'attachments-progress-bar'}>
-                                                {(showAttachmentLoader && !item.isUploaded) &&
-                                                <ProgressBar loaderPercentage={loaderPercentage}/>}
-                                                <div className={styles.closeIcon}
-                                                     onClick={() => removeAttachmentData(index)}>
-                                                    <CloseIcon/>
-                                                </div>
+                                {attachments && attachments.length > 0 ?
+                                    <Flex mt={3} align={'center'} flexWrap={'wrap'} gap={3}>
+                                        {attachments.map((item, index: number) => (
+                                            <Flex align={'center'} borderRadius={'50px'} border={'1px solid #E5E7EB'}
+                                                  fontSize={'12px'} color={'#6B7280'} fontWeight={400} key={index}
+                                                  backgroundColor={'#FFFFFF'} gap={1} className={styles.attachmentsFile}
+                                                  padding={'3px 8px 3px 6px'}
+                                            >
+                                                {item.filename}
+                                                <Flex gap={3} className={'attachments-progress-bar'}>
+                                                    {(showAttachmentLoader && !item.isUploaded) &&
+                                                    <ProgressBar loaderPercentage={loaderPercentage}/>}
+                                                    <div className={styles.closeIcon}
+                                                         onClick={() => removeAttachmentData(index)}>
+                                                        <CloseIcon/>
+                                                    </div>
+                                                </Flex>
                                             </Flex>
-                                        </Flex>
-                                    ))}
-                                </Flex> : null}
+                                        ))}
+                                    </Flex> : null}
 
                             </Flex>
                             <Flex direction={'column'}

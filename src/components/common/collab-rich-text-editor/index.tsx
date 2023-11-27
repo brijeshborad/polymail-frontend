@@ -95,11 +95,8 @@ export default function CollabRichTextEditor({
             if (!projectShare && isComposing && project) {
                 finalContent += getProjectBanner(selectedAccount)
             }
-
             editor.commands.setContent(finalContent.trim(), false)
-            if (isCompose) {
-                onChange(finalContent.trim());
-            }
+            onChange(finalContent.trim());
         }
         if (isAutoFocus) {
             editor.commands.focus('start')
