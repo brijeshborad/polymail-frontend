@@ -121,7 +121,15 @@ export function MessageReplyBox(props: MessageBoxType) {
             let draftMessages = [...messages].filter((item: MessageDraft) => item.mailboxes?.includes('DRAFT') && !item.draftInfo?.discardedBy)
             setTotalDraftMessages([...draftMessages]);
             if (draftIndex === null) {
-                setDraftIndex(messages.length);
+                if (draftMessages.length > 0) {
+                    let findFirstDraftIndex = messages.findIndex((t: MessageDraft) => t.mailboxes?.includes('DRAFT') && !t.draftInfo?.discardedBy);
+                    setDraftIndex(findFirstDraftIndex !== -1 ? findFirstDraftIndex : messages.length);
+                    if (findFirstDraftIndex !== -1) {
+                        draftService.setReplyDraft(messages[findFirstDraftIndex]);
+                    }
+                } else {
+                    setDraftIndex(messages.length);
+                }
             }
         }
     }, [totalMessages, draftIndex])
