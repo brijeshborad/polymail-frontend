@@ -243,11 +243,6 @@
     box-shadow: rgb(49, 130, 206) 0 0 0 1px;
 }
 
-.headerSearch.headerSearchPopup .headerSearchInput .headerSearchBadgeInput {
-    flex: none;
-    padding: 0;
-}
-
 .headerSearch .headerSearchInput {
     align-items: center;
     border: 0;
