@@ -1,7 +1,7 @@
-import {Message as MessageModel, Message, MessageAttachments, Thread} from "@/models";
+import {Message as MessageModel, Message, MessageAttachments} from "@/models";
 import {Button, Flex, Heading, Menu, MenuButton, MenuItem, MenuList, Text} from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
-import {Time, UsersOnline} from "@/components/common";
+import {Time} from "@/components/common";
 import {EyeSlashedIcon} from "@/icons/eye-slashed.icon";
 import {MenuIcon} from "@/icons";
 import Tooltip from "@/components/common/Tooltip";
@@ -9,21 +9,11 @@ import IframeLoader from "@/components/common/iframe-loader";
 import React, {useEffect, useState} from "react";
 import {getAttachmentDownloadUrl, updateMessage} from "@/redux/messages/action-reducer";
 import {globalEventService, messageService, threadService} from "@/services";
-import {clearDebounce, debounce, generateToasterId} from "@/utils/common.functions";
+import {clearDebounce, debounce} from "@/utils/common.functions";
 import {AttachmentIcon} from "@chakra-ui/icons";
 import {DefaultExtensionType, defaultStyles, FileIcon} from "react-file-icon";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {
-    MAILBOX_ARCHIVE,
-    MAILBOX_INBOX, MAILBOX_SNOOZED,
-    MAILBOX_SPAM,
-    MAILBOX_STARRED,
-    MAILBOX_TRASH,
-    MAILBOX_UNREAD
-} from "@/utils/constants";
-import dayjs from "dayjs";
-import {updateThreads} from "@/redux/threads/action-reducer";
 
 export function MessageItems() {
     const dispatch = useDispatch();
