@@ -336,7 +336,7 @@
     border: 1px solid #F3F4F6;
     border-radius: 16px;
     background-color: white;
-    height: calc(100vh - 192px)
+    height: calc(100vh - 157px)
 }
 
 .mailBox .mailBoxMailList {
@@ -1425,6 +1425,10 @@
 }
 
 @media (min-width: 992px) and (max-width: 1431px) {
+    .mailListTabs .composeButton .composeButtonText {
+        display: none;
+    }
+
     .mailListTabs .composeButton {
         min-width: 1px;
         width: fit-content;
@@ -1434,9 +1438,17 @@
         margin: 0;
     }
 
+    .mailTabList .emailTabs .active .mailboxText {
+        display: none;
+    }
+
     .mailTabList .tabListMoreButton {
         min-width: 1px;
         padding-left: 10px;
+    }
+
+    .mailTabList .tabListMoreButton span:first-child {
+        display: none;
     }
 }
 
