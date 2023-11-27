@@ -285,8 +285,8 @@ export function HeaderSearch() {
                                 })}
                             </Flex>
                             <Input
-                            style={{width: Math.max(searchString.length, getSearchPlaceHolder().length) * 7.7 + 'px'}}
-                                className={`${badges.length > 0 ? styles.headerSearchBadgeInput : ''}`}
+                                // style={{width: Math.max(searchString.length, getSearchPlaceHolder().length) * 7.7 + 'px'}}
+                                // className={`${badges.length > 0 ? styles.headerSearchBadgeInput : ''}`}
                                 flex={'1'}
                                 minWidth={'70px'}
                                 type="text"
