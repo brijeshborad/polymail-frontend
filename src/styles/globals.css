@@ -515,6 +515,9 @@ div:has(> .mailSendToaster) {
 .project-list-shadow {
     position: relative;
     user-select: none;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .project-list-shadow .project-list-top-shadow:before {

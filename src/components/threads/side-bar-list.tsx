@@ -1,6 +1,6 @@
 import {MessageDraft, Thread} from "@/models";
 import styles from "@/styles/Inbox.module.css";
-import {Flex, Input} from "@chakra-ui/react";
+import {Flex, Heading, Input} from "@chakra-ui/react";
 import React, {useEffect, useCallback, useRef, useState} from "react";
 import {useSelector} from "react-redux";
 import {StateType} from "@/types";
@@ -192,7 +192,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     return (
         <>
             <div className={'project-list-shadow'}>
-                <Flex direction={'column'} marginTop={3} pb={3} ref={editorRef}
+                <Flex direction={'column'} marginTop={3} pb={3} ref={editorRef} flex={1}
                       onScroll={() => handleEditorScroll()} id={'scrollableDiv'}
                       className={`${styles.mailList} ${extraClassNames} ${extraClassNamesForBottom} ${routePaths.includes('projects') ? styles.projectMailList : ''} ${showScrollBar ? styles.scrollBar : ''}`}>
                     <Input type={'text'} opacity={0} height={0} width={0} padding={0} border={0} outline={0}
@@ -214,6 +214,11 @@ export function ThreadsSideBarList(props: ThreadListProps) {
                             </div>
                         ))}
                     </InfiniteScroll>
+                    {currentThreads.length === 0 && <Flex flex={1} align={'center'} justify={'center'}>
+                        <Heading as='h3' size='md' color={'rgba(0, 0, 0, 0.2)'}>No Updates</Heading>
+                    </Flex>}
+
+
                 </Flex>
             </div>
         </>
