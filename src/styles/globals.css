@@ -1105,8 +1105,8 @@ div:has(> .mailSendToaster) {
 
 .reply-box-focus .editor-toolbar.editor-toolbar-hide .tiptap-container {
     height: 0;
-    animation: reply-box-animation-hide 300ms ease;
-    transition: all 300ms ease;
+    animation: reply-box-animation-hide 100ms ease;
+    transition: all 100ms ease;
 }
 
 @keyframes reply-box-animation {
@@ -1172,7 +1172,7 @@ div:has(> .mailSendToaster) {
 
 .editor-button.editor-button-hide {
     opacity: 0;
-    animation: toolbar-animate-hide 300ms ease;
+    animation: toolbar-animate-hide 70ms ease;
 }
 
 .editor-toolbar-show .tiptap-toolbar {
@@ -1185,7 +1185,7 @@ div:has(> .mailSendToaster) {
     animation: toolbar-animate-hide 70ms ease;
     display: flex;
     height: 38px;
-    transition: all 100ms ease;
+    transition: all 70ms ease;
 }
 
 @keyframes toolbar-animate {
@@ -1239,7 +1239,7 @@ div:has(> .mailSendToaster) {
     height: 20px;
     opacity: 1;
     visibility: visible;
-    animation: editor-input-animation-hide 300ms ease;
+    animation: editor-input-animation-hide 100ms ease;
 }
 
 .link-modal-ui .add-button:hover {
