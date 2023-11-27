@@ -17,7 +17,7 @@ export function ThreadsSideBar() {
             <Flex direction={'column'} gap={5} className={styles.mailListTabs}>
                 <Tabs>
                     <SideBarHeader/>
-                    <TabPanels marginTop={5}>
+                    <TabPanels marginTop={3}>
                         <ThreadsSideBarTab/>
                     </TabPanels>
                 </Tabs>

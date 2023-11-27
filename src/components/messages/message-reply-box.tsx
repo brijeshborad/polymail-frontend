@@ -842,7 +842,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 <Flex
                     maxHeight={'450px'} direction={'column'} backgroundColor={'#FFFFFF'} width={'100%'}
                     onBlur={() => handleBlur()}>
-                    <Flex borderRadius={8} border={'1px solid #F3F4F6'} direction={'column'} paddingX={4} paddingY={2}>
+                    <Flex borderRadius={8} border={'1px solid #E5E7EB'} direction={'column'} paddingX={4} paddingY={2}>
                         {totalDraftMessages.length > 0 &&
                         <Flex align={'center'} justifyContent={'space-between'} pb={2}
                               borderBottom={'1px solid #F3F4F6'}>
@@ -889,7 +889,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                             e.stopPropagation()
                                             setIsReplyDropdownOpen(true)
                                         }}
-                                        color={'#6B7280'} variant='link' size='xs'
+                                        color={'#6B7280'} fontWeight={'500'} variant='link' size='xs'
                                         as={Button} rightIcon={<ChevronDownIcon/>}
                                     >
                                         {typeName(replyType)}
@@ -1064,11 +1064,15 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                     </div>
                                 )}
 
-                                {attachments && attachments.length > 0 ? <div style={{marginTop: '20px'}}>
+                                {attachments && attachments.length > 0 ? <Flex mt={3} align={'center'} flexWrap={'wrap'} gap={3}>
                                     {attachments.map((item, index: number) => (
-                                        <Flex align={'center'} key={index} className={styles.attachmentsFile}>
+                                        <Flex align={'center'} borderRadius={'50px'} border={'1px solid #E5E7EB'}
+                                              fontSize={'12px'} color={'#6B7280'} fontWeight={400} key={index}
+                                              backgroundColor={'#FFFFFF'} gap={1} className={styles.attachmentsFile}
+                                              padding={'3px 8px 3px 6px'}
+                                        >
                                             {item.filename}
-                                            <Flex ml={'auto'} gap={3} className={'attachments-progress-bar'}>
+                                            <Flex gap={3} className={'attachments-progress-bar'}>
                                                 {(showAttachmentLoader && !item.isUploaded) &&
                                                 <ProgressBar loaderPercentage={loaderPercentage}/>}
                                                 <div className={styles.closeIcon}
@@ -1078,7 +1082,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                             </Flex>
                                         </Flex>
                                     ))}
-                                </div> : null}
+                                </Flex> : null}
 
                             </Flex>
                             <Flex direction={'column'}

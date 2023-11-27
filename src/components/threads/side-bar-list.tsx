@@ -192,7 +192,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     return (
         <>
             <div className={'project-list-shadow'}>
-                <Flex direction={'column'} gap={2} marginTop={5} pb={3} ref={editorRef}
+                <Flex direction={'column'} marginTop={3} pb={3} ref={editorRef}
                       onScroll={() => handleEditorScroll()} id={'scrollableDiv'}
                       className={`${styles.mailList} ${extraClassNames} ${extraClassNamesForBottom} ${routePaths.includes('projects') ? styles.projectMailList : ''} ${showScrollBar ? styles.scrollBar : ''}`}>
                     <Input type={'text'} opacity={0} height={0} width={0} padding={0} border={0} outline={0}
@@ -202,7 +202,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
                                     scrollableTarget="scrollableDiv" next={() => fetchNext()} loader={null}>
                         {currentThreads.length > 0 && currentThreads.map((item: Thread, index: number) => (
                             <div
-                                key={index} style={{marginBottom: '10px', padding: '3px 3px 0 3px'}}
+                                key={index} style={{marginBottom: '5px', padding: '3px 3px 0 3px'}}
                                 className={`${(selectedThread && selectedThread.id === item.id) ? styles.selectedThread : ''}`}
                             >
                                 <ThreadsSideBarListItem

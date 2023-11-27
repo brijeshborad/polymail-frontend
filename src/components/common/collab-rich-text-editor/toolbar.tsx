@@ -67,7 +67,7 @@ export default function CollabRichTextEditorToolbar({
     return (
         <>
             {beforeToolbar && beforeToolbar}
-            <Box position={'absolute'} display={isVisible ? 'flex' : 'none'} gap={4} bottom={3} zIndex={9}
+            <Box position={'absolute'} display={isVisible ? 'flex' : 'none'} gap={2} bottom={2} zIndex={9}
                  alignItems={'center'}
                  className={`tiptap-toolbar show`}>
                 <button

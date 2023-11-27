@@ -276,7 +276,7 @@ div:has(> .mailSendToaster) {
 }
 
 .folder-icon svg {
-    stroke: #374151;
+    stroke: #FFFFFF;
 }
 
 .readThreadIcon {
@@ -1091,7 +1091,7 @@ div:has(> .mailSendToaster) {
     visibility: hidden;
     opacity: 0;
     overflow: hidden;
-    transition: all 1s ease;
+    transition: all 500ms ease;
 }
 
 .editor-toolbar.editor-toolbar-show .tiptap-container {
@@ -1099,14 +1099,14 @@ div:has(> .mailSendToaster) {
     opacity: 1;
     visibility: visible;
     overflow: unset;
-    transition: all 500ms ease;
-    animation: reply-box-animation 500ms ease;
+    transition: all 300ms ease;
+    animation: reply-box-animation 300ms ease;
 }
 
 .reply-box-focus .editor-toolbar.editor-toolbar-hide .tiptap-container {
     height: 0;
-    animation: reply-box-animation-hide 500ms ease;
-    transition: all 500ms ease;
+    animation: reply-box-animation-hide 300ms ease;
+    transition: all 300ms ease;
 }
 
 @keyframes reply-box-animation {
@@ -1167,22 +1167,22 @@ div:has(> .mailSendToaster) {
 .editor-button.editor-button-show {
     position: inherit;
     opacity: 1;
-    animation: toolbar-animate 500ms ease;
+    animation: toolbar-animate 300ms ease;
 }
 
 .editor-button.editor-button-hide {
     opacity: 0;
-    animation: toolbar-animate-hide 500ms ease;
+    animation: toolbar-animate-hide 300ms ease;
 }
 
 .editor-toolbar-show .tiptap-toolbar {
     opacity: 1;
-    animation: toolbar-animate 100ms ease;
+    animation: toolbar-animate 70ms ease;
 }
 
 .reply-box-focus .editor-toolbar-hide .tiptap-toolbar {
     opacity: 0;
-    animation: toolbar-animate-hide 100ms ease;
+    animation: toolbar-animate-hide 70ms ease;
     display: flex;
     height: 38px;
     transition: all 100ms ease;
@@ -1231,7 +1231,7 @@ div:has(> .mailSendToaster) {
     height: 0;
     opacity: 0;
     visibility: hidden;
-    animation: editor-input-animation 500ms ease;
+    animation: editor-input-animation 300ms ease;
 }
 
 .reply-box-focus .editor-fake-input.editor-fake-input-show input,
@@ -1239,7 +1239,11 @@ div:has(> .mailSendToaster) {
     height: 20px;
     opacity: 1;
     visibility: visible;
-    animation: editor-input-animation-hide 500ms ease;
+    animation: editor-input-animation-hide 300ms ease;
+}
+
+.link-modal-ui .add-button:hover {
+    background-color: #000000;
 }
 
 @keyframes editor-input-animation {

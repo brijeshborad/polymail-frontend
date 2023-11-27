@@ -97,7 +97,9 @@ export default function CollabRichTextEditor({
             }
 
             editor.commands.setContent(finalContent.trim(), false)
-            onChange(finalContent.trim());
+            if (isCompose) {
+                onChange(finalContent.trim());
+            }
         }
         if (isAutoFocus) {
             editor.commands.focus('start')
