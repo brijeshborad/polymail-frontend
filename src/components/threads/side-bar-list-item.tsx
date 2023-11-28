@@ -4,7 +4,7 @@ import {Box, Flex, Text} from "@chakra-ui/react";
 import {Time, UsersOnline} from "@/components/common";
 import {DotIcon} from "@/icons";
 import {StateType, ThreadListItemProps} from "@/types";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import React, {useEffect, useState} from "react";
 import {MAILBOX_UNREAD} from "@/utils/constants";
 import {keyNavigationService} from "@/services";

@@ -78,6 +78,8 @@
   "devDependencies": {
     "@triplit/cli": "^0.2.1",
     "@types/react-file-icon": "^1.0.2",
+    "electron": "^27.1.2",
+    "electron-store": "^8.1.0",
     "husky": "^8.0.0",
     "typescript": "^5.2.2"
   }
