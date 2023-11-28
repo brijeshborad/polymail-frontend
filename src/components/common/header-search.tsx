@@ -268,8 +268,8 @@ export function HeaderSearch() {
                                 {badges.map((badge: any, index: number) => {
                                     return (
                                         <Badge key={index} textTransform={'none'} backgroundColor={'#ffffff'}
-                                               color={'#08162F'}
-                                               borderRadius={'4px'} display={'flex'} alignItems={'center'}
+                                               color={'#6B7280'}
+                                               borderRadius={'40px'} display={'flex'} alignItems={'center'}
                                                fontSize={'11px'} fontWeight={'500'} padding={'3px 10px'} lineHeight={1}>
                                             {getBadgeText(badge)}
                                             <CloseIcon cursor={'pointer'} width={'8px'} height={'8px'}
