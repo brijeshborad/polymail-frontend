@@ -34,6 +34,19 @@ class CommonService extends BaseService {
             setTimeout(() => {
                 this.setCommonState({animateCompose: false});
                 this.setCommonState({isComposing: enable});
+            }, 350)
+        } else {
+            this.setCommonState({isComposing: enable});
+        }
+
+    }
+
+    toggleResumeComposing(enable: boolean, showAnimation: boolean = true) {
+        if (enable && showAnimation) {
+            this.setCommonState({isComposing: enable});
+            this.setCommonState({animateResumeCompose: true});
+            setTimeout(() => {
+                this.setCommonState({animateResumeCompose: false});
             }, 300)
         } else {
             this.setCommonState({isComposing: enable});

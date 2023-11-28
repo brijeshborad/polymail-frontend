@@ -140,8 +140,6 @@ export function SideBarHeader() {
 
     const openComposeModel = () => {
         if (!isComposing) {
-            // threadService.setSelectedThread(null);
-            // messageService.setMessageState({showMessageBox: false});
             draftService.setComposeDraft(null);
             draftService.setResumeDraft(null);
             commonService.toggleComposing(true);

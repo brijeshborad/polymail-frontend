@@ -1,6 +1,6 @@
 import {MessageDraft, Thread} from "@/models";
 import styles from "@/styles/Inbox.module.css";
-import {Flex, Heading, Input} from "@chakra-ui/react";
+import {Flex, Input} from "@chakra-ui/react";
 import React, {useEffect, useCallback, useRef, useState} from "react";
 import {useSelector} from "react-redux";
 import {StateType} from "@/types";
@@ -22,7 +22,6 @@ import {
 } from "@/services";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {INFINITE_LIST_PER_COUNT} from "@/utils/constants";
-import {useAllLoader} from "@/hooks/all-loader.hook";
 
 const ThreadsSideBarListItem = dynamic(() => import("./side-bar-list-item").then(mod => mod.ThreadsSideBarListItem));
 
@@ -38,8 +37,6 @@ export function ThreadsSideBarList(props: ThreadListProps) {
     const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
     const threadsRef = useRef<any>([]);
     const [showScrollBar, setShowScrollBar] = useState<boolean>(false);
-
-    const isLoaderShow = useAllLoader();
 
     const scrollToPosition = useCallback((thread: Thread) => {
         const node = threadsRef.current[thread.id!]
@@ -217,9 +214,6 @@ export function ThreadsSideBarList(props: ThreadListProps) {
                             </div>
                         ))}
                     </InfiniteScroll>
-                    {!isLoaderShow && currentThreads.length === 0 && <Flex flex={1} align={'center'} justify={'center'}>
-                        <Heading as='h3' size='md' color={'rgba(0, 0, 0, 0.2)'}>No Updates</Heading>
-                    </Flex>}
                 </Flex>
             </div>
         </>

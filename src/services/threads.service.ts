@@ -186,10 +186,10 @@ class ThreadsService extends BaseService {
             }
             let batchUpdateMoveBody = {
                 body: {
-                    body: body.map((t: any) => {
-                        delete t.fromTab
-                        return t
-                    })
+                    body: {updates: body.map((t: any) => {
+                            delete t.fromTab
+                            return t
+                        })}
                 },
                 ...(showToaster ? {
                     toaster: {
@@ -205,10 +205,10 @@ class ThreadsService extends BaseService {
                         dispatch: this.getDispatch(),
                         action: batchUpdateThreads,
                         undoBody: {
-                            body: undoBody.map((t: any) => {
-                                delete t.fromTab
-                                return t
-                            }),
+                            body: {updates: undoBody.map((t: any) => {
+                                    delete t.fromTab
+                                    return t
+                                })},
                             tag: mailBoxType.toString().toLowerCase(),
                             afterUndoAction: () => {
                                 this.setThreadState({threads: threads, selectedThread: threads[0]});

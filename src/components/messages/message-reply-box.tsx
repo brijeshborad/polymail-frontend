@@ -17,7 +17,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import {Message as MessageModel, Message, MessageAttachments, MessageDraft, MessageRecipient} from "@/models";
+import {Message as MessageModel, Message, MessageAttachments, MessageDraft, MessageRecipient, Thread} from "@/models";
 import {removeAttachment, uploadAttachment} from "@/redux/messages/action-reducer";
 import {MessageBoxType} from "@/types/props-types/message-box.type";
 import {useRouter} from "next/router";
@@ -86,8 +86,44 @@ export function MessageReplyBox(props: MessageBoxType) {
     const [totalDraftMessages, setTotalDraftMessages] = useState<MessageDraft[]>([]);
     const [totalMessages, setTotalMessages] = useState<MessageDraft[] | null>(null);
     const [waitForDraft, setWaitForDraft] = useState<boolean>(false);
+    const [currentSelectedThread, setCurrentSelectedThread] = useState<Thread | null>(null);
 
     const isDraftCreatedByCurrentUser = draft?.accountId === selectedAccount?.id
+
+    const handleEditorScroll = useCallback((watchScrollHeight = false) => {
+        if (editorRef.current && editorRef.current.scrollTop > 0) {
+            setExtraClassNames(prevState => !prevState.includes('show-shadow') ? prevState + ' show-shadow' : prevState);
+        } else {
+            setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
+        }
+
+        const container = editorRef.current;
+        if (container) {
+            const size = editorRef.current.getBoundingClientRect()
+
+            if (watchScrollHeight && editorRef.current.scrollTop === 0 && editorRef.current.scrollHeight >= 325 && editorRef.current.scrollHeight > size.height) {
+                if (!isOnTop) {
+                    clearDebounce('setIsOnTop')
+                    debounce(() => {
+                        setIsOnTop(true)
+                        setDeltaY(0)
+                    }, 500, 'setIsOnTop')
+                }
+            }
+
+            if (isOnTop && editorRef.current.scrollTop > 10) {
+                setIsOnTop(false)
+            }
+            const scrollHeight = container?.scrollHeight;
+            const containerHeight = container?.clientHeight;
+            const scrollBottom = scrollHeight - containerHeight - editorRef.current.scrollTop;
+            if (scrollBottom > 3) {
+                setExtraClassNamesForBottom(prevState => !prevState.includes('show-shadow-bottom') ? prevState + ' show-shadow-bottom' : prevState);
+            } else {
+                setExtraClassNamesForBottom(prevState => prevState.replace('show-shadow-bottom', ''));
+            }
+        }
+    }, [isOnTop])
 
     useEffect(() => {
         if (draftSuccess) {
@@ -110,10 +146,21 @@ export function MessageReplyBox(props: MessageBoxType) {
 
     useEffect(() => {
         if (selectedThread) {
-            setTotalMessages([...selectedThread?.messages || []]);
-            discardMessage(false);
+            if (currentSelectedThread?.id !== selectedThread.id) {
+                setCurrentSelectedThread(selectedThread);
+            }
         }
-    }, [selectedThread])
+    }, [selectedThread, currentSelectedThread])
+
+    useEffect(() => {
+        if (currentSelectedThread) {
+            setTotalMessages([...currentSelectedThread?.messages || []]);
+            setIsReplyDropdownOpen(false)
+            setShowReplyBox(false);
+            setShowEditorToolbar(false)
+            handleEditorScroll();
+        }
+    }, [currentSelectedThread, handleEditorScroll])
 
     useEffect(() => {
         if (totalMessages) {
@@ -603,41 +650,6 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     const handleSchedule = (date: string | undefined) => {
         setScheduledDate(date);
     }
-
-    const handleEditorScroll = useCallback((watchScrollHeight = false) => {
-        if (editorRef.current && editorRef.current.scrollTop > 0) {
-            setExtraClassNames(prevState => !prevState.includes('show-shadow') ? prevState + ' show-shadow' : prevState);
-        } else {
-            setExtraClassNames(prevState => prevState.replace('show-shadow', ''));
-        }
-
-        const container = editorRef.current;
-        if (container) {
-            const size = editorRef.current.getBoundingClientRect()
-
-            if (watchScrollHeight && editorRef.current.scrollTop === 0 && editorRef.current.scrollHeight >= 325 && editorRef.current.scrollHeight > size.height) {
-                if (!isOnTop) {
-                    clearDebounce('setIsOnTop')
-                    debounce(() => {
-                        setIsOnTop(true)
-                        setDeltaY(0)
-                    }, 500, 'setIsOnTop')
-                }
-            }
-
-            if (isOnTop && editorRef.current.scrollTop > 10) {
-                setIsOnTop(false)
-            }
-            const scrollHeight = container?.scrollHeight;
-            const containerHeight = container?.clientHeight;
-            const scrollBottom = scrollHeight - containerHeight - editorRef.current.scrollTop;
-            if (scrollBottom > 3) {
-                setExtraClassNamesForBottom(prevState => !prevState.includes('show-shadow-bottom') ? prevState + ' show-shadow-bottom' : prevState);
-            } else {
-                setExtraClassNamesForBottom(prevState => prevState.replace('show-shadow-bottom', ''));
-            }
-        }
-    }, [isOnTop])
 
     useEffect(() => {
         handleEditorScroll();

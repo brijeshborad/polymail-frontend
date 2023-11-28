@@ -297,7 +297,7 @@ export function SideBarSubTab() {
                     (resumeAbleDraft && !isComposing && tabValue !== 'DRAFT') &&
                     <Button className={styles.resumeDraft}
                             onClick={() => {
-                                commonService.toggleComposing(true);
+                                commonService.toggleResumeComposing(true);
                                 draftService.resumeDraft();
                             }}>
                         Resume Draft

@@ -128,6 +128,10 @@
     gap: 8px;
 }
 
+.tabListDropDown button svg {
+    stroke: #5D5F62;
+}
+
 .tabListDropDown button:hover svg {
     stroke: #000;
 }
@@ -384,6 +388,10 @@
     width: 100%;
     /*padding: 0 16px;*/
     overflow-x: auto;
+}
+
+.mailBox .mailBodyContent::-webkit-scrollbar {
+    height: 0;
 }
 
 .mailBox .mailBodyContent.projectMailBodyContent {
@@ -1046,6 +1054,10 @@
     margin: 0;
 }
 
+.mailBox .tabListAttachmentButton .dropDownIcon {
+    margin-right: -5px;
+}
+
 .mailBox .tabListDropDown svg,
 .mailBox .mailBoxTime .tabListDropDown svg {
     width: 20px;
@@ -1207,6 +1219,15 @@
     box-shadow: 0 0 12px 0 #00000014;
 }
 
+.composeBox.resumeComposeBoxOpenAnimation {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 157px);
+    left: 0;
+    opacity: 1;
+    animation: compose-animation-show 300ms ease-in-out;
+}
+
 .composeBox.composeBoxCloseAnimation {
     position: absolute;
     width: 100%;
@@ -1215,7 +1236,7 @@
     top: 0;
     left: 0;
     opacity: 0;
-    animation: compose-animation 300ms ease-in-out;
+    animation: compose-animation 350ms ease-in-out;
 }
 
 .composeBox .subjectInput::placeholder {
@@ -1364,8 +1385,29 @@
     to {
         width: 0;
         height: 0;
-        top: 60px;
+        top: 45px;
         opacity: 0;
+    }
+}
+
+@keyframes compose-animation-show {
+    0% {
+        position: absolute;
+        width: 0;
+        height: 0;
+        top: 45px;
+        opacity: 0;
+    }
+
+    98% {
+        position: relative;
+    }
+
+    100% {
+        width: 100%;
+        height: calc(100vh - 157px);
+        top: 0;
+        opacity: 1;
     }
 }
 

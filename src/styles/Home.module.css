@@ -246,11 +246,15 @@
 .headerSearch .headerSearchInput {
     align-items: center;
     border: 0;
-    padding: 9px 35px 9px 8px;
+    padding: 5px 35px 5px 8px;
     width: 100%;
     gap: 12px;
     background-color: #F5F5F5;
     border-radius: 50px;
+}
+
+.headerSearch .headerSearchInput.headerNoBadge {
+    padding: 9px 35px 9px 8px;
 }
 
 .headerSearch .headerSearchInput .searchBarHeaderInput::-webkit-scrollbar {
@@ -346,6 +350,16 @@
     color: #08162F;
 }
 
+.notificationIcon:hover {
+    background-color: var(--alias-bg-subtle);
+    color: #08162F;
+}
+
+.notificationIcon.notificationIconUnRead {
+    background-color: #08162F;
+    color: #ffffff;
+}
+
 .feedBox {
     padding: 12px;
     border: 1px solid var(--alias-bg-subtle);
@@ -388,10 +402,6 @@
     text-align: center;
     right: -5px;
     top: -5px;
-}
-
-.notificationIcon svg {
-    fill: #374151;
 }
 
 .profile {

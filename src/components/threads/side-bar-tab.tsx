@@ -36,7 +36,7 @@ export function ThreadsSideBarTab() {
         <>
             <SideBarSubTab/>
             {(isLoading || summaryIsLoading || syncingEmails) && (
-                <Flex direction="column" mt={3} padding={"0 6px"}>
+                <Flex direction="column" gap={2} mt={3} padding={"0 6px"}>
                     <SkeletonLoader skeletonLength={15}/>
                 </Flex>
             )}
