@@ -121,7 +121,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                         {isClicked &&
                         <DotIcon marginRight={'5px'} className={`readThreadIcon`}
                                  color={props.thread.snooze ? '#FF5E2C' : '#9ca3af'}/>}
-                        {props.thread.attachments && props.thread.attachments?.length > 0 && <AttachmentIcon/>}
+                        {props.thread.attachments && props.thread.attachments?.length > 0 && <AttachmentIcon className={styles2.attachMentIcon} />}
                         <Time time={props.thread.latestMessage} isShowFullTime={false} showTimeInShortForm={false}/>
                     </Flex>
                 </Flex>

@@ -10,7 +10,7 @@ import React, {useEffect, useRef, useState} from "react";
 import {getAttachmentDownloadUrl, updateMessage} from "@/redux/messages/action-reducer";
 import {globalEventService, messageService, threadService} from "@/services";
 import {clearDebounce, debounce} from "@/utils/common.functions";
-import {AttachmentIcon} from "@chakra-ui/icons";
+import {AttachmentIcon, ChevronDownIcon} from "@chakra-ui/icons";
 import {DefaultExtensionType, defaultStyles, FileIcon} from "react-file-icon";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
@@ -171,7 +171,7 @@ export function MessageItems() {
                 className={styles.tabListAttachmentButton} minWidth={'1px'} padding={0}
                 borderRadius={0} backgroundColor={'transparent'} height={'auto'} outline={"none"}
                 _focusVisible={{boxShadow: 'none'}} _hover={{background: 'none'}} _active={{background: 'none'}}
-                fontSize={'13px'} color={'#6B7280'} as={Button} mx={1}
+                fontSize={'13px'} color={'#6B7280'} as={Button} mx={1} leftIcon={<ChevronDownIcon className={styles.dropDownIcon} />}
                 onMouseEnter={() => {
                     clearDebounce(message.id);
                     openAttachmentMenu(index)
