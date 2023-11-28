@@ -1175,7 +1175,7 @@ div:has(> .mailSendToaster) {
 
 .editor-button.editor-button-hide {
     opacity: 0;
-    animation: toolbar-animate-hide 70ms ease;
+    /*animation: toolbar-animate-hide 70ms ease;*/
 }
 
 .editor-toolbar-show .tiptap-toolbar {
