@@ -219,9 +219,9 @@ export function HeaderSearch() {
             if (router.pathname === '/projects') {
                 return 'Search projects';
             }
-            if (project) {
-                return `Search in ${project.name}`
-            }
+            // if (project) {
+            //     return `Search in ${project.name}`
+            // }
             return 'Search';
         }
         return 'Search';
