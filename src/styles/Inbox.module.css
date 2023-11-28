@@ -390,6 +390,10 @@
     overflow-x: auto;
 }
 
+.mailBox .mailBodyContent::-webkit-scrollbar {
+    height: 0;
+}
+
 .mailBox .mailBodyContent.projectMailBodyContent {
     padding: 0;
 }
