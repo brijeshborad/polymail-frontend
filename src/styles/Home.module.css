@@ -350,6 +350,16 @@
     color: #08162F;
 }
 
+.notificationIcon:hover {
+    background-color: var(--alias-bg-subtle);
+    color: #08162F;
+}
+
+.notificationIcon.notificationIconUnRead {
+    background-color: #08162F;
+    color: #ffffff;
+}
+
 .feedBox {
     padding: 12px;
     border: 1px solid var(--alias-bg-subtle);
@@ -392,10 +402,6 @@
     text-align: center;
     right: -5px;
     top: -5px;
-}
-
-.notificationIcon svg {
-    fill: #374151;
 }
 
 .profile {

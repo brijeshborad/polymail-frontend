@@ -176,7 +176,7 @@ export const FeedSidebar = () => {
                                     </React.Fragment>
                                 )
                             })}
-                        {feeds.length >= 0 && <Flex align={'center'} justify={'center'} flex={1}>
+                        {feeds.length <= 0 && <Flex align={'center'} justify={'center'} flex={1}>
                             <Heading as='h3' size='md' color={'rgba(0, 0, 0, 0.2)'}>No Updates</Heading>
                         </Flex>}
 
