@@ -1228,7 +1228,7 @@
     top: 0;
     left: 0;
     opacity: 0;
-    animation: compose-animation 300ms ease-in-out;
+    animation: compose-animation 350ms ease-in-out;
 }
 
 .composeBox .subjectInput::placeholder {
@@ -1377,7 +1377,7 @@
     to {
         width: 0;
         height: 0;
-        top: 60px;
+        top: 50px;
         opacity: 0;
     }
 }
