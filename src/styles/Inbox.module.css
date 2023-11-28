@@ -1377,7 +1377,7 @@
     to {
         width: 0;
         height: 0;
-        top: 50px;
+        top: 45px;
         opacity: 0;
     }
 }
@@ -1387,7 +1387,7 @@
         position: absolute;
         width: 0;
         height: 0;
-        top: 60px;
+        top: 45px;
         opacity: 0;
     }
 
