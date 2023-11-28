@@ -22,9 +22,6 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
     } = useSelector((state: StateType) => state.threads);
     const [isSelected, setIsSelected] = useState<boolean>(false);
     const [isClicked, setIsClicked] = useState<boolean>(false);
-    const [isAttachmentOpen, setIsAttachmentOpen] = useState<boolean>(false);
-    const [isAttachmentToolTipOpen, setIsAttachmentToolTipOpen] = useState<boolean>(false);
-    const dispatch = useDispatch();
 
     useEffect(() => {
         setIsSelected((multiSelection || [])?.includes(props.thread.id!));
