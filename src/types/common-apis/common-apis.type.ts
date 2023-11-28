@@ -21,4 +21,5 @@ export declare type InitialCommonApisStateType = {
     projects: { [key: string]: UserProjectOnlineStatus[] }
   },
   animateCompose?: boolean,
+  animateResumeCompose?: boolean,
 }

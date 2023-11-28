@@ -60,7 +60,7 @@ export function ComposeBox(props: any) {
     const {composeDraft} = useSelector((state: StateType) => state.draft);
     const {tabValue} = useSelector((state: StateType) => state.threads);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
-    const {animateCompose} = useSelector((state: StateType) => state.commonApis);
+    const {animateCompose, animateResumeCompose} = useSelector((state: StateType) => state.commonApis);
     const dispatch = useDispatch();
     const {
         isOpen: isDraftConformationModal,
@@ -423,7 +423,7 @@ export function ComposeBox(props: any) {
 
     return (
         <>
-            <Box className={`${styles.mailBox} ${styles.composeBox} ${animateCompose ? styles.composeBoxCloseAnimation : ''}`} overflow={'hidden'}>
+            <Box className={`${styles.mailBox} ${styles.composeBox} ${animateCompose ? styles.composeBoxCloseAnimation : ''} ${animateResumeCompose ? styles.resumeComposeBoxOpenAnimation : ''}`} overflow={'hidden'}>
                 <Flex padding={'16px 20px'} align={'center'} justify={'space-between'} gap={3}
                       className={styles.composeHeader} borderBottom={'1px solid #E5E7EB'}>
                     <Flex gap={1} align={'center'}>

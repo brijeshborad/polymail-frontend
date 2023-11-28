@@ -1207,6 +1207,15 @@
     box-shadow: 0 0 12px 0 #00000014;
 }
 
+.composeBox.resumeComposeBoxOpenAnimation {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 157px);
+    left: 0;
+    opacity: 1;
+    animation: compose-animation-show 300ms ease-in-out;
+}
+
 .composeBox.composeBoxCloseAnimation {
     position: absolute;
     width: 100%;
@@ -1366,6 +1375,27 @@
         height: 0;
         top: 60px;
         opacity: 0;
+    }
+}
+
+@keyframes compose-animation-show {
+    0% {
+        position: absolute;
+        width: 0;
+        height: 0;
+        top: 60px;
+        opacity: 0;
+    }
+
+    98% {
+        position: relative;
+    }
+
+    100% {
+        width: 100%;
+        height: calc(100vh - 157px);
+        top: 0;
+        opacity: 1;
     }
 }
 
