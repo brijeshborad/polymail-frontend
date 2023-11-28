@@ -259,7 +259,7 @@ export function HeaderSearch() {
              onFocus={() => handleFocus()}
              onBlur={() => handleBlur()}>
             <InputGroup>
-                <Flex className={styles.headerSearchInput}>
+                <Flex className={`${styles.headerSearchInput} ${badges.length === 0 ? styles.headerNoBadge: ''}`}>
                     <SearchIcon/>
                     <Flex gap={1} flex={1} overflow={'auto'} width={'calc(100vw - 810px)'}
                           className={styles.searchBarHeaderInput}>
@@ -270,7 +270,7 @@ export function HeaderSearch() {
                                         <Badge key={index} textTransform={'none'} backgroundColor={'#ffffff'}
                                                color={'#6B7280'}
                                                borderRadius={'40px'} display={'flex'} alignItems={'center'}
-                                               fontSize={'11px'} fontWeight={'500'} padding={'3px 10px'} lineHeight={1}>
+                                               fontSize={'11px'} fontWeight={'500'} padding={'7px 10px'} lineHeight={1}>
                                             {getBadgeText(badge)}
                                             <CloseIcon cursor={'pointer'} width={'8px'} height={'8px'}
                                                        marginLeft={'5px'}

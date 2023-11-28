@@ -246,11 +246,15 @@
 .headerSearch .headerSearchInput {
     align-items: center;
     border: 0;
-    padding: 9px 35px 9px 8px;
+    padding: 5px 35px 5px 8px;
     width: 100%;
     gap: 12px;
     background-color: #F5F5F5;
     border-radius: 50px;
+}
+
+.headerSearch .headerSearchInput.headerNoBadge {
+    padding: 9px 35px 9px 8px;
 }
 
 .headerSearch .headerSearchInput .searchBarHeaderInput::-webkit-scrollbar {
