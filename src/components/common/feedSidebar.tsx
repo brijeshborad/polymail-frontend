@@ -1,4 +1,4 @@
-import {Badge, Box, Flex, Slide, Text, useDisclosure, useOutsideClick} from '@chakra-ui/react';
+import {Badge, Box, Flex, Heading, Slide, Text, useDisclosure, useOutsideClick} from '@chakra-ui/react';
 import styles from '@/styles/Home.module.css';
 import React, {useEffect, useState} from 'react';
 import {EnergyIcon} from '@/icons';
@@ -119,7 +119,7 @@ export const FeedSidebar = () => {
                        boxShadow: 'var(--chakra-shadows-lg)', transition: 'all .05s'
                    }} ref={btnRef}>
                 {/* <DrawerOverlay /> */}
-                <Box borderLeft="1px solid #F3F4F6" maxH="100vh" overflowY={'scroll'}>
+                <Box borderLeft="1px solid #F3F4F6" display={'flex'} flexDirection={'column'} h={'100%'} maxH="100vh" overflowY={'scroll'}>
                     {/* Header */}
                     <Box height="65px" borderBottom="1px solid #F3F4F6" padding="12px 16px" display="flex"
                          justifyContent="space-between" alignItems="center" position={'sticky'} top={0}
@@ -149,7 +149,7 @@ export const FeedSidebar = () => {
                             <Text fontStyle="bold" fontSize={'14px'}>Updates</Text>
                         </Flex>
                     </Box>
-                    <Box padding="12px 16px">
+                    <Box padding="12px 16px" flex={1} display={'flex'} flexDirection={'column'}>
                         {feeds
                             .sort((a, b) => {
                                 if (dayjs(b.created!).isBefore(dayjs(a.created))) {
@@ -176,6 +176,10 @@ export const FeedSidebar = () => {
                                     </React.Fragment>
                                 )
                             })}
+                        {feeds.length >= 0 && <Flex align={'center'} justify={'center'} flex={1}>
+                            <Heading as='h3' size='md' color={'rgba(0, 0, 0, 0.2)'}>No Updates</Heading>
+                        </Flex>}
+
                     </Box>
                 </Box>
             </Slide>
