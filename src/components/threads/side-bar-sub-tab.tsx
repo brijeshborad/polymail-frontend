@@ -212,13 +212,11 @@ export function SideBarSubTab() {
         if (incomingEvent === 'threads.load-from-cache') {
             if (cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue!, tabName!)).length > 0) {
                 let threads = cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue!, tabName!)) as Thread[];
-                setTimeout(() => {
-                    threadService.setThreadState({
-                        threads: threads,
-                        isLoading: false,
-                        selectedThread: threads[0]
-                    })
-                }, 1)
+                threadService.setThreadState({
+                    threads: threads,
+                    isLoading: false,
+                    selectedThread: threads[0]
+                })
             }
         }
         if (incomingEvent === 'threads.refresh-with-cache') {
