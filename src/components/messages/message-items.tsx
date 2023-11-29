@@ -68,7 +68,7 @@ export function MessageItems() {
             if (currentInboxMessages.length > 1) {
                 setTimeout(() => {
                     if (lastMessageRef && lastMessageRef.current) {
-                        lastMessageRef.current.scrollIntoView({behavior: 'smooth'});
+                        lastMessageRef.current.scrollIntoView({behavior: 'smooth', block: "start"});
                     }
                 }, 500);
             }
