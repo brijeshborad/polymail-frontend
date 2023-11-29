@@ -116,7 +116,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
                 if (multiSelection && multiSelection.length > 0) {
                     isSameThreadClicked = false;
                 }
-                commonService.toggleComposing(false, false);
+                commonService.toggleComposing(false);
                 if (props.tab === 'DRAFT') {
                     draftService.setResumeDraft(null);
                     if (item && item.messages && item.messages[0]) {

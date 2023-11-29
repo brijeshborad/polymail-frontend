@@ -1217,13 +1217,19 @@
     display: flex;
     flex-direction: column;
     box-shadow: 0 0 12px 0 #00000014;
+    position: absolute;
+    top: 0;
+    z-index: 10;
+    width: 100%;
 }
 
 .composeBox.resumeComposeBoxOpenAnimation {
-    position: relative;
+    position: absolute;
+    top: 45px;
     width: 100%;
     height: calc(100vh - 157px);
     left: 0;
+    z-index: 10;
     opacity: 1;
     animation: compose-animation-show 300ms ease-in-out;
 }
@@ -1393,21 +1399,23 @@
 @keyframes compose-animation-show {
     0% {
         position: absolute;
+        z-index: 10;
         width: 0;
         height: 0;
         top: 45px;
         opacity: 0;
     }
 
-    98% {
-        position: relative;
-    }
+    /*98% {*/
+    /*    position: relative;*/
+    /*}*/
 
     100% {
         width: 100%;
         height: calc(100vh - 157px);
         top: 0;
         opacity: 1;
+        z-index: 10;
     }
 }
 
