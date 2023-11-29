@@ -31,13 +31,18 @@ const threadsSlice = createSlice({
         getAllThreadsSuccess: (state: InitialThreadStateType, {payload: {threads, fullPayload}}: PayloadAction<any>) => {
             // Sort threads by latestMessage DESC
             let currentThreads = current(state).threads;
+            let {tabValue, subTabValue} = current(state);
             let isThreadSearched = current(state).isThreadSearched;
             if (isThreadSearched) {
                 return {...state};
             }
             threads = extractAndMapThreadAndMessagesBody(threads, fullPayload.body.pagination, currentThreads, fullPayload.body.mailbox);
             performSuccessActions(fullPayload, threads);
-            return {...state, threads, isLoading: false, success: false}
+            let finalState: InitialThreadStateType = {...state, isLoading: false, success: false};
+            if (tabValue === fullPayload.body.mailbox && subTabValue === fullPayload.body.type) {
+                finalState.threads = threads;
+            }
+            return {...finalState}
         },
         getAllThreadsError: (state: InitialThreadStateType, _action: PayloadAction<any>) => {
             return {...state, threads: [], isLoading: false}

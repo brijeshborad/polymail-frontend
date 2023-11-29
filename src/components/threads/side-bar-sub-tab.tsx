@@ -181,6 +181,12 @@ export function SideBarSubTab() {
     }, [getAllThread, projectId])
 
     useEffect(() => {
+        if (tabName !== '') {
+            threadService.setSubTabValue(tabName);
+        }
+    }, [tabName])
+
+    useEffect(() => {
         if (tabValue && currentTab !== tabValue) {
             setCurrentTab(tabValue)
             let defaultTab = 'just-mine';
