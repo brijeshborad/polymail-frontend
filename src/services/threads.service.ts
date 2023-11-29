@@ -46,6 +46,10 @@ class ThreadsService extends BaseService {
         this.setThreadState({tabValue});
     }
 
+    setSubTabValue(subTabValue: string = '') {
+        this.setThreadState({subTabValue});
+    }
+
     setTabValueWithEmptyThread(tabValue: string = '') {
         this.setThreadState({tabValue, threads: []});
     }

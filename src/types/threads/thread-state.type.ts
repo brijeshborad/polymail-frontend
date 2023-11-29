@@ -10,6 +10,7 @@ export declare type InitialThreadStateType = {
     success?: boolean
     isThreadSearched?: boolean
     tabValue?: string,
+    subTabValue?: string,
     isThreadFocused?: boolean
 }
 
