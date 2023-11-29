@@ -1,4 +1,4 @@
-import {EditorProvider} from '@tiptap/react'
+import {EditorProvider, useCurrentEditor} from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import {useSelector} from 'react-redux'
 import CollabRichTextEditorToolbar from './toolbar'
@@ -34,15 +34,31 @@ export default function CollabRichTextEditor({
     const {project} = useSelector((state: StateType) => state.projects);
     const [provider, setProvider] = useState<any>()
     const [extensions, setExtensions] = useState<any>([]);
+    const [documentId, setDocumentId] = useState<string | null>(null);
+    const {editor} = useCurrentEditor()
 
     useEffect(() => {
-        if (!id) return
+        if (id) {
+            if (documentId !== id) {
+                if (editor) {
+                    editor.commands.clearContent(false);
+                }
+                if (provider) {
+                    setProvider(null);
+                }
+                setDocumentId(id);
+            }
+        }
+    }, [documentId, editor, id, provider]);
+
+    useEffect(() => {
+        if (!documentId) return
         const prov = new HocuspocusProvider({
             url: `${process.env.NEXT_PUBLIC_COLLAB_WEBSOCKET_URL}`,
-            name: id,
+            name: documentId,
             preserveConnection: false
         })
-        console.log('___COLLABID____', id, prov);
+        console.log('___COLLABID____', documentId, prov);
         setProvider(prov)
 
         setExtensions([
@@ -81,7 +97,7 @@ export default function CollabRichTextEditor({
                 multicolor: true
             })
         ])
-    }, [id, selectedAccount, placeholder])
+    }, [documentId, selectedAccount, placeholder])
 
     function setContent(editor: any) {
         if (!getPlainTextFromHtml(content || '').trim()) {
@@ -109,11 +125,8 @@ export default function CollabRichTextEditor({
         <div className={`tiptap-container ${className}`}>
             <EditorProvider
                 autofocus={isAutoFocus}
-                onFocus={({editor}) => {
-                    keyNavigationService.toggleKeyNavigation(false);
-                    if (editor.isEmpty) {
-                        setContent(editor);
-                    }
+                onFocus={() => {
+                    keyNavigationService.toggleKeyNavigation(false)
                 }}
                 onCreate={({editor}) => {
                     if (editor.isEmpty) {

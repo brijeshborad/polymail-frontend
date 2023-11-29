@@ -59,6 +59,9 @@ export function SideBarSubTab() {
             }
             let cutoffDate = dayjs().add(5, "day").format('YYYY-MM-DD');
             let currentThreads = [...threadService.getThreadState().threads || []];
+            if (currentThreads.length > 0) {
+                resetState = false;
+            }
             if (currentPage > 1 && currentThreads[currentThreads.length - 1]) {
                 cutoffDate = dayjs(currentThreads[currentThreads.length - 1].sortDate).format('YYYY-MM-DD');
             }
@@ -99,10 +102,11 @@ export function SideBarSubTab() {
             if (buildBody.mailbox === 'ARCHIVE') {
                 buildBody.mailbox = '';
             }
+            buildBody.type = type;
             dispatch(getAllThreads({
                 body: buildBody,
                 afterSuccessAction: (threads: any) => {
-                    cacheService.setThreadCacheByKey(cacheService.buildCacheKey(tabValue, type), threads ? [...threads] : []);
+                    cacheService.setThreadCacheByKey(cacheService.buildCacheKey(buildBody.mailbox, buildBody.type), threads ? [...threads] : []);
                 }
             }));
         }
@@ -206,7 +210,7 @@ export function SideBarSubTab() {
                     return;
                 }
                 currentPage = 1;
-                getAllThread();
+                getAllThread(defaultTab);
             }
         }
     }, [getAllThread, tabValue, currentTab, waitForProjectRoute, router.asPath, router.query.project])
@@ -219,6 +223,17 @@ export function SideBarSubTab() {
         if (incomingEvent === 'threads.next') {
             currentPage = currentPage + 1
             getAllThread();
+        }
+        if (incomingEvent === 'threads.load-from-cache') {
+            // console.log('FFF', cacheService.getThreadCache(), cacheService.buildCacheKey(tabValue!, tabName!));
+            // if (cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue!, tabName!)).length > 0) {
+            //     let threads = cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue!, tabName!)) as Thread[];
+            //     threadService.setThreadState({
+            //         threads: threads,
+            //         isLoading: false,
+            //         selectedThread: threads[0]
+            //     })
+            // }
         }
         if (incomingEvent === 'threads.refresh-with-cache') {
             if (cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue!, tabName!)).length > 0) {

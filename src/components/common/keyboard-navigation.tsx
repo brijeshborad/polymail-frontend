@@ -5,6 +5,7 @@ import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {globalEventService, messageService, threadService} from "@/services";
 import {MessageDraft} from "@/models";
+// import {clearDebounce, debounce} from "@/utils/common.functions";
 
 export default function KeyboardNavigationListener() {
     const dispatch = useDispatch();
@@ -92,6 +93,11 @@ export default function KeyboardNavigationListener() {
                             if (nextThread) {
                                 threadService.setSelectedThread(nextThread);
                                 messageService.setMessages([]);
+                                // messageService.setMessageState({showMessageBox: false});
+                                // clearDebounce('THREAD_SELECTION_BY_KEY');
+                                // debounce(() => {
+                                //     messageService.setMessageState({showMessageBox: true});
+                                // }, 10, 'THREAD_SELECTION_BY_KEY');
                                 dispatchAction.threadIndex = nextThreadIndex
                                 dispatchAction.currentThreadId = nextThread.id
                             }
@@ -103,6 +109,11 @@ export default function KeyboardNavigationListener() {
                             if (lastThread) {
                                 threadService.setSelectedThread(lastThread);
                                 messageService.setMessages([]);
+                                // messageService.setMessageState({showMessageBox: false});
+                                // clearDebounce('THREAD_SELECTION_BY_KEY');
+                                // debounce(() => {
+                                //     messageService.setMessageState({showMessageBox: true});
+                                // }, 10, 'THREAD_SELECTION_BY_KEY');
                                 dispatchAction.threadIndex = lastThreadIndex
                                 dispatchAction.currentThreadId = lastThread.id
                             }

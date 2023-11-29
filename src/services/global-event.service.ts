@@ -13,11 +13,14 @@ class GlobalEventService extends BaseService {
 
     fireEvent(event: string | Event | any) {
         this.setGlobalEventState({event: event});
+        setTimeout(() => {
+            this.blankEvent();
+        }, 1)
     }
 
     fireEventWithDelay(event: string | Event | any) {
         setTimeout(() => {
-            this.setGlobalEventState({event: event});
+            this.fireEvent(event);
         }, 100)
     }
 

@@ -55,6 +55,7 @@ class CacheService {
 
     setThreadCacheByKey(key: string, value: any) {
         this.cacheThreads[key] = value;
+        // globalEventService.fireEventWithDelay('threads.load-from-cache')
     }
 
     buildCacheKey(tab: string, filter: string = '') {

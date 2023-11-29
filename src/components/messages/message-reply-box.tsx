@@ -160,23 +160,21 @@ export function MessageReplyBox(props: MessageBoxType) {
             setShowEditorToolbar(false)
             handleEditorScroll();
         }
-    }, [currentSelectedThread, handleEditorScroll])
+    }, [currentSelectedThread])
 
     useEffect(() => {
         if (totalMessages) {
             let messages = [...totalMessages];
             let draftMessages = [...messages].filter((item: MessageDraft) => item.mailboxes?.includes('DRAFT') && !item.draftInfo?.discardedBy)
             setTotalDraftMessages([...draftMessages]);
-            if (draftIndex === null) {
-                if (draftMessages.length > 0) {
-                    let findFirstDraftIndex = messages.findIndex((t: MessageDraft) => t.mailboxes?.includes('DRAFT') && !t.draftInfo?.discardedBy);
-                    setDraftIndex(findFirstDraftIndex !== -1 ? findFirstDraftIndex : messages.length);
-                    if (findFirstDraftIndex !== -1) {
-                        draftService.setReplyDraft(messages[findFirstDraftIndex]);
-                    }
-                } else {
-                    setDraftIndex(messages.length);
+            if (draftMessages.length > 0) {
+                let findFirstDraftIndex = messages.findIndex((t: MessageDraft) => t.mailboxes?.includes('DRAFT') && !t.draftInfo?.discardedBy);
+                setDraftIndex(findFirstDraftIndex !== -1 ? findFirstDraftIndex : messages.length);
+                if (findFirstDraftIndex !== -1) {
+                    draftService.setReplyDraft(messages[findFirstDraftIndex]);
                 }
+            } else {
+                setDraftIndex(messages.length);
             }
         }
     }, [totalMessages, draftIndex])
@@ -631,18 +629,6 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         globalEventService.fireEvent({data: {}, type: 'richtexteditor.focus'})
     }
 
-    // const getBody = () => {
-    //     let body = '';
-    //     if (selectedAccount) {
-    //         body += getSignatureBanner(selectedAccount);
-    //         // ${selectedThread?.projects && selectedThread.projects.length === 1 ? `<!--<p style="font-size: 13px; margin-right: 3px;">at </p><p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">${selectedThread.projects[0].name}</p>-->` : `<p style="font-size: 13px; text-decoration: underline; margin-right: 3px;">others</p>`}
-    //         if (selectedThread?.projects?.length) {
-    //             body += getProjectBanner(selectedAccount);
-    //         }
-    //     }
-    //     return body;
-    // }
-
     const showRecipientsBox = () => {
         setShowReplyBox((current) => !current);
     }
@@ -742,9 +728,9 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 to: emailRecipients.recipients?.items,
                 cc: emailRecipients.cc?.items && emailRecipients.cc?.items.length > 0 ? emailRecipients.cc?.items : [],
                 bcc: emailRecipients.bcc?.items && emailRecipients.bcc?.items.length > 0 ? emailRecipients.bcc?.items : [],
-                // draftInfo: {
-                //     // body: emailBody
-                // },
+                draftInfo: {
+                    body: value
+                },
                 messageId,
                 accountId: selectedAccount?.id,
                 ...(props.isProjectView ? {projectId: router.query.project as string} : {}),

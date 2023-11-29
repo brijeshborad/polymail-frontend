@@ -35,7 +35,7 @@ const projectsSlice = createSlice({
         },
 
         getProjectById: (state: InitialProjectState, _action: PayloadAction<ReducerActionType>) => {
-            return {...state, isLoading: true}
+            return {...state, isLoading: false}
         },
         getProjectByIdSuccess: (state: InitialProjectState, {payload: project}: PayloadAction<any>) => {
             let currentProjects = [...(current(state).projects || [])] as Project[];

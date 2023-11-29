@@ -70,7 +70,7 @@ export function MessageItems() {
                     if (lastMessageRef && lastMessageRef.current) {
                         lastMessageRef.current.scrollIntoView({behavior: 'smooth'});
                     }
-                }, 700);
+                }, 500);
             }
         }
     }, [messages, dispatch])
@@ -171,7 +171,8 @@ export function MessageItems() {
                 className={styles.tabListAttachmentButton} minWidth={'1px'} padding={0}
                 borderRadius={0} backgroundColor={'transparent'} height={'auto'} outline={"none"}
                 _focusVisible={{boxShadow: 'none'}} _hover={{background: 'none'}} _active={{background: 'none'}}
-                fontSize={'13px'} color={'#6B7280'} as={Button} mx={1} leftIcon={<ChevronDownIcon className={styles.dropDownIcon} />}
+                fontSize={'13px'} color={'#6B7280'} as={Button} mx={1}
+                leftIcon={<ChevronDownIcon className={styles.dropDownIcon}/>}
                 onMouseEnter={() => {
                     clearDebounce(message.id);
                     openAttachmentMenu(index)

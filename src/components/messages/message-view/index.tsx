@@ -10,7 +10,7 @@ export function MessageView({isProjectView = false}: { isProjectView?: boolean }
     const {isComposing} = useSelector((state: StateType) => state.commonApis);
     return (
         <>
-            {!isComposing && <MessageBoxView isProjectView={isProjectView}/>}
+            <MessageBoxView isProjectView={isProjectView}/>
             {isComposing && <ComposeBox isProjectView={isProjectView}/>}
         </>
     )
