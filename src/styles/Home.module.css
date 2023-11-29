@@ -392,8 +392,9 @@
 .notificationIcon span {
     position: absolute;
     border-radius: 50px;
-    background-color: #1F2937;
-    color: #FFFFFF;
+    background-color: #FFFFFF;
+    border: 1px solid #08162F;
+    color: #08162F;
     min-width: 16px;
     width: fit-content;
     height: 16px;
