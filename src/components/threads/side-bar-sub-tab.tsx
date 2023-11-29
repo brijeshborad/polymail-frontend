@@ -59,6 +59,9 @@ export function SideBarSubTab() {
             }
             let cutoffDate = dayjs().add(5, "day").format('YYYY-MM-DD');
             let currentThreads = [...threadService.getThreadState().threads || []];
+            if (currentThreads.length > 0) {
+                resetState = false;
+            }
             if (currentPage > 1 && currentThreads[currentThreads.length - 1]) {
                 cutoffDate = dayjs(currentThreads[currentThreads.length - 1].sortDate).format('YYYY-MM-DD');
             }

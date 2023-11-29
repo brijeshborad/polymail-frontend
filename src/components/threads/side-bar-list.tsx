@@ -116,7 +116,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
                 if (multiSelection && multiSelection.length > 0) {
                     isSameThreadClicked = false;
                 }
-                commonService.toggleComposing(false);
+                commonService.toggleComposing(false, false);
                 if (props.tab === 'DRAFT') {
                     draftService.setResumeDraft(null);
                     if (item && item.messages && item.messages[0]) {
@@ -146,8 +146,13 @@ export function ThreadsSideBarList(props: ThreadListProps) {
                     });
                     messageService.setMessageState({
                         selectedMessage: (item.messages || [])[0],
-                        messages: []
+                        messages: [],
+                        // showMessageBox: isSameThreadClicked
                     })
+                    // setTimeout(() => {
+                    //     messageService.setMessageState({showMessageBox: true});
+                    // }, 10);
+                    // globalEventService.fireEvent({data: '', type: 'richtexteditor.discard'});
                 }
             }
         }
