@@ -728,9 +728,9 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                 to: emailRecipients.recipients?.items,
                 cc: emailRecipients.cc?.items && emailRecipients.cc?.items.length > 0 ? emailRecipients.cc?.items : [],
                 bcc: emailRecipients.bcc?.items && emailRecipients.bcc?.items.length > 0 ? emailRecipients.bcc?.items : [],
-                // draftInfo: {
-                //     // body: emailBody
-                // },
+                draftInfo: {
+                    body: value
+                },
                 messageId,
                 accountId: selectedAccount?.id,
                 ...(props.isProjectView ? {projectId: router.query.project as string} : {}),

@@ -3,7 +3,7 @@ import {Button, Checkbox, Flex} from "@chakra-ui/react";
 import {
     cacheService,
     commonService,
-    draftService,
+    draftService, globalEventService,
     messageService,
     threadService
 } from "@/services";
@@ -102,10 +102,11 @@ export function SideBarSubTab() {
             if (buildBody.mailbox === 'ARCHIVE') {
                 buildBody.mailbox = '';
             }
+            buildBody.type = type;
             dispatch(getAllThreads({
                 body: buildBody,
                 afterSuccessAction: (threads: any) => {
-                    cacheService.setThreadCacheByKey(cacheService.buildCacheKey(tabValue, type), threads ? [...threads] : []);
+                    cacheService.setThreadCacheByKey(cacheService.buildCacheKey(buildBody.mailbox, buildBody.type), threads ? [...threads] : []);
                 }
             }));
         }
@@ -118,15 +119,7 @@ export function SideBarSubTab() {
             setTabName(type);
             setCurrentViewingCacheTab(cacheService.buildCacheKey(tabValue!, type!));
             if (cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue!, type!)).length > 0) {
-                let threads = cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue!, type!)) as Thread[];
-                threadService.setThreads([]);
-                setTimeout(() => {
-                    threadService.setThreadState({
-                        threads: threads,
-                        isLoading: false,
-                        selectedThread: threads[0]
-                    })
-                }, 1);
+                globalEventService.fireEvent('threads.load-from-cache')
                 return;
             } else {
                 threadService.setThreads([]);
@@ -191,14 +184,7 @@ export function SideBarSubTab() {
             setTabName(defaultTab);
             setCurrentViewingCacheTab(cacheService.buildCacheKey(tabValue, defaultTab));
             if (cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue)).length > 0) {
-                let threads = cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue)) as Thread[];
-                threadService.setThreads([]);
-                messageService.setMessages([]);
-                threadService.setThreadState({
-                    threads: threads,
-                    isLoading: false,
-                    selectedThread: threads[0]
-                });
+                globalEventService.fireEvent('threads.load-from-cache')
                 return;
             } else {
                 threadService.setThreads([]);
@@ -209,7 +195,7 @@ export function SideBarSubTab() {
                     return;
                 }
                 currentPage = 1;
-                getAllThread();
+                getAllThread(defaultTab);
             }
         }
     }, [getAllThread, tabValue, currentTab, waitForProjectRoute, router.asPath, router.query.project])
@@ -222,6 +208,18 @@ export function SideBarSubTab() {
         if (incomingEvent === 'threads.next') {
             currentPage = currentPage + 1
             getAllThread();
+        }
+        if (incomingEvent === 'threads.load-from-cache') {
+            if (cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue!, tabName!)).length > 0) {
+                let threads = cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue!, tabName!)) as Thread[];
+                setTimeout(() => {
+                    threadService.setThreadState({
+                        threads: threads,
+                        isLoading: false,
+                        selectedThread: threads[0]
+                    })
+                }, 1)
+            }
         }
         if (incomingEvent === 'threads.refresh-with-cache') {
             if (cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue!, tabName!)).length > 0) {

@@ -125,11 +125,8 @@ export default function CollabRichTextEditor({
         <div className={`tiptap-container ${className}`}>
             <EditorProvider
                 autofocus={isAutoFocus}
-                onFocus={({editor}) => {
-                    keyNavigationService.toggleKeyNavigation(false);
-                    if (editor.isEmpty) {
-                        setContent(editor);
-                    }
+                onFocus={() => {
+                    keyNavigationService.toggleKeyNavigation(false)
                 }}
                 onCreate={({editor}) => {
                     if (editor.isEmpty) {
