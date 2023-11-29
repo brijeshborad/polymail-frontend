@@ -37,7 +37,7 @@ const threadsSlice = createSlice({
             }
             threads = extractAndMapThreadAndMessagesBody(threads, fullPayload.body.pagination, currentThreads, fullPayload.body.mailbox);
             performSuccessActions(fullPayload, threads);
-            return {...state, isLoading: false, success: false}
+            return {...state, threads, isLoading: false, success: false}
         },
         getAllThreadsError: (state: InitialThreadStateType, _action: PayloadAction<any>) => {
             return {...state, threads: [], isLoading: false}

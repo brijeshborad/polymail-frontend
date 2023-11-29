@@ -9,7 +9,6 @@ import {
 } from "@/utils/constants";
 import {matchSorter} from "match-sorter";
 import {threadService} from "@/services/threads.service";
-import {globalEventService} from "@/services/global-event.service";
 
 class CacheService {
     cacheThreads: { [key: string]: Thread[] } = {};
@@ -56,7 +55,7 @@ class CacheService {
 
     setThreadCacheByKey(key: string, value: any) {
         this.cacheThreads[key] = value;
-        globalEventService.fireEventWithDelay('threads.load-from-cache')
+        // globalEventService.fireEventWithDelay('threads.load-from-cache')
     }
 
     buildCacheKey(tab: string, filter: string = '') {

@@ -3,7 +3,7 @@ import {Button, Checkbox, Flex} from "@chakra-ui/react";
 import {
     cacheService,
     commonService,
-    draftService, globalEventService,
+    draftService,
     messageService,
     threadService
 } from "@/services";
@@ -119,7 +119,15 @@ export function SideBarSubTab() {
             setTabName(type);
             setCurrentViewingCacheTab(cacheService.buildCacheKey(tabValue!, type!));
             if (cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue!, type!)).length > 0) {
-                globalEventService.fireEvent('threads.load-from-cache')
+                let threads = cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue!, type!)) as Thread[];
+                threadService.setThreads([]);
+                setTimeout(() => {
+                    threadService.setThreadState({
+                        threads: threads,
+                        isLoading: false,
+                        selectedThread: threads[0]
+                    })
+                }, 1);
                 return;
             } else {
                 threadService.setThreads([]);
@@ -184,7 +192,14 @@ export function SideBarSubTab() {
             setTabName(defaultTab);
             setCurrentViewingCacheTab(cacheService.buildCacheKey(tabValue, defaultTab));
             if (cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue)).length > 0) {
-                globalEventService.fireEvent('threads.load-from-cache')
+                let threads = cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue)) as Thread[];
+                threadService.setThreads([]);
+                messageService.setMessages([]);
+                threadService.setThreadState({
+                    threads: threads,
+                    isLoading: false,
+                    selectedThread: threads[0]
+                });
                 return;
             } else {
                 threadService.setThreads([]);
@@ -210,14 +225,15 @@ export function SideBarSubTab() {
             getAllThread();
         }
         if (incomingEvent === 'threads.load-from-cache') {
-            if (cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue!, tabName!)).length > 0) {
-                let threads = cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue!, tabName!)) as Thread[];
-                threadService.setThreadState({
-                    threads: threads,
-                    isLoading: false,
-                    selectedThread: threads[0]
-                })
-            }
+            // console.log('FFF', cacheService.getThreadCache(), cacheService.buildCacheKey(tabValue!, tabName!));
+            // if (cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue!, tabName!)).length > 0) {
+            //     let threads = cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue!, tabName!)) as Thread[];
+            //     threadService.setThreadState({
+            //         threads: threads,
+            //         isLoading: false,
+            //         selectedThread: threads[0]
+            //     })
+            // }
         }
         if (incomingEvent === 'threads.refresh-with-cache') {
             if (cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue!, tabName!)).length > 0) {
