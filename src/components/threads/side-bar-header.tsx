@@ -248,7 +248,7 @@ export function SideBarHeader() {
                                     onClick={() => moveThreadToMailBoxes(MAILBOX_UNREAD)}><InboxOpenIcon/> Mark {toggleValues.readStatus ? 'Unread' : 'Read'}
                                 </MenuItem>
                                 <MenuItem
-                                    onClick={() => threadService.markMultipleThreadsAsMute()}><MuteIcon/>{toggleValues.muteStatus ? 'Mute' : 'Unmute'}
+                                    onClick={() => threadService.markMultipleThreadsAsMute()}><MuteIcon/>{!toggleValues.muteStatus ? 'Mute' : 'Unmute'}
                                 </MenuItem>
                                 <MenuItem
                                     onClick={() => moveThreadToMailBoxes(MAILBOX_SPAM)}><SpamIcon/> Mark Spam</MenuItem>
@@ -262,7 +262,7 @@ export function SideBarHeader() {
                                     />
                                 </div>
                                 <MenuItem
-                                    onClick={() => moveThreadToMailBoxes(MAILBOX_STARRED)}><StarIcon/> {toggleValues.starStatus ? 'Add' : 'Remove'}
+                                    onClick={() => moveThreadToMailBoxes(MAILBOX_STARRED)}><StarIcon/> {!toggleValues.starStatus ? 'Add ' : 'Remove '}
                                     Star</MenuItem>
                                 <MenuItem
                                     onClick={() => moveThreadToMailBoxes(MAILBOX_INBOX)}><InboxIcon/> Move to

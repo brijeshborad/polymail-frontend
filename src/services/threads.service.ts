@@ -161,11 +161,19 @@ class ThreadsService extends BaseService {
         if (selectedThreadIds.length > 0) {
             const messagePlural = selectedThreadIds.length === 1 ? 'message' : 'messages'
             let movingThreads = threads.filter((thread: Thread) => selectedThreadIds.includes(thread.id!));
+            let unreadStatus = movingThreads.filter((t: Thread) => t.mailboxes?.includes(MAILBOX_UNREAD));
+            let muteStatus = movingThreads.filter((t: Thread) => t.mute);
+            let starStatus = movingThreads.filter((t: Thread) => t.mailboxes?.includes(MAILBOX_STARRED));
+            let toggleValues = {
+                isAllRead: unreadStatus.length <= 0,
+                isAllUnMuted: muteStatus.length > 0,
+                isAllUnStared: starStatus.length > 0
+            }
             let body: any = movingThreads.map((thread: Thread) => {
                 let finalBody: any = {
                     id: thread.id,
                     fromTab: this.getThreadTabFromMailBoxes(thread.mailboxes || []),
-                    ...this.getThreadMailBox(thread, mailBoxType),
+                    ...this.getThreadMailBox(thread, mailBoxType, toggleValues),
                 }
                 if (mailBoxType === MAILBOX_SNOOZED) {
                     const targetDate = dayjs(snoozeDate)
@@ -190,10 +198,12 @@ class ThreadsService extends BaseService {
             }
             let batchUpdateMoveBody = {
                 body: {
-                    body: {updates: body.map((t: any) => {
+                    body: {
+                        updates: body.map((t: any) => {
                             delete t.fromTab
                             return t
-                        })}
+                        })
+                    }
                 },
                 ...(showToaster ? {
                     toaster: {
@@ -209,10 +219,12 @@ class ThreadsService extends BaseService {
                         dispatch: this.getDispatch(),
                         action: batchUpdateThreads,
                         undoBody: {
-                            body: {updates: undoBody.map((t: any) => {
+                            body: {
+                                updates: undoBody.map((t: any) => {
                                     delete t.fromTab
                                     return t
-                                })},
+                                })
+                            },
                             tag: mailBoxType.toString().toLowerCase(),
                             afterUndoAction: () => {
                                 this.setThreadState({threads: threads, selectedThread: threads[0]});
@@ -1102,7 +1114,7 @@ class ThreadsService extends BaseService {
         }
     }
 
-    getThreadMailBox(selectedThread: Thread, messageBox: string) {
+    getThreadMailBox(selectedThread: Thread, messageBox: string, toggleValues: any) {
         let body: any = {
             mailboxes: selectedThread.mailboxes
         };
@@ -1135,17 +1147,25 @@ class ThreadsService extends BaseService {
                 body.snooze = null;
                 break;
             case MAILBOX_STARRED:
-                if (selectedThread.mailboxes?.includes(messageBox)) {
-                    body.mailboxes = body.mailboxes.filter((item: string) => item !== messageBox)
-                } else {
+                if (toggleValues.isAllUnStared) {
                     body.mailboxes = [...body.mailboxes, messageBox]
+                } else {
+                    if (selectedThread.mailboxes?.includes(messageBox)) {
+                        body.mailboxes = body.mailboxes.filter((item: string) => item !== messageBox)
+                    }
                 }
                 break;
             case MAILBOX_UNREAD:
-                if (selectedThread.mailboxes?.includes(messageBox)) {
-                    body.mailboxes = body.mailboxes.filter((item: string) => item !== messageBox)
+                if (toggleValues.isAllRead) {
+                    if (!selectedThread.mailboxes?.includes(messageBox)) {
+                        body.mailboxes = [...body.mailboxes, messageBox]
+                    }
                 } else {
-                    body.mailboxes = [...body.mailboxes, messageBox]
+                    body.mailboxes = body.mailboxes.filter((item: string) => item !== messageBox)
+                    // if (selectedThread.mailboxes?.includes(messageBox)) {
+                    // } else {
+                    //     body.mailboxes = [...body.mailboxes, messageBox]
+                    // }
                 }
                 break;
             case MAILBOX_SNOOZED:
