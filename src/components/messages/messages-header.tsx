@@ -314,7 +314,7 @@ export function MessagesHeader({isProjectView = false}: { isProjectView?: boolea
                                             e.preventDefault();
                                             e.stopPropagation();
                                             updateMailBox(MAILBOX_STARRED)
-                                        }}><StarIcon/> Add Star</MenuItem>
+                                        }}><StarIcon/> {(selectedThread?.mailboxes || []).includes(MAILBOX_STARRED) ? 'Remove' : 'Add'} Star</MenuItem>
                                     <MenuItem
                                         onClick={(e) => {
                                             e.preventDefault();
