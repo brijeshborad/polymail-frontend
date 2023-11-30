@@ -163,6 +163,7 @@ class ThreadsService extends BaseService {
         if (selectedThreadIds.length > 0) {
             let movingThreads = threads.filter((thread: Thread) => selectedThreadIds.includes(thread.id!));
             let body: any = movingThreads.map((thread: Thread) => {
+                thread = {...thread, mailboxes: [...(thread.mailboxes || [])]};
                 if (markAsUnread) {
                     if (!thread.mailboxes?.includes(MAILBOX_UNREAD)) {
                         thread.mailboxes?.push(MAILBOX_UNREAD);
@@ -179,7 +180,7 @@ class ThreadsService extends BaseService {
             this.dispatchAction(batchUpdateThreads, batchUpdateMoveBody);
             let newFilteredThreads = threads.map((thread: Thread) => {
                 if (selectedThreadIds.includes(thread.id!)) {
-                    let mailboxes = thread.mailboxes || [];
+                    let mailboxes = [...(thread.mailboxes || [])];
                     if (markAsUnread) {
                         if (!mailboxes.includes(MAILBOX_UNREAD)) {
                             mailboxes.push(MAILBOX_UNREAD);
@@ -200,10 +201,12 @@ class ThreadsService extends BaseService {
     toggleMultipleThreadsAsStarred(markAsStared: boolean) {
         let selectedThreadIds = this.getThreadState().multiSelection || [];
         let threads = this.getThreadState().threads || [];
+        let selectedThread = this.getThreadState().selectedThread;
         if (selectedThreadIds.length > 0) {
             const messagePlural = selectedThreadIds.length === 1 ? 'message' : 'messages'
             let movingThreads = threads.filter((thread: Thread) => selectedThreadIds.includes(thread.id!));
             let body: any = movingThreads.map((thread: Thread) => {
+                thread = {...thread, mailboxes: [...(thread.mailboxes || [])]}
                 if (!markAsStared) {
                     if (!thread.mailboxes?.includes(MAILBOX_STARRED)) {
                         thread.mailboxes?.push(MAILBOX_STARRED);
@@ -253,7 +256,7 @@ class ThreadsService extends BaseService {
             this.dispatchAction(batchUpdateThreads, batchUpdateMoveBody);
             let newFilteredThreads = threads.map((thread: Thread) => {
                 if (selectedThreadIds.includes(thread.id!)) {
-                    let mailboxes = thread.mailboxes || [];
+                    let mailboxes = [...(thread.mailboxes || [])];
                     if (!markAsStared) {
                         if (!mailboxes.includes(MAILBOX_STARRED)) {
                             mailboxes.push(MAILBOX_STARRED);
@@ -267,6 +270,14 @@ class ThreadsService extends BaseService {
                 return thread;
             })
             this.setThreadState({threads: newFilteredThreads});
+            if (selectedThread) {
+                if (selectedThreadIds.includes(selectedThread.id!)) {
+                    let findUpdatedMailBox = body.find((t: any) => t.id === selectedThread?.id!);
+                    if (findUpdatedMailBox) {
+                        this.setSelectedThread({...selectedThread, mailboxes: findUpdatedMailBox.mailboxes})
+                    }
+                }
+            }
         }
     }
 
@@ -1131,45 +1142,8 @@ class ThreadsService extends BaseService {
             whatToMark = true;
         }
         if (selectedThreadIds.length > 0) {
-            // const messagePlural = selectedThreadIds.length === 1 ? 'message' : 'messages'
-            let body: any = {
-                mute: whatToMark,
-                threadIds: selectedThreadIds,
-            }
-            // let toastId = generateToasterId();
             let batchUpdateMoveBody = {
-                body: {body},
-                // toaster: {
-                //     success: {
-                //         desc: `Your threads has been ${whatToMark ? 'muted' : 'Un muted'}`,
-                //         title: `${selectedThreadIds.length} ${messagePlural} has been ${whatToMark ? 'muted' : 'Un muted'}`,
-                //         type: 'undo_changes',
-                //         id: toastId,
-                //     }
-                // },
-                // undoAction: {
-                //     showUndoButton: true,
-                //     dispatch: this.getDispatch(),
-                //     action: batchUpdateThreads,
-                //     success: {
-                //         type: 'success',
-                //         desc: `Your threads has been ${whatToMark ? 'un-muted' : 'muted'}`,
-                //         title: `${selectedThreadIds.length} ${messagePlural} has been ${whatToMark ? 'un-muted' : 'muted'}`
-                //     },
-                //     undoBody: {
-                //         body: {mute: !whatToMark, threadIds: selectedThreadIds},
-                //         afterUndoAction: () => {
-                //             this.setThreadState({threads: threads});
-                //             if (selectedThread && selectedThreadIds.includes(selectedThread.id!)) {
-                //                 this.setSelectedThread({...selectedThread, mute: !whatToMark})
-                //             }
-                //             selectedThreadIds.forEach(id => {
-                //                 this.makeThreadAsMuteCache(id, !whatToMark);
-                //             })
-                //         }
-                //     },
-                //     showToasterAfterUndoClick: true
-                // }
+                body: {body: {updates: selectedThreadIds.map(d => ({id: d, mute: whatToMark}))}},
             }
             this.dispatchAction(batchUpdateThreads, batchUpdateMoveBody);
             let newFilteredThreads = threads.map((thread: Thread) => {

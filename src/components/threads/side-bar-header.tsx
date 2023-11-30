@@ -62,10 +62,10 @@ export function SideBarHeader() {
     const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false)
     const [countUnreadMessages, setCountUnreadMessages] = useState<number>(0);
     const [tab, setTab] = useState<string>('INBOX');
-    const [toggleValues, setToggleValues] = useState<{ readStatus: boolean, muteStatus: boolean, starStatus: boolean }>({
-        readStatus: false,
-        muteStatus: false,
-        starStatus: false
+    const [toggleValues, setToggleValues] = useState<{ isAllRead: boolean, isAllMute: boolean, isAllStarred: boolean }>({
+        isAllRead: false,
+        isAllMute: false,
+        isAllStarred: false
     })
 
     useEffect(() => {
@@ -125,9 +125,9 @@ export function SideBarHeader() {
             let muteStatus = allSelectedThreads.filter((t: Thread) => t.mute);
             let starStatus = allSelectedThreads.filter((t: Thread) => t.mailboxes?.includes(MAILBOX_STARRED));
             setToggleValues({
-                readStatus: unreadStatus.length <= 0,
-                muteStatus: muteStatus.length > 0,
-                starStatus: starStatus.length > 0
+                isAllRead: unreadStatus.length <= 0,
+                isAllMute: muteStatus.length > 0 && allSelectedThreads.length === muteStatus.length,
+                isAllStarred: starStatus.length > 0 && allSelectedThreads.length === starStatus.length
             });
         }
     }, [multiSelection, threads])
@@ -172,11 +172,11 @@ export function SideBarHeader() {
 
     const moveThreadToMailBoxes = (type: string, date: string = '') => {
         if (type === MAILBOX_UNREAD) {
-            threadService.toggleMultipleThreadsAsRead(toggleValues.readStatus);
+            threadService.toggleMultipleThreadsAsRead(toggleValues.isAllRead);
             return;
         }
         if (type === MAILBOX_STARRED) {
-            threadService.toggleMultipleThreadsAsStarred(toggleValues.starStatus);
+            threadService.toggleMultipleThreadsAsStarred(toggleValues.isAllStarred);
             return;
         }
         threadService.moveThreadToMailBox(type, date);
@@ -253,10 +253,10 @@ export function SideBarHeader() {
                             </MenuButton>
                             <MenuList className={`${styles.tabListDropDown} drop-down-list`}>
                                 <MenuItem
-                                    onClick={() => moveThreadToMailBoxes(MAILBOX_UNREAD)}><InboxOpenIcon/> Mark {toggleValues.readStatus ? 'Unread' : 'Read'}
+                                    onClick={() => moveThreadToMailBoxes(MAILBOX_UNREAD)}><InboxOpenIcon/> Mark {toggleValues.isAllRead ? 'Unread' : 'Read'}
                                 </MenuItem>
                                 <MenuItem
-                                    onClick={() => threadService.markMultipleThreadsAsMute()}><MuteIcon/>{!toggleValues.muteStatus ? 'Mute' : 'Unmute'}
+                                    onClick={() => threadService.markMultipleThreadsAsMute()}><MuteIcon/>{toggleValues.isAllMute ? 'Unmute' : 'Mute'}
                                 </MenuItem>
                                 <MenuItem
                                     onClick={() => moveThreadToMailBoxes(MAILBOX_SPAM)}><SpamIcon/> Mark Spam</MenuItem>
@@ -270,7 +270,7 @@ export function SideBarHeader() {
                                     />
                                 </div>
                                 <MenuItem
-                                    onClick={() => moveThreadToMailBoxes(MAILBOX_STARRED)}><StarIcon/> {!toggleValues.starStatus ? 'Add ' : 'Remove '}
+                                    onClick={() => moveThreadToMailBoxes(MAILBOX_STARRED)}><StarIcon/> {toggleValues.isAllStarred ? 'Removed ' : 'Add '}
                                     Star</MenuItem>
                                 <MenuItem
                                     onClick={() => moveThreadToMailBoxes(MAILBOX_INBOX)}><InboxIcon/> Move to
