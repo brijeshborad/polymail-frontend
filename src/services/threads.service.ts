@@ -1226,6 +1226,35 @@ class ThreadsService extends BaseService {
         })
         cacheService.setThreadCache(cacheThreads);
     }
+
+    makeThreadAsStarredCache(threadId: string, isStarred: boolean = true) {
+        let {tabValue} = this.getThreadState();
+        let currentTabValue = tabValue || 'INBOX';
+        let cacheThreads = {...cacheService.getThreadCache()};
+        let cacheFromPage = cacheService.buildCacheKey(currentTabValue);
+        let fromThreads = [...(cacheThreads[cacheFromPage] || [])];
+        let threadIndex = fromThreads.findIndex((item) => item.id === threadId);
+        if (threadIndex !== -1) {
+            let mailBoxes = [...(fromThreads[threadIndex].mailboxes || [])];
+            let mailBoxesIndex = mailBoxes.indexOf(MAILBOX_STARRED);
+            if (isStarred) {
+                if (mailBoxesIndex !== -1) {
+                    mailBoxes = mailBoxes.filter(i => i !== MAILBOX_STARRED);
+                }
+            } else {
+                if (mailBoxesIndex === -1) {
+                    mailBoxes.push(MAILBOX_STARRED);
+                }
+            }
+            let updatingThread = {...fromThreads[threadIndex]};
+            updatingThread.mailboxes = mailBoxes;
+            fromThreads[threadIndex] = updatingThread;
+            cacheService.setThreadCache({
+                ...cacheThreads,
+                [cacheFromPage]: fromThreads
+            })
+        }
+    }
 }
 
 export const threadService = new ThreadsService();

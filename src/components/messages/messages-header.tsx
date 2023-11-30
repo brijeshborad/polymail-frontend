@@ -149,6 +149,13 @@ export function MessagesHeader({isProjectView = false}: { isProjectView?: boolea
                             threadService.makeThreadAsReadCache(currentThreads[index1].id!)
                         }
                     }
+                    if (messageBox === MAILBOX_STARRED) {
+                        if ((currentThreads[index1].mailboxes || []).includes(MAILBOX_STARRED)) {
+                            threadService.makeThreadAsStarredCache(currentThreads[index1].id!)
+                        } else {
+                            threadService.makeThreadAsStarredCache(currentThreads[index1].id!, false)
+                        }
+                    }
                 }
                 threadService.setThreadState({threads: currentThreads});
                 dispatch(updateThreads({
