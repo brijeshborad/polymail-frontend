@@ -35,6 +35,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import dynamic from "next/dynamic";
 import {useRouter} from "next/router";
+import {Thread} from "@/models";
 
 const MessageSchedule = dynamic(() => import("../messages/message-schedule").then(mod => mod.default));
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
@@ -61,6 +62,11 @@ export function SideBarHeader() {
     const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false)
     const [countUnreadMessages, setCountUnreadMessages] = useState<number>(0);
     const [tab, setTab] = useState<string>('INBOX');
+    const [toggleValues, setToggleValues] = useState<{ readStatus: boolean, muteStatus: boolean, starStatus: boolean }>({
+        readStatus: false,
+        muteStatus: false,
+        starStatus: false
+    })
 
     useEffect(() => {
         if (draftSuccess) {
@@ -111,6 +117,20 @@ export function SideBarHeader() {
             threadService.setTabValue(tab);
         }
     }, [tab])
+
+    useEffect(() => {
+        if (multiSelection && multiSelection.length > 0) {
+            let allSelectedThreads: Thread[] = (threads || []).filter((t: Thread) => multiSelection.includes(t.id!));
+            let unreadStatus = allSelectedThreads.filter((t: Thread) => t.mailboxes?.includes(MAILBOX_UNREAD));
+            let muteStatus = allSelectedThreads.filter((t: Thread) => t.mute);
+            let starStatus = allSelectedThreads.filter((t: Thread) => t.mailboxes?.includes(MAILBOX_STARRED));
+            setToggleValues({
+                readStatus: unreadStatus.length <= 0,
+                muteStatus: muteStatus.length > 0,
+                starStatus: starStatus.length > 0
+            });
+        }
+    }, [multiSelection, threads])
 
     const searchCancel = (callAPI: boolean = false) => {
         threadService.cancelThreadSearch(true);
@@ -225,11 +245,11 @@ export function SideBarHeader() {
                             </MenuButton>
                             <MenuList className={`${styles.tabListDropDown} drop-down-list`}>
                                 <MenuItem
-                                    onClick={() => moveThreadToMailBoxes(MAILBOX_UNREAD)}><InboxOpenIcon/> Mark
-                                    Unread</MenuItem>
+                                    onClick={() => moveThreadToMailBoxes(MAILBOX_UNREAD)}><InboxOpenIcon/> Mark {toggleValues.readStatus ? 'Unread' : 'Read'}
+                                </MenuItem>
                                 <MenuItem
-                                    onClick={() => threadService.markMultipleThreadsAsMute()}><MuteIcon/> Toggle
-                                    Mute</MenuItem>
+                                    onClick={() => threadService.markMultipleThreadsAsMute()}><MuteIcon/>{toggleValues.muteStatus ? 'Mute' : 'Unmute'}
+                                </MenuItem>
                                 <MenuItem
                                     onClick={() => moveThreadToMailBoxes(MAILBOX_SPAM)}><SpamIcon/> Mark Spam</MenuItem>
                                 <MenuDivider/>
@@ -241,7 +261,9 @@ export function SideBarHeader() {
                                         isNameShow={true}
                                     />
                                 </div>
-                                <MenuItem onClick={() => moveThreadToMailBoxes(MAILBOX_STARRED)}><StarIcon/> Toggle Star</MenuItem>
+                                <MenuItem
+                                    onClick={() => moveThreadToMailBoxes(MAILBOX_STARRED)}><StarIcon/> {toggleValues.starStatus ? 'Add' : 'Remove'}
+                                    Star</MenuItem>
                                 <MenuItem
                                     onClick={() => moveThreadToMailBoxes(MAILBOX_INBOX)}><InboxIcon/> Move to
                                     Inbox</MenuItem>
