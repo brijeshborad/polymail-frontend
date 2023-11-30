@@ -80,6 +80,9 @@ export function MessageItems() {
             setIsMoreMenuOpen(prevState => {
                 return prevState.map(() => false);
             });
+            setIsAttachmentOpen(prevState => {
+                return prevState.map(() => false);
+            });
         }
     }, [incomingEvent]);
 
@@ -163,6 +166,7 @@ export function MessageItems() {
 
     function attachmentsMenu(message: Message, index: number) {
         return <Menu
+            autoSelect={false}
             isOpen={isAttachmentOpen[index]}
             onClose={() => {
                 openAttachmentMenu(index, false)
@@ -173,36 +177,14 @@ export function MessageItems() {
                 _focusVisible={{boxShadow: 'none'}} _hover={{background: '#f1f1f1'}} _active={{background: 'none'}}
                 fontSize={'13px'} color={'#6B7280'} as={Button} mx={1}
                 leftIcon={<ChevronDownIcon className={styles.dropDownIcon}/>}
-                onMouseEnter={() => {
-                    clearDebounce(message.id);
+                onClick={() => {
                     openAttachmentMenu(index)
-                }}
-                onMouseLeave={() => {
-                    debounce(() => {
-                        openAttachmentMenu(index, false)
-                    }, 200, message.id)
-                }}
-                onMouseOut={() => {
-                    debounce(() => {
-                        openAttachmentMenu(index, false)
-                    }, 200, message.id)
                 }}
             >
                 <AttachmentIcon/>
             </MenuButton>
 
-            <MenuList
-                className={`${styles.tabListDropDown} drop-down-list`}
-                onMouseEnter={() => {
-                    clearDebounce(message.id);
-                    openAttachmentMenu(index)
-                }}
-                onMouseLeave={() => {
-                    debounce(() => {
-                        openAttachmentMenu(index, false)
-                    }, 200, message.id)
-                }}
-            >
+            <MenuList className={`${styles.tabListDropDown} drop-down-list`}>
                 {(message.attachments || []).map((item: MessageAttachments, i: number) => (
                     <MenuItem gap={2} key={i} onClick={() => downloadImage(message, item)}>
                         <FileIcon
