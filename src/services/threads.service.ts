@@ -1011,7 +1011,7 @@ class ThreadsService extends BaseService {
     }
 
     threadUpdated(thread: Thread) {
-        let {tabValue, threads, selectedThread} = this.getThreadState();
+        let {tabValue, threads, selectedThread, subTabValue} = this.getThreadState();
         let currentTabValue = 'INBOX';
         if (tabValue) {
             currentTabValue = tabValue;
@@ -1027,13 +1027,29 @@ class ThreadsService extends BaseService {
                     mailboxes: thread.mailboxes
                 }
             } else {
+                let allowThreadPush = true;
+                if (subTabValue === 'projects') {
+                    if (removableThread) {
+                        if (!removableThread.projects || removableThread.projects.length <= 0) {
+                            allowThreadPush = false;
+                        }
+                    } else {
+                        if (!thread.projects || thread.projects.length <= 0) {
+                            allowThreadPush = false;
+                        }
+                    }
+                }
                 if (removableThread) {
-                    finalThreads.unshift({...removableThread, mailboxes: thread.mailboxes});
+                    if (allowThreadPush) {
+                        finalThreads.unshift({...removableThread, mailboxes: thread.mailboxes});
+                    }
                 } else {
-                    let messages: Message[] = [...(thread.messages || [])];
-                    messages = performMessagesUpdate(messages);
-                    thread.messages = messages;
-                    finalThreads.unshift(thread);
+                    if (allowThreadPush) {
+                        let messages: Message[] = [...(thread.messages || [])];
+                        messages = performMessagesUpdate(messages);
+                        thread.messages = messages;
+                        finalThreads.unshift(thread);
+                    }
                 }
             }
             if (selectedThread && selectedThread.id === thread.id) {
