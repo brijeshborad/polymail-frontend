@@ -17,7 +17,7 @@ export function MessageBoxContent({isProjectView = false}: { isProjectView?: boo
     const messagesWrapperRef = React.useRef<HTMLDivElement | null | any>(null);
 
     const {selectedThread} = useSelector((state: StateType) => state.threads);
-    const {showMessageBox: isShowingMessageBox} = useSelector((state: StateType) => state.messages);
+    const {showMessageBox: isShowingMessageBox, showReplyBox} = useSelector((state: StateType) => state.messages);
     const [showScrollBar, setShowScrollBar] = useState<boolean>(false);
 
     const isLoaderShow = useAllLoader();
@@ -59,7 +59,7 @@ export function MessageBoxContent({isProjectView = false}: { isProjectView?: boo
                             <div className={styles.mailBoxMailList}>
                                 <MessageBox/>
                             </div>
-                            <MessageReplyBox isProjectView={isProjectView}/>
+                            {showReplyBox && <MessageReplyBox isProjectView={isProjectView}/>}
                         </Flex>
                     </Flex>}
                 </Flex>

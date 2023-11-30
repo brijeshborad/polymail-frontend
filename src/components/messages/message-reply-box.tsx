@@ -31,8 +31,6 @@ import Tooltip from "@/components/common/Tooltip";
 
 const MessageRecipients = dynamic(() => import("./message-recipients").then(mod => mod.default));
 const MessageSchedule = dynamic(() => import("./message-schedule").then(mod => mod.default));
-// const Time = dynamic(() => import("@/components/common").then(mod => mod.Time));
-
 
 dayjs.extend(relativeTime)
 
@@ -154,6 +152,7 @@ export function MessageReplyBox(props: MessageBoxType) {
 
     useEffect(() => {
         if (currentSelectedThread) {
+            setDraftIndex(null);
             setTotalMessages([...currentSelectedThread?.messages || []]);
             setIsReplyDropdownOpen(false)
             setShowReplyBox(false);
@@ -177,7 +176,7 @@ export function MessageReplyBox(props: MessageBoxType) {
                 setDraftIndex(messages.length);
             }
         }
-    }, [totalMessages, draftIndex])
+    }, [totalMessages])
 
     useEffect(() => {
         if (emailRecipients?.recipients?.items && emailRecipients?.recipients?.items.length > 1) {
@@ -675,7 +674,9 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             }
             if (incomingEvent.type === 'draft.updateIndex') {
                 let findMessage = (totalMessages || []).findIndex((item: Message) => item.id === incomingEvent.data.draftId);
-                setShowEditorToolbar(true);
+                if (!showEditorToolbar) {
+                    setShowEditorToolbar(true);
+                }
                 if (draftIndex === findMessage) {
                     return;
                 }

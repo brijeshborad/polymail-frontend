@@ -147,11 +147,11 @@ export function ThreadsSideBarList(props: ThreadListProps) {
                     messageService.setMessageState({
                         selectedMessage: (item.messages || [])[0],
                         messages: [],
-                        // showMessageBox: isSameThreadClicked
+                        showReplyBox: isSameThreadClicked
                     })
-                    // setTimeout(() => {
-                    //     messageService.setMessageState({showMessageBox: true});
-                    // }, 10);
+                    setTimeout(() => {
+                        messageService.setMessageState({showReplyBox: true});
+                    }, 1);
                     // globalEventService.fireEvent({data: '', type: 'richtexteditor.discard'});
                 }
             }

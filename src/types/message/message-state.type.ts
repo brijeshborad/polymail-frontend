@@ -14,6 +14,7 @@ export declare type InitialMessageStateType = {
     success?: boolean
     attachmentUrl?: MessageAttachments | null
     showMessageBox?: boolean,
+    showReplyBox?: boolean,
     showAttachmentLoader?: boolean
 }
 
