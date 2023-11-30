@@ -70,7 +70,7 @@ export default function KeyboardNavigationListener() {
                         let draftMessages = [...(messages || [])].filter((item: MessageDraft) => item.mailboxes?.includes('DRAFT') && !item.draftInfo?.discardedBy);
                         if (draftMessages.length > 0) {
                             globalEventService.fireEvent({
-                                data: {draftId: draftMessages[draftMessages.length - 1].id},
+                                data: {draftId: draftMessages[0].id},
                                 type: 'draft.updateIndex'
                             })
                         } else {

@@ -38,7 +38,7 @@ class CommonService extends BaseService {
         } else {
             this.setCommonState({isComposing: enable});
         }
-
+        keyNavigationService.toggleKeyNavigation(!enable);
     }
 
     toggleResumeComposing(enable: boolean, showAnimation: boolean = true) {
@@ -51,7 +51,7 @@ class CommonService extends BaseService {
         } else {
             this.setCommonState({isComposing: enable});
         }
-
+        keyNavigationService.toggleKeyNavigation(!enable);
     }
 
     toggleComposingWithThreadSelection(enable: boolean, allowSelection: boolean) {
