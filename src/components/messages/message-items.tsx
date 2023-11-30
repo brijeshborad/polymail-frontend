@@ -9,7 +9,6 @@ import IframeLoader from "@/components/common/iframe-loader";
 import React, {useEffect, useRef, useState} from "react";
 import {getAttachmentDownloadUrl, updateMessage} from "@/redux/messages/action-reducer";
 import {globalEventService, messageService, threadService} from "@/services";
-import {clearDebounce, debounce} from "@/utils/common.functions";
 import {AttachmentIcon, ChevronDownIcon} from "@chakra-ui/icons";
 import {DefaultExtensionType, defaultStyles, FileIcon} from "react-file-icon";
 import {useDispatch, useSelector} from "react-redux";

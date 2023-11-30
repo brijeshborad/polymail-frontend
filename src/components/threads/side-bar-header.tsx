@@ -23,7 +23,6 @@ import {
 import {
     commonService,
     draftService, globalEventService,
-    keyNavigationService,
     messageService,
     socketService,
     threadService
