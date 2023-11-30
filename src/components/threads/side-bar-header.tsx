@@ -163,7 +163,6 @@ export function SideBarHeader() {
             draftService.setComposeDraft(null);
             draftService.setResumeDraft(null);
             commonService.toggleComposing(true);
-            keyNavigationService.toggleKeyNavigation(false);
             if (selectedAccount && selectedAccount.id) {
                 dispatch(createDraft({body: {accountId: selectedAccount.id, body: {}, fromCompose: true}}));
             }

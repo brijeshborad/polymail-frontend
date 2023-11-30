@@ -453,7 +453,7 @@ export function ComposeBox(props: any) {
                                borderRadius={'0'} lineHeight={1} color={'#0A101D'}
                                onChange={(e) => addSubject(e)} value={subject || ''}/>
                         <div>
-                            <AddToProjectButton allowDefaultSelect={true}/>
+                            <AddToProjectButton allowDefaultSelect={true} selectFrom={'compose'}/>
                         </div>
 
                     </Flex>
