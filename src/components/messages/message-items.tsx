@@ -168,9 +168,9 @@ export function MessageItems() {
                 openAttachmentMenu(index, false)
             }}>
             <MenuButton
-                className={styles.tabListAttachmentButton} minWidth={'1px'} padding={0}
-                borderRadius={0} backgroundColor={'transparent'} height={'auto'} outline={"none"}
-                _focusVisible={{boxShadow: 'none'}} _hover={{background: 'none'}} _active={{background: 'none'}}
+                className={styles.tabListAttachmentButton} minWidth={'1px'} padding={'0 4px'} margin={0}
+                borderRadius={'3px'} backgroundColor={'transparent'} height={'auto'} outline={"none"}
+                _focusVisible={{boxShadow: 'none'}} _hover={{background: '#f1f1f1'}} _active={{background: 'none'}}
                 fontSize={'13px'} color={'#6B7280'} as={Button} mx={1}
                 leftIcon={<ChevronDownIcon className={styles.dropDownIcon}/>}
                 onMouseEnter={() => {

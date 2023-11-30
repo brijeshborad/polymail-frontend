@@ -1055,7 +1055,12 @@
 }
 
 .mailBox .tabListAttachmentButton .dropDownIcon {
-    margin-right: -5px;
+    margin-top: 3px;
+    margin-right: 2px;
+}
+
+.mailBox .tabListAttachmentButton span {
+    margin: 0;
 }
 
 .mailBox .tabListDropDown svg,
@@ -1067,7 +1072,7 @@
 
 .mailBox .tabListAttachmentButton:hover,
 .mailBox .tabListAttachmentButton[data-active] {
-    background-color: #FFFFFF;
+    background-color: #f1f1f1;
 }
 
 .mailBox .oldMail.lastOpenMail {
