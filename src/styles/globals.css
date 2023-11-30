@@ -1180,15 +1180,16 @@ div:has(> .mailSendToaster) {
 
 .editor-toolbar-show .tiptap-toolbar {
     opacity: 1;
-    animation: toolbar-animate 70ms ease;
+    animation: toolbar-animate 50ms ease;
+    transition: all 50ms ease;
 }
 
 .reply-box-focus .editor-toolbar-hide .tiptap-toolbar {
     opacity: 0;
-    animation: toolbar-animate-hide 70ms ease;
+    animation: toolbar-animate-hide 170ms ease;
     display: flex;
     height: 38px;
-    transition: all 70ms ease;
+    transition: all 170ms ease;
 }
 
 @keyframes toolbar-animate {
@@ -1210,10 +1211,13 @@ div:has(> .mailSendToaster) {
         opacity: 1;
     }
 
-    65% {
-        opacity: 0;
-        height: 0;
+    50% {
+        height: 19px;
     }
+
+    /*85% {*/
+    /*    height: 0;*/
+    /*}*/
     100% {
         height: inherit;
         opacity: 0;
