@@ -23,7 +23,6 @@ import {
 import {
     commonService,
     draftService, globalEventService,
-    keyNavigationService,
     messageService,
     socketService,
     threadService
@@ -35,6 +34,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import dynamic from "next/dynamic";
 import {useRouter} from "next/router";
+import {Thread} from "@/models";
 
 const MessageSchedule = dynamic(() => import("../messages/message-schedule").then(mod => mod.default));
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
@@ -61,6 +61,11 @@ export function SideBarHeader() {
     const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false)
     const [countUnreadMessages, setCountUnreadMessages] = useState<number>(0);
     const [tab, setTab] = useState<string>('INBOX');
+    const [toggleValues, setToggleValues] = useState<{ isAllRead: boolean, isAllMute: boolean, isAllStarred: boolean }>({
+        isAllRead: false,
+        isAllMute: false,
+        isAllStarred: false
+    })
 
     useEffect(() => {
         if (draftSuccess) {
@@ -112,6 +117,20 @@ export function SideBarHeader() {
         }
     }, [tab])
 
+    useEffect(() => {
+        if (multiSelection && multiSelection.length > 0) {
+            let allSelectedThreads: Thread[] = (threads || []).filter((t: Thread) => multiSelection.includes(t.id!));
+            let unreadStatus = allSelectedThreads.filter((t: Thread) => t.mailboxes?.includes(MAILBOX_UNREAD));
+            let muteStatus = allSelectedThreads.filter((t: Thread) => t.mute);
+            let starStatus = allSelectedThreads.filter((t: Thread) => t.mailboxes?.includes(MAILBOX_STARRED));
+            setToggleValues({
+                isAllRead: unreadStatus.length <= 0,
+                isAllMute: muteStatus.length > 0 && allSelectedThreads.length === muteStatus.length,
+                isAllStarred: starStatus.length > 0 && allSelectedThreads.length === starStatus.length
+            });
+        }
+    }, [multiSelection, threads])
+
     const searchCancel = (callAPI: boolean = false) => {
         threadService.cancelThreadSearch(true);
         socketService.cancelThreadSearch(userDetails?.id);
@@ -143,7 +162,6 @@ export function SideBarHeader() {
             draftService.setComposeDraft(null);
             draftService.setResumeDraft(null);
             commonService.toggleComposing(true);
-            keyNavigationService.toggleKeyNavigation(false);
             if (selectedAccount && selectedAccount.id) {
                 dispatch(createDraft({body: {accountId: selectedAccount.id, body: {}, fromCompose: true}}));
             }
@@ -151,6 +169,14 @@ export function SideBarHeader() {
     }
 
     const moveThreadToMailBoxes = (type: string, date: string = '') => {
+        if (type === MAILBOX_UNREAD) {
+            threadService.toggleMultipleThreadsAsRead(toggleValues.isAllRead);
+            return;
+        }
+        if (type === MAILBOX_STARRED) {
+            threadService.toggleMultipleThreadsAsStarred(toggleValues.isAllStarred);
+            return;
+        }
         threadService.moveThreadToMailBox(type, date);
     }
 
@@ -225,11 +251,11 @@ export function SideBarHeader() {
                             </MenuButton>
                             <MenuList className={`${styles.tabListDropDown} drop-down-list`}>
                                 <MenuItem
-                                    onClick={() => moveThreadToMailBoxes(MAILBOX_UNREAD)}><InboxOpenIcon/> Mark
-                                    Unread</MenuItem>
+                                    onClick={() => moveThreadToMailBoxes(MAILBOX_UNREAD)}><InboxOpenIcon/> Mark {toggleValues.isAllRead ? 'Unread' : 'Read'}
+                                </MenuItem>
                                 <MenuItem
-                                    onClick={() => threadService.markMultipleThreadsAsMute()}><MuteIcon/> Toggle
-                                    Mute</MenuItem>
+                                    onClick={() => threadService.markMultipleThreadsAsMute()}><MuteIcon/>{toggleValues.isAllMute ? 'Unmute' : 'Mute'}
+                                </MenuItem>
                                 <MenuItem
                                     onClick={() => moveThreadToMailBoxes(MAILBOX_SPAM)}><SpamIcon/> Mark Spam</MenuItem>
                                 <MenuDivider/>
@@ -241,7 +267,9 @@ export function SideBarHeader() {
                                         isNameShow={true}
                                     />
                                 </div>
-                                <MenuItem onClick={() => moveThreadToMailBoxes(MAILBOX_STARRED)}><StarIcon/> Toggle Star</MenuItem>
+                                <MenuItem
+                                    onClick={() => moveThreadToMailBoxes(MAILBOX_STARRED)}><StarIcon/> {toggleValues.isAllStarred ? 'Removed ' : 'Add '}
+                                    Star</MenuItem>
                                 <MenuItem
                                     onClick={() => moveThreadToMailBoxes(MAILBOX_INBOX)}><InboxIcon/> Move to
                                     Inbox</MenuItem>

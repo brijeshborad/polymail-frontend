@@ -142,6 +142,7 @@ export function MessagesHeader({isProjectView = false}: { isProjectView?: boolea
                     threadService.moveThreadFromListToListCache(tabValue || 'INBOX', messageBox, threadData.id!)
                 } else {
                     threadService.setSelectedThread({...currentThreads[index1]});
+                    threadService.updateUmMovingThreadCache(messageBox, currentThreads[index1]);
                 }
                 threadService.setThreadState({threads: currentThreads});
                 dispatch(updateThreads({
@@ -170,7 +171,11 @@ export function MessagesHeader({isProjectView = false}: { isProjectView?: boolea
                                 },
                                 tag: messageBox.toLowerCase(),
                                 afterUndoAction: () => {
-                                    threadService.moveThreadFromListToListCache(messageBox, tabValue || 'INBOX', threadData.id!);
+                                    if (remove_from_list) {
+                                        threadService.moveThreadFromListToListCache(messageBox, tabValue || 'INBOX', threadData.id!);
+                                    } else {
+                                        threadService.updateUmMovingThreadCache(messageBox, threadData);
+                                    }
                                     threadService.setThreadState({
                                         threads: threads || [],
                                         selectedThread: threadData
@@ -241,7 +246,7 @@ export function MessagesHeader({isProjectView = false}: { isProjectView?: boolea
                         <Flex alignItems={'center'} justifyContent={'end'} className={'member-images'}>
                             <UsersOnline type={'threads'} itemId={selectedThread.id!}/>
                         </Flex>
-                        {!isProjectView && <AddToProjectButton allowDefaultSelect={true}/>}
+                        {!isProjectView && <AddToProjectButton allowDefaultSelect={true} selectFrom={'thread'}/>}
                     </Flex>
                     <Flex align={'center'} className={'header-right-icon'}>
                         <div>
@@ -314,7 +319,7 @@ export function MessagesHeader({isProjectView = false}: { isProjectView?: boolea
                                             e.preventDefault();
                                             e.stopPropagation();
                                             updateMailBox(MAILBOX_STARRED)
-                                        }}><StarIcon/> Add Star</MenuItem>
+                                        }}><StarIcon/> {(selectedThread?.mailboxes || []).includes(MAILBOX_STARRED) ? 'Remove' : 'Add'} Star</MenuItem>
                                     <MenuItem
                                         onClick={(e) => {
                                             e.preventDefault();

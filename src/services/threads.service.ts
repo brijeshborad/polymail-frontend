@@ -5,9 +5,13 @@ import {BaseService} from "@/services/base.service";
 import {draftService} from "@/services/draft.service";
 import {
     MAILBOX_ARCHIVE,
-    MAILBOX_DRAFT, MAILBOX_INBOX,
+    MAILBOX_DRAFT,
+    MAILBOX_INBOX,
     MAILBOX_SENT,
-    MAILBOX_SNOOZED, MAILBOX_SPAM, MAILBOX_STARRED, MAILBOX_TRASH,
+    MAILBOX_SNOOZED,
+    MAILBOX_SPAM,
+    MAILBOX_STARRED,
+    MAILBOX_TRASH,
     MAILBOX_UNREAD
 } from "@/utils/constants";
 import {generateToasterId} from "@/utils/common.functions";
@@ -153,11 +157,133 @@ class ThreadsService extends BaseService {
         this.dispatchAction(updateThreadState, body);
     }
 
+    toggleMultipleThreadsAsRead(markAsUnread: boolean) {
+        let selectedThreadIds = this.getThreadState().multiSelection || [];
+        let threads = this.getThreadState().threads || [];
+        if (selectedThreadIds.length > 0) {
+            let movingThreads = threads.filter((thread: Thread) => selectedThreadIds.includes(thread.id!));
+            let body: any = movingThreads.map((thread: Thread) => {
+                thread = {...thread, mailboxes: [...(thread.mailboxes || [])]};
+                if (markAsUnread) {
+                    if (!thread.mailboxes?.includes(MAILBOX_UNREAD)) {
+                        thread.mailboxes?.push(MAILBOX_UNREAD);
+                    }
+                } else {
+                    thread.mailboxes = (thread.mailboxes || []).filter(i => i !== MAILBOX_UNREAD);
+                }
+                return {
+                    id: thread.id,
+                    mailboxes: thread.mailboxes,
+                };
+            })
+            let batchUpdateMoveBody = {body: {body: {updates: body}}};
+            this.dispatchAction(batchUpdateThreads, batchUpdateMoveBody);
+            let newFilteredThreads = threads.map((thread: Thread) => {
+                if (selectedThreadIds.includes(thread.id!)) {
+                    let mailboxes = [...(thread.mailboxes || [])];
+                    if (markAsUnread) {
+                        if (!mailboxes.includes(MAILBOX_UNREAD)) {
+                            mailboxes.push(MAILBOX_UNREAD);
+                            this.makeThreadAsReadCache(thread.id!, false);
+                        }
+                    } else {
+                        mailboxes = mailboxes.filter(i => i !== MAILBOX_UNREAD);
+                        this.makeThreadAsReadCache(thread.id!);
+                    }
+                    return {...thread, mailboxes: mailboxes}
+                }
+                return thread;
+            })
+            this.setThreadState({threads: newFilteredThreads});
+        }
+    }
+
+    toggleMultipleThreadsAsStarred(markAsStared: boolean) {
+        let selectedThreadIds = this.getThreadState().multiSelection || [];
+        let threads = this.getThreadState().threads || [];
+        let selectedThread = this.getThreadState().selectedThread;
+        if (selectedThreadIds.length > 0) {
+            const messagePlural = selectedThreadIds.length === 1 ? 'message' : 'messages'
+            let movingThreads = threads.filter((thread: Thread) => selectedThreadIds.includes(thread.id!));
+            let body: any = movingThreads.map((thread: Thread) => {
+                thread = {...thread, mailboxes: [...(thread.mailboxes || [])]}
+                if (!markAsStared) {
+                    if (!thread.mailboxes?.includes(MAILBOX_STARRED)) {
+                        thread.mailboxes?.push(MAILBOX_STARRED);
+                    }
+                } else {
+                    thread.mailboxes = (thread.mailboxes || []).filter(i => i !== MAILBOX_STARRED);
+                }
+                return {
+                    id: thread.id,
+                    mailboxes: thread.mailboxes,
+                };
+            })
+            let toastId = generateToasterId();
+            let undoBody: any = movingThreads.map((thread: Thread) => ({
+                id: thread.id,
+                mailboxes: thread.mailboxes
+            }))
+            let batchUpdateMoveBody = {
+                body: {body: {updates: body}},
+                toaster: {
+                    success: {
+                        desc: `Your message has been moved to ${MAILBOX_STARRED.toLowerCase()}`,
+                        title: `${selectedThreadIds.length} ${messagePlural} has been ${MAILBOX_STARRED.toLowerCase()}`,
+                        type: 'undo_changes',
+                        id: toastId,
+                    }
+                },
+                undoAction: {
+                    showUndoButton: true,
+                    dispatch: this.getDispatch(),
+                    action: batchUpdateThreads,
+                    undoBody: {
+                        body: {
+                            updates: undoBody
+                        },
+                        tag: MAILBOX_STARRED.toLowerCase(),
+                        afterUndoAction: () => {
+                            this.setThreadState({threads: threads, selectedThread: threads[0]});
+                            undoBody.forEach((data: any) => {
+                                this.makeThreadAsStarredCache(data.id, false);
+                            })
+                        }
+                    },
+                    showToasterAfterUndoClick: true
+                }
+            };
+            this.dispatchAction(batchUpdateThreads, batchUpdateMoveBody);
+            let newFilteredThreads = threads.map((thread: Thread) => {
+                if (selectedThreadIds.includes(thread.id!)) {
+                    let mailboxes = [...(thread.mailboxes || [])];
+                    if (!markAsStared) {
+                        if (!mailboxes.includes(MAILBOX_STARRED)) {
+                            mailboxes.push(MAILBOX_STARRED);
+                        }
+                    } else {
+                        mailboxes = mailboxes.filter(i => i !== MAILBOX_STARRED);
+                    }
+                    this.makeThreadAsStarredCache(thread.id!, markAsStared);
+                    return {...thread, mailboxes: mailboxes}
+                }
+                return thread;
+            })
+            this.setThreadState({threads: newFilteredThreads});
+            if (selectedThread) {
+                if (selectedThreadIds.includes(selectedThread.id!)) {
+                    let findUpdatedMailBox = body.find((t: any) => t.id === selectedThread?.id!);
+                    if (findUpdatedMailBox) {
+                        this.setSelectedThread({...selectedThread, mailboxes: findUpdatedMailBox.mailboxes})
+                    }
+                }
+            }
+        }
+    }
+
     moveThreadToMailBox(mailBoxType: MailBoxTypes, snoozeDate: string = '') {
         let selectedThreadIds = this.getThreadState().multiSelection || [];
         let threads = this.getThreadState().threads || [];
-        let showToaster = true;
-        let remove_from_list = true;
         if (selectedThreadIds.length > 0) {
             const messagePlural = selectedThreadIds.length === 1 ? 'message' : 'messages'
             let movingThreads = threads.filter((thread: Thread) => selectedThreadIds.includes(thread.id!));
@@ -184,67 +310,52 @@ class ThreadsService extends BaseService {
                 return finalBody
             })
             let toastId = generateToasterId();
-            if (mailBoxType === MAILBOX_UNREAD) {
-                showToaster = false;
-                remove_from_list = false;
-            }
             let batchUpdateMoveBody = {
                 body: {
-                    body: {updates: body.map((t: any) => {
+                    body: {
+                        updates: body.map((t: any) => {
                             delete t.fromTab
                             return t
-                        })}
+                        })
+                    }
                 },
-                ...(showToaster ? {
-                    toaster: {
-                        success: {
-                            desc: `Your message has been moved to ${mailBoxType.toString().toLowerCase()}`,
-                            title: `${selectedThreadIds.length} ${messagePlural} has been ${mailBoxType.toString().toLowerCase()}`,
-                            type: 'undo_changes',
-                            id: toastId,
+                toaster: {
+                    success: {
+                        desc: `Your message has been moved to ${mailBoxType.toString().toLowerCase()}`,
+                        title: `${selectedThreadIds.length} ${messagePlural} has been ${mailBoxType.toString().toLowerCase()}`,
+                        type: 'undo_changes',
+                        id: toastId,
+                    }
+                },
+                undoAction: {
+                    showUndoButton: true,
+                    dispatch: this.getDispatch(),
+                    action: batchUpdateThreads,
+                    undoBody: {
+                        body: {
+                            updates: undoBody.map((t: any) => {
+                                delete t.fromTab
+                                return t
+                            })
+                        },
+                        tag: mailBoxType.toString().toLowerCase(),
+                        afterUndoAction: () => {
+                            this.setThreadState({threads: threads, selectedThread: threads[0]});
+                            undoBody.forEach((data: any) => {
+                                this.moveThreadFromListToListCache(mailBoxType, data.fromTab, data.id);
+                            })
                         }
                     },
-                    undoAction: {
-                        showUndoButton: true,
-                        dispatch: this.getDispatch(),
-                        action: batchUpdateThreads,
-                        undoBody: {
-                            body: {updates: undoBody.map((t: any) => {
-                                    delete t.fromTab
-                                    return t
-                                })},
-                            tag: mailBoxType.toString().toLowerCase(),
-                            afterUndoAction: () => {
-                                this.setThreadState({threads: threads, selectedThread: threads[0]});
-                                undoBody.forEach((data: any) => {
-                                    this.moveThreadFromListToListCache(mailBoxType, data.fromTab, data.id);
-                                })
-                            }
-                        },
-                        showToasterAfterUndoClick: true
-                    }
-                } : {})
+                    showToasterAfterUndoClick: true
+                }
             }
             this.dispatchAction(batchUpdateThreads, batchUpdateMoveBody);
-            if (remove_from_list) {
-                let newFilteredThreads = threads.filter((thread: Thread) => !selectedThreadIds.includes(thread.id!))
-                this.setThreadState({threads: newFilteredThreads, selectedThread: newFilteredThreads[0]});
-                body.forEach((data: any) => {
-                    this.moveThreadFromListToListCache(data.fromTab, mailBoxType, data.id);
-                })
-                this.cancelThreadSearch();
-            } else {
-                let newFilteredThreads = threads.map((thread: Thread) => {
-                    if (selectedThreadIds.includes(thread.id!)) {
-                        return {...thread, mailboxes: [...(thread.mailboxes || []), mailBoxType]}
-                    }
-                    return thread;
-                })
-                this.setThreadState({threads: newFilteredThreads});
-                selectedThreadIds.forEach(id => {
-                    this.makeThreadAsReadCache(id);
-                })
-            }
+            let newFilteredThreads = threads.filter((thread: Thread) => !selectedThreadIds.includes(thread.id!))
+            this.setThreadState({threads: newFilteredThreads, selectedThread: newFilteredThreads[0]});
+            body.forEach((data: any) => {
+                this.moveThreadFromListToListCache(data.fromTab, mailBoxType, data.id);
+            })
+            this.cancelThreadSearch();
         }
     }
 
@@ -511,7 +622,7 @@ class ThreadsService extends BaseService {
         if (!thread) return;
         let {threads} = this.getThreadState();
         const mailboxes = (thread.mailboxes || [])
-        const isUnread = mailboxes.includes('UNREAD');
+        const isUnread = mailboxes.includes(MAILBOX_UNREAD);
 
         if (isUnread) {
             let updateTheList = [...(threads || [])];
@@ -519,7 +630,7 @@ class ThreadsService extends BaseService {
             if (findTheThreadToUpdate !== -1) {
                 updateTheList[findTheThreadToUpdate] = {
                     ...updateTheList[findTheThreadToUpdate],
-                    mailboxes: mailboxes.filter(i => i !== 'UNREAD')
+                    mailboxes: mailboxes.filter(i => i !== MAILBOX_UNREAD)
                 }
                 this.setThreads(updateTheList);
                 this.setSelectedThread({...updateTheList[findTheThreadToUpdate]});
@@ -528,14 +639,14 @@ class ThreadsService extends BaseService {
             this.dispatchAction(updateThreads, {
                 body: {
                     id: thread.id,
-                    body: {mailboxes: mailboxes.filter(i => i !== 'UNREAD')}
+                    body: {mailboxes: mailboxes.filter(i => i !== MAILBOX_UNREAD)}
                 }
             });
             this.makeThreadAsReadCache(thread.id!);
         }
     }
 
-    makeThreadAsReadCache(threadId: string) {
+    makeThreadAsReadCache(threadId: string, isRead: boolean = true) {
         let {tabValue} = this.getThreadState();
         let currentTabValue = tabValue || 'INBOX';
         let cacheThreads = {...cacheService.getThreadCache()};
@@ -545,10 +656,14 @@ class ThreadsService extends BaseService {
         if (threadIndex !== -1) {
             let mailBoxes = [...(fromThreads[threadIndex].mailboxes || [])];
             let mailBoxesIndex = mailBoxes.indexOf(MAILBOX_UNREAD);
-            if (mailBoxesIndex !== -1) {
-                mailBoxes.push(MAILBOX_UNREAD);
+            if (isRead) {
+                if (mailBoxesIndex !== -1) {
+                    mailBoxes = mailBoxes.filter(i => i !== MAILBOX_UNREAD);
+                }
             } else {
-                mailBoxes = mailBoxes.filter(i => i !== MAILBOX_UNREAD);
+                if (mailBoxesIndex === -1) {
+                    mailBoxes.push(MAILBOX_UNREAD);
+                }
             }
             let updatingThread = {...fromThreads[threadIndex]};
             updatingThread.mailboxes = mailBoxes;
@@ -802,9 +917,9 @@ class ThreadsService extends BaseService {
         let allMailboxToFindIn = (thread.mailboxes || []).filter((t: string) => ![MAILBOX_UNREAD, MAILBOX_STARRED].includes(t));
         let isProjectThread = (thread.projects || []).length > 0;
         let findThreadIndex = cacheThreads[cacheKey].findIndex((item: Thread) => item.id === thread.id);
-        let tabValueFromCacheKey = cacheKey.split('-')[2];
+        let tabValueFromCacheKey: string = cacheKey.split('-')[1];
         cacheThreads[cacheKey] = [...cacheThreads[cacheKey]];
-        if (!allMailboxToFindIn.includes(tabValueFromCacheKey)) {
+        if (!allMailboxToFindIn.includes(tabValueFromCacheKey.toUpperCase())) {
             if (findThreadIndex !== -1) {
                 cacheThreads[cacheKey].splice(findThreadIndex, 1);
             } else {
@@ -829,9 +944,9 @@ class ThreadsService extends BaseService {
         let allMailboxToFindIn = (thread.mailboxes || []).filter((t: string) => ![MAILBOX_UNREAD, MAILBOX_STARRED].includes(t));
         let isProjectThread = (thread.projects || []).length > 0;
         let findThreadIndex = cacheThreads[cacheKey].findIndex((item: Thread) => item.id === thread.id);
-        let tabValueFromCacheKey = cacheKey.split('-')[2];
+        let tabValueFromCacheKey: string = cacheKey.split('-')[2];
         cacheThreads[cacheKey] = [...cacheThreads[cacheKey]];
-        if (!allMailboxToFindIn.includes(tabValueFromCacheKey)) {
+        if (!allMailboxToFindIn.includes(tabValueFromCacheKey.toUpperCase())) {
             if (findThreadIndex !== -1) {
                 cacheThreads[cacheKey].splice(findThreadIndex, 1);
             } else {
@@ -896,7 +1011,7 @@ class ThreadsService extends BaseService {
     }
 
     threadUpdated(thread: Thread) {
-        let {tabValue, threads, selectedThread} = this.getThreadState();
+        let {tabValue, threads, selectedThread, subTabValue} = this.getThreadState();
         let currentTabValue = 'INBOX';
         if (tabValue) {
             currentTabValue = tabValue;
@@ -912,13 +1027,30 @@ class ThreadsService extends BaseService {
                     mailboxes: thread.mailboxes
                 }
             } else {
+                let allowThreadPush = true;
+                if (subTabValue === 'projects') {
+                    if (removableThread) {
+                        if (!removableThread.projects || removableThread.projects.length <= 0) {
+                            allowThreadPush = false;
+                        }
+                    } else {
+                        if (!thread.projects || thread.projects.length <= 0) {
+                            allowThreadPush = false;
+                        }
+                    }
+                }
                 if (removableThread) {
-                    finalThreads.unshift({...removableThread, mailboxes: thread.mailboxes});
+                    if (allowThreadPush) {
+                        finalThreads.unshift({...removableThread, mailboxes: thread.mailboxes});
+                    }
                 } else {
-                    let messages: Message[] = [...(thread.messages || [])];
-                    messages = performMessagesUpdate(messages);
-                    thread.messages = messages;
-                    finalThreads.unshift(thread);
+                    if (allowThreadPush) {
+                        let newThreads = {...thread};
+                        let messages: Message[] = [...(newThreads.messages || [])];
+                        messages = performMessagesUpdate(messages);
+                        newThreads.messages = messages;
+                        finalThreads.unshift(newThreads);
+                    }
                 }
             }
             if (selectedThread && selectedThread.id === thread.id) {
@@ -926,11 +1058,11 @@ class ThreadsService extends BaseService {
             }
         } else {
             if (findThreadIndex !== -1) {
+                finalThreads.splice(findThreadIndex, 1);
                 if (selectedThread && selectedThread.id === thread.id) {
                     let finalIndex = (findThreadIndex - 1 < finalThreads.length) ? (findThreadIndex === 0) ? findThreadIndex : findThreadIndex - 1 : (findThreadIndex <= 0 ? findThreadIndex + 1 : findThreadIndex - 1)
                     this.setSelectedThread(finalThreads[finalIndex]);
                 }
-                finalThreads.splice(findThreadIndex, 1);
             }
         }
         this.setThreads(finalThreads);
@@ -944,6 +1076,21 @@ class ThreadsService extends BaseService {
             removableThread = threadsToRemove[Object.keys(threadsToRemove)[0]];
         }
         cacheThreads = this.updateThreadsToCache(cacheThreads, thread, removableThread);
+        let allMailboxToFindIn = (thread.mailboxes || []);
+        Object.keys(threadsToRemove).forEach((keysToRemove: string) => {
+            let tabValueFromCacheKey: string = '';
+            if (keysToRemove.startsWith('inbox-')) {
+                tabValueFromCacheKey = keysToRemove.split('-')[1];
+            } else {
+                tabValueFromCacheKey = keysToRemove.split('-')[2];
+            }
+            if (!allMailboxToFindIn.includes(tabValueFromCacheKey)) {
+                let findItem = cacheThreads[keysToRemove].findIndex((t: Thread) => t.id === thread.id);
+                if (findItem !== -1) {
+                    cacheThreads[keysToRemove].splice(findItem, 1);
+                }
+            }
+        })
         cacheService.setThreadCache(cacheThreads);
         return removableThread;
     }
@@ -953,8 +1100,13 @@ class ThreadsService extends BaseService {
         let allMailboxToFindIn = (thread.mailboxes || []);
         Object.keys(cacheThreads).forEach((cacheKey: string) => {
             let findThreadIndex = cacheThreads[cacheKey].findIndex((item: Thread) => item.id === thread.id);
-            let tabValueFromCacheKey = cacheKey.split('-')[2];
-            if (!allMailboxToFindIn.includes(tabValueFromCacheKey)) {
+            let tabValueFromCacheKey: string = '';
+            if (cacheKey.startsWith('inbox-')) {
+                tabValueFromCacheKey = cacheKey.split('-')[1];
+            } else {
+                tabValueFromCacheKey = cacheKey.split('-')[2];
+            }
+            if (!allMailboxToFindIn.includes(tabValueFromCacheKey.toUpperCase())) {
                 if (findThreadIndex !== -1) {
                     threadsToRemove[cacheKey] = {...cacheThreads[cacheKey][findThreadIndex]};
                 }
@@ -969,8 +1121,13 @@ class ThreadsService extends BaseService {
         Object.keys(cacheThreads).forEach((cacheKey: string) => {
             cacheThreads[cacheKey] = [...cacheThreads[cacheKey]];
             let findThreadIndex = cacheThreads[cacheKey].findIndex((item: Thread) => item.id === thread.id);
-            let tabValueFromCacheKey = cacheKey.split('-')[2];
-            if (allMailboxToFindIn.includes(tabValueFromCacheKey)) {
+            let tabValueFromCacheKey: string = '';
+            if (cacheKey.startsWith('inbox-')) {
+                tabValueFromCacheKey = cacheKey.split('-')[1];
+            } else {
+                tabValueFromCacheKey = cacheKey.split('-')[2];
+            }
+            if (allMailboxToFindIn.includes(tabValueFromCacheKey.toUpperCase())) {
                 if (isProjectThread && (cacheKey.includes('projects') || cacheKey.includes('everything'))) {
                     if (findThreadIndex !== -1) {
                         cacheThreads[cacheKey][findThreadIndex] = {
@@ -981,14 +1138,15 @@ class ThreadsService extends BaseService {
                         if (removeThead) {
                             cacheThreads[cacheKey].unshift({...removeThead, mailboxes: thread.mailboxes});
                         } else {
-                            let messages: Message[] = [...(thread.messages || [])];
+                            let newThreads = {...thread};
+                            let messages: Message[] = [...(newThreads.messages || [])];
                             messages = performMessagesUpdate(messages);
-                            thread.messages = messages;
-                            cacheThreads[cacheKey].unshift(thread);
+                            newThreads.messages = messages;
+                            cacheThreads[cacheKey].unshift(newThreads);
                         }
                     }
                 } else {
-                    if (cacheKey.includes('just-mine')) {
+                    if (cacheKey.startsWith('inbox-') && cacheKey.includes('just-mine')) {
                         if (findThreadIndex !== -1) {
                             cacheThreads[cacheKey][findThreadIndex] = {
                                 ...cacheThreads[cacheKey][findThreadIndex],
@@ -998,10 +1156,11 @@ class ThreadsService extends BaseService {
                             if (removeThead) {
                                 cacheThreads[cacheKey].unshift({...removeThead, mailboxes: thread.mailboxes});
                             } else {
-                                let messages: Message[] = [...(thread.messages || [])];
+                                let newThreads = {...thread};
+                                let messages: Message[] = [...(newThreads.messages || [])];
                                 messages = performMessagesUpdate(messages);
-                                thread.messages = messages;
-                                cacheThreads[cacheKey].unshift(thread);
+                                newThreads.messages = messages;
+                                cacheThreads[cacheKey].unshift(newThreads);
                             }
                         }
                     }
@@ -1027,45 +1186,8 @@ class ThreadsService extends BaseService {
             whatToMark = true;
         }
         if (selectedThreadIds.length > 0) {
-            // const messagePlural = selectedThreadIds.length === 1 ? 'message' : 'messages'
-            let body: any = {
-                mute: whatToMark,
-                threadIds: selectedThreadIds,
-            }
-            // let toastId = generateToasterId();
             let batchUpdateMoveBody = {
-                body: {body},
-                // toaster: {
-                //     success: {
-                //         desc: `Your threads has been ${whatToMark ? 'muted' : 'Un muted'}`,
-                //         title: `${selectedThreadIds.length} ${messagePlural} has been ${whatToMark ? 'muted' : 'Un muted'}`,
-                //         type: 'undo_changes',
-                //         id: toastId,
-                //     }
-                // },
-                // undoAction: {
-                //     showUndoButton: true,
-                //     dispatch: this.getDispatch(),
-                //     action: batchUpdateThreads,
-                //     success: {
-                //         type: 'success',
-                //         desc: `Your threads has been ${whatToMark ? 'un-muted' : 'muted'}`,
-                //         title: `${selectedThreadIds.length} ${messagePlural} has been ${whatToMark ? 'un-muted' : 'muted'}`
-                //     },
-                //     undoBody: {
-                //         body: {mute: !whatToMark, threadIds: selectedThreadIds},
-                //         afterUndoAction: () => {
-                //             this.setThreadState({threads: threads});
-                //             if (selectedThread && selectedThreadIds.includes(selectedThread.id!)) {
-                //                 this.setSelectedThread({...selectedThread, mute: !whatToMark})
-                //             }
-                //             selectedThreadIds.forEach(id => {
-                //                 this.makeThreadAsMuteCache(id, !whatToMark);
-                //             })
-                //         }
-                //     },
-                //     showToasterAfterUndoClick: true
-                // }
+                body: {body: {updates: selectedThreadIds.map(d => ({id: d, mute: whatToMark}))}},
             }
             this.dispatchAction(batchUpdateThreads, batchUpdateMoveBody);
             let newFilteredThreads = threads.map((thread: Thread) => {
@@ -1134,20 +1256,20 @@ class ThreadsService extends BaseService {
                 body.mailboxes = [messageBox]
                 body.snooze = null;
                 break;
-            case MAILBOX_STARRED:
-                if (selectedThread.mailboxes?.includes(messageBox)) {
-                    body.mailboxes = body.mailboxes.filter((item: string) => item !== messageBox)
-                } else {
-                    body.mailboxes = [...body.mailboxes, messageBox]
-                }
-                break;
-            case MAILBOX_UNREAD:
-                if (selectedThread.mailboxes?.includes(messageBox)) {
-                    body.mailboxes = body.mailboxes.filter((item: string) => item !== messageBox)
-                } else {
-                    body.mailboxes = [...body.mailboxes, messageBox]
-                }
-                break;
+            // case MAILBOX_STARRED:
+            //     if (selectedThread.mailboxes?.includes(messageBox)) {
+            //         body.mailboxes = body.mailboxes.filter((item: string) => item !== messageBox)
+            //     } else {
+            //         body.mailboxes = [...body.mailboxes, messageBox]
+            //     }
+            //     break;
+            // case MAILBOX_UNREAD:
+            //     if (selectedThread.mailboxes?.includes(messageBox)) {
+            //         body.mailboxes = body.mailboxes.filter((item: string) => item !== messageBox)
+            //     } else {
+            //         body.mailboxes = [...body.mailboxes, messageBox]
+            //     }
+            //     break;
             case MAILBOX_SNOOZED:
                 if (selectedThread.mailboxes?.includes(messageBox)) {
                     return
@@ -1194,6 +1316,52 @@ class ThreadsService extends BaseService {
             })
         })
         cacheService.setThreadCache(cacheThreads);
+    }
+
+    makeThreadAsStarredCache(threadId: string, isStarred: boolean = true) {
+        let {tabValue} = this.getThreadState();
+        let currentTabValue = tabValue || 'INBOX';
+        let cacheThreads = {...cacheService.getThreadCache()};
+        let cacheFromPage = cacheService.buildCacheKey(currentTabValue);
+        let fromThreads = [...(cacheThreads[cacheFromPage] || [])];
+        let threadIndex = fromThreads.findIndex((item) => item.id === threadId);
+        if (threadIndex !== -1) {
+            let mailBoxes = [...(fromThreads[threadIndex].mailboxes || [])];
+            let mailBoxesIndex = mailBoxes.indexOf(MAILBOX_STARRED);
+            if (!isStarred) {
+                if (mailBoxesIndex !== -1) {
+                    mailBoxes = mailBoxes.filter(i => i !== MAILBOX_STARRED);
+                }
+            } else {
+                if (mailBoxesIndex === -1) {
+                    mailBoxes.push(MAILBOX_STARRED);
+                }
+            }
+            let updatingThread = {...fromThreads[threadIndex]};
+            updatingThread.mailboxes = mailBoxes;
+            fromThreads[threadIndex] = updatingThread;
+            cacheService.setThreadCache({
+                ...cacheThreads,
+                [cacheFromPage]: fromThreads
+            })
+        }
+    }
+
+    updateUmMovingThreadCache(messageBox: MailBoxTypes, thread: Thread) {
+        if (messageBox === MAILBOX_UNREAD) {
+            if ((thread.mailboxes || []).includes(MAILBOX_UNREAD)) {
+                threadService.makeThreadAsReadCache(thread.id!, false)
+            } else {
+                threadService.makeThreadAsReadCache(thread.id!)
+            }
+        }
+        if (messageBox === MAILBOX_STARRED) {
+            if ((thread.mailboxes || []).includes(MAILBOX_STARRED)) {
+                threadService.makeThreadAsStarredCache(thread.id!)
+            } else {
+                threadService.makeThreadAsStarredCache(thread.id!, false)
+            }
+        }
     }
 }
 

@@ -20,7 +20,7 @@ import Router, {useRouter} from 'next/router';
 import {commonService, globalEventService, threadService} from "@/services";
 import Tooltip from "@/components/common/Tooltip";
 
-export function AddToProjectButton({allowDefaultSelect = true}: { allowDefaultSelect: boolean }) {
+export function AddToProjectButton({allowDefaultSelect = true, selectFrom = ''}: { allowDefaultSelect: boolean, selectFrom?: string }) {
     const [isDropdownOpen, setDropDownOpen] = useState(false)
     const {selectedThread, threads, multiSelection} = useSelector((state: StateType) => state.threads);
     let {projects, project} = useSelector((state: StateType) => state.projects);
@@ -54,9 +54,14 @@ export function AddToProjectButton({allowDefaultSelect = true}: { allowDefaultSe
 
     useEffect(() => {
         if (allowDefaultSelect) {
-            let selectedProjects = selectedThread?.projects || [];
-            if (isComposing) {
-                selectedProjects = composeDraft?.projects || [];
+            let selectedProjects: any[] = [];
+            if (selectFrom === 'thread') {
+                selectedProjects = selectedThread?.projects || [];
+            }
+            if (selectFrom === 'compose') {
+                if (isComposing) {
+                    selectedProjects = composeDraft?.projects || [];
+                }
             }
             if (multiSelection && multiSelection.length > 0) {
                 selectedProjects = [];
@@ -75,7 +80,7 @@ export function AddToProjectButton({allowDefaultSelect = true}: { allowDefaultSe
         } else {
             setThreadProject([])
         }
-    }, [composeDraft, isComposing, multiSelection, project, selectedThread, allowDefaultSelect])
+    }, [composeDraft, isComposing, multiSelection, project, selectedThread, allowDefaultSelect, selectFrom])
 
     useEffect(() => {
         setFilteredProjects((projects || []));

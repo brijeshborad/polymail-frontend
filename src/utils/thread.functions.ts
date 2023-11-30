@@ -1,4 +1,5 @@
 import {ContentRoot, Message, MessageAttachments, Thread} from "@/models";
+import {MAILBOX_DRAFT, MAILBOX_SENT} from "@/utils/constants";
 
 export function extractAndMapThreadAndMessagesBody(threads: Thread[], payload: any, currentThreads: Thread[] | undefined, currentTab: string) {
     let rawThreads: Thread[] = [...(threads || [])];
@@ -19,7 +20,7 @@ export function extractAndMapThreadAndMessagesBody(threads: Thread[], payload: a
         }))
         rawThread.attachments = [...allAttachments];
         rawThread.tab = currentTab;
-        rawThread.latestSentMessage = rawThread.messages.findLast((item: Message) => item.mailboxes?.includes('SENT'));
+        rawThread.latestSentMessage = rawThread.messages.findLast((item: Message) => item.mailboxes?.includes(MAILBOX_SENT));
         return rawThread;
     })
     if (payload.from) {
@@ -48,7 +49,7 @@ export function extractAndMapThreadAndMessagesBody(threads: Thread[], payload: a
 
 export function performMessagesUpdate(messages: Message[]) {
     return messages.map((message: Message) => {
-        if (!message.mailboxes?.includes('DRAFT')) {
+        if (!message.mailboxes?.includes(MAILBOX_DRAFT)) {
             let body = extractBodyFromParts(message.contentRoot);
             let rawMessage = {...message};
             let decoded = Buffer.from(body || '', 'base64').toString();

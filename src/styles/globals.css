@@ -820,9 +820,9 @@ div:has(> .mailSendToaster) {
 /*    stroke: #A62700;*/
 /*}*/
 
-/*.starred-button-icon:hover path {*/
-/*    stroke: #f7ff00;*/
-/*}*/
+.starred-button-icon.active:hover path {
+    stroke: #f7ff00;
+}
 
 .starred-button-icon.active svg {
     fill: #f7ff00;
@@ -1102,8 +1102,8 @@ div:has(> .mailSendToaster) {
     opacity: 1;
     visibility: visible;
     overflow: unset;
-    transition: all 300ms ease;
-    animation: reply-box-animation 300ms ease;
+    transition: all 200ms ease;
+    animation: reply-box-animation 200ms ease;
 }
 
 .reply-box-focus .editor-toolbar.editor-toolbar-hide .tiptap-container {
@@ -1123,13 +1123,13 @@ div:has(> .mailSendToaster) {
     98% {
         max-height: 450px;
         height: 100%;
-        opacity: 1;
-        visibility: visible;
     }
     100% {
         height: inherit;
         max-height: 450px;
         overflow: inherit;
+        opacity: 1;
+        visibility: visible;
     }
 }
 
@@ -1180,27 +1180,31 @@ div:has(> .mailSendToaster) {
 
 .editor-toolbar-show .tiptap-toolbar {
     opacity: 1;
-    animation: toolbar-animate 70ms ease;
+    animation: toolbar-animate 50ms ease;
+    transition: all 50ms ease;
 }
 
 .reply-box-focus .editor-toolbar-hide .tiptap-toolbar {
     opacity: 0;
-    animation: toolbar-animate-hide 70ms ease;
+    animation: toolbar-animate-hide 170ms ease;
     display: flex;
     height: 38px;
-    transition: all 70ms ease;
+    transition: all 170ms ease;
 }
 
 @keyframes toolbar-animate {
     0% {
         opacity: 0;
+        height: 0;
     }
 
-    35% {
-        opacity: 0;
+    99% {
+        height: 38px;
     }
+
     100% {
         opacity: 1;
+        height: inherit;
     }
 }
 
@@ -1210,10 +1214,13 @@ div:has(> .mailSendToaster) {
         opacity: 1;
     }
 
-    65% {
-        opacity: 0;
-        height: 0;
+    50% {
+        height: 19px;
     }
+
+    /*85% {*/
+    /*    height: 0;*/
+    /*}*/
     100% {
         height: inherit;
         opacity: 0;

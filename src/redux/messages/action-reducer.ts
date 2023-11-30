@@ -11,6 +11,7 @@ const initialState: any = {
     attachmentUrl: null,
     error: null,
     showMessageBox: true,
+    showReplyBox: true,
     showAttachmentLoader: false,
 } as InitialMessageStateType
 

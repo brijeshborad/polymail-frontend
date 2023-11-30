@@ -1055,7 +1055,12 @@
 }
 
 .mailBox .tabListAttachmentButton .dropDownIcon {
-    margin-right: -5px;
+    margin-top: 3px;
+    margin-right: 2px;
+}
+
+.mailBox .tabListAttachmentButton span {
+    margin: 0;
 }
 
 .mailBox .tabListDropDown svg,
@@ -1067,7 +1072,7 @@
 
 .mailBox .tabListAttachmentButton:hover,
 .mailBox .tabListAttachmentButton[data-active] {
-    background-color: #FFFFFF;
+    background-color: #f1f1f1;
 }
 
 .mailBox .oldMail.lastOpenMail {
@@ -1242,7 +1247,7 @@
     top: 0;
     left: 0;
     opacity: 0;
-    animation: compose-animation 350ms ease-in-out;
+    animation: compose-animation 300ms ease-in-out;
 }
 
 .composeBox .subjectInput::placeholder {
@@ -1385,13 +1390,15 @@
         width: 100%;
         height: calc(100vh - 157px);
         top: 0;
+        left: 0;
         opacity: 1;
     }
 
     to {
         width: 0;
         height: 0;
-        top: 35px;
+        top: 50px;
+        left: -30px;
         opacity: 0;
     }
 }
@@ -1399,23 +1406,21 @@
 @keyframes compose-animation-show {
     0% {
         position: absolute;
-        z-index: 10;
         width: 0;
-        height: 0;
-        top: 45px;
+        height: 110px;
+        top: 20px;
+        left: -30px;
         opacity: 0;
+        bottom: 100%;
     }
-
-    /*98% {*/
-    /*    position: relative;*/
-    /*}*/
 
     100% {
         width: 100%;
         height: calc(100vh - 157px);
         top: 0;
+        left: 0;
         opacity: 1;
-        z-index: 10;
+        bottom: 0;
     }
 }
 

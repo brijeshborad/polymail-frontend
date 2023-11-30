@@ -9,7 +9,6 @@ import IframeLoader from "@/components/common/iframe-loader";
 import React, {useEffect, useRef, useState} from "react";
 import {getAttachmentDownloadUrl, updateMessage} from "@/redux/messages/action-reducer";
 import {globalEventService, messageService, threadService} from "@/services";
-import {clearDebounce, debounce} from "@/utils/common.functions";
 import {AttachmentIcon, ChevronDownIcon} from "@chakra-ui/icons";
 import {DefaultExtensionType, defaultStyles, FileIcon} from "react-file-icon";
 import {useDispatch, useSelector} from "react-redux";
@@ -78,6 +77,9 @@ export function MessageItems() {
     useEffect(() => {
         if (incomingEvent === 'iframe.clicked') {
             setIsMoreMenuOpen(prevState => {
+                return prevState.map(() => false);
+            });
+            setIsAttachmentOpen(prevState => {
                 return prevState.map(() => false);
             });
         }
@@ -163,46 +165,25 @@ export function MessageItems() {
 
     function attachmentsMenu(message: Message, index: number) {
         return <Menu
+            autoSelect={false}
             isOpen={isAttachmentOpen[index]}
             onClose={() => {
                 openAttachmentMenu(index, false)
             }}>
             <MenuButton
-                className={styles.tabListAttachmentButton} minWidth={'1px'} padding={0}
-                borderRadius={0} backgroundColor={'transparent'} height={'auto'} outline={"none"}
-                _focusVisible={{boxShadow: 'none'}} _hover={{background: 'none'}} _active={{background: 'none'}}
+                className={styles.tabListAttachmentButton} minWidth={'1px'} padding={'0 4px'} margin={0}
+                borderRadius={'3px'} backgroundColor={'transparent'} height={'auto'} outline={"none"}
+                _focusVisible={{boxShadow: 'none'}} _hover={{background: '#f1f1f1'}} _active={{background: 'none'}}
                 fontSize={'13px'} color={'#6B7280'} as={Button} mx={1}
                 leftIcon={<ChevronDownIcon className={styles.dropDownIcon}/>}
-                onMouseEnter={() => {
-                    clearDebounce(message.id);
+                onClick={() => {
                     openAttachmentMenu(index)
-                }}
-                onMouseLeave={() => {
-                    debounce(() => {
-                        openAttachmentMenu(index, false)
-                    }, 200, message.id)
-                }}
-                onMouseOut={() => {
-                    debounce(() => {
-                        openAttachmentMenu(index, false)
-                    }, 200, message.id)
                 }}
             >
                 <AttachmentIcon/>
             </MenuButton>
 
-            <MenuList
-                className={`${styles.tabListDropDown} drop-down-list`}
-                onMouseEnter={() => {
-                    clearDebounce(message.id);
-                    openAttachmentMenu(index)
-                }}
-                onMouseLeave={() => {
-                    debounce(() => {
-                        openAttachmentMenu(index, false)
-                    }, 200, message.id)
-                }}
-            >
+            <MenuList className={`${styles.tabListDropDown} drop-down-list`}>
                 {(message.attachments || []).map((item: MessageAttachments, i: number) => (
                     <MenuItem gap={2} key={i} onClick={() => downloadImage(message, item)}>
                         <FileIcon

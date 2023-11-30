@@ -5,6 +5,7 @@ import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {globalEventService, messageService, threadService} from "@/services";
 import {MessageDraft} from "@/models";
+import {clearDebounce, debounce} from "@/utils/common.functions";
 // import {clearDebounce, debounce} from "@/utils/common.functions";
 
 export default function KeyboardNavigationListener() {
@@ -70,7 +71,7 @@ export default function KeyboardNavigationListener() {
                         let draftMessages = [...(messages || [])].filter((item: MessageDraft) => item.mailboxes?.includes('DRAFT') && !item.draftInfo?.discardedBy);
                         if (draftMessages.length > 0) {
                             globalEventService.fireEvent({
-                                data: {draftId: draftMessages[draftMessages.length - 1].id},
+                                data: {draftId: draftMessages[0].id},
                                 type: 'draft.updateIndex'
                             })
                         } else {
@@ -93,11 +94,11 @@ export default function KeyboardNavigationListener() {
                             if (nextThread) {
                                 threadService.setSelectedThread(nextThread);
                                 messageService.setMessages([]);
-                                // messageService.setMessageState({showMessageBox: false});
-                                // clearDebounce('THREAD_SELECTION_BY_KEY');
-                                // debounce(() => {
-                                //     messageService.setMessageState({showMessageBox: true});
-                                // }, 10, 'THREAD_SELECTION_BY_KEY');
+                                messageService.setMessageState({showReplyBox: false});
+                                clearDebounce('THREAD_SELECTION_BY_KEY');
+                                debounce(() => {
+                                    messageService.setMessageState({showReplyBox: true});
+                                }, 1, 'THREAD_SELECTION_BY_KEY');
                                 dispatchAction.threadIndex = nextThreadIndex
                                 dispatchAction.currentThreadId = nextThread.id
                             }
@@ -109,11 +110,11 @@ export default function KeyboardNavigationListener() {
                             if (lastThread) {
                                 threadService.setSelectedThread(lastThread);
                                 messageService.setMessages([]);
-                                // messageService.setMessageState({showMessageBox: false});
-                                // clearDebounce('THREAD_SELECTION_BY_KEY');
-                                // debounce(() => {
-                                //     messageService.setMessageState({showMessageBox: true});
-                                // }, 10, 'THREAD_SELECTION_BY_KEY');
+                                messageService.setMessageState({showReplyBox: false});
+                                clearDebounce('THREAD_SELECTION_BY_KEY');
+                                debounce(() => {
+                                    messageService.setMessageState({showReplyBox: true});
+                                }, 1, 'THREAD_SELECTION_BY_KEY');
                                 dispatchAction.threadIndex = lastThreadIndex
                                 dispatchAction.currentThreadId = lastThread.id
                             }
