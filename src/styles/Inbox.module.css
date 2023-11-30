@@ -1247,7 +1247,7 @@
     top: 0;
     left: 0;
     opacity: 0;
-    animation: compose-animation 350ms ease-in-out;
+    animation: compose-animation 300ms ease-in-out;
 }
 
 .composeBox .subjectInput::placeholder {
@@ -1396,7 +1396,7 @@
     to {
         width: 0;
         height: 0;
-        top: 35px;
+        top: 50px;
         opacity: 0;
     }
 }
@@ -1407,13 +1407,9 @@
         z-index: 10;
         width: 0;
         height: 0;
-        top: 45px;
+        top: 55px;
         opacity: 0;
     }
-
-    /*98% {*/
-    /*    position: relative;*/
-    /*}*/
 
     100% {
         width: 100%;
