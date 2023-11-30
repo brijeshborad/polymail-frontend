@@ -917,9 +917,9 @@ class ThreadsService extends BaseService {
         let allMailboxToFindIn = (thread.mailboxes || []).filter((t: string) => ![MAILBOX_UNREAD, MAILBOX_STARRED].includes(t));
         let isProjectThread = (thread.projects || []).length > 0;
         let findThreadIndex = cacheThreads[cacheKey].findIndex((item: Thread) => item.id === thread.id);
-        let tabValueFromCacheKey = cacheKey.split('-')[2];
+        let tabValueFromCacheKey: string = cacheKey.split('-')[1];
         cacheThreads[cacheKey] = [...cacheThreads[cacheKey]];
-        if (!allMailboxToFindIn.includes(tabValueFromCacheKey)) {
+        if (!allMailboxToFindIn.includes(tabValueFromCacheKey.toUpperCase())) {
             if (findThreadIndex !== -1) {
                 cacheThreads[cacheKey].splice(findThreadIndex, 1);
             } else {
@@ -944,9 +944,9 @@ class ThreadsService extends BaseService {
         let allMailboxToFindIn = (thread.mailboxes || []).filter((t: string) => ![MAILBOX_UNREAD, MAILBOX_STARRED].includes(t));
         let isProjectThread = (thread.projects || []).length > 0;
         let findThreadIndex = cacheThreads[cacheKey].findIndex((item: Thread) => item.id === thread.id);
-        let tabValueFromCacheKey = cacheKey.split('-')[2];
+        let tabValueFromCacheKey: string = cacheKey.split('-')[2];
         cacheThreads[cacheKey] = [...cacheThreads[cacheKey]];
-        if (!allMailboxToFindIn.includes(tabValueFromCacheKey)) {
+        if (!allMailboxToFindIn.includes(tabValueFromCacheKey.toUpperCase())) {
             if (findThreadIndex !== -1) {
                 cacheThreads[cacheKey].splice(findThreadIndex, 1);
             } else {
@@ -1045,10 +1045,11 @@ class ThreadsService extends BaseService {
                     }
                 } else {
                     if (allowThreadPush) {
-                        let messages: Message[] = [...(thread.messages || [])];
+                        let newThreads = {...thread};
+                        let messages: Message[] = [...(newThreads.messages || [])];
                         messages = performMessagesUpdate(messages);
-                        thread.messages = messages;
-                        finalThreads.unshift(thread);
+                        newThreads.messages = messages;
+                        finalThreads.unshift(newThreads);
                     }
                 }
             }
@@ -1057,11 +1058,11 @@ class ThreadsService extends BaseService {
             }
         } else {
             if (findThreadIndex !== -1) {
+                finalThreads.splice(findThreadIndex, 1);
                 if (selectedThread && selectedThread.id === thread.id) {
                     let finalIndex = (findThreadIndex - 1 < finalThreads.length) ? (findThreadIndex === 0) ? findThreadIndex : findThreadIndex - 1 : (findThreadIndex <= 0 ? findThreadIndex + 1 : findThreadIndex - 1)
                     this.setSelectedThread(finalThreads[finalIndex]);
                 }
-                finalThreads.splice(findThreadIndex, 1);
             }
         }
         this.setThreads(finalThreads);
@@ -1075,6 +1076,21 @@ class ThreadsService extends BaseService {
             removableThread = threadsToRemove[Object.keys(threadsToRemove)[0]];
         }
         cacheThreads = this.updateThreadsToCache(cacheThreads, thread, removableThread);
+        let allMailboxToFindIn = (thread.mailboxes || []);
+        Object.keys(threadsToRemove).forEach((keysToRemove: string) => {
+            let tabValueFromCacheKey: string = '';
+            if (keysToRemove.startsWith('inbox-')) {
+                tabValueFromCacheKey = keysToRemove.split('-')[1];
+            } else {
+                tabValueFromCacheKey = keysToRemove.split('-')[2];
+            }
+            if (!allMailboxToFindIn.includes(tabValueFromCacheKey)) {
+                let findItem = cacheThreads[keysToRemove].findIndex((t: Thread) => t.id === thread.id);
+                if (findItem !== -1) {
+                    cacheThreads[keysToRemove].splice(findItem, 1);
+                }
+            }
+        })
         cacheService.setThreadCache(cacheThreads);
         return removableThread;
     }
@@ -1084,8 +1100,13 @@ class ThreadsService extends BaseService {
         let allMailboxToFindIn = (thread.mailboxes || []);
         Object.keys(cacheThreads).forEach((cacheKey: string) => {
             let findThreadIndex = cacheThreads[cacheKey].findIndex((item: Thread) => item.id === thread.id);
-            let tabValueFromCacheKey = cacheKey.split('-')[2];
-            if (!allMailboxToFindIn.includes(tabValueFromCacheKey)) {
+            let tabValueFromCacheKey: string = '';
+            if (cacheKey.startsWith('inbox-')) {
+                tabValueFromCacheKey = cacheKey.split('-')[1];
+            } else {
+                tabValueFromCacheKey = cacheKey.split('-')[2];
+            }
+            if (!allMailboxToFindIn.includes(tabValueFromCacheKey.toUpperCase())) {
                 if (findThreadIndex !== -1) {
                     threadsToRemove[cacheKey] = {...cacheThreads[cacheKey][findThreadIndex]};
                 }
@@ -1100,8 +1121,13 @@ class ThreadsService extends BaseService {
         Object.keys(cacheThreads).forEach((cacheKey: string) => {
             cacheThreads[cacheKey] = [...cacheThreads[cacheKey]];
             let findThreadIndex = cacheThreads[cacheKey].findIndex((item: Thread) => item.id === thread.id);
-            let tabValueFromCacheKey = cacheKey.split('-')[2];
-            if (allMailboxToFindIn.includes(tabValueFromCacheKey)) {
+            let tabValueFromCacheKey: string = '';
+            if (cacheKey.startsWith('inbox-')) {
+                tabValueFromCacheKey = cacheKey.split('-')[1];
+            } else {
+                tabValueFromCacheKey = cacheKey.split('-')[2];
+            }
+            if (allMailboxToFindIn.includes(tabValueFromCacheKey.toUpperCase())) {
                 if (isProjectThread && (cacheKey.includes('projects') || cacheKey.includes('everything'))) {
                     if (findThreadIndex !== -1) {
                         cacheThreads[cacheKey][findThreadIndex] = {
@@ -1112,14 +1138,15 @@ class ThreadsService extends BaseService {
                         if (removeThead) {
                             cacheThreads[cacheKey].unshift({...removeThead, mailboxes: thread.mailboxes});
                         } else {
-                            let messages: Message[] = [...(thread.messages || [])];
+                            let newThreads = {...thread};
+                            let messages: Message[] = [...(newThreads.messages || [])];
                             messages = performMessagesUpdate(messages);
-                            thread.messages = messages;
-                            cacheThreads[cacheKey].unshift(thread);
+                            newThreads.messages = messages;
+                            cacheThreads[cacheKey].unshift(newThreads);
                         }
                     }
                 } else {
-                    if (cacheKey.includes('just-mine')) {
+                    if (cacheKey.startsWith('inbox-') && cacheKey.includes('just-mine')) {
                         if (findThreadIndex !== -1) {
                             cacheThreads[cacheKey][findThreadIndex] = {
                                 ...cacheThreads[cacheKey][findThreadIndex],
@@ -1129,10 +1156,11 @@ class ThreadsService extends BaseService {
                             if (removeThead) {
                                 cacheThreads[cacheKey].unshift({...removeThead, mailboxes: thread.mailboxes});
                             } else {
-                                let messages: Message[] = [...(thread.messages || [])];
+                                let newThreads = {...thread};
+                                let messages: Message[] = [...(newThreads.messages || [])];
                                 messages = performMessagesUpdate(messages);
-                                thread.messages = messages;
-                                cacheThreads[cacheKey].unshift(thread);
+                                newThreads.messages = messages;
+                                cacheThreads[cacheKey].unshift(newThreads);
                             }
                         }
                     }
