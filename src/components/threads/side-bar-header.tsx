@@ -171,6 +171,10 @@ export function SideBarHeader() {
     }
 
     const moveThreadToMailBoxes = (type: string, date: string = '') => {
+        if (type === MAILBOX_UNREAD) {
+            threadService.makeMultipleThreadsAsRead(toggleValues.readStatus);
+            return;
+        }
         threadService.moveThreadToMailBox(type, date);
     }
 

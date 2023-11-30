@@ -142,6 +142,13 @@ export function MessagesHeader({isProjectView = false}: { isProjectView?: boolea
                     threadService.moveThreadFromListToListCache(tabValue || 'INBOX', messageBox, threadData.id!)
                 } else {
                     threadService.setSelectedThread({...currentThreads[index1]});
+                    if (messageBox === MAILBOX_UNREAD) {
+                        if ((currentThreads[index1].mailboxes || []).includes(MAILBOX_UNREAD)) {
+                            threadService.makeThreadAsReadCache(currentThreads[index1].id!, false)
+                        } else {
+                            threadService.makeThreadAsReadCache(currentThreads[index1].id!)
+                        }
+                    }
                 }
                 threadService.setThreadState({threads: currentThreads});
                 dispatch(updateThreads({
