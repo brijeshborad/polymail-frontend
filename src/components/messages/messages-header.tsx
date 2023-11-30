@@ -142,20 +142,7 @@ export function MessagesHeader({isProjectView = false}: { isProjectView?: boolea
                     threadService.moveThreadFromListToListCache(tabValue || 'INBOX', messageBox, threadData.id!)
                 } else {
                     threadService.setSelectedThread({...currentThreads[index1]});
-                    if (messageBox === MAILBOX_UNREAD) {
-                        if ((currentThreads[index1].mailboxes || []).includes(MAILBOX_UNREAD)) {
-                            threadService.makeThreadAsReadCache(currentThreads[index1].id!, false)
-                        } else {
-                            threadService.makeThreadAsReadCache(currentThreads[index1].id!)
-                        }
-                    }
-                    if (messageBox === MAILBOX_STARRED) {
-                        if ((currentThreads[index1].mailboxes || []).includes(MAILBOX_STARRED)) {
-                            threadService.makeThreadAsStarredCache(currentThreads[index1].id!)
-                        } else {
-                            threadService.makeThreadAsStarredCache(currentThreads[index1].id!, false)
-                        }
-                    }
+                    threadService.updateUmMovingThreadCache(messageBox, currentThreads[index1]);
                 }
                 threadService.setThreadState({threads: currentThreads});
                 dispatch(updateThreads({
@@ -184,7 +171,11 @@ export function MessagesHeader({isProjectView = false}: { isProjectView?: boolea
                                 },
                                 tag: messageBox.toLowerCase(),
                                 afterUndoAction: () => {
-                                    threadService.moveThreadFromListToListCache(messageBox, tabValue || 'INBOX', threadData.id!);
+                                    if (remove_from_list) {
+                                        threadService.moveThreadFromListToListCache(messageBox, tabValue || 'INBOX', threadData.id!);
+                                    } else {
+                                        threadService.updateUmMovingThreadCache(messageBox, threadData);
+                                    }
                                     threadService.setThreadState({
                                         threads: threads || [],
                                         selectedThread: threadData

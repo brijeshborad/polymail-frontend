@@ -1237,7 +1237,7 @@ class ThreadsService extends BaseService {
         if (threadIndex !== -1) {
             let mailBoxes = [...(fromThreads[threadIndex].mailboxes || [])];
             let mailBoxesIndex = mailBoxes.indexOf(MAILBOX_STARRED);
-            if (isStarred) {
+            if (!isStarred) {
                 if (mailBoxesIndex !== -1) {
                     mailBoxes = mailBoxes.filter(i => i !== MAILBOX_STARRED);
                 }
@@ -1253,6 +1253,23 @@ class ThreadsService extends BaseService {
                 ...cacheThreads,
                 [cacheFromPage]: fromThreads
             })
+        }
+    }
+
+    updateUmMovingThreadCache(messageBox: MailBoxTypes, thread: Thread) {
+        if (messageBox === MAILBOX_UNREAD) {
+            if ((thread.mailboxes || []).includes(MAILBOX_UNREAD)) {
+                threadService.makeThreadAsReadCache(thread.id!, false)
+            } else {
+                threadService.makeThreadAsReadCache(thread.id!)
+            }
+        }
+        if (messageBox === MAILBOX_STARRED) {
+            if ((thread.mailboxes || []).includes(MAILBOX_STARRED)) {
+                threadService.makeThreadAsStarredCache(thread.id!)
+            } else {
+                threadService.makeThreadAsStarredCache(thread.id!, false)
+            }
         }
     }
 }
