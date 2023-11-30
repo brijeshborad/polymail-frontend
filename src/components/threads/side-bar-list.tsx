@@ -71,7 +71,7 @@ export function ThreadsSideBarList(props: ThreadListProps) {
             currentSelectedThreads.push(currentThreads.findIndex((thread: Thread) => thread.id === selectedThread.id))
             setCurrentSelectedThreads(currentSelectedThreads);
         }
-    }, [selectedThread, currentThreads, scrollToPosition])
+    }, [selectedThread, scrollToPosition])
 
     const handleClick = useCallback((item: Thread, event: KeyboardEvent | any, index: number) => {
         // Check if Control key (or Command key on Mac) is held down
