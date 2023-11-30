@@ -21,7 +21,7 @@ function InboxPage() {
             </Flex>
 
             <div className={styles.mailBg}>
-                <Grid className={styles.mailGrid} templateColumns='30% auto' gap={4} height={'100%'}>
+                <Grid className={styles.mailGrid} templateColumns='calc(30% - 8px) calc(70% - 8px)' gap={4} height={'100%'}>
                     <GridItem w='100%' className={'threadSideBar'} id={'inbox-thread-side-bar'}>
                         <ThreadsSideBar/>
                     </GridItem>
