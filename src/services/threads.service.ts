@@ -157,7 +157,7 @@ class ThreadsService extends BaseService {
         this.dispatchAction(updateThreadState, body);
     }
 
-    makeMultipleThreadsAsRead(markAsUnread: boolean) {
+    toggleMultipleThreadsAsRead(markAsUnread: boolean) {
         let selectedThreadIds = this.getThreadState().multiSelection || [];
         let threads = this.getThreadState().threads || [];
         if (selectedThreadIds.length > 0) {
@@ -189,6 +189,79 @@ class ThreadsService extends BaseService {
                         mailboxes = mailboxes.filter(i => i !== MAILBOX_UNREAD);
                         this.makeThreadAsReadCache(thread.id!);
                     }
+                    return {...thread, mailboxes: mailboxes}
+                }
+                return thread;
+            })
+            this.setThreadState({threads: newFilteredThreads});
+        }
+    }
+
+    toggleMultipleThreadsAsStarred(markAsStared: boolean) {
+        let selectedThreadIds = this.getThreadState().multiSelection || [];
+        let threads = this.getThreadState().threads || [];
+        if (selectedThreadIds.length > 0) {
+            const messagePlural = selectedThreadIds.length === 1 ? 'message' : 'messages'
+            let movingThreads = threads.filter((thread: Thread) => selectedThreadIds.includes(thread.id!));
+            let body: any = movingThreads.map((thread: Thread) => {
+                if (!markAsStared) {
+                    if (!thread.mailboxes?.includes(MAILBOX_STARRED)) {
+                        thread.mailboxes?.push(MAILBOX_STARRED);
+                    }
+                } else {
+                    thread.mailboxes = (thread.mailboxes || []).filter(i => i !== MAILBOX_STARRED);
+                }
+                return {
+                    id: thread.id,
+                    mailboxes: thread.mailboxes,
+                };
+            })
+            let toastId = generateToasterId();
+            let undoBody: any = movingThreads.map((thread: Thread) => ({
+                id: thread.id,
+                mailboxes: thread.mailboxes
+            }))
+            let batchUpdateMoveBody = {
+                body: {body: {updates: body}},
+                toaster: {
+                    success: {
+                        desc: `Your message has been moved to ${MAILBOX_STARRED.toLowerCase()}`,
+                        title: `${selectedThreadIds.length} ${messagePlural} has been ${MAILBOX_STARRED.toLowerCase()}`,
+                        type: 'undo_changes',
+                        id: toastId,
+                    }
+                },
+                undoAction: {
+                    showUndoButton: true,
+                    dispatch: this.getDispatch(),
+                    action: batchUpdateThreads,
+                    undoBody: {
+                        body: {
+                            updates: undoBody
+                        },
+                        tag: MAILBOX_STARRED.toLowerCase(),
+                        afterUndoAction: () => {
+                            this.setThreadState({threads: threads, selectedThread: threads[0]});
+                            undoBody.forEach((data: any) => {
+                                this.makeThreadAsStarredCache(data.id, false);
+                            })
+                        }
+                    },
+                    showToasterAfterUndoClick: true
+                }
+            };
+            this.dispatchAction(batchUpdateThreads, batchUpdateMoveBody);
+            let newFilteredThreads = threads.map((thread: Thread) => {
+                if (selectedThreadIds.includes(thread.id!)) {
+                    let mailboxes = thread.mailboxes || [];
+                    if (!markAsStared) {
+                        if (!mailboxes.includes(MAILBOX_STARRED)) {
+                            mailboxes.push(MAILBOX_STARRED);
+                        }
+                    } else {
+                        mailboxes = mailboxes.filter(i => i !== MAILBOX_STARRED);
+                    }
+                    this.makeThreadAsStarredCache(thread.id!, markAsStared);
                     return {...thread, mailboxes: mailboxes}
                 }
                 return thread;
