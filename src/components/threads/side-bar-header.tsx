@@ -245,7 +245,7 @@ export function SideBarHeader() {
                                 lineHeight={1} _hover={{backgroundColor: 'var(--alias-bg-subtle)'}}
                                 fontSize={'12px'} color={'#374151'} as={Button} borderRadius={'50px'}
                                 rightIcon={<TriangleDownIcon color={'#374151'}/>}
-                                p={'0 8px 0 10px'}
+                                p={'0 8px 0 3px'}
                             >
                                 <span className={styles.threadSearchedActionButtonText}>Actions</span>
                             </MenuButton>
