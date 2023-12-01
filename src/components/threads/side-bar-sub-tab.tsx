@@ -99,9 +99,6 @@ export function SideBarSubTab() {
                     }
                 }
             }
-            if (buildBody.mailbox === 'ARCHIVE') {
-                buildBody.mailbox = '';
-            }
             buildBody.type = type;
             dispatch(getAllThreads({
                 body: buildBody,

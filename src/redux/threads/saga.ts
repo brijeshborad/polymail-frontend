@@ -11,6 +11,7 @@ import {
 } from "@/redux/threads/action-reducer";
 import { ReducerActionType } from "@/types";
 import { performSuccessActions } from "@/utils/common-redux.functions";
+import {MAILBOX_ARCHIVE} from "@/utils/constants";
 let source: any;
 function* getThreads({payload}: PayloadAction<ReducerActionType>) {
     try {
@@ -18,14 +19,18 @@ function* getThreads({payload}: PayloadAction<ReducerActionType>) {
             source.cancel();
         }
         source = axios.CancelToken.source();
-        const response: AxiosResponse = yield ApiService.callGet(`threads`, {
+        let params = {
             ...(payload.body.mailbox ? {mailbox: payload.body.mailbox}: {}),
             ...(payload.body.project ? {project: payload.body.project}: {}),
             ...(payload.body.account ? {account: payload.body.account}: {}),
             ...(payload.body.mine ? {mine: payload.body.mine}: {}),
             ...(payload.body.query ? {query: payload.body.query} : {}),
             ...payload.body.pagination
-        }, {}, source.token);
+        }
+        if (params.mailbox === MAILBOX_ARCHIVE) {
+            delete params.mailbox;
+        }
+        const response: AxiosResponse = yield ApiService.callGet(`threads`, params, {}, source.token);
         yield put(getAllThreadsSuccess({threads: response, fullPayload: payload}));
     } catch (error: any) {
         error = error as AxiosError;
