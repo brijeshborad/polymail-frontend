@@ -74,21 +74,23 @@ class DraftService extends BaseService {
         this.setComposeDraft(resumeAbleDraft);
     }
 
-    addComposeToProject() {
-        let {composeDraft} = this.getDraftState();
-        let {project} = projectService.getProjectState();
-        let reqBody = {
-            threadIds: [composeDraft!.threadId],
-            roles: ['n/a'],
-            groupType: 'project',
-            groupId: project?.id
-        }
-        this.dispatchAction(addItemToGroup, {
-            body: reqBody,
-            afterSuccessAction: () => {
-                this.setComposeDraft({...composeDraft, projects: [project]} as MessageDraft)
+    addComposeToProject(router: any) {
+        if (router.includes('[project]')) {
+            let {composeDraft} = this.getDraftState();
+            let {project} = projectService.getProjectState();
+            let reqBody = {
+                threadIds: [composeDraft!.threadId],
+                roles: ['n/a'],
+                groupType: 'project',
+                groupId: project?.id
             }
-        })
+            this.dispatchAction(addItemToGroup, {
+                body: reqBody,
+                afterSuccessAction: () => {
+                    this.setComposeDraft({...composeDraft, projects: [project]} as MessageDraft)
+                }
+            })
+        }
     }
 
     setDraftState(body: InitialDraftStateType) {

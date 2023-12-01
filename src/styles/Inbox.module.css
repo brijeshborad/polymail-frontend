@@ -101,6 +101,11 @@
     background-color: transparent;
 }
 
+.threadSearched .tabListMoreButton[data-active],
+.threadSearched .tabListMoreButton:active {
+    background-color: var(--alias-bg-subtle);
+}
+
 .mailTabList .tabListMoreButton svg {
     width: 9px;
 }
@@ -119,6 +124,10 @@
 }
 
 .searchCloseIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 6px;
     width: 20px;
     height: 20px;
     cursor: pointer;
@@ -130,6 +139,14 @@
 
 .tabListDropDown button svg {
     stroke: #5D5F62;
+}
+
+.multiselectTreadTabList.tabListDropDown .tabListSnoozeButton svg {
+    stroke: #5D5F62;
+}
+
+.multiselectTreadTabList.tabListDropDown .tabListSnoozeButton:hover svg {
+    stroke: #000;
 }
 
 .tabListDropDown button:hover svg {
@@ -149,7 +166,11 @@
 }
 
 .tabListDropDown .tabListSnoozeButton:hover {
-    background-color: rgba(8, 22, 47, 0.05);
+    background-color: var(--alias-bg-subtle);
+}
+
+.tabListDropDown button.dropDownIconBold svg {
+    opacity: 0.8;
 }
 
 .mailTabList .tabListDropDown button {
@@ -1049,14 +1070,18 @@
 }
 
 .mailBox .tabListAttachmentButton svg {
-    width: 12px;
+    width: 13px;
     height: 12px;
-    margin: 0;
+    margin: -2.5px 0 0;
+}
+
+.mailBox .tabListAttachmentButton:hover svg {
+    stroke: #000000;
+    color: #000000;
 }
 
 .mailBox .tabListAttachmentButton .dropDownIcon {
-    margin-top: 3px;
-    margin-right: 2px;
+    margin-top: 0;
 }
 
 .mailBox .tabListAttachmentButton span {
@@ -1206,6 +1231,10 @@
     display: flex;
     align-items: center;
     gap: 8px;
+}
+
+.addToProjectPlusActions .snoozeIcon {
+    margin-top: -2px;
 }
 
 .composeBox .composeHeader svg {

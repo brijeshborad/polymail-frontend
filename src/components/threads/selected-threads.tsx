@@ -47,7 +47,7 @@ export default function SelectedThreads() {
                                 onClick={() => threadService.moveThreadToMailBox(MAILBOX_TRASH)}><TrashIcon/></Button>
                     </Tooltip>
 
-                    <div>
+                    <div className={styles.snoozeIcon}>
                         <MessageSchedule
                             showTooltip={true}
                             isSnooze={true}

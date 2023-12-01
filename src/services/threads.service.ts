@@ -919,6 +919,7 @@ class ThreadsService extends BaseService {
         let findThreadIndex = cacheThreads[cacheKey].findIndex((item: Thread) => item.id === thread.id);
         let tabValueFromCacheKey: string = cacheKey.split('-')[1];
         cacheThreads[cacheKey] = [...cacheThreads[cacheKey]];
+        allMailboxToFindIn = cacheService.getMailBox(allMailboxToFindIn);
         if (!allMailboxToFindIn.includes(tabValueFromCacheKey.toUpperCase())) {
             if (findThreadIndex !== -1) {
                 cacheThreads[cacheKey].splice(findThreadIndex, 1);
@@ -946,6 +947,7 @@ class ThreadsService extends BaseService {
         let findThreadIndex = cacheThreads[cacheKey].findIndex((item: Thread) => item.id === thread.id);
         let tabValueFromCacheKey: string = cacheKey.split('-')[2];
         cacheThreads[cacheKey] = [...cacheThreads[cacheKey]];
+        allMailboxToFindIn = cacheService.getMailBox(allMailboxToFindIn);
         if (!allMailboxToFindIn.includes(tabValueFromCacheKey.toUpperCase())) {
             if (findThreadIndex !== -1) {
                 cacheThreads[cacheKey].splice(findThreadIndex, 1);
@@ -992,6 +994,7 @@ class ThreadsService extends BaseService {
         let allMailboxToFindIn = (thread.mailboxes || []).filter((t: string) => ![MAILBOX_UNREAD, MAILBOX_STARRED].includes(t));
         this.findThreadInAllCacheListAndRemoveOrUpdateIt(thread, isNewThread);
         let allowCallBack = false;
+        allMailboxToFindIn = cacheService.getMailBox(allMailboxToFindIn);
         if (allMailboxToFindIn.includes(currentTabValue)) {
             let finalThreads = [...(threads || [])];
             let isProjectThread = (thread.projects || []).length > 0;
@@ -1020,6 +1023,7 @@ class ThreadsService extends BaseService {
         let removableThread = this.updateThreadToProperPlaceInCache(thread);
         let finalThreads = [...(threads || [])];
         let findThreadIndex = finalThreads.findIndex((item: Thread) => item.id === thread.id);
+        allMailboxToFindIn = cacheService.getMailBox(allMailboxToFindIn);
         if (allMailboxToFindIn.includes(currentTabValue)) {
             if (findThreadIndex !== -1) {
                 finalThreads[findThreadIndex] = {
@@ -1077,6 +1081,7 @@ class ThreadsService extends BaseService {
         }
         cacheThreads = this.updateThreadsToCache(cacheThreads, thread, removableThread);
         let allMailboxToFindIn = (thread.mailboxes || []);
+        allMailboxToFindIn = cacheService.getMailBox(allMailboxToFindIn);
         Object.keys(threadsToRemove).forEach((keysToRemove: string) => {
             let tabValueFromCacheKey: string = '';
             if (keysToRemove.startsWith('inbox-')) {
@@ -1098,6 +1103,7 @@ class ThreadsService extends BaseService {
     getThreadsToRemoveFromCache(cacheThreads: any, thread: Thread) {
         let threadsToRemove: any = {};
         let allMailboxToFindIn = (thread.mailboxes || []);
+        allMailboxToFindIn = cacheService.getMailBox(allMailboxToFindIn);
         Object.keys(cacheThreads).forEach((cacheKey: string) => {
             let findThreadIndex = cacheThreads[cacheKey].findIndex((item: Thread) => item.id === thread.id);
             let tabValueFromCacheKey: string = '';
@@ -1117,6 +1123,7 @@ class ThreadsService extends BaseService {
 
     updateThreadsToCache(cacheThreads: any, thread: Thread, removeThead: Thread | null) {
         let allMailboxToFindIn = (thread.mailboxes || []);
+        allMailboxToFindIn = cacheService.getMailBox(allMailboxToFindIn);
         let isProjectThread = (thread.projects || []).length > 0;
         Object.keys(cacheThreads).forEach((cacheKey: string) => {
             cacheThreads[cacheKey] = [...cacheThreads[cacheKey]];

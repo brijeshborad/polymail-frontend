@@ -86,20 +86,23 @@ export function SideBarHeader() {
     useEffect(() => {
         if (threads && threads.length > 0 && !selectedThread && !isLoading) {
             if (allowThreadSelection) {
-                if (!isComposing) {
-                    if (!router.query.thread) {
-                        threadService.setSelectedThread(threads[0]);
-                    }
-                }
                 if (tabValue === 'DRAFT') {
-                    commonService.toggleComposing(true);
                     let item = threads[0];
+                    if (item.tab !== 'DRAFT') {
+                        return;
+                    }
+                    commonService.toggleComposing(true);
                     threadService.setSelectedThread(item);
                     if (item && item.messages && item.messages[0]) {
                         let finalDraft = {...item.messages[0], projects: [...(item.projects || [])]}
                         draftService.setComposeDraft(finalDraft);
                     }
-
+                } else {
+                    if (!isComposing) {
+                        if (!router.query.thread) {
+                            threadService.setSelectedThread(threads[0]);
+                        }
+                    }
                 }
             }
         }
@@ -163,7 +166,15 @@ export function SideBarHeader() {
             draftService.setResumeDraft(null);
             commonService.toggleComposing(true);
             if (selectedAccount && selectedAccount.id) {
-                dispatch(createDraft({body: {accountId: selectedAccount.id, body: {}, fromCompose: true}}));
+                dispatch(createDraft({
+                        body: {
+                            accountId: selectedAccount.id, body: {}, fromCompose: true
+                        },
+                        afterSuccessAction: () => {
+                            draftService.addComposeToProject(router.pathname)
+                        }
+                    }
+                ));
             }
         }
     }
@@ -241,15 +252,16 @@ export function SideBarHeader() {
                                     setIsMoreDropdownOpen(!isMoreDropdownOpen)
                                 }}
                                 className={styles.tabListMoreButton} minWidth={'60px'} height={'auto'}
-                                backgroundColor={'transparent'} border={'1px solid #D1D5DB'}
-                                lineHeight={1}
+                                backgroundColor={'transparent'} border={'1px solid #F3F4F6'}
+                                lineHeight={1} _hover={{backgroundColor: 'var(--alias-bg-subtle)'}}
                                 fontSize={'12px'} color={'#374151'} as={Button} borderRadius={'50px'}
                                 rightIcon={<TriangleDownIcon color={'#374151'}/>}
-                                p={'0 8px 0 10px'}
+                                p={'0 8px 0 3px'}
                             >
                                 <span className={styles.threadSearchedActionButtonText}>Actions</span>
                             </MenuButton>
-                            <MenuList className={`${styles.tabListDropDown} drop-down-list`}>
+                            <MenuList
+                                className={`${styles.tabListDropDown} ${styles.multiselectTreadTabList} drop-down-list`}>
                                 <MenuItem
                                     onClick={() => moveThreadToMailBoxes(MAILBOX_UNREAD)}><InboxOpenIcon/> Mark {toggleValues.isAllRead ? 'Unread' : 'Read'}
                                 </MenuItem>
@@ -267,17 +279,17 @@ export function SideBarHeader() {
                                         isNameShow={true}
                                     />
                                 </div>
-                                <MenuItem
-                                    onClick={() => moveThreadToMailBoxes(MAILBOX_STARRED)}><StarIcon/> {toggleValues.isAllStarred ? 'Removed ' : 'Add '}
+                                <MenuItem className={styles.dropDownIconBold}
+                                          onClick={() => moveThreadToMailBoxes(MAILBOX_STARRED)}><StarIcon/> {toggleValues.isAllStarred ? 'Removed ' : 'Add '}
                                     Star</MenuItem>
-                                <MenuItem
-                                    onClick={() => moveThreadToMailBoxes(MAILBOX_INBOX)}><InboxIcon/> Move to
+                                <MenuItem className={styles.dropDownIconBold}
+                                          onClick={() => moveThreadToMailBoxes(MAILBOX_INBOX)}><InboxIcon/> Move to
                                     Inbox</MenuItem>
-                                <MenuItem
-                                    onClick={() => moveThreadToMailBoxes(MAILBOX_TRASH)}><TrashIcon/> Move to
+                                <MenuItem className={styles.dropDownIconBold}
+                                          onClick={() => moveThreadToMailBoxes(MAILBOX_TRASH)}><TrashIcon/> Move to
                                     Trash</MenuItem>
-                                <MenuItem
-                                    onClick={() => moveThreadToMailBoxes(MAILBOX_ARCHIVE)}><ArchiveIcon/> Move to
+                                <MenuItem className={styles.dropDownIconBold}
+                                          onClick={() => moveThreadToMailBoxes(MAILBOX_ARCHIVE)}><ArchiveIcon/> Move to
                                     Archive</MenuItem>
                             </MenuList>
                         </Menu>
@@ -424,7 +436,7 @@ export function SideBarHeader() {
                         >
                             More
                         </MenuButton>
-                        <MenuList
+                        <MenuList zIndex={20}
                             className={`${styles.tabListDropDown} drop-down-list`}
                         >
                             {tab !== MAILBOX_SNOOZED &&

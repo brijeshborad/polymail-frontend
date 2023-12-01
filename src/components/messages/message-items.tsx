@@ -171,16 +171,16 @@ export function MessageItems() {
                 openAttachmentMenu(index, false)
             }}>
             <MenuButton
-                className={styles.tabListAttachmentButton} minWidth={'1px'} padding={'0 4px'} margin={0}
+                className={styles.tabListAttachmentButton} minWidth={'1px'} padding={'0 4px 0 0'} margin={0}
                 borderRadius={'3px'} backgroundColor={'transparent'} height={'auto'} outline={"none"}
                 _focusVisible={{boxShadow: 'none'}} _hover={{background: '#f1f1f1'}} _active={{background: 'none'}}
                 fontSize={'13px'} color={'#6B7280'} as={Button} mx={1}
-                leftIcon={<ChevronDownIcon className={styles.dropDownIcon}/>}
+                leftIcon={<ChevronDownIcon strokeWidth={0} className={styles.dropDownIcon}/>}
                 onClick={() => {
                     openAttachmentMenu(index)
                 }}
             >
-                <AttachmentIcon/>
+                <AttachmentIcon strokeWidth={0}/>
             </MenuButton>
 
             <MenuList className={`${styles.tabListDropDown} drop-down-list`}>
@@ -246,9 +246,9 @@ export function MessageItems() {
                         {/*</div>*/}
 
                         <Flex w={'100%'} direction={'column'}>
-                            <Flex align={'center'} justify={'space-between'} mb={1} minH={5}>
+                            <Flex align={'center'} justify={'space-between'} mb={1} minH={5} userSelect={'none'}>
                                 <Heading as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400}
-                                         letterSpacing={'-0.13px'}
+                                         letterSpacing={'-0.13px'} userSelect={'none'}
                                          lineHeight={1}>{message.from?.name || message.from?.email}</Heading>
                             </Flex>
                             <span className={styles.mailBoxTimeMobile} style={{whiteSpace: 'nowrap'}}>
@@ -256,7 +256,7 @@ export function MessageItems() {
                                           showTimeInShortForm={false}/>
                                 </span>
                             <Text fontSize='13px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1.2}
-                                  fontWeight={400} noOfLines={1}>
+                                  fontWeight={400} noOfLines={1} userSelect={'none'}>
                                 <span dangerouslySetInnerHTML={{__html: message.snippet || ''}}/>
                             </Text>
                         </Flex>
@@ -317,10 +317,10 @@ export function MessageItems() {
 
                             {/*</div>*/}
                             <Flex w={'100%'} direction={'column'} pr={'20px'}>
-                                <Flex align={'center'} justify={'space-between'} mb={1}>
+                                <Flex align={'center'} justify={'space-between'} mb={1} userSelect={'none'}>
                                     <Flex align={'flex-end'} className={styles.mailBoxMailHeaderDetails} gap={1}>
                                         <Heading
-                                            as='h6' fontSize={'13px'} color={'#0A101D'}
+                                            as='h6' fontSize={'13px'} color={'#0A101D'} userSelect={'none'}
                                             fontWeight={400} letterSpacing={'-0.13px'} lineHeight={1}
                                         >
                                             {message.from?.name || message.from?.email}
@@ -331,7 +331,7 @@ export function MessageItems() {
                                                 <Text
                                                     fontSize='12px' letterSpacing={'-0.13px'}
                                                     color={'#6B7280'} lineHeight={1}
-                                                    fontWeight={400}
+                                                    fontWeight={400} userSelect={'none'}
                                                 >
                                                     {message.from?.email}
                                                 </Text>
@@ -341,7 +341,7 @@ export function MessageItems() {
                                 </Flex>
                                 {message && message.to && message.to.length > 0 &&
                                 <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
-                                      fontWeight={400}>to:&nbsp;
+                                      fontWeight={400} userSelect={'none'}>to:&nbsp;
                                     {message.to[0].email}&nbsp;
 
                                     <div className={styles.otherMail} onClick={(e) => {
@@ -357,7 +357,7 @@ export function MessageItems() {
                                                         <p key={toIndex}>{item.email}</p>
                                                     )) : '') as any
                                             }>
-                                            <Text
+                                            <Text userSelect={'none'}
                                                 as='u'>{message.to.length - 1 > 0 && `and ${message.to.length - 1} others`} </Text>
                                         </Tooltip>
                                     </div>

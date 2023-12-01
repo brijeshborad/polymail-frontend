@@ -49,8 +49,17 @@ class CacheService {
         this.cacheThreads = value;
     }
 
+    getMailBox(mailboxes: string[]) {
+        mailboxes = [...mailboxes];
+        if (!mailboxes.some((item) => [MAILBOX_SPAM, MAILBOX_INBOX, MAILBOX_TRASH].includes(item))) {
+            mailboxes.push(MAILBOX_ARCHIVE)
+        }
+        return mailboxes;
+    }
+
     getThreadCacheByKey(key: string): Thread[] {
-        return (this.cacheThreads[key] || []) as Thread[];
+        let threads = (this.cacheThreads[key] || []) as Thread[];
+        return threads.sort((a: Thread, b: Thread) => (new Date(b.sortDate as string).valueOf() - new Date(a.sortDate as string).valueOf()));
     }
 
     setThreadCacheByKey(key: string, value: any) {

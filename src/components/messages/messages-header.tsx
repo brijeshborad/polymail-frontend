@@ -236,10 +236,8 @@ export function MessagesHeader({isProjectView = false}: { isProjectView?: boolea
         <>
             <Flex gap={2} align={'center'} justify={'space-between'} padding={'12px 20px'}
                   borderBottom={'1px solid #F3F4F6'} className={styles.mailBoxHeader}>
-                <Flex gap={1}>
-                    <Heading as='h6' fontSize={'15px'} color={'#0A101D'} noOfLines={1}
-                             fontWeight={600}>{selectedThread?.subject || '(no subject)'}</Heading>
-                </Flex>
+                <Heading as='h6' fontSize={'15px'} color={'#0A101D'} noOfLines={1}
+                         fontWeight={600}>{selectedThread?.subject || '(no subject)'}</Heading>
 
                 <Flex align={'center'}>
                     <Flex gap={3} align={'center'} className={styles.mailBoxHeaderAddProjectDiv}>

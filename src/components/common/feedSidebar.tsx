@@ -115,8 +115,8 @@ export const FeedSidebar = () => {
             </Tooltip>
             <Slide in={isOpen} direction="right"
                    style={{
-                       zIndex: 10, maxWidth: '20rem', maxHeight: '100vh', background: '#ffffff',
-                       boxShadow: 'var(--chakra-shadows-lg)', transition: 'all .05s'
+                       zIndex: 20, maxWidth: '20rem', maxHeight: '100vh', background: '#ffffff',
+                       boxShadow: 'var(--chakra-shadows-lg)', transition: 'all .05s',
                    }} ref={btnRef}>
                 {/* <DrawerOverlay /> */}
                 <Box borderLeft="1px solid #F3F4F6" display={'flex'} flexDirection={'column'} h={'100%'} maxH="100vh" overflowY={'scroll'}>
