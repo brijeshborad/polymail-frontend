@@ -51,7 +51,7 @@ class CacheService {
 
     getMailBox(mailboxes: string[]) {
         mailboxes = [...mailboxes];
-        if (!(mailboxes.includes(MAILBOX_SPAM) && mailboxes.includes(MAILBOX_INBOX) && mailboxes.includes(MAILBOX_TRASH))) {
+        if (!mailboxes.some((item) => [MAILBOX_SPAM, MAILBOX_INBOX, MAILBOX_TRASH].includes(item))) {
             mailboxes.push(MAILBOX_ARCHIVE)
         }
         return mailboxes;
