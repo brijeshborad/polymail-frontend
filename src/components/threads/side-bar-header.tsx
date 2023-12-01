@@ -163,7 +163,15 @@ export function SideBarHeader() {
             draftService.setResumeDraft(null);
             commonService.toggleComposing(true);
             if (selectedAccount && selectedAccount.id) {
-                dispatch(createDraft({body: {accountId: selectedAccount.id, body: {}, fromCompose: true}}));
+                dispatch(createDraft({
+                        body: {
+                            accountId: selectedAccount.id, body: {}, fromCompose: true
+                        },
+                        afterSuccessAction: () => {
+                            draftService.addComposeToProject(router.pathname)
+                        }
+                    }
+                ));
             }
         }
     }
@@ -249,7 +257,8 @@ export function SideBarHeader() {
                             >
                                 <span className={styles.threadSearchedActionButtonText}>Actions</span>
                             </MenuButton>
-                            <MenuList className={`${styles.tabListDropDown} ${styles.multiselectTreadTabList} drop-down-list`}>
+                            <MenuList
+                                className={`${styles.tabListDropDown} ${styles.multiselectTreadTabList} drop-down-list`}>
                                 <MenuItem
                                     onClick={() => moveThreadToMailBoxes(MAILBOX_UNREAD)}><InboxOpenIcon/> Mark {toggleValues.isAllRead ? 'Unread' : 'Read'}
                                 </MenuItem>
@@ -268,16 +277,16 @@ export function SideBarHeader() {
                                     />
                                 </div>
                                 <MenuItem className={styles.dropDownIconBold}
-                                    onClick={() => moveThreadToMailBoxes(MAILBOX_STARRED)}><StarIcon/> {toggleValues.isAllStarred ? 'Removed ' : 'Add '}
+                                          onClick={() => moveThreadToMailBoxes(MAILBOX_STARRED)}><StarIcon/> {toggleValues.isAllStarred ? 'Removed ' : 'Add '}
                                     Star</MenuItem>
                                 <MenuItem className={styles.dropDownIconBold}
-                                    onClick={() => moveThreadToMailBoxes(MAILBOX_INBOX)}><InboxIcon/> Move to
+                                          onClick={() => moveThreadToMailBoxes(MAILBOX_INBOX)}><InboxIcon/> Move to
                                     Inbox</MenuItem>
                                 <MenuItem className={styles.dropDownIconBold}
-                                    onClick={() => moveThreadToMailBoxes(MAILBOX_TRASH)}><TrashIcon/> Move to
+                                          onClick={() => moveThreadToMailBoxes(MAILBOX_TRASH)}><TrashIcon/> Move to
                                     Trash</MenuItem>
                                 <MenuItem className={styles.dropDownIconBold}
-                                    onClick={() => moveThreadToMailBoxes(MAILBOX_ARCHIVE)}><ArchiveIcon/> Move to
+                                          onClick={() => moveThreadToMailBoxes(MAILBOX_ARCHIVE)}><ArchiveIcon/> Move to
                                     Archive</MenuItem>
                             </MenuList>
                         </Menu>

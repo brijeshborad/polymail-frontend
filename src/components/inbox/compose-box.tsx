@@ -39,7 +39,7 @@ const blankRecipientValue: MessageRecipient = {
 
 let loaderPercentage = 10;
 
-export function ComposeBox(props: any) {
+export function ComposeBox() {
     const [emailRecipients, setEmailRecipients] = useState<RecipientsType>({
         cc: {
             items: [],
@@ -143,11 +143,8 @@ export function ComposeBox(props: any) {
             }
             setIsContentSet(true);
             setIsDraftUpdated(true);
-            if (props.isProjectView) {
-                draftService.addComposeToProject()
-            }
         }
-    }, [composeDraft, isContentSet, props.isProjectView])
+    }, [composeDraft, isContentSet])
 
     const addSubject = (event: ChangeEvent | any) => {
         if (event.target.value) {
@@ -183,7 +180,7 @@ export function ComposeBox(props: any) {
             // draftInfo: {
             //     body: checkValue ? value : emailBody
             // },
-            ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
+            ...(composeDraft?.projects && composeDraft?.projects?.length > 0 ? {projectId: router.query.project as string} : {}),
             accountId: selectedAccount?.id
         }
 
@@ -228,7 +225,7 @@ export function ComposeBox(props: any) {
                 draftInfo: {
                     body: emailBody
                 },
-                ...(props.isProjectView ? {projectId: router.query.project as string} : {}),
+                ...(composeDraft?.projects && composeDraft?.projects?.length > 0 ? {projectId: router.query.project as string} : {}),
             }
             messageService.sendMessage(true, scheduledDate || '', {
                 ...body,

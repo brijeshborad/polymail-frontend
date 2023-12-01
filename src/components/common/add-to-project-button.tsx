@@ -71,11 +71,11 @@ export function AddToProjectButton({allowDefaultSelect = true, selectFrom = ''}:
                     return index === selectedProjects.findIndex(o => obj.id === o.id);
                 }))
             } else {
-                if (project) {
-                    setThreadProject([project])
-                } else {
-                    setThreadProject([])
-                }
+                // if (project) {
+                //     setThreadProject([project])
+                // } else {
+                //     setThreadProject([])
+                // }
             }
         } else {
             setThreadProject([])

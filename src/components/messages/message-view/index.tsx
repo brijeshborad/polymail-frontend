@@ -11,7 +11,7 @@ export function MessageView({isProjectView = false}: { isProjectView?: boolean }
     return (
         <>
             <MessageBoxView isProjectView={isProjectView}/>
-            {isComposing && <ComposeBox isProjectView={isProjectView}/>}
+            {isComposing && <ComposeBox/>}
         </>
     )
 }
