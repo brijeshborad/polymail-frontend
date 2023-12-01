@@ -249,7 +249,7 @@ export function SideBarHeader() {
                             >
                                 <span className={styles.threadSearchedActionButtonText}>Actions</span>
                             </MenuButton>
-                            <MenuList className={`${styles.tabListDropDown} drop-down-list`}>
+                            <MenuList className={`${styles.tabListDropDown} ${styles.multiselectTreadTabList} drop-down-list`}>
                                 <MenuItem
                                     onClick={() => moveThreadToMailBoxes(MAILBOX_UNREAD)}><InboxOpenIcon/> Mark {toggleValues.isAllRead ? 'Unread' : 'Read'}
                                 </MenuItem>
@@ -267,16 +267,16 @@ export function SideBarHeader() {
                                         isNameShow={true}
                                     />
                                 </div>
-                                <MenuItem
+                                <MenuItem className={styles.dropDownIconBold}
                                     onClick={() => moveThreadToMailBoxes(MAILBOX_STARRED)}><StarIcon/> {toggleValues.isAllStarred ? 'Removed ' : 'Add '}
                                     Star</MenuItem>
-                                <MenuItem
+                                <MenuItem className={styles.dropDownIconBold}
                                     onClick={() => moveThreadToMailBoxes(MAILBOX_INBOX)}><InboxIcon/> Move to
                                     Inbox</MenuItem>
-                                <MenuItem
+                                <MenuItem className={styles.dropDownIconBold}
                                     onClick={() => moveThreadToMailBoxes(MAILBOX_TRASH)}><TrashIcon/> Move to
                                     Trash</MenuItem>
-                                <MenuItem
+                                <MenuItem className={styles.dropDownIconBold}
                                     onClick={() => moveThreadToMailBoxes(MAILBOX_ARCHIVE)}><ArchiveIcon/> Move to
                                     Archive</MenuItem>
                             </MenuList>

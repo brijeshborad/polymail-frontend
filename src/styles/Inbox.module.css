@@ -137,6 +137,10 @@
     stroke: #5D5F62;
 }
 
+.multiselectTreadTabList.tabListDropDown .tabListSnoozeButton svg {
+    stroke: #5D5F62;
+}
+
 .tabListDropDown button:hover svg {
     stroke: #000;
 }
@@ -155,6 +159,10 @@
 
 .tabListDropDown .tabListSnoozeButton:hover {
     background-color: rgba(8, 22, 47, 0.05);
+}
+
+.tabListDropDown button.dropDownIconBold svg {
+    opacity: 0.8;
 }
 
 .mailTabList .tabListDropDown button {
