@@ -246,7 +246,7 @@ export function MessageItems() {
                         {/*</div>*/}
 
                         <Flex w={'100%'} direction={'column'}>
-                            <Flex align={'center'} justify={'space-between'} mb={1} minH={5}>
+                            <Flex align={'center'} justify={'space-between'} mb={1} minH={5} userSelect={'none'}>
                                 <Heading as='h6' fontSize={'13px'} color={'#0A101D'} fontWeight={400}
                                          letterSpacing={'-0.13px'}
                                          lineHeight={1}>{message.from?.name || message.from?.email}</Heading>
@@ -256,7 +256,7 @@ export function MessageItems() {
                                           showTimeInShortForm={false}/>
                                 </span>
                             <Text fontSize='13px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1.2}
-                                  fontWeight={400} noOfLines={1}>
+                                  fontWeight={400} noOfLines={1} userSelect={'none'}>
                                 <span dangerouslySetInnerHTML={{__html: message.snippet || ''}}/>
                             </Text>
                         </Flex>
@@ -317,7 +317,7 @@ export function MessageItems() {
 
                             {/*</div>*/}
                             <Flex w={'100%'} direction={'column'} pr={'20px'}>
-                                <Flex align={'center'} justify={'space-between'} mb={1}>
+                                <Flex align={'center'} justify={'space-between'} mb={1} userSelect={'none'}>
                                     <Flex align={'flex-end'} className={styles.mailBoxMailHeaderDetails} gap={1}>
                                         <Heading
                                             as='h6' fontSize={'13px'} color={'#0A101D'}
@@ -341,7 +341,7 @@ export function MessageItems() {
                                 </Flex>
                                 {message && message.to && message.to.length > 0 &&
                                 <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
-                                      fontWeight={400}>to:&nbsp;
+                                      fontWeight={400} userSelect={'none'}>to:&nbsp;
                                     {message.to[0].email}&nbsp;
 
                                     <div className={styles.otherMail} onClick={(e) => {
