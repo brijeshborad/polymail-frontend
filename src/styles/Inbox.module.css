@@ -101,6 +101,11 @@
     background-color: transparent;
 }
 
+.threadSearched .tabListMoreButton[data-active],
+.threadSearched .tabListMoreButton:active {
+    background-color: var(--alias-bg-subtle);
+}
+
 .mailTabList .tabListMoreButton svg {
     width: 9px;
 }

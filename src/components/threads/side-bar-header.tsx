@@ -241,8 +241,8 @@ export function SideBarHeader() {
                                     setIsMoreDropdownOpen(!isMoreDropdownOpen)
                                 }}
                                 className={styles.tabListMoreButton} minWidth={'60px'} height={'auto'}
-                                backgroundColor={'transparent'} border={'1px solid #D1D5DB'}
-                                lineHeight={1}
+                                backgroundColor={'transparent'} border={'1px solid #F3F4F6'}
+                                lineHeight={1} _hover={{backgroundColor: 'var(--alias-bg-subtle)'}}
                                 fontSize={'12px'} color={'#374151'} as={Button} borderRadius={'50px'}
                                 rightIcon={<TriangleDownIcon color={'#374151'}/>}
                                 p={'0 8px 0 10px'}
