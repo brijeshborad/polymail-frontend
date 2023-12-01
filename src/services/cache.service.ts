@@ -49,6 +49,14 @@ class CacheService {
         this.cacheThreads = value;
     }
 
+    getMailBox(mailboxes: string[]) {
+        mailboxes = [...mailboxes];
+        if (!(mailboxes.includes(MAILBOX_SPAM) && mailboxes.includes(MAILBOX_INBOX) && mailboxes.includes(MAILBOX_TRASH))) {
+            mailboxes.push(MAILBOX_ARCHIVE)
+        }
+        return mailboxes;
+    }
+
     getThreadCacheByKey(key: string): Thread[] {
         return (this.cacheThreads[key] || []) as Thread[];
     }
