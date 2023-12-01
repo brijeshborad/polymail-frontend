@@ -36,7 +36,7 @@ const threadsSlice = createSlice({
             if (isThreadSearched) {
                 return {...state};
             }
-            threads = extractAndMapThreadAndMessagesBody(threads, fullPayload.body.pagination, currentThreads, fullPayload.body.mailbox);
+            threads = extractAndMapThreadAndMessagesBody(threads, fullPayload.body.pagination, currentThreads, fullPayload.body.mailbox, fullPayload.body.type);
             performSuccessActions(fullPayload, threads);
             let finalState: InitialThreadStateType = {...state, isLoading: false, success: false};
             if (tabValue === fullPayload.body.mailbox && subTabValue === fullPayload.body.type) {

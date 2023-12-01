@@ -28,6 +28,7 @@ export interface Thread {
     mute?: boolean
     latestSentMessage?: Message
     tab?: string
+    subTab?: string
 }
 
 export interface ThreadsRequestBody {

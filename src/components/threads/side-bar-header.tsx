@@ -86,20 +86,23 @@ export function SideBarHeader() {
     useEffect(() => {
         if (threads && threads.length > 0 && !selectedThread && !isLoading) {
             if (allowThreadSelection) {
-                if (!isComposing) {
-                    if (!router.query.thread) {
-                        threadService.setSelectedThread(threads[0]);
-                    }
-                }
                 if (tabValue === 'DRAFT') {
-                    commonService.toggleComposing(true);
                     let item = threads[0];
+                    if (item.tab !== 'DRAFT') {
+                        return;
+                    }
+                    commonService.toggleComposing(true);
                     threadService.setSelectedThread(item);
                     if (item && item.messages && item.messages[0]) {
                         let finalDraft = {...item.messages[0], projects: [...(item.projects || [])]}
                         draftService.setComposeDraft(finalDraft);
                     }
-
+                } else {
+                    if (!isComposing) {
+                        if (!router.query.thread) {
+                            threadService.setSelectedThread(threads[0]);
+                        }
+                    }
                 }
             }
         }
@@ -433,7 +436,7 @@ export function SideBarHeader() {
                         >
                             More
                         </MenuButton>
-                        <MenuList
+                        <MenuList zIndex={20}
                             className={`${styles.tabListDropDown} drop-down-list`}
                         >
                             {tab !== MAILBOX_SNOOZED &&
