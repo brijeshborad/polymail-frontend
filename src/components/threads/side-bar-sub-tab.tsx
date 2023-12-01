@@ -124,6 +124,8 @@ export function SideBarSubTab() {
                         isLoading: false,
                         selectedThread: threads[0]
                     })
+                    currentPage = 1;
+                    getAllThread(type);
                 }, 1);
                 return;
             } else {
@@ -203,6 +205,8 @@ export function SideBarSubTab() {
                     isLoading: false,
                     selectedThread: threads[0]
                 });
+                currentPage = 1;
+                getAllThread(defaultTab);
                 return;
             } else {
                 threadService.setThreads([]);
