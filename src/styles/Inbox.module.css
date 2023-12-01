@@ -1070,14 +1070,18 @@
 }
 
 .mailBox .tabListAttachmentButton svg {
-    width: 12px;
+    width: 13px;
     height: 12px;
-    margin: 0;
+    margin: -2.5px 0 0;
+}
+
+.mailBox .tabListAttachmentButton:hover svg {
+    stroke: #000000;
+    color: #000000;
 }
 
 .mailBox .tabListAttachmentButton .dropDownIcon {
-    margin-top: 3px;
-    margin-right: 2px;
+    margin-top: 0;
 }
 
 .mailBox .tabListAttachmentButton span {
