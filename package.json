@@ -76,7 +76,7 @@
     "redux-saga": "^1.2.3"
   },
   "devDependencies": {
-    "@triplit/cli": "^0.2.1",
+    "@triplit/cli": "^0.2.3",
     "@types/react-file-icon": "^1.0.2",
     "electron": "^27.1.2",
     "electron-store": "^8.1.0",
