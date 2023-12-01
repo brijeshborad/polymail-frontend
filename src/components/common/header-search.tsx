@@ -261,7 +261,7 @@ export function HeaderSearch() {
             <InputGroup>
                 <Flex className={`${styles.headerSearchInput} ${badges.length === 0 ? styles.headerNoBadge: ''}`}>
                     <SearchIcon/>
-                    <Flex gap={1} flex={1} overflow={'auto'} width={'calc(100vw - 810px)'}
+                    <Flex gap={2} flex={1} overflow={'auto'} width={'calc(100vw - 810px)'}
                           className={styles.searchBarHeaderInput}>
                             <Flex className={styles.headerSearchChip} alignItems={'center'}
                                   gap={1}>
