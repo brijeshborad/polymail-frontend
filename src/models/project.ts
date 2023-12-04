@@ -53,10 +53,18 @@ export type ProjectFilterTypes = 'domain' | 'email'
 export type ProjectRulesStatus = 'enabled' | 'disabled'
 
 export interface ProjectRules {
+    project?: Project;
     projectId?: string;
     userId?: string;
     accountId?: string;
     filterType?: ProjectFilterTypes;
     value?: string;
     status?: ProjectRulesStatus;
+}
+
+export interface GroupedProjectRules {
+    [key: string]: {
+        item: Project,
+        values: ProjectRules[]
+    }
 }

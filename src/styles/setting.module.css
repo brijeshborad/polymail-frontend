@@ -652,6 +652,7 @@
     width: 20px;
     height: 20px;
     stroke: #6B7280;
+    cursor: pointer;
 }
 
 @media (max-width: 768px) {

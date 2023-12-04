@@ -12,7 +12,7 @@ import {
     UnorderedList,
 } from "@chakra-ui/react";
 import styles from "@/styles/setting.module.css";
-import {InboxIcon, SignatureIcon, UserIcon} from "@/icons";
+import {EnergyIcon, InboxIcon, MembersIcon, SignatureIcon, UserIcon} from "@/icons";
 import Router, {useRouter} from "next/router";
 import {ArrowBackIcon, HamburgerIcon} from "@chakra-ui/icons";
 import {getOrganizationMembers} from "@/redux/organizations/action-reducer";
@@ -36,6 +36,11 @@ const tabMenu = [
                 icon: <SignatureIcon/>
             },
             {
+                title: 'Automation',
+                route: '/settings/automation',
+                icon: <EnergyIcon/>
+            },
+            {
                 title: 'Email Address',
                 route: '/settings/email-address',
                 icon: <InboxIcon/>
@@ -45,11 +50,11 @@ const tabMenu = [
     {
         title: 'Organization',
         children: [
-            {
-                title: 'Approved Domains',
-                route: '/settings/preferences',
-                icon: <UserIcon/>
-            },
+            // {
+            //     title: 'Approved Domains',
+            //     route: '/settings/preferences',
+            //     icon: <UserIcon/>
+            // },
             /*
             {
                 title: 'Billing',
@@ -59,12 +64,7 @@ const tabMenu = [
             {
                 title: 'Members',
                 route: '/settings/members',
-                icon: <UserIcon/>
-            },
-            {
-                title: 'Automation',
-                route: '/settings/automation',
-                icon: <UserIcon/>
+                icon: <MembersIcon/>
             },
         ]
     },
