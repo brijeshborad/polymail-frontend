@@ -9,7 +9,7 @@ import IframeLoader from "@/components/common/iframe-loader";
 import React, {useEffect, useRef, useState} from "react";
 import {getAttachmentDownloadUrl, updateMessage} from "@/redux/messages/action-reducer";
 import {globalEventService, messageService, threadService} from "@/services";
-import {AttachmentIcon, ChevronDownIcon} from "@chakra-ui/icons";
+import {AttachmentIcon, ChevronDownIcon, CopyIcon} from "@chakra-ui/icons";
 import {DefaultExtensionType, defaultStyles, FileIcon} from "react-file-icon";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
@@ -337,11 +337,14 @@ export function MessageItems() {
                                                 </Text>
                                             </>
                                         )}
+                                        <div className={styles.copyIcon}>
+                                            <CopyIcon strokeWidth={0}/>
+                                        </div>
                                     </Flex>
                                 </Flex>
                                 {message && message.to && message.to.length > 0 &&
                                 <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
-                                      fontWeight={400} userSelect={'none'}>to:&nbsp;
+                                      fontWeight={400} userSelect={'none'} className={styles.recipient}>to:&nbsp;
                                     {message.to[0].email}&nbsp;
 
                                     <div className={styles.otherMail} onClick={(e) => {
@@ -358,8 +361,11 @@ export function MessageItems() {
                                                     )) : '') as any
                                             }>
                                             <Text userSelect={'none'}
-                                                as='u'>{message.to.length - 1 > 0 && `and ${message.to.length - 1} others`} </Text>
+                                                  as='u'>{message.to.length - 1 > 0 && `and ${message.to.length - 1} others`} </Text>
                                         </Tooltip>
+                                    </div>
+                                    <div className={styles.copyIcon}>
+                                        <CopyIcon strokeWidth={0}/>
                                     </div>
                                 </Flex>
                                 }

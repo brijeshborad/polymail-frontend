@@ -142,7 +142,7 @@
 }
 
 .multiselectTreadTabList.tabListDropDown .tabListSnoozeButton svg {
-    stroke: rgba(93,95,98, 0.9);
+    stroke: rgba(93, 95, 98, 0.9);
 }
 
 .multiselectTreadTabList.tabListDropDown .tabListSnoozeButton:hover svg {
@@ -1412,6 +1412,24 @@
 
 .mailBox .mailBodyContent .mailBody {
     min-width: 730px;
+}
+
+.mailBox .oldMail .mailBoxMailHeader .mailBoxMailHeaderDetails:hover .copyIcon {
+    display: flex;
+}
+
+.mailBox .oldMail .mailBoxMailHeader .recipient:hover .copyIcon {
+    display: flex;
+}
+
+.mailBox .oldMail .mailBoxMailHeader .copyIcon {
+    display: none;
+}
+
+.mailBox .oldMail .mailBoxMailHeader .copyIcon svg {
+    height: 12px;
+    width: 12px;
+    color: rgb(107, 114, 128);
 }
 
 @keyframes compose-animation {
