@@ -1293,11 +1293,13 @@ div:has(> .mailSendToaster) {
 }
 
 .drop-down-list .EmojiPickerReact .epr-header .epr-category-nav button.epr-active {
-    filter: brightness(0) saturate(100%);
+    background-image: url("../../public/image/icon/emoji-tabs.svg");
+    border-color: #000000;
 }
 
 .drop-down-list .EmojiPickerReact .epr-header .epr-category-nav button:hover {
-    filter: brightness(0) saturate(100%);
+    background-image: url("../../public/image/icon/emoji-tabs.svg");
+    border-color: #000000;
 }
 
 .drop-down-list .EmojiPickerReact .epr-header .epr-category-nav button:focus:before {
