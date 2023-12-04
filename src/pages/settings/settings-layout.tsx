@@ -12,7 +12,7 @@ import {
     UnorderedList,
 } from "@chakra-ui/react";
 import styles from "@/styles/setting.module.css";
-import {UserIcon} from "@/icons";
+import {InboxIcon, SignatureIcon, UserIcon} from "@/icons";
 import Router, {useRouter} from "next/router";
 import {ArrowBackIcon, HamburgerIcon} from "@chakra-ui/icons";
 import {getOrganizationMembers} from "@/redux/organizations/action-reducer";
@@ -26,15 +26,18 @@ const tabMenu = [
         children: [
             {
                 title: 'Profile',
-                route: '/settings/profile'
+                route: '/settings/profile',
+                icon: <UserIcon/>
             },
             {
                 title: 'Signature',
-                route: '/settings/signature'
+                route: '/settings/signature',
+                icon: <SignatureIcon/>
             },
             {
                 title: 'Email Address',
-                route: '/settings/email-address'
+                route: '/settings/email-address',
+                icon: <InboxIcon/>
             },
         ]
     },
@@ -43,7 +46,8 @@ const tabMenu = [
         children: [
             {
                 title: 'Approved Domains',
-                route: '/settings/preferences'
+                route: '/settings/preferences',
+                icon: <UserIcon/>
             },
             /*
             {
@@ -53,11 +57,13 @@ const tabMenu = [
             */
             {
                 title: 'Members',
-                route: '/settings/members'
+                route: '/settings/members',
+                icon: <UserIcon/>
             },
             {
                 title: 'Automation',
-                route: '/settings/automation'
+                route: '/settings/automation',
+                icon: <UserIcon/>
             },
         ]
     },
@@ -124,9 +130,9 @@ export default function SettingsLayout({children}: any) {
                                     <MenuList className={'drop-down-list'}>
                                         {tabMenu.map((tab, index: number) => (
                                             <MenuGroup
-                                                       key={index}
-                                                       className={styles.settingListTitle} textTransform={'uppercase'}
-                                                       title={(<><UserIcon/> {tab.title}</>) as any}>
+                                                key={index}
+                                                className={styles.settingListTitle} textTransform={'uppercase'}
+                                                title={(<><UserIcon/> {tab.title}</>) as any}>
                                                 {tab.children &&
                                                 tab.children.map((item, i: number) => (
                                                     <MenuItem key={i + 1} onClick={() => openTabs(item)}
@@ -144,13 +150,15 @@ export default function SettingsLayout({children}: any) {
                                 <Flex direction={'column'} mb={8} key={index + 1}>
                                     <Heading display={'flex'} alignItems={'center'} mb={2} as='h5' size='sm'
                                              className={styles.settingListTitle} textTransform={'uppercase'}>
-                                        <UserIcon/>{tab.title}
+                                        {tab.title}
                                     </Heading>
                                     {tab.children &&
                                     <UnorderedList display={'flex'} gap={1} className={styles.settingList}>
                                         {tab.children.map((item, i: number) => (
                                             <ListItem key={i + 1} onClick={() => openTabs(item)}
-                                                      className={currentRoute === item.route ? styles.active : ''}>{item.title}</ListItem>
+                                                      className={currentRoute === item.route ? styles.active : ''}>
+                                                {item.icon}{item.title}
+                                            </ListItem>
                                         ))}
                                     </UnorderedList>
                                     }
@@ -158,7 +166,7 @@ export default function SettingsLayout({children}: any) {
                             ))}
                         </div>
                     </GridItem>
-                    <GridItem  w='100%' overflow={'auto'}>
+                    <GridItem w='100%' overflow={'auto'}>
                         {children}
                     </GridItem>
                 </Grid>
