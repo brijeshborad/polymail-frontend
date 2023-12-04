@@ -142,7 +142,7 @@
 }
 
 .multiselectTreadTabList.tabListDropDown .tabListSnoozeButton svg {
-    stroke: #5D5F62;
+    stroke: rgba(93,95,98, 0.9);
 }
 
 .multiselectTreadTabList.tabListDropDown .tabListSnoozeButton:hover svg {
@@ -162,7 +162,7 @@
 
 .tabListDropDown .tabListSnoozeButton svg {
     margin-right: 8px;
-    font-size: 16px;
+    font-size: 17px;
 }
 
 .tabListDropDown .tabListSnoozeButton:hover {
@@ -170,7 +170,7 @@
 }
 
 .tabListDropDown button.dropDownIconBold svg {
-    opacity: 0.8;
+    opacity: 0.9;
 }
 
 .mailTabList .tabListDropDown button {
