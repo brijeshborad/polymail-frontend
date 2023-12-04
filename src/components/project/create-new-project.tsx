@@ -189,7 +189,7 @@ function CreateNewProjectModal() {
                                             }}
                                             justifyContent={'center'}>{projectEmoji ? projectEmoji :
                                     <AddEmojiIcon/>} </MenuButton>
-                                <MenuList className={'drop-down-list emoji-drop-down-list'}>
+                                <MenuList className={'drop-down-list'}>
                                     {/*
                                         <Flex padding={3} borderBottom={'1px solid #F3F4F6'}>
                                             <InputGroup>

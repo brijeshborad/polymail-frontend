@@ -1262,42 +1262,77 @@ div:has(> .mailSendToaster) {
     border-bottom: 1px solid #000000;
 }
 
-.drop-down-list.emoji-drop-down-list .EmojiPickerReact {
-    box-shadow: none;
-    border: 0;
+.drop-down-list .EmojiPickerReact {
+    box-shadow: none !important;
+    border: 0 !important;
 }
 
-.emoji-drop-down-list .EmojiPickerReact .epr-header .epr-header-overlay {
+.drop-down-list .EmojiPickerReact .epr-header .epr-header-overlay {
     padding: 16px;
     border-bottom: 1px solid #F3F4F6;
 }
 
-.emoji-drop-down-list .EmojiPickerReact .epr-header .epr-header-overlay input {
+.drop-down-list .EmojiPickerReact .epr-header .epr-header-overlay input {
     background-color: #FFFFFF;
     border-color: #e2e8f0;
     font-size: 14px;
     padding-left: 40px;
 }
 
-.emoji-drop-down-list .EmojiPickerReact .epr-header .epr-category-nav {
-    padding: 16px;
+.drop-down-list .EmojiPickerReact .epr-header .epr-category-nav {
+    padding: 10px 16px;
     border-bottom: 1px solid #F3F4F6;
     justify-content: space-between;
 }
 
-.emoji-drop-down-list .EmojiPickerReact .epr-header .epr-category-nav button {
+.drop-down-list .EmojiPickerReact .epr-header .epr-category-nav button {
     width: 32px;
     height: 32px;
     border: 1px solid #e2e8f0;
     border-radius: 5px;
 }
 
-.emoji-drop-down-list .EmojiPickerReact .epr-header .epr-category-nav button.epr-active {
-    border-color: #6aa9dc;
+.drop-down-list .EmojiPickerReact .epr-header .epr-category-nav button.epr-active {
+    filter: brightness(0) saturate(100%);
 }
 
-.emoji-drop-down-list .EmojiPickerReact .epr-header .epr-category-nav button:focus:before {
+.drop-down-list .EmojiPickerReact .epr-header .epr-category-nav button:hover {
+    filter: brightness(0) saturate(100%);
+}
+
+.drop-down-list .EmojiPickerReact .epr-header .epr-category-nav button:focus:before {
     display: none;
+}
+
+.drop-down-list .EmojiPickerReact .epr-body .epr-emoji-list .epr-emoji-category-label {
+    color: #0a101d;
+    font-size: 16px;
+}
+
+.drop-down-list .EmojiPickerReact .epr-body .epr-emoji-list .epr-emoji-category-content {
+    grid-template-columns: repeat(10, 1fr);
+    gap: 8px;
+}
+
+.drop-down-list .EmojiPickerReact .epr-body .epr-emoji-list .epr-emoji-category-content button.epr-emoji {
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 0;
+}
+
+.drop-down-list .EmojiPickerReact .epr-body .epr-emoji-list .epr-emoji-category-content button.epr-emoji:hover,
+.drop-down-list .EmojiPickerReact .epr-body .epr-emoji-list .epr-emoji-category-content button.epr-emoji:hover >*{
+    background-color: transparent;
+}
+
+.drop-down-list .EmojiPickerReact .epr-preview img {
+    width: 30px !important;
+    height: 30px !important;
+}
+
+.drop-down-list .EmojiPickerReact .epr-preview {
+    height: 50px;
 }
 
 @keyframes editor-input-animation {
