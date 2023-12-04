@@ -495,6 +495,7 @@ div:has(> .mailSendToaster) {
     bottom: 38px;
     left: 0;
     z-index: 5;
+    pointer-events: none;
 }
 
 .editor-bottom-shadow .show-shadow:before {
@@ -506,6 +507,7 @@ div:has(> .mailSendToaster) {
     top: 0;
     left: 0;
     z-index: 5;
+    pointer-events: none;
 }
 
 ::-webkit-datetime-edit-ampm-field {
@@ -1254,6 +1256,10 @@ div:has(> .mailSendToaster) {
 
 .link-modal-ui .add-button:hover {
     background-color: #000000;
+}
+
+.emoji-active {
+    border-bottom: 1px solid #000000;
 }
 
 @keyframes editor-input-animation {
