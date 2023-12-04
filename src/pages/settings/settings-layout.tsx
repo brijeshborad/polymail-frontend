@@ -108,10 +108,8 @@ export default function SettingsLayout({children}: any) {
                     <GridItem display={'flex'} className={styles.settingSideBar} flexDirection={'column'}>
                         <div className={styles.settingSideBarHeader}>
                             <Button className={styles.backButton} borderRadius={8} height={'auto'}
-                                    padding={'5px 8px 5px 5px'}
-                                    marginBottom={'20px'}
-                                    backgroundColor={'#FFFFFF'} color={'#6B7280'} borderColor={'#6B7280'}
-                                    w={'fit-content'}
+                                    padding={'0'} marginBottom={'8px'} backgroundColor={'#FFFFFF'}
+                                    color={'#6B7280'} borderColor={'#6B7280'} w={'fit-content'}
                                     colorScheme='blue' variant='outline' fontSize={'14px'}
                                     leftIcon={<ArrowBackIcon/>} onClick={() => router.push('/inbox')}>
                                 Back To Inbox
@@ -148,12 +146,12 @@ export default function SettingsLayout({children}: any) {
                         <div className={styles.settingItems}>
                             {tabMenu.map((tab, index: number) => (
                                 <Flex direction={'column'} mb={8} key={index + 1}>
-                                    <Heading display={'flex'} alignItems={'center'} mb={2} as='h5' size='sm'
+                                    <Heading display={'flex'} alignItems={'center'} mb={2} fontWeight={'600'} as='h5' fontSize={'11px'}
                                              className={styles.settingListTitle} textTransform={'uppercase'}>
                                         {tab.title}
                                     </Heading>
                                     {tab.children &&
-                                    <UnorderedList display={'flex'} gap={1} className={styles.settingList}>
+                                    <UnorderedList display={'flex'} ml={'0'} className={styles.settingList}>
                                         {tab.children.map((item, i: number) => (
                                             <ListItem key={i + 1} onClick={() => openTabs(item)}
                                                       className={currentRoute === item.route ? styles.active : ''}>

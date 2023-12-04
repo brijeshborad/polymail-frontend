@@ -31,9 +31,19 @@
     flex-direction: column;
 }
 
+
+.settingSideBar .settingList li svg {
+    width: 20px;
+    height: 20px;
+    stroke: #9CA3AF;
+}
+
 .settingSideBar .settingList li {
-    padding: 3px 7px;
-    color: #1D2939;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px;
+    color: #374151;
     font-size: 13px;
     font-weight: 600;
     line-height: 1.5384;
@@ -43,11 +53,21 @@
 }
 
 .settingSideBar .settingList li:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: #EBF2FF;
+    color: #0A101D;
+}
+
+.settingSideBar .settingList li:hover svg {
+    stroke: #0A101D;
 }
 
 .settingSideBar .settingList li.active {
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: #EBF2FF;
+    color: #0A101D;
+}
+
+.settingSideBar .settingList li.active svg {
+    stroke: #0A101D;
 }
 
 .settingSubTitle {
