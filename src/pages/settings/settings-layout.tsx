@@ -55,6 +55,10 @@ const tabMenu = [
                 title: 'Members',
                 route: '/settings/members'
             },
+            {
+                title: 'Automation',
+                route: '/settings/automation'
+            },
         ]
     },
 ];
