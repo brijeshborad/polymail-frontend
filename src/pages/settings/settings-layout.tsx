@@ -18,6 +18,7 @@ import {ArrowBackIcon, HamburgerIcon} from "@chakra-ui/icons";
 import {getOrganizationMembers} from "@/redux/organizations/action-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
+import {getAllProjectRules} from "@/redux/common-apis/action-reducer";
 
 
 const tabMenu = [
@@ -75,6 +76,7 @@ export default function SettingsLayout({children}: any) {
     const router = useRouter()
     const dispatch = useDispatch();
     const {organizations, members} = useSelector((state: StateType) => state.organizations);
+    const {projectRules} = useSelector((state: StateType) => state.commonApis);
 
     useEffect(() => {
         const routePaths = router.pathname.split('/');
@@ -98,6 +100,12 @@ export default function SettingsLayout({children}: any) {
             }
         }
     }, [dispatch, organizations])
+
+    useEffect(() => {
+        if (projectRules && projectRules.length <= 0) {
+            dispatch(getAllProjectRules({}));
+        }
+    }, [dispatch])
 
 
     return (
@@ -146,7 +154,8 @@ export default function SettingsLayout({children}: any) {
                         <div className={styles.settingItems}>
                             {tabMenu.map((tab, index: number) => (
                                 <Flex direction={'column'} mb={8} key={index + 1}>
-                                    <Heading display={'flex'} alignItems={'center'} mb={2} fontWeight={'600'} as='h5' fontSize={'11px'}
+                                    <Heading display={'flex'} alignItems={'center'} mb={2} fontWeight={'600'} as='h5'
+                                             fontSize={'11px'}
                                              className={styles.settingListTitle} textTransform={'uppercase'}>
                                         {tab.title}
                                     </Heading>

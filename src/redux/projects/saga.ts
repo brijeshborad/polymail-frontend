@@ -1,4 +1,5 @@
 import {
+    createProjectRules, createProjectRulesError, createProjectRulesSuccess,
     createProjects,
     createProjectsError,
     createProjectsSuccess,
@@ -16,7 +17,7 @@ import {
     getProjectMembersInvites,
     getProjectMembersInvitesError,
     getProjectMembersInvitesSuccess,
-    getProjectMembersSuccess,
+    getProjectMembersSuccess, getProjectRules, getProjectRulesError, getProjectRulesSuccess,
     markProjectRead,
     markProjectReadError,
     markProjectReadSuccess,
@@ -32,7 +33,7 @@ import {
     updateProjectError,
     updateProjectMemberRole,
     updateProjectMemberRoleError,
-    updateProjectMemberRoleSuccess,
+    updateProjectMemberRoleSuccess, updateProjectRules, updateProjectRulesError, updateProjectRulesSuccess,
     updateProjectSuccess
 } from "@/redux/projects/action-reducer";
 import { ReducerActionType } from "@/types";
@@ -41,7 +42,6 @@ import {performErrorActions, performSuccessActions} from "@/utils/common-redux.f
 import { all, fork, put, takeEvery } from "@redux-saga/core/effects";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { AxiosError, AxiosResponse } from "axios";
-
 
 function* getProjects() {
     try {
@@ -80,7 +80,6 @@ function* addProjects({payload}: PayloadAction<ReducerActionType>) {
     }
 }
 
-
 function* getProjectMembersService({payload}: PayloadAction<ReducerActionType>) {
     try {
         const response: AxiosResponse = yield ApiService.callGet(`projects/${payload.body.projectId}/accounts`, {});
@@ -91,7 +90,6 @@ function* getProjectMembersService({payload}: PayloadAction<ReducerActionType>) 
         yield put(getProjectMembersError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
-
 
 function* getProjectMembersInvitees({payload}: PayloadAction<ReducerActionType>) {
     try {
@@ -199,6 +197,43 @@ function* markProjectAsRead({payload}: PayloadAction<ReducerActionType>) {
     }
 }
 
+function* getRulesForProject({payload}: PayloadAction<ReducerActionType>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callGet(`projects/${payload.body.projectId}/rules`, {});
+        performSuccessActions(payload);
+        yield put(getProjectRulesSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        performSuccessActions(payload);
+        yield put(getProjectRulesError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
+    }
+}
+
+function* updateRulesByProject({payload}: PayloadAction<ReducerActionType>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callPatch(`projects/${payload.body.projectId}/rules`, {});
+        performSuccessActions(payload);
+        yield put(updateProjectRulesSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        performSuccessActions(payload);
+        yield put(updateProjectRulesError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
+    }
+}
+
+function* createRulesByProject({payload}: PayloadAction<ReducerActionType>) {
+    try {
+        const response: AxiosResponse = yield ApiService.callPost(`projects/${payload.body.projectId}/rules`, {});
+        performSuccessActions(payload);
+        yield put(createProjectRulesSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        performSuccessActions(payload);
+        yield put(createProjectRulesError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
+    }
+}
+
+
 export function* watchGetProjects() {
     yield takeEvery(getAllProjects.type, getProjects);
 }
@@ -231,7 +266,6 @@ export function* watchUpdateOptimisticProjectData() {
     yield takeEvery(updateOptimisticProject.type, updateProjectDataWithUndo);
 }
 
-
 export function* watchRemoveProjectFromThread() {
     yield takeEvery(removeThreadFromProject.type, removeProjectFormThreads);
 }
@@ -244,9 +278,20 @@ export function* watchRemoveProjectData() {
     yield takeEvery(removeProject.type, removeProjectData);
 }
 
-
 export function* watchMarkProjectRead() {
     yield takeEvery(markProjectRead.type, markProjectAsRead);
+}
+
+export function* watchGetProjectRules() {
+    yield takeEvery(getProjectRules.type, getRulesForProject);
+}
+
+export function* watchUpdateProjectRules() {
+    yield takeEvery(updateProjectRules.type, updateRulesByProject);
+}
+
+export function* watchCreateProjectRules() {
+    yield takeEvery(createProjectRules.type, createRulesByProject);
 }
 
 export default function* rootSaga() {

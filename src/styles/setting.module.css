@@ -123,6 +123,7 @@
     text-align: left;
     width: 100%;
     position: relative;
+    z-index: 1;
 }
 
 .profileAccount p {
@@ -464,7 +465,7 @@
     padding: 8px 16px;
     border-radius: 8px;
     width: 100%;
-    z-index: 0;
+    z-index: 1;
 }
 
 .copyLinkDetails svg {
@@ -577,6 +578,7 @@
 
 .setting .settingSideBarHeader .settingTitle .settingTitleText {
     display: block;
+
 }
 
 .setting .settingSideBarHeader .settingMenu {

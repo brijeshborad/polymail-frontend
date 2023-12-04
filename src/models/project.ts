@@ -48,3 +48,15 @@ export interface ProjectMetaData {
     order?: number,
     favorite?: boolean
 }
+
+export type ProjectFilterTypes = 'domain' | 'email'
+export type ProjectRulesStatus = 'enabled' | 'disabled'
+
+export interface ProjectRules {
+    projectId?: string;
+    userId?: string;
+    accountId?: string;
+    filterType?: ProjectFilterTypes;
+    value?: string;
+    status?: ProjectRulesStatus;
+}

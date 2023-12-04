@@ -2,12 +2,24 @@ import {AxiosError, AxiosResponse} from "axios";
 import ApiService from "@/utils/api.service";
 import {all, fork, put, takeEvery} from "@redux-saga/core/effects";
 import {
-    getActivityFeed, getActivityFeedError, getActivityFeedSuccess,
-    getContacts, getContactsError, getContactsSuccess,
+    getActivityFeed,
+    getActivityFeedError,
+    getActivityFeedSuccess,
+    getAllProjectRules,
+    getAllProjectRulesError,
+    getAllProjectRulesSuccess,
+    getContacts,
+    getContactsError,
+    getContactsSuccess,
     getProjectSummary,
-    getProjectSummaryError, getProjectSummarySuccess,
+    getProjectSummaryError,
+    getProjectSummarySuccess,
     getSummary,
-    getSummaryError, getSummarySuccess, markActivityAsRead, markActivityAsReadError, markActivityAsReadSuccess
+    getSummaryError,
+    getSummarySuccess,
+    markActivityAsRead,
+    markActivityAsReadError,
+    markActivityAsReadSuccess
 } from "@/redux/common-apis/action-reducer";
 import {getProjectByIdSuccess} from "@/redux/projects/action-reducer";
 import {getAllAccountSuccess} from "@/redux/accounts/action-reducer";
@@ -86,6 +98,16 @@ function* markAllActivityAsRead() {
     }
 }
 
+function* allProjectRules() {
+    try {
+        const response: AxiosResponse = yield ApiService.callGet(`rules`, {});
+        yield put(getAllProjectRulesSuccess(response));
+    } catch (error: any) {
+        error = error as AxiosError;
+        yield put(getAllProjectRulesError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
+    }
+}
+
 
 export function* watchGetSummary() {
     yield takeEvery(getSummary.type, getSummaryData);
@@ -107,6 +129,10 @@ export function* watchMarkActivityAsRead() {
     yield takeEvery(markActivityAsRead.type, markAllActivityAsRead);
 }
 
+export function* watchGetAllProjectRules() {
+    yield takeEvery(getAllProjectRules.type, allProjectRules);
+}
+
 export default function* rootSaga() {
     yield all([
         fork(watchGetSummary),
@@ -114,5 +140,6 @@ export default function* rootSaga() {
         fork(watchGetAllContacts),
         fork(watchGetAllActivityFeed),
         fork(watchMarkActivityAsRead),
+        fork(watchGetAllProjectRules),
     ]);
 }

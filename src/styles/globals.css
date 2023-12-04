@@ -1262,11 +1262,6 @@ div:has(> .mailSendToaster) {
     border-bottom: 1px solid #000000;
 }
 
-.EmojiPickerReact {
-    box-shadow: none !important;
-    border: 0 !important;
-}
-
 .EmojiPickerReact .epr-header .epr-header-overlay {
     padding: 16px;
     border-bottom: 1px solid #F3F4F6;
