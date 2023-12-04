@@ -1321,6 +1321,11 @@ div:has(> .mailSendToaster) {
     border-radius: 0;
 }
 
+
+.drop-down-list .EmojiPickerReact .epr-body .epr-emoji-list .epr-emoji-category-content button.epr-emoji span {
+    font-size: 20px;
+}
+
 .drop-down-list .EmojiPickerReact .epr-body .epr-emoji-list .epr-emoji-category-content button.epr-emoji img {
     max-height: 24px;
     max-width: 24px;
@@ -1337,6 +1342,10 @@ div:has(> .mailSendToaster) {
 .drop-down-list .EmojiPickerReact .epr-preview img {
     width: 30px !important;
     height: 30px !important;
+}
+
+.drop-down-list .EmojiPickerReact .epr-preview .epr-emoji-native {
+    font-size: 30px !important;
 }
 
 .drop-down-list .EmojiPickerReact .epr-preview {

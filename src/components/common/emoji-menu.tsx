@@ -8,7 +8,7 @@ export function EmojiMenu(props: any) {
         <Picker
             autoFocusSearch={true}
             theme={'light' as any}
-            emojiStyle={'apple' as any}
+            emojiStyle={'native' as any}
             searchPlaceholder={'Search Emoji'}
             skinTonePickerLocation={'PREVIEW' as any}
             categories={['smileys_people', 'animals_nature', 'food_drink', 'travel_places', 'activities', 'objects', 'symbols', 'flags'] as any}
