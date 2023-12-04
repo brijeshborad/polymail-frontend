@@ -626,6 +626,34 @@
     background-color: rgba(0, 0, 0, 0.1);
 }
 
+.settingPageBox .automationEmail {
+    color: #0556FF;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+}
+
+.settingPageBox .settingPageUnderLine {
+    position: relative;
+}
+
+.settingPageBox .settingPageUnderLine:after {
+    position: absolute;
+    content: '';
+    height: 1px;
+    width: calc(100% - 30px);
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #374151;
+    bottom: -1px;
+}
+
+.settingPageBox .automationDelete svg {
+    width: 20px;
+    height: 20px;
+    stroke: #6B7280;
+}
+
 @media (max-width: 768px) {
     .setting {
         max-height: calc(100vh - 55px);
