@@ -22,10 +22,12 @@ function Automation() {
             let groupedValues: GroupedProjectRules = {};
             projectRules.forEach((item: ProjectRules) => {
                 let project = [...(projects || [])].find(t => t.id === item.projectId);
-                if (!groupedValues[item.projectId!]) {
-                    groupedValues[item.projectId!] = {item: project!, values: []};
+                if (project) {
+                    if (!groupedValues[item.projectId!]) {
+                        groupedValues[item.projectId!] = {item: project!, values: []};
+                    }
+                    groupedValues[item.projectId!].values.push(item);
                 }
-                groupedValues[item.projectId!].values.push(item);
             })
             setGroupedProjectRules(groupedValues);
         }
