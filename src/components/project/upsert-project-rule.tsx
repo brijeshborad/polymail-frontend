@@ -24,7 +24,6 @@ export function UpsertProjectRule({
                                       editValue
                                   }: { isOpen: boolean, onClose: any, type: 'create' | 'edit', editValue: ProjectRules | null }) {
     const {projects} = useSelector((state: StateType) => state.projects);
-    const {projectRules} = useSelector((state: StateType) => state.commonApis);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const dispatch = useDispatch();
 
@@ -50,40 +49,20 @@ export function UpsertProjectRule({
         };
         let toaster = {
             desc: `Rule ${type === 'create' ? 'Created' : 'Updated'}`,
-            title: ``,
+            title: `Rule for ${project?.name} ${project?.emoji} has been ${type === 'create' ? 'created' : 'updated'}`,
             type: 'success'
         };
+        let finalBody: any = {
+            body, toaster: {success: toaster},
+            afterSuccessAction: () => {
+                dispatch(getAllProjectRules({}));
+            }
+        }
         if (type === 'create') {
-            dispatch(createProjectRules({
-                body,
-                toaster: {
-                    success: {
-                        desc: "Rule Created",
-                        title: ``,
-                        type: 'success'
-                    }
-                }
-            }))
+            dispatch(createProjectRules(finalBody));
         } else {
-            dispatch(updateProjectRules({
-                body: {
-                    projectId: projectRuleValues.projectId,
-                    accountId: selectedAccount?.id,
-                    filterType: projectRuleValues.filterType,
-                    value: projectRuleValues.value,
-                    ruleId: editValue?.id
-                },
-                toaster: {
-                    success: {
-                        desc: "Rule Created",
-                        title: ``,
-                        type: 'success'
-                    }
-                },
-                afterSuccessAction: () => {
-                    dispatch(getAllProjectRules({}));
-                }
-            }))
+            finalBody.body.ruleId = editValue?.id;
+            dispatch(updateProjectRules(finalBody))
         }
         setProjectRuleValues({});
         onClose();

@@ -18,6 +18,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {GroupedProjectRules, Project, ProjectRules} from "@/models";
 import {deleteProjectRules} from "@/redux/projects/action-reducer";
+import {keyNavigationService} from "@/services";
 
 
 function Automation() {
@@ -46,6 +47,10 @@ function Automation() {
         }
     }, [projectRules, projects])
 
+    useEffect(() => {
+        keyNavigationService.toggleKeyNavigation(!isOpen);
+    }, [isOpen])
+
     function editRule(rule: ProjectRules) {
         setEditValue(rule);
         setActionType('edit');
@@ -61,6 +66,13 @@ function Automation() {
             body: {
                 projectId: deletingRule.projectId,
                 ruleId: deletingRule.id
+            },
+            toaster: {
+                success: {
+                    type: 'success',
+                    title: `Rule for ${deletingRule.project?.name} ${deletingRule.project?.emoji} has been deleted`,
+                    desc: 'Rule deleted'
+                }
             }
         }))
     }
@@ -149,7 +161,8 @@ function Automation() {
                                             </MenuButton>
                                             <MenuList minW={'126px'} className={'drop-down-list'}>
                                                 <MenuItem onClick={() => editRule(rule)}>Edit rule</MenuItem>
-                                                <MenuItem onClick={() => deleteRule(item, ruleIndex)} className={'delete-button'}>Delete rule</MenuItem>
+                                                <MenuItem onClick={() => deleteRule(item, ruleIndex)}
+                                                          className={'delete-button'}>Delete rule</MenuItem>
                                             </MenuList>
                                         </Menu>
                                     </Flex>
