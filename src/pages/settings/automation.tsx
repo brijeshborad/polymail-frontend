@@ -26,7 +26,7 @@ function Automation() {
                     if (!groupedValues[item.projectId!]) {
                         groupedValues[item.projectId!] = {item: project!, values: []};
                     }
-                    groupedValues[item.projectId!].values.push(item);
+                    groupedValues[item.projectId!].values.push({...item, project: project!});
                 }
             })
             setGroupedProjectRules(groupedValues);
