@@ -497,7 +497,7 @@
 .projectPage .projectListDropDownButton.projectListMenuButton:hover,
 .projectPage .projectListDropDownButton.projectListMenuButton[data-active],
 .projectPage .projectListDropDownButton.projectListMenuButton:active {
-    background-color: #FFFFFF;
+    background-color: var(--alias-bg-subtle);
 }
 
 .projectNameDropdown {

@@ -18,12 +18,13 @@ import {
     ModalOverlay
 } from "@chakra-ui/react";
 import Router from "next/router";
-import React, {ChangeEvent, useState} from "react";
+import React, {ChangeEvent, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {commonService, messageService, threadService} from "@/services";
 import {Project} from "@/models";
 import {AddEmojiIcon} from "@/icons";
 import {AutoComplete} from "@/components/common/auto-complete";
+import {emojiArray} from "@/utils/common.functions";
 
 
 function CreateNewProjectModal() {
@@ -44,6 +45,15 @@ function CreateNewProjectModal() {
     });
     const [projectEmoji, setProjectEmoji] = useState<string>('');
     const [isEmojiMenuOpen, setIsEmojiMenuOpen] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (showCreateProjectModal) {
+            setProjectEmoji(emojiArray[Math.floor(Math.random() * emojiArray.length)]);
+        }
+        return () => {
+            setProjectEmoji('')
+        }
+    }, [showCreateProjectModal])
 
     const handleChange = (event: ChangeEvent | any) => {
         setProjectName(event.target.value);

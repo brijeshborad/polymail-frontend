@@ -142,7 +142,7 @@
 }
 
 .multiselectTreadTabList.tabListDropDown .tabListSnoozeButton svg {
-    stroke: #5D5F62;
+    stroke: rgba(93, 95, 98, 0.9);
 }
 
 .multiselectTreadTabList.tabListDropDown .tabListSnoozeButton:hover svg {
@@ -162,7 +162,7 @@
 
 .tabListDropDown .tabListSnoozeButton svg {
     margin-right: 8px;
-    font-size: 16px;
+    font-size: 17px;
 }
 
 .tabListDropDown .tabListSnoozeButton:hover {
@@ -170,7 +170,7 @@
 }
 
 .tabListDropDown button.dropDownIconBold svg {
-    opacity: 0.8;
+    opacity: 0.9;
 }
 
 .mailTabList .tabListDropDown button {
@@ -1412,6 +1412,50 @@
 
 .mailBox .mailBodyContent .mailBody {
     min-width: 730px;
+}
+
+.mailBox .oldMail .mailBoxMailHeader .mailBoxMailHeaderDetails:hover .copyIcon {
+    display: flex;
+}
+
+.mailBox .oldMail .mailBoxMailHeader .recipient:hover .copyIcon {
+    display: flex;
+}
+
+.mailBox .oldMail .mailBoxMailHeader .copyIcon {
+    display: none;
+}
+
+.mailBox .oldMail .mailBoxMailHeader .copyIcon svg {
+    height: 12px;
+    width: 12px;
+    color: rgb(107, 114, 128);
+}
+
+.newEmailAddInProject {
+    padding: 16px 24px !important;
+}
+
+.newEmailAddInProject .newEmailButton {
+    border: 1px solid #374151;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    line-height: 1;
+    font-weight: 500;
+    color: #374151;
+    margin-top: 16px;
+}
+
+.newEmailAddInProject .newEmailButton a {
+    color: #0556FF;
+    margin-left: 5px;
+}
+
+.newEmailAddInProject .dropdownDismiss {
+    font-size: 12px;
+    padding: 5px 8px;
+    height: auto;
 }
 
 @keyframes compose-animation {

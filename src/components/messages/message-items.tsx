@@ -1,5 +1,15 @@
-import {Message as MessageModel, Message, MessageAttachments} from "@/models";
-import {Button, Flex, Heading, Menu, MenuButton, MenuItem, MenuList, Text} from "@chakra-ui/react";
+import {Message as MessageModel, MessageAttachments} from "@/models";
+import {
+    Button,
+    createStandaloneToast,
+    Flex,
+    Heading,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList,
+    Text
+} from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
 import {Time} from "@/components/common";
 import {EyeSlashedIcon} from "@/icons/eye-slashed.icon";
@@ -9,10 +19,15 @@ import IframeLoader from "@/components/common/iframe-loader";
 import React, {useEffect, useRef, useState} from "react";
 import {getAttachmentDownloadUrl, updateMessage} from "@/redux/messages/action-reducer";
 import {globalEventService, messageService, threadService} from "@/services";
-import {AttachmentIcon, ChevronDownIcon} from "@chakra-ui/icons";
+import {AttachmentIcon, ChevronDownIcon, CopyIcon} from "@chakra-ui/icons";
 import {DefaultExtensionType, defaultStyles, FileIcon} from "react-file-icon";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
+import {generateToasterId, getRecipientText, getSenderText} from "@/utils/common.functions";
+import {Toaster} from "../common";
+
+const {toast} = createStandaloneToast()
+let previousToastId: string = '';
 
 export function MessageItems() {
     const dispatch = useDispatch();
@@ -163,7 +178,7 @@ export function MessageItems() {
         return 'pdf'
     }
 
-    function attachmentsMenu(message: Message, index: number) {
+    function attachmentsMenu(message: MessageModel, index: number) {
         return <Menu
             autoSelect={false}
             isOpen={isAttachmentOpen[index]}
@@ -232,8 +247,23 @@ export function MessageItems() {
         setIsMoreMenuOpen([...moreMenu]);
     }
 
+    function copyData(type: 'sender' | 'recipient', message: MessageModel) {
+        let text = type === 'sender' ? getSenderText(message) : getRecipientText(message);
+        navigator.clipboard.writeText(text)
+        if (previousToastId) {
+            toast.close(previousToastId);
+        }
+        previousToastId = generateToasterId();
+        Toaster({
+            id: previousToastId,
+            type: 'success',
+            title: type === 'sender' ? 'Sender has been copied to clipboard.' : 'Recipient has been copied to clipboard.',
+            desc: 'Paste this wherever you please'
+        })
+    }
+
     return (
-        inboxMessages && inboxMessages.length > 0 && inboxMessages.map((message: Message, messageIndex) => (
+        inboxMessages && inboxMessages.length > 0 && inboxMessages.map((message: MessageModel, messageIndex) => (
             <Flex position={'relative'} direction={'column'} key={messageIndex}
                   className={`${styles.oldMail} ${messageIndex === index ? styles.lastOpenMail : ''}`} mb={2}
                   gap={4} border={'1px solid #E5E7EB'} borderRadius={12} align={'center'}>
@@ -337,11 +367,19 @@ export function MessageItems() {
                                                 </Text>
                                             </>
                                         )}
+                                        <div className={styles.copyIcon} onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            copyData('sender', message)
+                                        }}>
+                                            <CopyIcon strokeWidth={0}/>
+                                        </div>
                                     </Flex>
                                 </Flex>
                                 {message && message.to && message.to.length > 0 &&
-                                <Flex fontSize='12px' letterSpacing={'-0.13px'} color={'#6B7280'} lineHeight={1}
-                                      fontWeight={400} userSelect={'none'}>to:&nbsp;
+                                <Flex fontSize='12px' letterSpacing={'-0.13px'} w={'fit-content'} color={'#6B7280'}
+                                      lineHeight={1}
+                                      fontWeight={400} userSelect={'none'} className={styles.recipient}>to:&nbsp;
                                     {message.to[0].email}&nbsp;
 
                                     <div className={styles.otherMail} onClick={(e) => {
@@ -358,8 +396,15 @@ export function MessageItems() {
                                                     )) : '') as any
                                             }>
                                             <Text userSelect={'none'}
-                                                as='u'>{message.to.length - 1 > 0 && `and ${message.to.length - 1} others`} </Text>
+                                                  as='u'>{message.to.length - 1 > 0 && `and ${message.to.length - 1} others`} </Text>
                                         </Tooltip>
+                                    </div>
+                                    <div className={styles.copyIcon} onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        copyData('recipient', message)
+                                    }}>
+                                        <CopyIcon strokeWidth={0}/>
                                     </div>
                                 </Flex>
                                 }

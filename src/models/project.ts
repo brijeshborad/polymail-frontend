@@ -48,3 +48,25 @@ export interface ProjectMetaData {
     order?: number,
     favorite?: boolean
 }
+
+export type ProjectFilterTypes = 'domain' | 'email'
+export type ProjectRulesStatus = 'active' | 'disabled'
+
+export interface ProjectRules {
+    project?: Project;
+    projectId?: string;
+    userId?: string;
+    accountId?: string;
+    filterType?: ProjectFilterTypes;
+    value?: string;
+    status?: ProjectRulesStatus;
+    id?: string;
+    action?: string;
+}
+
+export interface GroupedProjectRules {
+    [key: string]: {
+        item: Project,
+        values: ProjectRules[]
+    }
+}

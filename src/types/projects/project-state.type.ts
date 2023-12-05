@@ -1,4 +1,4 @@
-import {InviteMember, Project, TeamMember} from "@/models";
+import {InviteMember, Project, ProjectRules, TeamMember} from "@/models";
 
 export declare type InitialProjectState = {
     projects?: Project[],
@@ -13,4 +13,5 @@ export declare type InitialProjectState = {
     isProjectUpdateSuccess?: boolean
     projectSearchedString?: string
     editProjectSuccess?: boolean
+    projectRule?: ProjectRules | null,
 }

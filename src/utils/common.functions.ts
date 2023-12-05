@@ -1,4 +1,4 @@
-import {Account} from "@/models";
+import {Account, Message, MessageRecipient} from "@/models";
 
 let timeout: any = null;
 let timeoutInterval: any = null;
@@ -277,6 +277,52 @@ export function getSignatureBanner(selectedAccount: Account | null | undefined) 
         tags[i].setAttribute('style', 'margin-top: 0;margin-bottom: 0');
     }
     return `<p></p><p></p>${textContent.body.innerHTML}`;
+}
+
+export function getSenderText(message: Message) {
+    let html = ``;
+    if (message.from?.name) {
+        html += `Name:- ${message.from?.name} \n`;
+    }
+    if (message.from?.email) {
+        html += `Email:- ${message.from?.email}`;
+    }
+    return html;
+}
+
+export function getRecipientText(message: Message) {
+    let html = `Recipients \n\n`;
+    message.to?.forEach((item : MessageRecipient) => {
+        if (item.name) {
+            html += `Name:- ${item.name} \n`;
+        }
+        if (item.email) {
+            html += `Email:- ${item.email}`;
+        }
+    })
+    if (message.cc && message.cc?.length > 0) {
+        html += `\n CC \n\n`;
+        message.cc?.forEach((item : MessageRecipient) => {
+            if (item.name) {
+                html += `Name:- ${item.name} \n`;
+            }
+            if (item.email) {
+                html += `Email:- ${item.email}`;
+            }
+        })
+    }
+    if (message.bcc && message.bcc?.length > 0) {
+        html += `\n BCC \n\n`;
+        message.bcc?.forEach((item : MessageRecipient) => {
+            if (item.name) {
+                html += `Name:- ${item.name} \n`;
+            }
+            if (item.email) {
+                html += `Email:- ${item.email}`;
+            }
+        })
+    }
+    return html;
 }
 
 export function getRandomProjectMetaOrder(): number {

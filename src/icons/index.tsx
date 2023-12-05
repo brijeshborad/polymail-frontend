@@ -30,3 +30,5 @@ export * from './unmute.icon';
 export * from './spam.icon';
 export * from './member-invite.icon';
 export * from './share.icon';
+export * from './signature.icon';
+export * from './members.icon';

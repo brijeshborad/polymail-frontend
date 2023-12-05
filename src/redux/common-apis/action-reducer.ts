@@ -12,7 +12,8 @@ const initialState: any = {
   contacts: [],
   allowThreadSelection: true,
   onlineUsers: {threads: {}, projects: {}},
-  activityFeed: []
+  activityFeed: [],
+  projectRules: []
 } as InitialCommonApisStateType
 
 const commonApisSlice = createSlice({
@@ -69,6 +70,17 @@ const commonApisSlice = createSlice({
       return {...state, isLoading: false}
     },
 
+    getAllProjectRules: (state: InitialCommonApisStateType, _action: PayloadAction<ReducerActionType>) => {
+      return {...state, isLoading: false}
+    },
+    getAllProjectRulesSuccess: (state: InitialCommonApisStateType, {payload: projectRules}: PayloadAction<any>) => {
+      let values = [...projectRules].map(val => ({...val, id: val._id}));
+      return {...state, projectRules: values, isLoading: false, error: null}
+    },
+    getAllProjectRulesError: (state: InitialCommonApisStateType, _action: PayloadAction<any>) => {
+      return {...state, projectRules: [], isLoading: false}
+    },
+
     updateCommonState: (state: InitialCommonApisStateType, action: PayloadAction<InitialCommonApisStateType>) => {
       return {...state, ...action.payload}
     },
@@ -87,6 +99,7 @@ export const {
   getContactsSuccess,
   getContactsError,
   updateCommonState, getActivityFeed, getActivityFeedSuccess, getActivityFeedError,
-  markActivityAsRead, markActivityAsReadSuccess, markActivityAsReadError
+  markActivityAsRead, markActivityAsReadSuccess, markActivityAsReadError,
+  getAllProjectRules, getAllProjectRulesSuccess, getAllProjectRulesError
 } = commonApisSlice.actions
 export default commonApisSlice.reducer
