@@ -271,6 +271,16 @@ const projectsSlice = createSlice({
             return {...state, projectRule: null, isLoading: false}
         },
 
+        deleteProjectRules: (state: InitialProjectState, _action: PayloadAction<ReducerActionType>) => {
+            return {...state}
+        },
+        deleteProjectRulesSuccess: (state: InitialProjectState, _action: PayloadAction<any>) => {
+            return {...state}
+        },
+        deleteProjectRulesError: (state: InitialProjectState, _action: PayloadAction<any>) => {
+            return {...state}
+        },
+
         updateProjectState: (state: InitialProjectState, action: PayloadAction<InitialProjectState>) => {
             return {...state, ...action.payload}
         },
@@ -313,6 +323,7 @@ export const {
     undoProjectUpdate, markProjectRead, markProjectReadSuccess, markProjectReadError,
     getProjectRules, getProjectRulesError, getProjectRulesSuccess,
     updateProjectRules, updateProjectRulesError, updateProjectRulesSuccess,
-    createProjectRules, createProjectRulesError, createProjectRulesSuccess
+    createProjectRules, createProjectRulesError, createProjectRulesSuccess,
+    deleteProjectRules, deleteProjectRulesSuccess, deleteProjectRulesError
 } = projectsSlice.actions
 export default projectsSlice.reducer
