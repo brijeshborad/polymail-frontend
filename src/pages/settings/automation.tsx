@@ -57,33 +57,42 @@ function Automation() {
                 <Flex direction={'column'} gap={10} mt={10}>
                     {Object.keys(groupedProjectRules).map((item: string, index: number) => (
                         groupedProjectRules[item].values.length > 0 && <Flex direction={'column'} gap={3} key={index}>
-                            <Flex gap={2} alignItems={'center'}>
-                                <Flex width={'29px'} height={'29px'} borderRadius={'50px'} alignItems={'center'}
-                                      justifyContent={'center'}>
-                                    {groupedProjectRules[item].item.emoji}
+                            <Flex justifyContent={'space-between'} alignItems={'center'} gap={2}>
+                                <Flex gap={2} alignItems={'center'}>
+                                    <Flex width={'29px'} height={'29px'} borderRadius={'50px'} alignItems={'center'}
+                                          justifyContent={'center'}>
+                                        {groupedProjectRules[item].item.emoji}
+                                    </Flex>
+                                    <Text fontSize={'15px'} fontWeight={'600'} color={'#0A101D'}
+                                          lineHeight={'normal'}>{groupedProjectRules[item].item.name}</Text>
                                 </Flex>
-                                <Text fontSize={'15px'} fontWeight={'600'} color={'#0A101D'}
-                                      lineHeight={'normal'}>{groupedProjectRules[item].item.name}</Text>
+                                <Text fontSize={'11px'} fontWeight={'600'} textTransform={'uppercase'} color={'#9CA3AF'}
+                                      lineHeight={'normal'}>2 automations</Text>
                             </Flex>
+
                             {groupedProjectRules[item].values.map((rule: ProjectRules, ruleIndex: number) => (
-                                <Flex alignItems={'center'} cursor={'pointer'} gap={3} key={ruleIndex}>
-                                    <Flex backgroundColor={'#FFFFFF'} border={'1px solid #E5E7EB'}
-                                          alignItems={'center'}
-                                          padding={'8px 16px'} gap={3} borderRadius={'16px'} w={'fit-content'}>
-                                        <Text className={styles.settingPageUnderLine} fontSize='sm'
-                                              color={'#374151'}
-                                              lineHeight={'1'}>If {rule.filterType === 'domain' ? 'sender’s domain name' : 'sender'} is</Text>
-                                        <Flex alignItems={'center'} border={'1px solid #F3F4F6'} borderRadius={8}
-                                              padding={'3px 4px'} gap={1}>
-                                            {rule.filterType === 'email' &&
-                                            <Flex width={'20px'} height={'20px'} borderRadius={'3px'}
-                                                  alignItems={'center'}
-                                                  justifyContent={'center'}>
-                                                😁
-                                            </Flex>}
-                                            <Link href='#' className={styles.automationEmail}>{rule.value}</Link>
+                                <Flex backgroundColor={'#FFFFFF'} padding={'8px 16px'} borderRadius={'16px'} gap={3} border={'1px solid #E5E7EB'} alignItems={'center'} cursor={'pointer'} key={ruleIndex}>
+                                    <Flex alignItems={'center'} w={'100%'} gap={6}>
+                                        <Flex width={'180px'}>
+                                            <Text className={styles.settingPageUnderLine} fontSize='sm'
+                                                  color={'#374151'} lineHeight={'1'}>
+                                                If {rule.filterType === 'domain' ? 'sender’s domain name' : 'sender'} is</Text>
                                         </Flex>
-                                        <Text fontSize='sm' color={'#374151'} lineHeight={'1'}>add email to</Text>
+                                        <Flex maxW={'200px'} minW={'200px'}>
+                                            <Flex alignItems={'center'} border={'1px solid #F3F4F6'} borderRadius={8}
+                                                  padding={'3px 4px'} gap={1}>
+                                                {rule.filterType === 'email' &&
+                                                <Flex width={'20px'} height={'20px'} borderRadius={'3px'}
+                                                      alignItems={'center'}
+                                                      justifyContent={'center'}>
+                                                    😁
+                                                </Flex>}
+                                                <Link href='#' className={styles.automationEmail}>{rule.value}</Link>
+                                            </Flex>
+                                        </Flex>
+                                        <Flex width={'100px'}>
+                                            <Text fontSize='sm' color={'#374151'} lineHeight={'1'}>add email to</Text>
+                                        </Flex>
                                         <Flex alignItems={'center'} border={'1px solid #F3F4F6'} borderRadius={8}
                                               padding={'3px 4px'} gap={1}>
                                             <Flex width={'20px'} height={'20px'} borderRadius={'3px'}
