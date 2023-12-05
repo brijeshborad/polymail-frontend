@@ -14,7 +14,8 @@ import {StateType} from "@/types";
 import {Project, ProjectRules} from "@/models";
 import React, {useEffect, useState} from "react";
 import {commonService} from "@/services";
-import {createProjectRules} from "@/redux/projects/action-reducer";
+import {createProjectRules, updateProjectRules} from "@/redux/projects/action-reducer";
+import {getAllProjectRules} from "@/redux/common-apis/action-reducer";
 
 export function UpsertProjectRule({
                                       isOpen,
@@ -40,31 +41,47 @@ export function UpsertProjectRule({
     }, [type, editValue])
 
     function submit() {
+        let project = [...(projects || [])].find((t: Project) => t.id === projectRuleValues.projectId);
+        let body = {
+            projectId: projectRuleValues.projectId,
+            accountId: selectedAccount?.id,
+            filterType: projectRuleValues.filterType,
+            value: projectRuleValues.value,
+        };
+        let toaster = {
+            desc: `Rule ${type === 'create' ? 'Created' : 'Updated'}`,
+            title: ``,
+            type: 'success'
+        };
         if (type === 'create') {
-            let finalRules: ProjectRules[] = [...(projectRules || [])];
-            finalRules.push({
-                filterType: projectRuleValues.filterType,
-                accountId: selectedAccount?.id,
-                projectId: projectRuleValues.projectId,
-                value: projectRuleValues.value,
-            });
-            commonService.setCommonState({projectRules: finalRules});
             dispatch(createProjectRules({
-                body: {
-                    projectId: projectRuleValues.projectId,
-                    accountId: selectedAccount?.id,
-                    filterType: projectRuleValues.filterType,
-                    value: projectRuleValues.value,
+                body,
+                toaster: {
+                    success: {
+                        desc: "Rule Created",
+                        title: ``,
+                        type: 'success'
+                    }
                 }
             }))
         } else {
-            dispatch(createProjectRules({
+            dispatch(updateProjectRules({
                 body: {
                     projectId: projectRuleValues.projectId,
                     accountId: selectedAccount?.id,
                     filterType: projectRuleValues.filterType,
                     value: projectRuleValues.value,
                     ruleId: editValue?.id
+                },
+                toaster: {
+                    success: {
+                        desc: "Rule Created",
+                        title: ``,
+                        type: 'success'
+                    }
+                },
+                afterSuccessAction: () => {
+                    dispatch(getAllProjectRules({}));
                 }
             }))
         }

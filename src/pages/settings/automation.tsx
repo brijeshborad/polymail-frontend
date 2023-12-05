@@ -14,9 +14,10 @@ import withAuth from "@/components/auth/withAuth";
 import styles from "@/styles/setting.module.css";
 import {MenuIcon} from "@/icons";
 import {UpsertProjectRule} from "@/components/project";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {GroupedProjectRules, Project, ProjectRules} from "@/models";
+import {deleteProjectRules} from "@/redux/projects/action-reducer";
 
 
 function Automation() {
@@ -25,6 +26,7 @@ function Automation() {
     const {projects} = useSelector((state: StateType) => state.projects);
     const [actionType, setActionType] = useState<'create' | 'edit'>('create');
     const [editValue, setEditValue] = useState<ProjectRules | null>(null);
+    const dispatch = useDispatch();
 
     const [groupedProjectRules, setGroupedProjectRules] = useState<GroupedProjectRules>({});
 
@@ -52,8 +54,15 @@ function Automation() {
 
     function deleteRule(key: string, index: number) {
         let currentItems = {...groupedProjectRules};
+        let deletingRule = {...currentItems[key].values[index]};
         currentItems[key].values.splice(index, 1);
         setGroupedProjectRules(currentItems);
+        dispatch(deleteProjectRules({
+            body: {
+                projectId: deletingRule.projectId,
+                ruleId: deletingRule.id
+            }
+        }))
     }
 
     return (
@@ -140,7 +149,7 @@ function Automation() {
                                             </MenuButton>
                                             <MenuList minW={'126px'} className={'drop-down-list'}>
                                                 <MenuItem onClick={() => editRule(rule)}>Edit rule</MenuItem>
-                                                <MenuItem className={'delete-button'}>Delete rule</MenuItem>
+                                                <MenuItem onClick={() => deleteRule(item, ruleIndex)} className={'delete-button'}>Delete rule</MenuItem>
                                             </MenuList>
                                         </Menu>
                                     </Flex>
