@@ -235,7 +235,7 @@ function* updateRulesByProject({payload}: PayloadAction<ReducerActionType>) {
 
 function* createRulesByProject({payload}: PayloadAction<ReducerActionType>) {
     try {
-        const response: AxiosResponse = yield ApiService.callPost(`projects/${payload.body.projectId}/rules`, {});
+        const response: AxiosResponse = yield ApiService.callPost(`projects/${payload.body.projectId}/rules`, payload.body);
         performSuccessActions(payload);
         yield put(createProjectRulesSuccess(response));
     } catch (error: any) {

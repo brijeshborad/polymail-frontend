@@ -9,31 +9,39 @@ import {
     ModalOverlay, Radio, RadioGroup, Select, Stack, Text
 } from "@chakra-ui/react";
 import styles from "@/styles/setting.module.css";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {Project, ProjectRules} from "@/models";
 import React, {useState} from "react";
 import {commonService} from "@/services";
+import {createProjectRules} from "@/redux/projects/action-reducer";
 
 export function UpsertProjectRule({isOpen, onClose, type}: { isOpen: boolean, onClose: any, type: 'create' | 'edit' }) {
     const {projects} = useSelector((state: StateType) => state.projects);
     const {projectRules} = useSelector((state: StateType) => state.commonApis);
     const {selectedAccount} = useSelector((state: StateType) => state.accounts);
+    const dispatch = useDispatch();
 
     const [projectRuleValues, setProjectRuleValues] = useState<ProjectRules>({});
 
     function submit() {
         if (type === 'create') {
-            let project = [...(projects || [])].find(t => t.id === projectRuleValues.projectId);
             let finalRules: ProjectRules[] = [...(projectRules || [])];
             finalRules.push({
                 filterType: projectRuleValues.filterType,
                 accountId: selectedAccount?.id,
                 projectId: projectRuleValues.projectId,
-                project: project,
                 value: projectRuleValues.value,
             });
             commonService.setCommonState({projectRules: finalRules});
+            dispatch(createProjectRules({
+                body: {
+                    projectId: projectRuleValues.projectId,
+                    accountId: selectedAccount?.id,
+                    filterType: projectRuleValues.filterType,
+                    value: projectRuleValues.value,
+                }
+            }))
         } else {
 
         }

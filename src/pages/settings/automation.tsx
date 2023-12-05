@@ -13,21 +13,23 @@ import {GroupedProjectRules, ProjectRules} from "@/models";
 function Automation() {
     const {isOpen, onOpen, onClose} = useDisclosure();
     const {projectRules} = useSelector((state: StateType) => state.commonApis);
+    const {projects} = useSelector((state: StateType) => state.projects);
 
     const [groupedProjectRules, setGroupedProjectRules] = useState<GroupedProjectRules>({});
 
     useEffect(() => {
-        if (projectRules) {
+        if (projectRules && projects && projects.length > 0) {
             let groupedValues: GroupedProjectRules = {};
             projectRules.forEach((item: ProjectRules) => {
+                let project = [...(projects || [])].find(t => t.id === item.projectId);
                 if (!groupedValues[item.projectId!]) {
-                    groupedValues[item.projectId!] = {item: item.project!, values: []};
+                    groupedValues[item.projectId!] = {item: project!, values: []};
                 }
                 groupedValues[item.projectId!].values.push(item);
             })
             setGroupedProjectRules(groupedValues);
         }
-    }, [projectRules])
+    }, [projectRules, projects])
 
     function deleteRule(key: string, index: number) {
         let currentItems = {...groupedProjectRules};
