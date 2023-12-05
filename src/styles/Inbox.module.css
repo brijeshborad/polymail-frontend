@@ -1432,6 +1432,32 @@
     color: rgb(107, 114, 128);
 }
 
+.newEmailAddInProject {
+    padding: 16px 24px !important;
+}
+
+.newEmailAddInProject .newEmailButton {
+    border: 1px solid #374151;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    line-height: 1;
+    font-weight: 500;
+    color: #374151;
+    margin-top: 16px;
+}
+
+.newEmailAddInProject .newEmailButton a {
+    color: #0556FF;
+    margin-left: 5px;
+}
+
+.newEmailAddInProject .dropdownDismiss {
+    font-size: 12px;
+    padding: 5px 8px;
+    height: auto;
+}
+
 @keyframes compose-animation {
     from {
         width: 100%;

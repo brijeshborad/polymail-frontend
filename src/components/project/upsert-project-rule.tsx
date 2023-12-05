@@ -13,7 +13,6 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {Project, ProjectRules} from "@/models";
 import React, {useEffect, useState} from "react";
-import {commonService} from "@/services";
 import {createProjectRules, updateProjectRules} from "@/redux/projects/action-reducer";
 import {getAllProjectRules} from "@/redux/common-apis/action-reducer";
 

@@ -8,7 +8,7 @@ import {
     Input,
     InputGroup,
     InputLeftElement,
-    Box, Flex, Text
+    Box, Flex, Text, Heading, Link
 } from "@chakra-ui/react";
 import {CloseIcon, SearchIcon, SmallAddIcon} from "@chakra-ui/icons";
 import {FolderIcon, MenuIcon} from "@/icons";
@@ -165,7 +165,7 @@ export function AddToProjectButton({allowDefaultSelect = true, selectFrom = ''}:
 
     return (
         <>
-            <Menu
+            <Menu isLazy
                 isOpen={isDropdownOpen}
                 onClose={() => {
                     setDropDownOpen(false)
@@ -220,6 +220,19 @@ export function AddToProjectButton({allowDefaultSelect = true, selectFrom = ''}:
                     <span className={styles.addToProjectButtonText}>Add to Project</span>
                     <span className={styles.RightContent}>⌘P</span>
                 </MenuButton>}
+
+                <MenuList className={`${styles.newEmailAddInProject} drop-down-list`} display={'none'} zIndex={'overlay'} padding={'16px 24px'}>
+                    <Heading as='h6' size='xs' color={'#0A101D'} fontWeight={'500'} mb={3} lineHeight={1}>Always add new emails to this project?</Heading>
+                    <MenuItem className={styles.newEmailButton}>
+                        If sender is <Link>leclow@disney.com</Link>
+                    </MenuItem>
+                    <MenuItem className={styles.newEmailButton}>
+                        If sender is <Link>leclow@disney.com</Link>
+                    </MenuItem>
+                    <Button className={styles.dropdownDismiss} backgroundColor={'#F3F4F6'} lineHeight={1} mt={3} borderRadius={50} _hover={{backgroundColor: '#F3F4F6'}}>
+                        Dismiss
+                    </Button>
+                </MenuList>
 
 
                 <MenuList className={`${styles.addToProjectList} drop-down-list`} zIndex={'overlay'}>
