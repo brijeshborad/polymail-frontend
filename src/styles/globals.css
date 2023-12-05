@@ -1351,10 +1351,11 @@ div:has(> .mailSendToaster) {
     direction: rtl;
 }
 
-.custom-radio-button label span {
+.custom-radio-button label .chakra-radio__label {
     color: #374151;
     font-size: 14px;
     line-height: 1;
+    margin-right: auto;
 }
 
 .custom-radio-button input + .chakra-radio__control:after{
@@ -1366,6 +1367,15 @@ div:has(> .mailSendToaster) {
     left: 0;
     border: 1px solid #E5E7EB;
     border-radius: 8px;
+}
+
+.custom-radio-button input:checked + .chakra-radio__control:after{
+    border: 1px solid #374151;
+}
+
+.custom-radio-button input:checked + .chakra-radio__control{
+    border-color: #0A101D;
+    background: #0A101D;
 }
 
 @keyframes editor-input-animation {
