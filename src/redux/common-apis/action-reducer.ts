@@ -74,7 +74,8 @@ const commonApisSlice = createSlice({
       return {...state, isLoading: false}
     },
     getAllProjectRulesSuccess: (state: InitialCommonApisStateType, {payload: projectRules}: PayloadAction<any>) => {
-      return {...state, projectRules, isLoading: false, error: null}
+      let values = [...projectRules].map(val => ({...val, id: val._id}));
+      return {...state, projectRules: values, isLoading: false, error: null}
     },
     getAllProjectRulesError: (state: InitialCommonApisStateType, _action: PayloadAction<any>) => {
       return {...state, projectRules: [], isLoading: false}

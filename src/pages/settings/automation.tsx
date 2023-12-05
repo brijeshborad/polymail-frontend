@@ -5,28 +5,26 @@ import {
     Flex,
     Heading,
     Text,
-    Link,
     useDisclosure,
     MenuButton,
-    IconButton,
     MenuList,
     MenuItem, Menu
 } from "@chakra-ui/react";
 import withAuth from "@/components/auth/withAuth";
 import styles from "@/styles/setting.module.css";
-import {MenuIcon, TrashIcon} from "@/icons";
+import {MenuIcon} from "@/icons";
 import {UpsertProjectRule} from "@/components/project";
 import {useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {GroupedProjectRules, ProjectRules} from "@/models";
-import {commonService, projectService} from "@/services";
-import Image from "next/image";
+import {GroupedProjectRules, Project, ProjectRules} from "@/models";
 
 
 function Automation() {
     const {isOpen, onOpen, onClose} = useDisclosure();
     const {projectRules} = useSelector((state: StateType) => state.commonApis);
     const {projects} = useSelector((state: StateType) => state.projects);
+    const [actionType, setActionType] = useState<'create' | 'edit'>('create');
+    const [editValue, setEditValue] = useState<ProjectRules | null>(null);
 
     const [groupedProjectRules, setGroupedProjectRules] = useState<GroupedProjectRules>({});
 
@@ -34,7 +32,7 @@ function Automation() {
         if (projectRules && projects && projects.length > 0) {
             let groupedValues: GroupedProjectRules = {};
             projectRules.forEach((item: ProjectRules) => {
-                let project = [...(projects || [])].find(t => t.id === item.projectId);
+                let project = [...(projects || [])].find((t: Project) => t.id === item.projectId);
                 if (project) {
                     if (!groupedValues[item.projectId!]) {
                         groupedValues[item.projectId!] = {item: project!, values: []};
@@ -45,6 +43,12 @@ function Automation() {
             setGroupedProjectRules(groupedValues);
         }
     }, [projectRules, projects])
+
+    function editRule(rule: ProjectRules) {
+        setEditValue(rule);
+        setActionType('edit');
+        onOpen();
+    }
 
     function deleteRule(key: string, index: number) {
         let currentItems = {...groupedProjectRules};
@@ -62,7 +66,10 @@ function Automation() {
                             Automation</Heading>
                         <Text fontSize='14px' className={styles.settingSubTitle}>Manage email automation</Text>
                     </div>
-                    <Button onClick={() => onOpen()} className={styles.inviteMemberButton}
+                    <Button onClick={() => {
+                        setActionType('create')
+                        onOpen();
+                    }} className={styles.inviteMemberButton}
                             _hover={{background: '#1F2937'}} fontSize={'14px'}
                             background={'#1F2937'} color={'white'} fontWeight={500} lineHeight={1}
                             height={'fit-content'} padding={'11px 12px'}>Create new rule</Button>
@@ -80,11 +87,13 @@ function Automation() {
                                           lineHeight={'normal'}>{groupedProjectRules[item].item.name}</Text>
                                 </Flex>
                                 <Text fontSize={'11px'} fontWeight={'600'} textTransform={'uppercase'} color={'#9CA3AF'}
-                                      lineHeight={'normal'}>2 automations</Text>
+                                      lineHeight={'normal'}>{groupedProjectRules[item].values.length} automations</Text>
                             </Flex>
 
                             {groupedProjectRules[item].values.map((rule: ProjectRules, ruleIndex: number) => (
-                                <Flex backgroundColor={'#FFFFFF'} padding={'8px 16px'} borderRadius={'16px'} gap={3} border={'1px solid #E5E7EB'} alignItems={'center'} cursor={'pointer'} key={ruleIndex}>
+                                <Flex backgroundColor={'#FFFFFF'} padding={'8px 16px'} borderRadius={'16px'} gap={3}
+                                      border={'1px solid #E5E7EB'} alignItems={'center'} cursor={'pointer'}
+                                      key={ruleIndex}>
                                     <Flex alignItems={'center'} w={'100%'} gap={6}>
                                         <Flex width={'180px'}>
                                             <Text className={styles.settingPageUnderLine} fontSize='sm'
@@ -94,18 +103,17 @@ function Automation() {
                                         <Flex maxW={'200px'} minW={'200px'}>
                                             <Flex alignItems={'center'} border={'1px solid #F3F4F6'} borderRadius={8}
                                                   padding={'3px 4px'} gap={1}>
-                                                {/*{rule.filterType === 'email' &&*/}
-                                                {/*<Flex width={'20px'} height={'20px'} borderRadius={'3px'}*/}
-                                                {/*      alignItems={'center'} justifyContent={'center'}>*/}
-                                                {/*    😁*/}
-                                                {/*</Flex>}*/}
-
-                                                <Flex width={'20px'} height={'20px'} borderRadius={'30px'}
-                                                      alignItems={'center'} overflow={'hidden'} className={styles.automationUserImage}
-                                                      justifyContent={'center'}>
-                                                    <Image priority src="/image/profile.jpg" alt="emoji" width={20} height={20}/>
-                                                </Flex>
-                                                <Link href='#' className={styles.automationEmail}>{rule.value}</Link>
+                                                {rule.filterType === 'email' &&
+                                                null
+                                                    // <Flex width={'20px'} height={'20px'} borderRadius={'30px'}
+                                                    //       alignItems={'center'} overflow={'hidden'}
+                                                    //       className={styles.automationUserImage}
+                                                    //       justifyContent={'center'}>
+                                                    //     <Image priority src="/image/profile.jpg" alt="emoji" width={20}
+                                                    //            height={20}/>
+                                                    // </Flex>
+                                                }
+                                                <Text className={styles.automationEmail}>{rule.value}</Text>
                                             </Flex>
                                         </Flex>
                                         <Flex width={'100px'}>
@@ -124,26 +132,25 @@ function Automation() {
                                     </Flex>
                                     <Flex>
                                         <Menu isLazy>
-                                            <MenuButton borderRadius={4} _hover={{backgroundColor: '#F3F4F6'}} className={styles.menuOptionButton}
+                                            <MenuButton borderRadius={4} _hover={{backgroundColor: '#F3F4F6'}}
+                                                        className={styles.menuOptionButton}
                                                         backgroundColor={'#FFFFFF'} h={'20px'} fontSize={12} padding={0}
                                                         minW={5} as={Button}>
                                                 <MenuIcon/>
                                             </MenuButton>
                                             <MenuList minW={'126px'} className={'drop-down-list'}>
-                                                <MenuItem>Edit rule</MenuItem>
+                                                <MenuItem onClick={() => editRule(rule)}>Edit rule</MenuItem>
                                                 <MenuItem className={'delete-button'}>Delete rule</MenuItem>
                                             </MenuList>
                                         </Menu>
                                     </Flex>
-                                    {/*<Flex className={styles.automationDelete}*/}
-                                    {/*      onClick={() => deleteRule(item, ruleIndex)}> <TrashIcon/> </Flex>*/}
                                 </Flex>
                             ))}
                         </Flex>
                     ))}
                 </Flex>
             </Flex>
-            <UpsertProjectRule isOpen={isOpen} onClose={onClose} type={'create'}/>
+            <UpsertProjectRule isOpen={isOpen} onClose={onClose} editValue={editValue} type={actionType}/>
         </SettingsLayout>
     )
 }

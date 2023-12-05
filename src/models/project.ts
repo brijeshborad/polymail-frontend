@@ -50,7 +50,7 @@ export interface ProjectMetaData {
 }
 
 export type ProjectFilterTypes = 'domain' | 'email'
-export type ProjectRulesStatus = 'enabled' | 'disabled'
+export type ProjectRulesStatus = 'active' | 'disabled'
 
 export interface ProjectRules {
     project?: Project;
@@ -60,6 +60,8 @@ export interface ProjectRules {
     filterType?: ProjectFilterTypes;
     value?: string;
     status?: ProjectRulesStatus;
+    id?: string;
+    action?: string;
 }
 
 export interface GroupedProjectRules {
