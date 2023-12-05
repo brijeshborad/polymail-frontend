@@ -1,13 +1,26 @@
 import SettingsLayout from "@/pages/settings/settings-layout";
 import React, {useEffect, useState} from "react";
-import {Button, Flex, Heading, Text, Link, useDisclosure} from "@chakra-ui/react";
+import {
+    Button,
+    Flex,
+    Heading,
+    Text,
+    Link,
+    useDisclosure,
+    MenuButton,
+    IconButton,
+    MenuList,
+    MenuItem, Menu
+} from "@chakra-ui/react";
 import withAuth from "@/components/auth/withAuth";
 import styles from "@/styles/setting.module.css";
-import {TrashIcon} from "@/icons";
+import {MenuIcon, TrashIcon} from "@/icons";
 import {UpsertProjectRule} from "@/components/project";
 import {useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {GroupedProjectRules, ProjectRules} from "@/models";
+import {commonService, projectService} from "@/services";
+import Image from "next/image";
 
 
 function Automation() {
@@ -81,12 +94,17 @@ function Automation() {
                                         <Flex maxW={'200px'} minW={'200px'}>
                                             <Flex alignItems={'center'} border={'1px solid #F3F4F6'} borderRadius={8}
                                                   padding={'3px 4px'} gap={1}>
-                                                {rule.filterType === 'email' &&
-                                                <Flex width={'20px'} height={'20px'} borderRadius={'3px'}
-                                                      alignItems={'center'}
+                                                {/*{rule.filterType === 'email' &&*/}
+                                                {/*<Flex width={'20px'} height={'20px'} borderRadius={'3px'}*/}
+                                                {/*      alignItems={'center'} justifyContent={'center'}>*/}
+                                                {/*    😁*/}
+                                                {/*</Flex>}*/}
+
+                                                <Flex width={'20px'} height={'20px'} borderRadius={'30px'}
+                                                      alignItems={'center'} overflow={'hidden'} className={styles.automationUserImage}
                                                       justifyContent={'center'}>
-                                                    😁
-                                                </Flex>}
+                                                    <Image priority src="/image/profile.jpg" alt="emoji" width={20} height={20}/>
+                                                </Flex>
                                                 <Link href='#' className={styles.automationEmail}>{rule.value}</Link>
                                             </Flex>
                                         </Flex>
@@ -104,8 +122,21 @@ function Automation() {
                                                   lineHeight={'normal'}>{rule.project?.name}</Text>
                                         </Flex>
                                     </Flex>
-                                    <Flex className={styles.automationDelete}
-                                          onClick={() => deleteRule(item, ruleIndex)}> <TrashIcon/> </Flex>
+                                    <Flex>
+                                        <Menu isLazy>
+                                            <MenuButton borderRadius={4} _hover={{backgroundColor: '#F3F4F6'}} className={styles.menuOptionButton}
+                                                        backgroundColor={'#FFFFFF'} h={'20px'} fontSize={12} padding={0}
+                                                        minW={5} as={Button}>
+                                                <MenuIcon/>
+                                            </MenuButton>
+                                            <MenuList minW={'126px'} className={'drop-down-list'}>
+                                                <MenuItem>Edit rule</MenuItem>
+                                                <MenuItem className={'delete-button'}>Delete rule</MenuItem>
+                                            </MenuList>
+                                        </Menu>
+                                    </Flex>
+                                    {/*<Flex className={styles.automationDelete}*/}
+                                    {/*      onClick={() => deleteRule(item, ruleIndex)}> <TrashIcon/> </Flex>*/}
                                 </Flex>
                             ))}
                         </Flex>
