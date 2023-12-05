@@ -1345,6 +1345,29 @@ div:has(> .mailSendToaster) {
     height: 50px;
 }
 
+.custom-radio-button label {
+    padding: 10px 12px;
+    width: 100%;
+    direction: rtl;
+}
+
+.custom-radio-button label span {
+    color: #374151;
+    font-size: 14px;
+    line-height: 1;
+}
+
+.custom-radio-button input + .chakra-radio__control:after{
+    position: absolute;
+    content: '';
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+}
+
 @keyframes editor-input-animation {
     0% {
         height: 20px;

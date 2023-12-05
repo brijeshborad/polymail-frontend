@@ -3,10 +3,10 @@ import {
     Flex, FormControl, FormLabel,
     Heading, Input,
     Modal,
-    ModalBody,
+    ModalBody, ModalCloseButton,
     ModalContent, ModalFooter,
     ModalHeader,
-    ModalOverlay, Radio, RadioGroup, Select, Stack
+    ModalOverlay, Radio, RadioGroup, Select, Stack, Text
 } from "@chakra-ui/react";
 import styles from "@/styles/setting.module.css";
 import {useSelector} from "react-redux";
@@ -42,13 +42,27 @@ export function UpsertProjectRule({isOpen, onClose, type}: { isOpen: boolean, on
     }
 
     return <Modal isOpen={isOpen} onClose={onClose} isCentered>
-        <ModalOverlay/>
-        <ModalContent maxWidth={'490px'}>
-            <ModalHeader padding={'40px 40px 24px 40px'}>
-                <Heading as='h3' size='lg' pb={1} color={'#101828'}> Create Project Rule </Heading>
+        <ModalOverlay backgroundColor={'rgba(229, 231, 235, 0.50)'} backdropFilter={'blur(16px)'}/>
+        <ModalContent maxWidth={'360px'} borderRadius={12} boxShadow={'0 0 12px 0 rgba(0,0,0, 0.08)'}>
+            <ModalHeader padding={'14px 12px'} borderBottom={'1px solid #F3F4F6'}>
+                <Heading as='h3' fontSize={'13px'} fontWeight={'500'} letterSpacing={'-0.13px'} color={'#101828'}> Create Project Rule </Heading>
             </ModalHeader>
-            {/*<ModalCloseButton />*/}
-            <ModalBody padding={'8px 40px 16px'}>
+            <ModalCloseButton top={'15px'} right={'12px'} fontSize={'12px'} color={'#6B7280'} className={styles.closeIcon}/>
+            <ModalBody padding={'16px 12px'}>
+                <Flex direction={'column'}>
+                    <Text fontSize='10px' color={'#6B7280'} fontWeight={'500'} lineHeight={'normal'} textTransform={'uppercase'} mb={1}>IF EMAIL IS FROM</Text>
+                    <Flex border={'1px solid #F3F4F6'} direction={'column'} borderRadius={'12px'} padding={3}>
+                        <Flex gap={3}>
+                            <Flex className={'custom-radio-button'}>
+                                <Radio value='1'>Sender email</Radio>
+                            </Flex>
+
+                            <Flex className={'custom-radio-button'}>
+                                <Radio value='1'>Sender domain</Radio>
+                            </Flex>
+                        </Flex>
+                    </Flex>
+                </Flex>
                 <Flex alignItems={'flex-start'} direction={'column'} gap={4}>
                     <FormControl w={'100%'}>
                         <FormLabel>Select project</FormLabel>
