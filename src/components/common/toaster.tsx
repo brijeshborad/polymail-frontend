@@ -3,7 +3,6 @@ import {ToasterProps} from "@/types/props-types/toaster.type";
 import styles from "@/styles/Home.module.css";
 import {CheckIcon, SmallCloseIcon} from "@chakra-ui/icons";
 import React from "react";
-import {RepIcon} from "@/icons";
 import {generateToasterId} from "@/utils/common.functions";
 
 const {toast} = createStandaloneToast()
@@ -47,30 +46,33 @@ export function Toaster(props: ToasterProps) {
                         {props.type === 'send_confirmation' && (
                             <>
                                 <Button className={styles.toasterUndoButton} backgroundColor={'#1F2937'}
-                                        color={'#FFFFFF'} fontSize={'12px'} lineHeight={1} height={"fit-content"}
+                                        color={'#FFFFFF'} fontSize={'13px'} lineHeight={1} height={"fit-content"}
                                         onClick={() => props.undoClick ? props.undoClick('undo') : null}
-                                        padding={'5px 10px 6px'} borderRadius={'20px'}>Undo</Button>
+                                        padding={'5px 12px 6px'} borderRadius={'20px'}>Undo</Button>
                                 <Button className={styles.toasterUndoButton} borderRadius={'20px'}
-                                        backgroundColor={'#1F2937'} color={'#FFFFFF'} fontSize={'12px'} lineHeight={1}
+                                        backgroundColor={'#1F2937'} color={'#FFFFFF'} fontSize={'13px'} lineHeight={1}
                                         onClick={() => props.undoClick ? props.undoClick('send-now') : null}
-                                        height={"fit-content"} padding={'5px 10px 6px'}>Send Now</Button>
+                                        height={"fit-content"} padding={'5px 12px 6px'}>Send Now</Button>
                             </>
                         )}
-                        {props.type === 'undo_changes' && (
-                            <>
-                                <Button className={styles.toasterUndoButton} backgroundColor={'#1F2937'}
-                                        color={'#FFFFFF'} ml={3} height={"fit-content"} padding={'4px 10px'}
-                                        onClick={() => props.undoUpdateRecordClick ? props.undoUpdateRecordClick() : null}
-                                        borderRadius={'20px'} minW={'2px'} w={'fit-content'}><RepIcon/></Button>
-                            </>
-                        )}
-                        {['success', 'error', 'undo_changes'].includes(props.type) && (
-                            <Button
-                                className={styles.toasterCloseIcon} ml={'auto'} height={"auto"}
-                                backgroundColor={'transparent'} padding={'0'}
-                                minWidth={'auto'}><SmallCloseIcon
-                                onClick={() => toast.close(`${props.id ? props.id : polyToasterId}`)}/></Button>
-                        )}
+                        <div style={{marginLeft: 'auto'}}>
+                            {props.type === 'undo_changes' && (
+                                <>
+                                    <Button className={styles.toasterUndoButton} backgroundColor={'#1F2937'}
+                                            color={'#FFFFFF'} fontSize={'13px'} lineHeight={1} height={"fit-content"} padding={'5px 12px 6px'}
+                                            onClick={() => props.undoUpdateRecordClick ? props.undoUpdateRecordClick() : null}
+                                            borderRadius={'20px'} minW={'2px'} w={'fit-content'}>Undo</Button>
+                                </>
+                            )}
+                            {['success', 'error', 'undo_changes'].includes(props.type) && (
+                                <Button
+                                    className={styles.toasterCloseIcon} ml={2} height={"auto"}
+                                    backgroundColor={'transparent'} padding={'0'}
+                                    minWidth={'auto'}><SmallCloseIcon
+                                    onClick={() => toast.close(`${props.id ? props.id : polyToasterId}`)}/></Button>
+                            )}
+                        </div>
+
                     </Box>
                 )
             },

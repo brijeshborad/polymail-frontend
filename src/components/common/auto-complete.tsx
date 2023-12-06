@@ -11,7 +11,7 @@ export function AutoComplete({
                                  placeholder,
                                  handleChange, handleKeyDown,
                                  handlePaste, handleAutoCompleteSelect,
-                                 openAutoComplete,setIsInputClicked
+                                 openAutoComplete, setIsInputClicked
                              }: {
     value: string, placeholder: string, handleChange: (_e: any) => void, openAutoComplete: boolean
     handleKeyDown: (_e: any) => void, handlePaste: (_e: any) => void, handleAutoCompleteSelect: (_e: any) => void, setIsInputClicked?: (_e: any) => void

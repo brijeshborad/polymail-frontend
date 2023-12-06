@@ -117,16 +117,13 @@ export function SideBarSubTab() {
             setCurrentViewingCacheTab(cacheService.buildCacheKey(tabValue!, type!));
             if (cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue!, type!)).length > 0) {
                 let threads = cacheService.getThreadCacheByKey(cacheService.buildCacheKey(tabValue!, type!)) as Thread[];
-                threadService.setThreads([]);
-                setTimeout(() => {
-                    threadService.setThreadState({
-                        threads: threads,
-                        isLoading: false,
-                        selectedThread: threads[0]
-                    })
-                    currentPage = 1;
-                    getAllThread(type);
-                }, 1);
+                threadService.setThreadState({
+                    threads: [...threads],
+                    isLoading: false,
+                    selectedThread: {...threads[0]}
+                })
+                currentPage = 1;
+                getAllThread(type);
                 return;
             } else {
                 threadService.setThreads([]);

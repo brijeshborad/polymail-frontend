@@ -48,10 +48,6 @@ function CreateNewProjectModal() {
     const [isEmojiMenuOpen, setIsEmojiMenuOpen] = useState<boolean>(false);
 
     useEffect(() => {
-        console.log('isInputClicked', isInputClicked)
-    }, [isInputClicked])
-
-    useEffect(() => {
         if (showCreateProjectModal) {
             setProjectEmoji(emojiArray[Math.floor(Math.random() * emojiArray.length)]);
         }
