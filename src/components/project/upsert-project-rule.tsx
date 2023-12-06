@@ -35,6 +35,7 @@ export function UpsertProjectRule({
                 filterType: editValue.filterType,
                 value: editValue.value,
                 projectId: editValue.projectId,
+                project: editValue.project,
             });
         }
     }, [type, editValue])
@@ -100,7 +101,7 @@ export function UpsertProjectRule({
                             <Input border={'1px solid #E5E7EB'} borderRadius={8} color={'#0A101D'} fontSize={'14px'}
                                    h={'36px'}
                                    placeholder={`Enter ${projectRuleValues.filterType === 'domain' ? 'domain' : 'email address'}`}
-                                   value={projectRuleValues.value} onChange={(e) => setProjectRuleValues(prevState => ({
+                                   value={projectRuleValues.value || ''} onChange={(e) => setProjectRuleValues(prevState => ({
                                 ...prevState, value: e.target.value
                             }))}/>
                         </FormControl>

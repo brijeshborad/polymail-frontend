@@ -52,7 +52,8 @@ function Automation() {
     }, [isOpen])
 
     function editRule(rule: ProjectRules) {
-        setEditValue(rule);
+        let project = [...(projects || [])].find((t: Project) => t.id === rule.projectId);
+        setEditValue({...rule, project});
         setActionType('edit');
         onOpen();
     }
