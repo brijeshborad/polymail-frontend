@@ -8,7 +8,7 @@ export function EmojiMenu(props: any) {
         <Picker
             previewConfig={{defaultCaption: 'Select your project icon'}}
             autoFocusSearch={true}
-            lazyLoadEmojis={true}
+            // lazyLoadEmojis={true}
             theme={'light' as any}
             emojiStyle={'native' as any}
             searchPlaceholder={'Search Emoji'}
