@@ -676,6 +676,17 @@
     object-fit: cover;
 }
 
+button.selectProjectButton svg {
+    width: 9px;
+    color: #6B7280;
+}
+
+button.selectProjectButton:active,
+button.selectProjectButton[data-active],
+button.selectProjectButton:hover {
+    background: #ffffff;
+}
+
 @media (max-width: 768px) {
     .setting {
         max-height: calc(100vh - 55px);

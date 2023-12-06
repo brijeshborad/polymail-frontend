@@ -1377,6 +1377,13 @@ div:has(> .mailSendToaster) {
     border: 1px solid #374151;
 }
 
+.custom-radio-button input:checked + .chakra-radio__control:before{
+    background: url("../../public/image/icon/check.svg");
+    width: 80%;
+    height: 80%;
+    border-radius: 0;
+}
+
 .custom-radio-button input:checked + .chakra-radio__control{
     border-color: #0A101D;
     background: #0A101D;

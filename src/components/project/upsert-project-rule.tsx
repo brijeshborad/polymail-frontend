@@ -1,7 +1,7 @@
 import {
     Button,
     Flex, FormControl, FormLabel,
-    Heading, Input,
+    Heading, Input, Menu, MenuButton, MenuItem, MenuList,
     Modal,
     ModalBody, ModalCloseButton,
     ModalContent, ModalFooter,
@@ -15,6 +15,7 @@ import {Project, ProjectRules} from "@/models";
 import React, {useEffect, useState} from "react";
 import {createProjectRules, updateProjectRules} from "@/redux/projects/action-reducer";
 import {getAllProjectRules} from "@/redux/common-apis/action-reducer";
+import {TriangleDownIcon} from "@chakra-ui/icons";
 
 export function UpsertProjectRule({
                                       isOpen,
@@ -113,16 +114,30 @@ export function UpsertProjectRule({
                         <FormControl w={'100%'}>
                             <FormLabel color={'#374151'} fontSize={'13px'} lineHeight={'1'} letterSpacing={'-0.13px'}
                                        mb={2}>Project</FormLabel>
-                            <Select border={'1px solid #E5E7EB'} borderRadius={8} color={'#0A101D'} fontSize={'14px'}
-                                    h={'36px'} variant='outline' placeholder='Select Project'
-                                    value={projectRuleValues.projectId}
-                                    onChange={(value) => setProjectRuleValues(prevState => ({
-                                        ...prevState, projectId: value.target.value
-                                    }))}>
-                                {projects && projects.map((item: Project) => (
-                                    <option key={item.id} value={item.id}>{item.emoji} {item.name}</option>
-                                ))}
-                            </Select>
+
+                            <Menu isLazy matchWidth={true}>
+                                <MenuButton textAlign={'left'} border={'1px solid #E5E7EB'} backgroundColor={'#FFF'}
+                                            borderRadius={'8px'} fontSize={'13px'} lineHeight={1} padding={'10px 12px'}
+                                            height={'fit-content'} width={'100%'} as={Button} className={styles.selectProjectButton}
+                                            rightIcon={<TriangleDownIcon/>}>
+                                    Select Project
+                                </MenuButton>
+                                <MenuList className={'drop-down-list'}>
+                                    {projects && projects.map((item: Project) => (
+                                        <MenuItem key={item.id}>{item.emoji} {item.name}</MenuItem>
+                                    ))}
+                                </MenuList>
+                            </Menu>
+                            {/*<Select border={'1px solid #E5E7EB'} borderRadius={8} color={'#0A101D'} fontSize={'14px'}*/}
+                            {/*        h={'36px'} variant='outline' placeholder='Select Project'*/}
+                            {/*        value={projectRuleValues.projectId}*/}
+                            {/*        onChange={(value) => setProjectRuleValues(prevState => ({*/}
+                            {/*            ...prevState, projectId: value.target.value*/}
+                            {/*        }))}>*/}
+                            {/*    {projects && projects.map((item: Project) => (*/}
+                            {/*        <MenuItem key={item.id} value={item.id}>{item.emoji} {item.name}</MenuItem>*/}
+                            {/*    ))}*/}
+                            {/*</Select>*/}
                         </FormControl>
                     </Flex>
                 </Flex>
