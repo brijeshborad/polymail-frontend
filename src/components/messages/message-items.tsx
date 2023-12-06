@@ -1,4 +1,4 @@
-import {Message as MessageModel, MessageAttachments} from "@/models";
+import {Message as MessageModel, MessageAttachments, MessageDraft} from "@/models";
 import {
     Button,
     createStandaloneToast,
@@ -25,6 +25,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {generateToasterId, getRecipientText, getSenderText} from "@/utils/common.functions";
 import {Toaster} from "../common";
+import {sendMessage} from "@/redux/draft/action-reducer";
 
 const {toast} = createStandaloneToast()
 let previousToastId: string = '';
@@ -262,6 +263,11 @@ export function MessageItems() {
         })
     }
 
+    function resendMessage(draft: MessageDraft | MessageModel) {
+        dispatch(sendMessage({body: {id: draft.id!, now: true}}));
+        messageService.toggleFailed(draft, false);
+    }
+
     return (
         inboxMessages && inboxMessages.length > 0 && inboxMessages.map((message: MessageModel, messageIndex) => (
             <Flex position={'relative'} direction={'column'} key={messageIndex}
@@ -300,9 +306,19 @@ export function MessageItems() {
 
                         {message.attachments && !!message.attachments.length && attachmentsMenu(message, messageIndex)}
 
-                        <span className={styles.mailBoxTimeDesktop} style={{whiteSpace: 'nowrap'}}>
+                        <span className={styles.mailBoxTimeDesktop} style={{
+                            whiteSpace: 'nowrap',
+                            display: "flex",
+                            alignItems: 'flex-end',
+                            flexDirection: 'column'
+                        }}>
                                         <Time time={message.created || ''} isShowFullTime={true}
                                               showTimeInShortForm={false}/>
+
+                            {message?.draftInfo?.error &&
+                            <Text margin={0} padding={0} color={'blue !important'} textDecoration={'underline'}
+                                  cursor={'pointer'} onClick={() => resendMessage(message)}>Sending
+                                failed, try again?</Text>}
                                     </span>
 
                         <Menu isOpen={isMoreMenuOpen[messageIndex]}
@@ -416,9 +432,17 @@ export function MessageItems() {
                                     <EyeSlashedIcon/>
                                 </Flex> : ''}
                             {message.attachments && !!message.attachments.length && attachmentsMenu(message, messageIndex)}
-                            <div className={styles.mailBoxTime} style={{whiteSpace: 'nowrap'}}>
+                            <div className={styles.mailBoxTime} style={{
+                                whiteSpace: 'nowrap', display: "flex",
+                                alignItems: 'flex-end',
+                                flexDirection: 'column'
+                            }}>
                                 <Time time={message?.created || ''} isShowFullTime={true}
                                       showTimeInShortForm={false}/>
+                                {message?.draftInfo?.error &&
+                                <Text margin={0} padding={0} color={'blue !important'} textDecoration={'underline'}
+                                      cursor={'pointer'} onClick={() => resendMessage(message)}>Sending failed, try
+                                    again?</Text>}
                             </div>
                             <Menu isOpen={isMoreMenuOpen[messageIndex]}
                                   onClose={() => openMoreMenu(messageIndex, false)}>
