@@ -11,10 +11,10 @@ export function AutoComplete({
                                  placeholder,
                                  handleChange, handleKeyDown,
                                  handlePaste, handleAutoCompleteSelect,
-                                 openAutoComplete
+                                 openAutoComplete,setIsInputClicked
                              }: {
     value: string, placeholder: string, handleChange: (_e: any) => void, openAutoComplete: boolean
-    handleKeyDown: (_e: any) => void, handlePaste: (_e: any) => void, handleAutoCompleteSelect: (_e: any) => void
+    handleKeyDown: (_e: any) => void, handlePaste: (_e: any) => void, handleAutoCompleteSelect: (_e: any) => void, setIsInputClicked?: (_e: any) => void
 }) {
     const {contacts} = useSelector((state: StateType) => state.commonApis);
     const [finalContacts, setFinalContact] = useState<any>([]);
@@ -52,6 +52,16 @@ export function AutoComplete({
                            onChange={(e) => handleChange(e)}
                            onPaste={(e) => handlePaste(e)}
                            placeholder={placeholder}
+                           onFocus={() => {
+                               if (setIsInputClicked) {
+                                   setIsInputClicked(true)
+                               }
+                           }}
+                           onBlur={() => {
+                               if (setIsInputClicked) {
+                                   setIsInputClicked(false)
+                               }
+                           }}
                     />
                 </PopoverAnchor>
             </HStack>

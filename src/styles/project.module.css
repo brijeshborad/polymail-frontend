@@ -434,9 +434,9 @@
 }
 
 .projectMemberModal .projectSearchBar:focus-visible,
-.projectMemberModal .projectSearchBar:hover {
-    border-color: #E5E7EB;
-    box-shadow: none;
+.projectMemberModal .projectSearchBar:focus {
+    border-color: rgb(49, 130, 206);
+    box-shadow: rgb(49, 130, 206) 0 0 0 1px;
 }
 
 .projectMemberModal .addProjectMember {
@@ -533,6 +533,11 @@
     border-bottom: 1px solid #F3F4F6;
     background-color: #FFFFFF;
     height: 69px;
+}
+
+.addProjectMemberInputFlex .memberInputFocus {
+    border-color: rgb(49, 130, 206);
+    box-shadow: rgb(49, 130, 206) 0 0 0 1px;
 }
 
 @media (max-width: 991px) {
