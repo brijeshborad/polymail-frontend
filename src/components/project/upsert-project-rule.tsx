@@ -6,7 +6,7 @@ import {
     ModalBody, ModalCloseButton,
     ModalContent, ModalFooter,
     ModalHeader,
-    ModalOverlay, Radio, RadioGroup, Select, Stack, Text
+    ModalOverlay, Radio, RadioGroup, Stack, Text
 } from "@chakra-ui/react";
 import styles from "@/styles/setting.module.css";
 import {useDispatch, useSelector} from "react-redux";
