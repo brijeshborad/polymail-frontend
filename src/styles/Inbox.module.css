@@ -1415,15 +1415,16 @@
 }
 
 .mailBox .oldMail .mailBoxMailHeader .mailBoxMailHeaderDetails:hover .copyIcon {
-    display: flex;
+    visibility: visible;
 }
 
 .mailBox .oldMail .mailBoxMailHeader .recipient:hover .copyIcon {
-    display: flex;
+    visibility: visible;
 }
 
 .mailBox .oldMail .mailBoxMailHeader .copyIcon {
-    display: none;
+    visibility: hidden;
+    display: flex;
 }
 
 .mailBox .oldMail .mailBoxMailHeader .copyIcon svg {

@@ -38,6 +38,7 @@ function CreateNewProjectModal() {
     } = useSelector((state: StateType) => state.commonApis);
     const [projectName, setProjectName] = useState<string>('');
     const [autoCompleteOpen, setAutoCompleteOpen] = useState<boolean>(false);
+    const [isInputClicked, setIsInputClicked] = useState<boolean>(false);
     const [membersInputs, setMembersInput] = useState<{ input: string; role: string; memberArray: Array<{ item?: string; memberRole?: string }> }>({
         input: '',
         role: 'member',
@@ -235,7 +236,7 @@ function CreateNewProjectModal() {
                             <Flex align={'center'} gap={'14px'} className={styles.addProjectMemberInputFlex}>
                                 <Flex align={'center'} position={"relative"} borderRadius={'8px'}
                                       padding={'10px 10px 10px 16px'} width={'100%'} backgroundColor={'#ffffff'}
-                                      border={'1px solid #E5E7EB'}>
+                                      border={'1px solid #E5E7EB'} className={`${styles.memberProjectInput} ${isInputClicked ? styles.memberInputFocus : ''}`}>
                                     <AutoComplete value={membersInputs.input} placeholder={`Name or email address`}
                                                   openAutoComplete={autoCompleteOpen}
                                                   handleChange={(e) => {
@@ -243,6 +244,7 @@ function CreateNewProjectModal() {
                                                       membersInputs.input = e.target.value;
                                                       setMembersInput({...membersInputs})
                                                   }}
+                                                  setIsInputClicked={setIsInputClicked}
                                                   handleKeyDown={() => null}
                                                   handlePaste={() => null}
                                                   handleAutoCompleteSelect={(e) => {

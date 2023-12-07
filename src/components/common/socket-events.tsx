@@ -3,7 +3,7 @@ import {StateType} from "@/types";
 import {useCallback, useEffect} from "react";
 import {
     accountService,
-    commonService, draftService, globalEventService, projectService,
+    commonService, draftService, globalEventService, messageService, projectService,
     socketService,
     threadService
 } from "@/services";
@@ -179,6 +179,11 @@ export function SocketEvents() {
                     let thread: Thread = {...newMessage.data.thread};
                     thread = {...thread, id: thread._id};
                     threadService.threadUpdated(thread);
+                    break;
+                case SOCKET_EVENTS.SEND_FAILED:
+                    if (newMessage.data.draft && newMessage.data.draft.draftInfo && newMessage.data.draft.draftInfo.error) {
+                        messageService.toggleFailed(newMessage.data.draft);
+                    }
                     break;
             }
         }

@@ -1,7 +1,7 @@
 import {InitialMessageStateType} from "@/types";
 import {BaseService} from "@/services/base.service";
 import {updateMessageState} from "@/redux/messages/action-reducer";
-import {Message, MessageAttachments, MessagePart} from "@/models";
+import {Message, MessageAttachments, MessageDraft, MessagePart, Thread} from "@/models";
 import {generateToasterId} from "@/utils/common.functions";
 import dayjs from "dayjs";
 import {sendMessage, updatePartialMessage} from "@/redux/draft/action-reducer";
@@ -12,6 +12,7 @@ import {threadService} from "@/services/threads.service";
 import {commonService} from "@/services/common.service";
 import {globalEventService} from "@/services/global-event.service";
 import {getDraftStatus, setDraftStatus} from "@/utils/cache.functions";
+import {cacheService} from "@/services/cache.service";
 
 class MessageService extends BaseService {
     constructor() {
@@ -123,7 +124,10 @@ class MessageService extends BaseService {
                             params = {undo: true}
                             if (!isCompose) {
                                 threadService.updateThreadForUndoOrSend('undo', currentDraft?.draftInfo?.body);
-                                globalEventService.fireEvent({data: {draftId: currentDraft.id}, type: 'draft.updateIndex'});
+                                globalEventService.fireEvent({
+                                    data: {draftId: currentDraft.id},
+                                    type: 'draft.updateIndex'
+                                });
                             } else {
                                 if (performForDraftTab) {
                                     let undoDraft = draftService.getUndoDraft();
@@ -154,6 +158,40 @@ class MessageService extends BaseService {
         let cachedDraft = {...getDraftStatus()};
         cachedDraft[messageId] = isSent;
         setDraftStatus(cachedDraft);
+    }
+
+    toggleFailed(draft: MessageDraft, failed: boolean = true) {
+        let {messages} = this.getMessageState();
+        let finalMessages = [...(messages || [])];
+        let findDraft = finalMessages.findIndex((message: any) => message.id === draft.id);
+        if (findDraft !== -1) {
+            if (failed) {
+                finalMessages[findDraft].draftInfo!.error = draft.draftInfo?.error;
+            } else {
+                finalMessages[findDraft].draftInfo!.error = null;
+            }
+            this.setMessages([...finalMessages]);
+        }
+        let cacheThreads = {...cacheService.getThreadCache()}
+        Object.keys(cacheThreads).forEach((key: any) => {
+            cacheThreads[key] = [...cacheThreads[key]];
+            cacheThreads[key].forEach((thread: Thread, index: number) => {
+                let messages = [...(thread.messages || [])];
+                let findDraft = messages.findIndex((message: any) => message.id === draft.id);
+                if (findDraft !== -1) {
+                    if (failed) {
+                        messages[findDraft].draftInfo!.error = draft.draftInfo?.error;
+                    } else {
+                        messages[findDraft].draftInfo!.error = null;
+                    }
+                    cacheThreads[key][index] = {
+                        ...cacheThreads[key][index],
+                        messages: messages
+                    }
+                }
+            })
+        })
+        cacheService.setThreadCache(cacheThreads);
     }
 }
 

@@ -6,7 +6,9 @@ const Picker = dynamic(() => import('emoji-picker-react'), {ssr: false});
 export function EmojiMenu(props: any) {
     return (
         <Picker
+            previewConfig={{defaultCaption: 'Select your project icon'}}
             autoFocusSearch={true}
+            // lazyLoadEmojis={true}
             theme={'light' as any}
             emojiStyle={'native' as any}
             searchPlaceholder={'Search Emoji'}

@@ -1,7 +1,7 @@
 import {
     Button,
     Flex, FormControl, FormLabel,
-    Heading, Input,
+    Heading, Input, Menu, MenuButton, MenuItem, MenuList,
     Modal,
     ModalBody, ModalCloseButton,
     ModalContent, ModalFooter,
@@ -15,6 +15,7 @@ import {Project, ProjectRules} from "@/models";
 import React, {useEffect, useState} from "react";
 import {createProjectRules, updateProjectRules} from "@/redux/projects/action-reducer";
 import {getAllProjectRules} from "@/redux/common-apis/action-reducer";
+import {TriangleDownIcon} from "@chakra-ui/icons";
 
 export function UpsertProjectRule({
                                       isOpen,
@@ -34,12 +35,12 @@ export function UpsertProjectRule({
                 filterType: editValue.filterType,
                 value: editValue.value,
                 projectId: editValue.projectId,
+                project: editValue.project,
             });
         }
     }, [type, editValue])
 
     function submit() {
-        let project = [...(projects || [])].find((t: Project) => t.id === projectRuleValues.projectId);
         let body = {
             projectId: projectRuleValues.projectId,
             accountId: selectedAccount?.id,
@@ -48,7 +49,7 @@ export function UpsertProjectRule({
         };
         let toaster = {
             desc: `Rule ${type === 'create' ? 'Created' : 'Updated'}`,
-            title: `Rule for ${project?.name} ${project?.emoji} has been ${type === 'create' ? 'created' : 'updated'}`,
+            title: `Rule for ${projectRuleValues.project?.name} ${projectRuleValues.project?.emoji} has been ${type === 'create' ? 'created' : 'updated'}`,
             type: 'success'
         };
         let finalBody: any = {
@@ -100,7 +101,7 @@ export function UpsertProjectRule({
                             <Input border={'1px solid #E5E7EB'} borderRadius={8} color={'#0A101D'} fontSize={'14px'}
                                    h={'36px'}
                                    placeholder={`Enter ${projectRuleValues.filterType === 'domain' ? 'domain' : 'email address'}`}
-                                   value={projectRuleValues.value} onChange={(e) => setProjectRuleValues(prevState => ({
+                                   value={projectRuleValues.value || ''} onChange={(e) => setProjectRuleValues(prevState => ({
                                 ...prevState, value: e.target.value
                             }))}/>
                         </FormControl>
@@ -113,16 +114,24 @@ export function UpsertProjectRule({
                         <FormControl w={'100%'}>
                             <FormLabel color={'#374151'} fontSize={'13px'} lineHeight={'1'} letterSpacing={'-0.13px'}
                                        mb={2}>Project</FormLabel>
-                            <Select border={'1px solid #E5E7EB'} borderRadius={8} color={'#0A101D'} fontSize={'14px'}
-                                    h={'36px'} variant='outline' placeholder='Select Project'
-                                    value={projectRuleValues.projectId}
-                                    onChange={(value) => setProjectRuleValues(prevState => ({
-                                        ...prevState, projectId: value.target.value
-                                    }))}>
-                                {projects && projects.map((item: Project) => (
-                                    <option key={item.id} value={item.id}>{item.emoji} {item.name}</option>
-                                ))}
-                            </Select>
+                            <Menu isLazy matchWidth={true}>
+                                <MenuButton textAlign={'left'} border={'1px solid #E5E7EB'} backgroundColor={'#FFF'}
+                                            borderRadius={'8px'} fontSize={'13px'} lineHeight={1} padding={'10px 12px'}
+                                            height={'fit-content'} width={'100%'} as={Button}
+                                            className={styles.selectProjectButton}
+                                            rightIcon={<TriangleDownIcon/>}>
+                                    {projectRuleValues.project ? `${projectRuleValues.project.emoji} ${projectRuleValues.project.name}` : 'Select Project'}
+                                </MenuButton>
+                                <MenuList className={'drop-down-list'}>
+                                    {projects && projects.map((item: Project) => (
+                                        <MenuItem key={item.id} onClick={() => {
+                                            setProjectRuleValues(prevState => ({
+                                                ...prevState, projectId: item.id, project: item
+                                            }))
+                                        }}>{item.emoji} {item.name}</MenuItem>
+                                    ))}
+                                </MenuList>
+                            </Menu>
                         </FormControl>
                     </Flex>
                 </Flex>

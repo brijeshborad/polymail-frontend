@@ -50,18 +50,19 @@ export function MessageBoxContent({isProjectView = false}: { isProjectView?: boo
                 {selectedThread && <Flex flexDir={'column'} height={'100%'}>
                     <MessagesHeader isProjectView={isProjectView}/>
                     {getMuteStatus()}
-                    {isShowingMessageBox &&
-                    <Flex ref={messagesWrapperRef} onScroll={handleScroll} padding={'20px'} gap={5}
-                          direction={'column'} flex={1}
-                          overflowY={'scroll'} overflowX={'hidden'}
-                          className={`${styles.messageListScrollBar} ${showScrollBar ? styles.messageScrollBar : ''}`}>
-                        <Flex gap={2} direction={'column'} height={'100%'}>
-                            <div className={styles.mailBoxMailList}>
-                                <MessageBox/>
-                            </div>
-                            {showReplyBox && <MessageReplyBox isProjectView={isProjectView}/>}
+                    {isShowingMessageBox && <>
+                        <Flex ref={messagesWrapperRef} onScroll={handleScroll} padding={'20px'} gap={5}
+                              direction={'column'} flex={1}
+                              overflowY={'scroll'} overflowX={'hidden'}
+                              className={`${styles.messageListScrollBar} ${showScrollBar ? styles.messageScrollBar : ''}`}>
+                            <Flex gap={2} direction={'column'} height={'100%'}>
+                                <div className={styles.mailBoxMailList}>
+                                    <MessageBox/>
+                                </div>
+                            </Flex>
                         </Flex>
-                    </Flex>}
+                        {showReplyBox && <MessageReplyBox isProjectView={isProjectView}/>}
+                    </>}
                 </Flex>
                 }
             </>}
