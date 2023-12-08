@@ -176,7 +176,12 @@ export function AddToProjectButton({
     }
 
     function addAutomationRulForProject(filterType: string, value: string) {
-        projectService.addRuleForAutomation({filterType, value, projectId: selectedAutomationProject?.id});
+        projectService.addRuleForAutomation({
+            filterType,
+            value,
+            projectId: selectedAutomationProject?.id,
+            project: selectedAutomationProject
+        });
     }
 
     return (
