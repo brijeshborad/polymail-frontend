@@ -1077,6 +1077,29 @@ class ThreadsService extends BaseService {
         this.setThreads(finalThreads);
     }
 
+    removeThread(thread: Thread) {
+        let {threads, selectedThread} = this.getThreadState();
+        let finalThreads = [...(threads || [])];
+        let findThread = finalThreads.findIndex((t: Thread) => t.id === thread.id);
+        if (findThread !== -1) {
+            finalThreads.splice(findThread, 1);
+        }
+        if (selectedThread && selectedThread.id === thread.id) {
+            let finalIndex = (findThread - 1 < finalThreads.length) ? (findThread === 0) ? findThread : findThread - 1 : (findThread <= 0 ? findThread + 1 : findThread - 1)
+            this.setSelectedThread(finalThreads[finalIndex]);
+        }
+        this.setThreads(finalThreads);
+        let cacheThreads = {...cacheService.getThreadCache()};
+        Object.keys(cacheThreads).forEach((key: any) => {
+            cacheThreads[key] = [...cacheThreads[key]];
+            let findThreadIndex = cacheThreads[key].findIndex((item: Thread) => item.id === thread.id);
+            if (findThreadIndex !== -1) {
+                cacheThreads[key].splice(findThreadIndex, 1);
+            }
+        })
+        cacheService.setThreadCache(cacheThreads);
+    }
+
     updateThreadToProperPlaceInCache(thread: Thread) {
         let cacheThreads = {...cacheService.getThreadCache()};
         let threadsToRemove: any = {...this.getThreadsToRemoveFromCache(cacheThreads, thread)};

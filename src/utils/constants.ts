@@ -31,6 +31,7 @@ export const SOCKET_EVENTS = {
     SNOOZED_THREAD: 'SnoozedThread',
     THREAD_UPDATED: 'ThreadUpdated',
     SEND_FAILED: 'SendFailed',
+    THREAD_REMOVED: 'RemovedThread',
 }
 export const SOCKET_ACTIVITY_EVENTS = {
     THREAD_SHARED: 'ThreadShared',

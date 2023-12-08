@@ -436,7 +436,7 @@
 .projectMemberModal .projectSearchBar:focus-visible,
 .projectMemberModal .projectSearchBar:focus {
     border-color: rgb(49, 130, 206);
-    box-shadow: rgb(49, 130, 206) 0 0 0 1px;
+    box-shadow: rgb(49, 130, 206) 0 0 0 0.1px;
 }
 
 .projectMemberModal .addProjectMember {
@@ -537,13 +537,13 @@
 
 .addProjectMemberInputFlex .memberInputFocus {
     border-color: rgb(49, 130, 206);
-    box-shadow: rgb(49, 130, 206) 0 0 0 1px;
+    box-shadow: rgb(49, 130, 206) 0 0 0 0.1px;
 }
 
 .addProjectMember .addProjectMemberInputFlex .memberProjectInput:focus-visible,
 .addProjectMember .addProjectMemberInputFlex .memberProjectInput:focus {
     border-color: rgb(49, 130, 206);
-    box-shadow: rgb(49, 130, 206) 0 0 0 1px;
+    box-shadow: rgb(49, 130, 206) 0 0 0 0.1px;
 }
 
 @media (max-width: 991px) {

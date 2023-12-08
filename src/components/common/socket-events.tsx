@@ -185,6 +185,11 @@ export function SocketEvents() {
                         messageService.toggleFailed(newMessage.data.draft);
                     }
                     break;
+                case SOCKET_EVENTS.THREAD_REMOVED:
+                    let removedThread: Thread = {...newMessage.data.thread};
+                    removedThread = {...removedThread, id: removedThread._id};
+                    threadService.removeThread(removedThread);
+                    break;
             }
         }
     }, [accounts, newMessage, threads, reAuthToast, selectedAccount, dispatch, activityEvent, fireNotification]);

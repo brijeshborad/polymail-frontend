@@ -59,7 +59,13 @@ class CacheService {
 
     getThreadCacheByKey(key: string): Thread[] {
         let threads = (this.cacheThreads[key] || []) as Thread[];
-        return [...threads].sort((a: Thread, b: Thread) => (new Date(b.sortDate as string).valueOf() - new Date(a.sortDate as string).valueOf()));
+        // Remove Duplicate
+        threads = [...threads].filter((obj: Thread, index: number) => {
+            return index === [...threads].findIndex((o: Thread) => obj.id === o.id);
+        });
+        // Sort threads
+        [...threads].sort((a: Thread, b: Thread) => (new Date(b.sortDate as string).valueOf() - new Date(a.sortDate as string).valueOf()))
+        return threads;
     }
 
     setThreadCacheByKey(key: string, value: any) {
