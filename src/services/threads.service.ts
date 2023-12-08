@@ -359,7 +359,7 @@ class ThreadsService extends BaseService {
         }
     }
 
-    addThreadToProject(item: Project, ref: any = null, allowComposeDraft: boolean = false) {
+    addThreadToProject(item: Project, ref: any = null, allowComposeDraft: boolean = false, fireEvent: boolean = false) {
         let {multiSelection, selectedThread: currentSelectedThread, threads, tabValue} = this.getThreadState();
         let {composeDraft} = draftService.getDraftState();
         let selectedThread: any = currentSelectedThread;
@@ -445,6 +445,9 @@ class ThreadsService extends BaseService {
             }
             projectService.updateThreadsCountInProject(item, reqBody.threadIds.length, 'add');
             this.updateThreadsCacheForProjects(reqBody.threadIds, item, 'add');
+            if (fireEvent) {
+                globalEventService.fireEvent({data: item, type: 'project.automation'});
+            }
             this.dispatchAction(
                 addItemToGroup,
                 {
@@ -589,6 +592,7 @@ class ThreadsService extends BaseService {
                             ...newThreads[index1],
                             projects: data
                         }
+                        this.setSelectedThread(newThreads[index1]);
                         this.setThreadState({threads: newThreads});
                     }
                 }
@@ -612,6 +616,7 @@ class ThreadsService extends BaseService {
                         ...newThreads[index1],
                         projects: data
                     }
+                    this.setSelectedThread(newThreads[index1]);
                     this.setThreadState({threads: newThreads});
                 }
             }

@@ -1,6 +1,6 @@
 import {InitialProjectState} from "@/types";
 import {BaseService} from "@/services/base.service";
-import {markProjectRead, updateProjectState} from "@/redux/projects/action-reducer";
+import {createProjectRules, markProjectRead, updateProjectState} from "@/redux/projects/action-reducer";
 import {InviteMember, Project, TeamMember, Thread} from "@/models";
 import {commonService} from "@/services/common.service";
 import Router from "next/router";
@@ -9,6 +9,7 @@ import {userService} from "@/services/user.service";
 import {cacheService} from "@/services/cache.service";
 import {MAILBOX_UNREAD} from "@/utils/constants";
 import {threadService} from "@/services/threads.service";
+import {accountService} from "@/services/account.service";
 
 class ProjectService extends BaseService {
     constructor() {
@@ -277,6 +278,24 @@ class ProjectService extends BaseService {
             })
         })
         cacheService.setThreadCache(cacheThreads);
+    }
+
+    addRuleForAutomation(projectRuleValues: any) {
+        let {selectedAccount} = accountService.getAccountState();
+        let body = {
+            projectId: projectRuleValues.projectId,
+            accountId: selectedAccount?.id,
+            filterType: projectRuleValues.filterType,
+            value: projectRuleValues.value,
+        };
+        let toaster = {
+            desc: `Rule Created`,
+            title: `Rule for ${projectRuleValues.project?.name} ${projectRuleValues.project?.emoji} has been created`,
+            type: 'success'
+        };
+        this.dispatchAction(createProjectRules, {
+            body, toaster: {success: toaster}
+        });
     }
 }
 

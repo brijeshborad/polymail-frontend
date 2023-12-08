@@ -3,7 +3,7 @@ import {MAILBOX_DRAFT, MAILBOX_SENT} from "@/utils/constants";
 
 export function extractAndMapThreadAndMessagesBody(threads: Thread[], payload: any, currentThreads: Thread[] | undefined, currentTab: string, currentSubTab: string) {
     let rawThreads: Thread[] = [...(threads || [])];
-    // rawThreads.sort((a: Thread, b: Thread) => (new Date(b.sortDate as string).valueOf() - new Date(a.sortDate as string).valueOf()));
+    rawThreads.sort((a: Thread, b: Thread) => (new Date(b.sortDate as string).valueOf() - new Date(a.sortDate as string).valueOf()));
     rawThreads = rawThreads.map((thread: Thread) => {
         let rawThread = {...thread};
         rawThread.messages = [...(thread.messages || [])];
