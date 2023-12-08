@@ -20,7 +20,10 @@ import Router, {useRouter} from 'next/router';
 import {commonService, globalEventService, threadService} from "@/services";
 import Tooltip from "@/components/common/Tooltip";
 
-export function AddToProjectButton({allowDefaultSelect = true, selectFrom = ''}: { allowDefaultSelect: boolean, selectFrom?: string }) {
+export function AddToProjectButton({
+                                       allowDefaultSelect = true,
+                                       selectFrom = ''
+                                   }: { allowDefaultSelect: boolean, selectFrom?: string}) {
     const [isDropdownOpen, setDropDownOpen] = useState(false)
     const {selectedThread, threads, multiSelection} = useSelector((state: StateType) => state.threads);
     let {projects, project} = useSelector((state: StateType) => state.projects);
@@ -34,6 +37,7 @@ export function AddToProjectButton({allowDefaultSelect = true, selectFrom = ''}:
     const {composeDraft} = useSelector((state: StateType) => state.draft);
     const router = useRouter();
     const {isComposing} = useSelector((state: StateType) => state.commonApis);
+    const [automationMenu, setAutomationMenu] = useState<boolean>(false);
 
     useEffect(() => {
         const handleShortcutKeyPress = (e: KeyboardEvent | any) => {
@@ -50,7 +54,6 @@ export function AddToProjectButton({allowDefaultSelect = true, selectFrom = ''}:
             window.removeEventListener('keydown', handleShortcutKeyPress);
         };
     }, []);
-
 
     useEffect(() => {
         if (allowDefaultSelect) {
@@ -116,6 +119,10 @@ export function AddToProjectButton({allowDefaultSelect = true, selectFrom = ''}:
             setDropDownOpen(false);
             globalEventService.blankEvent();
         }
+        if (incomingEvent === 'project.automation') {
+            setAutomationMenu(true);
+            globalEventService.blankEvent();
+        }
         if (typeof incomingEvent === 'object' && incomingEvent.type && incomingEvent.type === 'addToProject.remove') {
             let removeProject = threadProject.filter((project: any) => project.id !== incomingEvent.data.id);
             setThreadProject([...removeProject]);
@@ -167,17 +174,18 @@ export function AddToProjectButton({allowDefaultSelect = true, selectFrom = ''}:
     return (
         <>
             <Menu isLazy
-                isOpen={isDropdownOpen}
-                onClose={() => {
-                    setDropDownOpen(false)
-                    setSearchValue('')
-                    window.focus()
-                }}
-                closeOnBlur={true}
-                autoSelect={false}
+                  isOpen={isDropdownOpen}
+                  onClose={() => {
+                      setDropDownOpen(false)
+                      setSearchValue('')
+                      window.focus()
+                  }}
+                  closeOnBlur={true}
+                  autoSelect={false}
             >
                 {threadProject?.length ? <Tooltip label={'Share'} placement={'bottom'}>
                     <MenuButton onClick={() => {
+                        // setAutomationMenu(false);
                         setDropDownOpen(!isDropdownOpen)
                         focusSearch();
                     }}
@@ -202,6 +210,7 @@ export function AddToProjectButton({allowDefaultSelect = true, selectFrom = ''}:
                               className={styles.projectMenuIcon}><MenuIcon/></Flex>
                     </MenuButton></Tooltip> : <MenuButton
                     onClick={() => {
+                        // setAutomationMenu(false);
                         setDropDownOpen(!isDropdownOpen)
                         focusSearch();
                     }}
@@ -222,21 +231,25 @@ export function AddToProjectButton({allowDefaultSelect = true, selectFrom = ''}:
                     <span className={styles.RightContent}>⌘P</span>
                 </MenuButton>}
 
-                <MenuList className={`${styles.newEmailAddInProject} drop-down-list`} display={'none'} zIndex={'overlay'} padding={'16px 24px'}>
-                    <Heading as='h6' size='xs' color={'#0A101D'} fontWeight={'500'} mb={3} lineHeight={1}>Always add new emails to this project?</Heading>
+                {automationMenu &&
+                <MenuList className={`${styles.newEmailAddInProject} drop-down-list`} zIndex={'overlay'}
+                          padding={'16px 24px'}>
+                    <Heading as='h6' size='xs' color={'#0A101D'} fontWeight={'500'} mb={3} lineHeight={1}>Always add new
+                        emails to this project?</Heading>
                     <MenuItem className={styles.newEmailButton}>
-                        If sender is <Link>leclow@disney.com</Link>
+                        If sender is <Link>{`@${selectedThread?.from?.email.split('@')[1]}`}</Link>
                     </MenuItem>
                     <MenuItem className={styles.newEmailButton}>
-                        If sender is <Link>leclow@disney.com</Link>
+                        If sender is <Link>{selectedThread?.from?.email}</Link>
                     </MenuItem>
-                    <Button className={styles.dropdownDismiss} backgroundColor={'#F3F4F6'} lineHeight={1} mt={3} borderRadius={50} _hover={{backgroundColor: '#F3F4F6'}}>
+                    <Button className={styles.dropdownDismiss} backgroundColor={'#F3F4F6'} lineHeight={1} mt={3}
+                            borderRadius={50} _hover={{backgroundColor: '#F3F4F6'}}>
                         Dismiss
                     </Button>
-                </MenuList>
+                </MenuList>}
 
 
-                <MenuList className={`${styles.addToProjectList} drop-down-list`} zIndex={'overlay'}>
+                {!automationMenu && <MenuList className={`${styles.addToProjectList} drop-down-list`} zIndex={'overlay'}>
                     {!!threadProject?.length &&
                     <Flex direction={'column'} position={'relative'} pb={1} className={styles.selectedProject}>
                         {(threadProject || []).map((item: any, index: number) => (
@@ -292,7 +305,7 @@ export function AddToProjectButton({allowDefaultSelect = true, selectFrom = ''}:
                             Create New Project
                         </Button>
                     </div>
-                </MenuList>
+                </MenuList>}
             </Menu>
         </>
     )
