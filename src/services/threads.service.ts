@@ -546,16 +546,16 @@ class ThreadsService extends BaseService {
                             type: 'success'
                         },
                         afterUndoAction: () => {
+                            let projects = selectedThread?.projects || [];
+                            projects = [...projects, item];
+                            projects = projects.filter((obj: Project, index: number) => {
+                                return index === projects.findIndex((o: Project) => obj.id === o.id);
+                            })
+                            let addProject = {
+                                ...selectedThread,
+                                projects: projects
+                            }
                             if (isComposing) {
-                                let projects = selectedThread?.projects || [];
-                                projects = [...projects, item];
-                                projects = projects.filter((obj: Project, index: number) => {
-                                    return index === projects.findIndex((o: Project) => obj.id === o.id);
-                                })
-                                let addProject = {
-                                    ...selectedThread,
-                                    projects: projects
-                                }
                                 setTimeout(() => {
                                     globalEventService.fireEvent({
                                         data: {body: 'add'},
@@ -566,7 +566,7 @@ class ThreadsService extends BaseService {
                             }
                             projectService.updateThreadsCountInProject(item, 1, 'add');
                             this.updateThreadsCacheForProjects([threadId], item, 'add');
-                            this.setThreadState({selectedThread: selectedThread, threads: threads});
+                            this.setThreadState({selectedThread: addProject, threads: threads});
                             globalEventService.fireEvent({data: item, type: 'addToProject.add'});
                         }
                     },

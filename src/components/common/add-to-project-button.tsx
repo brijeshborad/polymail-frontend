@@ -92,6 +92,12 @@ export function AddToProjectButton({
     }, [projects, selectedThread])
 
     useEffect(() => {
+        if (!isDropdownOpen) {
+            setAutomationMenu(false);
+        }
+    }, [isDropdownOpen])
+
+    useEffect(() => {
         if (searchValue.length > 0) {
             setFilteredProjects((projects || []).filter((item: Project) => item.name?.toLowerCase().includes(searchValue.toLowerCase())));
         } else {
@@ -132,7 +138,7 @@ export function AddToProjectButton({
             globalEventService.blankEvent();
         }
         if (typeof incomingEvent === 'object' && incomingEvent.type === 'addToProject.add') {
-            setThreadProject(prevState => [...prevState, incomingEvent.data]);
+            // setThreadProject(prevState => [...prevState, incomingEvent.data]);
             setFilteredProjects((filteredProjects || []).filter((project: Project) => project.id !== incomingEvent.data.id));
             globalEventService.blankEvent();
         }
@@ -184,6 +190,14 @@ export function AddToProjectButton({
         });
     }
 
+    function openMenu() {
+        if (!automationMenu) {
+            setDropDownOpen(!isDropdownOpen)
+        }
+        setAutomationMenu(false);
+        focusSearch();
+    }
+
     return (
         <>
             <Menu isLazy
@@ -197,10 +211,10 @@ export function AddToProjectButton({
                   autoSelect={false}
             >
                 {threadProject?.length ? <Tooltip label={'Share'} placement={'bottom'}>
-                    <MenuButton onClick={() => {
-                        setAutomationMenu(false);
-                        setDropDownOpen(!isDropdownOpen)
-                        focusSearch();
+                    <MenuButton onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        openMenu()
                     }}
                                 cursor={'pointer'} className={`${styles.projectAdded}`}
                                 borderRadius={'8px'}
@@ -222,10 +236,10 @@ export function AddToProjectButton({
                         <Flex width={'20px'} height={'20px'} alignItems={'center'} justifyContent={'center'}
                               className={styles.projectMenuIcon}><MenuIcon/></Flex>
                     </MenuButton></Tooltip> : <MenuButton
-                    onClick={() => {
-                        setAutomationMenu(false);
-                        setDropDownOpen(!isDropdownOpen)
-                        focusSearch();
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        openMenu()
                     }}
                     cursor={'pointer'}
                     className={`${styles.addToProject} ${styles.projectAdded}`}
