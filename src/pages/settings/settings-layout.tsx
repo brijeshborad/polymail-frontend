@@ -116,7 +116,7 @@ export default function SettingsLayout({children}: any) {
                     <GridItem display={'flex'} className={styles.settingSideBar} flexDirection={'column'}>
                         <div className={styles.settingSideBarHeader}>
                             <Button className={styles.backButton} borderRadius={8} height={'auto'}
-                                    padding={'0'} marginBottom={'8px'} backgroundColor={'#FFFFFF'}
+                                    marginBottom={'8px'} backgroundColor={'#FFFFFF'} ml={'-1rem'}
                                     color={'#6B7280'} borderColor={'#6B7280'} w={'fit-content'}
                                     colorScheme='blue' variant='outline' fontSize={'14px'}
                                     leftIcon={<ArrowBackIcon/>} onClick={() => router.push('/inbox')}>

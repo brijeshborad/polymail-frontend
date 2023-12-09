@@ -359,7 +359,7 @@ class ThreadsService extends BaseService {
         }
     }
 
-    addThreadToProject(item: Project, ref: any = null, allowComposeDraft: boolean = false) {
+    addThreadToProject(item: Project, ref: any = null, allowComposeDraft: boolean = false, fireEvent: boolean = false) {
         let {multiSelection, selectedThread: currentSelectedThread, threads, tabValue} = this.getThreadState();
         let {composeDraft} = draftService.getDraftState();
         let selectedThread: any = currentSelectedThread;
@@ -445,6 +445,9 @@ class ThreadsService extends BaseService {
             }
             projectService.updateThreadsCountInProject(item, reqBody.threadIds.length, 'add');
             this.updateThreadsCacheForProjects(reqBody.threadIds, item, 'add');
+            if (fireEvent) {
+                globalEventService.fireEvent({data: item, type: 'project.automation'});
+            }
             this.dispatchAction(
                 addItemToGroup,
                 {
@@ -543,16 +546,16 @@ class ThreadsService extends BaseService {
                             type: 'success'
                         },
                         afterUndoAction: () => {
+                            let projects = selectedThread?.projects || [];
+                            projects = [...projects, item];
+                            projects = projects.filter((obj: Project, index: number) => {
+                                return index === projects.findIndex((o: Project) => obj.id === o.id);
+                            })
+                            let addProject = {
+                                ...selectedThread,
+                                projects: projects
+                            }
                             if (isComposing) {
-                                let projects = selectedThread?.projects || [];
-                                projects = [...projects, item];
-                                projects = projects.filter((obj: Project, index: number) => {
-                                    return index === projects.findIndex((o: Project) => obj.id === o.id);
-                                })
-                                let addProject = {
-                                    ...selectedThread,
-                                    projects: projects
-                                }
                                 setTimeout(() => {
                                     globalEventService.fireEvent({
                                         data: {body: 'add'},
@@ -563,7 +566,7 @@ class ThreadsService extends BaseService {
                             }
                             projectService.updateThreadsCountInProject(item, 1, 'add');
                             this.updateThreadsCacheForProjects([threadId], item, 'add');
-                            this.setThreadState({selectedThread: selectedThread, threads: threads});
+                            this.setThreadState({selectedThread: addProject, threads: threads});
                             globalEventService.fireEvent({data: item, type: 'addToProject.add'});
                         }
                     },
@@ -589,6 +592,7 @@ class ThreadsService extends BaseService {
                             ...newThreads[index1],
                             projects: data
                         }
+                        this.setSelectedThread(newThreads[index1]);
                         this.setThreadState({threads: newThreads});
                     }
                 }
@@ -612,6 +616,7 @@ class ThreadsService extends BaseService {
                         ...newThreads[index1],
                         projects: data
                     }
+                    this.setSelectedThread(newThreads[index1]);
                     this.setThreadState({threads: newThreads});
                 }
             }
@@ -1070,6 +1075,29 @@ class ThreadsService extends BaseService {
             }
         }
         this.setThreads(finalThreads);
+    }
+
+    removeThread(thread: Thread) {
+        let {threads, selectedThread} = this.getThreadState();
+        let finalThreads = [...(threads || [])];
+        let findThread = finalThreads.findIndex((t: Thread) => t.id === thread.id);
+        if (findThread !== -1) {
+            finalThreads.splice(findThread, 1);
+        }
+        if (selectedThread && selectedThread.id === thread.id) {
+            let finalIndex = (findThread - 1 < finalThreads.length) ? (findThread === 0) ? findThread : findThread - 1 : (findThread <= 0 ? findThread + 1 : findThread - 1)
+            this.setSelectedThread(finalThreads[finalIndex]);
+        }
+        this.setThreads(finalThreads);
+        let cacheThreads = {...cacheService.getThreadCache()};
+        Object.keys(cacheThreads).forEach((key: any) => {
+            cacheThreads[key] = [...cacheThreads[key]];
+            let findThreadIndex = cacheThreads[key].findIndex((item: Thread) => item.id === thread.id);
+            if (findThreadIndex !== -1) {
+                cacheThreads[key].splice(findThreadIndex, 1);
+            }
+        })
+        cacheService.setThreadCache(cacheThreads);
     }
 
     updateThreadToProperPlaceInCache(thread: Thread) {

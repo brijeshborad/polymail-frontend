@@ -104,7 +104,7 @@ function CreateNewProjectModal() {
                     setProjectName('');
                     setProjectEmoji('');
                     if (shouldAddThread) {
-                        threadService.addThreadToProject(project, null, false);
+                        threadService.addThreadToProject(project, null, false, true);
                     }
                     if (selectedAccount && selectedAccount.email && invitedMembers.length > 0) {
                         let reqBody = {

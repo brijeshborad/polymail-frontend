@@ -1108,14 +1108,14 @@ div:has(> .mailSendToaster) {
     opacity: 1;
     visibility: visible;
     overflow: unset;
-    transition: all 200ms ease;
-    animation: reply-box-animation 200ms ease;
+    transition: all 250ms ease;
+    animation: reply-box-animation 250ms ease;
 }
 
 .reply-box-focus .editor-toolbar.editor-toolbar-hide .tiptap-container {
     height: 0;
-    animation: reply-box-animation-hide 100ms ease;
-    transition: all 100ms ease;
+    animation: reply-box-animation-hide 150ms ease;
+    transition: all 150ms ease;
 }
 
 @keyframes reply-box-animation {
@@ -1176,7 +1176,7 @@ div:has(> .mailSendToaster) {
 .editor-button.editor-button-show {
     position: inherit;
     opacity: 1;
-    animation: toolbar-animate 300ms ease;
+    animation: toolbar-animate 350ms ease;
 }
 
 .editor-button.editor-button-hide {
@@ -1186,16 +1186,16 @@ div:has(> .mailSendToaster) {
 
 .editor-toolbar-show .tiptap-toolbar {
     opacity: 1;
-    animation: toolbar-animate 50ms ease;
-    transition: all 50ms ease;
+    animation: toolbar-animate 100ms ease;
+    transition: all 100ms ease;
 }
 
 .reply-box-focus .editor-toolbar-hide .tiptap-toolbar {
     opacity: 0;
-    animation: toolbar-animate-hide 170ms ease;
+    animation: toolbar-animate-hide 200ms ease;
     display: flex;
     height: 38px;
-    transition: all 170ms ease;
+    transition: all 200ms ease;
 }
 
 @keyframes toolbar-animate {
@@ -1247,7 +1247,7 @@ div:has(> .mailSendToaster) {
     height: 0;
     opacity: 0;
     visibility: hidden;
-    animation: editor-input-animation 300ms ease;
+    animation: editor-input-animation 350ms ease;
 }
 
 .reply-box-focus .editor-fake-input.editor-fake-input-show input,
@@ -1255,7 +1255,7 @@ div:has(> .mailSendToaster) {
     height: 20px;
     opacity: 1;
     visibility: visible;
-    animation: editor-input-animation-hide 100ms ease;
+    animation: editor-input-animation-hide 150ms ease;
 }
 
 .link-modal-ui .add-button:hover {
