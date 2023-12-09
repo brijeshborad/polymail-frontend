@@ -265,7 +265,7 @@ export function AddToProjectButton({
                         emails to this project?</Heading>
                     <MenuItem className={styles.newEmailButton}
                               onClick={() => addAutomationRulForProject('domain', `@${selectedThread?.from?.email.split('@')[1]}`)}>
-                        If sender's email domain is <Link>{`@${selectedThread?.from?.email.split('@')[1]}`}</Link>
+                        If sender&apos;s email domain is <Link>{`@${selectedThread?.from?.email.split('@')[1]}`}</Link>
                     </MenuItem>
                     <MenuItem className={styles.newEmailButton}
                               onClick={() => addAutomationRulForProject('email', selectedThread?.from?.email || '')}>
