@@ -301,6 +301,9 @@ export function HeaderSearch() {
                                 flex={'1'}
                                 minWidth={'70px'}
                                 type="text"
+                                autoComplete={'off'}
+                                autoCorrect={'off'}
+                                spellCheck={false}
                                 placeholder={getSearchPlaceHolder()}
                                 onChange={event => {
                                     setSearchString(event.target.value);

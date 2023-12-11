@@ -1,7 +1,7 @@
 import {
     Button,
     Flex, FormControl, FormLabel,
-    Heading, Input, Menu, MenuButton, MenuItem, MenuList,
+    Heading, Input, InputGroup, InputLeftAddon, Menu, MenuButton, MenuItem, MenuList,
     Modal,
     ModalBody, ModalCloseButton,
     ModalContent, ModalFooter,
@@ -97,13 +97,25 @@ export function UpsertProjectRule({
 
                         <FormControl w={'100%'}>
                             <FormLabel color={'#374151'} fontSize={'13px'} lineHeight={'1'} letterSpacing={'-0.13px'}
-                                       mb={2}>Email Address</FormLabel>
-                            <Input border={'1px solid #E5E7EB'} borderRadius={8} color={'#0A101D'} fontSize={'14px'}
-                                   h={'36px'}
-                                   placeholder={`Enter ${projectRuleValues.filterType === 'domain' ? 'domain' : 'email address'}`}
-                                   value={projectRuleValues.value || ''} onChange={(e) => setProjectRuleValues(prevState => ({
-                                ...prevState, value: e.target.value
-                            }))}/>
+                                       mb={2}>{projectRuleValues.filterType === 'domain' ? 'Domain' : 'Email Address'}</FormLabel>
+                            {projectRuleValues.filterType === 'domain' ?
+                                <InputGroup>
+                                    <InputLeftAddon h={'36px'}>@</InputLeftAddon>
+                                    <Input border={'1px solid #E5E7EB'} borderRadius={8} color={'#0A101D'} fontSize={'14px'}
+                                           h={'36px'}
+                                           placeholder={`Enter domain`}
+                                           value={projectRuleValues.value || ''}
+                                           onChange={(e) => setProjectRuleValues(prevState => ({
+                                               ...prevState, value: e.target.value
+                                           }))}/>
+                                </InputGroup>:
+                                <Input border={'1px solid #E5E7EB'} borderRadius={8} color={'#0A101D'} fontSize={'14px'}
+                                       h={'36px'}
+                                       placeholder={`Enter email address`}
+                                       value={projectRuleValues.value || ''}
+                                       onChange={(e) => setProjectRuleValues(prevState => ({
+                                           ...prevState, value: e.target.value
+                                       }))}/>}
                         </FormControl>
                     </Flex>
                 </Flex>
