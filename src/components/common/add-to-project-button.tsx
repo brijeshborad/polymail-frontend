@@ -143,12 +143,14 @@ export function AddToProjectButton({
             globalEventService.blankEvent();
         }
         if (typeof incomingEvent === 'object' && incomingEvent.type === 'project.automation') {
-            setSelectedAutomationProject(incomingEvent.data);
-            setAutomationMenu(true);
-            setDropDownOpen(true);
+            if (allShowingAutomationMenu) {
+                setSelectedAutomationProject(incomingEvent.data);
+                setAutomationMenu(true);
+                setDropDownOpen(true);
+            }
             globalEventService.blankEvent();
         }
-    }, [filteredProjects, incomingEvent, setDropDownOpen, threadProject]);
+    }, [filteredProjects, incomingEvent, setDropDownOpen, threadProject, allShowingAutomationMenu]);
 
     const removeProjectFromThread = (item: Project) => {
         let finalThread = isComposing ? composeDraft : selectedThread;
