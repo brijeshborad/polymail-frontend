@@ -33,11 +33,13 @@ export function HeaderSearch() {
     const {isThreadSearched} = useSelector((state: StateType) => state.threads);
     const {userDetails} = useSelector((state: StateType) => state.users);
     const {project, projects} = useSelector((state: StateType) => state.projects);
+    const {selectedAccount} = useSelector((state: StateType) => state.accounts);
+    const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
+
     const [showCloseIcon, setShowCloseIcon] = useState(false);
     const [searchPopup, showSearchPopup] = useState(false);
     const [searchString, setSearchString] = useState<string>('');
     const searchInputRef = useRef<HTMLInputElement | null>(null);
-    const {selectedAccount} = useSelector((state: StateType) => state.accounts);
     const [badges, setBadges] = useState<{ type: string, value: any }[]>([]);
     const [isProjectRoute, setIsProjectRoute] = useState<boolean>(false);
     const [filteredProjectsAndPeoples, setFilteredProjectsAndPeoples] = useState<any>([]);
@@ -67,6 +69,15 @@ export function HeaderSearch() {
             setBadges([]);
         }
     }, [isThreadSearched]);
+
+    useEffect(() => {
+        if (incomingEvent === 'iframe.clicked') {
+            showSearchPopup(false);
+            if (!searchString && badges.length <= 0) {
+                setShowCloseIcon(false);
+            }
+        }
+    }, [incomingEvent]);
 
     useEffect(() => {
         if (router.pathname.includes('/projects')) {
