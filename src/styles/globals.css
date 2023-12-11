@@ -39,7 +39,7 @@ body {
     background: #fcfcfd !important;
 }
 
-body.preload *{
+body.preload * {
     animation-duration: 0s !important;
     -webkit-animation-duration: 0s !important;
 }
@@ -1337,7 +1337,7 @@ div:has(> .mailSendToaster) {
 }
 
 .EmojiPickerReact .epr-body .epr-emoji-list .epr-emoji-category-content button.epr-emoji:hover,
-.EmojiPickerReact .epr-body .epr-emoji-list .epr-emoji-category-content button.epr-emoji:hover >*{
+.EmojiPickerReact .epr-body .epr-emoji-list .epr-emoji-category-content button.epr-emoji:hover > * {
     background-color: transparent;
 }
 
@@ -1367,7 +1367,7 @@ div:has(> .mailSendToaster) {
     margin-right: auto;
 }
 
-.custom-radio-button input + .chakra-radio__control:after{
+.custom-radio-button input + .chakra-radio__control:after {
     position: absolute;
     content: '';
     width: 100%;
@@ -1378,20 +1378,34 @@ div:has(> .mailSendToaster) {
     border-radius: 8px;
 }
 
-.custom-radio-button input:checked + .chakra-radio__control:after{
+.custom-radio-button input:checked + .chakra-radio__control:after {
     border: 1px solid #374151;
 }
 
-.custom-radio-button input:checked + .chakra-radio__control:before{
+.custom-radio-button input:checked + .chakra-radio__control:before {
     background: url("../../public/image/icon/check.svg");
     width: 80%;
     height: 80%;
     border-radius: 0;
 }
 
-.custom-radio-button input:checked + .chakra-radio__control{
+.custom-radio-button input:checked + .chakra-radio__control {
     border-color: #0A101D;
     background: #0A101D;
+}
+
+.header-menu-button {
+    display: none !important;
+}
+
+.header-menu-button img {
+    border-radius: 50px;
+    margin-right: 3px;
+}
+
+.header-menu-button svg {
+    stroke: red;
+    stroke-width: 1px;
 }
 
 @keyframes editor-input-animation {
@@ -1468,28 +1482,12 @@ div:has(> .mailSendToaster) {
         min-width: 175px;
         max-width: 175px;
     }
-}
 
-@media (min-width: 481px) {
     .header-menu-button {
-        display: none !important;
+        display: flex !important;
     }
-}
-
-@media (max-width: 480px) {
-    .dot {
-        display: none;
-    }
-
     .drop-down-list.header-dropdown-list button {
         gap: 5px;
-        color: rgba(8, 22, 47, 0.4);
-        transition: all 0.2s;
-    }
-
-    .drop-down-list.header-dropdown-list button svg {
-        stroke: rgba(8, 22, 47, 0.4);
-        transition: all 0.2s;
     }
 
     .drop-down-list.header-dropdown-list button:hover {
@@ -1507,6 +1505,12 @@ div:has(> .mailSendToaster) {
 
     .drop-down-list.header-dropdown-list button:hover svg {
         stroke: #000000;
+    }
+}
+
+@media (max-width: 480px) {
+    .dot {
+        display: none;
     }
 
     .header-menu-button span {

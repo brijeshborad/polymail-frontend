@@ -785,9 +785,9 @@ div:has(> .mailToaster) {
         border: 0;
     }
 
-    .headerSearch {
-        padding-right: 0;
-    }
+    /*.headerSearch {*/
+    /*    padding-right: 0;*/
+    /*}*/
 
     .profileButton .profileImage {
         width: 30px;
@@ -795,8 +795,12 @@ div:has(> .mailToaster) {
         min-width: 30px;
     }
 
-    .headerSearch .headerSearchInput input,
-    .headerSearch .headerSearchInput > div {
+    /*.headerSearch .headerSearchInput input,*/
+    /*.headerSearch .headerSearchInput > div {*/
+    /*    display: none;*/
+    /*}*/
+
+    .headerSearch .headerSearchInput .inputRight {
         display: none;
     }
 
@@ -806,12 +810,13 @@ div:has(> .mailToaster) {
     }
 
     .headerSearch .headerSearchInput {
-        width: fit-content;
-        padding: 6px;
+        /*width: fit-content;*/
+        /*padding: 6px;*/
         background-color: #FFFFFF;
-        border: 0;
-        margin-left: auto;
-        cursor: pointer;
+        border: 1px solid #E5E7EB;
+        /*border: 0;*/
+        /*margin-left: auto;*/
+        /*cursor: pointer;*/
     }
 
     .headerSearch.headerSearchPopup .headerSearchInput {
@@ -861,12 +866,25 @@ div:has(> .mailToaster) {
     .notificationIcon {
         margin-right: 5px;
     }
-}
-
-@media (max-width: 480px) {
     .header .headerTabs {
         display: none;
     }
+
+    .header .logo {
+        display: none;
+    }
+
+    .profile {
+        display: none;
+    }
+
+    .header {
+        padding: 0 10px !important;
+    }
+}
+
+@media (max-width: 480px) {
+
 }
 
 
