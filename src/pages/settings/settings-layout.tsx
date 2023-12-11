@@ -116,13 +116,13 @@ export default function SettingsLayout({children}: any) {
                     <GridItem display={'flex'} className={styles.settingSideBar} flexDirection={'column'}>
                         <div className={styles.settingSideBarHeader}>
                             <Button className={styles.backButton} borderRadius={8} height={'auto'}
-                                    marginBottom={'8px'} backgroundColor={'#FFFFFF'} ml={'-1rem'}
+                                    marginBottom={'8px'} backgroundColor={'#FFFFFF'} padding={'4px 8px'}
                                     color={'#6B7280'} borderColor={'#6B7280'} w={'fit-content'}
-                                    colorScheme='blue' variant='outline' fontSize={'14px'}
+                                    colorScheme='blue' variant='outline' fontSize={'14px'} ml={'-8px'}
                                     leftIcon={<ArrowBackIcon/>} onClick={() => router.push('/inbox')}>
                                 Back To Inbox
                             </Button>
-                            <Heading as='h4' mb={8} className={styles.settingTitle}>
+                            <Heading as='h4' mb={'20px'} className={styles.settingTitle}>
                                 <span className={styles.settingTitleText}>Settings</span>
                                 <Menu>
                                     <MenuButton
