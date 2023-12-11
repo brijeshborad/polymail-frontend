@@ -7,7 +7,7 @@ import {
     MenuItem,
     MenuList
 } from '@chakra-ui/react';
-import {CheckIcon, ChevronDownIcon, HamburgerIcon} from '@chakra-ui/icons';
+import {CheckIcon, ChevronDownIcon} from '@chakra-ui/icons';
 import {FolderIcon, HamburgerMenuIcon, MailIcon} from '@/icons';
 import styles from '@/styles/Home.module.css';
 import {useSelector} from 'react-redux';
@@ -203,9 +203,9 @@ export function Header() {
 
                 <Menu>
                     <MenuButton className={'header-menu-button'} backgroundColor={"#FFFFFF"}
-                                border={'1px solid rgba(0,0,0, 0.1)'} minWidth={'1px'} padding={'2px 5px 2px 2px'}
-                                height={'fit-content'} as={Button} borderRadius={'50px'}>
-                        <Flex overflow={'hidden'} alignItems={'center'}>
+                                border={'1px solid rgba(0,0,0, 0.1)'} minWidth={'1px'} padding={'2px 2px'}
+                                height={'fit-content'} as={Button} borderRadius={'50px'} width={'60px'}>
+                        <Flex overflow={'hidden'} alignItems={'center'} justifyContent={'space-between'}>
                             {profilePicture && profilePicture.url &&
                             <Image src={profilePicture && profilePicture.url} width="40" height="40" alt=""/>}
                             <HamburgerMenuIcon stroke={'#6B7280'}/>

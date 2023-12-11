@@ -108,10 +108,10 @@
     background-color: #FFFFFF;
 }
 
-.header img {
-    min-width: 20px;
-    max-width: 20px;
-}
+/*.header img {*/
+/*    min-width: 20px;*/
+/*    max-width: 20px;*/
+/*}*/
 
 .header .logo img {
     min-width: 26px;
@@ -254,7 +254,7 @@
 }
 
 .headerSearch .headerSearchInput.headerNoBadge {
-    padding: 9px 35px 9px 8px;
+    padding: 6px 35px 6px 8px;
 }
 
 .headerSearch .headerSearchInput .searchBarHeaderInput::-webkit-scrollbar {
