@@ -22,8 +22,8 @@ import Tooltip from "@/components/common/Tooltip";
 
 export function AddToProjectButton({
                                        allowDefaultSelect = true,
-                                       selectFrom = ''
-                                   }: { allowDefaultSelect: boolean, selectFrom?: string }) {
+                                       selectFrom = '', allShowingAutomationMenu = false
+                                   }: { allowDefaultSelect: boolean, selectFrom?: string, allShowingAutomationMenu?: boolean }) {
     const [isDropdownOpen, setDropDownOpen] = useState(false)
     const {selectedThread, threads, multiSelection} = useSelector((state: StateType) => state.threads);
     let {projects, project} = useSelector((state: StateType) => state.projects);
