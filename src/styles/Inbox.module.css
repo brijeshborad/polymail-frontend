@@ -1427,6 +1427,10 @@
     display: flex;
 }
 
+.mailBox .oldMail .mailBoxMailHeader .copyIcon.singleRecipients {
+    margin-left: -5px;
+}
+
 .mailBox .oldMail .mailBoxMailHeader .copyIcon svg {
     height: 12px;
     width: 12px;
