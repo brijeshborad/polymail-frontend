@@ -208,8 +208,8 @@ function EditProject() {
                 dispatch(deleteMembershipFromProject({
                     body: {id: selectedMember.id}, toaster: {
                         success: {
-                            desc: 'Membership is removed form project successfully',
-                            title: 'Remove membership form project',
+                            desc: 'Membership is removed from project successfully',
+                            title: 'Remove membership from project',
                             type: 'success'
                         }
                     }
@@ -220,8 +220,8 @@ function EditProject() {
                     dispatch(deleteMemberFromProject({
                         body: {id: passThroughProject.id, accountId: selectedMember.id}, toaster: {
                             success: {
-                                desc: 'Member is removed form project successfully',
-                                title: 'Remove member form project',
+                                desc: 'Member is removed from project successfully',
+                                title: 'Remove member from project',
                                 type: 'success'
                             }
                         }
