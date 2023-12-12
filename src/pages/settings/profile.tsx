@@ -8,7 +8,8 @@ import {
     removeProfilePicture,
     updateUsersDetails,
     uploadProfilePicture,
-    removeProfileData
+    removeProfileData,
+    logoutAllUser
 } from "@/redux/users/action-reducer";
 import styles from "@/styles/setting.module.css";
 import {StateType} from "@/types";
@@ -225,6 +226,20 @@ function Profile() {
         onClose();
     }
 
+    const logOutAll = () => {
+        dispatch(logoutAllUser({
+            toaster: {
+                success: {
+                    desc: "You are logged out from all devices!",
+                    title: "Success",
+                    type: 'success'
+                }
+            },
+            afterSuccessAction: () => {
+                Router.push('/auth/logout');
+            }
+        }));
+    }
 
     return (
         <>
@@ -286,9 +301,13 @@ function Profile() {
                             <Flex align={'center'} className={styles.changeProfileButton} gap={5}>
                                 {/*<Button height={'auto'} padding={'0'} onClick={onOpen}*/}
                                 {/*        variant='ghost'> Change Password </Button>*/}
+                                <Flex gap={2} className={styles.settingButton}>
+                                    <Button className={styles.settingSave}  onClick={logOutAll}>Logout All</Button>
+                                </Flex>
                                 <Button height={'auto'} padding={'0'} className={styles.deleteProfile} onClick={onOpen}
                                         variant='ghost'> Delete
                                     Profile </Button>
+
                             </Flex>
                             {isDataUpdate &&
                             <>
