@@ -394,28 +394,30 @@ export function MessageItems() {
                                 </Flex>
                                 {message && message.to && message.to.length > 0 &&
                                 <Flex fontSize='12px' letterSpacing={'-0.13px'} w={'fit-content'} color={'#6B7280'}
-                                      lineHeight={1}
-                                      fontWeight={400} userSelect={'none'} className={styles.recipient}>to:&nbsp;
-                                    {message.to[0].email}&nbsp;
+                                      lineHeight={1} gap={1}
+                                      fontWeight={400} userSelect={'none'} className={styles.recipient}>
+                                    <Flex>
+                                        to:&nbsp;{message.to[0].email}&nbsp;
 
-                                    <div className={styles.otherMail} onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                    }}>
-                                        <Tooltip
-                                            closeOnClick={'no'}
-                                            placement="bottom"
-                                            label={
-                                                (message.to.length > 1 ?
-                                                    (message.to || []).slice(1, message.to.length).map((item: any, toIndex: number) => (
-                                                        <p key={toIndex}>{item.email}</p>
-                                                    )) : '') as any
-                                            }>
-                                            <Text userSelect={'none'}
-                                                  as='u'>{message.to.length - 1 > 0 && `and ${message.to.length - 1} others`} </Text>
-                                        </Tooltip>
-                                    </div>
-                                    <div className={styles.copyIcon} onClick={(e) => {
+                                        <div className={styles.otherMail} onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                        }}>
+                                            <Tooltip
+                                                closeOnClick={'no'}
+                                                placement="bottom"
+                                                label={
+                                                    (message.to.length > 1 ?
+                                                        (message.to || []).slice(1, message.to.length).map((item: any, toIndex: number) => (
+                                                            <p key={toIndex}>{item.email}</p>
+                                                        )) : '') as any
+                                                }>
+                                                <Text userSelect={'none'}
+                                                      as='u'>{message.to.length - 1 > 0 && `and ${message.to.length - 1} others`} </Text>
+                                            </Tooltip>
+                                        </div>
+                                    </Flex>
+                                    <div className={`${styles.copyIcon} ${message.to.length === 1 ? styles.singleRecipients: ''}`} onClick={(e) => {
                                         e.preventDefault();
                                         e.stopPropagation();
                                         copyData('recipient', message)

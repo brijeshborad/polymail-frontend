@@ -1,7 +1,7 @@
 import {
     Button,
     Flex, FormControl, FormLabel,
-    Heading, Input, Menu, MenuButton, MenuItem, MenuList,
+    Heading, Input, InputGroup, InputLeftAddon, Menu, MenuButton, MenuItem, MenuList,
     Modal,
     ModalBody, ModalCloseButton,
     ModalContent, ModalFooter,
@@ -16,6 +16,8 @@ import React, {useEffect, useState} from "react";
 import {createProjectRules, updateProjectRules} from "@/redux/projects/action-reducer";
 import {getAllProjectRules} from "@/redux/common-apis/action-reducer";
 import {TriangleDownIcon} from "@chakra-ui/icons";
+import {isDomain, isEmail} from "@/utils/common.functions";
+import {Toaster} from "@/components/common";
 
 export function UpsertProjectRule({
                                       isOpen,
@@ -41,7 +43,7 @@ export function UpsertProjectRule({
     }, [type, editValue])
 
     function submit() {
-        let body = {
+        let body: any = {
             projectId: projectRuleValues.projectId,
             accountId: selectedAccount?.id,
             filterType: projectRuleValues.filterType,
@@ -52,6 +54,28 @@ export function UpsertProjectRule({
             title: `Rule for ${projectRuleValues.project?.name} ${projectRuleValues.project?.emoji} has been ${type === 'create' ? 'created' : 'updated'}`,
             type: 'success'
         };
+        if (body.filterType === 'domain') {
+            if (!isDomain(body.value.replace('@', ''))) {
+                Toaster({
+                    desc: 'Please enter a valid domain',
+                    title: 'Invalid Domain',
+                    type: 'error'
+                })
+                return;
+            }
+        } else {
+            if (!isEmail(body.value)) {
+                Toaster({
+                    desc: 'Please enter a valid email',
+                    title: 'Invalid Email',
+                    type: 'error'
+                })
+                return;
+            }
+        }
+        if (!body.value.includes('@')) {
+            body.value = '@' + body.value;
+        }
         let finalBody: any = {
             body, toaster: {success: toaster},
             afterSuccessAction: () => {
@@ -97,13 +121,26 @@ export function UpsertProjectRule({
 
                         <FormControl w={'100%'}>
                             <FormLabel color={'#374151'} fontSize={'13px'} lineHeight={'1'} letterSpacing={'-0.13px'}
-                                       mb={2}>Email Address</FormLabel>
-                            <Input border={'1px solid #E5E7EB'} borderRadius={8} color={'#0A101D'} fontSize={'14px'}
-                                   h={'36px'}
-                                   placeholder={`Enter ${projectRuleValues.filterType === 'domain' ? 'domain' : 'email address'}`}
-                                   value={projectRuleValues.value || ''} onChange={(e) => setProjectRuleValues(prevState => ({
-                                ...prevState, value: e.target.value
-                            }))}/>
+                                       mb={2}>{projectRuleValues.filterType === 'domain' ? 'Domain' : 'Email Address'}</FormLabel>
+                            {projectRuleValues.filterType === 'domain' ?
+                                <InputGroup>
+                                    <InputLeftAddon h={'36px'}>@</InputLeftAddon>
+                                    <Input border={'1px solid #E5E7EB'} borderRadius={8} color={'#0A101D'}
+                                           fontSize={'14px'}
+                                           h={'36px'}
+                                           placeholder={`Enter domain`}
+                                           value={projectRuleValues.value || ''}
+                                           onChange={(e) => setProjectRuleValues(prevState => ({
+                                               ...prevState, value: e.target.value
+                                           }))}/>
+                                </InputGroup> :
+                                <Input border={'1px solid #E5E7EB'} borderRadius={8} color={'#0A101D'} fontSize={'14px'}
+                                       h={'36px'}
+                                       placeholder={`Enter email address`}
+                                       value={projectRuleValues.value || ''}
+                                       onChange={(e) => setProjectRuleValues(prevState => ({
+                                           ...prevState, value: e.target.value
+                                       }))}/>}
                         </FormControl>
                     </Flex>
                 </Flex>

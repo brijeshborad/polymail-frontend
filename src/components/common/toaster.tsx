@@ -55,7 +55,7 @@ export function Toaster(props: ToasterProps) {
                                         height={"fit-content"} padding={'5px 12px 6px'}>Send Now</Button>
                             </>
                         )}
-                        <div style={{marginLeft: 'auto'}}>
+                        <div style={{marginLeft: 'auto', display: 'flex'}}>
                             {props.type === 'undo_changes' && (
                                 <>
                                     <Button className={styles.toasterUndoButton} backgroundColor={'#1F2937'}

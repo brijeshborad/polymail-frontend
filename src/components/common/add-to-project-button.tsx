@@ -22,8 +22,8 @@ import Tooltip from "@/components/common/Tooltip";
 
 export function AddToProjectButton({
                                        allowDefaultSelect = true,
-                                       selectFrom = ''
-                                   }: { allowDefaultSelect: boolean, selectFrom?: string }) {
+                                       selectFrom = '', allShowingAutomationMenu = false
+                                   }: { allowDefaultSelect: boolean, selectFrom?: string, allShowingAutomationMenu?: boolean }) {
     const [isDropdownOpen, setDropDownOpen] = useState(false)
     const {selectedThread, threads, multiSelection} = useSelector((state: StateType) => state.threads);
     let {projects, project} = useSelector((state: StateType) => state.projects);
@@ -143,12 +143,14 @@ export function AddToProjectButton({
             globalEventService.blankEvent();
         }
         if (typeof incomingEvent === 'object' && incomingEvent.type === 'project.automation') {
-            setSelectedAutomationProject(incomingEvent.data);
-            setAutomationMenu(true);
-            setDropDownOpen(true);
+            if (allShowingAutomationMenu) {
+                setSelectedAutomationProject(incomingEvent.data);
+                setAutomationMenu(true);
+                setDropDownOpen(true);
+            }
             globalEventService.blankEvent();
         }
-    }, [filteredProjects, incomingEvent, setDropDownOpen, threadProject]);
+    }, [filteredProjects, incomingEvent, setDropDownOpen, threadProject, allShowingAutomationMenu]);
 
     const removeProjectFromThread = (item: Project) => {
         let finalThread = isComposing ? composeDraft : selectedThread;

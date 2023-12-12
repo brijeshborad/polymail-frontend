@@ -244,7 +244,7 @@ export function MessagesHeader({isProjectView = false}: { isProjectView?: boolea
                         <Flex alignItems={'center'} justifyContent={'end'} className={'member-images'}>
                             <UsersOnline type={'threads'} itemId={selectedThread.id!}/>
                         </Flex>
-                        {!isProjectView && <AddToProjectButton allowDefaultSelect={true} selectFrom={'thread'}/>}
+                        {!isProjectView && <AddToProjectButton allowDefaultSelect={true} selectFrom={'thread'} allShowingAutomationMenu={true}/>}
                     </Flex>
                     <Flex align={'center'} className={'header-right-icon'}>
                         <div>

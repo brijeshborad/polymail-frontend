@@ -175,6 +175,9 @@ export function MessageReplyBox(props: MessageBoxType) {
             } else {
                 setDraftIndex(messages.length);
             }
+            setTimeout(() => {
+                document.body.classList.remove('preload');
+            }, 1000);
         }
     }, [totalMessages])
 
@@ -550,23 +553,18 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
             setIsReplyDropdownOpen(false)
             setShowReplyBox(false);
             setShowEditorToolbar(false)
-            // globalEventService.fireEvent({data: '', type: 'richtexteditor.discard'});
-            handleEditorScroll();
+            setDeltaY(100)
+            setIsOnTop(false)
         }
         if (draft && draft.id) {
+            document.body.classList.add('preload');
             messageService.setDraftCache(draft.id);
             let discardedBy = isRescue ? '' : selectedAccount?.name;
             draftService.instantDraftUpdate({...draft, draftInfo: {...draft?.draftInfo, discardedBy: discardedBy}});
             setDraftIndex(null);
             draftService.setReplyDraft(null);
             setAttachments([]);
-            // draftService.discardDraft(draft.id!);
-            dispatch(discardDraft({
-                body: {id: draft.id, discardedBy: discardedBy},
-                // afterSuccessAction: () => {
-                //     setIsDraftUpdated(false);
-                // }
-            }));
+            dispatch(discardDraft({body: {id: draft.id, discardedBy: discardedBy}}));
         }
     }
 

@@ -543,17 +543,19 @@ export function ProjectHeader() {
                                             <Flex align={'center'} pr={3} gap={3} key={index}
                                                   className={styles.projectMember}>
                                                 <MenuItem>
-                                                    <div style={{
-                                                        background: '#F3F4F6',
-                                                        border: '1px solid #F3F4F6',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center'
-                                                    }}
-                                                         className={styles.imgWrapper}>
-                                                        <MemberInviteIcon/>
-                                                        {/*<Image src="/image/user.png" width="36" height="36" alt=""/>*/}
-                                                    </div>
+                                                    <Tooltip label={'Invitation Pending'} placement={'bottom'}>
+                                                        <div style={{
+                                                            background: '#F3F4F6',
+                                                            border: '1px solid #F3F4F6',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center'
+                                                        }}
+                                                             className={styles.imgWrapper}>
+                                                            <MemberInviteIcon/>
+                                                            {/*<Image src="/image/user.png" width="36" height="36" alt=""/>*/}
+                                                        </div>
+                                                    </Tooltip>
                                                     {invite?.invite?.toEmail}
                                                 </MenuItem>
                                                 <Flex align={'center'} gap={1}>

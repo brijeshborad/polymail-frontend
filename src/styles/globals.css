@@ -39,6 +39,11 @@ body {
     background: #fcfcfd !important;
 }
 
+body.preload *{
+    animation-duration: 0s !important;
+    -webkit-animation-duration: 0s !important;
+}
+
 a {
     color: inherit;
     text-decoration: none;
