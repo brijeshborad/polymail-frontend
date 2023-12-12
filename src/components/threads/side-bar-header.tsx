@@ -305,7 +305,7 @@ export function SideBarHeader() {
 
     function getHeaderForNotSearched() {
         return (
-            <Flex align={'center'} gap={'3'} padding={"0 6px"}>
+            <Flex align={'center'} gap={'3'} padding={"0 6px"} className={styles.TabsListTabPanel}>
                 <TabList
                     justifyContent={'space-between'} flex={1} alignItems={'center'}
                     className={styles.mailTabList} overflowX={"auto"}

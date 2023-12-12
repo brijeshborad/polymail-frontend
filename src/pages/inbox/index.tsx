@@ -4,6 +4,7 @@ import styles from "@/styles/Home.module.css";
 import {Flex, Grid, GridItem,} from "@chakra-ui/react";
 import withAuth from "@/components/auth/withAuth";
 import dynamic from 'next/dynamic'
+import {useWindowSize} from "@/hooks/window-resize.hook";
 
 const InboxHeaderProjectsList = dynamic(
     () => import('@/components/project/inbox-header-projects-list').then((mod) => mod.InboxHeaderProjectsList)
@@ -13,10 +14,11 @@ const Message = dynamic(
 )
 
 function InboxPage() {
+    const [width] = useWindowSize();
     return (
         <div className={'mail-box-main'}>
             <Flex padding={'16px 40px 15px'} backgroundColor={'#FFFFFF'} borderBottom={'1px solid #F3F4F6'} gap={3}
-                  overflow={'auto hidden'} height={'69px'} className={'mail-box-subheader'}>
+                  overflow={'auto hidden'} height={'69px'} className={'mail-box-subheader'} position={'relative'}>
                 <InboxHeaderProjectsList/>
             </Flex>
 

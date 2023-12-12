@@ -95,12 +95,13 @@ export function InboxHeaderProjectsList() {
                             </Flex>
                         </Button>
                     ))}
-                    {(projectData && projectData.length >= maxSize && maxSize > 0) &&
+                    {/*{(projectData && projectData.length >= maxSize && maxSize > 0) &&*/}
+                    {/*}*/}
                     <Button alignItems={'center'} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
                             onClick={() => changePage()} padding={'7px'} minWidth={'216px'}
                             _hover={{backgroundColor: 'var(--alias-bg-subtle)'}}
                             border={'1px solid #F3F4F6'} borderRadius={'8px'} h={'fit-content'}
-                            className={'header-project-name-button'} color={'#0A101D'}
+                            className={'header-project-name-button show-all-project'} color={'#0A101D'}
                             maxWidth={'216px'}>
                         <div className={'folder-icon'}>
                             <FolderIcon/>
@@ -110,7 +111,6 @@ export function InboxHeaderProjectsList() {
                               color={'#374151'} flex={'1'}>Show all
                             projects {projectDataLength.length > maxSize && `(${projectDataLength.length - projectData.length})`}</Text>
                     </Button>
-                    }
                 </>}
             </>
         </>

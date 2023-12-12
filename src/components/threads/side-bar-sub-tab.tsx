@@ -267,7 +267,7 @@ export function SideBarSubTab() {
 
     return (
         <Flex overflowX={'auto'} align={'center'} alignItems={'center'} alignContent={'center'} gap={2}
-              padding={"0 6px"}>
+              padding={"0 6px"} className={styles.mailOtherOptionParents}>
             <div className={styles.mailOtherOption}>
                 {(isMultiItemsSelected || isThreadSearched) ?
                     <Flex align={'center'} gap={2} className={styles.checkBoxLabel}>

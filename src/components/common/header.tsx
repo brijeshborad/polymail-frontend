@@ -203,8 +203,8 @@ export function Header() {
 
                 <Menu>
                     <MenuButton className={'header-menu-button'} backgroundColor={"#FFFFFF"}
-                                border={'1px solid rgba(0,0,0, 0.1)'} minWidth={'1px'} padding={'2px 2px'}
-                                height={'fit-content'} as={Button} borderRadius={'50px'} width={'60px'}>
+                                border={'1px solid rgba(0,0,0, 0.1)'} minWidth={'1px'} padding={'3px 8px 3px 2px'}
+                                height={'fit-content'} as={Button} borderRadius={'50px'} width={'68px'}>
                         <Flex overflow={'hidden'} alignItems={'center'} justifyContent={'space-between'}>
                             {profilePicture && profilePicture.url &&
                             <Image src={profilePicture && profilePicture.url} width="40" height="40" alt=""/>}

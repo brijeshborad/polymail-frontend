@@ -991,6 +991,11 @@
     box-shadow: none;
 }
 
+.threadList {
+    margin-bottom: 5px;
+    padding: 3px 3px 0 3px;
+}
+
 .mailMessageOption button {
     min-width: 10px;
     height: auto;
@@ -1596,21 +1601,24 @@
 
 @media (max-width: 576px) {
     .mailBox .mailBoxHeader {
-        flex-direction: column;
-        padding: 10px;
-        align-items: flex-start;
+        flex-direction: column-reverse;
+        padding: 12px;
+        gap: 12px;
+        box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.08);
+        z-index: 1;
     }
 
     .mailBox .mailBoxHeader > div + div {
         width: 100%;
     }
 
-    .mailBox .mailBoxHeader .mailBoxHeaderAddProjectDiv {
-        margin-right: auto;
+    .mailBox .mailBoxHeader .mailboxHeaderMobileView {
+        justify-content: space-between;
+        width: 100%;
     }
 
     .mailBox .messageListScrollBar {
-        padding: 10px 10px 20px 10px;
+        padding: 0;
     }
 
     .mailBox .oldMail .mailBoxMailHeader {
@@ -1639,11 +1647,80 @@
     }
 
     .mailBox .oldMail .mailBoxHideMail {
-        padding: 8px 11px 16px;
+        padding: 12px;
     }
 
     .mailBox .oldMail .mailBoxTime {
         padding-top: 11px;
+    }
+
+    .threadList {
+        padding: 0;
+        margin-bottom: 6px;
+    }
+
+    .mailDetails {
+        border-radius: 0;
+        border: 0;
+        border-bottom: 1px solid #E5E7EB;
+    }
+
+    div.mailOtherOptionParents {
+        display: none;
+    }
+
+    div.TabsListTabPanel {
+        display: none;
+    }
+
+    div.mailList {
+        margin: 0;
+        max-height: calc(100vh - 119px);
+    }
+
+    .mailListTabs .mailListResult {
+        margin: 0;
+    }
+
+    .mailDetails .senderDetails {
+        color: #374151;
+    }
+
+    .mailMessage .threadSubject {
+        color: #0A101D;
+    }
+
+    .mailBox {
+        background-color: #F9FAFB;
+        border: 0;
+        height: 100vh;
+    }
+
+    .addToProject.projectAdded {
+        background-color: transparent;
+        border-color: #2A6FFF;
+        color: #082561;
+        padding: 7px 12px;
+        min-width: fit-content;
+    }
+
+    .addToProject.projectAdded .RightContent {
+        display: none;
+    }
+
+    .addToProject.projectAdded svg {
+        stroke: #2A6FFF;
+    }
+
+    .mailBoxMailList .oldMail {
+        border-radius: 0;
+        margin-bottom: 0;
+        border: 0;
+        border-bottom: 1px solid #E5E7EB;
+    }
+
+    .mailBoxMailList .oldMail.lastOpenMail {
+        background-color: #ffffff;
     }
 }
 
