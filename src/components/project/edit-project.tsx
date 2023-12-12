@@ -25,7 +25,7 @@ import Image from "next/image";
 import React, {ChangeEvent, useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {commonService, projectService} from "@/services";
-import {addItemToGroup, deleteMemberFromProject, deleteMemberShipFromProject} from "@/redux/memberships/action-reducer";
+import {addItemToGroup, deleteMemberFromProject, deleteMembershipFromProject} from "@/redux/memberships/action-reducer";
 import RemoveRecordModal from "@/components/common/delete-record-modal";
 import {AutoComplete} from "@/components/common/auto-complete";
 import {InviteMember, Project, TeamMember} from "@/models";
@@ -205,7 +205,7 @@ function EditProject() {
         if (selectedMember) {
             if (selectedMember?.invite) {
                 projectService.addOrUpdateProjectMemberOrInvites('delete', 'invite', selectedMember, passThroughProject);
-                dispatch(deleteMemberShipFromProject({
+                dispatch(deleteMembershipFromProject({
                     body: {id: selectedMember.id}, toaster: {
                         success: {
                             desc: 'Membership is removed form project successfully',

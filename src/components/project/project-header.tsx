@@ -24,7 +24,7 @@ import React, {useCallback, useEffect, useRef, useState} from "react";
 import {
     addItemToGroup,
     deleteMemberFromProject,
-    deleteMemberShipFromProject
+    deleteMembershipFromProject
 } from "@/redux/memberships/action-reducer";
 import {
     removeProject,
@@ -143,7 +143,7 @@ export function ProjectHeader() {
         if (selectedMember) {
             if (selectedMember?.invite) {
                 projectService.addOrUpdateProjectMemberOrInvites('delete', 'invite', selectedMember);
-                dispatch(deleteMemberShipFromProject({
+                dispatch(deleteMembershipFromProject({
                     body: {id: selectedMember.id}, toaster: {
                         success: {
                             desc: project?.emoji + " " + project?.name,

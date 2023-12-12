@@ -12,7 +12,7 @@ import {
     deleteMemberFromOrganization,
     deleteMemberFromOrganizationSuccess,
     deleteMemberFromOrganizationError,
-    deleteMemberShipFromProjectError, deleteMemberShipFromProjectSuccess, deleteMemberShipFromProject
+    deleteMembershipFromProjectError, deleteMembershipFromProjectSuccess, deleteMembershipFromProject
 } from "@/redux/memberships/action-reducer";
 import { ReducerActionType } from "@/types";
 import { performSuccessActions } from "@/utils/common-redux.functions";
@@ -41,14 +41,14 @@ function* removeMemberFromProject({payload}: PayloadAction<ReducerActionType>) {
     }
 }
 
-function* removeMemberShipFromProject({payload}: PayloadAction<ReducerActionType>) {
+function* removeMembershipFromProject({payload}: PayloadAction<ReducerActionType>) {
     try {
         const response: AxiosResponse = yield ApiService.callDelete(`memberships/${payload.body.id}`, {});
         performSuccessActions(payload);
-        yield put(deleteMemberShipFromProjectSuccess(response));
+        yield put(deleteMembershipFromProjectSuccess(response));
     } catch (error: any) {
         error = error as AxiosError;
-        yield put(deleteMemberShipFromProjectError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
+        yield put(deleteMembershipFromProjectError(error?.response?.data || {code: '400', description: 'Something went wrong'}));
     }
 }
 
@@ -71,8 +71,8 @@ export function* watchDeleteMemberFromProject() {
     yield takeEvery(deleteMemberFromProject.type, removeMemberFromProject);
 }
 
-export function* watchDeleteMemberShipFromProject() {
-    yield takeEvery(deleteMemberShipFromProject.type, removeMemberShipFromProject);
+export function* watchDeleteMembershipFromProject() {
+    yield takeEvery(deleteMembershipFromProject.type, removeMembershipFromProject);
 }
 
 export function* watchDeleteMemberFromOrganization() {
@@ -83,7 +83,7 @@ export default function* rootSaga() {
     yield all([
         fork(watchAddItemToGroup),
         fork(watchDeleteMemberFromProject),
-        fork(watchDeleteMemberShipFromProject),
+        fork(watchDeleteMembershipFromProject),
         fork(watchDeleteMemberFromOrganization),
     ]);
 }
