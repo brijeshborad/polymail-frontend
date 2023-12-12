@@ -147,7 +147,7 @@ export function ProjectHeader() {
                     body: {id: selectedMember.id}, toaster: {
                         success: {
                             desc: project?.emoji + " " + project?.name,
-                            title: 'Removed ' + selectedMember.name,
+                            title: 'Removed ' + selectedMember.invite.toEmail,
                             type: 'success'
                         }
                     }
