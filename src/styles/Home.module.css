@@ -782,7 +782,6 @@ div:has(> .mailToaster) {
         height: 30px;
         margin-right: 5px;
         margin-left: 0;
-        border: 0;
     }
 
     /*.headerSearch {*/

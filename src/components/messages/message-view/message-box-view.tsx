@@ -26,12 +26,11 @@ import {MessageBoxContent} from "@/components/messages/message-view/message-box-
 
     return (
         <>
-            {/*<Button className={'backToThread'} minW={'1px'} variant='outline' border={'1px solid #E5E7EB'}*/}
-            {/*        fontSize={'13px'} fontWeight={500} letterSpacing={'-0.13px'} borderRadius={'50px'} width={'36px'}*/}
-            {/*        height={'36px'} backgroundColor={'#FFFFFF'} alignItems={'center'} justifyContent={'center'}*/}
-            {/*        leftIcon={<ArrowBackIcon/>} onClick={() => threadService.setSelectedThread(null)}>*/}
-            {/*    /!*Back To Threads*!/*/}
-            {/*</Button>*/}
+            <Button className={'backToThread'}
+                    colorScheme='blue' variant='outline'
+                    leftIcon={<ArrowBackIcon/>} onClick={() => threadService.setSelectedThread(null)}>
+                Back To Threads
+            </Button>
             <Box
                 className={`${styles.mailBox} ${isThreadFocused ? styles.mailBoxFocused : ''}`}
                 overflow={'hidden'} borderRadius={'15px'}

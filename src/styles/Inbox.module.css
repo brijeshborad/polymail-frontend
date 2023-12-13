@@ -1415,10 +1415,6 @@
     background-color: rgba(0, 0, 0, 0.8);
 }
 
-.mailBox .mailBodyContent .mailBody {
-    min-width: 730px;
-}
-
 .mailBox .oldMail .mailBoxMailHeader .mailBoxMailHeaderDetails:hover .copyIcon {
     visibility: visible;
 }

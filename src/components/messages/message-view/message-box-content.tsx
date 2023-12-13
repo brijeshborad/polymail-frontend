@@ -2,14 +2,12 @@ import {MessageBoxLoader} from "@/components/messages/message-view/message-box-l
 import React, {useCallback, useState} from "react";
 import {useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {Button, Flex, Heading, Text} from "@chakra-ui/react";
+import {Flex, Heading, Text} from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
 import {debounce} from "@/utils/common.functions";
 import dynamic from "next/dynamic";
-import {ArchiveIcon,ForwardIcon, MuteIcon, ReplyIcon, TrashIcon} from "@/icons";
+import {MuteIcon} from "@/icons";
 import {useAllLoader} from "@/hooks/all-loader.hook";
-import {MAILBOX_ARCHIVE, MAILBOX_TRASH} from "@/utils/constants";
-import MessageSchedule from "@/components/messages/message-schedule";
 
 const MessagesHeader = dynamic(() => import('@/components/messages/messages-header').then(mod => mod.MessagesHeader));
 const MessageBox = dynamic(() => import('@/components/messages/message-box').then(mod => mod.MessageBox));

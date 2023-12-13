@@ -182,8 +182,8 @@ export function Header() {
     };
 
     return (
-        <Flex className={styles.header} w="100%" align={'center'} flex={'none'} padding={'0 40px'}>
-            <Flex padding={'12px 0'} align={'center'} className={styles.headerLogo}>
+        <Flex className={`${styles.header} page-header`} w="100%" align={'center'} flex={'none'} padding={'0 40px'}  id={'page-header'}>
+            <Flex padding={'12px 0'} align={'center'} className={styles.headerLogo} zIndex={"dropdown"}>
                 <Flex className={styles.logo} marginBottom={'-5px'} cursor={'pointer'}
                       onClick={() => changePage('inbox')}>
                     <Image priority src="/image/icon/logo.png" alt="emoji" width={26} height={30}/>
