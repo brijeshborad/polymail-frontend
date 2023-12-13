@@ -221,7 +221,6 @@ export function AddToProjectButton({
                                 cursor={'pointer'} className={`${styles.projectAdded}`}
                                 borderRadius={'8px'}
                                 backgroundColor={'#FFFFFF'} color={'#0A101D'} as={Box}
-                                padding={'4px 4px'}
                                 fontSize={'13px'} fontWeight={500} h={'fit-content'}
                                 ref={addToProjectRef}>
                         <Flex alignItems={'center'} justify={'center'} mr={1} className={styles.projectSelectImage}>

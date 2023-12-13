@@ -459,6 +459,7 @@
 
 .projectAdded {
     border: 1px solid #F3F4F6;
+    padding: 4px;
 }
 
 .projectAdded:hover {
@@ -1419,6 +1420,10 @@
     visibility: visible;
 }
 
+.mailBox .mailBodyContent .mailBody {
+    min-width: 730px;
+}
+
 .mailBox .oldMail .mailBoxMailHeader .recipient:hover .copyIcon {
     visibility: visible;
 }
@@ -1596,6 +1601,15 @@
 }
 
 @media (max-width: 576px) {
+    .projectAdded .projectMenuIcon {
+        display: none;
+    }
+    .projectAdded {
+        padding: 8px;
+    }
+    .projectAdded .projectAddedText {
+        line-height: 16px;
+    }
     .mailBox .mailBoxHeader {
         flex-direction: column-reverse;
         padding: 12px;
@@ -1729,10 +1743,6 @@
 }
 
 @media (max-width: 480px) {
-    .mailTabList .emailTabs .active .mailboxText, .mailTabList .tabListMoreButton span:first-child, .mailListTabs .composeButton .composeButtonText {
-        display: none;
-    }
-
     .mailListTabs .composeButton {
         width: auto;
         min-width: auto;

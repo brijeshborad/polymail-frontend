@@ -1497,7 +1497,9 @@ div:has(> .mailSendToaster) {
     .mail-box-subheader.selected-thread {
         display: none;
     }
-
+    .member-images-mobile {
+        display: none !important;
+    }
     .page-header.selected-thread {
         display: none;
     }
@@ -1579,6 +1581,9 @@ div:has(> .mailSendToaster) {
         background-color: #ffffff;
         border-radius: 50%;
         transform: rotate(90deg);
+    }
+    .header-right-icon .mail-box-header-menu-button span + span{
+        display: inline-flex;
     }
 
     div.message-reply-box-div {

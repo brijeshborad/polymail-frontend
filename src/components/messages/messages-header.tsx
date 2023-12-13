@@ -253,7 +253,7 @@ export function MessagesHeader({isProjectView = false}: { isProjectView?: boolea
                     </Button>
 
                     <Flex gap={3} align={'center'}>
-                        <Flex alignItems={'center'} justifyContent={'end'} className={'member-images'}>
+                        <Flex alignItems={'center'} justifyContent={'end'} className={'member-images member-images-mobile'}>
                             <UsersOnline type={'threads'} itemId={selectedThread.id!}/>
                         </Flex>
                         {!isProjectView && <AddToProjectButton allowDefaultSelect={true} selectFrom={'thread'} allShowingAutomationMenu={true}/>}
@@ -309,7 +309,7 @@ export function MessagesHeader({isProjectView = false}: { isProjectView?: boolea
                                         e.preventDefault()
                                         e.stopPropagation()
                                         setIsMoreMenuOpen(!isMoreMenuOpen)
-                                    }} className={`${styles.menuIcon} mail-box-header-menu-button`}
+                                    }} className={`mail-box-header-menu-button ${styles.menuIcon}`}
                                     transition={'all 0.5s'} backgroundColor={'transparent'} outline={'none'}
                                     _focusVisible={{boxShadow: 'none'}} _focus={{boxShadow: 'none'}} fontSize={'12px'}
                                     h={'auto'} minWidth={'24px'} padding={'0'} as={Button} rightIcon={<MenuIcon/>}>
