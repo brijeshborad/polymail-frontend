@@ -229,8 +229,15 @@ export function MessagesHeader({isProjectView = false}: { isProjectView?: boolea
         if (incomingEvent === 'iframe.clicked') {
             setIsMoreMenuOpen(false);
         }
-        if (typeof incomingEvent === 'object' && incomingEvent.type === 'project.toggleList') {
-            setShowMessageHeader(!incomingEvent.data);
+        if (typeof incomingEvent === 'object') {
+            if (incomingEvent.type === 'project.toggleList') {
+                setShowMessageHeader(!incomingEvent.data);
+            }
+
+            if (incomingEvent.type === 'thread.move') {
+                globalEventService.blankEvent();
+                updateMailBox(incomingEvent.data.mailbox, incomingEvent.data.value);
+            }
         }
     }, [incomingEvent])
 

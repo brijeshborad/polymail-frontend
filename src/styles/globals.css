@@ -1583,42 +1583,68 @@ div:has(> .mailSendToaster) {
         transform: rotate(90deg);
     }
     .header-right-icon .mail-box-header-menu-button span + span{
-        display: inline-flex;
+        display: inline-flex !important;
     }
 
     div.message-reply-box-div {
         display: none;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+        z-index: 10;
     }
-
-    div.replay-mobile-ui {
+    .message-reply-box-div.showReplyBoxMobile {
+        display: flex;
+    }
+    div.message-reply-box-div > div {
+        width: 100%;
+    }
+    div.message-reply-box-div .message-reply-box-dropzone {
+        height: 100%;
+        max-height: none;
+    }
+    div.message-reply-box-div .message-reply-box-dropzone > div {
+        flex: 1
+    }
+    div.message-reply-box-div .editor-focusable-div > div:first-child {
+        max-height: none;
+        height: 100%;
+    }
+    div.message-reply-box-div .editor-focusable-div .editor-toolbar{
+        height: 100%;
+        max-height: calc(100vh - 285px);
+    }
+    div.reply-mobile-ui {
         display: flex;
     }
 
-    div.replay-mobile-ui svg {
+    div.reply-mobile-ui svg {
         margin: 0;
         width: 24px;
         height: 24px;
         stroke: #ffffff;
     }
 
-    div.replay-mobile-ui .forward-button svg {
+    div.reply-mobile-ui .forward-button svg {
         stroke: #6B7280;
     }
 
-    .replay-mobile-ui .mobile-view-icon {
+    .reply-mobile-ui .mobile-view-icon {
         width: 36px;
         height: 36px;
         border: 1px solid #E5E7EB;
         border-radius: 50%;
     }
 
-    .replay-mobile-ui .mobile-view-icon.mobile-schedule-icon {
+    .reply-mobile-ui .mobile-view-icon.mobile-schedule-icon {
         display: flex;
         align-items: center;
         justify-content: center;
     }
 
-    .replay-mobile-ui .mobile-view-icon svg {
+    .reply-mobile-ui .mobile-view-icon svg {
         stroke: #6B7280;
     }
 
@@ -1675,9 +1701,16 @@ div:has(> .mailSendToaster) {
         justify-content: space-between;
     }
     .compose-editor .tiptap-container > div {
-        flex: none;
-        position: unset;
+        /*flex: none;*/
+        /*position: unset;*/
         margin-bottom: 10px;
+    }
+    .tiptap-container > div {
+        padding-bottom: 30px;
+    }
+    .tiptap-toolbar.show {
+        /*position: unset;*/
+        margin-bottom: 5px;
     }
 
 }
@@ -1695,10 +1728,6 @@ div:has(> .mailSendToaster) {
         grid-template-columns: repeat(9, 1fr);
     }
 
-    .tiptap-toolbar.show {
-        position: unset;
-        margin-bottom: 6px;
-    }
 }
 
 @media (max-width: 360px) {

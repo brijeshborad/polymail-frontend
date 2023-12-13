@@ -27,6 +27,7 @@ import {generateToasterId, getRecipientText, getSenderText} from "@/utils/common
 import {Toaster} from "../common";
 import {sendMessage} from "@/redux/draft/action-reducer";
 import MessageSchedule from "@/components/messages/message-schedule";
+import {MAILBOX_ARCHIVE, MAILBOX_TRASH} from "@/utils/constants";
 
 const {toast} = createStandaloneToast()
 let previousToastId: string = '';
@@ -264,6 +265,17 @@ export function MessageItems() {
         })
     }
 
+    function openReplyBoxMobile(type: string) {
+        if (index !== null) {
+            let messageData = inboxMessages[index!];
+            globalEventService.fireEvent('replyBoxMobile.open');
+            globalEventService.fireEventWithDelay({data: messageData, type: 'draft.currentMessage'})
+            setTimeout(() => {
+                globalEventService.fireEvent({type: 'draft.updateType', data: {type, messageData}})
+            }, 100);
+        }
+    }
+
     function resendMessage(draft: MessageDraft | MessageModel) {
         dispatch(sendMessage({body: {id: draft.id!, now: true}}));
         messageService.toggleFailed(draft, false);
@@ -485,29 +497,31 @@ export function MessageItems() {
                     }
                 </Flex>
             ))}
-            <Flex alignItems={'center'} display={'none'} position={'sticky'} bottom={0} justifyContent={'space-between'} backgroundColor={'#F9FAFB'} padding={3} borderTop={'1px solid #E5E7EB'} className={'replay-mobile-ui'}>
+            <Flex alignItems={'center'} display={'none'} position={'sticky'} bottom={0} justifyContent={'space-between'}
+                  backgroundColor={'#F9FAFB'} padding={3} borderTop={'1px solid #E5E7EB'} className={'reply-mobile-ui'}>
                 <Flex alignItems={'center'} gap={3}>
-                    <Button backgroundColor={'#1F2937'} borderRadius={'8px'} padding={'10px 12px'} _hover={{backgroundColor: '#1F2937'}}
+                    <Button className={styles.mobileReplyBtn} onClick={() => openReplyBoxMobile('reply')} backgroundColor={'#1F2937'} borderRadius={'8px'}
+                            padding={'10px 12px'} _hover={{backgroundColor: '#1F2937'}}
                             color={'#FFFFFF'} fontSize={'14px'} fontWeight={'500'} leftIcon={<ReplyIcon />}
                     >Reply</Button>
 
-                    <Button className={'forward-button'} backgroundColor={'transparent'} border={'1px solid #374151'} borderRadius={'8px'}
+                    <Button className={'forward-button'} onClick={() => openReplyBoxMobile('forward')} backgroundColor={'transparent'} border={'1px solid #374151'} borderRadius={'8px'}
                             padding={'10px 12px'} _hover={{backgroundColor: 'transparent'}}
                             color={'#374151'} fontSize={'14px'} fontWeight={'500'} leftIcon={<ForwardIcon />}
                     >Forward</Button>
                 </Flex>
 
                 <Flex gap={'3'}>
-                    <button className='archive-button-icon mobile-view-icon'>
+                    <button className='archive-button-icon mobile-view-icon' onClick={() => globalEventService.fireEvent({type: 'thread.move', data: {mailbox: MAILBOX_ARCHIVE}})}>
                         <ArchiveIcon/>
                     </button>
 
-                    <button className='trash-button-icon mobile-view-icon'>
+                    <button className='trash-button-icon mobile-view-icon' onClick={() => globalEventService.fireEvent({type: 'thread.move', data: {mailbox: MAILBOX_TRASH}})}>
                         <TrashIcon/>
                     </button>
 
                     <div className={'mobile-view-icon mobile-schedule-icon'}>
-                        <MessageSchedule isSnooze={true} date={''} onChange={() => null} />
+                        <MessageSchedule isSnooze={true} date={''} onChange={(date: any) => globalEventService.fireEvent({type: 'thread.move', data: {mailbox: MAILBOX_TRASH, value: date}})} />
                     </div>
                 </Flex>
             </Flex>

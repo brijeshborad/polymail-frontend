@@ -393,7 +393,7 @@
     stroke: #6B7280;
 }
 
-.mailBox svg:hover {
+.mailBox button(:not.mobileReplyBtn) svg:hover {
     stroke: black;
 }
 
@@ -1623,7 +1623,7 @@
         border: 0;
     }
     .composeEditorWrapper .composeEditor {
-        max-height: none;
+        max-height: calc(100vh - 300px);
     }
     .composeEditorWrapper .replyBoxIcon {
         display: none;

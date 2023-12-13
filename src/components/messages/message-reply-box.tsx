@@ -63,6 +63,7 @@ export function MessageReplyBox(props: MessageBoxType) {
     const [scheduledDate, setScheduledDate] = useState<string | undefined>();
     const [showEditorToolbar, setShowEditorToolbar] = useState<boolean>(false);
     const [showReplyBox, setShowReplyBox] = useState<boolean>(false);
+    const [showReplyBoxMobile, setShowReplyBoxMobile] = useState<boolean>(false);
     const [isReplyDropdownOpen, setIsReplyDropdownOpen] = useState<boolean>(false);
     const [extraClassNames, setExtraClassNames] = useState<string>('');
     const [extraClassNamesForBottom, setExtraClassNamesForBottom] = useState<string>('');
@@ -552,6 +553,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         if (!isRescue) {
             setIsReplyDropdownOpen(false)
             setShowReplyBox(false);
+            setShowReplyBoxMobile(false);
             setShowEditorToolbar(false)
             setDeltaY(100)
             setIsOnTop(false)
@@ -659,6 +661,13 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
         if (incomingEvent === 'draft.undo') {
             handleFocus();
         }
+
+        if(incomingEvent === 'replyBoxMobile.open') {
+            setShowReplyBoxMobile(true);
+            setShowReplyBox(true);
+            setShowEditorToolbar(true);
+        }
+
         if (incomingEvent === 'draft.setNull') {
             setDraftIndex(null);
         }
@@ -842,10 +851,10 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     }
 
     return (
-        <Flex backgroundColor={'#FFFFFF'} p={'20px'} className={'message-reply-box-div'}>
+        <Flex backgroundColor={'#FFFFFF'} p={'20px'} className={`message-reply-box-div ${showReplyBoxMobile ? 'showReplyBoxMobile' : ''}`}>
             <DropZone onFileUpload={handleFileUpload} forReply={true}>
                 <Flex
-                    maxHeight={'450px'} direction={'column'} backgroundColor={'#FFFFFF'} width={'100%'}
+                    className={'message-reply-box-dropzone'} maxHeight={'450px'} direction={'column'} backgroundColor={'#FFFFFF'} width={'100%'}
                     onBlur={() => handleBlur()}>
                     <Flex borderRadius={8} border={'1px solid #E5E7EB'} direction={'column'} paddingX={4} paddingY={2}>
                         {(selectedThread && selectedThread?.projects && selectedThread?.projects?.length > 0 && totalDraftMessages.length > 0) &&
@@ -1000,7 +1009,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                         </div>
                         }
                         <Flex
-                            className={focusClass}
+                            className={`${focusClass} editor-focusable-div`}
                             onClick={(e) => {
                                 e.stopPropagation();
                                 e.preventDefault();

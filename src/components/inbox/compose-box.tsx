@@ -535,7 +535,7 @@ export function ComposeBox() {
                                     <Flex gap={2} className={styles.replyBoxIcon} mb={'-3px'} position={'relative'}
                                           zIndex={5} ml={'170px'}>
                                     </Flex>
-                                    <Flex align={'center'} className={styles.replyButton}>
+                                    <Flex align={'center'} className={styles.replyButton} zIndex={6}>
                                         <Button
                                             className={styles.replyTextDiscardButton}
                                             fontSize={14} lineHeight={16}
