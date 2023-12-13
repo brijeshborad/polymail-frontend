@@ -102,9 +102,7 @@ export function InboxHeaderProjectsList() {
                             border={'1px solid #F3F4F6'} borderRadius={'8px'} h={'fit-content'}
                             className={'header-project-name-button'} color={'#0A101D'}
                             maxWidth={'216px'}>
-                        <div className={'folder-icon'}>
-                            <FolderIcon/>
-                        </div>
+                        <FolderIcon/>
 
                         <Text whiteSpace={'nowrap'} overflow={'hidden'} textOverflow={'ellipsis'} fontSize='13px'
                               color={'#374151'} flex={'1'}>Show all
