@@ -1,4 +1,4 @@
-import {Summary, Contacts, UserProjectOnlineStatus, Project, ProjectRules} from "@/models";
+import {Summary, Contacts, UserProjectOnlineStatus, Project, ProjectRules, Thread} from "@/models";
 import {ActivityFeed} from "@/models/activityFeed";
 
 export declare type InitialCommonApisStateType = {
@@ -23,4 +23,7 @@ export declare type InitialCommonApisStateType = {
   animateCompose?: boolean,
   animateResumeCompose?: boolean,
   projectRules?: ProjectRules[],
+  removingThread?: {
+    [key: string]: boolean
+  },
 }

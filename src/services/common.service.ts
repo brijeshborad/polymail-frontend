@@ -283,6 +283,28 @@ class CommonService extends BaseService {
         organizationService.setSelectedOrganization(null);
         LocalStorageService.clearStorage();
     }
+
+    removeThread(threadId: string) {
+        let {removingThread} = this.getCommonState();
+        this.setCommonState({removingThread: {...removingThread, [threadId]: true}})
+        setTimeout(() => {
+            let {threads} = threadService.getThreadState();
+            let currentThreads = [...(threads || [])];
+            let findRemovingThread = currentThreads.findIndex((t: Thread) => t.id === threadId);
+            if (findRemovingThread !== -1) {
+                currentThreads.splice(findRemovingThread, 1);
+                threadService.setThreads([...currentThreads]);
+                setTimeout(() => {
+                    let {removingThread} = this.getCommonState();
+                    let currentRemovingThread = {...removingThread};
+                    currentRemovingThread[threadId] = false;
+                    this.setCommonState({
+                        removingThread: currentRemovingThread
+                    })
+                }, 10);
+            }
+        }, 250);
+    }
 }
 
 export const commonService = new CommonService();

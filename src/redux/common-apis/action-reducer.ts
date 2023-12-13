@@ -13,7 +13,8 @@ const initialState: any = {
   allowThreadSelection: true,
   onlineUsers: {threads: {}, projects: {}},
   activityFeed: [],
-  projectRules: []
+  projectRules: [],
+  removingThread: {},
 } as InitialCommonApisStateType
 
 const commonApisSlice = createSlice({

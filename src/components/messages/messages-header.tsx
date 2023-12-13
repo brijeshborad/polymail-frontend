@@ -26,7 +26,7 @@ import {
 } from "@/utils/constants";
 import dayjs from "dayjs";
 import {clearDebounce, debounce, generateToasterId} from "@/utils/common.functions";
-import {globalEventService, messageService, threadService} from "@/services";
+import {commonService, globalEventService, messageService, threadService} from "@/services";
 import Tooltip from "../common/Tooltip";
 import {MuteIcon} from "@/icons/mute.icon";
 import styles from "@/styles/Inbox.module.css";
@@ -39,6 +39,7 @@ const MessageSchedule = dynamic(() => import("./message-schedule").then(mod => m
 export function MessagesHeader({isProjectView = false}: { isProjectView?: boolean }) {
     const {selectedThread, threads, tabValue} = useSelector((state: StateType) => state.threads);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
+    const {removingThread} = useSelector((state: StateType) => state.commonApis);
 
     const dispatch = useDispatch();
     const [scheduledDate, setScheduledDate] = useState<string | undefined>();
@@ -129,6 +130,7 @@ export function MessagesHeader({isProjectView = false}: { isProjectView?: boolea
                 }
 
                 if (remove_from_list) {
+                    commonService.removeThread(currentThreads[index1].id!);
                     currentThreads.splice(index1, 1);
 
                     messageService.setMessageState({showMessageBox: false});
@@ -146,7 +148,7 @@ export function MessagesHeader({isProjectView = false}: { isProjectView?: boolea
                     threadService.setSelectedThread({...currentThreads[index1]});
                     threadService.updateUmMovingThreadCache(messageBox, currentThreads[index1]);
                 }
-                threadService.setThreadState({threads: currentThreads});
+                // threadService.setThreadState({threads: currentThreads});
                 dispatch(updateThreads({
                     body: {
                         id: selectedThread.id,

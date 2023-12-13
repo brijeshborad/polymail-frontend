@@ -1426,32 +1426,49 @@ div:has(> .mailSendToaster) {
     display: none;
     border-bottom: 1px solid var(--alias-border-subtle, #F3F4F6);
     border-top: 1px solid var(--alias-border-subtle, #F3F4F6);
-    background: rgba(255,255,255, 0.8);
+    background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(2px);
-}
-
-.thread-list {
-    transition: all 2s;
-}
-
-.thread-list.removing {
-    transform: translateY(-70px);
-}
-
-.thread-list.adding {
-    transform: translateY(70px);
 }
 
 .main-thread-list.adding {
     visibility: visible;
     opacity: 1;
-    transition: opacity 2s linear;
+    transition: opacity 250s linear;
 }
 
 .main-thread-list.removing {
-    visibility: hidden;
+    border: 0;
+    box-shadow: none;
+    height: 0;
     opacity: 0;
-    transition: visibility 0s 2s, opacity 2s linear;
+    visibility: hidden;
+    animation: thread-remove-animation 250ms ease;
+}
+
+@keyframes thread-remove-animation {
+    0% {
+        height: 72px;
+        opacity: 1;
+        visibility: visible;
+    }
+
+    30% {
+        height: 50px;
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    70% {
+        height: 10px;
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    100% {
+        visibility: hidden;
+        height: 0;
+        opacity: 0;
+    }
 }
 
 @keyframes editor-input-animation {
@@ -1520,9 +1537,11 @@ div:has(> .mailSendToaster) {
     .mail-box-subheader.selected-thread {
         display: none;
     }
+
     .member-images-mobile {
         display: none !important;
     }
+
     .page-header.selected-thread {
         display: none;
     }
@@ -1545,6 +1564,7 @@ div:has(> .mailSendToaster) {
     .header-menu-button {
         display: flex !important;
     }
+
     .drop-down-list.header-dropdown-list button {
         gap: 5px;
     }
@@ -1605,7 +1625,8 @@ div:has(> .mailSendToaster) {
         border-radius: 50%;
         transform: rotate(90deg);
     }
-    .header-right-icon .mail-box-header-menu-button span + span{
+
+    .header-right-icon .mail-box-header-menu-button span + span {
         display: inline-flex !important;
     }
 
@@ -1618,27 +1639,34 @@ div:has(> .mailSendToaster) {
         top: 0;
         z-index: 10;
     }
+
     .message-reply-box-div.showReplyBoxMobile {
         display: flex;
     }
+
     div.message-reply-box-div > div {
         width: 100%;
     }
+
     div.message-reply-box-div .message-reply-box-dropzone {
         height: 100%;
         max-height: none;
     }
+
     div.message-reply-box-div .message-reply-box-dropzone > div {
         flex: 1
     }
+
     div.message-reply-box-div .editor-focusable-div > div:first-child {
         max-height: none;
         height: 100%;
     }
-    div.message-reply-box-div .editor-focusable-div .editor-toolbar{
+
+    div.message-reply-box-div .editor-focusable-div .editor-toolbar {
         height: 100%;
         max-height: calc(100vh - 285px);
     }
+
     div.reply-mobile-ui {
         display: flex;
     }
@@ -1677,6 +1705,7 @@ div:has(> .mailSendToaster) {
         z-index: 5;
         top: 0;
     }
+
     .header-project-name-button.show-all-project {
         display: none;
     }
@@ -1719,18 +1748,22 @@ div:has(> .mailSendToaster) {
     .mail-box-main .mail-box-subheader.show-project-list .back-to-inbox-div .back-to-inbox-button {
         filter: none;
     }
+
     .tiptap-container.compose-view {
         flex-direction: column;
         justify-content: space-between;
     }
+
     .compose-editor .tiptap-container > div {
         /*flex: none;*/
         /*position: unset;*/
         margin-bottom: 10px;
     }
+
     .tiptap-container > div {
         padding-bottom: 30px;
     }
+
     .tiptap-toolbar.show {
         /*position: unset;*/
         margin-bottom: 5px;
