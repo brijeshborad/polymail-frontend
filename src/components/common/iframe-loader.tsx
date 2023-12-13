@@ -32,7 +32,6 @@ export default function IframeLoader({body}: { body: string }) {
             }
 
             const iframeKeyUp = () => {
-                console.log('iframe keyup bind');
                 globalEventService.fireEventWithDelay('iframe.keyUp')
             }
             iframeRef.current.contentDocument.body.addEventListener('keydown', iframeKeyDown)

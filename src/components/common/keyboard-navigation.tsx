@@ -26,18 +26,14 @@ export default function KeyboardNavigationListener() {
             return
         }
 
-        console.log('outside ');
-
         if (MONITORED_KEYS.map(mk => mk.key).includes(e.keyCode)) {
             // Prevents the scrollbar to scrolling while pressing up/down keys.
             e.preventDefault()
             e.stopPropagation()
 
-            console.log('inside ', lastTarget);
             const pressedKey = MONITORED_KEYS.find(mk => mk.key === e.keyCode)
             let target = lastTarget
 
-            console.log('pressedKey==',pressedKey);
             if (pressedKey) {
                 let dispatchAction: InitialKeyNavigationStateType = {
                     isEnabled,
@@ -163,6 +159,7 @@ export default function KeyboardNavigationListener() {
 
                 dispatch(keyPress(dispatchAction))
                 setIsKeyDown(true)
+                window.focus();
             }
         }
     }, [
@@ -191,7 +188,6 @@ export default function KeyboardNavigationListener() {
         if (incomingEvent === 'iframe.keyUp') {
             setIsKeyDown(false)
         }
-        console.log('Incoming event', incomingEvent);
         if (typeof incomingEvent === 'object' && incomingEvent.type === 'iframe.keyDown') {
             handleShortcutKeyPress(incomingEvent.data);
         }
