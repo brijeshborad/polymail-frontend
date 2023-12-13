@@ -75,6 +75,15 @@ const userSlice = createSlice({
             return {...state, isLoading: false}
         },
 
+        logoutAllUser: (state: InitialUserState, _action: PayloadAction<ReducerActionType>) => {
+            return {...state, isLoading: false}
+        },
+        logoutAllUserSuccess: (state: InitialUserState, _action: PayloadAction<{}>) => {
+            return {...state, isLoading: false}
+        },
+        logoutAllUserError: (state: InitialUserState,  _action: PayloadAction<any>) => {
+            return {...state, isLoading: false}
+        },
 
         updateUserState: (state: InitialUserState, action: PayloadAction<InitialUserState>) => {
             return {...state, ...action.payload}
@@ -102,6 +111,9 @@ export const {
     removeProfileData,
     removeProfileDataSuccess,
     removeProfileDataError,
+    logoutAllUser,
+    logoutAllUserSuccess,
+    logoutAllUserError,
     updateUserState
 } = userSlice.actions
 export default userSlice.reducer

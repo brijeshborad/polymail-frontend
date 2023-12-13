@@ -86,7 +86,7 @@ export default function CollabRichTextEditor({
             CollaborationCursor.configure({
                 provider: prov,
                 user: {
-                    name: selectedAccount ? selectedAccount.name : 'Uknown',
+                    name: selectedAccount ? selectedAccount.name : 'Unknown',
                     color: '#f783ac',
                 }
             }),
