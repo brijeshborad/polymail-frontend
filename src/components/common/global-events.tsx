@@ -5,6 +5,8 @@ import Notification from "./notification";
 
 export default function GlobalEvents() {
     useEffect(() => {
+        // main document must be focused in order for window blur to fire when the iframe is interacted with.
+        window.focus();
         const handleWindowBlur = () => {
             if (document.activeElement?.tagName === 'IFRAME') {
                 globalEventService.fireEvent('iframe.clicked')

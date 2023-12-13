@@ -2,6 +2,7 @@ import styles from "@/styles/Inbox.module.css";
 import React, {useCallback, useEffect, useState} from "react";
 import {LinkPreviewProps} from "@/types/props-types/link-preview.types";
 import LinkPreview from "@/components/common/link-preview";
+import {globalEventService} from "@/services";
 
 export default function IframeLoader({body}: { body: string }) {
     const iframeRef = React.useRef<any | null>(null);
@@ -25,6 +26,17 @@ export default function IframeLoader({body}: { body: string }) {
             iframeRef.current.contentDocument.body.style.fontFamily = "'Inter', sans-serif";
             iframeRef.current.contentDocument.body.style.fontSize = "14px";
             const allLinks = iframeRef.current.contentDocument.getElementsByTagName("a")
+
+            const iframeKeyDown = (e: KeyboardEvent | any) => {
+                globalEventService.fireEventWithDelay({type: 'iframe.keyDown', data: e})
+            }
+
+            const iframeKeyUp = () => {
+                console.log('iframe keyup bind');
+                globalEventService.fireEventWithDelay('iframe.keyUp')
+            }
+            iframeRef.current.contentDocument.body.addEventListener('keydown', iframeKeyDown)
+            iframeRef.current.contentDocument.body.addEventListener('keyup', iframeKeyUp)
 
             for (let i in allLinks) {
                 const a = allLinks[i]
