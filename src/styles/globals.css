@@ -1670,6 +1670,15 @@ div:has(> .mailSendToaster) {
     .mail-box-main .mail-box-subheader.show-project-list .back-to-inbox-div .back-to-inbox-button {
         filter: none;
     }
+    .tiptap-container.compose-view {
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .compose-editor .tiptap-container > div {
+        flex: none;
+        position: unset;
+        margin-bottom: 10px;
+    }
 
 }
 
@@ -1684,16 +1693,6 @@ div:has(> .mailSendToaster) {
 
     .drop-down-list > div + div {
         grid-template-columns: repeat(9, 1fr);
-    }
-
-    .tiptap-container.compose-view {
-        flex-direction: column;
-        justify-content: space-between;
-    }
-
-    .compose-editor .tiptap-container > div {
-        flex: none;
-        position: unset;
     }
 
     .tiptap-toolbar.show {
