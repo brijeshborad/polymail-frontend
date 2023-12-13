@@ -61,6 +61,7 @@ export function MessageBoxContent({isProjectView = false}: { isProjectView?: boo
                                 </div>
                             </Flex>
                         </Flex>
+
                         {showReplyBox && <MessageReplyBox isProjectView={isProjectView}/>}
                     </>}
                 </Flex>

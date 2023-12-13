@@ -101,17 +101,17 @@
 
 /*Header CSS start*/
 
-.header {
+div.header {
     /*padding: 12px 40px;*/
     /*border-bottom: 1px solid rgba(8, 22, 47, 0.12);*/
     border-bottom: 1px solid #F3F4F6;
     background-color: #FFFFFF;
 }
 
-.header img {
-    min-width: 20px;
-    max-width: 20px;
-}
+/*.header img {*/
+/*    min-width: 20px;*/
+/*    max-width: 20px;*/
+/*}*/
 
 .header .logo img {
     min-width: 26px;
@@ -174,7 +174,7 @@
     width: 100%;
     height: 2px;
     background: #000000;
-    bottom: -20px;
+    bottom: -18px;
 }
 
 .headerTabs .tabsActive svg {
@@ -254,7 +254,7 @@
 }
 
 .headerSearch .headerSearchInput.headerNoBadge {
-    padding: 9px 35px 9px 8px;
+    padding: 6px 35px 6px 8px;
 }
 
 .headerSearch .headerSearchInput .searchBarHeaderInput::-webkit-scrollbar {
@@ -622,8 +622,8 @@ div:has(> .mailToaster) {
         padding: 16px 10px 0;
     }
 
-    .header {
-        padding: 0 35px !important;
+    div.header {
+        padding: 0 35px;
     }
 
     .notificationIcon {
@@ -756,11 +756,11 @@ div:has(> .mailToaster) {
 
 @media (max-width: 767px) {
     .mailBg {
-        padding: 15px 10px;
+        padding: 0;
     }
 
-    .header {
-        padding: 0 25px !important;
+    div.header {
+        padding: 0 25px;
     }
 
     .headerTabs {
@@ -778,16 +778,13 @@ div:has(> .mailToaster) {
     }
 
     .notificationIcon {
-        width: 30px;
-        height: 30px;
         margin-right: 5px;
         margin-left: 0;
-        border: 0;
     }
 
-    .headerSearch {
-        padding-right: 0;
-    }
+    /*.headerSearch {*/
+    /*    padding-right: 0;*/
+    /*}*/
 
     .profileButton .profileImage {
         width: 30px;
@@ -795,8 +792,12 @@ div:has(> .mailToaster) {
         min-width: 30px;
     }
 
-    .headerSearch .headerSearchInput input,
-    .headerSearch .headerSearchInput > div {
+    /*.headerSearch .headerSearchInput input,*/
+    /*.headerSearch .headerSearchInput > div {*/
+    /*    display: none;*/
+    /*}*/
+
+    .headerSearch .headerSearchInput .inputRight {
         display: none;
     }
 
@@ -806,12 +807,13 @@ div:has(> .mailToaster) {
     }
 
     .headerSearch .headerSearchInput {
-        width: fit-content;
-        padding: 6px;
+        /*width: fit-content;*/
+        /*padding: 6px;*/
         background-color: #FFFFFF;
-        border: 0;
-        margin-left: auto;
-        cursor: pointer;
+        border: 1px solid #E5E7EB;
+        /*border: 0;*/
+        /*margin-left: auto;*/
+        /*cursor: pointer;*/
     }
 
     .headerSearch.headerSearchPopup .headerSearchInput {
@@ -861,14 +863,32 @@ div:has(> .mailToaster) {
     .notificationIcon {
         margin-right: 5px;
     }
-}
-
-@media (max-width: 480px) {
     .header .headerTabs {
         display: none;
     }
-}
 
+    .header .logo {
+        display: none;
+    }
+
+    .profile {
+        display: none;
+    }
+
+    div.header {
+        padding: 0 10px;
+        background-color: #F9FAFB;
+        border-bottom: 0;
+    }
+
+    .headerSearch .headerSearchInput.headerNoBadge {
+        padding: 8px 35px 8px 8px;
+    }
+
+    .mailBg {
+        background-color: #F9FAFB;
+    }
+}
 
 @media (max-width: 360px) {
     .header .headerLogo {

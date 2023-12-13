@@ -53,6 +53,9 @@ export function UrlManager() {
     useEffect(() => {
         if (isComposing) {
             draftService.saveDraftToResume()
+            domService.addOrRemoveSelectedThreadClasses();
+        } else {
+            domService.addOrRemoveSelectedThreadClasses(true);
         }
     }, [isComposing]);
 

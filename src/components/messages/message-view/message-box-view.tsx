@@ -7,7 +7,7 @@ import {useSelector} from "react-redux";
 import {StateType} from "@/types";
 import {MessageBoxContent} from "@/components/messages/message-view/message-box-content";
 
-export function MessageBoxView({isProjectView = false}: { isProjectView?: boolean }) {
+    export function MessageBoxView({isProjectView = false}: { isProjectView?: boolean }) {
     const {isThreadFocused, selectedThread} = useSelector((state: StateType) => state.threads);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
 

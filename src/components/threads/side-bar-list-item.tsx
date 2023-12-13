@@ -127,7 +127,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                 </Flex>
                 <div className={styles.mailMessage}>
                     <Flex alignItems={'center'} justifyContent={'space-between'}>
-                        <Text lineHeight={'18px'} noOfLines={1}> {props.thread.subject || "(no subject)"}</Text>
+                        <Text className={styles.threadSubject} lineHeight={'18px'} noOfLines={1}> {props.thread.subject || "(no subject)"}</Text>
                         <Flex alignItems={'center'} justifyContent={'end'} className={'member-images subheader-images'}>
                             <UsersOnline type={'threads'} itemId={props.thread.id!}/>
                         </Flex>

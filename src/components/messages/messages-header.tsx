@@ -31,6 +31,7 @@ import Tooltip from "../common/Tooltip";
 import {MuteIcon} from "@/icons/mute.icon";
 import styles from "@/styles/Inbox.module.css";
 import {UsersOnline} from "@/components/common";
+import {ArrowBackIcon} from "@chakra-ui/icons";
 
 const AddToProjectButton = dynamic(() => import("@/components/common").then(mod => mod.AddToProjectButton));
 const MessageSchedule = dynamic(() => import("./message-schedule").then(mod => mod.default));
@@ -42,6 +43,7 @@ export function MessagesHeader({isProjectView = false}: { isProjectView?: boolea
     const dispatch = useDispatch();
     const [scheduledDate, setScheduledDate] = useState<string | undefined>();
     const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean>(false);
+    const [showMessageHeader, setShowMessageHeader] = useState<boolean>(true);
 
     const updateMailBox = (messageBox: string, date: string = '') => {
         if (selectedThread && selectedThread.id) {
@@ -227,6 +229,16 @@ export function MessagesHeader({isProjectView = false}: { isProjectView?: boolea
         if (incomingEvent === 'iframe.clicked') {
             setIsMoreMenuOpen(false);
         }
+        if (typeof incomingEvent === 'object') {
+            if (incomingEvent.type === 'project.toggleList') {
+                setShowMessageHeader(!incomingEvent.data);
+            }
+
+            if (incomingEvent.type === 'thread.move') {
+                globalEventService.blankEvent();
+                updateMailBox(incomingEvent.data.mailbox, incomingEvent.data.value);
+            }
+        }
     }, [incomingEvent])
 
     if (!selectedThread || !threads || threads.length === 0 || (!tabValue)) {
@@ -235,13 +247,20 @@ export function MessagesHeader({isProjectView = false}: { isProjectView?: boolea
     return (
         <>
             <Flex gap={2} align={'center'} justify={'space-between'} padding={'12px 20px'}
-                  borderBottom={'1px solid #F3F4F6'} className={styles.mailBoxHeader}>
+                  borderBottom={'1px solid #F3F4F6'} className={styles.mailBoxHeader} display={showMessageHeader ? 'flex': 'none'}>
                 <Heading as='h6' fontSize={'15px'} color={'#0A101D'} noOfLines={1}
                          fontWeight={600}>{selectedThread?.subject || '(no subject)'}</Heading>
 
-                <Flex align={'center'}>
-                    <Flex gap={3} align={'center'} className={styles.mailBoxHeaderAddProjectDiv}>
-                        <Flex alignItems={'center'} justifyContent={'end'} className={'member-images'}>
+                <Flex align={'center'} className={styles.mailboxHeaderMobileView}>
+                    <Button className={'backToThreadMobile'} minW={'1px'} variant='outline' border={'1px solid #E5E7EB'}
+                            fontSize={'13px'} fontWeight={500} letterSpacing={'-0.13px'} borderRadius={'50px'} width={'36px'}
+                            height={'36px'} backgroundColor={'#FFFFFF'} alignItems={'center'} justifyContent={'center'}
+                            leftIcon={<ArrowBackIcon/>} onClick={() => threadService.setSelectedThread(null)}>
+                        {/*Back To Threads*/}
+                    </Button>
+
+                    <Flex gap={3} align={'center'}>
+                        <Flex alignItems={'center'} justifyContent={'end'} className={'member-images member-images-mobile'}>
                             <UsersOnline type={'threads'} itemId={selectedThread.id!}/>
                         </Flex>
                         {!isProjectView && <AddToProjectButton allowDefaultSelect={true} selectFrom={'thread'} allShowingAutomationMenu={true}/>}
@@ -297,7 +316,7 @@ export function MessagesHeader({isProjectView = false}: { isProjectView?: boolea
                                         e.preventDefault()
                                         e.stopPropagation()
                                         setIsMoreMenuOpen(!isMoreMenuOpen)
-                                    }} className={styles.menuIcon}
+                                    }} className={`mail-box-header-menu-button ${styles.menuIcon}`}
                                     transition={'all 0.5s'} backgroundColor={'transparent'} outline={'none'}
                                     _focusVisible={{boxShadow: 'none'}} _focus={{boxShadow: 'none'}} fontSize={'12px'}
                                     h={'auto'} minWidth={'24px'} padding={'0'} as={Button} rightIcon={<MenuIcon/>}>

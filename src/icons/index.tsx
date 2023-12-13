@@ -32,3 +32,6 @@ export * from './member-invite.icon';
 export * from './share.icon';
 export * from './signature.icon';
 export * from './members.icon';
+export * from './hamburger-menu.icon';
+export * from './reply.icon';
+export * from './forward.icon';

@@ -2,31 +2,53 @@ class DomService {
     constructor() {
     }
 
+    addClass(element: any) {
+        if (!element.classList.contains('selected-thread')) {
+            element.classList.add('selected-thread');
+        }
+    }
+
+    removeClass(element: any) {
+        if (element.classList.contains('selected-thread')) {
+            element.classList.remove('selected-thread');
+        }
+    }
+
     addOrRemoveSelectedThreadClasses(removeClass: boolean = false) {
         let threadBar = document.getElementById('inbox-thread-side-bar');
         let messageBar = document.getElementById('inbox-message-side-bar');
+        let projectBar = document.getElementById('inbox-page-projects-header');
+        let pageHeader = document.getElementById('page-header');
 
         if (threadBar) {
             if (!removeClass) {
-                if (!threadBar.classList.contains('selected-thread')) {
-                    threadBar.classList.add('selected-thread');
-                }
+                this.addClass(threadBar)
             } else {
-                if (threadBar.classList.contains('selected-thread')) {
-                    threadBar.classList.remove('selected-thread');
-                }
+                this.removeClass(threadBar);
             }
         }
 
         if (messageBar) {
             if (!removeClass) {
-                if (!messageBar.classList.contains('selected-thread')) {
-                    messageBar.classList.add('selected-thread');
-                }
+                this.addClass(messageBar)
             } else {
-                if (messageBar.classList.contains('selected-thread')) {
-                    messageBar.classList.remove('selected-thread');
-                }
+                this.removeClass(messageBar)
+            }
+        }
+
+        if (projectBar) {
+            if (!removeClass) {
+                this.addClass(projectBar)
+            } else {
+                this.removeClass(projectBar)
+            }
+        }
+
+        if (pageHeader) {
+            if (!removeClass) {
+                this.addClass(pageHeader)
+            } else {
+                this.removeClass(pageHeader)
             }
         }
     }

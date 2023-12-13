@@ -438,6 +438,11 @@ export function ComposeBox() {
                         {/*    }*/}
                         {/*</Text>*/}
                     </Flex>
+                    <Flex>
+                        <div className={styles.addToProjectMobile}>
+                            <AddToProjectButton allowDefaultSelect={true} selectFrom={'compose'}/>
+                        </div>
+                    </Flex>
                     <Flex color={'#6B7280'} fontSize={'13px'} h={'20px'} w={'20px'} align={'center'} justify={'center'}
                           cursor={'pointer'} onClick={() => onCloseClick()}> <CloseIcon/> </Flex>
                 </Flex>
@@ -449,14 +454,14 @@ export function ComposeBox() {
                                flex={1} fontWeight={'600'} padding={'0'} border={'0'} h={'auto'} autoFocus={true}
                                borderRadius={'0'} lineHeight={1} color={'#0A101D'}
                                onChange={(e) => addSubject(e)} value={subject || ''}/>
-                        <div>
+                        <div className={styles.addToProjectDesktop}>
                             <AddToProjectButton allowDefaultSelect={true} selectFrom={'compose'}/>
                         </div>
 
                     </Flex>
 
                     <DropZone onFileUpload={handleFileUpload}>
-                        <Flex w={'100%'} gap={4} padding={4} direction={'column'} border={'1px solid #F3F4F6'}
+                        <Flex w={'100%'} className={styles.composeEditorWrapper} gap={4} direction={'column'}
                               borderRadius={8}>
                             <MessageRecipients
                                 emailRecipients={emailRecipients}
@@ -467,8 +472,8 @@ export function ComposeBox() {
                             />
                             <Flex flex={1} direction={'column'} position={'relative'}>
                                 <Flex flex={1} direction={'column'} ref={editorRef}
-                                      className={`editor-bottom-shadow compose-editor`}
-                                      maxH={'calc(100vh - 500px)'} overflowY={'auto'}
+                                      className={`editor-bottom-shadow compose-editor ${styles.composeEditor}`}
+                                       overflowY={'auto'}
                                       onScroll={() => handleEditorScroll()} zIndex={6}
                                 >
                                     {composeDraft?.threadId && <CollabRichTextEditor
@@ -530,7 +535,7 @@ export function ComposeBox() {
                                     <Flex gap={2} className={styles.replyBoxIcon} mb={'-3px'} position={'relative'}
                                           zIndex={5} ml={'170px'}>
                                     </Flex>
-                                    <Flex align={'center'} className={styles.replyButton}>
+                                    <Flex align={'center'} className={styles.replyButton} zIndex={6}>
                                         <Button
                                             className={styles.replyTextDiscardButton}
                                             fontSize={14} lineHeight={16}
