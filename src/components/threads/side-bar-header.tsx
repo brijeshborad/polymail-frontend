@@ -21,7 +21,7 @@ import {
     TrashIcon
 } from "@/icons";
 import {
-    commonService, domService,
+    commonService,
     draftService, globalEventService,
     messageService,
     socketService,
