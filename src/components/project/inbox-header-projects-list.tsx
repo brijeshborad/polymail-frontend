@@ -12,7 +12,7 @@ import {getInboxLoadedFirstTime, setInboxLoadedFirstTime} from "@/utils/cache.fu
 import {useWindowSize} from "@/hooks/window-resize.hook";
 import {UsersOnline} from "@/components/common";
 
-export function InboxHeaderProjectsList() {
+export function InboxHeaderProjectsList(props: any) {
     const {projects} = useSelector((state: StateType) => state.projects);
     const {isLoading} = useSelector((state: StateType) => state.commonApis);
     const {isLoading: threadIsLoading} = useSelector((state: StateType) => state.threads);
@@ -40,7 +40,11 @@ export function InboxHeaderProjectsList() {
     }, [isLoading, threadIsLoading]);
 
     useEffect(() => {
-        setMaxSize(Math.floor(width / 216) - 3)
+        if (width > 576) {
+            setMaxSize(Math.floor(width / 216) - 3)
+        } else {
+            setMaxSize(100)
+        }
     }, [width])
 
     const changePage = () => {
@@ -61,7 +65,20 @@ export function InboxHeaderProjectsList() {
 
     return (
         <>
-            <>
+            <Flex alignItems={'center'} className={'sub-header-mobile-view'} gap={3}>
+                <Button alignItems={'center'} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'} padding={'7px'} width={'100%'}
+                        _hover={{backgroundColor: 'var(--alias-bg-subtle)'}} border={'1px solid #F3F4F6'} borderRadius={'8px'} h={'fit-content'}
+                        color={'#0A101D'} className={'all-project-mobile-view'} cursor={'pointer'} onClick={() => {
+                    props.setProjectListShow(true)
+                }}>
+                    <div className={'folder-icon'}>
+                        <FolderIcon/>
+                    </div>
+
+                    <Text whiteSpace={'nowrap'} overflow={'hidden'} textOverflow={'ellipsis'} fontSize='13px'
+                          color={'#374151'} flex={'1'}> Projects {projectData.length > 0 ? `(${projectData.length})` : ''}</Text>
+                </Button>
+
                 <Button alignItems={'center'} gap={2} textAlign={'left'} backgroundColor={'#FFFFFF'}
                         onClick={() => commonService.toggleCreateProjectModel(true, true)} padding={'7px'}
                         minWidth={'216px'} _hover={{backgroundColor: 'var(--alias-bg-subtle)'}}
@@ -112,7 +129,15 @@ export function InboxHeaderProjectsList() {
                             projects {projectDataLength.length > maxSize && `(${projectDataLength.length - projectData.length})`}</Text>
                     </Button>
                 </>}
-            </>
+            </Flex>
+            <Flex className={'back-to-inbox-div'} padding={3} onClick={() => {props.setProjectListShow(false)}}>
+                <Flex alignItems={'center'} gap={2} textAlign={'center'} backgroundColor={'transparent'} padding={'8px'} width={'100%'}
+                      border={'0'} fontSize={'13px'} fontWeight={500} letterSpacing={'-0.13px'} borderRadius={'0'} h={'fit-content'}
+                        color={'#082561'} className={'back-to-inbox-button'} cursor={'pointer'} >
+                    <Text whiteSpace={'nowrap'} overflow={'hidden'} textOverflow={'ellipsis'} fontSize='13px'
+                          color={'#374151'} flex={'1'}> ↑ Back to inbox</Text>
+                </Flex>
+            </Flex>
         </>
     )
 }

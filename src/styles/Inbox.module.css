@@ -1669,8 +1669,16 @@
         display: none;
     }
 
-    div.TabsListTabPanel {
+    div.mailTabList {
         display: none;
+    }
+
+    .mailListTabs .composeButton {
+        position: absolute;
+        z-index: 5;
+        right: 12px;
+        bottom: 5px;
+        border-color: #D1D5DB;
     }
 
     div.mailList {

@@ -2,12 +2,14 @@ import {MessageBoxLoader} from "@/components/messages/message-view/message-box-l
 import React, {useCallback, useState} from "react";
 import {useSelector} from "react-redux";
 import {StateType} from "@/types";
-import {Flex, Heading, Text} from "@chakra-ui/react";
+import {Button, Flex, Heading, Text} from "@chakra-ui/react";
 import styles from "@/styles/Inbox.module.css";
 import {debounce} from "@/utils/common.functions";
 import dynamic from "next/dynamic";
-import {MuteIcon} from "@/icons";
+import {ArchiveIcon,ForwardIcon, MuteIcon, ReplyIcon, TrashIcon} from "@/icons";
 import {useAllLoader} from "@/hooks/all-loader.hook";
+import {MAILBOX_ARCHIVE, MAILBOX_TRASH} from "@/utils/constants";
+import MessageSchedule from "@/components/messages/message-schedule";
 
 const MessagesHeader = dynamic(() => import('@/components/messages/messages-header').then(mod => mod.MessagesHeader));
 const MessageBox = dynamic(() => import('@/components/messages/message-box').then(mod => mod.MessageBox));
@@ -61,6 +63,34 @@ export function MessageBoxContent({isProjectView = false}: { isProjectView?: boo
                                 </div>
                             </Flex>
                         </Flex>
+
+                        <Flex alignItems={'center'} justifyContent={'space-between'} backgroundColor={'#F9FAFB'} padding={3} borderTop={'1px solid #E5E7EB'} className={'replay-mobile-ui'}>
+                            <Flex alignItems={'center'} gap={3}>
+                                <Button backgroundColor={'#1F2937'} borderRadius={'8px'} padding={'10px 12px'} _hover={{backgroundColor: '#1F2937'}}
+                                color={'#FFFFFF'} fontSize={'14px'} fontWeight={'500'} leftIcon={<ReplyIcon />}
+                                >Reply</Button>
+
+                                <Button className={'forward-button'} backgroundColor={'transparent'} border={'1px solid #374151'} borderRadius={'8px'}
+                                        padding={'10px 12px'} _hover={{backgroundColor: 'transparent'}}
+                                        color={'#374151'} fontSize={'14px'} fontWeight={'500'} leftIcon={<ForwardIcon />}
+                                >Forward</Button>
+                            </Flex>
+
+                            <Flex gap={'3'}>
+                                <button className='archive-button-icon mobile-view-icon'>
+                                    <ArchiveIcon/>
+                                </button>
+
+                                <button className='trash-button-icon mobile-view-icon'>
+                                    <TrashIcon/>
+                                </button>
+
+                                <div className={'mobile-view-icon'}>
+                                    <MessageSchedule date={''} onChange={() => null} />
+                                </div>
+                            </Flex>
+                        </Flex>
+
                         {showReplyBox && <MessageReplyBox isProjectView={isProjectView}/>}
                     </>}
                 </Flex>

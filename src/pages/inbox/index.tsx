@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {ThreadsSideBar} from "@/components/threads";
 import styles from "@/styles/Home.module.css";
 import {Flex, Grid, GridItem,} from "@chakra-ui/react";
@@ -14,12 +14,16 @@ const Message = dynamic(
 )
 
 function InboxPage() {
-    const [width] = useWindowSize();
+    const [projectListShow, setProjectListShow] = useState<boolean>(false);
+
+    useEffect(() => {
+        console.log('projectListShow' , projectListShow)
+    }, [projectListShow])
     return (
         <div className={'mail-box-main'}>
-            <Flex padding={'16px 40px 15px'} backgroundColor={'#FFFFFF'} borderBottom={'1px solid #F3F4F6'} gap={3}
-                  overflow={'auto hidden'} height={'69px'} className={'mail-box-subheader'} position={'relative'}>
-                <InboxHeaderProjectsList/>
+            <Flex padding={'16px 40px 15px'} backgroundColor={'#FFFFFF'} borderBottom={'1px solid #F3F4F6'}
+                  overflow={'auto hidden'} height={'69px'} className={`mail-box-subheader ${projectListShow ? 'show-project-list' : ''}`} position={'relative'}>
+                <InboxHeaderProjectsList setProjectListShow={setProjectListShow}/>
             </Flex>
 
             <div className={styles.mailBg}>

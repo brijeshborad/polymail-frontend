@@ -842,7 +842,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
     }
 
     return (
-        <Flex backgroundColor={'#FFFFFF'} p={'20px'}>
+        <Flex backgroundColor={'#FFFFFF'} p={'20px'} className={'message-reply-box-div'}>
             <DropZone onFileUpload={handleFileUpload} forReply={true}>
                 <Flex
                     maxHeight={'450px'} direction={'column'} backgroundColor={'#FFFFFF'} width={'100%'}
