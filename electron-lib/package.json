@@ -6,8 +6,10 @@
   "private": true,
   "main": "electron-build/background.js",
   "scripts": {
-    "build-win": "node build.js --config electron-builder-config.js --win",
-    "build-mac": "node build-mac.js",
+    "build-win-prod": "set WEBPACK_ENV=production & node build.js --config electron-builder-config.js --win",
+    "build-win-dev": "node build.js --config electron-builder-config.js --win",
+    "build-mac-prod": "WEBPACK_ENV=production & node build-mac.js",
+    "build-mac-dev": "node build-mac.js",
     "start": "node dev.js"
   },
   "engines": {

@@ -2,7 +2,9 @@
 const webpack = require('webpack');
 const {webpackConfig} = require('./helper');
 
-webpack(webpackConfig('production')).run((err, stats) => {
+let env = process.env.WEBPACK_ENV || 'development';
+
+webpack(webpackConfig(env)).run((err, stats) => {
     if (err) {
         console.error(err);
     }

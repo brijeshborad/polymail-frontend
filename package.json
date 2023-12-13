@@ -7,8 +7,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build-win": "npm run build-win --prefix electron-lib",
-    "build-mac": "npm run build-mac --prefix electron-lib",
+    "build-win-prod": "npm run build-win-prod --prefix electron-lib",
+    "build-win-dev": "npm run build-win-dev --prefix electron-lib",
+    "build-mac-prod": "npm run build-mac-prod --prefix electron-lib",
+    "build-mac-dev": "npm run build-mac-dev --prefix electron-lib",
     "electron-run": "npm run start --prefix electron-lib",
     "start": "next start",
     "lint": "next lint",
