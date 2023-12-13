@@ -1411,7 +1411,7 @@ div:has(> .mailSendToaster) {
 .mail-box-subheader .back-to-inbox-div {
     display: none;
     border-bottom: 1px solid var(--alias-border-subtle, #F3F4F6);
-    background: var(--alias-bg-default, #FFF);
+    background: rgba(255,255,255, 0.8);
     filter: blur(6px);
 }
 
@@ -1555,6 +1555,10 @@ div:has(> .mailSendToaster) {
         display: none;
     }
 
+    div.replay-mobile-ui {
+        display: flex;
+    }
+
     div.replay-mobile-ui svg {
         margin: 0;
         width: 24px;
@@ -1566,11 +1570,21 @@ div:has(> .mailSendToaster) {
         stroke: #6B7280;
     }
 
-    .mobile-view-icon {
+    .replay-mobile-ui .mobile-view-icon {
         width: 36px;
         height: 36px;
         border: 1px solid #E5E7EB;
         border-radius: 50%;
+    }
+
+    .replay-mobile-ui .mobile-view-icon.mobile-schedule-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .replay-mobile-ui .mobile-view-icon svg {
+        stroke: #6B7280;
     }
 
     .mail-box-subheader .all-project-mobile-view {
