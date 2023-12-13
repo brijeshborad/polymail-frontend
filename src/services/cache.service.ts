@@ -64,7 +64,7 @@ class CacheService {
             return index === [...threads].findIndex((o: Thread) => obj.id === o.id);
         });
         // Sort threads
-        [...threads].sort((a: Thread, b: Thread) => (new Date(b.sortDate as string).valueOf() - new Date(a.sortDate as string).valueOf()))
+        threads.sort((a: Thread, b: Thread) => (new Date(b.sortDate as string).valueOf() - new Date(a.sortDate as string).valueOf()))
         return threads;
     }
 

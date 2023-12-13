@@ -1430,6 +1430,29 @@ div:has(> .mailSendToaster) {
     backdrop-filter: blur(2px);
 }
 
+.thread-list {
+    transition: all 2s;
+}
+
+.thread-list.removing {
+    transform: translateY(-70px);
+}
+
+.thread-list.adding {
+    transform: translateY(70px);
+}
+
+.main-thread-list.adding {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 2s linear;
+}
+
+.main-thread-list.removing {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s 2s, opacity 2s linear;
+}
 
 @keyframes editor-input-animation {
     0% {

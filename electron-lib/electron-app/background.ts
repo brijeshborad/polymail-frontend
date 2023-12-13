@@ -18,16 +18,17 @@ if (isProd) {
     mainWindow = createWindow('main', getDefaultWindowConfig());
 
     if (isProd) {
-        await mainWindow.loadURL(`https://devapp.polymail.io`);
+        await mainWindow.loadURL(`https://teams.polymail.com`);
     } else {
-        const port = process.argv[2];
-        await mainWindow.loadURL(`http://localhost:${port}`);
-        mainWindow.webContents.openDevTools();
+        await mainWindow.loadURL(`https://devapp.polymail.com`);
+
+        // Uncomment Blow code if you want to run & test it on local.
+
+        // const port = process.argv[2];
+        // await mainWindow.loadURL(`http://localhost:${port}`);
+        // mainWindow.webContents.openDevTools();
     }
     mainWindow.maximize();
-    if (isProd) {
-        // updateSession();
-    }
 })();
 
 function getDefaultWindowConfig() {
@@ -44,42 +45,6 @@ function getDefaultWindowConfig() {
 
 function loadEvents() {
     // IPCMain Events.
-}
-
-function UpsertKeyValue(obj: any, keyToChange: string, value: any) {
-    const keyToChangeLower = keyToChange.toLowerCase();
-    for (const key of Object.keys(obj)) {
-        if (key.toLowerCase() === keyToChangeLower) {
-            // Reassign old key
-            obj[key] = value;
-            // Done
-            return;
-        }
-    }
-    // Insert at end instead
-    obj[keyToChange] = value;
-}
-
-function updateSession() {
-    mainWindow.webContents.session.webRequest.onBeforeSendHeaders(
-        (details: any, callback: any) => {
-            const {requestHeaders} = details;
-            UpsertKeyValue(requestHeaders, 'Access-Control-Allow-Origin', ['*']);
-            UpsertKeyValue(requestHeaders, 'Origin', ['*']);
-            callback({requestHeaders});
-        }
-    );
-
-    mainWindow.webContents.session.webRequest.onHeadersReceived(
-        (details: any, callback: any) => {
-            const {responseHeaders} = details;
-            UpsertKeyValue(responseHeaders, 'Access-Control-Allow-Origin', ['*']);
-            UpsertKeyValue(responseHeaders, 'Access-Control-Allow-Headers', ['*']);
-            callback({
-                responseHeaders,
-            });
-        }
-    )
 }
 
 app.on('window-all-closed', () => {

@@ -884,7 +884,7 @@ ${content?.cc ? 'Cc: ' + ccEmailString : ''}</p><br/><br/><br/>`;
                                     Draft
                                 </Text>
                             </Flex>
-                            {props.isProjectView &&
+                            {(props.isProjectView && !isDraftCreatedByCurrentUser) &&
                             <Button fontSize={'13px'} fontWeight={'500'} border={'1px solid #FFFFFF'}
                                     onClick={() => createNewDraft()}
                                     background={'#F3F4F6'} borderRadius={'34px'} padding={'6px 8px'}

@@ -9,6 +9,7 @@ const ext = fs.existsSync(path.join(cwd, '../tsconfig.json')) ? '.ts' : '.js';
 
 // ENV = 'development' | 'production'
 const configure = (env) => {
+    env = env.trim();
     const {buildDir} = getElectronConfig();
     const config = {
         mode: env,
