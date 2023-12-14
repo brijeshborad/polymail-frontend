@@ -1431,44 +1431,22 @@ div:has(> .mailSendToaster) {
 }
 
 .main-thread-list.adding {
+    height: 72px;
     visibility: visible;
     opacity: 1;
-    transition: opacity 250s linear;
+    transition: 200ms all ease-out;
 }
 
 .main-thread-list.removing {
-    border: 0;
-    box-shadow: none;
+    border: 0 !important;
+    box-shadow: none !important;
+    margin-bottom: 0;
     height: 0;
-    opacity: 0;
+    padding-top: 0;
     visibility: hidden;
-    animation: thread-remove-animation 250ms ease;
-}
-
-@keyframes thread-remove-animation {
-    0% {
-        height: 72px;
-        opacity: 1;
-        visibility: visible;
-    }
-
-    30% {
-        height: 50px;
-        opacity: 0;
-        visibility: hidden;
-    }
-
-    70% {
-        height: 10px;
-        opacity: 0;
-        visibility: hidden;
-    }
-
-    100% {
-        visibility: hidden;
-        height: 0;
-        opacity: 0;
-    }
+    opacity: 0;
+    padding-bottom: 0;
+    transition: 200ms all ease-out;
 }
 
 @keyframes editor-input-animation {

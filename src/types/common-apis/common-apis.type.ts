@@ -22,8 +22,5 @@ export declare type InitialCommonApisStateType = {
   },
   animateCompose?: boolean,
   animateResumeCompose?: boolean,
-  projectRules?: ProjectRules[],
-  removingThread?: {
-    [key: string]: boolean
-  },
+  projectRules?: ProjectRules[]
 }

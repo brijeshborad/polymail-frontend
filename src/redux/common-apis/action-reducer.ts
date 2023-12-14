@@ -14,7 +14,6 @@ const initialState: any = {
   onlineUsers: {threads: {}, projects: {}},
   activityFeed: [],
   projectRules: [],
-  removingThread: {},
 } as InitialCommonApisStateType
 
 const commonApisSlice = createSlice({

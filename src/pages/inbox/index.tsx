@@ -22,7 +22,7 @@ function InboxPage() {
     return (
         <div className={'mail-box-main'}>
             <Flex padding={'16px 40px 15px'} id={'inbox-page-projects-header'} backgroundColor={'#FFFFFF'} borderBottom={'1px solid #F3F4F6'}
-                  overflow={'auto hidden'} height={'69px'} className={`mail-box-subheader ${projectListShow ? 'show-project-list' : ''}`} position={'relative'}>
+                  overflow={'hidden'} height={'69px'} className={`mail-box-subheader ${projectListShow ? 'show-project-list' : ''}`} position={'relative'}>
                 <InboxHeaderProjectsList setProjectListShow={setProjectListShow}/>
             </Flex>
 

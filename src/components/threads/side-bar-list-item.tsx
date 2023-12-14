@@ -20,7 +20,6 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
         isThreadFocused,
         selectedThread
     } = useSelector((state: StateType) => state.threads);
-    const {removingThread} = useSelector((state: StateType) => state.commonApis);
     const [isSelected, setIsSelected] = useState<boolean>(false);
     const [isClicked, setIsClicked] = useState<boolean>(false);
 
@@ -79,7 +78,7 @@ export function ThreadsSideBarListItem(props: ThreadListItemProps) {
                     props.onClick(e)
                     keyNavigationService.setKeyNavigationState({target: 'threads'});
                 }}
-                className={`${styles.mailDetails} ${isSelected ? styles.mailDetailsSelected : ''} main-thread-list ${removingThread && removingThread[props.thread.id!] ? 'removing' : ''}`}
+                className={`${styles.mailDetails} ${isSelected ? styles.mailDetailsSelected : ''} main-thread-list`}
             >
                 <Flex align={"center"} justify={'space-between'} gap={2}>
                     <Flex align={"center"} className={styles.senderDetails} noOfLines={1} gap={1}>

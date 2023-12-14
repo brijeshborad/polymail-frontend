@@ -39,7 +39,6 @@ const MessageSchedule = dynamic(() => import("./message-schedule").then(mod => m
 export function MessagesHeader({isProjectView = false}: { isProjectView?: boolean }) {
     const {selectedThread, threads, tabValue} = useSelector((state: StateType) => state.threads);
     const {event: incomingEvent} = useSelector((state: StateType) => state.globalEvents);
-    const {removingThread} = useSelector((state: StateType) => state.commonApis);
 
     const dispatch = useDispatch();
     const [scheduledDate, setScheduledDate] = useState<string | undefined>();
@@ -130,7 +129,6 @@ export function MessagesHeader({isProjectView = false}: { isProjectView?: boolea
                 }
 
                 if (remove_from_list) {
-                    commonService.removeThread(currentThreads[index1].id!);
                     currentThreads.splice(index1, 1);
 
                     messageService.setMessageState({showMessageBox: false});
@@ -148,7 +146,7 @@ export function MessagesHeader({isProjectView = false}: { isProjectView?: boolea
                     threadService.setSelectedThread({...currentThreads[index1]});
                     threadService.updateUmMovingThreadCache(messageBox, currentThreads[index1]);
                 }
-                // threadService.setThreadState({threads: currentThreads});
+                threadService.setThreadState({threads: currentThreads});
                 dispatch(updateThreads({
                     body: {
                         id: selectedThread.id,
@@ -249,23 +247,27 @@ export function MessagesHeader({isProjectView = false}: { isProjectView?: boolea
     return (
         <>
             <Flex gap={2} align={'center'} justify={'space-between'} padding={'12px 20px'}
-                  borderBottom={'1px solid #F3F4F6'} className={styles.mailBoxHeader} display={showMessageHeader ? 'flex': 'none'}>
+                  borderBottom={'1px solid #F3F4F6'} className={styles.mailBoxHeader}
+                  display={showMessageHeader ? 'flex' : 'none'}>
                 <Heading as='h6' fontSize={'15px'} color={'#0A101D'} noOfLines={1}
                          fontWeight={600}>{selectedThread?.subject || '(no subject)'}</Heading>
 
                 <Flex align={'center'} className={styles.mailboxHeaderMobileView}>
                     <Button className={'backToThreadMobile'} minW={'1px'} variant='outline' border={'1px solid #E5E7EB'}
-                            fontSize={'13px'} fontWeight={500} letterSpacing={'-0.13px'} borderRadius={'50px'} width={'36px'}
-                            height={'36px'} backgroundColor={'#FFFFFF'} alignItems={'center'} justifyContent={'center'}
+                            fontSize={'13px'} fontWeight={500} letterSpacing={'-0.13px'} borderRadius={'50px'}
+                            width={'36px'} height={'36px'} backgroundColor={'#FFFFFF'} alignItems={'center'}
+                            justifyContent={'center'}
                             leftIcon={<ArrowBackIcon/>} onClick={() => threadService.setSelectedThread(null)}>
                         {/*Back To Threads*/}
                     </Button>
 
                     <Flex gap={3} align={'center'}>
-                        <Flex alignItems={'center'} justifyContent={'end'} className={'member-images member-images-mobile'}>
+                        <Flex alignItems={'center'} justifyContent={'end'}
+                              className={'member-images member-images-mobile'}>
                             <UsersOnline type={'threads'} itemId={selectedThread.id!}/>
                         </Flex>
-                        {!isProjectView && <AddToProjectButton allowDefaultSelect={true} selectFrom={'thread'} allShowingAutomationMenu={true}/>}
+                        {!isProjectView && <AddToProjectButton allowDefaultSelect={true} selectFrom={'thread'}
+                                                               allShowingAutomationMenu={true}/>}
                     </Flex>
                     <Flex align={'center'} className={'header-right-icon'}>
                         <div>
